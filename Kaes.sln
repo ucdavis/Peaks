@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26730.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kaes.Mvc", "Kaes.Mvc\Kaes.Mvc.csproj", "{3DE07311-A66E-47B2-993A-FF6DD5A88E22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kaes.Core", "Kaes.Core\Kaes.Core.csproj", "{7237EA5E-81A5-4F27-9F1D-D56969342DB5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{3DE07311-A66E-47B2-993A-FF6DD5A88E22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DE07311-A66E-47B2-993A-FF6DD5A88E22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DE07311-A66E-47B2-993A-FF6DD5A88E22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7237EA5E-81A5-4F27-9F1D-D56969342DB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7237EA5E-81A5-4F27-9F1D-D56969342DB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7237EA5E-81A5-4F27-9F1D-D56969342DB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7237EA5E-81A5-4F27-9F1D-D56969342DB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
