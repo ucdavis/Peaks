@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -35,12 +36,12 @@ namespace Keas.Mvc
             {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.GetClaimsFromUserInfoEndpoint = true;
-                options.ClientId = "d80bb7cd-b059-4230-9a33-a53f86fab0c4";
-                options.Authority = "https://login.microsoftonline.com/ucdavis365.onmicrosoft.com";
+                options.ClientId = Configuration["Authentication:ClientId"];
+                options.Authority = $"https://login.microsoftonline.com/{Configuration["Authentication:Tenant"]}";
                 options.Events.OnRedirectToIdentityProvider = context =>
                 {
                     // this allows us to go straight to the UCD login
-                    context.ProtocolMessage.SetParameter("domain_hint", "ucdavis.edu");
+                    context.ProtocolMessage.SetParameter("domain_hint", Configuration["Authentication:Domain"]);
 
                     return Task.FromResult(0);
                 };
