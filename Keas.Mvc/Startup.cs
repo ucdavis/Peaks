@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Mvc.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +24,29 @@ namespace Keas.Mvc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // add openID connect auth backed by a cookie signin scheme
+            services.AddAuthentication(options =>
+            {
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = OpenIdConnectDefaults.AuthenticationScheme;
+            })
+            .AddCookie()
+            .AddOpenIdConnect(options =>
+            {
+                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.ClientId = Configuration["Authentication:ClientId"];
+                options.Authority = $"https://login.microsoftonline.com/{Configuration["Authentication:Tenant"]}";
+                options.Events.OnRedirectToIdentityProvider = context =>
+                {
+                    // this allows us to go straight to the UCD login
+                    context.ProtocolMessage.SetParameter("domain_hint", Configuration["Authentication:Domain"]);
+
+                    return Task.FromResult(0);
+                };
+            });
+
             services.AddMvc();
         }
 
@@ -37,6 +63,8 @@ namespace Keas.Mvc
             }
 
             app.UseStaticFiles();
+
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {
