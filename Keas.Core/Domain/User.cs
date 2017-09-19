@@ -6,6 +6,7 @@ namespace Keas.Core.Domain
     {
         // IAM (campus identity) ID
         [Required]
+        [Key]
         public string Id { get; set; }
 
         [StringLength(50)]
