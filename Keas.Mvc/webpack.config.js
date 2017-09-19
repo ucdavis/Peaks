@@ -29,7 +29,7 @@ module.exports = (env) => {
             new CheckerPlugin(),
             new webpack.optimize.CommonsChunkPlugin({
                 name: 'vendor',
-                chunks: ['boot']
+                minChunks: Infinity,
             })
 
         ].concat(isDevBuild ? [
