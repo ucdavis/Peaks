@@ -10,7 +10,7 @@ module.exports = (env) => {
         stats: { modules: false },
         entry: {
             'main': './ClientApp/boot.tsx',
-            'vendor': ['event-source-polyfill', 'isomorphic-fetch', 'react', 'react-dom', 'react-router-dom']
+            'vendor': ['event-source-polyfill', 'isomorphic-fetch', 'react', 'react-dom']
         },
         resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
         output: {
