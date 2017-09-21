@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Mvc.Models;
+using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,11 @@ namespace Keas.Mvc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
+
+            // setup services
+            services.AddSingleton<IIdentityService, IdentityService>();
+            
             // setup entity framework
             services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));
 
