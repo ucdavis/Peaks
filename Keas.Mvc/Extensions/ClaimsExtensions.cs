@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Keas.Core.Domain;
 
 namespace Keas.Mvc.Extensions
 {
@@ -15,6 +16,20 @@ namespace Keas.Mvc.Extensions
             var nameClaim = claimsPrincipal.FindFirst("name");
 
             return nameClaim != null ? nameClaim.Value : claimsPrincipal.Identity.Name;
+        }
+
+        public static User GetUserInfo(this ClaimsPrincipal claimsPrincipal)
+        {
+            if (claimsPrincipal == null || !claimsPrincipal.Identity.IsAuthenticated) return null;
+
+            return new User
+            {
+                FirstName = claimsPrincipal.FindFirstValue(ClaimTypes.GivenName),
+                LastName = claimsPrincipal.FindFirstValue(ClaimTypes.Surname),
+                Name = claimsPrincipal.GetNameClaim(),
+                Email = claimsPrincipal.FindFirstValue(ClaimTypes.Email),
+                Id = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier)
+            };
         }
     }
 }

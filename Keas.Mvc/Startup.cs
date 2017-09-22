@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Mvc.Models;
@@ -56,6 +57,24 @@ namespace Keas.Mvc
                     context.ProtocolMessage.SetParameter("domain_hint", Configuration["Authentication:Domain"]);
 
                     return Task.FromResult(0);
+                };
+                options.Events.OnTokenValidated = async context =>
+                {
+                    var identity = (ClaimsIdentity) context.Principal.Identity;
+
+                    // email comes across in upn claim
+                    var email = identity?.FindFirst(ClaimTypes.Upn).Value;
+
+                    if (string.IsNullOrWhiteSpace(email)) return;
+
+                    var identityService = services.BuildServiceProvider().GetService<IIdentityService>();
+
+                    var userId = await identityService.GetUserId(email);
+
+                    identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier));
+                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));
+
+                    identity.AddClaim(new Claim(ClaimTypes.Email, email));
                 };
             });
 
