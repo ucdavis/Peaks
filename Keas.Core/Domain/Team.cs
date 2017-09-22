@@ -13,7 +13,7 @@ namespace Keas.Core.Domain
         public string TeamName { get; set; }
 
         
-        public Location Location { get; set; }
+       // public Location Location { get; set; }
 
     }
 }
