@@ -11,7 +11,7 @@ namespace Keas.Core.Domain
 
         public TeamMember TeamMember { get; set; }
 
-        // TODO: Location? Does this vary by Asset type??
+        public Location Location { get; set; }
 
         public string Type { get; set; }
 

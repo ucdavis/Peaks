@@ -12,8 +12,8 @@ namespace Keas.Core.Domain
         [Display(Name = "Team Name")]
         public string TeamName { get; set; }
 
-        // TODO: Add location once we have that.
-        //public Location Location { get; set; }
+        
+        public Location Location { get; set; }
 
     }
 }
