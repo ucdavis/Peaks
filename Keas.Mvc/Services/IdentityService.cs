@@ -30,9 +30,11 @@ namespace Keas.Mvc.Services
                 var response = await client.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 var contents = await response.Content.ReadAsStringAsync();
-                dynamic test = JsonConvert.DeserializeObject(contents);
+                dynamic results = JsonConvert.DeserializeObject(contents);
 
-                return test.responseData.results.Count > 0 ? test.responseData.results[0].iamId : string.Empty;
+                if (results.responseData.result == null) return string.Empty;
+                
+                return results.responseData.results.Count > 0 ? results.responseData.results[0].iamId : string.Empty;
             }
         }
     }    

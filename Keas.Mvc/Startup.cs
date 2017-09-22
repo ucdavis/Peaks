@@ -71,6 +71,11 @@ namespace Keas.Mvc
 
                     var userId = await identityService.GetUserId(email);
 
+                    if (string.IsNullOrWhiteSpace(userId))
+                    {
+                        throw new InvalidOperationException("Could not retrieve user information from IAM");
+                    }
+
                     identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier));
                     identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));
 
