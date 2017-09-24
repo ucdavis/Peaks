@@ -9,7 +9,9 @@ namespace Keas.Core.Domain
         [Key]
         public int Id { get; set; }
 
-       // public TeamMember TeamMember { get; set; }
+       public TeamMember AssignedToTeamMember { get; set; }
+
+        public TeamMember AssignedByTeamMember { get; set; }
 
       //  public Location Location { get; set; }
 
