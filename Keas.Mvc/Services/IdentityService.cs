@@ -32,7 +32,7 @@ namespace Keas.Mvc.Services
                 var contents = await response.Content.ReadAsStringAsync();
                 dynamic results = JsonConvert.DeserializeObject(contents);
 
-                if (results.responseData.result == null) return string.Empty;
+                if (results.responseData.results == null) return string.Empty;
                 
                 return results.responseData.results.Count > 0 ? results.responseData.results[0].iamId : string.Empty;
             }
