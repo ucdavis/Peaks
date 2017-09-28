@@ -16,7 +16,7 @@ namespace Keas.Core.Domain
 
         public string Type { get; set; }
 
-        //[ForeignKey("Id")]
+        // TODO: Get this working. [ForeignKey("Id")]
         //public Location ParentLocation { get; set; }
 
 
