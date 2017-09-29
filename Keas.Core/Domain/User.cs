@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Keas.Core.Domain
 {
@@ -26,5 +27,7 @@ namespace Keas.Core.Domain
         [StringLength(256)]
         [EmailAddress]
         public string Email { get; set; }
+
+        public List<TeamMember> TeamMembers { get; set; }
     }
 }

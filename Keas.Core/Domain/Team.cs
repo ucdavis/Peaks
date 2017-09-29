@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Keas.Core.Domain
 {
@@ -12,6 +13,7 @@ namespace Keas.Core.Domain
         [Display(Name = "Team Name")]
         public string TeamName { get; set; }
 
+        public List<TeamMember> TeamMembers { get; set; }
         
        // public Location Location { get; set; }
 

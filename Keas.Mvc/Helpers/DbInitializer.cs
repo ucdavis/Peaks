@@ -18,10 +18,10 @@ namespace Keas.Mvc.Helpers
             var team = new Team {Id = 1, TeamName = "CAES DO"};
             var teamMember = new TeamMember {Id = 1, Team = team, User = user};
             var teamMemberSupervisor = new TeamMember {Id = 2, Team = team, User = supervisor};
-            var teamRole = new TeamRole {Name = "Team Admin", User = user, Team = team};
-            var locationCampus = new Location {Id = 1, Name = "Davis Campus", Type = "Campus"};
-            var locationBuilding = new Location {Id = 2, Name = "Mrak", Type = "Building", ParentLocation = locationCampus};
-            var locationRoom = new Location {Id = 3, Name = "12", ParentLocation = locationBuilding, Type = "Room"};
+            var teamRole = new TeamRole {Name = "Team Admin", TeamMember = teamMemberSupervisor};
+            var locationCampus = new Location {Id = 1, Name = "Davis Campus", Type = "Campus", Team = team};
+            var locationBuilding = new Location {Id = 2, Name = "Mrak", Type = "Building", ParentLocation = locationCampus, Team = team};
+            var locationRoom = new Location {Id = 3, Name = "12", ParentLocation = locationBuilding, Type = "Room", Team = team};
             var assignment = new Assignment {Id = 1, StartDate = DateTime.Now.AddMonths(-2), TeamMember = teamMember, Supervisor = teamMemberSupervisor };
             var asset = new Asset {Id = 1, Type = "Computer", AssignedToTeamMember = teamMember, AssignedByTeamMember = teamMemberSupervisor, Location = locationRoom};
 
