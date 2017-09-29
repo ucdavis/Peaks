@@ -12,12 +12,15 @@ namespace Keas.Core.Domain
 
         public string Name { get; set; }
 
-        // TODO: External IDs go here
-
+        public int QualityRating { get; set; }
+        
         public string Type { get; set; }
 
-        // TODO: Get this working. [ForeignKey("Id")]
-        //public Location ParentLocation { get; set; }
+        public int? ParentLocationId { get; set; }
+
+       
+        [ForeignKey("ParentLocationId")]
+        public Location ParentLocation { get; set; }
 
 
     }

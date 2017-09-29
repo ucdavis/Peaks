@@ -13,11 +13,11 @@ namespace Keas.Core.Domain
 
         public TeamMember AssignedByTeamMember { get; set; }
 
-      //  public Location Location { get; set; }
+        public Location Location { get; set; }
 
         public string Type { get; set; }
 
-        // TODO: Assett info JSON goes here?
+        // TODO: Asset info (JSON???) goes here
 
 
     }
