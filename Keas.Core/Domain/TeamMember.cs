@@ -21,8 +21,8 @@ namespace Keas.Core.Domain
         public User User { get; set; }
         public string UserId { get; set; }
 
-        //[InverseProperty("TeamMember")]
-        //public List<Assignment> Assignments { get; set; }
+        //[InverseProperty("Assignee")]
+        //public List<Assignment> GivenAssignments { get; set; }
 
         //[InverseProperty("Supervisor")]
         //public List<Assignment> SupervisedAssignments { get; set; }

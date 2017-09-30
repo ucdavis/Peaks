@@ -22,7 +22,7 @@ namespace Keas.Mvc.Helpers
             var locationCampus = new Location {Id = 1, Name = "Davis Campus", Type = "Campus", Team = team};
             var locationBuilding = new Location {Id = 2, Name = "Mrak", Type = "Building", ParentLocation = locationCampus, Team = team};
             var locationRoom = new Location {Id = 3, Name = "12", ParentLocation = locationBuilding, Type = "Room", Team = team};
-            var assignment = new Assignment {Id = 1, StartDate = DateTime.Now.AddMonths(-2), TeamMember = teamMember, Supervisor = teamMemberSupervisor };
+            var assignment = new Assignment {Id = 1, StartDate = DateTime.Now.AddMonths(-2), Assignee = teamMember, Supervisor = teamMemberSupervisor };
             var asset = new Asset {Id = 1, Type = "Computer", AssignedToTeamMember = teamMember, AssignedByTeamMember = teamMemberSupervisor, Location = locationRoom};
 
             context.Users.Add(user);

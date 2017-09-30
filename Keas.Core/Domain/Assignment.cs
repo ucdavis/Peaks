@@ -2,6 +2,7 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keas.Core.Domain
 {
@@ -11,15 +12,19 @@ namespace Keas.Core.Domain
         [Key]
         public int Id { get; set; }
 
-        public TeamMember TeamMember { get; set; }
-        public int TeamMemberId { get; set; }
+
+        public int AssigneeTeamMemberId { get; set; }
+        [ForeignKey("AssigneeTeamMemberId")]
+        public TeamMember Assignee { get; set; }
+        
 
         public DateTime StartDate { get; set; }
 
         // TODO: Figue out what appointment info we need. Sync with PPS/Path/IAM????
 
+        [ForeignKey("SupervisorTeamMemberId")]
         public TeamMember Supervisor { get; set; }
-        public int SupervisorId { get; set; }
+        public int SupervisorTeamMemberId { get; set; }
 
     }
 }
