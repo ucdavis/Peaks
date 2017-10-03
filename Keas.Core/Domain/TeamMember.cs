@@ -21,6 +21,22 @@ namespace Keas.Core.Domain
         public User User { get; set; }
         public string UserId { get; set; }
 
+        public string HomePhone { get; set; }
+
+        // TODO: Expand to full set of fields
+        public string HomeAddress { get; set; }
+
+        public string CampusPhone { get; set; }
+
+        // TODO: Should this be one to many?
+        public Location CampusLocation { get; set; }
+        public int CampusLocationId { get; set; }
+
+        public string DirectoryPhone { get; set; }
+        public Location DirectoryLocation { get; set; }
+        public int DirectoryLocationId { get; set; }
+
+        
         //[InverseProperty("Assignee")]
         //public List<Assignment> GivenAssignments { get; set; }
 

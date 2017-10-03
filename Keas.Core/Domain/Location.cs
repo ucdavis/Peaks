@@ -13,6 +13,7 @@ namespace Keas.Core.Domain
 
         public string Name { get; set; }
 
+        // TODO: Maybe move this out to a teamLocation table? Otherwise, we have folks fighting over this???
         public int QualityRating { get; set; }
         
         public string Type { get; set; }
@@ -22,11 +23,12 @@ namespace Keas.Core.Domain
         public Location ParentLocation { get; set; }
         public int? ParentLocationId { get; set; }
 
-        [Required]
-        public Team Team { get; set; }
-        public int TeamId { get; set; }
+        //[Required]
+        //public Team Team { get; set; }
+        //public int TeamId { get; set; }
 
-        public List<Asset> Assets { get; set; }
+        // TODO: If locations are now public, should assets show up? Maybe force the cascade load only when needed?
+        //public List<Asset> Assets { get; set; }
 
     }
 }
