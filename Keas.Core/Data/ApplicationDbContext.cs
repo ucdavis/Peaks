@@ -10,5 +10,11 @@ namespace Keas.Core.Data
         { }
         
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Team> Teams { get; set; }
+        public virtual DbSet<TeamMember> TeamMembers { get; set; }
+        public virtual DbSet<TeamRole> TeamRoles { get; set; }
+        public virtual DbSet<Location> Locations { get; set; }
+        public virtual DbSet<Assignment> Assignments { get; set; }
+        public virtual DbSet<Asset> Assets { get; set; }
     }
 }
