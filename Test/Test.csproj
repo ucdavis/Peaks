@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TestsDatabase\" />
     <Folder Include="TestsModel\" />
     <Folder Include="TestsController\" />
   </ItemGroup>
