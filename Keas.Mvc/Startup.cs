@@ -110,6 +110,10 @@ namespace Keas.Mvc
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: "TeamRoutes",
+                    template: "{teamName}/{controller=Home}/{action=Index}/{id?}");
+
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
