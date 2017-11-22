@@ -14,15 +14,45 @@ namespace Keas.Mvc.Helpers
 
             if (context.Users.Any()) return; // already initialzied
 
-            var user = new User {Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com"};
-            var team = new Team {Id = 1, TeamName = "CAES DO"};
+            var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
+            var jason = new User { Id = "123222", Name = "Jason", Email = "jsylvestre@email.com" };
+            var caes = new Team { Id = 1, TeamName = "CAES DO" };
 
-            context.Users.Add(user);
-            context.Teams.Add(team);
-            context.TeamMemberships.Add(new TeamMembership { User = user, Team = team, Role = "Admin" });
+            context.Users.Add(scott);
+            context.Teams.Add(caes);
+            context.TeamMemberships.Add(new TeamMembership { User = scott, Team = caes, Role = "Admin" });
+
+            // add assets
+            var jasonCaes = new Person { User = jason, Team = caes, Group = "CRU" };
+
+            var access = new AccessAssignment
+            {
+                Person = jasonCaes,
+                RequestedBy = scott,
+                Access = new Access { Team = caes, Name = "PPS" },
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+
+            var key = new KeyAssignment {
+                Person = jasonCaes,
+                RequestedBy = scott,
+                Key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard" },
+                ExpiresAt = DateTime.UtcNow.AddYears(5)
+            };
+
+            var equipment = new EquipmentAssignment {
+                Person = jasonCaes,
+                RequestedBy = scott,
+                Equipment = new Equipment { Name = "laptop", Team = caes },
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+
+            context.AccessAssignments.Add(access);
+            context.KeyAssignments.Add(key);
+            context.EquipmentAssignments.Add(equipment);
 
             context.SaveChanges();
-            
+
         }
     }
 }
