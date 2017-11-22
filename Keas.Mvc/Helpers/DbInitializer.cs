@@ -9,6 +9,7 @@ namespace Keas.Mvc.Helpers
     {
         public static void Initialize(ApplicationDbContext context)
         {
+            context.Database.EnsureDeleted(); // TODO: remove
             context.Database.EnsureCreated();
 
             if (context.Users.Any()) return; // already initialzied
