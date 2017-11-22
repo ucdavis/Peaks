@@ -2,6 +2,10 @@
   "name": "kaes-mvc",
   "private": true,
   "version": "0.0.0",
+  "scripts": {
+    "debug": "ASPNETCORE_ENVIRONMENT=Development dotnet watch run",
+    "test": "karma start"
+  },
   "devDependencies": {
     "@types/history": "4.6.0",
     "@types/isomorphic-fetch": "0.0.34",
