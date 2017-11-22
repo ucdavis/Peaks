@@ -17,5 +17,9 @@ namespace Keas.Core.Domain
         public string Model { get; set; }
 
         public List<EquipmentAttribute> Attributes { get; set; }
+
+        public void AddAttribute(string key, string value) {
+            Attributes.Add(new EquipmentAttribute { Equipment = this, Key = key, Value = value });
+        }
     }
 }

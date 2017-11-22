@@ -33,14 +33,16 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var key = new KeyAssignment {
+            var key = new KeyAssignment
+            {
                 Person = jasonCaes,
                 RequestedBy = scott,
                 Key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard" },
                 ExpiresAt = DateTime.UtcNow.AddYears(5)
             };
 
-            var equipment = new EquipmentAssignment {
+            var equipment = new EquipmentAssignment
+            {
                 Person = jasonCaes,
                 RequestedBy = scott,
                 Equipment = new Equipment { Name = "laptop", Team = caes },
@@ -51,8 +53,19 @@ namespace Keas.Mvc.Helpers
             context.KeyAssignments.Add(key);
             context.EquipmentAssignments.Add(equipment);
 
-            context.SaveChanges();
+            var equip2 = new EquipmentAssignment
+            {
+                Person = jasonCaes,
+                RequestedBy = scott,
+                Equipment = new Equipment { Name = "desktop", Team = caes },
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
 
+            equip2.Equipment.AddAttribute("OS", "windows");
+
+            context.EquipmentAssignments.Add(equip2);
+            
+            context.SaveChanges();
         }
     }
 }
