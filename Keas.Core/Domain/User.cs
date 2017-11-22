@@ -6,7 +6,6 @@ namespace Keas.Core.Domain
     public class User
     {
         // IAM (campus identity) ID
-        [Required]
         [Key]
         public string Id { get; set; }
 
@@ -28,6 +27,6 @@ namespace Keas.Core.Domain
         [EmailAddress]
         public string Email { get; set; }
 
-        public List<TeamMember> TeamMembers { get; set; }
+        public List<TeamMembership> TeamMemberships { get; set; }
     }
 }

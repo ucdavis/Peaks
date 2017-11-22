@@ -5,15 +5,14 @@ namespace Keas.Core.Domain
 {
     public class Team
     {
-        [Required]
         [Key]
         public int Id { get; set; }
 
-        [StringLength(50)]
+        [StringLength(128)]
         [Display(Name = "Team Name")]
         public string TeamName { get; set; }
 
-        public List<TeamMember> TeamMembers { get; set; }
+        public List<TeamMembership> TeamMemberships { get; set; }
         
        // public Location Location { get; set; }
 
