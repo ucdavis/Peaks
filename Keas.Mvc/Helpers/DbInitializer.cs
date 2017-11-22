@@ -9,36 +9,72 @@ namespace Keas.Mvc.Helpers
     {
         public static void Initialize(ApplicationDbContext context)
         {
+            context.Database.EnsureDeleted(); // TODO: remove
             context.Database.EnsureCreated();
 
             if (context.Users.Any()) return; // already initialzied
 
-            var user = new User {Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com"};
-            var supervisor = new User { Id = "321421", Name = "Adam Getchell", Email = "adam@email.com"};
-            var team = new Team {Id = 1, TeamName = "CAES DO"};
-            var teamMember = new TeamMember {Id = 1, Team = team, User = user};
-            var teamMemberSupervisor = new TeamMember {Id = 2, Team = team, User = supervisor};
-            var teamRole = new TeamRole {Name = "Team Admin", TeamMember = teamMemberSupervisor};
-            var locationCampus = new Location {Id = 1, Name = "Davis Campus", Type = "Campus"};
-            var locationBuilding = new Location {Id = 2, Name = "Mrak", Type = "Building", ParentLocation = locationCampus};
-            var locationRoom = new Location {Id = 3, Name = "12", ParentLocation = locationBuilding, Type = "Room"};
-            var assignment = new Assignment {Id = 1, StartDate = DateTime.Now.AddMonths(-2), Assignee = teamMember, Supervisor = teamMemberSupervisor };
-            var asset = new Asset {Id = 1, Type = "Computer", AssignedToTeamMember = teamMember, AssignedByTeamMember = teamMemberSupervisor, Location = locationRoom};
+            var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
+            var jason = new User { Id = "123222", Name = "Jason", Email = "jsylvestre@email.com" };
+            var caes = new Team { Id = 1, TeamName = "CAES DO" };
 
-            context.Users.Add(user);
-            context.Users.Add(supervisor);
-            context.Teams.Add(team);
-            context.TeamMembers.Add(teamMember);
-            context.TeamMembers.Add(teamMemberSupervisor);
-            context.TeamRoles.Add(teamRole);
-            context.Locations.Add(locationCampus);
-            context.Locations.Add(locationBuilding);
-            context.Locations.Add(locationRoom);
-            context.Assignments.Add(assignment);
-            context.Assets.Add(asset);
+            context.Users.Add(scott);
+            context.Teams.Add(caes);
+            context.TeamMemberships.Add(new TeamMembership { User = scott, Team = caes, Role = "Admin" });
+
+            // add assets
+            var jasonCaes = new Person { User = jason, Team = caes, Group = "CRU" };
+
+            var access = new AccessAssignment
+            {
+                Person = jasonCaes,
+                RequestedBy = scott,
+                Access = new Access { Team = caes, Name = "PPS" },
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+
+            var key = new KeyAssignment
+            {
+                Person = jasonCaes,
+                RequestedBy = scott,
+                Key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard" },
+                ExpiresAt = DateTime.UtcNow.AddYears(5)
+            };
+
+            var equipment = new EquipmentAssignment
+            {
+                Person = jasonCaes,
+                RequestedBy = scott,
+                Equipment = new Equipment { Name = "laptop", Team = caes },
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+
+            context.AccessAssignments.Add(access);
+            context.KeyAssignments.Add(key);
+            context.EquipmentAssignments.Add(equipment);
+
+            var equip2 = new EquipmentAssignment
+            {
+                Person = jasonCaes,
+                RequestedBy = scott,
+                Equipment = new Equipment { Name = "desktop", Team = caes },
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+
+            equip2.Equipment.AddAttribute("OS", "windows");
+
+            context.EquipmentAssignments.Add(equip2);
+            
+            var history = new History {
+                Person = jasonCaes,
+                Actor = scott,
+                Description = "Something important happened",
+                Key = key.Key
+            };
+
+            context.Histories.Add(history);
 
             context.SaveChanges();
-            
         }
     }
 }
