@@ -3,8 +3,13 @@ using System.Collections.Generic;
 namespace Keas.Core.Domain
 {
     public class Person {
+        public Person()
+        {
+            Active = true;
+        }
         public int Id { get; set; }
 
+        public bool Active { get; set; }
         public Team Team { get; set; }
         public int TeamId { get; set; }
 

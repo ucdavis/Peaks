@@ -65,6 +65,15 @@ namespace Keas.Mvc.Helpers
 
             context.EquipmentAssignments.Add(equip2);
             
+            var history = new History {
+                Person = jasonCaes,
+                Actor = scott,
+                Description = "Something important happened",
+                Key = key.Key
+            };
+
+            context.Histories.Add(history);
+
             context.SaveChanges();
         }
     }

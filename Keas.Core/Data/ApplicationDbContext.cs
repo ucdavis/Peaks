@@ -21,5 +21,7 @@ namespace Keas.Core.Data
         public virtual DbSet<Equipment> Equipment { get; set; }
         public virtual DbSet<EquipmentAssignment> EquipmentAssignments { get; set; }
         public virtual DbSet<EquipmentAttribute> EquipmentAttributes { get; set; }
+
+        public virtual DbSet<History> Histories { get; set; }
     }
 }
