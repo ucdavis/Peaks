@@ -1,3 +1,4 @@
+@model Keas.Core.Domain.Person
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -5,6 +6,11 @@
 <div id="react-app">Loading...</div>
 
 @section scripts {
+    <script>
+        window.App = {};
+        window.App.personData = @Json.Serialize(Model);
+    </script>
+
     <script src="~/dist/vendor.js" asp-append-version="true"></script>
     <script src="~/dist/main.js" asp-append-version="true"></script>
 }

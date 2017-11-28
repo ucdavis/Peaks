@@ -25,7 +25,7 @@ namespace Keas.Mvc.Controllers {
             Person person;
 
             if (id.HasValue) {
-                person = await _context.People.Where(x=>x.Team.Name == Team && x.Id == id.Value).AsNoTracking().SingleAsync();
+                person = await _context.People.Where(x=>x.Team.Name == Team && x.Id == id.Value).Include(x=>x.User).AsNoTracking().SingleAsync();
             } else {
                 person = new Person();
             }
