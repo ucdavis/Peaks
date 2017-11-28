@@ -23,7 +23,7 @@ renderApp();
 
 // Allow Hot Module Replacement
 if (module.hot) {
-  module.hot.accept("./components/Home", () => {
+  module.hot.accept("./components/PersonContainer", () => {
     renderApp();
   });
 }
