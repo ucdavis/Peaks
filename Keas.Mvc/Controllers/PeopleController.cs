@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Core.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,18 @@ namespace Keas.Mvc.Controllers {
             var people = await _context.People.Where(x=>x.Team.Name == Team && x.Active).AsNoTracking().ToListAsync();
 
             return Json(people);
+        }
+
+        public async Task<IActionResult> Details(int? id) {
+            Person person;
+
+            if (id.HasValue) {
+                person = await _context.People.Where(x=>x.Team.Name == Team && x.Id == id.Value).AsNoTracking().SingleAsync();
+            } else {
+                person = new Person();
+            }
+
+            return View(person);
         }
     }
 }
