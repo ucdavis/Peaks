@@ -3,6 +3,7 @@ import "isomorphic-fetch";
 
 import { IPerson, IKeyAssignment } from "../../Types";
 
+import AssignKey from "./AssignKey";
 import KeyList from "./KeyList";
 
 interface IProps {
@@ -36,8 +37,15 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   }
   public render() {
     if (this.state.loading) return <h2>Loading...</h2>;
-
-    return <KeyList keyAssignments={this.state.keyAssignments} />;
+    return (
+      <div className="card">
+        <div className="card-body">
+          <h4 className="card-title">Keys</h4>
+          <AssignKey />
+          <KeyList keyAssignments={this.state.keyAssignments} />
+        </div>
+      </div>
+    );
   }
 
   doFetch = async (p: Promise<Response>) => {
