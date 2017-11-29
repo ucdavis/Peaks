@@ -16,7 +16,7 @@ namespace Keas.Mvc.Helpers
 
             var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
             var jason = new User { Id = "123222", Name = "Jason", Email = "jsylvestre@email.com" };
-            var caes = new Team { Id = 1, TeamName = "CAES DO" };
+            var caes = new Team { Id = 1, Name = "CAESDO" };
 
             context.Users.Add(scott);
             context.Teams.Add(caes);

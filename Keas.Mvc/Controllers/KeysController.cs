@@ -7,6 +7,7 @@ using Keas.Core.Data;
 using Keas.Core.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
@@ -22,6 +23,12 @@ namespace Keas.Mvc.Controllers
         public string GetTeam()
         {
             return Team;
+        }
+
+        public async Task<IActionResult> ListAssigned(int id) {
+            var keyAssignments = await _context.KeyAssignments.Where(x=>x.PersonId == id).Include(x=>x.Key).AsNoTracking().ToArrayAsync();
+
+            return Json(keyAssignments);
         }
         public async Task<IActionResult> Create(Key key)
         {
