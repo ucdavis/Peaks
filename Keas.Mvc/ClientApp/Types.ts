@@ -1,7 +1,6 @@
 // Main Type of the context
 export interface AppContext {
-  team: String;
-  teamId: Number;
+  team: any; //TODO: define team
   person: IPerson;
 }
 

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import PropTypes from 'prop-types';
 
+import { createFetch } from './util/api';
 import { IPerson } from './Types';
 
 interface IProps {
@@ -10,14 +11,15 @@ interface IProps {
 // Provider
 export default class App extends React.Component<IProps, {}> {
   static childContextTypes = {
-    team: PropTypes.string,
-    teamId: PropTypes.number,
+    team: PropTypes.object,
     person: PropTypes.object,
+    fetch: PropTypes.func,
   };
   getChildContext() {
     // define context here
     return {
-      person: this.props.person
+      person: this.props.person,
+      fetch: createFetch()
     };
   }
   render() {
