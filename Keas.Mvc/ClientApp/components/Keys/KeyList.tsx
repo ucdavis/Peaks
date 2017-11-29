@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import KeyDetail from './KeyDetail';
+
 import { IKeyAssignment } from "../../Types";
 
 interface IProps {
@@ -8,7 +10,7 @@ interface IProps {
 
 export default class KeyList extends React.Component<IProps, {}> {
   public render() {
-    const keys = this.props.keyAssignments.map(x=> <li>{x.key.name}</li>);
+    const keys = this.props.keyAssignments.map(x=> <KeyDetail assignment={x} />);
     return (
       <ul>
         {keys}
