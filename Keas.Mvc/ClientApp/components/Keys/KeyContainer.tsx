@@ -1,7 +1,7 @@
 import * as React from "react";
 import "isomorphic-fetch";
 
-import { IPerson } from "../../Types";
+import { IPerson, IKeyAssignment } from "../../Types";
 
 import KeyList from "./KeyList";
 
@@ -11,7 +11,7 @@ interface IProps {
 
 interface IState {
   loading: boolean;
-  data: any;
+  keyAssignments: [IKeyAssignment];
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
@@ -20,7 +20,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
     this.state = {
       loading: true,
-      data: {}
+      keyAssignments: [] as [IKeyAssignment]
     };
   }
   async componentDidMount() {
@@ -31,18 +31,18 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     //   .then(data => this.setState({ data, loading: false }))
     //   .catch(console.log);
 
-    const data = await this.doFetch(fetch("/keys/listassigned/1"));
-    this.setState({ data, loading: false });
+    const keyAssignments = await this.doFetch(fetch("/keys/listassigned/1"));
+    this.setState({ keyAssignments, loading: false });
   }
   public render() {
     if (this.state.loading) return <h2>Loading...</h2>;
 
-    return <KeyList />;
+    return <KeyList keyAssignments={this.state.keyAssignments} />;
   }
 
   doFetch = async (p: Promise<Response>) => {
     const t = await p;
-    if (!t.ok) throw new Error(); 
+    if (!t.ok) throw new Error();
 
     const d = await t.json();
     return d;

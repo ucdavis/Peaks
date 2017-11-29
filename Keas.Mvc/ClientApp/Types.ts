@@ -15,3 +15,15 @@ export interface IPerson {
   userid: number;
   user: IUser;
 }
+
+export interface IKey {
+    id: Number;
+    name: String;
+}
+
+export interface IKeyAssignment {
+  id: Number;
+  keyId: Number;
+  expiresAt: Date;
+  key: IKey;
+}

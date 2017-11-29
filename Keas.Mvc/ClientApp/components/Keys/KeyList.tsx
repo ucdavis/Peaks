@@ -1,12 +1,18 @@
 import * as React from "react";
 
-export default class KeyList extends React.Component<{}, {}> {
+import { IKeyAssignment } from "../../Types";
+
+interface IProps {
+  keyAssignments: [IKeyAssignment];
+}
+
+export default class KeyList extends React.Component<IProps, {}> {
   public render() {
+    const keys = this.props.keyAssignments.map(x=> <li>{x.key.name}</li>);
     return (
-        <ul>
-            <li>Key1</li>
-            <li>Key2</li>
-        </ul>
+      <ul>
+        {keys}
+      </ul>
     );
   }
 }
