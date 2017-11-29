@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import BioDetail from './Biographical/BioDetail';
 import { IPerson } from "./PersonContainer";
 
 interface IProps {
@@ -9,15 +10,9 @@ interface IProps {
 export default class Person extends React.Component<IProps, {}> {
   public render() {
     return (
-      <div className="card">
-        <div className="card-body">
-          <h4 className="card-title">{this.props.person.user.name}</h4>
-          <p className="card-text">
-            <i className="fa fa-envelope-o" aria-hidden="true" />{" "}
-            {this.props.person.user.email}
-          </p>
+        <div>
+            <BioDetail person={this.props.person} />
         </div>
-      </div>
     );
   }
 }
