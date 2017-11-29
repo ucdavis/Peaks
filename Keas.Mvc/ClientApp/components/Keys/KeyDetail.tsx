@@ -3,7 +3,7 @@ import * as React from "react";
 import { IKeyAssignment } from "../../Types";
 
 interface IProps {
-    assignment: IKeyAssignment
+  assignment: IKeyAssignment;
 }
 
 export default class KeyDetail extends React.Component<IProps, {}> {

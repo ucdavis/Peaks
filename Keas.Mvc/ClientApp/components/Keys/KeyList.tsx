@@ -10,7 +10,7 @@ interface IProps {
 
 export default class KeyList extends React.Component<IProps, {}> {
   public render() {
-    const keys = this.props.keyAssignments.map(x=> <KeyDetail assignment={x} />);
+    const keys = this.props.keyAssignments.map(x=> <KeyDetail key={x.id.toString()} assignment={x} />);
     return (
       <ul>
         {keys}
