@@ -2,7 +2,8 @@ import "./css/site.css";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
-import PersonContainer from './components/PersonContainer';
+import App from "./App";
+import PersonContainer from "./components/PersonContainer";
 
 declare var window: any;
 
@@ -13,7 +14,9 @@ function renderApp() {
   // configuration and injects the app into a DOM element.
   ReactDOM.render(
     <AppContainer>
-      <PersonContainer person={person} />
+      <App person={person}>
+        <PersonContainer />
+      </App>
     </AppContainer>,
     document.getElementById("react-app")
   );

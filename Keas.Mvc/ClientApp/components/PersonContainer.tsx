@@ -1,28 +1,20 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 
-import Person from './Person';
+import { AppContext } from '../Types';
+import Person from "./Person";
 
-interface IUser {
-  name: string;
-  email: string;
-}
-
-export interface IPerson {
-  id: number;
-  userid: number;
-  user: IUser;
-}
-
-interface IProps {
-  person: IPerson
-}
-
-export default class PersonContainer extends React.Component<IProps, {}> {
+export default class PersonContainer extends React.Component<{}, {}> {
+  static contextTypes = {
+    person: PropTypes.object
+  };
+  context: AppContext;
   public render() {
-      if (this.props.person.id === 0) {
-          return <div>Create a new person</div>;
-      }
-      
-      return <Person person={this.props.person} />;
+    const { person } = this.context;
+    if (person.id === 0) {
+      return <div>Create a new person</div>;
+    }
+
+    return <Person person={person} />;
   }
 }

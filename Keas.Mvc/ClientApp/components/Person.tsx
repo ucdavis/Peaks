@@ -3,7 +3,7 @@ import * as React from "react";
 import BioDetail from './Biographical/BioDetail';
 import KeyContainer from './Keys/KeyContainer';
 
-import { IPerson } from "./PersonContainer";
+import { IPerson } from "../Types";
 
 interface IProps {
   person: IPerson;

@@ -1,7 +1,7 @@
 import * as React from "react";
 import "isomorphic-fetch";
 
-import { IPerson } from "../PersonContainer";
+import { IPerson } from "../../Types";
 
 import KeyList from "./KeyList";
 

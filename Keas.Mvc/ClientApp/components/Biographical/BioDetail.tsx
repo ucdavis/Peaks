@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { IPerson } from "../PersonContainer";
+import { IPerson } from "../../Types";
 
 interface IProps {
   person: IPerson;
