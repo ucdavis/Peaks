@@ -7,15 +7,18 @@ export default class App extends React.Component<any, any> {
     this.state = { name: "" };
   }
 
-  _clicked = () => {
-    this.setState({ name: "Scott" });
+  handleClick = () => {
+    console.log("this is:", this);
+    this.setState({
+      name: "Scott"
+    });
   };
 
   render() {
     return (
       <div>
         Hello {this.state.name}!
-        <button name="Update" onClick={this._clicked}>
+        <button name="Update" onClick={this.handleClick}>
           Update
         </button>
       </div>
