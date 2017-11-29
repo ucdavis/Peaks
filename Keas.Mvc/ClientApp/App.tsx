@@ -1,26 +1,24 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-
-import { IPerson } from './Types';
-
-interface IProps {
-  person: IPerson
-}
+import * as React from "react";
 
 // Provider
-export default class App extends React.Component<IProps, {}> {
-  static childContextTypes = {
-    team: PropTypes.string,
-    teamId: PropTypes.number,
-    person: PropTypes.object,
-  };
-  getChildContext() {
-    // define context here
-    return {
-      person: this.props.person
-    };
+export default class App extends React.Component<any, any> {
+  constructor(props) {
+    super(props);
+    this.state = { name: "" };
   }
+
+  _clicked = () => {
+    this.setState({ name: "Scott" });
+  };
+
   render() {
-    return this.props.children;
+    return (
+      <div>
+        Hello {this.state.name}!
+        <button name="Update" onClick={this._clicked}>
+          Update
+        </button>
+      </div>
+    );
   }
 }
