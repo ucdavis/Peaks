@@ -1,8 +1,8 @@
 import "isomorphic-fetch";
 import { RequestInfo } from "_debugger";
 
-const doFetch = async (req: Request) : Promise<any> => {
-    const res = await fetch(req);
+const doFetch = async (url: string, init?: RequestInit) : Promise<any> => {
+    const res = await fetch(url, init);
     
     if (!res.ok) throw new Error(res.statusText);
 

@@ -1,6 +1,7 @@
 // Main Type of the context
 export interface AppContext {
   team: any; //TODO: define team
+  fetch: (url: string, init?: RequestInit) => any;
   person: IPerson;
 }
 

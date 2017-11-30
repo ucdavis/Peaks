@@ -1,7 +1,7 @@
 import * as React from "react";
-import "isomorphic-fetch";
+import PropTypes from "prop-types";
 
-import { IPerson, IKeyAssignment } from "../../Types";
+import { IPerson, IKeyAssignment, AppContext } from "../../Types";
 
 import AssignKey from "./AssignKey";
 import KeyList from "./KeyList";
@@ -16,6 +16,10 @@ interface IState {
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
+  static contextTypes = {
+    fetch: PropTypes.func
+  };
+  context: AppContext;
   constructor(props) {
     super(props);
 
@@ -25,14 +29,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     };
   }
   async componentDidMount() {
-    // fetch the keys associated with this user
-    // TODO: for now load from SWAPI
-    // fetch("https://swapi.co/api/films/2/")
-    //   .then(r => r.json())
-    //   .then(data => this.setState({ data, loading: false }))
-    //   .catch(console.log);
-
-    const keyAssignments = await this.doFetch(fetch("/keys/listassigned/1"));
+    const keyAssignments = await this.context.fetch("/keys/listassigned/1");
     this.setState({ keyAssignments, loading: false });
   }
   public render() {
@@ -47,12 +44,4 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       </div>
     );
   }
-
-  doFetch = async (p: Promise<Response>) => {
-    const t = await p;
-    if (!t.ok) throw new Error();
-
-    const d = await t.json();
-    return d;
-  };
 }
