@@ -1,11 +1,17 @@
 import * as React from "react";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
+import { IKey } from "../../Types";
+
+interface IProps {
+  onCreate: (key: IKey) => void;
+}
+
 interface IState {
   modal: boolean;
 }
 
-export default class AssignKey extends React.Component<{}, IState> {
+export default class AssignKey extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,6 +24,16 @@ export default class AssignKey extends React.Component<{}, IState> {
       modal: !this.state.modal
     });
   }
+  async createKey() {
+    await this.props.onCreate({
+      id: 0,
+      name: "newkey" + new Date().getUTCSeconds(),
+      teamId: 1,
+      serialNumber: "SN123"
+    });
+    // TODO: check for success
+    this.setState({ modal: false });
+  }
   public render() {
     return (
       <div>
@@ -25,19 +41,15 @@ export default class AssignKey extends React.Component<{}, IState> {
           Add Key
         </Button>
         <Modal isOpen={this.state.modal} toggle={() => this.toggle()}>
-          <ModalHeader>Modal title</ModalHeader>
-          <ModalBody>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </ModalBody>
+          <ModalHeader>Assign Key</ModalHeader>
+          <ModalBody>This will assign a new key</ModalBody>
           <ModalFooter>
-            <Button color="primary">Do Something</Button>{" "}
-            <Button color="secondary" onClick={() => this.toggle()}>Cancel</Button>
+            <Button color="primary" onClick={() => this.createKey()}>
+              Add & Assign New Key
+            </Button>{" "}
+            <Button color="secondary" onClick={() => this.toggle()}>
+              Cancel
+            </Button>
           </ModalFooter>
         </Modal>
       </div>

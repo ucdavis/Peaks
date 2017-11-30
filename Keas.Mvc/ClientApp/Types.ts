@@ -19,7 +19,9 @@ export interface IPerson {
 
 export interface IKey {
   id: number;
+  teamId: number;
   name: string;
+  serialNumber: string;
 }
 
 export interface IKeyAssignment {

@@ -5,7 +5,7 @@ import KeyDetail from './KeyDetail';
 import { IKeyAssignment } from "../../Types";
 
 interface IProps {
-  keyAssignments: [IKeyAssignment];
+  keyAssignments: IKeyAssignment[];
 }
 
 export default class KeyList extends React.Component<IProps, {}> {
