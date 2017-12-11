@@ -1,7 +1,7 @@
 // Main Type of the context
 export interface AppContext {
-  team: String;
-  teamId: Number;
+  teamId: number;
+  fetch: (url: string, init?: RequestInit) => any;
   person: IPerson;
 }
 
@@ -13,17 +13,20 @@ export interface IUser {
 export interface IPerson {
   id: number;
   userid: number;
+  teamId: number;
   user: IUser;
 }
 
 export interface IKey {
-    id: Number;
-    name: String;
+  id: number;
+  teamId: number;
+  name: string;
+  serialNumber: string;
 }
 
 export interface IKeyAssignment {
-  id: Number;
-  keyId: Number;
+  id: number;
+  keyId: number;
   expiresAt: Date;
   key: IKey;
 }

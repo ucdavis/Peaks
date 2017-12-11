@@ -30,7 +30,7 @@ namespace Keas.Mvc.Controllers
 
             return Json(keyAssignments);
         }
-        public async Task<IActionResult> Create(Key key)
+        public async Task<IActionResult> Create([FromBody]Key key)
         {
             // TODO Make sure user has permissions
             if (ModelState.IsValid)

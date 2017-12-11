@@ -1,8 +1,9 @@
 import * as React from "react";
-import "isomorphic-fetch";
+import PropTypes from "prop-types";
 
-import { IPerson, IKeyAssignment } from "../../Types";
+import { IPerson, IKey, IKeyAssignment, AppContext } from "../../Types";
 
+import AssignKey from "./AssignKey";
 import KeyList from "./KeyList";
 
 interface IProps {
@@ -11,40 +12,52 @@ interface IProps {
 
 interface IState {
   loading: boolean;
-  keyAssignments: [IKeyAssignment];
+  keyAssignments: IKeyAssignment[];
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
+  static contextTypes = {
+    person: PropTypes.object,
+    fetch: PropTypes.func
+  };
+  context: AppContext;
   constructor(props) {
     super(props);
 
     this.state = {
       loading: true,
-      keyAssignments: [] as [IKeyAssignment]
+      keyAssignments: []
     };
   }
   async componentDidMount() {
-    // fetch the keys associated with this user
-    // TODO: for now load from SWAPI
-    // fetch("https://swapi.co/api/films/2/")
-    //   .then(r => r.json())
-    //   .then(data => this.setState({ data, loading: false }))
-    //   .catch(console.log);
-
-    const keyAssignments = await this.doFetch(fetch("/keys/listassigned/1"));
+    const keyAssignments = await this.context.fetch("/keys/listassigned/1");
     this.setState({ keyAssignments, loading: false });
   }
   public render() {
     if (this.state.loading) return <h2>Loading...</h2>;
-
-    return <KeyList keyAssignments={this.state.keyAssignments} />;
+    return (
+      <div className="card">
+        <div className="card-body">
+          <h4 className="card-title">Keys</h4>
+          <AssignKey onCreate={k => this._createAndAssignKey(k)} />
+          <KeyList keyAssignments={this.state.keyAssignments} />
+        </div>
+      </div>
+    );
   }
+  async _createAndAssignKey(key: IKey) {
+    // call API to create a key, then assign it
 
-  doFetch = async (p: Promise<Response>) => {
-    const t = await p;
-    if (!t.ok) throw new Error();
+    // TODO: basically all fake, make it real
+    const newKey : IKey = await this.context.fetch("/keys/create", {
+      method: "POST",
+      body: JSON.stringify(key)
+    });
 
-    const d = await t.json();
-    return d;
-  };
+    const assignUrl = `/keys/assign?keyId=${newKey.id}&personId=${this.context.person.id}`;
+    const newAssignment : IKeyAssignment = await this.context.fetch(assignUrl, { method: "POST" });
+    newAssignment.key = newKey;
+
+    this.setState({ keyAssignments : [...this.state.keyAssignments, newAssignment] });
+  }
 }
