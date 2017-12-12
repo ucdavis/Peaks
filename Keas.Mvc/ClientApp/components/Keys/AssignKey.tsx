@@ -19,7 +19,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
     };
   }
 
-  toggle() {
+  toggle = () => {
     this.setState({
       modal: !this.state.modal
     });
@@ -37,17 +37,17 @@ export default class AssignKey extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
-        <Button color="danger" onClick={() => this.toggle()}>
+        <Button color="danger" onClick={this.toggle}>
           Add Key
         </Button>
-        <Modal isOpen={this.state.modal} toggle={() => this.toggle()}>
+        <Modal isOpen={this.state.modal} toggle={this.toggle}>
           <ModalHeader>Assign Key</ModalHeader>
           <ModalBody>This will assign a new key</ModalBody>
           <ModalFooter>
             <Button color="primary" onClick={() => this.createKey()}>
               Add & Assign New Key
             </Button>{" "}
-            <Button color="secondary" onClick={() => this.toggle()}>
+            <Button color="secondary" onClick={this.toggle}>
               Cancel
             </Button>
           </ModalFooter>
