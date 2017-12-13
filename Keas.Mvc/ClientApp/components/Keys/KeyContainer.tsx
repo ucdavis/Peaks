@@ -1,7 +1,7 @@
-import * as React from "react";
 import PropTypes from "prop-types";
+import * as React from "react";
 
-import { IPerson, IKey, IKeyAssignment, AppContext } from "../../Types";
+import { AppContext, IKey, IKeyAssignment, IPerson } from "../../Types";
 
 import AssignKey from "./AssignKey";
 import KeyList from "./KeyList";
@@ -14,6 +14,8 @@ interface IState {
 export default class KeyContainer extends React.Component<{}, IState> {
     static contextTypes = {
         person: PropTypes.object,
+
+
         fetch: PropTypes.func
     };
     context: AppContext;
