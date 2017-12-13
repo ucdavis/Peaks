@@ -14,7 +14,7 @@ export default class Person extends React.Component<IProps, {}> {
     return (
         <div>
             <BioDetail person={this.props.person} />
-            <KeyContainer person={this.props.person} />
+            <KeyContainer />
         </div>
     );
   }

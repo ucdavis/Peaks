@@ -1,6 +1,5 @@
 // Main Type of the context
 export interface AppContext {
-  teamId: number;
   fetch: (url: string, init?: RequestInit) => any;
   person: IPerson;
 }

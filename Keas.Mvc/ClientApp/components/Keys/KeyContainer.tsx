@@ -6,16 +6,12 @@ import { IPerson, IKey, IKeyAssignment, AppContext } from "../../Types";
 import AssignKey from "./AssignKey";
 import KeyList from "./KeyList";
 
-interface IProps {
-  person: IPerson;
-}
-
 interface IState {
   loading: boolean;
   keyAssignments: IKeyAssignment[];
 }
 
-export default class KeyContainer extends React.Component<IProps, IState> {
+export default class KeyContainer extends React.Component<{}, IState> {
   static contextTypes = {
     person: PropTypes.object,
     fetch: PropTypes.func
@@ -30,7 +26,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     };
   }
   async componentDidMount() {
-    const keyAssignments = await this.context.fetch("/keys/listassigned/1");
+    const keyAssignments = await this.context.fetch(`/keys/listassigned/${this.context.person.id}`);
     this.setState({ keyAssignments, loading: false });
   }
   public render() {
