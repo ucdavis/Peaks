@@ -7,53 +7,62 @@ import AssignKey from "./AssignKey";
 import KeyList from "./KeyList";
 
 interface IState {
-  loading: boolean;
-  keyAssignments: IKeyAssignment[];
+    loading: boolean;
+    keyAssignments: IKeyAssignment[];
 }
 
 export default class KeyContainer extends React.Component<{}, IState> {
-  static contextTypes = {
-    person: PropTypes.object,
-    fetch: PropTypes.func
-  };
-  context: AppContext;
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      loading: true,
-      keyAssignments: []
+    static contextTypes = {
+        person: PropTypes.object,
+        fetch: PropTypes.func
     };
-  }
-  async componentDidMount() {
-    const keyAssignments = await this.context.fetch(`/keys/listassigned/${this.context.person.id}`);
-    this.setState({ keyAssignments, loading: false });
-  }
-  public render() {
-    if (this.state.loading) return <h2>Loading...</h2>;
-    return (
-      <div className="card">
-        <div className="card-body">
-          <h4 className="card-title">Keys</h4>
-          <AssignKey onCreate={k => this._createAndAssignKey(k)} />
-          <KeyList keyAssignments={this.state.keyAssignments} />
-        </div>
-      </div>
-    );
-  }
-  async _createAndAssignKey(key: IKey) {
-    // call API to create a key, then assign it
+    context: AppContext;
+    constructor(props) {
+        super(props);
 
-    // TODO: basically all fake, make it real
-    const newKey : IKey = await this.context.fetch("/keys/create", {
-      method: "POST",
-      body: JSON.stringify(key)
-    });
+        this.state = {
+            loading: true,
+            keyAssignments: []
+        };
+    }
+    async componentDidMount() {
+        const keyAssignments = await this.context.fetch(
+            `/keys/listassigned/${this.context.person.id}`
+        );
+        this.setState({ keyAssignments, loading: false });
+    }
+    public render() {
+        if (this.state.loading) return <h2>Loading...</h2>;
+        return (
+            <div className="card">
+                <div className="card-body">
+                    <h4 className="card-title">Keys</h4>
+                    <AssignKey onCreate={this._createAndAssignKey} />
+                    <KeyList keyAssignments={this.state.keyAssignments} />
+                </div>
+            </div>
+        );
+    }
+    _createAndAssignKey = async (key: IKey) => {
+        // call API to create a key, then assign it
 
-    const assignUrl = `/keys/assign?keyId=${newKey.id}&personId=${this.context.person.id}`;
-    const newAssignment : IKeyAssignment = await this.context.fetch(assignUrl, { method: "POST" });
-    newAssignment.key = newKey;
+        // TODO: basically all fake, make it real
+        const newKey: IKey = await this.context.fetch("/keys/create", {
+            method: "POST",
+            body: JSON.stringify(key)
+        });
 
-    this.setState({ keyAssignments : [...this.state.keyAssignments, newAssignment] });
-  }
+        const assignUrl = `/keys/assign?keyId=${newKey.id}&personId=${
+            this.context.person.id
+        }`;
+        const newAssignment: IKeyAssignment = await this.context.fetch(
+            assignUrl,
+            { method: "POST" }
+        );
+        newAssignment.key = newKey;
+
+        this.setState({
+            keyAssignments: [...this.state.keyAssignments, newAssignment]
+        });
+    };
 }
