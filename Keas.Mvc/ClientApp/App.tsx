@@ -1,29 +1,29 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
+import * as React from "react";
 
-import { createFetch } from './util/api';
-import { IPerson } from './Types';
+import { IPerson } from "./Types";
+import { createFetch } from "./util/api";
 
 interface IProps {
-  person: IPerson
+    person: IPerson;
 }
 
 // Provider
 export default class App extends React.Component<IProps, {}> {
-  static childContextTypes = {
-    teamId: PropTypes.number,
-    person: PropTypes.object,
-    fetch: PropTypes.func,
-  };
-  getChildContext() {
-    // define context here
-    return {
-      teamId: this.props.person.teamId,
-      person: this.props.person,
-      fetch: createFetch()
+    public static childContextTypes = {
+        fetch: PropTypes.func,
+        person: PropTypes.object,
+        teamId: PropTypes.number,
     };
-  }
-  render() {
-    return <div>{this.props.children}</div>;
-  }
+    public getChildContext() {
+        // define context here
+        return {
+            fetch: createFetch(),
+            person: this.props.person,
+            teamId: this.props.person.teamId,
+        };
+    }
+    public render() {
+        return <div>{this.props.children}</div>;
+    }
 }

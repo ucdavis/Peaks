@@ -1,14 +1,14 @@
-import * as React from "react";
 import PropTypes from "prop-types";
+import * as React from "react";
 
-import { IPerson, AppContext } from "../../Types";
+import { AppContext, IPerson } from "../../Types";
 
 export default class BioContainer extends React.Component<{}, {}> {
-    static contextTypes = {
+    public static contextTypes = {
+        fetch: PropTypes.func,
         person: PropTypes.object,
-        fetch: PropTypes.func
     };
-    context: AppContext;
+    public context: AppContext;
     public render() {
         return (
             <div className="card">
