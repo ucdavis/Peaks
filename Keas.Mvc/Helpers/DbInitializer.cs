@@ -33,6 +33,14 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
+            var access2 = new AccessAssignment
+            {
+                Person = jasonCaes,
+                RequestedBy = scott,
+                Access = new Access { Team = caes, Name = "PPS2" },
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+
             var key = new KeyAssignment
             {
                 Person = jasonCaes,
@@ -50,6 +58,7 @@ namespace Keas.Mvc.Helpers
             };
 
             context.AccessAssignments.Add(access);
+            context.AccessAssignments.Add(access2);
             context.KeyAssignments.Add(key);
             context.EquipmentAssignments.Add(equipment);
 
