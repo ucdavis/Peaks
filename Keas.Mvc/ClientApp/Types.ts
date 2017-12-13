@@ -1,4 +1,5 @@
 // Main Type of the context
+// tslint:disable-next-line:interface-name
 export interface AppContext {
   fetch: (url: string, init?: RequestInit) => any;
   person: IPerson;

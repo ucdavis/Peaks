@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
 import { IKey } from "../../Types";
 
@@ -15,25 +15,26 @@ export default class AssignKey extends React.Component<IProps, IState> {
     constructor(props) {
         super(props);
         this.state = {
-            modal: false
+            modal: false,
         };
     }
 
-    toggle = () => {
+    public toggle = () => {
         this.setState({
-            modal: !this.state.modal
+            modal: !this.state.modal,
         });
-    };
-    createKey = async () => {
+    }
+
+    public createKey = async () => {
         await this.props.onCreate({
             id: 0,
             name: "newkey" + new Date().getUTCSeconds(),
+            serialNumber: "SN123",
             teamId: 1,
-            serialNumber: "SN123"
         });
         // TODO: check for success
         this.setState({ modal: false });
-    };
+    }
     public render() {
         return (
             <div>
@@ -44,10 +45,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                     <ModalHeader>Assign Key</ModalHeader>
                     <ModalBody>This will assign a new key</ModalBody>
                     <ModalFooter>
-                        <Button
-                            color="primary"
-                            onClick={this.createKey}
-                        >
+                        <Button color="primary" onClick={this.createKey}>
                             Add & Assign New Key
                         </Button>{" "}
                         <Button color="secondary" onClick={this.toggle}>

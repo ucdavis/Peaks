@@ -1,7 +1,7 @@
-import * as React from "react";
 import PropTypes from "prop-types";
+import * as React from "react";
 
-import { IPerson, IKey, IKeyAssignment, AppContext } from "../../Types";
+import { AppContext, IKey, IKeyAssignment, IPerson } from "../../Types";
 
 import AssignKey from "./AssignKey";
 import KeyList from "./KeyList";
@@ -12,27 +12,29 @@ interface IState {
 }
 
 export default class KeyContainer extends React.Component<{}, IState> {
-    static contextTypes = {
+    public static contextTypes = {
+        fetch: PropTypes.func,
         person: PropTypes.object,
-        fetch: PropTypes.func
     };
-    context: AppContext;
+    public context: AppContext;
     constructor(props) {
         super(props);
 
         this.state = {
+            keyAssignments: [],
             loading: true,
-            keyAssignments: []
         };
     }
-    async componentDidMount() {
+    public async componentDidMount() {
         const keyAssignments = await this.context.fetch(
-            `/keys/listassigned/${this.context.person.id}`
+            `/keys/listassigned/${this.context.person.id}`,
         );
         this.setState({ keyAssignments, loading: false });
     }
     public render() {
-        if (this.state.loading) return <h2>Loading...</h2>;
+        if (this.state.loading) {
+            return <h2>Loading...</h2>;
+        }
         return (
             <div className="card">
                 <div className="card-body">
@@ -43,13 +45,13 @@ export default class KeyContainer extends React.Component<{}, IState> {
             </div>
         );
     }
-    _createAndAssignKey = async (key: IKey) => {
+    public _createAndAssignKey = async (key: IKey) => {
         // call API to create a key, then assign it
 
         // TODO: basically all fake, make it real
         const newKey: IKey = await this.context.fetch("/keys/create", {
+            body: JSON.stringify(key),
             method: "POST",
-            body: JSON.stringify(key)
         });
 
         const assignUrl = `/keys/assign?keyId=${newKey.id}&personId=${
@@ -57,12 +59,12 @@ export default class KeyContainer extends React.Component<{}, IState> {
         }`;
         const newAssignment: IKeyAssignment = await this.context.fetch(
             assignUrl,
-            { method: "POST" }
+            { method: "POST" },
         );
         newAssignment.key = newKey;
 
         this.setState({
-            keyAssignments: [...this.state.keyAssignments, newAssignment]
+            keyAssignments: [...this.state.keyAssignments, newAssignment],
         });
-    };
+    }
 }

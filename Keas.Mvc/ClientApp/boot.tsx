@@ -1,9 +1,9 @@
-import "./css/site.css";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
 import App from "./App";
 import PersonContainer from "./components/PersonContainer";
+import "./css/site.css";
 
 declare var window: any;
 
@@ -18,7 +18,7 @@ function renderApp() {
         <PersonContainer />
       </App>
     </AppContainer>,
-    document.getElementById("react-app")
+    document.getElementById("react-app"),
   );
 }
 
