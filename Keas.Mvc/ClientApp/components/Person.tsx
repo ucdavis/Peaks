@@ -2,6 +2,7 @@ import * as React from "react";
 
 import BioContainer from "./Biographical/BioContainer";
 import KeyContainer from "./Keys/KeyContainer";
+import AccessContainer from "./Access/AccessContainer";
 
 import { IPerson } from "../Types";
 
@@ -15,6 +16,7 @@ export default class Person extends React.Component<IProps, {}> {
             <div>
                 <BioContainer />
                 <KeyContainer />
+                <AccessContainer />
             </div>
         );
     }
