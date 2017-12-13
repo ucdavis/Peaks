@@ -2,15 +2,15 @@ import * as React from "react";
 
 import KeyDetail from "./KeyDetail";
 
-import { IKeyAssignment } from "../../Types";
+import { IKey } from "../../Types";
 
 interface IProps {
-  keyAssignments: IKeyAssignment[];
+  keys: IKey[];
 }
 
 export default class KeyList extends React.Component<IProps, {}> {
   public render() {
-    const keys = this.props.keyAssignments.map((x) => <KeyDetail key={x.id.toString()} assignment={x} />);
+    const keys = this.props.keys.map((x) => <KeyDetail key={x.id.toString()} keyEntity={x} />);
     return (
       <ul>
         {keys}

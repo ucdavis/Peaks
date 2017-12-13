@@ -33,43 +33,44 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var key = new KeyAssignment
+            var keyAssignment = new KeyAssignment
             {
                 Person = jasonCaes,
                 RequestedBy = scott,
-                Key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard" },
                 ExpiresAt = DateTime.UtcNow.AddYears(5)
             };
 
-            var equipment = new EquipmentAssignment
+            var key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard", Assignment = keyAssignment };
+
+            var equipmentAssignment = new EquipmentAssignment
             {
                 Person = jasonCaes,
                 RequestedBy = scott,
-                Equipment = new Equipment { Name = "laptop", Team = caes },
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
+
+            var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment };
 
             context.AccessAssignments.Add(access);
-            context.KeyAssignments.Add(key);
-            context.EquipmentAssignments.Add(equipment);
+            context.Keys.Add(key);
+            context.Equipment.Add(equipment);
 
-            var equip2 = new EquipmentAssignment
+            var equip2Assignment = new EquipmentAssignment
             {
                 Person = jasonCaes,
                 RequestedBy = scott,
-                Equipment = new Equipment { Name = "desktop", Team = caes },
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            equip2.Equipment.AddAttribute("OS", "windows");
+            var equip2 = new Equipment { Name = "desktop", Team = caes, Assignment = equip2Assignment };
 
-            context.EquipmentAssignments.Add(equip2);
+            context.Equipment.Add(equip2);
             
             var history = new History {
                 Person = jasonCaes,
                 Actor = scott,
                 Description = "Something important happened",
-                Key = key.Key
+                Key = key
             };
 
             context.Histories.Add(history);

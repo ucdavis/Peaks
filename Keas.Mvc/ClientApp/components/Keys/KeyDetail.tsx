@@ -1,13 +1,13 @@
 import * as React from "react";
 
-import { IKeyAssignment } from "../../Types";
+import { IKey } from "../../Types";
 
 interface IProps {
-  assignment: IKeyAssignment;
+    keyEntity: IKey;
 }
 
 export default class KeyDetail extends React.Component<IProps, {}> {
-  public render() {
-    return <li>{this.props.assignment.key.name}</li>;
-  }
+    public render() {
+        return <li>{this.props.keyEntity.name}</li>;
+    }
 }

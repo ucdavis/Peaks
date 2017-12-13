@@ -16,6 +16,8 @@ namespace Keas.Core.Domain
         public string Make { get; set; }
         public string Model { get; set; }
 
+        public EquipmentAssignment Assignment { get; set; }
+        public int? EquipmentAssignmentId { get; set; }
         public List<EquipmentAttribute> Attributes { get; set; }
 
         public void AddAttribute(string key, string value) {
