@@ -26,7 +26,7 @@ namespace Keas.Mvc.Controllers
         }
 
         public async Task<IActionResult> ListAssigned(int id) {
-            var keyAssignments = await _context.KeyAssignments.Where(x=>x.PersonId == id).Include(x=>x.Key).AsNoTracking().ToArrayAsync();
+            var keyAssignments = await _context.Keys.Where(x=>x.Assignment.PersonId == id).Include(x=>x.Assignment).AsNoTracking().ToArrayAsync();
 
             return Json(keyAssignments);
         }
@@ -46,10 +46,11 @@ namespace Keas.Mvc.Controllers
             // TODO Make sure user has permssion, make sure key exists, makes sure key is in this team
             if (ModelState.IsValid)
             {
-                var keyassingment = new KeyAssignment{ KeyId = keyId, PersonId = personId};
-                _context.KeyAssignments.Add(keyassingment);
+                var key = await _context.Keys.SingleAsync(x=>x.Id == keyId);
+                key.Assignment = new KeyAssignment{ PersonId = personId};
+
                 await _context.SaveChangesAsync();
-                return Json(keyassingment);
+                return Json(key);
             }
             return BadRequest(ModelState);
         }

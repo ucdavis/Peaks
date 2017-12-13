@@ -10,6 +10,7 @@ namespace Keas.Core.Domain
 
         public string LockId { get; set; }
 
-        public string Rooms { get; set; }
+        public KeyAssignment Assignment { get; set; }
+        public int? KeyAssignmentId { get; set; }
     }
 }
