@@ -39,8 +39,8 @@ export default class AccessContainer extends React.Component<{}, IState> {
             <div className="card">
                 <div className="card-body">
                     <h4 className="card-title">Access</h4>
-                    <AssignAccess onCreate={this._createAndAssignAccess} />
                     <AccessList accessAssignments={this.state.accessAssignments} onRevoke={this._revokeAccess} />
+                    <AssignAccess onCreate={this._createAndAssignAccess} />
                 </div>
             </div>
         );

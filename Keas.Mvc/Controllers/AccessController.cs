@@ -46,7 +46,11 @@ namespace Keas.Mvc.Controllers
             // TODO Make sure user has permssion, make sure access exists, makes sure access is in this team
             if (ModelState.IsValid)
             {
-                var accessassingment = new AccessAssignment{ AccessId = accessId, PersonId = personId};
+                var accessassingment = new AccessAssignment{
+                    AccessId = accessId,
+                    PersonId = personId,
+                    ExpiresAt = DateTime.UtcNow.AddYears(3)
+                };
                 _context.AccessAssignments.Add(accessassingment);
                 await _context.SaveChangesAsync();
                 return Json(accessassingment);
@@ -56,6 +60,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Revoke(int accessId, int personId)
         {
+            //TODO: check permissions
             if (ModelState.IsValid)
             {
                 var accessAssingment = await _context.AccessAssignments.Where(x => x.AccessId == accessId).FirstOrDefaultAsync();
