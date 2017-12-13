@@ -22,6 +22,7 @@ export interface IKey {
   teamId: number;
   name: string;
   serialNumber: string;
+  assignment?: IKeyAssignment;
 }
 
 export interface IKeyAssignment {

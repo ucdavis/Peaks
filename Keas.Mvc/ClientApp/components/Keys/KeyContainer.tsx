@@ -1,14 +1,14 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 
-import { AppContext, IKey, IKeyAssignment, IPerson } from "../../Types";
+import { AppContext, IKey, IPerson } from "../../Types";
 
 import AssignKey from "./AssignKey";
 import KeyList from "./KeyList";
 
 interface IState {
     loading: boolean;
-    keyAssignments: IKeyAssignment[];
+    keys: IKey[];
 }
 
 export default class KeyContainer extends React.Component<{}, IState> {
@@ -21,15 +21,15 @@ export default class KeyContainer extends React.Component<{}, IState> {
         super(props);
 
         this.state = {
-            keyAssignments: [],
+            keys: [],
             loading: true,
         };
     }
     public async componentDidMount() {
-        const keyAssignments = await this.context.fetch(
+        const keys = await this.context.fetch(
             `/keys/listassigned/${this.context.person.id}`,
         );
-        this.setState({ keyAssignments, loading: false });
+        this.setState({ keys, loading: false });
     }
     public render() {
         if (this.state.loading) {
@@ -40,7 +40,7 @@ export default class KeyContainer extends React.Component<{}, IState> {
                 <div className="card-body">
                     <h4 className="card-title">Keys</h4>
                     <AssignKey onCreate={this._createAndAssignKey} />
-                    <KeyList keyAssignments={this.state.keyAssignments} />
+                    <KeyList keys={this.state.keys} />
                 </div>
             </div>
         );
@@ -57,14 +57,14 @@ export default class KeyContainer extends React.Component<{}, IState> {
         const assignUrl = `/keys/assign?keyId=${newKey.id}&personId=${
             this.context.person.id
         }`;
-        const newAssignment: IKeyAssignment = await this.context.fetch(
+
+        const assignedKey: IKey = await this.context.fetch(
             assignUrl,
             { method: "POST" },
         );
-        newAssignment.key = newKey;
 
         this.setState({
-            keyAssignments: [...this.state.keyAssignments, newAssignment],
+            keys: [...this.state.keys, assignedKey],
         });
     }
 }
