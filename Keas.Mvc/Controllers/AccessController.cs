@@ -30,6 +30,14 @@ namespace Keas.Mvc.Controllers
 
             return Json(accessAssignments);
         }
+
+        public async Task<IActionResult> ListTeamAccess(int teamId)
+        {
+            var accessList = await _context.Access.Where(x => x.Team.Id == teamId).AsNoTracking().ToArrayAsync();
+
+            return Json(accessList);
+        }
+
         public async Task<IActionResult> Create([FromBody]Access access)
         {
             // TODO Make sure user has permissions
