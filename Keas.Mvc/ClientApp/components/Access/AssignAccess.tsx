@@ -1,24 +1,34 @@
-﻿import * as React from "react";
+﻿import PropTypes from "prop-types";
+import * as React from "react";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
-import { IAccess } from "../../Types";
+import { AppContext, IAccess } from "../../Types";
 import AssignAccessList from "./AssignAccessList";
 
 interface IProps {
-    accessList: IAccess[];
     onAssign: (access: IAccess) => void;
-    onCreate: (access: IAccess) => void;
+    onCreate: (access: IAccess) => any;
 }
 
 interface IState {
+    accessList: IAccess[];
     modal: boolean;
+    loading: boolean;
 }
 
 export default class AssignAccess extends React.Component<IProps, IState> {
+    public static contextTypes = {
+        fetch: PropTypes.func,
+        person: PropTypes.object,
+    };
+    public context: AppContext;
+
     constructor(props) {
         super(props);
         this.state = {
+            accessList: [],
             modal: false,
+            loading: true,
         };
     }
 
@@ -28,14 +38,26 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         });
     }
 
+    public openModal = async () => {
+        this.setState({ modal: true });
+        const accessList: IAccess[] = await this.context.fetch(
+            `/access/listteamaccess?teamId=${this.context.person.teamId}`,
+        );
+        this.setState({ accessList, loading: false });
+    }
+
     public createAccess = async () => {
-        await this.props.onCreate({
+        var newAccess = await this.props.onCreate({
             id: 0,
             name: "newaccess" + new Date().getUTCSeconds(),
-            teamId: 1,
+            teamId: this.context.person.teamId,
         });
         // TODO: check for success
-        this.setState({ modal: false });
+
+        this.setState({
+            modal: false,
+            accessList: [...this.state.accessList, newAccess],
+            });
     }
 
     public assignAccess = async (access: IAccess) => {
@@ -45,20 +67,23 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     }
 
     public render() {
-        const assets = this.props.accessList.map((x) => <AssignAccessList key={x.id.toString()} onAssign={this.assignAccess} access={x} />);
+        const assets = this.state.accessList.map((x) => <AssignAccessList key={x.id.toString()} onAssign={this.assignAccess} access={x} />);
         return (
             <div>
-                <Button color="danger" onClick={this.toggle}>
+                <Button color="danger" onClick={this.openModal}>
                     Add Access
                 </Button>
                 <Modal isOpen={this.state.modal} toggle={this.toggle}>
                     <ModalHeader>Assign Access</ModalHeader>
                     <ModalBody>
-                        <table>
-                            <tbody>
-                                {assets}
-                            </tbody>
-                        </table>
+                        {this.state.loading && 
+                            <h2>Loading...</h2>}
+                        {!this.state.loading &&
+                            <table>
+                                <tbody>
+                                    {assets}
+                                </tbody>
+                            </table>}
                     </ModalBody>
                     <ModalFooter>
                         <Button color="primary" onClick={this.createAccess}>

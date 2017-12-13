@@ -9,7 +9,6 @@ import AccessList from "./AccessList";
 interface IState {
     loading: boolean;
     accessAssignments: IAccessAssignment[];
-    accessList: IAccess[];
 }
 
 export default class AccessContainer extends React.Component<{}, IState> {
@@ -23,7 +22,6 @@ export default class AccessContainer extends React.Component<{}, IState> {
 
         this.state = {
             accessAssignments: [],
-            accessList: [],
             loading: true,
         };
     }
@@ -31,10 +29,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
         const accessAssignments = await this.context.fetch(
             `/access/listassigned/${this.context.person.id}`,
         );
-        const accessList: IAccess[] = await this.context.fetch(
-            `/access/listteamaccess?teamId=${this.context.person.teamId}`,
-        );
-        this.setState({ accessAssignments,  accessList, loading: false });
+        this.setState({ accessAssignments, loading: false });
     }
 
     public render() {
@@ -46,7 +41,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
                 <div className="card-body">
                     <h4 className="card-title">Access</h4>
                     <AccessList accessAssignments={this.state.accessAssignments} onRevoke={this._revokeAccess} />
-                    <AssignAccess accessList={this.state.accessList} onCreate={this._createAndAssignAccess} onAssign={this._assignAccess} />
+                    <AssignAccess onCreate={this._createAndAssignAccess} onAssign={this._assignAccess} />
                 </div>
             </div>
         );
@@ -71,9 +66,10 @@ export default class AccessContainer extends React.Component<{}, IState> {
         newAssignment.access = newAccess;
 
         this.setState({
-            accessList: [...this.state.accessList, newAccess],
             accessAssignments: [...this.state.accessAssignments, newAssignment],
         });
+
+        return newAccess;
     }
 
     public _assignAccess = async (access: IAccess) => {
