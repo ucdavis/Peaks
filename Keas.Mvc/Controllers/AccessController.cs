@@ -54,5 +54,24 @@ namespace Keas.Mvc.Controllers
             return BadRequest(ModelState);
         }
 
+        public async Task<IActionResult> Revoke(int accessId, int personId)
+        {
+            if (ModelState.IsValid)
+            {
+                var accessAssingment = await _context.AccessAssignments.Where(x => x.AccessId == accessId).FirstOrDefaultAsync();
+                if (accessAssingment == null)
+                {
+                    return NotFound();
+                }
+                if (accessAssingment.PersonId != personId)
+                {
+                    return Unauthorized();
+                }
+                _context.AccessAssignments.Remove(accessAssingment);
+                await _context.SaveChangesAsync();
+                return Json(accessAssingment);
+            }
+            return BadRequest(ModelState);
+        }
     }
 }

@@ -28,17 +28,18 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     public createAccess = async () => {
         await this.props.onCreate({
             id: 0,
-            name: "newkey" + new Date().getUTCSeconds(),
+            name: "newaccess" + new Date().getUTCSeconds(),
             teamId: 1,
         });
         // TODO: check for success
         this.setState({ modal: false });
     }
+
     public render() {
         return (
             <div>
                 <Button color="danger" onClick={this.toggle}>
-                    Add Key
+                    Add Access
                 </Button>
                 <Modal isOpen={this.state.modal} toggle={this.toggle}>
                     <ModalHeader>Assign Access</ModalHeader>

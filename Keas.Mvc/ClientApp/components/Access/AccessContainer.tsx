@@ -40,7 +40,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
                 <div className="card-body">
                     <h4 className="card-title">Access</h4>
                     <AssignAccess onCreate={this._createAndAssignAccess} />
-                    <AccessList accessAssignments={this.state.accessAssignments} />
+                    <AccessList accessAssignments={this.state.accessAssignments} onRevoke={this._revokeAccess} />
                 </div>
             </div>
         );
@@ -66,5 +66,26 @@ export default class AccessContainer extends React.Component<{}, IState> {
         this.setState({
             accessAssignments: [...this.state.accessAssignments, newAssignment],
         });
+    }
+
+    public _revokeAccess = async (accessAssignment: IAccessAssignment) => {
+
+        //remove from state
+        const index = this.state.accessAssignments.indexOf(accessAssignment);
+        if (index > -1) {
+            const shallowCopy = [...this.state.accessAssignments];
+            shallowCopy.splice(index, 1);
+            this.setState({ accessAssignments: shallowCopy });
+        }
+
+        // call API to actually revoke
+        const assignUrl = `/access/revoke?accessId=${accessAssignment.id}&personId=${
+            this.context.person.id
+            }`;
+
+        await this.context.fetch(
+            assignUrl,
+            { method: "POST" },
+        );
     }
 }
