@@ -79,13 +79,11 @@ export default class AccessContainer extends React.Component<{}, IState> {
         }
 
         // call API to actually revoke
-        const assignUrl = `/access/revoke?accessId=${accessAssignment.id}&personId=${
-            this.context.person.id
-            }`;
 
-        await this.context.fetch(
-            assignUrl,
-            { method: "POST" },
-        );
+        const newAccess: IAccess = await this.context.fetch("/access/revoke", {
+            body: JSON.stringify(accessAssignment),
+            method: "POST",
+        });
+
     }
 }
