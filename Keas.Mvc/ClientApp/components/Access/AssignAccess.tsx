@@ -1,6 +1,6 @@
 ﻿import PropTypes from "prop-types";
 import * as React from "react";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader, ListGroup, ListGroupItem } from "reactstrap";
 
 import { AppContext, IAccess } from "../../Types";
 import AssignAccessList from "./AssignAccessList";
@@ -12,6 +12,7 @@ interface IProps {
 
 interface IState {
     accessList: IAccess[];
+    newAccessName: string;
     modal: boolean;
     loading: boolean;
 }
@@ -27,6 +28,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         super(props);
         this.state = {
             accessList: [],
+            newAccessName: "",
             modal: false,
             loading: true,
         };
@@ -49,7 +51,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     public createAccess = async () => {
         var newAccess = await this.props.onCreate({
             id: 0,
-            name: "newaccess" + new Date().getUTCSeconds(),
+            name: this.state.newAccessName,
             teamId: this.context.person.teamId,
         });
         // TODO: check for success
@@ -66,6 +68,10 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         this.setState({ modal: false });
     }
 
+    private _onChange = (e) => {
+        this.setState({newAccessName: e.target.value});
+    }
+
     public render() {
         const assets = this.state.accessList.map((x) => <AssignAccessList key={x.id.toString()} onAssign={this.assignAccess} access={x} />);
         return (
@@ -79,11 +85,12 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                         {this.state.loading && 
                             <h2>Loading...</h2>}
                         {!this.state.loading &&
-                            <table>
-                                <tbody>
-                                    {assets}
-                                </tbody>
-                            </table>}
+                            <ul className="list-group">
+                                {assets}
+                                <li className="list-group-item">
+                                    <input type="text" className="form-control" placeholder="Create new asset" value={this.state.newAccessName} onChange={this._onChange} ></input>
+                                </li>
+                            </ul>}
                     </ModalBody>
                     <ModalFooter>
                         <Button color="primary" onClick={this.createAccess}>

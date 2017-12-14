@@ -1,4 +1,5 @@
 ﻿import * as React from "react";
+import { ListGroupItem } from 'reactstrap';
 
 import { IAccess } from "../../Types";
 
@@ -10,14 +11,10 @@ interface IProps {
 export default class AssignAccessList extends React.Component<IProps, {}> {
     public render() {
         return (
-            <tr>
-                <td>
-                    <i className="fa fa-plus" aria-hidden="true" onClick={() => this.props.onAssign(this.props.access)}></i>
-                </td>
-                <td>
-                    {this.props.access.name}
-                </td>
-            </tr>
+            <li className="list-group-item" onClick={() => this.props.onAssign(this.props.access)}>
+                <i className="fa fa-plus" aria-hidden="true"></i>
+                {this.props.access.name}
+            </li>
         );
     }
 }
