@@ -31,3 +31,16 @@ export interface IKeyAssignment {
   expiresAt: Date;
   key: IKey;
 }
+
+export interface IAccess {
+    id: number;
+    teamId: number;
+    name: string;
+}
+
+export interface IAccessAssignment {
+    id: number;
+    accessId: number;
+    expiresAt: Date;
+    access: IAccess;
+}

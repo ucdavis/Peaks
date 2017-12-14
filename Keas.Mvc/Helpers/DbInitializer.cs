@@ -23,13 +23,22 @@ namespace Keas.Mvc.Helpers
             context.TeamMemberships.Add(new TeamMembership { User = scott, Team = caes, Role = "Admin" });
 
             // add assets
-            var jasonCaes = new Person { User = jason, Team = caes, Group = "CRU" };
+            var jasonCaes = new Person { User = jason, Id=1, Team = caes, Group = "CRU" };
+            var scottCaes = new Person { User = scott, Id=2, Team = caes, Group = "CRU" };
 
             var access = new AccessAssignment
             {
                 Person = jasonCaes,
                 RequestedBy = scott,
                 Access = new Access { Team = caes, Name = "PPS" },
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+
+            var access2 = new AccessAssignment
+            {
+                Person = scottCaes,
+                RequestedBy = scott,
+                Access = new Access { Team = caes, Name = "PPS2" },
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
@@ -52,6 +61,7 @@ namespace Keas.Mvc.Helpers
             var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment };
 
             context.AccessAssignments.Add(access);
+            context.AccessAssignments.Add(access2);
             context.Keys.Add(key);
             context.Equipment.Add(equipment);
 
