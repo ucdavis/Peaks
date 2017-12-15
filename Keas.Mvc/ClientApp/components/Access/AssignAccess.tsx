@@ -10,14 +10,13 @@ import {
   ListGroupItem
 } from "reactstrap";
 
-import { AppContext, IAccess } from "../../Types";
+import { AppContext, IAccess, IAccessAssignment } from "../../Types";
 import AssignAccessList from "./AssignAccessList";
 import CreateAccess from "./CreateAccess";
 import SearchAccess from "./SearchAccess";
 
 interface IProps {
-  onAssign: (access: IAccess) => void;
-  onCreate: (access: IAccess) => any;
+  onAssign: (access: IAccess) => Promise<IAccessAssignment>;
 }
 
 interface IState {
@@ -28,12 +27,6 @@ interface IState {
 }
 
 export default class AssignAccess extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    person: PropTypes.object
-  };
-  public context: AppContext;
-
   constructor(props) {
     super(props);
     this.state = {
@@ -60,21 +53,11 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
     if (!this.state.selectedAccess) return;
 
-    let access = this.state.selectedAccess;
-
-    // TODO: maybe we should let the parent decide how to create
-    if (access.id === 0) {
-      // create new access if we need to
-      access.teamId = this.context.person.teamId; // give the access the team of the current person
-      access = await this.props.onCreate(access);
-    } else {
-      // otherwise just assign existing
-      await this.props.onAssign(access);
-    }
+    const accessAssignment = await this.props.onAssign(this.state.selectedAccess);
 
     this.setState({
       modal: false,
-      accessList: [...this.state.accessList, access]
+      accessList: [...this.state.accessList, accessAssignment.access]
     });
   };
 
