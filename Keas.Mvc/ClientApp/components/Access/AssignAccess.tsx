@@ -56,20 +56,21 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
   // assign the selected access even if we have to create it
   private _assignSelected = async () => {
-    console.log('assign selected', this.state.selectedAccess);
+    console.log("assign selected", this.state.selectedAccess);
 
     if (!this.state.selectedAccess) return;
 
     let access = this.state.selectedAccess;
 
-    // create new access if we need to
+    // TODO: maybe we should let the parent decide how to create
     if (access.id === 0) {
+      // create new access if we need to
       access.teamId = this.context.person.teamId; // give the access the team of the current person
       access = await this.props.onCreate(access);
+    } else {
+      // otherwise just assign existing
+      await this.props.onAssign(access);
     }
-
-    // assign it
-    await this.props.onAssign(access);
 
     this.setState({
       modal: false,
@@ -104,7 +105,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={() => {}}>
+            <Button color="primary" onClick={this._assignSelected}>
               Go!
             </Button>{" "}
             <Button color="secondary" onClick={this.toggle}>
