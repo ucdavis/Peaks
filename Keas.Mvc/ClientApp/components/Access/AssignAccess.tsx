@@ -68,6 +68,9 @@ export default class AssignAccess extends React.Component<IProps, IState> {
   };
 
   public render() {
+    // TODO: move datepicker into new component, try to make it look nice
+    // TODO: only show step 2 if state.selectedAccess is truthy
+    // TODO: use expiration date as part of assignment
     return (
       <div>
         <Button color="danger" onClick={this.openModal}>
@@ -83,6 +86,17 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                 </div>
                 <div className="col-sm">
                   <CreateAccess onSelect={this._onSelected} />
+                </div>
+              </div>
+              <div>
+                <div className="row">
+                <div className="col-sm">
+                  <h3>Step 2: Assign it</h3>
+                  <form>
+                    <label>Set Expiration Date</label>
+                    <input type="date" className="form-control" />
+                  </form>
+                </div>
                 </div>
               </div>
             </div>
