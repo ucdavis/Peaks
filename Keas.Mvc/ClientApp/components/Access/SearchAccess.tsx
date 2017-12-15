@@ -39,18 +39,24 @@ export default class SearchAccess extends React.Component<IProps, IState> {
   }
 
   private _onSelected = (access: IAccess) => {
-      this.props.onSelect(access);
-  }
+    this.props.onSelect(access);
+  };
 
   public render() {
     if (this.state.loading) return <div>Loading ... </div>;
 
     // TODO: pull from typeahead
-    const access = this.state.accessList.map(x=> <AssignAccessList key={x.id.toString()} onAssign={this._onSelected} access={x} />);
+    const access = this.state.accessList.map(x => (
+      <AssignAccessList
+        key={x.id.toString()}
+        onAssign={this._onSelected}
+        access={x}
+      />
+    ));
     return (
-      <ul className="list-group">
-        {access}
-      </ul>
+      <div>
+        <ul className="list-group">{access}</ul>
+      </div>
     );
   }
 }
