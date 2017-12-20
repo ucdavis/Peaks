@@ -1,107 +1,116 @@
 ﻿import PropTypes from "prop-types";
 import * as React from "react";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader, ListGroup, ListGroupItem } from "reactstrap";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ListGroup,
+  ListGroupItem
+} from "reactstrap";
 
-import { AppContext, IAccess } from "../../Types";
+import { AppContext, IAccess, IAccessAssignment } from "../../Types";
 import AssignAccessList from "./AssignAccessList";
+import CreateAccess from "./CreateAccess";
+import SearchAccess from "./SearchAccess";
 
 interface IProps {
-    onAssign: (access: IAccess) => void;
-    onCreate: (access: IAccess) => any;
+  onAssign: (access: IAccess) => Promise<IAccessAssignment>;
 }
 
 interface IState {
-    accessList: IAccess[];
-    newAccessName: string;
-    modal: boolean;
-    loading: boolean;
+  accessList: IAccess[];
+  selectedAccess: IAccess;
+  modal: boolean;
+  loading: boolean;
 }
 
 export default class AssignAccess extends React.Component<IProps, IState> {
-    public static contextTypes = {
-        fetch: PropTypes.func,
-        person: PropTypes.object,
+  constructor(props) {
+    super(props);
+    this.state = {
+      accessList: [],
+      selectedAccess: null,
+      modal: false,
+      loading: true
     };
-    public context: AppContext;
+  }
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            accessList: [],
-            newAccessName: "",
-            modal: false,
-            loading: true,
-        };
-    }
+  public toggle = () => {
+    this.setState({
+      modal: !this.state.modal
+    });
+  };
 
-    public toggle = () => {
-        this.setState({
-            modal: !this.state.modal,
-        });
-    }
+  public openModal = async () => {
+    this.setState({ modal: true });
+  };
 
-    public openModal = async () => {
-        this.setState({ modal: true });
-        const accessList: IAccess[] = await this.context.fetch(
-            `/access/listteamaccess?teamId=${this.context.person.teamId}`,
-        );
-        this.setState({ accessList, loading: false });
-    }
+  // assign the selected access even if we have to create it
+  private _assignSelected = async () => {
+    console.log("assign selected", this.state.selectedAccess);
 
-    public createAccess = async () => {
-        var newAccess = await this.props.onCreate({
-            id: 0,
-            name: this.state.newAccessName,
-            teamId: this.context.person.teamId,
-        });
-        // TODO: check for success
+    if (!this.state.selectedAccess) return;
 
-        this.setState({
-            modal: false,
-            accessList: [...this.state.accessList, newAccess],
-            });
-    }
+    const accessAssignment = await this.props.onAssign(this.state.selectedAccess);
 
-    public assignAccess = async (access: IAccess) => {
-        //TODO: avoid assigning something already assigned
-        await this.props.onAssign(access);
-        this.setState({ modal: false });
-    }
+    this.setState({
+      modal: false,
+      accessList: [...this.state.accessList, accessAssignment.access]
+    });
+  };
 
-    private _onChange = (e) => {
-        this.setState({newAccessName: e.target.value});
-    }
+  // once we have either selected or created the access we care about
+  private _onSelected = (access: IAccess) => {
+    console.log("selected", access);
+    this.setState({ selectedAccess: access });
+  };
 
-    public render() {
-        const assets = this.state.accessList.map((x) => <AssignAccessList key={x.id.toString()} onAssign={this.assignAccess} access={x} />);
-        return (
-            <div>
-                <Button color="danger" onClick={this.openModal}>
-                    Add Access
-                </Button>
-                <Modal isOpen={this.state.modal} toggle={this.toggle}>
-                    <ModalHeader>Assign Access</ModalHeader>
-                    <ModalBody>
-                        {this.state.loading && 
-                            <h2>Loading...</h2>}
-                        {!this.state.loading &&
-                            <ul className="list-group">
-                                {assets}
-                                <li className="list-group-item">
-                                    <input type="text" className="form-control" placeholder="Create new asset" value={this.state.newAccessName} onChange={this._onChange} ></input>
-                                </li>
-                            </ul>}
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="primary" onClick={this.createAccess}>
-                            Add & Assign New Access
-                        </Button>{" "}
-                        <Button color="secondary" onClick={this.toggle}>
-                            Cancel
-                        </Button>
-                    </ModalFooter>
-                </Modal>
+  public render() {
+    // TODO: move datepicker into new component, try to make it look nice
+    // TODO: only show step 2 if state.selectedAccess is truthy
+    // TODO: use expiration date as part of assignment
+    return (
+      <div>
+        <Button color="danger" onClick={this.openModal}>
+          Add Access
+        </Button>
+        <Modal isOpen={this.state.modal} toggle={this.toggle} size="lg">
+          <ModalHeader>Assign Access</ModalHeader>
+          <ModalBody>
+            <div className="container-fluid">
+              <div className="row">
+                <div className="col-sm">
+                  <SearchAccess onSelect={this._onSelected} />
+                </div>
+                <div className="col-sm">
+                  <CreateAccess onSelect={this._onSelected} />
+                </div>
+              </div>
+              <div>
+                <div className="row">
+                <div className="col-sm">
+                  <h3>Step 2: Assign it</h3>
+                  <form>
+                    <label>Set Expiration Date</label>
+                    <input type="date" className="form-control" />
+                  </form>
+                </div>
+                </div>
+              </div>
             </div>
-        );
-    }
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={this._assignSelected}>
+              Go!
+            </Button>{" "}
+            <Button color="secondary" onClick={this.toggle}>
+              Close
+            </Button>
+          </ModalFooter>
+        </Modal>
+      </div>
+    );
+  }
 }
