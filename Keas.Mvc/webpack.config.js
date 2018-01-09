@@ -11,6 +11,7 @@ module.exports = env => {
       stats: { modules: false },
       entry: {
         main: "./ClientApp/boot.tsx",
+        asset: "./ClientApp/assetBoot.tsx",
         vendor: [
           "event-source-polyfill",
           "isomorphic-fetch",
