@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
-import App from "./App";
-import AssetContainer from "./components/Assets/AssetContainer";
-import "./css/site.css";
+import App from "../../App";
+import AssetContainer from "./AssetContainer";
+import "../../css/site.css";
 
 declare var window: any;
 
@@ -27,7 +27,7 @@ renderApp();
 
 // Allow Hot Module Replacement
 if (module.hot) {
-  module.hot.accept("./components/AssetContainer", () => {
+  module.hot.accept("./AssetContainer", () => {
     renderApp();
   });
 }

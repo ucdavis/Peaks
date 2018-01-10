@@ -3,6 +3,7 @@ import { TabContent, TabPane, Nav, NavItem, NavLink, Button } from "reactstrap";
 import classnames from "classnames";
 
 import { ITeam } from "../../Types";
+import KeyContainer from './keys/KeyContainer';
 
 interface IProps {
   team: ITeam;
@@ -27,6 +28,11 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
       this.setState({
         activeTab: tab
       });
+    }
+  }
+  _renderKeys = () => {
+    if (this.state.activeTab === "keys"){
+      return <KeyContainer />;
     }
   }
   render() {
@@ -86,7 +92,7 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
             <div className="container">Pane 2</div>
           </TabPane>
           <TabPane tabId="keys">
-              <div>KEYS</div>
+              {this._renderKeys()}
           </TabPane>
           <TabPane tabId="equipment">
               <div>EQUIP</div>
