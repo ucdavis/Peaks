@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import * as React from "react";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 import { AppContext, IAccess } from "../../Types";
 import AssignAccessList from "./AssignAccessList";
@@ -10,7 +11,6 @@ interface IProps {
 
 interface IState {
   accessList: IAccess[];
-  selectedAccess: IAccess;
   loading: boolean;
 }
 
@@ -26,7 +26,6 @@ export default class SearchAccess extends React.Component<IProps, IState> {
 
     this.state = {
       accessList: [],
-      selectedAccess: null,
       loading: true
     };
   }
@@ -39,24 +38,26 @@ export default class SearchAccess extends React.Component<IProps, IState> {
   }
 
   private _onSelected = (access: IAccess) => {
-    this.props.onSelect(access);
+      this.props.onSelect(access);
   };
 
   public render() {
     if (this.state.loading) return <div>Loading ... </div>;
 
-    // TODO: pull from typeahead
-    const access = this.state.accessList.map(x => (
-      <AssignAccessList
-        key={x.id.toString()}
-        onAssign={this._onSelected}
-        access={x}
-      />
-    ));
     return (
-      <div>
-        <ul className="list-group">{access}</ul>
-      </div>
-    );
+        <div>
+            <Typeahead
+                labelKey="name"
+                multiple={false}
+                allowNew={false}
+                options={this.state.accessList}
+                placeholder="Assign a new access"
+                onChange={(selected) => {
+                    this._onSelected(selected[0]);
+                }}
+            />
+        </div>
+        
+        );
   }
 }
