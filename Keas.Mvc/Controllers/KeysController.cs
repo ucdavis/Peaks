@@ -30,6 +30,13 @@ namespace Keas.Mvc.Controllers
 
             return Json(keyAssignments);
         }
+
+        // List all keys for a team
+        public async Task<IActionResult> List(int id) {
+            var keys = await _context.Keys.Where(x=>x.TeamId == id).AsNoTracking().ToArrayAsync();
+
+            return Json(keys);
+        }
         public async Task<IActionResult> Create([FromBody]Key key)
         {
             // TODO Make sure user has permissions

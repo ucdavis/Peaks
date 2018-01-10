@@ -3,6 +3,7 @@
 export interface AppContext {
   fetch: (url: string, init?: RequestInit) => any;
   person: IPerson;
+  team: ITeam;
 }
 
 export interface IUser {
@@ -15,6 +16,11 @@ export interface IPerson {
   userid: number;
   teamId: number;
   user: IUser;
+}
+
+export interface ITeam {
+  id: number;
+  name: string;
 }
 
 export interface IKey {
