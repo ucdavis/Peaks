@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 
 import { AppContext } from "../../Types";
+import AssetDisplay from './AssetDisplay';
 
 export default class AssetContainer extends React.Component<{}, {}> {
   public static contextTypes = {
@@ -11,6 +12,6 @@ export default class AssetContainer extends React.Component<{}, {}> {
   public render() {
     const team = this.context.team;
 
-    return <div>{team.name}</div>;
+    return <AssetDisplay team={team} />;
   }
 }
