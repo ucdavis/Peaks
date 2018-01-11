@@ -6,7 +6,8 @@ import { AppContext, IAccess } from "../../Types";
 import AssignAccessList from "./AssignAccessList";
 
 interface IProps {
-  onSelect: (access: IAccess) => void;
+    onSelect: (access: IAccess) => void;
+    onDeselect: () => void;
 }
 
 interface IState {
@@ -38,12 +39,19 @@ export default class SearchAccess extends React.Component<IProps, IState> {
   }
 
   private _onSelected = (access: IAccess) => {
-      //if teamId is not set, this is a new access
-      this.props.onSelect({
-            name: access.name,
-            id: access.teamId ? access.id : 0,
-            teamId: access.teamId ? access.teamId : 0
+      //onChange is called when deselected
+      if (access == null || access.name == null)
+      {
+          this.props.onDeselect();
+      }
+      else {
+          //if teamId is not set, this is a new access
+          this.props.onSelect({
+              name: access.name,
+              id: access.teamId ? access.id : 0,
+              teamId: access.teamId ? access.teamId : 0
           });
+      }
   };
 
   public render() {

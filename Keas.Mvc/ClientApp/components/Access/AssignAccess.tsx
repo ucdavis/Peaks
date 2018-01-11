@@ -67,6 +67,10 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     this.setState({ selectedAccess: access });
   };
 
+  private _onDeselected = () => {
+      this.setState({ selectedAccess: null });
+  }
+
   public render() {
     // TODO: move datepicker into new component, try to make it look nice
     // TODO: only show step 2 if state.selectedAccess is truthy
@@ -82,7 +86,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
             <div className="container-fluid">
               <div className="row">
                 <div className="col-sm">
-                  <SearchAccess onSelect={this._onSelected} />
+                  <SearchAccess onSelect={this._onSelected} onDeselect={this._onDeselected} />
                 </div>
                 <div className="col-sm">
                   <CreateAccess onSelect={this._onSelected} />
