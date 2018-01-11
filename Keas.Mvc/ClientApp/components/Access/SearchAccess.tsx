@@ -38,7 +38,12 @@ export default class SearchAccess extends React.Component<IProps, IState> {
   }
 
   private _onSelected = (access: IAccess) => {
-      this.props.onSelect(access);
+      //if teamId is not set, this is a new access
+      this.props.onSelect({
+            name: access.name,
+            id: access.teamId ? access.id : 0,
+            teamId: access.teamId ? access.teamId : 0
+          });
   };
 
   public render() {
@@ -49,9 +54,10 @@ export default class SearchAccess extends React.Component<IProps, IState> {
             <Typeahead
                 labelKey="name"
                 multiple={false}
-                allowNew={false}
+                allowNew={true}
                 options={this.state.accessList}
                 placeholder="Assign a new access"
+                newSelectionPrefix="Create a new access"
                 onChange={(selected) => {
                     this._onSelected(selected[0]);
                 }}
