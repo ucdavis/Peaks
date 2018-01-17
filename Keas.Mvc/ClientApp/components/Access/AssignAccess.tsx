@@ -15,7 +15,8 @@ import AssignAccessList from "./AssignAccessList";
 import SearchAccess from "./SearchAccess";
 
 interface IProps {
-  onAssign: (access: IAccess) => Promise<IAccessAssignment>;
+    onAssign: (access: IAccess) => Promise<IAccessAssignment>;
+    assignedAccessList: string[];
 }
 
 interface IState {
@@ -23,6 +24,7 @@ interface IState {
   selectedAccess: IAccess;
   modal: boolean;
   loading: boolean;
+  error: string;
 }
 
 export default class AssignAccess extends React.Component<IProps, IState> {
@@ -37,7 +39,8 @@ export default class AssignAccess extends React.Component<IProps, IState> {
       accessList: [],
       selectedAccess: null,
       modal: false,
-      loading: true
+      loading: true,
+      error: "",
     };
   }
 
@@ -71,15 +74,26 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
   // once we have either selected or created the access we care about
   private _onSelected = (access: IAccess) => {
-    console.log("selected", access);
-    this.setState({ selectedAccess: access });
+      console.log("selected", access);
+      //if this access is not already assigned
+      if (this.props.assignedAccessList.findIndex(x => x == access.name) == -1)
+      {
+          this.setState({ selectedAccess: access, error: "" });
+      }
+      else
+      {
+          console.log("already selected");
+          this.setState({ error: "This access is already assigned" });
+      }
   };
 
   private _onDeselected = () => {
-      this.setState({ selectedAccess: null });
+      this.setState({ selectedAccess: null, error: "" });
   }
 
   public render() {
+
+      const canSubmit = this.state.error == "" && !this.state.loading;
     // TODO: move datepicker into new component, try to make it look nice
     // TODO: only show step 2 if state.selectedAccess is truthy
     // TODO: use expiration date as part of assignment
@@ -94,7 +108,12 @@ export default class AssignAccess extends React.Component<IProps, IState> {
             <div className="container-fluid">
               <div className="row">
                 <div className="col-sm">
-                    <SearchAccess accessList={this.state.accessList} loading={this.state.loading} onSelect={this._onSelected} onDeselect={this._onDeselected} />
+                    <SearchAccess
+                        accessList={this.state.accessList}
+                        loading={this.state.loading}
+                        onSelect={this._onSelected}
+                        onDeselect={this._onDeselected} />
+                    {this.state.error}
                 </div>
               </div>
               <div>
@@ -111,7 +130,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this._assignSelected}>
+              <Button color="primary" onClick={this._assignSelected} disabled={canSubmit}>
               Go!
             </Button>{" "}
             <Button color="secondary" onClick={this.toggle}>

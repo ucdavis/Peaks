@@ -35,7 +35,8 @@ export default class AccessContainer extends React.Component<{}, IState> {
   public render() {
     if (this.state.loading) {
       return <h2>Loading...</h2>;
-    }
+      }
+      const assignedAccessList = this.state.accessAssignments.map(x => x.access.name);
     return (
       <div className="card">
         <div className="card-body">
@@ -44,7 +45,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
             accessAssignments={this.state.accessAssignments}
             onRevoke={this._revokeAccess}
           />
-          <AssignAccess onAssign={this._assignAccess} />
+          <AssignAccess onAssign={this._assignAccess} assignedAccessList={assignedAccessList} />
         </div>
       </div>
     );
