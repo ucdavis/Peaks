@@ -12,7 +12,6 @@ import {
 
 import { AppContext, IAccess, IAccessAssignment } from "../../Types";
 import AssignAccessList from "./AssignAccessList";
-import CreateAccess from "./CreateAccess";
 import SearchAccess from "./SearchAccess";
 
 interface IProps {
@@ -27,6 +26,11 @@ interface IState {
 }
 
 export default class AssignAccess extends React.Component<IProps, IState> {
+    public static contextTypes = {
+        fetch: PropTypes.func,
+        person: PropTypes.object
+    };
+    public context: AppContext;
   constructor(props) {
     super(props);
     this.state = {
@@ -44,7 +48,11 @@ export default class AssignAccess extends React.Component<IProps, IState> {
   };
 
   public openModal = async () => {
-    this.setState({ modal: true });
+      this.setState({ modal: true, loading: true });
+      const accessList: IAccess[] = await this.context.fetch(
+          `/access/listteamaccess?teamId=${this.context.person.teamId}`
+      );
+      this.setState({ accessList: accessList, loading: false });
   };
 
   // assign the selected access even if we have to create it
@@ -86,10 +94,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
             <div className="container-fluid">
               <div className="row">
                 <div className="col-sm">
-                  <SearchAccess onSelect={this._onSelected} onDeselect={this._onDeselected} />
-                </div>
-                <div className="col-sm">
-                  <CreateAccess onSelect={this._onSelected} />
+                    <SearchAccess accessList={this.state.accessList} loading={this.state.loading} onSelect={this._onSelected} onDeselect={this._onDeselected} />
                 </div>
               </div>
               <div>
