@@ -25,6 +25,8 @@ interface IState {
   modal: boolean;
   loading: boolean;
   error: string;
+  validState: boolean;
+  validAccess: boolean;
 }
 
 export default class AssignAccess extends React.Component<IProps, IState> {
@@ -41,12 +43,19 @@ export default class AssignAccess extends React.Component<IProps, IState> {
       modal: false,
       loading: true,
       error: "",
+      validState: false,
+      validAccess: false,
     };
   }
 
-  public toggle = () => {
+  //clear everything out on close
+  public closeModal = () => {
     this.setState({
-      modal: !this.state.modal
+        modal: false,
+        selectedAccess: null,
+        error: "",
+        validAccess: false,
+        validState: false,
     });
   };
 
@@ -60,40 +69,53 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
   // assign the selected access even if we have to create it
   private _assignSelected = async () => {
-    console.log("assign selected", this.state.selectedAccess);
 
-    if (!this.state.selectedAccess) return;
+    if (!this.state.validState) return;
+    console.log("assign selected", this.state.selectedAccess);
 
     const accessAssignment = await this.props.onAssign(this.state.selectedAccess);
 
     this.setState({
-      modal: false,
-      accessList: [...this.state.accessList, accessAssignment.access]
+      accessList: [...this.state.accessList, accessAssignment.access],
     });
+    this.closeModal();
   };
 
   // once we have either selected or created the access we care about
   private _onSelected = (access: IAccess) => {
-      console.log("selected", access);
+      console.log("selected in assign", access);
       //if this access is not already assigned
-      if (this.props.assignedAccessList.findIndex(x => x == access.name) == -1)
+      //TODO: more validation of name
+      if (access.name.length > 64)
       {
-          this.setState({ selectedAccess: access, error: "" });
+          this.setState({ selectedAccess: null, error: "The access name you have chosen is too long", validAccess: false }, this._validateState);
+      }
+      else if (this.props.assignedAccessList.findIndex(x => x == access.name) != -1)
+      {
+          this.setState({ selectedAccess: null, error: "The access you have chosen is already assigned to this user", validAccess: false }, this._validateState);
       }
       else
       {
-          console.log("already selected");
-          this.setState({ error: "This access is already assigned" });
+          this.setState({ selectedAccess: access, error: "", validAccess: true }, this._validateState);
       }
   };
 
   private _onDeselected = () => {
-      this.setState({ selectedAccess: null, error: "" });
+      this.setState({ selectedAccess: null, error: "", validAccess: false }, this._validateState);
+  }
+
+
+  private _validateState = () => {
+      let valid = true;
+      if (this.state.selectedAccess == null)
+          valid = false;
+      else if (this.state.error != "")
+          valid = false;
+      this.setState({ validState: valid });
+
   }
 
   public render() {
-
-      const canSubmit = this.state.error == "" && !this.state.loading;
     // TODO: move datepicker into new component, try to make it look nice
     // TODO: only show step 2 if state.selectedAccess is truthy
     // TODO: use expiration date as part of assignment
@@ -102,7 +124,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         <Button color="danger" onClick={this.openModal}>
           Add Access
         </Button>
-        <Modal isOpen={this.state.modal} toggle={this.toggle} size="lg">
+        <Modal isOpen={this.state.modal} toggle={this.closeModal} size="lg">
           <ModalHeader>Assign Access</ModalHeader>
           <ModalBody>
             <div className="container-fluid">
@@ -118,22 +140,24 @@ export default class AssignAccess extends React.Component<IProps, IState> {
               </div>
               <div>
                 <div className="row">
-                <div className="col-sm">
-                  <h3>Step 2: Assign it</h3>
-                  <form>
-                    <label>Set Expiration Date</label>
-                    <input type="date" className="form-control" />
-                  </form>
-                </div>
+                    {this.state.validAccess &&
+                        <div className="col-sm">
+                            <h3>Step 2: Assign it</h3>
+                            <form>
+                                <label>Set Expiration Date</label>
+                                <input type="date" className="form-control" />
+
+                            </form>
+                        </div>}
                 </div>
               </div>
             </div>
           </ModalBody>
           <ModalFooter>
-              <Button color="primary" onClick={this._assignSelected} disabled={canSubmit}>
+              <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState}>
               Go!
             </Button>{" "}
-            <Button color="secondary" onClick={this.toggle}>
+              <Button color="secondary" onClick={this.closeModal}>
               Close
             </Button>
           </ModalFooter>
