@@ -41,6 +41,8 @@ export default class SearchAccess extends React.Component<IProps, {}> {
                 labelKey="name"
                 multiple={false}
                 allowNew={true}
+                autoFocus={true}
+                minLength={2}
                 options={this.props.accessList}
                 placeholder="Assign a new access"
                 newSelectionPrefix="Create a new access"
