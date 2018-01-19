@@ -1,4 +1,3 @@
-import { RequestInfo } from "_debugger";
 import "isomorphic-fetch";
 
 const doFetch = async (url: string, init?: RequestInit): Promise<any> => {
