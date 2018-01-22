@@ -49,7 +49,7 @@ namespace Keas.Mvc.Controllers
             return Json(access);
         }
 
-        public async Task<IActionResult> Assign(int accessId, int personId)
+        public async Task<IActionResult> Assign(int accessId, int personId, string date)
         {
             // TODO Make sure user has permssion, make sure access exists, makes sure access is in this team
             if (ModelState.IsValid)
@@ -57,7 +57,7 @@ namespace Keas.Mvc.Controllers
                 var accessassingment = new AccessAssignment{
                     AccessId = accessId,
                     PersonId = personId,
-                    ExpiresAt = DateTime.UtcNow.AddYears(3)
+                    ExpiresAt = DateTime.Parse(date),
                 };
                 _context.AccessAssignments.Add(accessassingment);
                 await _context.SaveChangesAsync();
