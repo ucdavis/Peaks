@@ -51,7 +51,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
     );
   }
 
-  public _assignAccess = async (access: IAccess): Promise<IAccessAssignment> => {
+  public _assignAccess = async (access: IAccess, date: string): Promise<IAccessAssignment> => {
     if (access.id === 0) {
       // if we need to create the new access first
       access.teamId = this.context.person.teamId; // assign to current team
@@ -64,8 +64,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
 
     // now assign the existing or newly created access
     const assignUrl = `/access/assign?accessId=${access.id}&personId=${
-      this.context.person.id
-    }`;
+      this.context.person.id}&date=${date}`;
     const newAssignment: IAccessAssignment = await this.context.fetch(
       assignUrl,
       { method: "POST" }

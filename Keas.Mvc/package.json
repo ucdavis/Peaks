@@ -55,6 +55,8 @@
     "webpack-hot-middleware": "2.18.2"
   },
   "dependencies": {
+    "moment": "^2.20.1",
+    "react-datepicker": "^1.0.4",
     "reactstrap": "^5.0.0-alpha.4"
   }
 }

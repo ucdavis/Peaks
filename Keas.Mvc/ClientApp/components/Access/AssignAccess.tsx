@@ -10,18 +10,24 @@ import {
   ListGroupItem
 } from "reactstrap";
 
+import * as moment from "moment";
+import DatePicker from "react-datepicker";
 import { AppContext, IAccess, IAccessAssignment } from "../../Types";
 import AssignAccessList from "./AssignAccessList";
 import SearchAccess from "./SearchAccess";
 
+import 'react-datepicker/dist/react-datepicker.css';
+
+
 interface IProps {
-    onAssign: (access: IAccess) => Promise<IAccessAssignment>;
+    onAssign: (access: IAccess, date: string) => Promise<IAccessAssignment>;
     assignedAccessList: string[];
 }
 
 interface IState {
   accessList: IAccess[];
   selectedAccess: IAccess;
+  date: any;
   modal: boolean;
   loading: boolean;
   error: string;
@@ -40,6 +46,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     this.state = {
       accessList: [],
       selectedAccess: null,
+      date: moment().add(3, 'y'),
       modal: false,
       loading: true,
       error: "",
@@ -73,7 +80,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     if (!this.state.validState) return;
     console.log("assign selected", this.state.selectedAccess);
 
-    const accessAssignment = await this.props.onAssign(this.state.selectedAccess);
+    const accessAssignment = await this.props.onAssign(this.state.selectedAccess, this.state.date.format("YYYY MM DD").toString());
 
     this.setState({
       accessList: [...this.state.accessList, accessAssignment.access],
@@ -115,6 +122,10 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
   }
 
+  private _changeDate = (newDate) => {
+      this.setState({ date: newDate });
+  }
+
   public render() {
     // TODO: move datepicker into new component, try to make it look nice
     // TODO: only show step 2 if state.selectedAccess is truthy
@@ -130,6 +141,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
             <div className="container-fluid">
               <div className="row">
                 <div className="col-sm">
+                    <label>Pick an access to assign</label>
                     <SearchAccess
                         accessList={this.state.accessList}
                         loading={this.state.loading}
@@ -142,12 +154,11 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                 <div className="row">
                     {this.state.validAccess &&
                         <div className="col-sm">
-                            <h3>Step 2: Assign it</h3>
-                            <form>
-                                <label>Set Expiration Date</label>
-                                <input type="date" className="form-control" />
-
-                            </form>
+                                    <label>Set the expiration date</label>
+                                    <DatePicker
+                                        selected={this.state.date}
+                                        onChange={this._changeDate}
+                                    />
                         </div>}
                 </div>
               </div>

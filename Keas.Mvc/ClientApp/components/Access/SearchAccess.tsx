@@ -36,7 +36,6 @@ export default class SearchAccess extends React.Component<IProps, {}> {
 
     return (
         <div>
-            <h3>Step 1: Pick an access to assign</h3>
             <Typeahead
                 labelKey="name"
                 multiple={false}
