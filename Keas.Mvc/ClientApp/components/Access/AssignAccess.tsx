@@ -118,12 +118,16 @@ export default class AssignAccess extends React.Component<IProps, IState> {
           valid = false;
       else if (this.state.error != "")
           valid = false;
+      else if (this.state.date == null)
+          valid = false;
+      else if (moment().isSameOrAfter(this.state.date))
+          valid = false;
       this.setState({ validState: valid });
 
   }
 
   private _changeDate = (newDate) => {
-      this.setState({ date: newDate });
+      this.setState({ date: newDate }, this._validateState);
   }
 
   public render() {
