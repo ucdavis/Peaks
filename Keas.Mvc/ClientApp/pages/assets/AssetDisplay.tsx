@@ -1,9 +1,9 @@
-import * as React from "react";
-import { TabContent, TabPane, Nav, NavItem, NavLink, Button } from "reactstrap";
 import classnames from "classnames";
+import * as React from "react";
+import { Button, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 
+import KeyContainer from "../../components/Keys/KeyContainer";
 import { ITeam } from "../../Types";
-import KeyContainer from './keys/KeyContainer';
 
 interface IProps {
   team: ITeam;
@@ -23,22 +23,10 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
     };
   }
 
-  toggle(tab) {
-    if (this.state.activeTab !== tab) {
-      this.setState({
-        activeTab: tab
-      });
-    }
-  }
-  _renderKeys = () => {
-    if (this.state.activeTab === "keys"){
-      return <KeyContainer />;
-    }
-  }
-  render() {
+  public render() {
     return (
       <div>
-        <Nav tabs>
+        <Nav tabs={true}>
           <NavItem>
             <NavLink
               className={classnames({
@@ -91,14 +79,25 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           <TabPane tabId="2">
             <div className="container">Pane 2</div>
           </TabPane>
-          <TabPane tabId="keys">
-              {this._renderKeys()}
-          </TabPane>
+          <TabPane tabId="keys">{this._renderKeys()}</TabPane>
           <TabPane tabId="equipment">
-              <div>EQUIP</div>
+            <div>EQUIP</div>
           </TabPane>
         </TabContent>
       </div>
     );
   }
+
+  private toggle(tab) {
+    if (this.state.activeTab !== tab) {
+      this.setState({
+        activeTab: tab
+      });
+    }
+  }
+  private _renderKeys = () => {
+    if (this.state.activeTab === "keys") {
+      return <KeyContainer />;
+    }
+  };
 }
