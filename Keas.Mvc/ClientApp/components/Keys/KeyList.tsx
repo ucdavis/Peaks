@@ -10,11 +10,21 @@ interface IProps {
 
 export default class KeyList extends React.Component<IProps, {}> {
   public render() {
-    const keys = this.props.keys.map((x) => <KeyDetail key={x.id.toString()} keyEntity={x} />);
+    const keys = this.props.keys.map(x => (
+      <KeyDetail key={x.id.toString()} keyEntity={x} />
+    ));
     return (
-      <ul>
-        {keys}
-      </ul>
+      <table className="table">
+        <thead>
+          <tr>
+            <th>Serial</th>
+            <th>Number</th>
+            <th>Assigned?</th>
+            <th>Expiration</th>
+          </tr>
+        </thead>
+        <tbody>{keys}</tbody>
+      </table>
     );
   }
 }

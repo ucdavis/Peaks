@@ -33,7 +33,7 @@ namespace Keas.Mvc.Controllers
 
         // List all keys for a team
         public async Task<IActionResult> List(int id) {
-            var keys = await _context.Keys.Where(x=>x.TeamId == id).AsNoTracking().ToArrayAsync();
+            var keys = await _context.Keys.Where(x=>x.TeamId == id).Include(x=>x.Assignment).AsNoTracking().ToArrayAsync();
 
             return Json(keys);
         }

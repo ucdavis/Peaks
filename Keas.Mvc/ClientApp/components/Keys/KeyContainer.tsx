@@ -27,6 +27,7 @@ export default class KeyContainer extends React.Component<{}, IState> {
     };
   }
   public async componentDidMount() {
+    // are we getting the person's keys or the team's?
     const keyFetchUrl = this.context.person
       ? `/keys/listassigned/${this.context.person.id}`
       : `/keys/list/${this.context.team.id}`;
