@@ -3,6 +3,8 @@ import * as React from "react";
 import { Button, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 
 import KeyContainer from "../../components/Keys/KeyContainer";
+import EquipmentContainer from "../../components/Equipment/EquipmentContainer";
+
 import { ITeam } from "../../Types";
 
 interface IProps {
@@ -80,9 +82,7 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
             <div className="container">Pane 2</div>
           </TabPane>
           <TabPane tabId="keys">{this._renderKeys()}</TabPane>
-          <TabPane tabId="equipment">
-            <div>EQUIP</div>
-          </TabPane>
+          <TabPane tabId="equipment">{this._renderEquipment()}</TabPane>
         </TabContent>
       </div>
     );
@@ -99,5 +99,10 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
     if (this.state.activeTab === "keys") {
       return <KeyContainer />;
     }
+  };
+  private _renderEquipment = () => {
+      if (this.state.activeTab === "equipment") {
+          return <EquipmentContainer />;
+      }
   };
 }

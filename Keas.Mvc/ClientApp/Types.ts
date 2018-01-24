@@ -50,3 +50,30 @@ export interface IAccessAssignment {
     expiresAt: Date;
     access: IAccess;
 }
+
+export interface IEquipment {
+    id: number;
+    teamId: number;
+    name: string;
+    serialNumber: string;
+    //make: string;
+    //model: string;
+    //type: string;
+    assignment?: IEquipmentAssignment;
+    attributes?: IEquipmentAttribute[];
+}
+
+export interface IEquipmentAssignment {
+    id: number;
+    equipmentId: number;
+    expiresAt: Date;
+    equipment: IEquipment;
+}
+
+export interface IEquipmentAttribute {
+    equipment: IEquipment;
+    id: number;
+    equipmentId: number;
+    key: string;
+    value: string;
+}
