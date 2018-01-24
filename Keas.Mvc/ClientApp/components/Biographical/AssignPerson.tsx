@@ -13,9 +13,10 @@ interface IState {
   modal: boolean;
   isSearchLoading: boolean;
   people: IPerson[];
+  selectedPerson: IPerson;
 }
 
-// TODO: need a way to clear out selected person and maybe lock in choice
+// TODO: need a way to clear out selected person
 // Assign a person via search lookup, unless a person is already provided
 export default class AssignPerson extends React.Component<IProps, IState> {
   public static contextTypes = {
@@ -29,12 +30,13 @@ export default class AssignPerson extends React.Component<IProps, IState> {
     this.state = {
       isSearchLoading: false,
       modal: false,
-      people: []
+      people: [],
+      selectedPerson: null,
     };
   }
 
   public render() {
-    if (this.context.person) {
+    if (this.context.person || this.state.selectedPerson) {
       return this._renderExistingPerson();
     } else {
       return this._renderFindPerson();
@@ -47,6 +49,8 @@ export default class AssignPerson extends React.Component<IProps, IState> {
       <div>
         <AsyncTypeahead
           isLoading={this.state.isSearchLoading}
+          minLength={3}
+          placeholder="Search for person by email"
           labelKey={(option: IPerson) =>
             `${option.user.name} (${option.user.email})`
           }
@@ -62,6 +66,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
           }}
           onChange={selected => {
             if (selected && selected.length === 1) {
+              this.setState({ selectedPerson: selected[0] });
               this.props.onSelect(selected[0]);
             }
           }}
@@ -72,12 +77,13 @@ export default class AssignPerson extends React.Component<IProps, IState> {
   };
 
   private _renderExistingPerson = () => {
+    const person = this.context.person ? this.context.person : this.state.selectedPerson;
     return (
       <input
         type="text"
         id="assignto"
         className="form-control"
-        value={this.context.person.user.name}
+        value={person.user.name}
         disabled={true}
       />
     );
