@@ -43,8 +43,8 @@ export default class KeyContainer extends React.Component<{}, IState> {
       <div className="card">
         <div className="card-body">
           <h4 className="card-title">Keys</h4>
-          <AssignKey onCreate={this._createAndMaybeAssignKey} />
           <KeyList keys={this.state.keys} />
+          <AssignKey onCreate={this._createAndMaybeAssignKey} />
         </div>
       </div>
     );

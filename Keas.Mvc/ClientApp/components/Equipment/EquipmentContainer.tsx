@@ -43,8 +43,8 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
       <div className="card">
         <div className="card-body">
           <h4 className="card-title">Equipment</h4>
-          <AssignEquipment onCreate={this._createAndMaybeAssignEquipment} />
           <EquipmentList equipment={this.state.equipment} />
+          <AssignEquipment onCreate={this._createAndMaybeAssignEquipment} />
         </div>
       </div>
     );
