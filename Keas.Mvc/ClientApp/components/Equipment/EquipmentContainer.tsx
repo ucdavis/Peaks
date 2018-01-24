@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 
-import { AppContext, IEquipment, IPerson } from "../../Types";
+import { AppContext, IEquipment, IEquipmentAttribute, IPerson } from "../../Types";
 
 import AssignEquipment from "./AssignEquipment";
 import EquipmentList from "./EquipmentList";
@@ -42,8 +42,8 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
     return (
       <div className="card">
         <div className="card-body">
-          <h4 className="card-title">Equipment</h4>
-          <EquipmentList equipment={this.state.equipment} />
+                <h4 className="card-title">Equipment</h4>
+                <EquipmentList equipment={this.state.equipment} onRevoke={this._revokeEquipment} />
           <AssignEquipment onCreate={this._createAndMaybeAssignEquipment} />
         </div>
       </div>
@@ -73,4 +73,21 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
       equipment: [...this.state.equipment, newEquipment]
     });
   };
+
+  public _revokeEquipment = async (equipment: IEquipment) => {
+      //remove from state
+      const index = this.state.equipment.indexOf(equipment);
+      if (index > -1) {
+          const shallowCopy = [...this.state.equipment];
+          shallowCopy.splice(index, 1);
+          this.setState({ equipment: shallowCopy });
+      }
+
+      // call API to actually revoke
+
+      const newAccess: IEquipment = await this.context.fetch("/equipment/revoke", {
+          body: JSON.stringify(equipment),
+          method: "POST"
+      });
+  }
 }

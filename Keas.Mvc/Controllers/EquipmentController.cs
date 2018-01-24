@@ -64,5 +64,17 @@ namespace Keas.Mvc.Controllers
             return BadRequest(ModelState);
         }
 
+        public async Task<IActionResult> Revoke([FromBody]Equipment equipment)
+        {
+            //TODO: check permissions
+            if (ModelState.IsValid)
+            {
+                var eq = await _context.Equipment.SingleAsync(x => x.Id == equipment.Id);
+                eq.Assignment = null;
+                await _context.SaveChangesAsync();
+                return Json(equipment);
+            }
+            return BadRequest(ModelState);
+        }
     }
 }
