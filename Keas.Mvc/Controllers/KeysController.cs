@@ -54,7 +54,7 @@ namespace Keas.Mvc.Controllers
             if (ModelState.IsValid)
             {
                 var key = await _context.Keys.SingleAsync(x=>x.Id == keyId);
-                key.Assignment = new KeyAssignment{ PersonId = personId};
+                key.Assignment = new KeyAssignment{ PersonId = personId, ExpiresAt = DateTime.UtcNow.AddYears(3)};
 
                 await _context.SaveChangesAsync();
                 return Json(key);

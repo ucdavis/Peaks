@@ -6,7 +6,7 @@ import { AppContext, IKey, IPerson } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
 
 interface IProps {
-  onCreate: (key: IKey) => void;
+  onCreate: (key: IKey, person: IPerson) => void;
 }
 
 interface IState {
@@ -36,12 +36,19 @@ export default class AssignKey extends React.Component<IProps, IState> {
   };
 
   public createKey = async () => {
-    await this.props.onCreate({
+    const person = this.context.person
+      ? this.context.person
+      : this.state.person;
+
+    const key = {
       id: 0,
       name: "newkey" + new Date().getUTCSeconds(),
       serialNumber: "SN123",
       teamId: 1
-    });
+    };
+
+    await this.props.onCreate(key, person);
+
     // TODO: check for success
     this.setState({ modal: false });
   };
@@ -75,6 +82,6 @@ export default class AssignKey extends React.Component<IProps, IState> {
   }
 
   private _onSelect = (person: IPerson) => {
-      this.setState({ person });
-  }
+    this.setState({ person });
+  };
 }

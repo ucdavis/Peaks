@@ -43,31 +43,34 @@ export default class KeyContainer extends React.Component<{}, IState> {
       <div className="card">
         <div className="card-body">
           <h4 className="card-title">Keys</h4>
-          <AssignKey onCreate={this._createAndAssignKey} />
+          <AssignKey onCreate={this._createAndMaybeAssignKey} />
           <KeyList keys={this.state.keys} />
         </div>
       </div>
     );
   }
-  public _createAndAssignKey = async (key: IKey) => {
-    // call API to create a key, then assign it
+  public _createAndMaybeAssignKey = async (key: IKey, person: IPerson) => {
+    // call API to create a key, then assign it if there is a person to assign to
 
     // TODO: basically all fake, make it real
-    const newKey: IKey = await this.context.fetch("/keys/create", {
+    let newKey: IKey = await this.context.fetch("/keys/create", {
       body: JSON.stringify(key),
       method: "POST"
     });
 
-    const assignUrl = `/keys/assign?keyId=${newKey.id}&personId=${
-      this.context.person.id
-    }`;
+    // if we know who to assign it to, do it now
+    if (person) {
+      const assignUrl = `/keys/assign?keyId=${newKey.id}&personId=${
+        this.context.person.id
+      }`;
 
-    const assignedKey: IKey = await this.context.fetch(assignUrl, {
-      method: "POST"
-    });
+      newKey = await this.context.fetch(assignUrl, {
+        method: "POST"
+      });
+    }
 
     this.setState({
-      keys: [...this.state.keys, assignedKey]
+      keys: [...this.state.keys, newKey]
     });
   };
 }
