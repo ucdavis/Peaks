@@ -26,7 +26,9 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Search(string q)
         {
-            var people = await _context.People.Where(x => x.Team.Name == Team && x.Active && x.User.Email.StartsWith(q)).AsNoTracking().ToListAsync();
+            var people = await _context.People
+                .Where(x => x.Team.Name == Team && x.Active && x.User.Email.StartsWith(q))
+                .Include(x => x.User).AsNoTracking().ToListAsync();
 
             return Json(people);
         }

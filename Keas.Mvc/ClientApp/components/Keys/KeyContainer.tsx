@@ -61,7 +61,7 @@ export default class KeyContainer extends React.Component<{}, IState> {
     // if we know who to assign it to, do it now
     if (person) {
       const assignUrl = `/keys/assign?keyId=${newKey.id}&personId=${
-        this.context.person.id
+        person.id
       }`;
 
       newKey = await this.context.fetch(assignUrl, {
