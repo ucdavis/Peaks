@@ -3,7 +3,6 @@ import * as React from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
 
 import { IAccess } from "../../Types";
-import AssignAccessList from "./AssignAccessList";
 
 interface IProps {
     accessList: IAccess[];
