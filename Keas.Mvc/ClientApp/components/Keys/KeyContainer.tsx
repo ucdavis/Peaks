@@ -7,64 +7,70 @@ import AssignKey from "./AssignKey";
 import KeyList from "./KeyList";
 
 interface IState {
-    loading: boolean;
-    keys: IKey[];
+  loading: boolean;
+  keys: IKey[];
 }
 
 export default class KeyContainer extends React.Component<{}, IState> {
-    public static contextTypes = {
-        fetch: PropTypes.func,
-        person: PropTypes.object,
+  public static contextTypes = {
+    fetch: PropTypes.func,
+    person: PropTypes.object,
+    team: PropTypes.object
+  };
+  public context: AppContext;
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      keys: [],
+      loading: true
     };
-    public context: AppContext;
-    constructor(props) {
-        super(props);
+  }
+  public async componentDidMount() {
+    // are we getting the person's keys or the team's?
+    const keyFetchUrl = this.context.person
+      ? `/keys/listassigned/${this.context.person.id}`
+      : `/keys/list/${this.context.team.id}`;
 
-        this.state = {
-            keys: [],
-            loading: true,
-        };
+    const keys = await this.context.fetch(keyFetchUrl);
+    this.setState({ keys, loading: false });
+  }
+  public render() {
+    if (this.state.loading) {
+      return <h2>Loading...</h2>;
     }
-    public async componentDidMount() {
-        const keys = await this.context.fetch(
-            `/keys/listassigned/${this.context.person.id}`,
-        );
-        this.setState({ keys, loading: false });
+    return (
+      <div className="card">
+        <div className="card-body">
+          <h4 className="card-title">Keys</h4>
+          <AssignKey onCreate={this._createAndMaybeAssignKey} />
+          <KeyList keys={this.state.keys} />
+        </div>
+      </div>
+    );
+  }
+  public _createAndMaybeAssignKey = async (key: IKey, person: IPerson) => {
+    // call API to create a key, then assign it if there is a person to assign to
+
+    // TODO: basically all fake, make it real
+    let newKey: IKey = await this.context.fetch("/keys/create", {
+      body: JSON.stringify(key),
+      method: "POST"
+    });
+
+    // if we know who to assign it to, do it now
+    if (person) {
+      const assignUrl = `/keys/assign?keyId=${newKey.id}&personId=${
+        person.id
+      }`;
+
+      newKey = await this.context.fetch(assignUrl, {
+        method: "POST"
+      });
     }
-    public render() {
-        if (this.state.loading) {
-            return <h2>Loading...</h2>;
-        }
-        return (
-            <div className="card">
-                <div className="card-body">
-                    <h4 className="card-title">Keys</h4>
-                    <AssignKey onCreate={this._createAndAssignKey} />
-                    <KeyList keys={this.state.keys} />
-                </div>
-            </div>
-        );
-    }
-    public _createAndAssignKey = async (key: IKey) => {
-        // call API to create a key, then assign it
 
-        // TODO: basically all fake, make it real
-        const newKey: IKey = await this.context.fetch("/keys/create", {
-            body: JSON.stringify(key),
-            method: "POST",
-        });
-
-        const assignUrl = `/keys/assign?keyId=${newKey.id}&personId=${
-            this.context.person.id
-        }`;
-
-        const assignedKey: IKey = await this.context.fetch(
-            assignUrl,
-            { method: "POST" },
-        );
-
-        this.setState({
-            keys: [...this.state.keys, assignedKey],
-        });
-    }
+    this.setState({
+      keys: [...this.state.keys, newKey]
+    });
+  };
 }

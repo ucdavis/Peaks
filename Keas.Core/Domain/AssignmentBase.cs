@@ -12,6 +12,8 @@ namespace Keas.Core.Domain
 
         public Person Person { get; set; }
         public int PersonId { get; set; }
+        
+        //TODO: copy the person name for easy access
 
         public DateTime RequestedAt { get; set; }
         public User RequestedBy {get;set;}
