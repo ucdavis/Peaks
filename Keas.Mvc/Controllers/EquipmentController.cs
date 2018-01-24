@@ -71,8 +71,9 @@ namespace Keas.Mvc.Controllers
             {
                 var eq = await _context.Equipment.SingleAsync(x => x.Id == equipment.Id);
                 eq.Assignment = null;
+                eq.EquipmentAssignmentId = null;
                 await _context.SaveChangesAsync();
-                return Json(equipment);
+                return Json(eq);
             }
             return BadRequest(ModelState);
         }
