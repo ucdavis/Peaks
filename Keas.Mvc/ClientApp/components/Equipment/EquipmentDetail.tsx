@@ -19,7 +19,7 @@ export default class EquipmentDetail extends React.Component<IProps, {}> {
           {hasAssignment ? this.props.equipmentEntity.assignment.expiresAt : ""}
         </td>
         <td>
-            <button type="button" className="btn btn-danger" onClick={() => this.props.onRevoke(this.props.equipmentEntity)}><i className="fa fa-times" aria-hidden="true"></i></button>
+                <button type="button" className="btn btn-danger" onClick={() => this.props.onRevoke(this.props.equipmentEntity)} hidden={!hasAssignment}><i className="fa fa-times" aria-hidden="true" ></i></button>
         </td>
       </tr>
     );
