@@ -8,7 +8,13 @@ interface IProps {
     onRevoke: (equipment: IEquipment) => void;
 }
 
+
 export default class EquipmentDetail extends React.Component<IProps, {}> {
+
+    private _onRevoke = () => {
+        this.props.onRevoke(this.props.equipmentEntity);
+    }
+
   public render() {
     const hasAssignment = !!this.props.equipmentEntity.assignment;
     return (
@@ -20,7 +26,7 @@ export default class EquipmentDetail extends React.Component<IProps, {}> {
           {hasAssignment ? this.props.equipmentEntity.assignment.expiresAt : ""}
         </td>
         <td>
-                <ListActionsDropdown onRevoke={this.props.onRevoke} asset={this.props.equipmentEntity} />
+                <ListActionsDropdown onRevoke={this._onRevoke} canRevoke={hasAssignment} />
         </td>
       </tr>
     );
