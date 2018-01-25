@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { IEquipment } from "../../Types";
+import ListActionsDropdown from "../ListActionsDropdown";
 
 interface IProps {
     equipmentEntity: IEquipment;
@@ -19,7 +20,7 @@ export default class EquipmentDetail extends React.Component<IProps, {}> {
           {hasAssignment ? this.props.equipmentEntity.assignment.expiresAt : ""}
         </td>
         <td>
-                <button type="button" className="btn btn-danger" onClick={() => this.props.onRevoke(this.props.equipmentEntity)} hidden={!hasAssignment}><i className="fa fa-times" aria-hidden="true" ></i></button>
+                <ListActionsDropdown onRevoke={this.props.onRevoke} asset={this.props.equipmentEntity} />
         </td>
       </tr>
     );
