@@ -78,16 +78,23 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
       //remove from state
       const index = this.state.equipment.indexOf(equipment);
       if (index > -1) {
-          const shallowCopy = [...this.state.equipment];
-          shallowCopy.splice(index, 1);
-          this.setState({ equipment: shallowCopy });
+        const shallowCopy = [...this.state.equipment];
+        shallowCopy.splice(index, 1);
+        this.setState({ equipment: shallowCopy });
       }
 
       // call API to actually revoke
 
-      const newAccess: IEquipment = await this.context.fetch("/equipment/revoke", {
+      const removed: IEquipment = await this.context.fetch("/equipment/revoke", {
           body: JSON.stringify(equipment),
           method: "POST"
       });
+
+      //if looking at all equipment, add back as unassigned
+      if (this.context.person == null) {
+          this.setState({
+              equipment: [...this.state.equipment, removed]
+          });
+      }
   }
 }
