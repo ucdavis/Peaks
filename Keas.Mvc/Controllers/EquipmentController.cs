@@ -25,9 +25,9 @@ namespace Keas.Mvc.Controllers
             return Team;
         }
 
-        public async Task<IActionResult> ListAssigned(int id)
+        public async Task<IActionResult> ListAssigned(int id, int teamId)
         {
-            var equipmentAssignments = await _context.Equipment.Where(x => x.Assignment.PersonId == id).Include(x => x.Assignment).AsNoTracking().ToArrayAsync();
+            var equipmentAssignments = await _context.Equipment.Where(x => x.Assignment.PersonId == id && x.TeamId == teamId).Include(x => x.Assignment).AsNoTracking().ToArrayAsync();
 
             return Json(equipmentAssignments);
         }

@@ -28,8 +28,8 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
   }
   public async componentDidMount() {
     // are we getting the person's equipment or the team's?
-    const equipmentFetchUrl = this.context.person
-      ? `/equipment/listassigned/${this.context.person.id}`
+      const equipmentFetchUrl = this.context.person
+      ? `/equipment/listassigned/${this.context.person.id}&${this.context.team.id}`
       : `/equipment/list/${this.context.team.id}`;
 
     const equipment = await this.context.fetch(equipmentFetchUrl);
