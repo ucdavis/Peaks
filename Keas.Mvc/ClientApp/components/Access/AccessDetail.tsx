@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { IAccessAssignment } from "../../Types";
+import ListActionsDropdown from "../ListActionsDropdown";
 
 interface IProps {
     assignment: IAccessAssignment;
@@ -8,6 +9,10 @@ interface IProps {
 }
 
 export default class AccessDetail extends React.Component<IProps, {}> {
+
+    private _onRevoke = () => {
+        this.props.onRevoke(this.props.assignment);
+    }
     public render() {
         return (
             <tr>
@@ -15,7 +20,7 @@ export default class AccessDetail extends React.Component<IProps, {}> {
                 <td>{this.props.assignment.access.teamId}</td>
                 <td>{this.props.assignment.expiresAt}</td>
                 <td>
-                    <button type="button"  className="btn btn-danger" onClick={() => this.props.onRevoke(this.props.assignment)}><i className="fa fa-times" aria-hidden="true"></i></button>
+                    <ListActionsDropdown onRevoke={this._onRevoke} canRevoke={this.props.assignment != null} />
                 </td>
             </tr>
         );

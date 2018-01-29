@@ -13,7 +13,6 @@ import {
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
 import { AppContext, IAccess, IAccessAssignment } from "../../Types";
-import AssignAccessList from "./AssignAccessList";
 import SearchAccess from "./SearchAccess";
 
 import 'react-datepicker/dist/react-datepicker.css';

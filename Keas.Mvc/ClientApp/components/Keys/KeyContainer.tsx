@@ -29,7 +29,7 @@ export default class KeyContainer extends React.Component<{}, IState> {
   public async componentDidMount() {
     // are we getting the person's keys or the team's?
     const keyFetchUrl = this.context.person
-      ? `/keys/listassigned/${this.context.person.id}`
+      ? `/keys/listassigned/${this.context.person.id}&${this.context.team.id}`
       : `/keys/list/${this.context.team.id}`;
 
     const keys = await this.context.fetch(keyFetchUrl);
@@ -43,8 +43,8 @@ export default class KeyContainer extends React.Component<{}, IState> {
       <div className="card">
         <div className="card-body">
           <h4 className="card-title">Keys</h4>
-          <AssignKey onCreate={this._createAndMaybeAssignKey} />
           <KeyList keys={this.state.keys} />
+          <AssignKey onCreate={this._createAndMaybeAssignKey} />
         </div>
       </div>
     );
