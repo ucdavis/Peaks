@@ -19,8 +19,9 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 
 interface IProps {
-    onAssign: (equipment: IEquipment, date: string) => Promise<IEquipmentAssignment>;
-    assignedEquipmentList: string[];
+    onCreate: (equipment: IEquipment, person: IPerson) => Promise<IEquipment>;
+    assignedEquipmentList?: string[];
+    allEquipmentList?: IEquipment[];
 }
 
 interface IState {
@@ -67,9 +68,15 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   public openModal = async () => {
       this.setState({ modal: true, loading: true });
-      const equipmentList: IEquipment[] = await this.context.fetch(
-          `/equipment/listteamequipment?teamId=${this.context.person.teamId}`
-      );
+      let equipmentList: IEquipment[];
+      if (this.props.assignedEquipmentList != null) {
+          equipmentList = await this.context.fetch(
+              `/equipment/list?teamId=${this.context.person.teamId}`
+          );
+      }
+      else {
+          equipmentList = this.props.allEquipmentList;
+      }
       this.setState({ equipmentList: equipmentList, loading: false });
   };
 
@@ -79,10 +86,10 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     if (!this.state.validState) return;
     console.log("assign selected", this.state.selectedEquipment);
 
-    const equipmentAssignment = await this.props.onAssign(this.state.selectedEquipment, this.state.date.format("YYYY MM DD").toString());
+    const equipmentAssignment = await this.props.onCreate(this.state.selectedEquipment, this.context.person);
 
     this.setState({
-      equipmentList: [...this.state.equipmentList, equipmentAssignment.equipment],
+      equipmentList: [...this.state.equipmentList, equipmentAssignment],
     });
     this.closeModal();
   };

@@ -38,13 +38,15 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
   public render() {
     if (this.state.loading) {
       return <h2>Loading...</h2>;
-    }
+      }
+    const assignedEquipmentList = this.context.person ? this.state.equipment.map(x => x.name) : null;
+    const allEquipmentList = this.context.person ? null : this.state.equipment;
     return (
       <div className="card">
         <div className="card-body">
                 <h4 className="card-title">Equipment</h4>
                 <EquipmentList equipment={this.state.equipment} onRevoke={this._revokeEquipment} />
-          <AssignEquipment onCreate={this._createAndMaybeAssignEquipment} />
+                <AssignEquipment onCreate={this._createAndMaybeAssignEquipment} assignedEquipmentList={assignedEquipmentList} allEquipmentList={allEquipmentList} />
         </div>
       </div>
     );
@@ -72,6 +74,8 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
     this.setState({
       equipment: [...this.state.equipment, newEquipment]
     });
+
+    return newEquipment;
   };
 
   public _revokeEquipment = async (equipment: IEquipment) => {
