@@ -55,7 +55,7 @@ export interface IEquipment {
     id: number;
     teamId: number;
     name: string;
-    serialNumber: string;
+    serialNumber?: string;
     //make: string;
     //model: string;
     //type: string;
