@@ -27,9 +27,9 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
     };
   }
   public async componentDidMount() {
-    // are we getting the person's equipment or the team's?
+      // are we getting the person's equipment or the team's?
       const equipmentFetchUrl = this.context.person
-          ? `/equipment/listassigned/${this.context.person.id}&${this.context.person.teamId}`
+          ? `/equipment/listassigned?id=${this.context.person.id}&teamId=${this.context.person.teamId}`
       : `/equipment/list/${this.context.team.id}`;
 
     const equipment = await this.context.fetch(equipmentFetchUrl);
@@ -51,7 +51,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
       </div>
     );
   }
-  public _createAndMaybeAssignEquipment = async (equipment: IEquipment, person: IPerson) => {
+  public _createAndMaybeAssignEquipment = async (equipment: IEquipment, person: IPerson): Promise<IEquipment> => {
     // call API to create a equipment, then assign it if there is a person to assign to
 
       //if we are creating a new equipment

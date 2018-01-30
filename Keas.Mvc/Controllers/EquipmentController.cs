@@ -27,7 +27,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> ListAssigned(int id, int teamId)
         {
-            var equipmentAssignments = await _context.Equipment.Include(x => x.Assignment).Where(x => x.Assignment.PersonId == id && x.TeamId == teamId).AsNoTracking().ToArrayAsync();
+            var equipmentAssignments = await _context.Equipment.Where(x => x.Assignment.PersonId == id && x.TeamId == teamId).Include(x => x.Assignment).AsNoTracking().ToArrayAsync();
 
             return Json(equipmentAssignments);
         }
@@ -65,6 +65,8 @@ namespace Keas.Mvc.Controllers
             {
                 var equipment = await _context.Equipment.SingleAsync(x => x.Id == equipmentId);
                 equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.UtcNow.AddYears(3) };
+
+                _context.EquipmentAssignments.Add(equipment.Assignment);
 
                 await _context.SaveChangesAsync();
                 return Json(equipment);

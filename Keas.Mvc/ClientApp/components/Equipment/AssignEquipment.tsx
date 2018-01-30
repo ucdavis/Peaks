@@ -20,7 +20,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 
 interface IProps {
-    onCreate: (equipment: IEquipment, person: IPerson) => Promise<IEquipment>;
+    onCreate: (equipment: IEquipment, person: IPerson) => void;
 }
 
 interface IState {
@@ -86,11 +86,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         ? this.context.person
         : this.state.person;
 
-    const equipmentAssignment = await this.props.onCreate(this.state.selectedEquipment, person);
+    await this.props.onCreate(this.state.selectedEquipment, person);
 
-    this.setState({
-      equipmentList: [...this.state.equipmentList, equipmentAssignment],
-    });
     this.closeModal();
   };
 
