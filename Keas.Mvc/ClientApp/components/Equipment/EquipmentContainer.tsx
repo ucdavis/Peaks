@@ -51,7 +51,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
       </div>
     );
   }
-  public _createAndMaybeAssignEquipment = async (equipment: IEquipment, person: IPerson): Promise<IEquipment> => {
+  public _createAndMaybeAssignEquipment = async (equipment: IEquipment, person: IPerson) => {
     // call API to create a equipment, then assign it if there is a person to assign to
 
       //if we are creating a new equipment
@@ -63,6 +63,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
           });
       }
 
+
     // if we know who to assign it to, do it now
     if (person) {
       const assignUrl = `/equipment/assign?equipmentId=${equipment.id}&personId=${
@@ -72,36 +73,47 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
       equipment = await this.context.fetch(assignUrl, {
         method: "POST"
       });
+      }
+
+    let index = this.state.equipment.findIndex(x => x.id == equipment.id);
+    console.log("index " + index);
+    if (index != -1) {
+        console.log("changing");
+        let updateEquipment = this.state.equipment.slice();
+        updateEquipment[index] = equipment;
+        this.setState({
+            ...this.state,
+            equipment: updateEquipment
+        });
     }
-
-    this.setState({
-        equipment: [...this.state.equipment, equipment]
-    });
-
-    return equipment;
+    else {
+        this.setState({
+            equipment: [...this.state.equipment, equipment]
+        });
+    }
   };
 
   public _revokeEquipment = async (equipment: IEquipment) => {
-      //remove from state
-      const index = this.state.equipment.indexOf(equipment);
-      if (index > -1) {
-        const shallowCopy = [...this.state.equipment];
-        shallowCopy.splice(index, 1);
-        this.setState({ equipment: shallowCopy });
-      }
 
       // call API to actually revoke
-
       const removed: IEquipment = await this.context.fetch("/equipment/revoke", {
           body: JSON.stringify(equipment),
           method: "POST"
       });
 
-      //if looking at all equipment, add back as unassigned
-      if (this.context.person == null) {
-          this.setState({
-              equipment: [...this.state.equipment, removed]
-          });
+      //remove from state
+      const index = this.state.equipment.indexOf(equipment);
+      if (index > -1) {
+          let shallowCopy = [...this.state.equipment];
+          if (this.context.person == null) {
+              //if we are looking at all equipment
+              shallowCopy[index] = removed;
+          }
+          else {
+              //if we are looking at a person
+              shallowCopy.splice(index, 1);
+          }
+          this.setState({ equipment: shallowCopy });
       }
   }
 }
