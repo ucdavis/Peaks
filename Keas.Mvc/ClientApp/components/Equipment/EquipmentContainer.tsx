@@ -54,28 +54,30 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
   public _createAndMaybeAssignEquipment = async (equipment: IEquipment, person: IPerson) => {
     // call API to create a equipment, then assign it if there is a person to assign to
 
-    // TODO: basically all fake, make it real
-    let newEquipment: IEquipment = await this.context.fetch("/equipment/create", {
-      body: JSON.stringify(equipment),
-      method: "POST"
-    });
+      //if we are creating a new equipment
+      if (equipment.id === 0) {
+          equipment = await this.context.fetch("/equipment/create", {
+              body: JSON.stringify(equipment),
+              method: "POST"
+          });
+      }
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/equipment/assign?equipmentId=${newEquipment.id}&personId=${
+      const assignUrl = `/equipment/assign?equipmentId=${equipment.id}&personId=${
         person.id
       }`;
 
-      newEquipment = await this.context.fetch(assignUrl, {
+      equipment = await this.context.fetch(assignUrl, {
         method: "POST"
       });
     }
 
     this.setState({
-      equipment: [...this.state.equipment, newEquipment]
+        equipment: [...this.state.equipment, equipment]
     });
 
-    return newEquipment;
+    return equipment;
   };
 
   public _revokeEquipment = async (equipment: IEquipment) => {
