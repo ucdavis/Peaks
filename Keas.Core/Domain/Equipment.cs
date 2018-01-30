@@ -5,7 +5,7 @@ namespace Keas.Core.Domain
     public class Equipment : AssetBase {
         public Equipment()
         {
-            Attributes = new List<EquipmentAttribute>();
+        //    Attributes = new List<EquipmentAttribute>();
         }
 
         // Computer / Phone / other
@@ -18,10 +18,10 @@ namespace Keas.Core.Domain
 
         public EquipmentAssignment Assignment { get; set; }
         public int? EquipmentAssignmentId { get; set; }
-        public List<EquipmentAttribute> Attributes { get; set; }
+        //public List<EquipmentAttribute> Attributes { get; set; }
 
-        public void AddAttribute(string key, string value) {
-            Attributes.Add(new EquipmentAttribute { Equipment = this, Key = key, Value = value });
-        }
+        //public void AddAttribute(string key, string value) {
+        //    Attributes.Add(new EquipmentAttribute { Equipment = this, Key = key, Value = value });
+        //}
     }
 }

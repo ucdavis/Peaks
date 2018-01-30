@@ -55,12 +55,12 @@ export interface IEquipment {
     id: number;
     teamId: number;
     name: string;
-    serialNumber?: string;
-    //make: string;
-    //model: string;
-    //type: string;
+    serialNumber: string;
+    make: string;
+    model: string;
+    type: string;
     assignment?: IEquipmentAssignment;
-    attributes?: IEquipmentAttribute[];
+    //attributes?: IEquipmentAttribute[];
 }
 
 export interface IEquipmentAssignment {

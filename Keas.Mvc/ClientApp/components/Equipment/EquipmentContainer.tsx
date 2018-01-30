@@ -29,7 +29,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
   public async componentDidMount() {
     // are we getting the person's equipment or the team's?
       const equipmentFetchUrl = this.context.person
-      ? `/equipment/listassigned/${this.context.person.id}&${this.context.team.id}`
+          ? `/equipment/listassigned/${this.context.person.id}&${this.context.person.teamId}`
       : `/equipment/list/${this.context.team.id}`;
 
     const equipment = await this.context.fetch(equipmentFetchUrl);
@@ -46,7 +46,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
         <div className="card-body">
                 <h4 className="card-title">Equipment</h4>
                 <EquipmentList equipment={this.state.equipment} onRevoke={this._revokeEquipment} />
-                <AssignEquipment onCreate={this._createAndMaybeAssignEquipment} assignedEquipmentList={assignedEquipmentList} allEquipmentList={allEquipmentList} />
+                <AssignEquipment onCreate={this._createAndMaybeAssignEquipment} />
         </div>
       </div>
     );
@@ -56,6 +56,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
 
       //if we are creating a new equipment
       if (equipment.id === 0) {
+          equipment.teamId = this.context.team.id;
           equipment = await this.context.fetch("/equipment/create", {
               body: JSON.stringify(equipment),
               method: "POST"

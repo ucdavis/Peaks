@@ -24,7 +24,11 @@ export default class SearchEquipment extends React.Component<IProps, {}> {
             this.props.onSelect({
                 name: equipment.name,
                 id: equipment.teamId ? equipment.id : 0,
-                teamId: equipment.teamId ? equipment.teamId : 0
+                teamId: equipment.teamId ? equipment.teamId : 0,
+                serialNumber: "12345",
+                make: "Make",
+                model: "Model",
+                type: "Phone"
             });
         }
     };

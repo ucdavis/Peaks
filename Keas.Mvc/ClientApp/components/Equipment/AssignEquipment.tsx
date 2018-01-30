@@ -12,19 +12,19 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IEquipment, IEquipmentAssignment, IPerson } from "../../Types";
+import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson } from "../../Types";
 import SearchEquipment from "./SearchEquipment";
+import AssignPerson from "../Biographical/AssignPerson";
 
 import 'react-datepicker/dist/react-datepicker.css';
 
 
 interface IProps {
     onCreate: (equipment: IEquipment, person: IPerson) => Promise<IEquipment>;
-    assignedEquipmentList?: string[];
-    allEquipmentList?: IEquipment[];
 }
 
 interface IState {
+  person: IPerson;
   equipmentList: IEquipment[];
   selectedEquipment: IEquipment;
   date: any;
@@ -38,12 +38,14 @@ interface IState {
 export default class AssignEquipment extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
-        person: PropTypes.object
+        person: PropTypes.object,
+        team: PropTypes.object
     };
     public context: AppContext;
   constructor(props) {
     super(props);
     this.state = {
+      person: null,
       equipmentList: [],
       selectedEquipment: null,
       date: moment().add(3, 'y'),
@@ -68,15 +70,9 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   public openModal = async () => {
       this.setState({ modal: true, loading: true });
-      let equipmentList: IEquipment[];
-      if (this.props.assignedEquipmentList != null) {
-          equipmentList = await this.context.fetch(
-              `/equipment/list?teamId=${this.context.person.teamId}`
-          );
-      }
-      else {
-          equipmentList = this.props.allEquipmentList;
-      }
+      const equipmentList: IEquipment[] = await this.context.fetch(
+          `/equipment/listunassigned?teamId=${this.context.team.id}`);
+   
       this.setState({ equipmentList: equipmentList, loading: false });
   };
 
@@ -86,7 +82,11 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     if (!this.state.validState) return;
     console.log("assign selected", this.state.selectedEquipment);
 
-    const equipmentAssignment = await this.props.onCreate(this.state.selectedEquipment, this.context.person);
+    const person = this.context.person
+        ? this.context.person
+        : this.state.person;
+
+    const equipmentAssignment = await this.props.onCreate(this.state.selectedEquipment, person);
 
     this.setState({
       equipmentList: [...this.state.equipmentList, equipmentAssignment],
@@ -98,15 +98,16 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   private _onSelected = (equipment: IEquipment) => {
       console.log("selected in assign", equipment);
       //if this equipment is not already assigned
+
       //TODO: more validation of name
       if (equipment.name.length > 64)
       {
           this.setState({ selectedEquipment: null, error: "The equipment name you have chosen is too long", validEquipment: false }, this._validateState);
       }
-      else if (this.props.assignedEquipmentList.findIndex(x => x == equipment.name) != -1)
-      {
-          this.setState({ selectedEquipment: null, error: "The equipment you have chosen is already assigned to this user", validEquipment: false }, this._validateState);
-      }
+      //else if (this.props.assignedEquipmentList.findIndex(x => x == equipment.name) != -1)
+      //{
+      //    this.setState({ selectedEquipment: null, error: "The equipment you have chosen is already assigned to this user", validEquipment: false }, this._validateState);
+      //}
       else
       {
           this.setState({ selectedEquipment: equipment, error: "", validEquipment: true }, this._validateState);
@@ -116,6 +117,10 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   private _onDeselected = () => {
       this.setState({ selectedEquipment: null, error: "", validEquipment: false }, this._validateState);
   }
+
+  private _onSelectPerson = (person: IPerson) => {
+      this.setState({ person });
+  };
 
 
   private _validateState = () => {
@@ -149,6 +154,12 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
           <ModalHeader>Assign Equipment</ModalHeader>
           <ModalBody>
             <div className="container-fluid">
+                        <form>
+                            <div className="form-group">
+                                <label htmlFor="assignto">Assign To</label>
+                                <AssignPerson onSelect={this._onSelectPerson} />
+                            </div>
+                        </form>
               <div className="row">
                 <div className="col-sm">
                     <label>Pick an equipment to assign</label>
