@@ -59,7 +59,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   }
 
   //clear everything out on close
-  public closeModal = () => {
+  private _closeModal = () => {
     this.setState({
         error: "",
         validState: false,
@@ -78,7 +78,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
     await this.props.onCreate(person);
 
-    this.closeModal();
+    this._closeModal();
   };
 
   // once we have either selected or created the equipment we care about
@@ -140,7 +140,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         <Button color="danger" onClick={this.props.openModal}>
           Add Equipment
         </Button>
-        <Modal isOpen={this.props.modal} toggle={this.closeModal} size="lg">
+        <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
           <ModalHeader>Assign Equipment</ModalHeader>
           <ModalBody>
             <div className="container-fluid">

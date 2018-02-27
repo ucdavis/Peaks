@@ -58,23 +58,23 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
       <div className="card">
         <div className="card-body">
                 <h4 className="card-title">Equipment</h4>
-                <EquipmentList equipment={this.state.equipment} onRevoke={this._revokeEquipment} onAdd={this._assignSelectedEquipment} showDetails={this._showDetails} />
+                <EquipmentList equipment={this.state.equipment} onRevoke={this._revokeEquipment} onAdd={this._assignSelectedEquipment} showDetails={this._openDetailsModal} />
                 <AssignEquipment
                     onCreate={this._createAndMaybeAssignEquipment}
                     modal={this.state.assignModal}
                     modalLoading={this.state.assignModalLoading}
-                    openModal={this.openAssignModal}
-                    closeModal={this.closeAssignModal}
+                    openModal={this._openAssignModal}
+                    closeModal={this._closeAssignModal}
                     selectedEquipment={this.state.selectedEquipment}
                     selectEquipment={this._selectEquipment}
                     unassignedEquipment={this.state.unassignedEquipment}
                 />
-                <EquipmentDetails selectedEquipment={this.state.selectedEquipment} modal={this.state.detailsModal} closeModal={this.closeDetailsModal} />
+                <EquipmentDetails selectedEquipment={this.state.selectedEquipment} modal={this.state.detailsModal} closeModal={this._closeDetailsModal} />
         </div>
       </div>
     );
   }
-  public _createAndMaybeAssignEquipment = async (person: IPerson) => {
+  private _createAndMaybeAssignEquipment = async (person: IPerson) => {
       // call API to create a equipment, then assign it if there is a person to assign to
       var equipment = this.state.selectedEquipment;
       //if we are creating a new equipment
@@ -102,6 +102,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
     console.log("index " + index);
     if (index != -1) {
         console.log("changing");
+        //update already existing entry in equipment
         let updateEquipment = this.state.equipment.slice();
         updateEquipment[index] = equipment;
         //since this equipment already exists, we should remove it from our list of unassigned
@@ -122,7 +123,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
     }
   };
 
-  public _revokeEquipment = async (equipment: IEquipment) => {
+  private _revokeEquipment = async (equipment: IEquipment) => {
 
       // call API to actually revoke
       const removed: IEquipment = await this.context.fetch("/equipment/revoke", {
@@ -147,13 +148,14 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
       }
   }
 
-  public _assignSelectedEquipment = (equipment: IEquipment) => {
+    //pulls up assign modal from dropdown action
+  private _assignSelectedEquipment = (equipment: IEquipment) => {
       this.setState({ selectedEquipment: equipment });
       this.openAssignModal();
   }
 
     //open modal and fetch list of unassigned equipment for typeahead
-  public openAssignModal = async () => {
+  private _openAssignModal = async () => {
       this.setState({ assignModal: true, assignModalLoading: true });
       //fetch on first time opening
       if (this.state.unassignedEquipment == null) { 
@@ -167,21 +169,23 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
   };
 
   //clear everything out on close
-  public closeAssignModal = () => {
+  private _closeAssignModal = () => {
       this.setState({
           assignModal: false,
           selectedEquipment: null,
       });
   };
 
-  private _showDetails = (equipment: IEquipment) => {
+    //used in assign equipment 
+  private _selectEquipment = (equipment: IEquipment) => {
+      this.setState({ selectedEquipment: equipment });
+  }
+
+  private _openDetailsModal = (equipment: IEquipment) => {
       this.setState({ detailsModal: true, selectedEquipment: equipment });
   }
-  public closeDetailsModal = () => {
+  private _closeDetailsModal = () => {
       this.setState({ detailsModal: !this.state.detailsModal, selectedEquipment: null });
   }
 
-  public _selectEquipment = (equipment: IEquipment) => {
-      this.setState({ selectedEquipment: equipment });
-  }
 }
