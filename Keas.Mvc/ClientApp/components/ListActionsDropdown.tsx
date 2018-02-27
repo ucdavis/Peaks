@@ -4,6 +4,9 @@ import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reac
 interface IProps {
     onRevoke?: () => void;
     canRevoke?: boolean;
+
+    onAdd?: () => void;
+    canAdd?: boolean;
 }
 
 interface IState {
@@ -22,10 +25,6 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
         this.setState({ isOpen: !this.state.isOpen });
     }
 
-    private _revoke = () => {
-        this.props.onRevoke();
-    }
-
     public render() {
         return (
             <ButtonDropdown isOpen={this.state.isOpen} toggle={this.toggle} dropup>
@@ -33,8 +32,11 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
                     <i className="fa fa-ellipsis-h fa-lg" aria-hidden="true"></i>
                 </DropdownToggle>
                 <DropdownMenu>
-                    <DropdownItem onClick={this._revoke} disabled={!this.props.canRevoke} > Revoke</DropdownItem>
-                    <DropdownItem>Another Action</DropdownItem>
+                    {this.props.canRevoke &&
+                        <DropdownItem onClick={this.props.onRevoke} > Revoke</DropdownItem>
+                    }
+                    {this.props.canAdd &&
+                        <DropdownItem onClick={this.props.onAdd} >Assign</DropdownItem>}
                 </DropdownMenu>
             </ButtonDropdown>
         );

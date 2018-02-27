@@ -6,6 +6,7 @@ import { IEquipment } from "../../Types";
 
 interface IProps {
     equipmentList: IEquipment[];
+    selectedEquipment?: IEquipment;
     loading: boolean;
     onSelect: (equipment: IEquipment) => void;
     onDeselect: () => void;
@@ -40,9 +41,10 @@ export default class SearchEquipment extends React.Component<IProps, {}> {
             <div>
                 <Typeahead
                     labelKey="name"
+                    disabled={this.props.selectedEquipment != null}
+                    selected={this.props.selectedEquipment != null ? [this.props.selectedEquipment] : []}
                     multiple={false}
                     allowNew={true}
-                    autoFocus={true}
                     minLength={2}
                     options={this.props.equipmentList}
                     placeholder="Assign a new equipment"

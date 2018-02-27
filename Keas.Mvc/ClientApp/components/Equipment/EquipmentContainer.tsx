@@ -10,7 +10,9 @@ interface IState {
     loading: boolean;
     equipment: IEquipment[];
     selectedEquipment: IEquipment;
+    searchEquipment: IEquipment[];
     modal: boolean;
+    modalLoading: boolean;
 }
 
 export default class EquipmentContainer extends React.Component<{}, IState> {
@@ -25,9 +27,11 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
 
     this.state = {
         equipment: [],
+        searchEquipment: [],
         selectedEquipment: null,
         loading: true,
         modal: false,
+        modalLoading: true,
     };
   }
   public async componentDidMount() {
@@ -49,13 +53,16 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
       <div className="card">
         <div className="card-body">
                 <h4 className="card-title">Equipment</h4>
-                <EquipmentList equipment={this.state.equipment} onRevoke={this._revokeEquipment} />
+                <EquipmentList equipment={this.state.equipment} onRevoke={this._revokeEquipment} onAdd={this._assignSelectedEquipment} />
                 <AssignEquipment
                     onCreate={this._createAndMaybeAssignEquipment}
-                    toggleModal={this._toggleModal}
                     modal={this.state.modal}
+                    modalLoading={this.state.modalLoading}
+                    openModal={this.openModal}
+                    closeModal={this.closeModal}
                     selectedEquipment={this.state.selectedEquipment}
                     selectEquipment={this._selectEquipment}
+                    unassignedEquipment={this.state.searchEquipment}
                 />
         </div>
       </div>
@@ -123,12 +130,36 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
               //if we are looking at a person
               shallowCopy.splice(index, 1);
           }
-          this.setState({ equipment: shallowCopy });
+          this.setState({ equipment: shallowCopy, searchEquipment: [...this.state.searchEquipment, equipment] });
       }
   }
-  public _toggleModal = () => {
-      this.setState({modal: !this.state.modal});
+
+  public _assignSelectedEquipment = (equipment: IEquipment) => {
+      this.setState({ selectedEquipment: equipment });
+      this.openModal();
   }
+
+    //open modal and fetch list of unassigned equipment for typeahead
+  public openModal = async () => {
+      this.setState({ modal: true, modalLoading: true });
+      if (this.state.searchEquipment == null) {
+          const equipmentList: IEquipment[] = await this.context.fetch(
+              `/equipment/listunassigned?teamId=${this.context.team.id}`);
+          this.setState({ searchEquipment: equipmentList, modalLoading: false });
+      }
+      else {
+          this.setState({ modalLoading: false });
+      }
+  };
+
+  //clear everything out on close
+  public closeModal = () => {
+      this.setState({
+          modal: false,
+          selectedEquipment: null,
+      });
+  };
+
   public _selectEquipment = (equipment: IEquipment) => {
       this.setState({ selectedEquipment: equipment });
   }

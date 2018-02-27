@@ -21,22 +21,24 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 interface IProps {
     onCreate: (person: IPerson) => void;
-    toggleModal: () => void;
     modal: boolean;
+    modalLoading: boolean;
+    openModal: () => void;
+    closeModal: () => void;
     selectEquipment: (equipment: IEquipment) => void;
     selectedEquipment: IEquipment;
+    unassignedEquipment: IEquipment[];
 }
 
 interface IState {
   person: IPerson;
-  equipmentList: IEquipment[];
+  //equipmentList: IEquipment[];
   //selectedEquipment: IEquipment;
   date: any;
   //modal: boolean;
-  loading: boolean;
+  //loading: boolean;
   error: string;
   validState: boolean;
-  validEquipment: boolean;
 }
 
 export default class AssignEquipment extends React.Component<IProps, IState> {
@@ -50,36 +52,19 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       person: null,
-      equipmentList: [],
-      //selectedEquipment: null,
       date: moment().add(3, 'y'),
-      //modal: false,
-      loading: true,
       error: "",
       validState: false,
-      validEquipment: false,
     };
   }
 
   //clear everything out on close
   public closeModal = () => {
     this.setState({
-        //modal: false,
-        //selectedEquipment: null,
         error: "",
-        validEquipment: false,
         validState: false,
       });
-    this.props.toggleModal();
-  };
-
-  public openModal = async () => {
-      this.props.toggleModal();
-      this.setState({ loading: true });
-      const equipmentList: IEquipment[] = await this.context.fetch(
-          `/equipment/listunassigned?teamId=${this.context.team.id}`);
-   
-      this.setState({ equipmentList: equipmentList, loading: false });
+      this.props.closeModal();
   };
 
   // assign the selected equipment even if we have to create it
@@ -105,7 +90,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       if (equipment.name.length > 64)
       {
           this.props.selectEquipment(null);
-          this.setState({ error: "The equipment name you have chosen is too long", validEquipment: false }, this._validateState);
+          this.setState({ error: "The equipment name you have chosen is too long" }, this._validateState);
       }
       //else if (this.props.assignedEquipmentList.findIndex(x => x == equipment.name) != -1)
       //{
@@ -114,17 +99,17 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       else
       {
           this.props.selectEquipment(equipment);
-          this.setState({ error: "", validEquipment: true }, this._validateState);
+          this.setState({ error: ""}, this._validateState);
       }
   };
 
   private _onDeselected = () => {
       this.props.selectEquipment(null);
-      this.setState({ error: "", validEquipment: false }, this._validateState);
+      this.setState({ error: ""}, this._validateState);
   }
 
   private _onSelectPerson = (person: IPerson) => {
-      this.setState({ person });
+      this.setState({ person }, this._validateState);
   };
 
 
@@ -152,7 +137,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     // TODO: use expiration date as part of assignment
     return (
       <div>
-        <Button color="danger" onClick={this.openModal}>
+        <Button color="danger" onClick={this.props.openModal}>
           Add Equipment
         </Button>
         <Modal isOpen={this.props.modal} toggle={this.closeModal} size="lg">
@@ -169,8 +154,9 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                 <div className="col-sm">
                     <label>Pick an equipment to assign</label>
                     <SearchEquipment
-                        equipmentList={this.state.equipmentList}
-                        loading={this.state.loading}
+                        equipmentList={this.props.unassignedEquipment}
+                        selectedEquipment={this.props.selectedEquipment}
+                        loading={this.props.modalLoading}
                         onSelect={this._onSelected}
                         onDeselect={this._onDeselected} />
                     {this.state.error}
@@ -178,7 +164,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
               </div>
               <div>
                 <div className="row">
-                    {this.state.validEquipment &&
+                    {this.props.selectedEquipment != null &&
                         <div className="col-sm">
                                     <label>Set the expiration date</label>
                                     <DatePicker
