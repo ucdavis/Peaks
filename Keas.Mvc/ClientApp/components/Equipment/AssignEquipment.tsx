@@ -144,36 +144,33 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
           <ModalHeader>Assign Equipment</ModalHeader>
           <ModalBody>
             <div className="container-fluid">
-                        <form>
-                            <div className="form-group">
-                                <label htmlFor="assignto">Assign To</label>
-                                <AssignPerson onSelect={this._onSelectPerson} />
-                            </div>
-                        </form>
-              <div className="row">
-                <div className="col-sm">
-                    <label>Pick an equipment to assign</label>
-                    <SearchEquipment
-                        equipmentList={this.props.unassignedEquipment}
-                        selectedEquipment={this.props.selectedEquipment}
-                        loading={this.props.modalLoading}
-                        onSelect={this._onSelected}
-                        onDeselect={this._onDeselected} />
-                    {this.state.error}
-                </div>
-              </div>
-              <div>
-                <div className="row">
+                <form>
+                    <div className="form-group">
+                        <label htmlFor="assignto">Assign To</label>
+                        <AssignPerson onSelect={this._onSelectPerson} />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Pick an equipment to assign</label>
+                        <SearchEquipment
+                            equipmentList={this.props.unassignedEquipment}
+                            selectedEquipment={this.props.selectedEquipment}
+                            loading={this.props.modalLoading}
+                            onSelect={this._onSelected}
+                            onDeselect={this._onDeselected} />
+                        {this.state.error}
+                    </div>
+
+
                     {this.props.selectedEquipment != null &&
-                        <div className="col-sm">
-                                    <label>Set the expiration date</label>
-                                    <DatePicker
-                                        selected={this.state.date}
-                                        onChange={this._changeDate}
-                                    />
+                        <div className="form-group">
+                            <label>Set the expiration date</label>
+                            <DatePicker
+                                selected={this.state.date}
+                                onChange={this._changeDate}
+                            />
                         </div>}
-                </div>
-              </div>
+                </form>
             </div>
           </ModalBody>
           <ModalFooter>

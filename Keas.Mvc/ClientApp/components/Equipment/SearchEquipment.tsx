@@ -35,26 +35,42 @@ export default class SearchEquipment extends React.Component<IProps, {}> {
     };
 
     public render() {
+        if (this.props.selectedEquipment != null) {
+            return this._renderExistingEquipment();
+        }
+        else {
+            return this._renderSelectEquipment();
+        }
+    }
+
+    private _renderSelectEquipment = () => {
         if (this.props.loading) return <div>Loading ... </div>;
 
         return (
-            <div>
-                <Typeahead
-                    labelKey="name"
-                    disabled={this.props.selectedEquipment != null}
-                    selected={this.props.selectedEquipment != null ? [this.props.selectedEquipment] : []}
-                    multiple={false}
-                    allowNew={true}
-                    minLength={2}
-                    options={this.props.equipmentList}
-                    placeholder="Assign a new equipment"
-                    newSelectionPrefix="Create a new equipment"
-                    onChange={(selected) => {
-                        this._onSelected(selected[0]);
-                    }}
-                />
-            </div>
+            <Typeahead
+                labelKey="name"
+                multiple={false}
+                allowNew={true}
+                minLength={2}
+                options={this.props.equipmentList}
+                placeholder="Assign a new equipment"
+                newSelectionPrefix="Create a new equipment"
+                onChange={(selected) => {
+                    this._onSelected(selected[0]);
+                }}
+            />
 
         );
     }
+
+    private _renderExistingEquipment = () => {
+        return (
+            <input
+                type="text"
+                className="form-control"
+                value={this.props.selectedEquipment.name}
+                disabled={true}
+            />
+        );
+    };
 }
