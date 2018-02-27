@@ -69,7 +69,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
                     selectEquipment={this._selectEquipment}
                     unassignedEquipment={this.state.unassignedEquipment}
                 />
-                <EquipmentDetails selectedEquipment={this.state.selectedEquipment} modal={this.state.detailsModal} toggleModal={this.toggleDetailsModal} />
+                <EquipmentDetails selectedEquipment={this.state.selectedEquipment} modal={this.state.detailsModal} closeModal={this.closeDetailsModal} />
         </div>
       </div>
     );
@@ -177,8 +177,8 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
   private _showDetails = (equipment: IEquipment) => {
       this.setState({ detailsModal: true, selectedEquipment: equipment });
   }
-  public toggleDetailsModal = () => {
-      this.setState({ detailsModal: !this.state.detailsModal });
+  public closeDetailsModal = () => {
+      this.setState({ detailsModal: !this.state.detailsModal, selectedEquipment: null });
   }
 
   public _selectEquipment = (equipment: IEquipment) => {

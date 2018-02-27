@@ -14,7 +14,7 @@ import { IEquipment } from "ClientApp/Types";
 
 interface IProps {
     modal: boolean;
-    toggleModal: () => void;
+    closeModal: () => void;
     selectedEquipment: IEquipment;
 }
 
@@ -27,7 +27,7 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
         const equipment = this.props.selectedEquipment;
         return (
             <div>
-                <Modal isOpen={this.props.modal} toggle={this.props.toggleModal} size="lg">
+                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg">
                     <ModalHeader>Details for {equipment.name}</ModalHeader>
                     <ModalBody>
                         <div className="container-fluid">
@@ -39,10 +39,12 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
                                 <div className="col-md-4"><label>Serial Number</label></div>
                                 <div className="col-md-4">{equipment.serialNumber}</div>
                             </div>
-                            <div className="row">
-                                <div className="col-md-4"><label>Expires at</label></div>
-                                <div className="col-md-4">{equipment.assignment.expiresAt}</div>
-                            </div>
+                            {equipment.assignment != null &&
+                                <div className="row">
+                                    <div className="col-md-4"><label>Expires at</label></div>
+                                    <div className="col-md-4">{equipment.assignment.expiresAt}</div>
+                                </div>
+                            }
                             <div className="row">
                                 <div className="col-md-4"><label>Make</label></div>
                                 <div className="col-md-4">{equipment.make}</div>
