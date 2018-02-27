@@ -7,6 +7,8 @@ interface IProps {
 
     onAdd?: () => void;
     canAdd?: boolean;
+
+    showDetails?: () => void;
 }
 
 interface IState {
@@ -37,6 +39,8 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
                     }
                     {this.props.canAdd &&
                         <DropdownItem onClick={this.props.onAdd} >Assign</DropdownItem>}
+                    {this.props.showDetails != null &&
+                        <DropdownItem onClick={this.props.showDetails} > Show Details</DropdownItem>}
                 </DropdownMenu>
             </ButtonDropdown>
         );

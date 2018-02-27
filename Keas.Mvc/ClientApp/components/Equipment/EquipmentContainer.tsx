@@ -5,6 +5,7 @@ import { AppContext, IEquipment, IEquipmentAttribute, IPerson } from "../../Type
 
 import AssignEquipment from "./AssignEquipment";
 import EquipmentList from "./EquipmentList";
+import EquipmentDetails from "./EquipmentDetails";
 
 interface IState {
     loading: boolean;
@@ -13,8 +14,9 @@ interface IState {
     //unassigned equipment for this team, used in modal's search
     unassignedEquipment: IEquipment[];
     selectedEquipment: IEquipment;
-    modal: boolean;
-    modalLoading: boolean;
+    assignModal: boolean;
+    assignModalLoading: boolean;
+    detailsModal: boolean;
 }
 
 export default class EquipmentContainer extends React.Component<{}, IState> {
@@ -32,8 +34,9 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
         unassignedEquipment: [],
         selectedEquipment: null,
         loading: true,
-        modal: false,
-        modalLoading: true,
+        assignModal: false,
+        assignModalLoading: true,
+        detailsModal: false,
     };
   }
   public async componentDidMount() {
@@ -55,17 +58,18 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
       <div className="card">
         <div className="card-body">
                 <h4 className="card-title">Equipment</h4>
-                <EquipmentList equipment={this.state.equipment} onRevoke={this._revokeEquipment} onAdd={this._assignSelectedEquipment} />
+                <EquipmentList equipment={this.state.equipment} onRevoke={this._revokeEquipment} onAdd={this._assignSelectedEquipment} showDetails={this._showDetails} />
                 <AssignEquipment
                     onCreate={this._createAndMaybeAssignEquipment}
-                    modal={this.state.modal}
-                    modalLoading={this.state.modalLoading}
-                    openModal={this.openModal}
-                    closeModal={this.closeModal}
+                    modal={this.state.assignModal}
+                    modalLoading={this.state.assignModalLoading}
+                    openModal={this.openAssignModal}
+                    closeModal={this.closeAssignModal}
                     selectedEquipment={this.state.selectedEquipment}
                     selectEquipment={this._selectEquipment}
                     unassignedEquipment={this.state.unassignedEquipment}
                 />
+                <EquipmentDetails selectedEquipment={this.state.selectedEquipment} modal={this.state.detailsModal} toggleModal={this.toggleDetailsModal} />
         </div>
       </div>
     );
@@ -145,30 +149,37 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
 
   public _assignSelectedEquipment = (equipment: IEquipment) => {
       this.setState({ selectedEquipment: equipment });
-      this.openModal();
+      this.openAssignModal();
   }
 
     //open modal and fetch list of unassigned equipment for typeahead
-  public openModal = async () => {
-      this.setState({ modal: true, modalLoading: true });
+  public openAssignModal = async () => {
+      this.setState({ assignModal: true, assignModalLoading: true });
       //fetch on first time opening
       if (this.state.unassignedEquipment == null) { 
           const equipmentList: IEquipment[] = await this.context.fetch(
               `/equipment/listunassigned?teamId=${this.context.team.id}`);
-          this.setState({ unassignedEquipment: equipmentList, modalLoading: false });
+          this.setState({ unassignedEquipment: equipmentList, assignModalLoading: false });
       }
       else {
-          this.setState({ modalLoading: false });
+          this.setState({ assignModalLoading: false });
       }
   };
 
   //clear everything out on close
-  public closeModal = () => {
+  public closeAssignModal = () => {
       this.setState({
-          modal: false,
+          assignModal: false,
           selectedEquipment: null,
       });
   };
+
+  private _showDetails = (equipment: IEquipment) => {
+      this.setState({ detailsModal: true, selectedEquipment: equipment });
+  }
+  public toggleDetailsModal = () => {
+      this.setState({ detailsModal: !this.state.detailsModal });
+  }
 
   public _selectEquipment = (equipment: IEquipment) => {
       this.setState({ selectedEquipment: equipment });

@@ -15,7 +15,7 @@ namespace Keas.Mvc.Helpers
             if (context.Users.Any()) return; // already initialzied
 
             var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
-            var jason = new User { Id = "123222", Name = "Jason", Email = "jsylvestre@email.com" };
+            var jason = new User { Id = "123222", Name = "Jason", Email = "jason@email.com" };
             var caes = new Team { Id = 1, Name = "CAESDO" };
 
             context.Users.Add(scott);
@@ -58,7 +58,7 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment };
+            var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment, SerialNumber = "XYZ" };
 
             context.AccessAssignments.Add(access);
             context.AccessAssignments.Add(access2);
@@ -72,7 +72,7 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var equip2 = new Equipment { Name = "desktop", Team = caes, Assignment = equip2Assignment };
+            var equip2 = new Equipment { Name = "desktop", Team = caes, Assignment = equip2Assignment, SerialNumber = "ABC" };
 
             context.Equipment.Add(equip2);
             

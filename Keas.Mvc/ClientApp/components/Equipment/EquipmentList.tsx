@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import EquipmentDetail from "./EquipmentDetail";
+import EquipmentListItem from "./EquipmentListItem";
 
 import { IEquipment } from "../../Types";
 
@@ -8,16 +8,18 @@ interface IProps {
     equipment: IEquipment[];
     onRevoke: (equipment: IEquipment) => void;
     onAdd: (equipment: IEquipment) => void;
+    showDetails: (equipment: IEquipment) => void;
 }
 
 export default class EquipmentList extends React.Component<IProps, {}> {
   public render() {
       const equipment = this.props.equipment.map(x => (
-          <EquipmentDetail
+          <EquipmentListItem
               key={x.id.toString()}
               equipmentEntity={x}
               onRevoke={this.props.onRevoke}
               onAdd={this.props.onAdd}
+              showDetails={this.props.showDetails}
           />
     ));
     return (
