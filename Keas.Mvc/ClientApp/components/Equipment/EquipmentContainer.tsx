@@ -9,6 +9,8 @@ import EquipmentList from "./EquipmentList";
 interface IState {
     loading: boolean;
     equipment: IEquipment[];
+    selectedEquipment: IEquipment;
+    modal: boolean;
 }
 
 export default class EquipmentContainer extends React.Component<{}, IState> {
@@ -23,7 +25,9 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
 
     this.state = {
         equipment: [],
-      loading: true
+        selectedEquipment: null,
+        loading: true,
+        modal: false,
     };
   }
   public async componentDidMount() {
@@ -46,14 +50,20 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
         <div className="card-body">
                 <h4 className="card-title">Equipment</h4>
                 <EquipmentList equipment={this.state.equipment} onRevoke={this._revokeEquipment} />
-                <AssignEquipment onCreate={this._createAndMaybeAssignEquipment} />
+                <AssignEquipment
+                    onCreate={this._createAndMaybeAssignEquipment}
+                    toggleModal={this._toggleModal}
+                    modal={this.state.modal}
+                    selectedEquipment={this.state.selectedEquipment}
+                    selectEquipment={this._selectEquipment}
+                />
         </div>
       </div>
     );
   }
-  public _createAndMaybeAssignEquipment = async (equipment: IEquipment, person: IPerson) => {
-    // call API to create a equipment, then assign it if there is a person to assign to
-
+  public _createAndMaybeAssignEquipment = async (person: IPerson) => {
+      // call API to create a equipment, then assign it if there is a person to assign to
+      var equipment = this.state.selectedEquipment;
       //if we are creating a new equipment
       if (equipment.id === 0) {
           equipment.teamId = this.context.team.id;
@@ -115,5 +125,11 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
           }
           this.setState({ equipment: shallowCopy });
       }
+  }
+  public _toggleModal = () => {
+      this.setState({modal: !this.state.modal});
+  }
+  public _selectEquipment = (equipment: IEquipment) => {
+      this.setState({ selectedEquipment: equipment });
   }
 }

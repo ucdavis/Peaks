@@ -20,15 +20,19 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 
 interface IProps {
-    onCreate: (equipment: IEquipment, person: IPerson) => void;
+    onCreate: (person: IPerson) => void;
+    toggleModal: () => void;
+    modal: boolean;
+    selectEquipment: (equipment: IEquipment) => void;
+    selectedEquipment: IEquipment;
 }
 
 interface IState {
   person: IPerson;
   equipmentList: IEquipment[];
-  selectedEquipment: IEquipment;
+  //selectedEquipment: IEquipment;
   date: any;
-  modal: boolean;
+  //modal: boolean;
   loading: boolean;
   error: string;
   validState: boolean;
@@ -47,9 +51,9 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     this.state = {
       person: null,
       equipmentList: [],
-      selectedEquipment: null,
+      //selectedEquipment: null,
       date: moment().add(3, 'y'),
-      modal: false,
+      //modal: false,
       loading: true,
       error: "",
       validState: false,
@@ -60,16 +64,18 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   //clear everything out on close
   public closeModal = () => {
     this.setState({
-        modal: false,
-        selectedEquipment: null,
+        //modal: false,
+        //selectedEquipment: null,
         error: "",
         validEquipment: false,
         validState: false,
-    });
+      });
+    this.props.toggleModal();
   };
 
   public openModal = async () => {
-      this.setState({ modal: true, loading: true });
+      this.props.toggleModal();
+      this.setState({ loading: true });
       const equipmentList: IEquipment[] = await this.context.fetch(
           `/equipment/listunassigned?teamId=${this.context.team.id}`);
    
@@ -80,13 +86,12 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   private _assignSelected = async () => {
 
     if (!this.state.validState) return;
-    console.log("assign selected", this.state.selectedEquipment);
 
     const person = this.context.person
         ? this.context.person
         : this.state.person;
 
-    await this.props.onCreate(this.state.selectedEquipment, person);
+    await this.props.onCreate(person);
 
     this.closeModal();
   };
@@ -99,7 +104,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       //TODO: more validation of name
       if (equipment.name.length > 64)
       {
-          this.setState({ selectedEquipment: null, error: "The equipment name you have chosen is too long", validEquipment: false }, this._validateState);
+          this.props.selectEquipment(null);
+          this.setState({ error: "The equipment name you have chosen is too long", validEquipment: false }, this._validateState);
       }
       //else if (this.props.assignedEquipmentList.findIndex(x => x == equipment.name) != -1)
       //{
@@ -107,12 +113,14 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       //}
       else
       {
-          this.setState({ selectedEquipment: equipment, error: "", validEquipment: true }, this._validateState);
+          this.props.selectEquipment(equipment);
+          this.setState({ error: "", validEquipment: true }, this._validateState);
       }
   };
 
   private _onDeselected = () => {
-      this.setState({ selectedEquipment: null, error: "", validEquipment: false }, this._validateState);
+      this.props.selectEquipment(null);
+      this.setState({ error: "", validEquipment: false }, this._validateState);
   }
 
   private _onSelectPerson = (person: IPerson) => {
@@ -122,7 +130,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   private _validateState = () => {
       let valid = true;
-      if (this.state.selectedEquipment == null)
+      if (this.props.selectedEquipment == null)
           valid = false;
       else if (this.state.error != "")
           valid = false;
@@ -147,7 +155,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         <Button color="danger" onClick={this.openModal}>
           Add Equipment
         </Button>
-        <Modal isOpen={this.state.modal} toggle={this.closeModal} size="lg">
+        <Modal isOpen={this.props.modal} toggle={this.closeModal} size="lg">
           <ModalHeader>Assign Equipment</ModalHeader>
           <ModalBody>
             <div className="container-fluid">
