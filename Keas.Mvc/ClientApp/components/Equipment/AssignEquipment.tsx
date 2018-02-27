@@ -177,7 +177,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
               <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState}>
               Go!
             </Button>{" "}
-              <Button color="secondary" onClick={this.closeModal}>
+              <Button color="secondary" onClick={this._closeModal}>
               Close
             </Button>
           </ModalFooter>

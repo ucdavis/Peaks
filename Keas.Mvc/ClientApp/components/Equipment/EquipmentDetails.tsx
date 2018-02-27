@@ -56,7 +56,7 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="secondary" onClick={this.props.toggleModal}>
+                        <Button color="secondary" onClick={this.props.closeModal}>
                             Close
                         </Button>
                     </ModalFooter>

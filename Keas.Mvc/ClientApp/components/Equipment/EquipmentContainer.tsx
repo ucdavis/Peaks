@@ -151,14 +151,14 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
     //pulls up assign modal from dropdown action
   private _assignSelectedEquipment = (equipment: IEquipment) => {
       this.setState({ selectedEquipment: equipment });
-      this.openAssignModal();
+      this._openAssignModal();
   }
 
     //open modal and fetch list of unassigned equipment for typeahead
   private _openAssignModal = async () => {
       this.setState({ assignModal: true, assignModalLoading: true });
       //fetch on first time opening
-      if (this.state.unassignedEquipment == null) { 
+      if (this.state.unassignedEquipment.length < 1) { 
           const equipmentList: IEquipment[] = await this.context.fetch(
               `/equipment/listunassigned?teamId=${this.context.team.id}`);
           this.setState({ unassignedEquipment: equipmentList, assignModalLoading: false });
