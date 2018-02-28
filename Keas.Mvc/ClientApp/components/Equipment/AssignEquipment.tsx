@@ -32,11 +32,7 @@ interface IProps {
 
 interface IState {
   person: IPerson;
-  //equipmentList: IEquipment[];
-  //selectedEquipment: IEquipment;
   date: any;
-  //modal: boolean;
-  //loading: boolean;
   error: string;
   validState: boolean;
 }
