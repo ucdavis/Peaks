@@ -1,20 +1,35 @@
 ﻿import PropTypes from "prop-types";
 import * as React from "react";
-import { Typeahead } from "react-bootstrap-typeahead";
+import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
-import { IEquipment } from "../../Types";
+import { IEquipment, AppContext } from "../../Types";
 
 interface IProps {
-    equipmentList: IEquipment[];
     selectedEquipment?: IEquipment;
-    loading: boolean;
     onSelect: (equipment: IEquipment) => void;
     onDeselect: () => void;
 }
 
-// Search for existing equipment then send selection back to parent
-export default class SearchEquipment extends React.Component<IProps, {}> {
+interface IState {
+    isSearchLoading: boolean;
+    equipment: IEquipment[];
+}
 
+// Search for existing equipment then send selection back to parent
+export default class SearchEquipment extends React.Component<IProps, IState> {
+    public static contextTypes = {
+        fetch: PropTypes.func,
+        person: PropTypes.object,
+        team: PropTypes.object
+    };
+    public context: AppContext;
+    constructor(props) {
+        super(props);
+        this.state = {
+            isSearchLoading: false,
+            equipment: [],
+        };
+    }
     private _onSelected = (equipment: IEquipment) => {
         //onChange is called when deselected
         if (equipment == null || equipment.name == null) {
@@ -26,7 +41,7 @@ export default class SearchEquipment extends React.Component<IProps, {}> {
                 name: equipment.name,
                 id: equipment.teamId ? equipment.id : 0,
                 teamId: equipment.teamId ? equipment.teamId : 0,
-                serialNumber: "12345",
+                serialNumber: equipment.serialNumber ? equipment.serialNumber : "DEFAULT",
                 make: "Make",
                 model: "Model",
                 type: "Phone"
@@ -44,22 +59,46 @@ export default class SearchEquipment extends React.Component<IProps, {}> {
     }
 
     private _renderSelectEquipment = () => {
-        if (this.props.loading) return <div>Loading ... </div>;
 
         return (
-            <Typeahead
-                labelKey="name"
-                multiple={false}
-                allowNew={true}
-                minLength={2}
-                options={this.props.equipmentList}
-                placeholder="Assign a new equipment"
-                newSelectionPrefix="Create a new equipment"
-                onChange={(selected) => {
-                    this._onSelected(selected[0]);
-                }}
-            />
-
+            <div>
+                <AsyncTypeahead
+                    isLoading={this.state.isSearchLoading}
+                    minLength={3}
+                    placeholder="Search for equipment by name or by serial number"
+                    labelKey="name"
+                    allowNew={true}
+                    renderMenuItemChildren={(option, props, index) => (
+                        <div>
+                        <Highlighter key="name" search={props.text}>
+                                {option[props.labelKey]}
+                        </Highlighter>
+                            <div key="serialNumber">
+                            <small>
+                                Serial Number: {option.serialNumber}
+                            </small>
+                            </div>
+                        </div>
+                    )}
+                    onSearch={async query => {
+                        this.setState({ isSearchLoading: true });
+                        const equipment = await this.context.fetch(
+                            `/equipment/search?teamId=${this.context.team.id}&q=${query}`
+                        );
+                        this.setState({
+                            isSearchLoading: false,
+                            equipment
+                        });
+                    }}
+                    onChange={selected => {
+                        if (selected && selected.length === 1) {
+                            //this.setState({ selectedEquipment: selected[0] });
+                            this._onSelected(selected[0]);
+                        }
+                    }}
+                    options={this.state.equipment}
+                />
+            </div>
         );
     }
 

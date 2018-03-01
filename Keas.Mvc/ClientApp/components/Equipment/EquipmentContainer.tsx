@@ -11,11 +11,8 @@ interface IState {
     loading: boolean;
     //either equipment assigned to this person, or all team equipment
     equipment: IEquipment[];
-    //unassigned equipment for this team, used in modal's search
-    unassignedEquipment: IEquipment[];
     selectedEquipment: IEquipment;
     assignModal: boolean;
-    assignModalLoading: boolean;
     detailsModal: boolean;
 }
 
@@ -31,11 +28,9 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
 
     this.state = {
         equipment: [],
-        unassignedEquipment: [],
         selectedEquipment: null,
         loading: true,
         assignModal: false,
-        assignModalLoading: true,
         detailsModal: false,
     };
   }
@@ -62,12 +57,10 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
                 <AssignEquipment
                     onCreate={this._createAndMaybeAssignEquipment}
                     modal={this.state.assignModal}
-                    modalLoading={this.state.assignModalLoading}
                     openModal={this._openAssignModal}
                     closeModal={this._closeAssignModal}
                     selectedEquipment={this.state.selectedEquipment}
                     selectEquipment={this._selectEquipment}
-                    unassignedEquipment={this.state.unassignedEquipment}
                 />
                 <EquipmentDetails selectedEquipment={this.state.selectedEquipment} modal={this.state.detailsModal} closeModal={this._closeDetailsModal} />
         </div>
@@ -105,15 +98,10 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
         //update already existing entry in equipment
         let updateEquipment = [...this.state.equipment];
         updateEquipment[index] = equipment;
-        //since this equipment already exists, we should remove it from our list of unassigned
-        let unassignedIndex = this.state.unassignedEquipment.findIndex(x => x.id == equipment.id);
-        let unassignedCopy = [...this.state.unassignedEquipment];
-        unassignedCopy.splice(unassignedIndex, 1);
 
         this.setState({
             ...this.state,
             equipment: updateEquipment,
-            unassignedEquipment: unassignedCopy,
         });
     }
     else {
@@ -143,8 +131,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
               //if we are looking at a person, remove from our list of equipment
               shallowCopy.splice(index, 1);
           }
-          //either way, update equipment and add this newly revoked equipment to our list of unassigned for searching
-          this.setState({ equipment: shallowCopy, unassignedEquipment: [...this.state.unassignedEquipment, equipment] });
+          this.setState({ equipment: shallowCopy });
       }
   }
 
@@ -154,18 +141,8 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
       this._openAssignModal();
   }
 
-    //open modal and fetch list of unassigned equipment for typeahead
   private _openAssignModal = async () => {
-      this.setState({ assignModal: true, assignModalLoading: true });
-      //fetch on first time opening
-      if (this.state.unassignedEquipment.length < 1) { 
-          const equipmentList: IEquipment[] = await this.context.fetch(
-              `/equipment/listunassigned?teamId=${this.context.team.id}`);
-          this.setState({ unassignedEquipment: equipmentList, assignModalLoading: false });
-      }
-      else {
-          this.setState({ assignModalLoading: false });
-      }
+      this.setState({ assignModal: true});
   };
 
   //clear everything out on close

@@ -25,6 +25,17 @@ namespace Keas.Mvc.Controllers
             return Team;
         }
 
+        public async Task<IActionResult> Search(int teamId, string q)
+        {
+            var comparison = StringComparison.InvariantCultureIgnoreCase;
+            var equipment = await _context.Equipment
+                .Where(x => x.Team.Id == teamId && x.Active && x.Assignment == null &&
+                (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
+                .AsNoTracking().ToListAsync();
+
+            return Json(equipment);
+        }
+
         public async Task<IActionResult> ListAssigned(int id, int teamId)
         {
             var equipmentAssignments = await _context.Equipment.Where(x => x.Assignment.PersonId == id && x.TeamId == teamId).Include(x => x.Assignment).AsNoTracking().ToArrayAsync();
