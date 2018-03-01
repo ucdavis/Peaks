@@ -100,10 +100,10 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
 
     let index = this.state.equipment.findIndex(x => x.id == equipment.id);
     console.log("index " + index);
-    if (index != -1) {
+    if (index !== -1) {
         console.log("changing");
         //update already existing entry in equipment
-        let updateEquipment = this.state.equipment.slice();
+        let updateEquipment = [...this.state.equipment];
         updateEquipment[index] = equipment;
         //since this equipment already exists, we should remove it from our list of unassigned
         let unassignedIndex = this.state.unassignedEquipment.findIndex(x => x.id == equipment.id);

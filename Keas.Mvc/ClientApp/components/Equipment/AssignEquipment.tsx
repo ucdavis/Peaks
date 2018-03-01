@@ -111,11 +111,11 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   private _validateState = () => {
       let valid = true;
-      if (this.props.selectedEquipment == null)
+      if (!this.props.selectedEquipment)
           valid = false;
-      else if (this.state.error != "")
+      else if (this.state.error !== "")
           valid = false;
-      else if (this.state.date == null)
+      else if (!this.state.date)
           valid = false;
       else if (moment().isSameOrAfter(this.state.date))
           valid = false;
