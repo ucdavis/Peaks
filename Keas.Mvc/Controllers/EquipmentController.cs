@@ -39,6 +39,14 @@ namespace Keas.Mvc.Controllers
 
             return Json(equipments);
         }
+
+        public async Task<IActionResult> ListUnassigned(int teamId)
+        {
+            var equipment = await _context.Equipment.Where(x => x.TeamId == teamId && x.EquipmentAssignmentId == null).Include(x => x.Assignment).AsNoTracking().ToArrayAsync();
+
+            return Json(equipment);
+        }
+
         public async Task<IActionResult> Create([FromBody]Equipment equipment)
         {
             // TODO Make sure user has permissions
@@ -57,6 +65,8 @@ namespace Keas.Mvc.Controllers
             {
                 var equipment = await _context.Equipment.SingleAsync(x => x.Id == equipmentId);
                 equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.UtcNow.AddYears(3) };
+
+                _context.EquipmentAssignments.Add(equipment.Assignment);
 
                 await _context.SaveChangesAsync();
                 return Json(equipment);

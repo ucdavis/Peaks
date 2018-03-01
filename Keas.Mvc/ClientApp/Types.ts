@@ -56,11 +56,11 @@ export interface IEquipment {
     teamId: number;
     name: string;
     serialNumber: string;
-    //make: string;
-    //model: string;
-    //type: string;
+    make: string;
+    model: string;
+    type: string;
     assignment?: IEquipmentAssignment;
-    attributes?: IEquipmentAttribute[];
+    //attributes?: IEquipmentAttribute[];
 }
 
 export interface IEquipmentAssignment {

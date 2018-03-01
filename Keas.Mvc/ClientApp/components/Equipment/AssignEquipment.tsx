@@ -1,87 +1,184 @@
 import PropTypes from "prop-types";
 import * as React from "react";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ListGroup,
+  ListGroupItem
+} from "reactstrap";
 
-import { AppContext, IEquipment, IPerson } from "../../Types";
+import * as moment from "moment";
+import DatePicker from "react-datepicker";
+import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson } from "../../Types";
+import SearchEquipment from "./SearchEquipment";
 import AssignPerson from "../Biographical/AssignPerson";
 
+import 'react-datepicker/dist/react-datepicker.css';
+
+
 interface IProps {
-  onCreate: (equipment: IEquipment, person: IPerson) => void;
+    onCreate: (person: IPerson) => void;
+    modal: boolean;
+    modalLoading: boolean;
+    openModal: () => void;
+    closeModal: () => void;
+    selectEquipment: (equipment: IEquipment) => void;
+    selectedEquipment: IEquipment;
+    unassignedEquipment: IEquipment[];
 }
 
 interface IState {
-  modal: boolean;
   person: IPerson;
+  date: any;
+  error: string;
+  validState: boolean;
 }
 
 export default class AssignEquipment extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    person: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+    public static contextTypes = {
+        fetch: PropTypes.func,
+        person: PropTypes.object,
+        team: PropTypes.object
+    };
+    public context: AppContext;
   constructor(props) {
     super(props);
     this.state = {
-      modal: false,
-      person: null
+      person: null,
+      date: moment().add(3, 'y'),
+      error: "",
+      validState: false,
     };
   }
 
-  public toggle = () => {
+  //clear everything out on close
+  private _closeModal = () => {
     this.setState({
-      modal: !this.state.modal
-    });
+        error: "",
+        validState: false,
+      });
+      this.props.closeModal();
   };
 
-  public createEquipment = async () => {
+  // assign the selected equipment even if we have to create it
+  private _assignSelected = async () => {
+
+    if (!this.state.validState) return;
+
     const person = this.context.person
-      ? this.context.person
-      : this.state.person;
+        ? this.context.person
+        : this.state.person;
 
-    const equipment = {
-      id: 0,
-      name: "newequipment" + new Date().getUTCSeconds(),
-      serialNumber: "SN123",
-      teamId: 1
-    };
+    await this.props.onCreate(person);
 
-    await this.props.onCreate(equipment, person);
-
-    // TODO: check for success
-    this.setState({ modal: false });
+    this._closeModal();
   };
+
+  // once we have either selected or created the equipment we care about
+  private _onSelected = (equipment: IEquipment) => {
+      console.log("selected in assign", equipment);
+      //if this equipment is not already assigned
+
+      //TODO: more validation of name
+      if (equipment.name.length > 64)
+      {
+          this.props.selectEquipment(null);
+          this.setState({ error: "The equipment name you have chosen is too long" }, this._validateState);
+      }
+      //else if (this.props.assignedEquipmentList.findIndex(x => x == equipment.name) != -1)
+      //{
+      //    this.setState({ selectedEquipment: null, error: "The equipment you have chosen is already assigned to this user", validEquipment: false }, this._validateState);
+      //}
+      else
+      {
+          this.props.selectEquipment(equipment);
+          this.setState({ error: ""}, this._validateState);
+      }
+  };
+
+  private _onDeselected = () => {
+      this.props.selectEquipment(null);
+      this.setState({ error: ""}, this._validateState);
+  }
+
+  private _onSelectPerson = (person: IPerson) => {
+      this.setState({ person }, this._validateState);
+  };
+
+
+  private _validateState = () => {
+      let valid = true;
+      if (!this.props.selectedEquipment)
+          valid = false;
+      else if (this.state.error !== "")
+          valid = false;
+      else if (!this.state.date)
+          valid = false;
+      else if (moment().isSameOrAfter(this.state.date))
+          valid = false;
+      this.setState({ validState: valid });
+
+  }
+
+  private _changeDate = (newDate) => {
+      this.setState({ date: newDate }, this._validateState);
+  }
+
   public render() {
+    // TODO: move datepicker into new component, try to make it look nice
+    // TODO: only show step 2 if state.selectedEquipment is truthy
+    // TODO: use expiration date as part of assignment
     return (
       <div>
-        <Button color="danger" onClick={this.toggle}>
+        <Button color="danger" onClick={this.props.openModal}>
           Add Equipment
         </Button>
-        <Modal isOpen={this.state.modal} toggle={this.toggle}>
+        <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
           <ModalHeader>Assign Equipment</ModalHeader>
           <ModalBody>
-            <form>
-              <div className="form-group">
-                <label htmlFor="assignto">Assign To</label>
-                <AssignPerson onSelect={this._onSelect} />
-              </div>
-            </form>
+            <div className="container-fluid">
+                <form>
+                    <div className="form-group">
+                        <label htmlFor="assignto">Assign To</label>
+                        <AssignPerson onSelect={this._onSelectPerson} />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Pick an equipment to assign</label>
+                        <SearchEquipment
+                            equipmentList={this.props.unassignedEquipment}
+                            selectedEquipment={this.props.selectedEquipment}
+                            loading={this.props.modalLoading}
+                            onSelect={this._onSelected}
+                            onDeselect={this._onDeselected} />
+                        {this.state.error}
+                    </div>
+
+
+                    {this.props.selectedEquipment != null &&
+                        <div className="form-group">
+                            <label>Set the expiration date</label>
+                            <DatePicker
+                                selected={this.state.date}
+                                onChange={this._changeDate}
+                            />
+                        </div>}
+                </form>
+            </div>
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.createEquipment}>
-              Add & Assign New Equipment
+              <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState}>
+              Go!
             </Button>{" "}
-            <Button color="secondary" onClick={this.toggle}>
-              Cancel
+              <Button color="secondary" onClick={this._closeModal}>
+              Close
             </Button>
           </ModalFooter>
         </Modal>
       </div>
     );
   }
-
-  private _onSelect = (person: IPerson) => {
-    this.setState({ person });
-  };
 }
