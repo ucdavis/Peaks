@@ -22,12 +22,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 interface IProps {
     onCreate: (person: IPerson) => void;
     modal: boolean;
-    modalLoading: boolean;
     openModal: () => void;
     closeModal: () => void;
     selectEquipment: (equipment: IEquipment) => void;
     selectedEquipment: IEquipment;
-    unassignedEquipment: IEquipment[];
 }
 
 interface IState {
@@ -111,7 +109,9 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   private _validateState = () => {
       let valid = true;
-      if (!this.props.selectedEquipment)
+      if (!this.state.person && !this.context.person)
+          valid = false;
+      else if (!this.props.selectedEquipment)
           valid = false;
       else if (this.state.error !== "")
           valid = false;
@@ -128,9 +128,6 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   }
 
   public render() {
-    // TODO: move datepicker into new component, try to make it look nice
-    // TODO: only show step 2 if state.selectedEquipment is truthy
-    // TODO: use expiration date as part of assignment
     return (
       <div>
         <Button color="danger" onClick={this.props.openModal}>
@@ -149,9 +146,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     <div className="form-group">
                         <label>Pick an equipment to assign</label>
                         <SearchEquipment
-                            equipmentList={this.props.unassignedEquipment}
                             selectedEquipment={this.props.selectedEquipment}
-                            loading={this.props.modalLoading}
                             onSelect={this._onSelected}
                             onDeselect={this._onDeselected} />
                         {this.state.error}
