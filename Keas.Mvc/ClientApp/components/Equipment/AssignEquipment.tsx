@@ -109,9 +109,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   private _validateState = () => {
       let valid = true;
-      if (!this.state.person && !this.context.person)
-          valid = false;
-      else if (!this.props.selectedEquipment)
+      if (!this.props.selectedEquipment)
           valid = false;
       else if (this.state.error !== "")
           valid = false;
