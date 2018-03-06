@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
 
 interface IProps {
     onRevoke?: () => void;
@@ -29,7 +29,7 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
 
     public render() {
         return (
-            <ButtonDropdown isOpen={this.state.isOpen} toggle={this.toggle} dropup>
+            <Dropdown direction="up" isOpen={this.state.isOpen} toggle={this.toggle}>
                 <DropdownToggle size="sm" color="info">
                     <i className="fa fa-ellipsis-h fa-lg" aria-hidden="true"></i>
                 </DropdownToggle>
@@ -42,7 +42,7 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
                     {this.props.showDetails != null &&
                         <DropdownItem onClick={this.props.showDetails} > Show Details</DropdownItem>}
                 </DropdownMenu>
-            </ButtonDropdown>
+            </Dropdown>
         );
     }
 }
