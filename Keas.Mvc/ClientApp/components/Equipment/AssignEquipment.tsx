@@ -20,7 +20,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 
 interface IProps {
-    onCreate: (person: IPerson) => void;
+    onCreate: (person: IPerson, date: any) => void;
     modal: boolean;
     openModal: () => void;
     closeModal: () => void;
@@ -70,7 +70,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         ? this.context.person
         : this.state.person;
 
-    await this.props.onCreate(person);
+    await this.props.onCreate(person, this.state.date.format());
 
     this._closeModal();
   };
@@ -122,7 +122,18 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   }
 
   private _changeDate = (newDate) => {
-      this.setState({ date: newDate }, this._validateState);
+      this.setState({ date: newDate, error: "" }, this._validateState);
+  }
+
+  private _changeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      let m = moment(value, "MM/DD/YYYY", true);
+      if (m.isValid()) {
+          this._changeDate(m);
+      }
+      else {
+          this.setState({ date: null, error: "Please enter a valid date" });
+      }
   }
 
   public render() {
@@ -147,7 +158,6 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                             selectedEquipment={this.props.selectedEquipment}
                             onSelect={this._onSelected}
                             onDeselect={this._onDeselected} />
-                        {this.state.error}
                     </div>
 
 
@@ -157,8 +167,10 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                             <DatePicker
                                 selected={this.state.date}
                                 onChange={this._changeDate}
+                                onChangeRaw={this._changeDateRaw}
                             />
                         </div>}
+                    {this.state.error}
                 </form>
             </div>
           </ModalBody>
