@@ -61,6 +61,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
                     closeModal={this._closeAssignModal}
                     selectedEquipment={this.state.selectedEquipment}
                     selectEquipment={this._selectEquipment}
+                    changeProperty={this._changeSelectedEquipmentProperty}
                 />
                 <EquipmentDetails selectedEquipment={this.state.selectedEquipment} modal={this.state.detailsModal} closeModal={this._closeDetailsModal} />
         </div>
@@ -154,6 +155,15 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
     //used in assign equipment 
   private _selectEquipment = (equipment: IEquipment) => {
       this.setState({ selectedEquipment: equipment });
+  }
+
+  private _changeSelectedEquipmentProperty = (property: string, value: string) => {
+      this.setState({
+          selectedEquipment: {
+              ...this.state.selectedEquipment,
+              [property]: value
+          }
+          });
   }
 
   private _openDetailsModal = (equipment: IEquipment) => {

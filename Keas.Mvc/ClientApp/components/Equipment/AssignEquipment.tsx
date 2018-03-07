@@ -15,6 +15,7 @@ import DatePicker from "react-datepicker";
 import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson } from "../../Types";
 import SearchEquipment from "./SearchEquipment";
 import AssignPerson from "../Biographical/AssignPerson";
+import EquipmentEditValues from "./EquipmentEditValues";
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -26,6 +27,7 @@ interface IProps {
     closeModal: () => void;
     selectEquipment: (equipment: IEquipment) => void;
     selectedEquipment: IEquipment;
+    changeProperty: (property: string, value: string) => void;
 }
 
 interface IState {
@@ -57,6 +59,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     this.setState({
         error: "",
         validState: false,
+        person: null,
       });
       this.props.closeModal();
   };
@@ -136,6 +139,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       }
   }
 
+
+
   public render() {
     return (
       <div>
@@ -159,9 +164,11 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                             onSelect={this._onSelected}
                             onDeselect={this._onDeselected} />
                     </div>
+                    {!this.props.selectedEquipment || !this.props.selectedEquipment.teamId &&
+                        <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} changeProperty={this.props.changeProperty} />
+                    }
 
-
-                    {this.props.selectedEquipment != null &&
+                    {this.state.person != null &&
                         <div className="form-group">
                             <label>Set the expiration date</label>
                             <DatePicker
