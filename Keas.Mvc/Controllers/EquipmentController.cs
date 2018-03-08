@@ -91,6 +91,7 @@ namespace Keas.Mvc.Controllers
             if (ModelState.IsValid)
             {
                 var eq = await _context.Equipment.SingleAsync(x => x.Id == equipment.Id);
+                _context.EquipmentAssignments.Remove(eq.Assignment);
                 eq.Assignment = null;
                 eq.EquipmentAssignmentId = null;
                 await _context.SaveChangesAsync();
