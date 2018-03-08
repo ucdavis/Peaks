@@ -11,13 +11,53 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
 
     public render() {
         return (
-            <div>
-                <div className="form-group">
-                    <label>Serial Number</label>
-                    <input type="text"
-                        value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
+            <div className="container-fluid">
+                <div className="row">
+                    <div className="col-md-4"><label>Name</label></div>
+                    <div className="col-md-4">
+                        <input type="text"
+                        //value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
                         onChange={this._changeSerialNumber}
-                    />
+                        />
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-4"><label>Serial Number</label></div>
+                    <div className="col-md-4">
+                        <input type="text"
+                            value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
+                            onChange={this._changeSerialNumber}
+                        />
+                    </div>
+                </div>
+                {this.props.selectedEquipment.assignment != null &&
+                    <div className="row">
+                        <div className="col-md-4"><label>Expires at</label></div>
+                        <div className="col-md-4">
+                            <input type="text"
+                                //value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
+                                onChange={this._changeSerialNumber}
+                            />
+                        </div>
+                </div>
+                }
+                <div className="row">
+                    <div className="col-md-4"><label>Make</label></div>
+                    <div className="col-md-4">
+                        <input type="text"
+                            //value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
+                            onChange={this._changeSerialNumber}
+                        />
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="col-md-4"><label>Model</label></div>
+                    <div className="col-md-4">
+                        <input type="text"
+                            //value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
+                            onChange={this._changeSerialNumber}
+                        />
+                    </div>
                 </div>
             </div>
         );
