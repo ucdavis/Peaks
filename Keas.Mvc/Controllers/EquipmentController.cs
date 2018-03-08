@@ -90,7 +90,8 @@ namespace Keas.Mvc.Controllers
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var eq = await _context.Equipment.SingleAsync(x => x.Id == equipment.Id);
+                var eq = await _context.Equipment.Include(x => x.Assignment).SingleAsync(x => x.Id == equipment.Id);
+
                 _context.EquipmentAssignments.Remove(eq.Assignment);
                 eq.Assignment = null;
                 eq.EquipmentAssignmentId = null;
