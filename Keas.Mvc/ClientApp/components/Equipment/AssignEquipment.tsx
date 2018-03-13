@@ -16,7 +16,6 @@ import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPer
 import SearchEquipment from "./SearchEquipment";
 import AssignPerson from "../Biographical/AssignPerson";
 import EquipmentEditValues from "./EquipmentEditValues";
-import EquipmentViewValues from "./EquipmentViewValues";
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -166,10 +165,10 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                             onDeselect={this._onDeselected} />
                     </div>
                     {!this.props.selectedEquipment || !this.props.selectedEquipment.teamId && //if we are creating a new equipment, edit properties
-                        <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} changeProperty={this.props.changeProperty} />
+                        <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} changeProperty={this.props.changeProperty} disableEditing={false} />
                     }
                     {this.props.selectedEquipment && !!this.props.selectedEquipment.teamId &&
-                        <EquipmentViewValues selectedEquipment={this.props.selectedEquipment} />
+                         <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} disableEditing={true} />
                     }
 
                     {this.state.person != null &&

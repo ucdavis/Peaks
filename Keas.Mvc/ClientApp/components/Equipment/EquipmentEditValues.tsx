@@ -4,7 +4,8 @@ import { IEquipment } from "../../Types";
 
 interface IProps {
     selectedEquipment: IEquipment;
-    changeProperty: (property: string, value: string) => void;
+    disableEditing: boolean;
+    changeProperty?: (property: string, value: string) => void;
 }
 
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
@@ -16,7 +17,8 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <div className="col-md-4"><label>Name</label></div>
                     <div className="col-md-4">
                         <input type="text"
-                        //value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
+                            disabled={true}
+                            value={this.props.selectedEquipment.name ? this.props.selectedEquipment.name : ""}
                         onChange={this._changeSerialNumber}
                         />
                     </div>
@@ -25,6 +27,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <div className="col-md-4"><label>Serial Number</label></div>
                     <div className="col-md-4">
                         <input type="text"
+                            disabled={this.props.disableEditing}
                             value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
                             onChange={this._changeSerialNumber}
                         />
@@ -34,7 +37,8 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <div className="row">
                         <div className="col-md-4"><label>Expires at</label></div>
                         <div className="col-md-4">
-                            <input type="text"
+                        <input type="text"
+                                disabled={this.props.disableEditing}
                                 //value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
                                 onChange={this._changeSerialNumber}
                             />
@@ -45,6 +49,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <div className="col-md-4"><label>Make</label></div>
                     <div className="col-md-4">
                         <input type="text"
+                            disabled={this.props.disableEditing}
                             //value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
                             onChange={this._changeSerialNumber}
                         />
@@ -54,6 +59,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <div className="col-md-4"><label>Model</label></div>
                     <div className="col-md-4">
                         <input type="text"
+                            disabled={this.props.disableEditing}
                             //value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
                             onChange={this._changeSerialNumber}
                         />

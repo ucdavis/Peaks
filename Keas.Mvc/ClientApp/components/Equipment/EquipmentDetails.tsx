@@ -10,7 +10,7 @@ import {
     ListGroupItem
 } from "reactstrap";
 import { IEquipment } from "ClientApp/Types";
-import EquipmentViewValues from "./EquipmentViewValues";
+import EquipmentEditValues from "./EquipmentEditValues";
 
 
 interface IProps {
@@ -31,7 +31,7 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
                 <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg">
                     <ModalHeader>Details for {equipment.name}</ModalHeader>
                     <ModalBody>
-                        <EquipmentViewValues selectedEquipment={equipment} />
+                        <EquipmentEditValues selectedEquipment={equipment} disableEditing={true} />
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this.props.closeModal}>
