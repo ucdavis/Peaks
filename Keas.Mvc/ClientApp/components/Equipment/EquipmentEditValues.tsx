@@ -12,56 +12,51 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
 
     public render() {
         return (
-            <div className="container-fluid">
-                <div className="row">
-                    <div className="col-md-4"><label>Name</label></div>
-                    <div className="col-md-4">
-                        <input type="text"
-                            disabled={true}
-                            value={this.props.selectedEquipment.name ? this.props.selectedEquipment.name : ""}
-                        />
-                    </div>
+            <div>
+                <div className="form-group">
+                    <label>Name</label>
+                    <input type="text"
+                        className="form-control"
+                        disabled={true}
+                        value={this.props.selectedEquipment.name ? this.props.selectedEquipment.name : ""}
+                    />
                 </div>
-                <div className="row">
-                    <div className="col-md-4"><label>Serial Number</label></div>
-                    <div className="col-md-4">
-                        <input type="text"
-                            disabled={this.props.disableEditing}
-                            value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
-                            onChange={(e) => this.props.changeProperty("serialNumber", e.target.value)}
-                        />
-                    </div>
+                <div className="form-group">
+                    <label>Serial Number</label>
+                    <input type="text"
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
+                        onChange={(e) => this.props.changeProperty("serialNumber", e.target.value)}
+                    />
                 </div>
                 {this.props.selectedEquipment.assignment != null &&
-                    <div className="row">
-                        <div className="col-md-4"><label>Expires at</label></div>
-                        <div className="col-md-4">
+                    <div className="form-group">
+                        <label>Expires at</label>
                         <input type="text"
+                            className="form-control"
                             disabled={this.props.disableEditing}
                             value={this.props.selectedEquipment.assignment.expiresAt ? this.props.selectedEquipment.assignment.expiresAt.toString() : ""}
                             />
-                        </div>
-                </div>
+                    </div>
                 }
-                <div className="row">
-                    <div className="col-md-4"><label>Make</label></div>
-                    <div className="col-md-4">
-                        <input type="text"
-                            disabled={this.props.disableEditing}
-                            value={this.props.selectedEquipment.make ? this.props.selectedEquipment.make : ""}
-                            onChange={(e) => this.props.changeProperty("make", e.target.value)}
-                        />
-                    </div>
+                <div className="form-group">
+                    <label>Make</label>
+                    <input type="text"
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedEquipment.make ? this.props.selectedEquipment.make : ""}
+                        onChange={(e) => this.props.changeProperty("make", e.target.value)}
+                    />
                 </div>
-                <div className="row">
-                    <div className="col-md-4"><label>Model</label></div>
-                    <div className="col-md-4">
-                        <input type="text"
-                            disabled={this.props.disableEditing}
-                            value={this.props.selectedEquipment.model ? this.props.selectedEquipment.model : ""}
-                            onChange={(e) => this.props.changeProperty("model", e.target.value)}
-                        />
-                    </div>
+                <div className="form-group">
+                    <label>Model</label>
+                    <input type="text"
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedEquipment.model ? this.props.selectedEquipment.model : ""}
+                        onChange={(e) => this.props.changeProperty("model", e.target.value)}
+                    />
                 </div>
             </div>
         );
