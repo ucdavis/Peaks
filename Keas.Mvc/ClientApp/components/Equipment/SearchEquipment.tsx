@@ -42,8 +42,8 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                 id: equipment.teamId ? equipment.id : 0,
                 teamId: equipment.teamId ? equipment.teamId : 0,
                 serialNumber: equipment.serialNumber ? equipment.serialNumber : "",
-                make: "Make",
-                model: "Model",
+                make: equipment.make ? equipment.make : "",
+                model: equipment.model ? equipment.model : "",
                 type: "Phone"
             });
         }
