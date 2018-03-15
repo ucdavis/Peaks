@@ -41,9 +41,9 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                 name: equipment.name,
                 id: equipment.teamId ? equipment.id : 0,
                 teamId: equipment.teamId ? equipment.teamId : 0,
-                serialNumber: equipment.serialNumber ? equipment.serialNumber : "DEFAULT",
-                make: "Make",
-                model: "Model",
+                serialNumber: equipment.serialNumber ? equipment.serialNumber : "",
+                make: equipment.make ? equipment.make : "",
+                model: equipment.model ? equipment.model : "",
                 type: "Phone"
             });
         }
@@ -67,16 +67,20 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     minLength={3}
                     placeholder="Search for equipment by name or by serial number"
                     labelKey="name"
+                    filterBy={() => true} //don't filter on top of our search
                     allowNew={true}
                     renderMenuItemChildren={(option, props, index) => (
                         <div>
-                        <Highlighter key="name" search={props.text}>
-                                {option[props.labelKey]}
-                        </Highlighter>
-                            <div key="serialNumber">
-                            <small>
-                                Serial Number: {option.serialNumber}
-                            </small>
+                            <div>
+                                <Highlighter key="name" search={props.text}>
+                                    {option.name}
+                                </Highlighter>
+                            </div>
+                            <div>
+                                <small>
+                                    Serial Number:
+                                    <Highlighter key="serialNumber" search={props.text}>{option.serialNumber}</Highlighter>
+                                </small>
                             </div>
                         </div>
                     )}
@@ -92,7 +96,6 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     }}
                     onChange={selected => {
                         if (selected && selected.length === 1) {
-                            //this.setState({ selectedEquipment: selected[0] });
                             this._onSelected(selected[0]);
                         }
                     }}

@@ -69,13 +69,13 @@ namespace Keas.Mvc.Controllers
             return Json(equipment);
         }
 
-        public async Task<IActionResult> Assign(int equipmentId, int personId)
+        public async Task<IActionResult> Assign(int equipmentId, int personId, string date)
         {
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
                 var equipment = await _context.Equipment.SingleAsync(x => x.Id == equipmentId);
-                equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.UtcNow.AddYears(3) };
+                equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
 
                 _context.EquipmentAssignments.Add(equipment.Assignment);
 
@@ -90,7 +90,9 @@ namespace Keas.Mvc.Controllers
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var eq = await _context.Equipment.SingleAsync(x => x.Id == equipment.Id);
+                var eq = await _context.Equipment.Include(x => x.Assignment).SingleAsync(x => x.Id == equipment.Id);
+
+                _context.EquipmentAssignments.Remove(eq.Assignment);
                 eq.Assignment = null;
                 eq.EquipmentAssignmentId = null;
                 await _context.SaveChangesAsync();

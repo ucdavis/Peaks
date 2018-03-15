@@ -63,6 +63,7 @@ namespace Keas.Mvc.Helpers
             context.AccessAssignments.Add(access);
             context.AccessAssignments.Add(access2);
             context.Keys.Add(key);
+            context.EquipmentAssignments.Add(equipmentAssignment);
             context.Equipment.Add(equipment);
 
             var equip2Assignment = new EquipmentAssignment
@@ -74,6 +75,7 @@ namespace Keas.Mvc.Helpers
 
             var equip2 = new Equipment { Name = "desktop", Team = caes, Assignment = equip2Assignment, SerialNumber = "ABC" };
 
+            context.EquipmentAssignments.Add(equip2Assignment);
             context.Equipment.Add(equip2);
             
             var history = new History {

@@ -61,13 +61,14 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
                     closeModal={this._closeAssignModal}
                     selectedEquipment={this.state.selectedEquipment}
                     selectEquipment={this._selectEquipment}
+                    changeProperty={this._changeSelectedEquipmentProperty}
                 />
                 <EquipmentDetails selectedEquipment={this.state.selectedEquipment} modal={this.state.detailsModal} closeModal={this._closeDetailsModal} />
         </div>
       </div>
     );
   }
-  private _createAndMaybeAssignEquipment = async (person: IPerson) => {
+  private _createAndMaybeAssignEquipment = async (person: IPerson, date: any) => {
       // call API to create a equipment, then assign it if there is a person to assign to
       var equipment = this.state.selectedEquipment;
       //if we are creating a new equipment
@@ -82,9 +83,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/equipment/assign?equipmentId=${equipment.id}&personId=${
-        person.id
-      }`;
+      const assignUrl = `/equipment/assign?equipmentId=${equipment.id}&personId=${person.id}&date=${date}`;
 
       equipment = await this.context.fetch(assignUrl, {
         method: "POST"
@@ -156,6 +155,15 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
     //used in assign equipment 
   private _selectEquipment = (equipment: IEquipment) => {
       this.setState({ selectedEquipment: equipment });
+  }
+
+  private _changeSelectedEquipmentProperty = (property: string, value: string) => {
+      this.setState({
+          selectedEquipment: {
+              ...this.state.selectedEquipment,
+              [property]: value
+          }
+          });
   }
 
   private _openDetailsModal = (equipment: IEquipment) => {

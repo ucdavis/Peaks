@@ -15,17 +15,19 @@ import DatePicker from "react-datepicker";
 import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson } from "../../Types";
 import SearchEquipment from "./SearchEquipment";
 import AssignPerson from "../Biographical/AssignPerson";
+import EquipmentEditValues from "./EquipmentEditValues";
 
 import 'react-datepicker/dist/react-datepicker.css';
 
 
 interface IProps {
-    onCreate: (person: IPerson) => void;
+    onCreate: (person: IPerson, date: any) => void;
     modal: boolean;
     openModal: () => void;
     closeModal: () => void;
     selectEquipment: (equipment: IEquipment) => void;
     selectedEquipment: IEquipment;
+    changeProperty: (property: string, value: string) => void;
 }
 
 interface IState {
@@ -57,6 +59,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     this.setState({
         error: "",
         validState: false,
+        person: null,
       });
       this.props.closeModal();
   };
@@ -70,7 +73,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         ? this.context.person
         : this.state.person;
 
-    await this.props.onCreate(person);
+    await this.props.onCreate(person, this.state.date.format());
 
     this._closeModal();
   };
@@ -109,9 +112,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   private _validateState = () => {
       let valid = true;
-      if (!this.state.person && !this.context.person)
-          valid = false;
-      else if (!this.props.selectedEquipment)
+      if (!this.props.selectedEquipment)
           valid = false;
       else if (this.state.error !== "")
           valid = false;
@@ -124,8 +125,21 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   }
 
   private _changeDate = (newDate) => {
-      this.setState({ date: newDate }, this._validateState);
+      this.setState({ date: newDate, error: "" }, this._validateState);
   }
+
+  private _changeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      let m = moment(value, "MM/DD/YYYY", true);
+      if (m.isValid()) {
+          this._changeDate(m);
+      }
+      else {
+          this.setState({ date: null, error: "Please enter a valid date" });
+      }
+  }
+
+
 
   public render() {
     return (
@@ -149,18 +163,24 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                             selectedEquipment={this.props.selectedEquipment}
                             onSelect={this._onSelected}
                             onDeselect={this._onDeselected} />
-                        {this.state.error}
                     </div>
+                    {!this.props.selectedEquipment || !this.props.selectedEquipment.teamId && //if we are creating a new equipment, edit properties
+                        <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} changeProperty={this.props.changeProperty} disableEditing={false} />
+                    }
+                    {this.props.selectedEquipment && !!this.props.selectedEquipment.teamId &&
+                         <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} disableEditing={true} />
+                    }
 
-
-                    {this.props.selectedEquipment != null &&
+                    {this.state.person != null &&
                         <div className="form-group">
                             <label>Set the expiration date</label>
                             <DatePicker
                                 selected={this.state.date}
                                 onChange={this._changeDate}
+                                onChangeRaw={this._changeDateRaw}
                             />
                         </div>}
+                    {this.state.error}
                 </form>
             </div>
           </ModalBody>
