@@ -25,6 +25,17 @@ namespace Keas.Mvc.Controllers
             return Team;
         }
 
+        public async Task<IActionResult> Search(int teamId, string q)
+        {
+            var comparison = StringComparison.InvariantCultureIgnoreCase;
+            var keys = await _context.Keys
+                .Where(x => x.Team.Id == teamId && x.Active && x.Assignment == null &&
+                (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
+                .AsNoTracking().ToListAsync();
+
+            return Json(keys);
+        }
+
         public async Task<IActionResult> ListAssigned(int personId, int teamId) {
             var keyAssignments = await _context.Keys.Where(x=>x.Assignment.PersonId == personId && x.TeamId == teamId).Include(x=>x.Assignment).AsNoTracking().ToArrayAsync();
 
@@ -48,13 +59,15 @@ namespace Keas.Mvc.Controllers
             return Json(key);
         }
 
-        public async Task<IActionResult> Assign(int keyId, int personId)
+        public async Task<IActionResult> Assign(int keyId, int personId, string date)
         {
-            // TODO Make sure user has permssion, make sure key exists, makes sure key is in this team
+            // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var key = await _context.Keys.SingleAsync(x=>x.Id == keyId);
-                key.Assignment = new KeyAssignment{ PersonId = personId, ExpiresAt = DateTime.UtcNow.AddYears(3)};
+                var key = await _context.Keys.SingleAsync(x => x.Id == keyId);
+                key.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
+
+                _context.KeyAssignments.Add(key.Assignment);
 
                 await _context.SaveChangesAsync();
                 return Json(key);
@@ -62,5 +75,20 @@ namespace Keas.Mvc.Controllers
             return BadRequest(ModelState);
         }
 
+        public async Task<IActionResult> Revoke([FromBody]Key key)
+        {
+            //TODO: check permissions
+            if (ModelState.IsValid)
+            {
+                var k = await _context.Keys.Include(x => x.Assignment).SingleAsync(x => x.Id == key.Id);
+
+                _context.KeyAssignments.Remove(k.Assignment);
+                k.Assignment = null;
+                k.KeyAssignmentId = null;
+                await _context.SaveChangesAsync();
+                return Json(k);
+            }
+            return BadRequest(ModelState);
+        }
     }
 }

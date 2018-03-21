@@ -1,87 +1,197 @@
 import PropTypes from "prop-types";
 import * as React from "react";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import {
+    Button,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+    ListGroup,
+    ListGroupItem
+} from "reactstrap";
 
-import { AppContext, IKey, IPerson } from "../../Types";
+import * as moment from "moment";
+import DatePicker from "react-datepicker";
+import { AppContext, IKey, IKeyAssignment, IPerson } from "../../Types";
+import SearchKey from "./SearchKeys";
 import AssignPerson from "../Biographical/AssignPerson";
+import KeyEditValues from "./KeyEditValues";
+
+import 'react-datepicker/dist/react-datepicker.css';
+
 
 interface IProps {
-  onCreate: (key: IKey, person: IPerson) => void;
+    onCreate: (person: IPerson, date: any) => void;
+    modal: boolean;
+    openModal: () => void;
+    closeModal: () => void;
+    selectKey: (key: IKey) => void;
+    selectedKey: IKey;
+    changeProperty: (property: string, value: string) => void;
 }
 
 interface IState {
-  modal: boolean;
-  person: IPerson;
+    person: IPerson;
+    date: any;
+    error: string;
+    validState: boolean;
 }
 
 export default class AssignKey extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    person: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
-  constructor(props) {
-    super(props);
-    this.state = {
-      modal: false,
-      person: null
+    public static contextTypes = {
+        fetch: PropTypes.func,
+        person: PropTypes.object,
+        team: PropTypes.object
     };
-  }
+    public context: AppContext;
+    constructor(props) {
+        super(props);
+        this.state = {
+            person: null,
+            date: moment().add(3, 'y'),
+            error: "",
+            validState: false,
+        };
+    }
 
-  public toggle = () => {
-    this.setState({
-      modal: !this.state.modal
-    });
-  };
-
-  public createKey = async () => {
-    const person = this.context.person
-      ? this.context.person
-      : this.state.person;
-
-    const key = {
-      id: 0,
-      name: "newkey" + new Date().getUTCSeconds(),
-      serialNumber: "SN123",
-      teamId: 1
+    //clear everything out on close
+    private _closeModal = () => {
+        this.setState({
+            error: "",
+            validState: false,
+            person: null,
+        });
+        this.props.closeModal();
     };
 
-    await this.props.onCreate(key, person);
+    // assign the selected key even if we have to create it
+    private _assignSelected = async () => {
 
-    // TODO: check for success
-    this.setState({ modal: false });
-  };
-  public render() {
-    return (
-      <div>
-        <Button color="danger" onClick={this.toggle}>
-          Add Key
+        if (!this.state.validState) return;
+
+        const person = this.context.person
+            ? this.context.person
+            : this.state.person;
+
+        await this.props.onCreate(person, this.state.date.format());
+
+        this._closeModal();
+    };
+
+    // once we have either selected or created the key we care about
+    private _onSelected = (key: IKey) => {
+        console.log("selected in assign", key);
+        //if this key is not already assigned
+
+        //TODO: more validation of name
+        if (key.name.length > 64) {
+            this.props.selectKey(null);
+            this.setState({ error: "The key name you have chosen is too long" }, this._validateState);
+        }
+        //else if (this.props.assignedKeyList.findIndex(x => x == key.name) != -1)
+        //{
+        //    this.setState({ selectedKey: null, error: "The key you have chosen is already assigned to this user", validKey: false }, this._validateState);
+        //}
+        else {
+            this.props.selectKey(key);
+            this.setState({ error: "" }, this._validateState);
+        }
+    };
+
+    private _onDeselected = () => {
+        this.props.selectKey(null);
+        this.setState({ error: "" }, this._validateState);
+    }
+
+    private _onSelectPerson = (person: IPerson) => {
+        this.setState({ person }, this._validateState);
+    };
+
+
+    private _validateState = () => {
+        let valid = true;
+        if (!this.props.selectedKey)
+            valid = false;
+        else if (this.state.error !== "")
+            valid = false;
+        else if (!this.state.date)
+            valid = false;
+        else if (moment().isSameOrAfter(this.state.date))
+            valid = false;
+        this.setState({ validState: valid });
+
+    }
+
+    private _changeDate = (newDate) => {
+        this.setState({ date: newDate, error: "" }, this._validateState);
+    }
+
+    private _changeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        let m = moment(value, "MM/DD/YYYY", true);
+        if (m.isValid()) {
+            this._changeDate(m);
+        }
+        else {
+            this.setState({ date: null, error: "Please enter a valid date" });
+        }
+    }
+
+
+
+    public render() {
+        return (
+            <div>
+                <Button color="danger" onClick={this.props.openModal}>
+                    Add Key
         </Button>
-        <Modal isOpen={this.state.modal} toggle={this.toggle}>
-          <ModalHeader>Assign Key</ModalHeader>
-          <ModalBody>
-            <form>
-              <div className="form-group">
-                <label htmlFor="assignto">Assign To</label>
-                <AssignPerson onSelect={this._onSelect} />
-              </div>
-            </form>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="primary" onClick={this.createKey}>
-              Add & Assign New Key
-            </Button>{" "}
-            <Button color="secondary" onClick={this.toggle}>
-              Cancel
-            </Button>
-          </ModalFooter>
-        </Modal>
-      </div>
-    );
-  }
+                <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
+                    <ModalHeader>Assign Key</ModalHeader>
+                    <ModalBody>
+                        <div className="container-fluid">
+                            <form>
+                                <div className="form-group">
+                                    <label htmlFor="assignto">Assign To</label>
+                                    <AssignPerson onSelect={this._onSelectPerson} />
+                                </div>
 
-  private _onSelect = (person: IPerson) => {
-    this.setState({ person });
-  };
+                                <div className="form-group">
+                                    <label>Pick an key to assign</label>
+                                    <SearchKey
+                                        selectedKey={this.props.selectedKey}
+                                        onSelect={this._onSelected}
+                                        onDeselect={this._onDeselected} />
+                                </div>
+                                {!this.props.selectedKey || !this.props.selectedKey.teamId && //if we are creating a new key, edit properties
+                                    <KeyEditValues selectedKey={this.props.selectedKey} changeProperty={this.props.changeProperty} disableEditing={false} />
+                                }
+                                {this.props.selectedKey && !!this.props.selectedKey.teamId &&
+                                    <KeyEditValues selectedKey={this.props.selectedKey} disableEditing={true} />
+                                }
+
+                                {this.state.person != null &&
+                                    <div className="form-group">
+                                        <label>Set the expiration date</label>
+                                        <DatePicker
+                                            selected={this.state.date}
+                                            onChange={this._changeDate}
+                                            onChangeRaw={this._changeDateRaw}
+                                        />
+                                    </div>}
+                                {this.state.error}
+                            </form>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState}>
+                            Go!
+            </Button>{" "}
+                        <Button color="secondary" onClick={this._closeModal}>
+                            Close
+            </Button>
+                    </ModalFooter>
+                </Modal>
+            </div>
+        );
+    }
 }
