@@ -37,14 +37,14 @@ namespace Keas.Mvc.Controllers
         }
 
         public async Task<IActionResult> ListAssigned(int personId, int teamId) {
-            var keyAssignments = await _context.Keys.Where(x=>x.Assignment.PersonId == personId && x.TeamId == teamId).Include(x=>x.Assignment).AsNoTracking().ToArrayAsync();
+            var keyAssignments = await _context.Keys.Where(x=> x.Assignment.PersonId == personId && x.TeamId == teamId).Include(x=> x.Assignment).AsNoTracking().ToArrayAsync();
 
             return Json(keyAssignments);
         }
 
         // List all keys for a team
         public async Task<IActionResult> List(int id) {
-            var keys = await _context.Keys.Where(x=>x.TeamId == id).Include(x=>x.Assignment).AsNoTracking().ToArrayAsync();
+            var keys = await _context.Keys.Where(x=> x.TeamId == id).Include(x=> x.Assignment).AsNoTracking().ToArrayAsync();
 
             return Json(keys);
         }

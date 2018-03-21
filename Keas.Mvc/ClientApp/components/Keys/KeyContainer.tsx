@@ -9,7 +9,7 @@ import KeyDetails from "./KeyDetails";
 
 interface IState {
     loading: boolean;
-    //either key assigned to this person, or all team key
+    //either key assigned to this person, or all team keys
     keys: IKey[];
     selectedKey: IKey;
     assignModal: boolean;
@@ -37,7 +37,7 @@ export default class KeyContainer extends React.Component<{}, IState> {
     public async componentDidMount() {
         // are we getting the person's key or the team's?
         const keyFetchUrl = this.context.person
-            ? `/keys/listassigned?id=${this.context.person.id}&teamId=${this.context.person.teamId}`
+            ? `/keys/listassigned?personid=${this.context.person.id}&teamId=${this.context.person.teamId}`
             : `/keys/list/${this.context.team.id}`;
 
         const keys = await this.context.fetch(keyFetchUrl);
@@ -100,7 +100,7 @@ export default class KeyContainer extends React.Component<{}, IState> {
 
             this.setState({
                 ...this.state,
-                key: updateKey,
+                keys: updateKey,
             });
         }
         else {
