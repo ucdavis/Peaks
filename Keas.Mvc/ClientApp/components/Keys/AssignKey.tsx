@@ -169,7 +169,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                                     <KeyEditValues selectedKey={this.props.selectedKey} disableEditing={true} />
                                 }
 
-                                {this.state.person != null &&
+                                {(this.state.person !== null || this.context.person !== null) &&
                                     <div className="form-group">
                                         <label>Set the expiration date</label>
                                         <DatePicker

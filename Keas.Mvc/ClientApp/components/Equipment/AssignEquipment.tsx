@@ -171,7 +171,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                          <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} disableEditing={true} />
                     }
 
-                    {this.state.person != null &&
+                    {(this.state.person !== null || this.context.person !== null) && 
                         <div className="form-group">
                             <label>Set the expiration date</label>
                             <DatePicker
