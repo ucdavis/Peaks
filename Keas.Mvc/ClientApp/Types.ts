@@ -48,6 +48,7 @@ export interface IAccess {
 export interface IAccessAssignment {
     id: number;
     accessId: number;
+    personId: number;
     expiresAt: Date;
     access: IAccess;
 }

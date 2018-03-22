@@ -125,16 +125,62 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
   private _validateState = () => {
       let valid = true;
-      if (!this.props.selectedAccess)
+      if (!this.props.selectedAccess) {
           valid = false;
-      else if (this.state.error !== "")
+      } else if (this.props.adding && (!!this.state.person &&
+          !this._checkValidAssignmentToPerson())) {
           valid = false;
-      else if (!this.state.date)
+      } else if (!this.props.adding && (!this.state.person ||
+          !this._checkValidRevokeFromPerson())) {
           valid = false;
-      else if (moment().isSameOrAfter(this.state.date))
+      } else if (this.state.error !== "") {
           valid = false;
+      } else if (this.props.adding && (!this.state.date || moment().isSameOrAfter(this.state.date)) {
+          valid = false;
+        }
       this.setState({ validState: valid });
 
+  }
+
+  private _checkValidAssignmentToPerson = () => {
+      let valid = true;
+      let assignments = this.props.selectedAccess.assignments;
+      for(let i = 0; i < assignments.length; i++)
+      {
+          if (assignments[i].personId === this.state.person.id)
+          {
+              valid = false;
+              break;
+          }
+      }
+      if (!valid)
+      {
+          this.setState({ error: "The user you have selected is already assigned this access." });
+      }
+      else
+      {
+          this.setState({ error: "" });
+      }
+      return valid;
+  }
+
+  private _checkValidRevokeFromPerson = () => {
+      let valid = false;
+      let assignments = this.props.selectedAccess.assignments;
+      for (let i = 0; i < assignments.length; i++) {
+          if (assignments[i].personId === this.state.person.id) {
+              valid = true;
+              break;
+          }
+      }
+      if (!valid)
+      {
+          this.setState({ error: "The user you have selected is not assigned this access." });
+      }
+      else {
+          this.setState({ error: "" });
+      }
+      return valid;
   }
 
   private _changeDate = (newDate) => {
@@ -184,7 +230,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                          <AccessEditValues selectedAccess={this.props.selectedAccess} disableEditing={true} />
                     }
 
-                    {(this.state.person !== null || this.context.person !== null) && 
+                    {this.props.adding && (this.state.person !== null || this.context.person !== null) && 
                         <div className="form-group">
                             <label>Set the expiration date</label>
                             <DatePicker
@@ -205,7 +251,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                 </Button>}
             {!this.props.adding &&
                 <Button color="primary" onClick={this._revokeSelected} disabled={!this.state.validState}>
-                    Go!
+                    Revoke
                 </Button>}
                     {" "}
               <Button color="secondary" onClick={this._closeModal}>
