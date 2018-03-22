@@ -14,6 +14,11 @@ namespace Keas.Mvc.Helpers
 
             if (context.Users.Any()) return; // already initialzied
 
+            // add in some default factilities
+            var room1 = new Room { BldgKey = "01", FloorKey = "01", RoomKey = "01", RoomName = "Bar", RoomNumber = "12" };
+            var space1 = new Space { Room = room1, ChartNum = "3", OrgId = "ADNO" };
+            context.Spaces.Add(space1);
+
             var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
             var jason = new User { Id = "123222", Name = "Jason", Email = "jason@email.com" };
             var caes = new Team { Id = 1, Name = "CAESDO" };
