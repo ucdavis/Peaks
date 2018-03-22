@@ -45,7 +45,8 @@ namespace Keas.Mvc.Helpers
             var keyAssignment = new KeyAssignment
             {
                 Person = jasonCaes,
-                RequestedBy = scott,
+                PersonId = jasonCaes.Id,
+                RequestedBy = jason,
                 ExpiresAt = DateTime.UtcNow.AddYears(5)
             };
 
@@ -63,6 +64,7 @@ namespace Keas.Mvc.Helpers
             context.AccessAssignments.Add(access);
             context.AccessAssignments.Add(access2);
             context.Keys.Add(key);
+            context.KeyAssignments.Add(keyAssignment);
             context.EquipmentAssignments.Add(equipmentAssignment);
             context.Equipment.Add(equipment);
 
