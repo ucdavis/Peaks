@@ -42,7 +42,7 @@ export interface IAccess {
     id: number;
     teamId: number;
     name: string;
-    assignments: IAccess[];
+    assignments: IAccessAssignment[];
 }
 
 export interface IAccessAssignment {

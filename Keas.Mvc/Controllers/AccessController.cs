@@ -25,13 +25,27 @@ namespace Keas.Mvc.Controllers
             return Team;
         }
 
-        public async Task<IActionResult> ListAssigned(int id) {
-            var accessAssignments = await _context.AccessAssignments.Where(x=>x.PersonId == id).Include(x=>x.Access).AsNoTracking().ToArrayAsync();
+        public async Task<IActionResult> Search(int teamId, string q)
+        {
+            var comparison = StringComparison.InvariantCultureIgnoreCase;
+            var access = await _context.Access
+                .Where(x => x.Team.Id == teamId && x.Active &&
+                (x.Name.StartsWith(q, comparison))) //|| x.SerialNumber.StartsWith(q, comparison)))
+                .AsNoTracking().ToListAsync();
 
-            return Json(accessAssignments);
+            return Json(access);
         }
 
-        public async Task<IActionResult> ListTeamAccess(int teamId)
+        public async Task<IActionResult> ListAssigned(int id, int teamId) {
+            var assignedAccess = await _context.Access 
+                .Where(x => x.TeamId == teamId && x.Assignments.Any(a => a.PersonId == id))
+                .Include(x => x.Assignments)
+                .AsNoTracking().ToArrayAsync();
+
+            return Json(assignedAccess);
+        }
+
+        public async Task<IActionResult> List(int teamId)
         {
             var accessList = await _context.Access.Where(x => x.Team.Id == teamId).AsNoTracking().ToArrayAsync();
 
@@ -54,14 +68,16 @@ namespace Keas.Mvc.Controllers
             // TODO Make sure user has permssion, make sure access exists, makes sure access is in this team
             if (ModelState.IsValid)
             {
-                var accessassingment = new AccessAssignment{
+                var access = await _context.Access.SingleAsync(x => x.Id == accessId);
+                var accessAssingment = new AccessAssignment{
                     AccessId = accessId,
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date),
                 };
-                _context.AccessAssignments.Add(accessassingment);
+                access.Assignments.Add(accessAssingment);
+                _context.AccessAssignments.Add(accessAssingment);
                 await _context.SaveChangesAsync();
-                return Json(accessassingment);
+                return Json(access);
             }
             return BadRequest(ModelState);
         }
@@ -71,6 +87,8 @@ namespace Keas.Mvc.Controllers
             //TODO: check permissions
             if (ModelState.IsValid)
             {
+                var access = await _context.Access.Include(x => x.Assignments).SingleAsync(x => x.Id == accessAssignment.AccessId);
+                access.Assignments.Remove(accessAssignment);
                 _context.AccessAssignments.Remove(accessAssignment);
                 await _context.SaveChangesAsync();
                 return Json(accessAssignment);

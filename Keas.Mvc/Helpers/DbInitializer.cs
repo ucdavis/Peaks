@@ -2,6 +2,7 @@
 using System.Linq;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using System.Collections.Generic;
 
 namespace Keas.Mvc.Helpers
 {
@@ -26,21 +27,34 @@ namespace Keas.Mvc.Helpers
             var jasonCaes = new Person { User = jason, Id=1, Team = caes, Group = "CRU" };
             var scottCaes = new Person { User = scott, Id=2, Team = caes, Group = "CRU" };
 
-            var access = new AccessAssignment
+
+            var access = new Access
             {
+                Name = "PPS", Team = caes
+            };
+            var accessAssignment = new AccessAssignment
+            {
+                //Access = access,
                 Person = jasonCaes,
                 RequestedBy = scott,
-                Access = new Access { Team = caes, Name = "PPS" },
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+            access.Assignments.Add(accessAssignment);
+
+            var access2 = new Access
+            {
+                Name = "PPS2",
+                Team = caes,
             };
 
-            var access2 = new AccessAssignment
+            var accessAssignment2 = new AccessAssignment
             {
+                //Access = access2,
                 Person = scottCaes,
                 RequestedBy = scott,
-                Access = new Access { Team = caes, Name = "PPS2" },
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
+            access2.Assignments.Add(accessAssignment2);
 
             var keyAssignment = new KeyAssignment
             {
@@ -61,8 +75,11 @@ namespace Keas.Mvc.Helpers
 
             var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment, SerialNumber = "XYZ" };
 
-            context.AccessAssignments.Add(access);
-            context.AccessAssignments.Add(access2);
+            context.Access.Add(access);
+            context.AccessAssignments.Add(accessAssignment);
+            context.Access.Add(access2);
+            context.AccessAssignments.Add(accessAssignment2);
+
             context.Keys.Add(key);
             context.KeyAssignments.Add(keyAssignment);
             context.EquipmentAssignments.Add(equipmentAssignment);
