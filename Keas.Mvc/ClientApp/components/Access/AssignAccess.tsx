@@ -135,7 +135,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
           valid = false;
       } else if (this.state.error !== "") {
           valid = false;
-      } else if (this.props.adding && (!this.state.date || moment().isSameOrAfter(this.state.date)) {
+      } else if (this.props.adding && (!this.state.date || moment().isSameOrAfter(this.state.date))) {
           valid = false;
         }
       this.setState({ validState: valid });
