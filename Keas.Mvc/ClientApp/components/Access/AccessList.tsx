@@ -6,6 +6,7 @@ import { IAccess } from "../../Types";
 
 interface IProps {
     access: IAccess[];
+    personView: boolean;
     onRevoke: (access: IAccess) => void;
     onAdd: (access: IAccess) => void;
     showDetails: (access: IAccess) => void;
@@ -17,6 +18,7 @@ export default class AccessList extends React.Component<IProps, {}> {
           <AccessListItem
               key={x.id.toString()}
               accessEntity={x}
+              personView={this.props.personView}
               onRevoke={this.props.onRevoke}
               onAdd={this.props.onAdd}
               showDetails={this.props.showDetails}

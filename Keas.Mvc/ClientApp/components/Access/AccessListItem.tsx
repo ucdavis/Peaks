@@ -5,6 +5,7 @@ import ListActionsDropdown from "../ListActionsDropdown";
 
 interface IProps {
     accessEntity: IAccess;
+    personView: boolean;
     onRevoke: (access: IAccess) => void;
     onAdd: (access: IAccess) => void;
     showDetails: (access: IAccess) => void;
@@ -25,6 +26,7 @@ export default class AccessListItem extends React.Component<IProps, {}> {
 
     public render() {
         const hasAssignment = this.props.accessEntity.assignments.length > 0;
+        const canAdd = !this.props.personView || !hasAssignment; 
     return (
       <tr>
         <td>{this.props.accessEntity.name}</td>
@@ -36,7 +38,7 @@ export default class AccessListItem extends React.Component<IProps, {}> {
                     onRevoke={this._onRevoke}
                     canRevoke={hasAssignment}
                     onAdd={this._onAdd}
-                    canAdd={!hasAssignment}
+                    canAdd={canAdd}
                     showDetails={this._showDetails}
                 />
         </td>

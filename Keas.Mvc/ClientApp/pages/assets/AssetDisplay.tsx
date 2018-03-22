@@ -2,8 +2,9 @@ import classnames from "classnames";
 import * as React from "react";
 import { Button, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 
-import KeyContainer from "../../components/Keys/KeyContainer";
+import AccessContainer from "../../components/Access/AccessContainer";
 import EquipmentContainer from "../../components/Equipment/EquipmentContainer";
+import KeyContainer from "../../components/Keys/KeyContainer";
 
 import { ITeam } from "../../Types";
 
@@ -55,9 +56,9 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === "2" })}
+              className={classnames({ active: this.state.activeTab === "access" })}
               onClick={() => {
-                this.toggle("2");
+                this.toggle("access");
               }}
             >
               Access
@@ -75,14 +76,12 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           </NavItem>
         </Nav>
         <TabContent activeTab={this.state.activeTab}>
-          <TabPane tabId="1">
-            <div className="container">Pane 1</div>
-          </TabPane>
-          <TabPane tabId="2">
-            <div className="container">Pane 2</div>
-          </TabPane>
           <TabPane tabId="keys">{this._renderKeys()}</TabPane>
           <TabPane tabId="equipment">{this._renderEquipment()}</TabPane>
+          <TabPane tabId="access">{this._renderAccess()}</TabPane>
+          <TabPane tabId="2">
+              <div className="container">Pane 2</div>
+          </TabPane>
         </TabContent>
       </div>
     );
@@ -105,4 +104,9 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           return <EquipmentContainer />;
       }
   };
+  private _renderAccess = () => {
+      if (this.state.activeTab === "access") {
+          return <AccessContainer />
+      }
+  }
 }

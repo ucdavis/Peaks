@@ -40,7 +40,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
       // are we getting the person's access or the team's?
       const accessFetchUrl = this.context.person
           ? `/access/listassigned?id=${this.context.person.id}&teamId=${this.context.person.teamId}`
-      : `/access/list/${this.context.team.id}`;
+      : `/access/list?teamId=${this.context.team.id}`;
 
     const access = await this.context.fetch(accessFetchUrl);
     this.setState({ access , loading: false });
@@ -55,7 +55,12 @@ export default class AccessContainer extends React.Component<{}, IState> {
       <div className="card">
         <div className="card-body">
                 <h4 className="card-title">Access</h4>
-                <AccessList access={this.state.access} onRevoke={this._openRevokeModal} onAdd={this._openAssignModal} showDetails={this._openDetailsModal} />
+                <AccessList
+                    access={this.state.access}
+                    personView={this.context.person !== null}
+                    onRevoke={this._openRevokeModal}
+                    onAdd={this._assignSelectedAccess}
+                    showDetails={this._openDetailsModal} />
                 <AssignAccess
                     onCreate={this._createAndMaybeAssignAccess}
                     onRevoke={this._revokeAccess}

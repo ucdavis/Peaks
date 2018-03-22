@@ -47,7 +47,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> List(int teamId)
         {
-            var accessList = await _context.Access.Where(x => x.Team.Id == teamId).AsNoTracking().ToArrayAsync();
+            var accessList = await _context.Access.Where(x => x.Team.Id == teamId).Include(x=> x.Assignments).AsNoTracking().ToArrayAsync();
 
             return Json(accessList);
         }
