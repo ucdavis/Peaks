@@ -1,4 +1,4 @@
-﻿import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import * as React from "react";
 import {
   Button,
@@ -12,112 +12,111 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IAccess, IAccessAssignment } from "../../Types";
-import SearchAccess from "./SearchAccess";
+import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson } from "../../Types";
+import SearchEquipment from "./SearchEquipment";
+import AssignPerson from "../Biographical/AssignPerson";
+import EquipmentEditValues from "./EquipmentEditValues";
 
 import 'react-datepicker/dist/react-datepicker.css';
 
 
 interface IProps {
-    onAssign: (access: IAccess, date: string) => Promise<IAccessAssignment>;
-    assignedAccessList: string[];
+    onCreate: (person: IPerson, date: any) => void;
+    modal: boolean;
+    openModal: () => void;
+    closeModal: () => void;
+    selectEquipment: (access: IEquipment) => void;
+    selectedEquipment: IEquipment;
+    changeProperty: (property: string, value: string) => void;
 }
 
 interface IState {
-  accessList: IAccess[];
-  selectedAccess: IAccess;
+  person: IPerson;
   date: any;
-  modal: boolean;
-  loading: boolean;
   error: string;
   validState: boolean;
-  validAccess: boolean;
 }
 
-export default class AssignAccess extends React.Component<IProps, IState> {
+export default class AssignEquipment extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
-        person: PropTypes.object
+        person: PropTypes.object,
+        team: PropTypes.object
     };
     public context: AppContext;
   constructor(props) {
     super(props);
     this.state = {
-      accessList: [],
-      selectedAccess: null,
+      person: null,
       date: moment().add(3, 'y'),
-      modal: false,
-      loading: true,
       error: "",
       validState: false,
-      validAccess: false,
     };
   }
 
   //clear everything out on close
-  public closeModal = () => {
+  private _closeModal = () => {
     this.setState({
-        modal: false,
-        selectedAccess: null,
         error: "",
-        validAccess: false,
         validState: false,
-    });
-  };
-
-  public openModal = async () => {
-      this.setState({ modal: true, loading: true });
-      const accessList: IAccess[] = await this.context.fetch(
-          `/access/listteamaccess?teamId=${this.context.person.teamId}`
-      );
-      this.setState({ accessList: accessList, loading: false });
+        person: null,
+      });
+      this.props.closeModal();
   };
 
   // assign the selected access even if we have to create it
   private _assignSelected = async () => {
 
     if (!this.state.validState) return;
-    console.log("assign selected", this.state.selectedAccess);
 
-    const accessAssignment = await this.props.onAssign(this.state.selectedAccess, this.state.date.format("YYYY MM DD").toString());
+    const person = this.context.person
+        ? this.context.person
+        : this.state.person;
 
-    this.setState({
-      accessList: [...this.state.accessList, accessAssignment.access],
-    });
-    this.closeModal();
+    await this.props.onCreate(person, this.state.date.format());
+
+    this._closeModal();
   };
 
   // once we have either selected or created the access we care about
-  private _onSelected = (access: IAccess) => {
+  private _onSelected = (access: IEquipment) => {
       console.log("selected in assign", access);
       //if this access is not already assigned
+
       //TODO: more validation of name
       if (access.name.length > 64)
       {
-          this.setState({ selectedAccess: null, error: "The access name you have chosen is too long", validAccess: false }, this._validateState);
+          this.props.selectEquipment(null);
+          this.setState({ error: "The access name you have chosen is too long" }, this._validateState);
       }
-      else if (this.props.assignedAccessList.findIndex(x => x == access.name) != -1)
-      {
-          this.setState({ selectedAccess: null, error: "The access you have chosen is already assigned to this user", validAccess: false }, this._validateState);
-      }
+      //else if (this.props.assignedEquipmentList.findIndex(x => x == access.name) != -1)
+      //{
+      //    this.setState({ selectedEquipment: null, error: "The access you have chosen is already assigned to this user", validEquipment: false }, this._validateState);
+      //}
       else
       {
-          this.setState({ selectedAccess: access, error: "", validAccess: true }, this._validateState);
+          this.props.selectEquipment(access);
+          this.setState({ error: ""}, this._validateState);
       }
   };
 
   private _onDeselected = () => {
-      this.setState({ selectedAccess: null, error: "", validAccess: false }, this._validateState);
+      this.props.selectEquipment(null);
+      this.setState({ error: ""}, this._validateState);
   }
+
+  private _onSelectPerson = (person: IPerson) => {
+      this.setState({ person }, this._validateState);
+  };
 
 
   private _validateState = () => {
       let valid = true;
-      if (this.state.selectedAccess == null)
+      if (!this.props.selectedEquipment)
           valid = false;
-      else if (this.state.error != "")
+      else if (this.state.error !== "")
           valid = false;
-      else if (this.state.date == null)
+      else if (!this.state.date)
           valid = false;
       else if (moment().isSameOrAfter(this.state.date))
           valid = false;
@@ -126,52 +125,71 @@ export default class AssignAccess extends React.Component<IProps, IState> {
   }
 
   private _changeDate = (newDate) => {
-      this.setState({ date: newDate }, this._validateState);
+      this.setState({ date: newDate, error: "" }, this._validateState);
   }
 
+  private _changeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      let m = moment(value, "MM/DD/YYYY", true);
+      if (m.isValid()) {
+          this._changeDate(m);
+      }
+      else {
+          this.setState({ date: null, error: "Please enter a valid date" });
+      }
+  }
+
+
+
   public render() {
-    // TODO: move datepicker into new component, try to make it look nice
-    // TODO: only show step 2 if state.selectedAccess is truthy
-    // TODO: use expiration date as part of assignment
     return (
       <div>
-        <Button color="danger" onClick={this.openModal}>
-          Add Access
+        <Button color="danger" onClick={this.props.openModal}>
+          Add Equipment
         </Button>
-        <Modal isOpen={this.state.modal} toggle={this.closeModal} size="lg">
-          <ModalHeader>Assign Access</ModalHeader>
+        <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
+          <ModalHeader>Assign Equipment</ModalHeader>
           <ModalBody>
             <div className="container-fluid">
-              <div className="row">
-                <div className="col-sm">
-                    <label>Pick an access to assign</label>
-                    <SearchAccess
-                        accessList={this.state.accessList}
-                        loading={this.state.loading}
-                        onSelect={this._onSelected}
-                        onDeselect={this._onDeselected} />
-                    {this.state.error}
-                </div>
-              </div>
-              <div>
-                <div className="row">
-                    {this.state.validAccess &&
-                        <div className="col-sm">
-                                    <label>Set the expiration date</label>
-                                    <DatePicker
-                                        selected={this.state.date}
-                                        onChange={this._changeDate}
-                                    />
+                <form>
+                    <div className="form-group">
+                        <label htmlFor="assignto">Assign To</label>
+                        <AssignPerson onSelect={this._onSelectPerson} />
+                    </div>
+
+                    <div className="form-group">
+                        <label>Pick an access to assign</label>
+                        <SearchEquipment
+                            selectedEquipment={this.props.selectedEquipment}
+                            onSelect={this._onSelected}
+                            onDeselect={this._onDeselected} />
+                    </div>
+                    {!this.props.selectedEquipment || !this.props.selectedEquipment.teamId && //if we are creating a new access, edit properties
+                        <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} changeProperty={this.props.changeProperty} disableEditing={false} />
+                    }
+                    {this.props.selectedEquipment && !!this.props.selectedEquipment.teamId &&
+                         <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} disableEditing={true} />
+                    }
+
+                    {(this.state.person !== null || this.context.person !== null) && 
+                        <div className="form-group">
+                            <label>Set the expiration date</label>
+                            <DatePicker
+                                selected={this.state.date}
+                                onChange={this._changeDate}
+                                onChangeRaw={this._changeDateRaw}
+                                className="form-control"
+                            />
                         </div>}
-                </div>
-              </div>
+                    {this.state.error}
+                </form>
             </div>
           </ModalBody>
           <ModalFooter>
               <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState}>
               Go!
             </Button>{" "}
-              <Button color="secondary" onClick={this.closeModal}>
+              <Button color="secondary" onClick={this._closeModal}>
               Close
             </Button>
           </ModalFooter>
