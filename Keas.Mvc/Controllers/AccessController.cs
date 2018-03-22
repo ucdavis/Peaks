@@ -82,16 +82,16 @@ namespace Keas.Mvc.Controllers
             return BadRequest(ModelState);
         }
 
-        public async Task<IActionResult> Revoke([FromBody]AccessAssignment accessAssignment)
+        public async Task<IActionResult> Revoke(int accessId, int personId)
         {
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var access = await _context.Access.Include(x => x.Assignments).SingleAsync(x => x.Id == accessAssignment.AccessId);
-                access.Assignments.Remove(accessAssignment);
+                var access = await _context.Access.Include(x => x.Assignments).SingleAsync(x => x.Id == accessId);
+                var accessAssignment = access.Assignments.Single(x => x.PersonId == personId);
                 _context.AccessAssignments.Remove(accessAssignment);
                 await _context.SaveChangesAsync();
-                return Json(accessAssignment);
+                return Json(access);
             }
             return BadRequest(ModelState);
         }
