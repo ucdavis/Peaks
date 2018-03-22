@@ -173,9 +173,10 @@ export default class AssignKey extends React.Component<IProps, IState> {
                                     <div className="form-group">
                                         <label>Set the expiration date</label>
                                         <DatePicker
-                                            selected={this.state.date}
-                                            onChange={this._changeDate}
-                                            onChangeRaw={this._changeDateRaw}
+                                        selected={this.state.date}
+                                        onChange={this._changeDate}
+                                        onChangeRaw={this._changeDateRaw}
+                                        className="form-control"
                                         />
                                     </div>}
                                 {this.state.error}

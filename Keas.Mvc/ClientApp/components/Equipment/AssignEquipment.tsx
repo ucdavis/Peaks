@@ -178,6 +178,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                                 selected={this.state.date}
                                 onChange={this._changeDate}
                                 onChangeRaw={this._changeDateRaw}
+                                className="form-control"
                             />
                         </div>}
                     {this.state.error}
