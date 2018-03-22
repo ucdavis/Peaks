@@ -75,8 +75,8 @@ export default class SearchAccess extends React.Component<IProps, IState> {
                             </div>
                             <div>
                                 <small>
-                                    Serial Number:
-                                    <Highlighter key="id" search={props.text}>{option.id}</Highlighter>
+                                    Some other search term:
+                                    <Highlighter key="id" search={props.text}>text</Highlighter>
                                 </small>
                             </div>
                         </div>
