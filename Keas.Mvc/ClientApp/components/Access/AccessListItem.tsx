@@ -23,15 +23,14 @@ export default class AccessListItem extends React.Component<IProps, {}> {
         this.props.showDetails(this.props.accessEntity);
     }
 
-  public render() {
-    const hasAssignment = !!this.props.accessEntity.assignment;
+    public render() {
+        const hasAssignment = this.props.accessEntity.assignments.length > 0;
     return (
       <tr>
-        <td>{this.props.accessEntity.serialNumber}</td>
         <td>{this.props.accessEntity.name}</td>
         <td>{hasAssignment ? "Assigned" : "Unassigned"}</td>
         <td>
-          {hasAssignment ? this.props.accessEntity.assignment.expiresAt : ""}
+            {hasAssignment ? this.props.accessEntity.assignments : ""}
         </td>
         <td>
                 <ListActionsDropdown

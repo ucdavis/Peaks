@@ -12,21 +12,23 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson } from "../../Types";
-import SearchEquipment from "./SearchEquipment";
+import { AppContext, IAccess, IAccessAssignment, IPerson } from "../../Types";
+import SearchAccess from "./SearchAccess";
 import AssignPerson from "../Biographical/AssignPerson";
-import EquipmentEditValues from "./EquipmentEditValues";
+import AccessEditValues from "./AccessEditValues";
 
 import 'react-datepicker/dist/react-datepicker.css';
 
 
 interface IProps {
     onCreate: (person: IPerson, date: any) => void;
+    onRevoke: (person: IPerson) => void;
+    adding: boolean;
     modal: boolean;
     openModal: () => void;
     closeModal: () => void;
-    selectEquipment: (access: IEquipment) => void;
-    selectedEquipment: IEquipment;
+    selectAccess: (access: IAccess) => void;
+    selectedAccess: IAccess;
     changeProperty: (property: string, value: string) => void;
 }
 
@@ -37,7 +39,7 @@ interface IState {
   validState: boolean;
 }
 
-export default class AssignEquipment extends React.Component<IProps, IState> {
+export default class AssignAccess extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
         person: PropTypes.object,
@@ -78,30 +80,41 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     this._closeModal();
   };
 
+  private _revokeSelected = async () => {
+
+    const person = this.context.person
+        ? this.context.person
+        : this.state.person;
+
+    await this.props.onRevoke(person);
+
+    this._closeModal();
+    };
+
   // once we have either selected or created the access we care about
-  private _onSelected = (access: IEquipment) => {
+  private _onSelected = (access: IAccess) => {
       console.log("selected in assign", access);
       //if this access is not already assigned
 
       //TODO: more validation of name
       if (access.name.length > 64)
       {
-          this.props.selectEquipment(null);
+          this.props.selectAccess(null);
           this.setState({ error: "The access name you have chosen is too long" }, this._validateState);
       }
-      //else if (this.props.assignedEquipmentList.findIndex(x => x == access.name) != -1)
+      //else if (this.props.assignedAccessList.findIndex(x => x == access.name) != -1)
       //{
-      //    this.setState({ selectedEquipment: null, error: "The access you have chosen is already assigned to this user", validEquipment: false }, this._validateState);
+      //    this.setState({ selectedAccess: null, error: "The access you have chosen is already assigned to this user", validAccess: false }, this._validateState);
       //}
       else
       {
-          this.props.selectEquipment(access);
+          this.props.selectAccess(access);
           this.setState({ error: ""}, this._validateState);
       }
   };
 
   private _onDeselected = () => {
-      this.props.selectEquipment(null);
+      this.props.selectAccess(null);
       this.setState({ error: ""}, this._validateState);
   }
 
@@ -112,7 +125,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   private _validateState = () => {
       let valid = true;
-      if (!this.props.selectedEquipment)
+      if (!this.props.selectedAccess)
           valid = false;
       else if (this.state.error !== "")
           valid = false;
@@ -145,10 +158,10 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     return (
       <div>
         <Button color="danger" onClick={this.props.openModal}>
-          Add Equipment
+          Add Access
         </Button>
         <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
-          <ModalHeader>Assign Equipment</ModalHeader>
+          <ModalHeader>Assign Access</ModalHeader>
           <ModalBody>
             <div className="container-fluid">
                 <form>
@@ -159,16 +172,16 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
                     <div className="form-group">
                         <label>Pick an access to assign</label>
-                        <SearchEquipment
-                            selectedEquipment={this.props.selectedEquipment}
+                        <SearchAccess
+                            selectedAccess={this.props.selectedAccess}
                             onSelect={this._onSelected}
                             onDeselect={this._onDeselected} />
                     </div>
-                    {!this.props.selectedEquipment || !this.props.selectedEquipment.teamId && //if we are creating a new access, edit properties
-                        <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} changeProperty={this.props.changeProperty} disableEditing={false} />
+                    {!this.props.selectedAccess || !this.props.selectedAccess.teamId && //if we are creating a new access, edit properties
+                        <AccessEditValues selectedAccess={this.props.selectedAccess} changeProperty={this.props.changeProperty} disableEditing={false} />
                     }
-                    {this.props.selectedEquipment && !!this.props.selectedEquipment.teamId &&
-                         <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} disableEditing={true} />
+                    {this.props.selectedAccess && !!this.props.selectedAccess.teamId &&
+                         <AccessEditValues selectedAccess={this.props.selectedAccess} disableEditing={true} />
                     }
 
                     {(this.state.person !== null || this.context.person !== null) && 
@@ -186,9 +199,15 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
             </div>
           </ModalBody>
           <ModalFooter>
-              <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState}>
-              Go!
-            </Button>{" "}
+            {this.props.adding &&
+                <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState}>
+                    Go!
+                </Button>}
+            {!this.props.adding &&
+                <Button color="primary" onClick={this._revokeSelected} disabled={!this.state.validState}>
+                    Go!
+                </Button>}
+                    {" "}
               <Button color="secondary" onClick={this._closeModal}>
               Close
             </Button>

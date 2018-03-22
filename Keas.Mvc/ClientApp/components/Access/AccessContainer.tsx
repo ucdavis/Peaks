@@ -14,6 +14,7 @@ interface IState {
     selectedAccess: IAccess;
     assignModal: boolean;
     detailsModal: boolean;
+    addingAccess: boolean;
 }
 
 export default class AccessContainer extends React.Component<{}, IState> {
@@ -32,6 +33,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
         loading: true,
         assignModal: false,
         detailsModal: false,
+        addingAccess: true,
     };
   }
   public async componentDidMount() {
@@ -53,9 +55,11 @@ export default class AccessContainer extends React.Component<{}, IState> {
       <div className="card">
         <div className="card-body">
                 <h4 className="card-title">Access</h4>
-                <AccessList access={this.state.access} onRevoke={this._revokeAccess} onAdd={this._assignSelectedAccess} showDetails={this._openDetailsModal} />
+                <AccessList access={this.state.access} onRevoke={this._openRevokeModal} onAdd={this._openAssignModal} showDetails={this._openDetailsModal} />
                 <AssignAccess
                     onCreate={this._createAndMaybeAssignAccess}
+                    onRevoke={this._revokeAccess}
+                    adding={this.state.addingAccess}
                     modal={this.state.assignModal}
                     openModal={this._openAssignModal}
                     closeModal={this._closeAssignModal}
@@ -110,11 +114,12 @@ export default class AccessContainer extends React.Component<{}, IState> {
     }
   };
 
-  private _revokeAccess = async (access: IAccess) => {
+  private _revokeAccess = async (person: IPerson) => {
 
+      var access = this.state.selectedAccess;
       // call API to actually revoke
-      const removed: IAccess = await this.context.fetch("/access/revoke", {
-          body: JSON.stringify(access),
+      const revokeUrl = `/access/revoke?accessId=${access.id}&personId=${person.id}`
+      const removed: IAccess = await this.context.fetch(revokeUrl, {
           method: "POST"
       });
 
@@ -141,7 +146,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
   }
 
   private _openAssignModal = async () => {
-      this.setState({ assignModal: true});
+      this.setState({ assignModal: true, addingAccess: true});
   };
 
   //clear everything out on close
@@ -151,7 +156,9 @@ export default class AccessContainer extends React.Component<{}, IState> {
           selectedAccess: null,
       });
   };
-
+  private _openRevokeModal = (access: IAccess) => {
+      this.setState({ assignModal: true, addingAccess: false, selectedAccess: access });
+  }
     //used in assign access 
   private _selectAccess = (access: IAccess) => {
       this.setState({ selectedAccess: access });
