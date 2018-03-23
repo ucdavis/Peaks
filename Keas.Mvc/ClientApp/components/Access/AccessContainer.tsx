@@ -119,11 +119,11 @@ export default class AccessContainer extends React.Component<{}, IState> {
     }
   };
 
-  private _revokeAccess = async (person: IPerson) => {
+  private _revokeAccess = async (person?: IPerson) => {
 
       var access = this.state.selectedAccess;
       // call API to actually revoke
-      const revokeUrl = `/access/revoke?accessId=${access.id}&personId=${person.id}`
+      const revokeUrl = `/access/revoke?accessId=${access.id}&personId=${!!this.context.person ? this.context.person.id : person.id}`
       const removed: IAccess = await this.context.fetch(revokeUrl, {
           method: "POST"
       });
@@ -162,7 +162,15 @@ export default class AccessContainer extends React.Component<{}, IState> {
       });
   };
   private _openRevokeModal = (access: IAccess) => {
-      this.setState({ assignModal: true, addingAccess: false, selectedAccess: access });
+      if (!!this.context.person) // if we already have the person, just revoke
+      {
+          this.setState({ selectedAccess: access }, this._revokeAccess);
+      }
+      else // otherwise, pull up the modal
+      {
+          this.setState({ assignModal: true, addingAccess: false, selectedAccess: access });
+
+      }
   }
     //used in assign access 
   private _selectAccess = (access: IAccess) => {
