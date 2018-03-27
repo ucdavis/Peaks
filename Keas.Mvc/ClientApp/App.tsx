@@ -9,7 +9,7 @@ import { History } from "history";
 interface IProps {
   person: IPerson;
   team: ITeam;
-  history: History;
+  history?: History;
 }
 
 // Provider

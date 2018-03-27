@@ -9,6 +9,12 @@ export interface AppContext {
   team: ITeam;
 }
 
+export interface IRouteProps {
+  id: string;
+  action: string;
+  assetType: string;
+}
+
 export interface IUser {
   name: string;
   email: string;
@@ -63,7 +69,7 @@ export interface IEquipment {
     model: string;
     type: string;
     assignment?: IEquipmentAssignment;
-    //attributes?: IEquipmentAttribute[];
+    // attributes?: IEquipmentAttribute[];
 }
 
 export interface IEquipmentAssignment {
