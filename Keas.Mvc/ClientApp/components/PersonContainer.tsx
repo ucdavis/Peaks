@@ -13,7 +13,7 @@ export default class PersonContainer extends React.Component<{}, {}> {
   public render() {
     const personId = this.context.router.route.match.params.id;
 
-    // go get the person from javascript
+    // TODO: go get the person from javascript
     const person: IPerson = {
       id: 1,
       teamId: this.context.team.id,

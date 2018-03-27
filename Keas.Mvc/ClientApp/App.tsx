@@ -7,7 +7,6 @@ import { createFetch } from "./util/api";
 import { History } from "history";
 
 interface IProps {
-  person: IPerson;
   team: ITeam;
 }
 
@@ -15,14 +14,12 @@ interface IProps {
 export default class App extends React.Component<IProps, {}> {
   public static childContextTypes = {
     fetch: PropTypes.func,
-    person: PropTypes.object,
     team: PropTypes.object
   };
   public getChildContext() {
     // define context here
     return {
       fetch: createFetch(),
-      person: this.props.person,
       team: this.props.team
     };
   }
