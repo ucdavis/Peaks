@@ -9,14 +9,12 @@ import { History } from "history";
 interface IProps {
   person: IPerson;
   team: ITeam;
-  history?: History;
 }
 
 // Provider
 export default class App extends React.Component<IProps, {}> {
   public static childContextTypes = {
     fetch: PropTypes.func,
-    history: PropTypes.object,
     person: PropTypes.object,
     team: PropTypes.object
   };
@@ -24,7 +22,6 @@ export default class App extends React.Component<IProps, {}> {
     // define context here
     return {
       fetch: createFetch(),
-      history: this.props.history,
       person: this.props.person,
       team: this.props.team
     };

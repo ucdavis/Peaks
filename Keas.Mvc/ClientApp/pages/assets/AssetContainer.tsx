@@ -11,7 +11,7 @@ interface IProps {
 
 export default class AssetContainer extends React.Component<IProps, {}> {
   public static contextTypes = {
-    history: PropTypes.object,
+    router: PropTypes.object,
     team: PropTypes.object,
   };
   public context: AppContext;
@@ -20,15 +20,12 @@ export default class AssetContainer extends React.Component<IProps, {}> {
     const selectedId = parseInt(this.props.match.params.id, 10);
     return (
       <AssetDisplay
-        action={this.props.match.params.action}
-        team={team}
         type={this.props.match.params.assetType}
-        selectedId={selectedId}
         onTypeChange={this.onTypeChange}
       />
     );
   }
   private onTypeChange = type => {
-    this.context.history.push(`/${this.context.team.name}/asset/${type}`);
+    this.context.router.history.push(`/${this.context.team.name}/asset/${type}`);
   };
 }

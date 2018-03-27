@@ -14,17 +14,12 @@ interface IState {
   selectedKey: IKey;
 }
 
-interface IProps {
-  selectedId: number;
-  action: string;
-}
-
-export default class KeyContainer extends React.Component<IProps, IState> {
+export default class KeyContainer extends React.Component<{}, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
-    history: PropTypes.object,
     person: PropTypes.object,
-    team: PropTypes.object
+    router: PropTypes.object,
+    team: PropTypes.object,
   };
   public context: AppContext;
   constructor(props) {
@@ -56,7 +51,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       : null;
     const allKeyList = this.context.person ? null : this.state.keys;
 
-    const detailKey = this.state.keys.find(k => k.id === this.props.selectedId);
+    const { action, id } = this.context.router.route.match.params;
+    const selectedId = parseInt(id, 10);
+    const detailKey = this.state.keys.find(k => k.id === selectedId);
     return (
       <div className="card">
         <div className="card-body">
@@ -69,7 +66,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           />
           <AssignKey
             onCreate={this._createAndMaybeAssignKey}
-            modal={this.props.action === "create"}
+            modal={action === "create"}
             openModal={this._openAssignModal}
             closeModal={this._closeModals}
             selectedKey={this.state.selectedKey}
@@ -78,7 +75,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           />
           <KeyDetails
             selectedKey={detailKey}
-            modal={this.props.action === "details" && !!detailKey}
+            modal={action === "details" && !!detailKey}
             closeModal={this._closeModals}
           />
         </div>
@@ -156,7 +153,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   };
 
   private _openAssignModal = async () => {
-    this.context.history.push(
+    this.context.router.history.push(
       `/${this.context.team.name}/asset/keys/create`
     );
   };
@@ -176,11 +173,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   };
 
   private _openDetailsModal = (key: IKey) => {
-    this.context.history.push(
+    this.context.router.history.push(
       `/${this.context.team.name}/asset/keys/details/${key.id}`
     );
   };
   private _closeModals = () => {
-    this.context.history.push(`/${this.context.team.name}/asset/keys`);
+    this.context.router.history.push(`/${this.context.team.name}/asset/keys`);
   };
 }
