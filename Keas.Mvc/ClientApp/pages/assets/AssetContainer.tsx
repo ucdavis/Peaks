@@ -16,11 +16,12 @@ export default class AssetContainer extends React.Component<IProps, {}> {
   public context: AppContext;
   public render() {
     const team = this.context.team;
-
+    const selectedId = parseInt(this.props.match.params.id);
     return (
       <AssetDisplay
         team={team}
         type={this.props.match.params.assetType}
+        selectedId={selectedId}
         onTypeChange={this.onTypeChange}
       />
     );

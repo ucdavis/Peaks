@@ -1,7 +1,10 @@
+import { History } from "history";
+
 // Main Type of the context
 // tslint:disable-next-line:interface-name
 export interface AppContext {
   fetch: (url: string, init?: RequestInit) => any;
+  history: History;
   person: IPerson;
   team: ITeam;
 }

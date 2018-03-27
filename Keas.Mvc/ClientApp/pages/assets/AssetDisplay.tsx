@@ -11,6 +11,7 @@ interface IProps {
   team: ITeam;
   onTypeChange: (type: string) => void;
   type: string;
+  selectedId: number;
 }
 
 export default class AssetDisplay extends React.Component<IProps, {}> {
@@ -91,7 +92,7 @@ export default class AssetDisplay extends React.Component<IProps, {}> {
   }
   private _renderKeys = () => {
     if (this.props.type === "keys") {
-      return <KeyContainer />;
+      return <KeyContainer selectedId={this.props.selectedId} />;
     }
   };
   private _renderEquipment = () => {
