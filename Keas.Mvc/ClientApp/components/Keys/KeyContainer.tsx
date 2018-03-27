@@ -11,12 +11,12 @@ interface IState {
   loading: boolean;
   // either key assigned to this person, or all team keys
   keys: IKey[];
-  assignModal: boolean;
   selectedKey: IKey;
 }
 
 interface IProps {
   selectedId: number;
+  action: string;
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
@@ -31,10 +31,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      assignModal: false,
       keys: [],
       loading: true,
-      selectedKey: {}
+      selectedKey: null
     };
   }
   public async componentDidMount() {
@@ -70,17 +69,17 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           />
           <AssignKey
             onCreate={this._createAndMaybeAssignKey}
-            modal={this.state.assignModal}
+            modal={this.props.action === "create"}
             openModal={this._openAssignModal}
-            closeModal={this._closeAssignModal}
+            closeModal={this._closeModals}
             selectedKey={this.state.selectedKey}
             selectKey={this._selectKey}
             changeProperty={this._changeSelectedKeyProperty}
           />
           <KeyDetails
             selectedKey={detailKey}
-            modal={!!detailKey}
-            closeModal={this._closeDetailsModal}
+            modal={this.props.action === "details" && !!detailKey}
+            closeModal={this._closeModals}
           />
         </div>
       </div>
@@ -157,15 +156,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   };
 
   private _openAssignModal = async () => {
-    this.setState({ assignModal: true });
-  };
-
-  //clear everything out on close
-  private _closeAssignModal = () => {
-    this.setState({
-      assignModal: false,
-      selectedKey: null
-    });
+    this.context.history.push(
+      `/${this.context.team.name}/asset/keys/create`
+    );
   };
 
   //used in assign key
@@ -184,12 +177,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
   private _openDetailsModal = (key: IKey) => {
     this.context.history.push(
-      `/${this.context.team.name}/asset/keys/${key.id}`
+      `/${this.context.team.name}/asset/keys/details/${key.id}`
     );
   };
-  private _closeDetailsModal = () => {
-    this.context.history.push(
-      `/${this.context.team.name}/asset/keys`
-    );
+  private _closeModals = () => {
+    this.context.history.push(`/${this.context.team.name}/asset/keys`);
   };
 }

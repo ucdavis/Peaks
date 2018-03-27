@@ -19,6 +19,7 @@ export default class AssetContainer extends React.Component<IProps, {}> {
     const selectedId = parseInt(this.props.match.params.id);
     return (
       <AssetDisplay
+        action={this.props.match.params.action}
         team={team}
         type={this.props.match.params.assetType}
         selectedId={selectedId}

@@ -8,6 +8,7 @@ import KeyContainer from "../../components/Keys/KeyContainer";
 import { ITeam } from "../../Types";
 
 interface IProps {
+  action: string;
   team: ITeam;
   onTypeChange: (type: string) => void;
   type: string;
@@ -92,7 +93,7 @@ export default class AssetDisplay extends React.Component<IProps, {}> {
   }
   private _renderKeys = () => {
     if (this.props.type === "keys") {
-      return <KeyContainer selectedId={this.props.selectedId} />;
+      return <KeyContainer action={this.props.action} selectedId={this.props.selectedId} />;
     }
   };
   private _renderEquipment = () => {
