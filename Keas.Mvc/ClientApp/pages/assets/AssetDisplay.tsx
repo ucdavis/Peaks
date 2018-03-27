@@ -88,7 +88,11 @@ export default class AssetDisplay extends React.Component<IProps, {}> {
           </TabPane>
           <TabPane tabId="keys">{this._renderKeys()}</TabPane>
           <TabPane tabId="equipment">{this._renderEquipment()}</TabPane>
-          <TabPane tabId="people">{this._renderPeople()}</TabPane>
+          <TabPane tabId="people">
+              <h1>Site of future people tab</h1>
+              <h5>Eventually this will render all the people in a team.  Clicking on one should show the person container you are seeing now, possibly in a new tab.  For now nothing here works.</h5>
+            {this._renderPeople()}
+          </TabPane>
         </TabContent>
       </div>
     );
