@@ -11,7 +11,11 @@ interface IState {
   accessAssignments: IAccessAssignment[];
 }
 
-export default class AccessContainer extends React.Component<{}, IState> {
+interface IProps {
+  person: IPerson;
+}
+
+export default class AccessContainer extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
     person: PropTypes.object
@@ -27,7 +31,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
   }
   public async componentDidMount() {
     const accessAssignments = await this.context.fetch(
-      `/access/listassigned/${this.context.person.id}`
+      `/access/listassigned/${this.props.person.id}`
     );
     this.setState({ accessAssignments, loading: false });
   }
@@ -35,8 +39,10 @@ export default class AccessContainer extends React.Component<{}, IState> {
   public render() {
     if (this.state.loading) {
       return <h2>Loading...</h2>;
-      }
-      const assignedAccessList = this.state.accessAssignments.map(x => x.access.name);
+    }
+    const assignedAccessList = this.state.accessAssignments.map(
+      x => x.access.name
+    );
     return (
       <div className="card">
         <div className="card-body">
@@ -45,16 +51,22 @@ export default class AccessContainer extends React.Component<{}, IState> {
             accessAssignments={this.state.accessAssignments}
             onRevoke={this._revokeAccess}
           />
-          <AssignAccess onAssign={this._assignAccess} assignedAccessList={assignedAccessList} />
+          <AssignAccess
+            onAssign={this._assignAccess}
+            assignedAccessList={assignedAccessList}
+          />
         </div>
       </div>
     );
   }
 
-  public _assignAccess = async (access: IAccess, date: string): Promise<IAccessAssignment> => {
+  public _assignAccess = async (
+    access: IAccess,
+    date: string
+  ): Promise<IAccessAssignment> => {
     if (access.id === 0) {
       // if we need to create the new access first
-      access.teamId = this.context.person.teamId; // assign to current team
+      access.teamId = this.props.person.teamId; // assign to current team
 
       access = await this.context.fetch("/access/create", {
         body: JSON.stringify(access),
@@ -64,7 +76,8 @@ export default class AccessContainer extends React.Component<{}, IState> {
 
     // now assign the existing or newly created access
     const assignUrl = `/access/assign?accessId=${access.id}&personId=${
-      this.context.person.id}&date=${date}`;
+      this.props.person.id
+    }&date=${date}`;
     const newAssignment: IAccessAssignment = await this.context.fetch(
       assignUrl,
       { method: "POST" }

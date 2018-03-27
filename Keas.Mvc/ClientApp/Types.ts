@@ -12,7 +12,6 @@ export interface AppContext {
       match: match<IRouteProps>;
     };
   };
-  person: IPerson;
   team: ITeam;
 }
 

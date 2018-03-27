@@ -14,12 +14,15 @@ interface IState {
   selectedKey: IKey;
 }
 
-export default class KeyContainer extends React.Component<{}, IState> {
+interface IProps {
+  person?: IPerson;
+}
+
+export default class KeyContainer extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
-    person: PropTypes.object,
     router: PropTypes.object,
-    team: PropTypes.object,
+    team: PropTypes.object
   };
   public context: AppContext;
   constructor(props) {
@@ -33,9 +36,9 @@ export default class KeyContainer extends React.Component<{}, IState> {
   }
   public async componentDidMount() {
     // are we getting the person's key or the team's?
-    const keyFetchUrl = this.context.person
-      ? `/keys/listassigned?personid=${this.context.person.id}&teamId=${
-          this.context.person.teamId
+    const keyFetchUrl = this.props.person
+      ? `/keys/listassigned?personid=${this.props.person.id}&teamId=${
+          this.props.person.teamId
         }`
       : `/keys/list/${this.context.team.id}`;
 
@@ -46,10 +49,10 @@ export default class KeyContainer extends React.Component<{}, IState> {
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
-    const assignedKeyList = this.context.person
+    const assignedKeyList = this.props.person
       ? this.state.keys.map(x => x.name)
       : null;
-    const allKeyList = this.context.person ? null : this.state.keys;
+    const allKeyList = this.props.person ? null : this.state.keys;
 
     const { action, id } = this.context.router.route.match.params;
     const selectedId = parseInt(id, 10);
@@ -135,7 +138,7 @@ export default class KeyContainer extends React.Component<{}, IState> {
     const index = this.state.keys.indexOf(key);
     if (index > -1) {
       let shallowCopy = [...this.state.keys];
-      if (this.context.person == null) {
+      if (this.props.person == null) {
         //if we are looking at all key, just update assignment
         shallowCopy[index] = removed;
       } else {
@@ -153,9 +156,7 @@ export default class KeyContainer extends React.Component<{}, IState> {
   };
 
   private _openAssignModal = async () => {
-    this.context.router.history.push(
-      `/${this.context.team.name}/keys/create`
-    );
+    this.context.router.history.push(`/${this.context.team.name}/keys/create`);
   };
 
   //used in assign key

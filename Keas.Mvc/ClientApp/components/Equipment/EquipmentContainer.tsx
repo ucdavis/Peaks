@@ -19,7 +19,14 @@ interface IState {
   selectedEquipment: IEquipment;
 }
 
-export default class EquipmentContainer extends React.Component<{}, IState> {
+interface IProps {
+  person?: IPerson;
+}
+
+export default class EquipmentContainer extends React.Component<
+  IProps,
+  IState
+> {
   public static contextTypes = {
     fetch: PropTypes.func,
     person: PropTypes.object,
@@ -38,9 +45,9 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
   }
   public async componentDidMount() {
     // are we getting the person's equipment or the team's?
-    const equipmentFetchUrl = this.context.person
-      ? `/equipment/listassigned?id=${this.context.person.id}&teamId=${
-          this.context.person.teamId
+    const equipmentFetchUrl = this.props.person
+      ? `/equipment/listassigned?id=${this.props.person.id}&teamId=${
+          this.props.person.teamId
         }`
       : `/equipment/list/${this.context.team.id}`;
 
@@ -51,10 +58,10 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
-    const assignedEquipmentList = this.context.person
+    const assignedEquipmentList = this.props.person
       ? this.state.equipment.map(x => x.name)
       : null;
-    const allEquipmentList = this.context.person ? null : this.state.equipment;
+    const allEquipmentList = this.props.person ? null : this.state.equipment;
 
     const { action, id } = this.context.router.route.match.params;
     const selectedId = parseInt(id, 10);
@@ -144,7 +151,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
     const index = this.state.equipment.indexOf(equipment);
     if (index > -1) {
       let shallowCopy = [...this.state.equipment];
-      if (this.context.person == null) {
+      if (this.props.person == null) {
         //if we are looking at all equipment, just update assignment
         shallowCopy[index] = removed;
       } else {
@@ -191,8 +198,6 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
   };
 
   private _closeModals = () => {
-    this.context.router.history.push(
-      `/${this.context.team.name}/equipment`
-    );
+    this.context.router.history.push(`/${this.context.team.name}/equipment`);
   };
 }

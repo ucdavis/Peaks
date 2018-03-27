@@ -4,6 +4,7 @@ import { Button, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 
 import EquipmentContainer from "../../components/Equipment/EquipmentContainer";
 import KeyContainer from "../../components/Keys/KeyContainer";
+import PersonContainer from "../../components/PersonContainer";
 
 import { ITeam } from "../../Types";
 
@@ -67,6 +68,16 @@ export default class AssetDisplay extends React.Component<IProps, {}> {
               Space
             </NavLink>
           </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: this.props.type === "people" })}
+              onClick={() => {
+                this.toggle("people");
+              }}
+            >
+              People
+            </NavLink>
+          </NavItem>
         </Nav>
         <TabContent activeTab={this.props.type}>
           <TabPane tabId="1">
@@ -77,6 +88,7 @@ export default class AssetDisplay extends React.Component<IProps, {}> {
           </TabPane>
           <TabPane tabId="keys">{this._renderKeys()}</TabPane>
           <TabPane tabId="equipment">{this._renderEquipment()}</TabPane>
+          <TabPane tabId="people">{this._renderPeople()}</TabPane>
         </TabContent>
       </div>
     );
@@ -96,6 +108,11 @@ export default class AssetDisplay extends React.Component<IProps, {}> {
   private _renderEquipment = () => {
     if (this.props.type === "equipment") {
       return <EquipmentContainer />;
+    }
+  };
+  private _renderPeople = () => {
+    if (this.props.type === "people") {
+      return <PersonContainer />;
     }
   };
 }
