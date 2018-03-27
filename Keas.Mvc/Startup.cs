@@ -109,6 +109,12 @@ namespace Keas.Mvc
 
             app.UseMvc(routes =>
             {
+
+                routes.MapRoute(
+                    name: "Assets",
+                    template: "{teamName}/Asset/{*type}",
+                    defaults: new { controller = "Asset", action = "Index" }
+                );
                 routes.MapRoute(
                     name: "TeamRoutes",
                     template: "{teamName}/{controller=Home}/{action=Index}/{id?}");

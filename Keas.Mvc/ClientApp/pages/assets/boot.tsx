@@ -1,8 +1,13 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { AppContainer } from "react-hot-loader";
+import { BrowserRouter } from "react-router-dom";
+
 import App from "../../App";
-import AssetContainer from "./AssetContainer";
+import * as RoutesModule from "./routes";
+
+const routes = RoutesModule.routes;
+
 import "../../css/site.css";
 
 declare var window: any;
@@ -16,7 +21,7 @@ function renderApp() {
   ReactDOM.render(
     <AppContainer>
       <App person={person} team={team}>
-        <AssetContainer />
+        <BrowserRouter children={routes} />
       </App>
     </AppContainer>,
     document.getElementById("react-app")

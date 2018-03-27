@@ -2,27 +2,22 @@ import classnames from "classnames";
 import * as React from "react";
 import { Button, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 
-import KeyContainer from "../../components/Keys/KeyContainer";
 import EquipmentContainer from "../../components/Equipment/EquipmentContainer";
+import KeyContainer from "../../components/Keys/KeyContainer";
 
 import { ITeam } from "../../Types";
 
 interface IProps {
   team: ITeam;
+  onTypeChange: (type: string) => void;
+  type: string;
 }
 
-interface IState {
-  activeTab: string;
-}
-
-export default class AssetDisplay extends React.Component<IProps, IState> {
+export default class AssetDisplay extends React.Component<IProps, {}> {
   constructor(props) {
     super(props);
 
     this.toggle = this.toggle.bind(this);
-    this.state = {
-      activeTab: "keys"
-    };
   }
 
   public render() {
@@ -32,7 +27,7 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           <NavItem>
             <NavLink
               className={classnames({
-                active: this.state.activeTab === "keys"
+                active: this.props.type === "keys"
               })}
               onClick={() => {
                 this.toggle("keys");
@@ -44,7 +39,7 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           <NavItem>
             <NavLink
               className={classnames({
-                active: this.state.activeTab === "equipment"
+                active: this.props.type === "equipment"
               })}
               onClick={() => {
                 this.toggle("equipment");
@@ -55,7 +50,7 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === "2" })}
+              className={classnames({ active: this.props.type === "2" })}
               onClick={() => {
                 this.toggle("2");
               }}
@@ -65,7 +60,7 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === "2" })}
+              className={classnames({ active: this.props.type === "2" })}
               onClick={() => {
                 this.toggle("4");
               }}
@@ -74,7 +69,7 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
             </NavLink>
           </NavItem>
         </Nav>
-        <TabContent activeTab={this.state.activeTab}>
+        <TabContent activeTab={this.props.type}>
           <TabPane tabId="1">
             <div className="container">Pane 1</div>
           </TabPane>
@@ -89,20 +84,19 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
   }
 
   private toggle(tab) {
-    if (this.state.activeTab !== tab) {
-      this.setState({
-        activeTab: tab
-      });
+    // go change route
+    if (this.props.type !== tab) {
+      this.props.onTypeChange(tab);
     }
   }
   private _renderKeys = () => {
-    if (this.state.activeTab === "keys") {
+    if (this.props.type === "keys") {
       return <KeyContainer />;
     }
   };
   private _renderEquipment = () => {
-      if (this.state.activeTab === "equipment") {
-          return <EquipmentContainer />;
-      }
+    if (this.props.type === "equipment") {
+      return <EquipmentContainer />;
+    }
   };
 }
