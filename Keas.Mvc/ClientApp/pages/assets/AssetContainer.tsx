@@ -26,6 +26,6 @@ export default class AssetContainer extends React.Component<IProps, {}> {
     );
   }
   private onTypeChange = type => {
-    this.context.router.history.push(`/${this.context.team.name}/asset/${type}`);
+    this.context.router.history.push(`/${this.context.team.name}/${type}`);
   };
 }

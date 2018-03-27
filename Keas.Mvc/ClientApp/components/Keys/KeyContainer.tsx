@@ -154,7 +154,7 @@ export default class KeyContainer extends React.Component<{}, IState> {
 
   private _openAssignModal = async () => {
     this.context.router.history.push(
-      `/${this.context.team.name}/asset/keys/create`
+      `/${this.context.team.name}/keys/create`
     );
   };
 
@@ -174,10 +174,10 @@ export default class KeyContainer extends React.Component<{}, IState> {
 
   private _openDetailsModal = (key: IKey) => {
     this.context.router.history.push(
-      `/${this.context.team.name}/asset/keys/details/${key.id}`
+      `/${this.context.team.name}/keys/details/${key.id}`
     );
   };
   private _closeModals = () => {
-    this.context.router.history.push(`/${this.context.team.name}/asset/keys`);
+    this.context.router.history.push(`/${this.context.team.name}/keys`);
   };
 }

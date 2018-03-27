@@ -163,7 +163,7 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
 
   private _openAssignModal = async () => {
     this.context.router.history.push(
-      `/${this.context.team.name}/asset/equipment/create`
+      `/${this.context.team.name}/equipment/create`
     );
   };
 
@@ -186,13 +186,13 @@ export default class EquipmentContainer extends React.Component<{}, IState> {
 
   private _openDetailsModal = (equipment: IEquipment) => {
     this.context.router.history.push(
-      `/${this.context.team.name}/asset/equipment/details/${equipment.id}`
+      `/${this.context.team.name}/equipment/details/${equipment.id}`
     );
   };
 
   private _closeModals = () => {
     this.context.router.history.push(
-      `/${this.context.team.name}/asset/equipment`
+      `/${this.context.team.name}/equipment`
     );
   };
 }

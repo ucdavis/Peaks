@@ -5,6 +5,6 @@ import AssetContainer from './AssetContainer';
 
 export const routes = (
   <div>
-    <Route path="/:team/asset/:assetType?/:action?/:id?" component={AssetContainer} />
+    <Route path="/:team/:assetType?/:action?/:id?" component={AssetContainer} />
   </div>
 );
