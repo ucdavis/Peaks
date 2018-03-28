@@ -85,34 +85,27 @@ namespace Keas.Mvc.Controllers
         // POST: Team/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // Updated as per MS docs https://docs.microsoft.com/en-us/aspnet/core/data/ef-mvc/crud
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Team team)
+        public async Task<IActionResult> Edit(int id, Team team)
         {
             if (id != team.Id)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            var teamToUpdate = await _context.Teams.SingleOrDefaultAsync(x => x.Id == id);
+            if (await TryUpdateModelAsync<Team>(teamToUpdate, "", t => t.Name))
             {
                 try
                 {
-                    _context.Update(team);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException ex)
                 {
-                    if (!TeamExists(team.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("","Unable to save changes.");
                 }
-                return RedirectToAction(nameof(Index));
             }
             return View(team);
         }
