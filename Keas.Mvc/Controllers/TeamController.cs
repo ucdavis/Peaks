@@ -25,23 +25,24 @@ namespace Keas.Mvc.Controllers
             return View(await _context.Teams.ToListAsync());
         }
 
-        // GET: Team/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        // Don't need details? Only one property.
+        //// GET: Team/Details/5
+        //public async Task<IActionResult> Details(int? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            var team = await _context.Teams
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (team == null)
-            {
-                return NotFound();
-            }
+        //    var team = await _context.Teams
+        //        .SingleOrDefaultAsync(m => m.Id == id);
+        //    if (team == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            return View(team);
-        }
+        //    return View(team);
+        //}
 
         // GET: Team/Create
         public IActionResult Create()
@@ -116,35 +117,7 @@ namespace Keas.Mvc.Controllers
             return View(team);
         }
 
-        // GET: Team/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var team = await _context.Teams
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (team == null)
-            {
-                return NotFound();
-            }
-
-            return View(team);
-        }
-
-        // POST: Team/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var team = await _context.Teams.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Teams.Remove(team);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
+      
         private bool TeamExists(int id)
         {
             return _context.Teams.Any(e => e.Id == id);
