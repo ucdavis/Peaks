@@ -21,7 +21,7 @@ export const routes = (
     <Route path="/:team/people/:action?/:id?" component={PersonContainer} />
     <Route
       path="/:team/person/:id?/:assetType?/:action?/:subId?"
-      component={AssetContainer}
+      component={PersonContainer}
     />
   </AssetNav>
 );
