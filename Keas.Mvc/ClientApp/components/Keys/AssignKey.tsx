@@ -20,13 +20,11 @@ import SearchKey from "./SearchKeys";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface IProps {
-  onCreate: (person: IPerson, date: any) => void;
+  onCreate: (person: IPerson, key: IKey, date: any) => void;
   modal: boolean;
   onAddNew: () => void;
   closeModal: () => void;
-  selectKey: (key: IKey) => void;
   selectedKey: IKey;
-  changeProperty: (property: string, value: string) => void;
   person?: IPerson;
 }
 
@@ -34,6 +32,7 @@ interface IState {
   person: IPerson;
   date: any;
   error: string;
+  key: IKey;
   validState: boolean;
 }
 
@@ -48,9 +47,17 @@ export default class AssignKey extends React.Component<IProps, IState> {
     this.state = {
       date: moment().add(3, "y"),
       error: "",
+      key: this.props.selectedKey,
       person: null,
       validState: false
     };
+  }
+
+  // make sure we change the key we are updating if the parent changes selected key
+  public componentWillReceiveProps(nextProps) {
+    if (nextProps.selectedKey !== this.props.selectedKey) {
+      this.setState({ key: nextProps.selectedKey });
+    }
   }
 
   public render() {
@@ -72,23 +79,23 @@ export default class AssignKey extends React.Component<IProps, IState> {
                 <div className="form-group">
                   <label>Pick an key to assign</label>
                   <SearchKey
-                    selectedKey={this.props.selectedKey}
+                    selectedKey={this.state.key}
                     onSelect={this._onSelected}
                     onDeselect={this._onDeselected}
                   />
                 </div>
-                {!this.props.selectedKey ||
-                  (!this.props.selectedKey.teamId && ( // if we are creating a new key, edit properties
+                {!this.state.key ||
+                  (!this.state.key.teamId && ( // if we are creating a new key, edit properties
                     <KeyEditValues
-                      selectedKey={this.props.selectedKey}
-                      changeProperty={this.props.changeProperty}
+                      selectedKey={this.state.key}
+                      changeProperty={this._changeProperty}
                       disableEditing={false}
                     />
                   ))}
-                {this.props.selectedKey &&
-                  !!this.props.selectedKey.teamId && (
+                {this.state.key &&
+                  !!this.state.key.teamId && (
                     <KeyEditValues
-                      selectedKey={this.props.selectedKey}
+                      selectedKey={this.state.key}
                       disableEditing={true}
                     />
                   )}
@@ -125,6 +132,15 @@ export default class AssignKey extends React.Component<IProps, IState> {
     );
   }
 
+  private _changeProperty = (property: string, value: string) => {
+    this.setState({
+      key: {
+        ...this.state.key,
+        [property]: value
+      }
+    });
+  };
+
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
@@ -143,21 +159,22 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
     const person = this.props.person ? this.props.person : this.state.person;
 
-    await this.props.onCreate(person, this.state.date.format());
+    await this.props.onCreate(person, this.state.key, this.state.date.format());
 
     this._closeModal();
   };
 
   // once we have either selected or created the key we care about
   private _onSelected = (key: IKey) => {
-    console.log("selected in assign", key);
     // if this key is not already assigned
 
     // TODO: more validation of name
     if (key.name.length > 64) {
-      this.props.selectKey(null);
       this.setState(
-        { error: "The key name you have chosen is too long" },
+        {
+          error: "The key name you have chosen is too long",
+          key: null
+        },
         this._validateState
       );
     } else {
@@ -165,14 +182,12 @@ export default class AssignKey extends React.Component<IProps, IState> {
       // {
       //    this.setState({ selectedKey: null, error: "The key you have chosen is already assigned to this user", validKey: false }, this._validateState);
       // }
-      this.props.selectKey(key);
-      this.setState({ error: "" }, this._validateState);
+      this.setState({ key, error: "" }, this._validateState);
     }
   };
 
   private _onDeselected = () => {
-    this.props.selectKey(null);
-    this.setState({ error: "" }, this._validateState);
+    this.setState({ key: null, error: "" }, this._validateState);
   };
 
   private _onSelectPerson = (person: IPerson) => {
@@ -181,7 +196,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
   private _validateState = () => {
     let valid = true;
-    if (!this.props.selectedKey) {
+    if (!this.state.key) {
       valid = false;
     } else if (this.state.error !== "") {
       valid = false;
