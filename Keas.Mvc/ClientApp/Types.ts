@@ -1,9 +1,26 @@
+import { History, Location } from "history";
+import { match } from "react-router";
+
 // Main Type of the context
 // tslint:disable-next-line:interface-name
 export interface AppContext {
   fetch: (url: string, init?: RequestInit) => any;
-  person: IPerson;
+  router: {
+    history: History;
+    route: {
+      location: Location;
+      match: match<IRouteProps>;
+    };
+  };
   team: ITeam;
+}
+
+export interface IRouteProps {
+  id: string;
+  action: string;
+  assetType: string;
+  personId: string;
+  personAction: string;
 }
 
 export interface IUser {
@@ -39,41 +56,41 @@ export interface IKeyAssignment {
 }
 
 export interface IAccess {
-    id: number;
-    teamId: number;
-    name: string;
+  id: number;
+  teamId: number;
+  name: string;
 }
 
 export interface IAccessAssignment {
-    id: number;
-    accessId: number;
-    expiresAt: Date;
-    access: IAccess;
+  id: number;
+  accessId: number;
+  expiresAt: Date;
+  access: IAccess;
 }
 
 export interface IEquipment {
-    id: number;
-    teamId: number;
-    name: string;
-    serialNumber: string;
-    make: string;
-    model: string;
-    type: string;
-    assignment?: IEquipmentAssignment;
-    //attributes?: IEquipmentAttribute[];
+  id: number;
+  teamId: number;
+  name: string;
+  serialNumber: string;
+  make: string;
+  model: string;
+  type: string;
+  assignment?: IEquipmentAssignment;
+  // attributes?: IEquipmentAttribute[];
 }
 
 export interface IEquipmentAssignment {
-    id: number;
-    equipmentId: number;
-    expiresAt: Date;
-    equipment: IEquipment;
+  id: number;
+  equipmentId: number;
+  expiresAt: Date;
+  equipment: IEquipment;
 }
 
 export interface IEquipmentAttribute {
-    equipment: IEquipment;
-    id: number;
-    equipmentId: number;
-    key: string;
-    value: string;
+  equipment: IEquipment;
+  id: number;
+  equipmentId: number;
+  key: string;
+  value: string;
 }
