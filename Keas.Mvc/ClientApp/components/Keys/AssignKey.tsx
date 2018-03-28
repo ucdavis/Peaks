@@ -22,7 +22,7 @@ import "react-datepicker/dist/react-datepicker.css";
 interface IProps {
   onCreate: (person: IPerson, date: any) => void;
   modal: boolean;
-  openModal: () => void;
+  onAddNew: () => void;
   closeModal: () => void;
   selectKey: (key: IKey) => void;
   selectedKey: IKey;
@@ -56,7 +56,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
-        <Button color="danger" onClick={this.props.openModal}>
+        <Button color="danger" onClick={this.props.onAddNew}>
           Add Key
         </Button>
         <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">

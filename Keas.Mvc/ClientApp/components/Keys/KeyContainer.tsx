@@ -64,13 +64,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           <KeyList
             keys={this.state.keys}
             onRevoke={this._revokeKey}
-            onAdd={this._assignSelectedKey}
+            onAdd={this._openAssignModal}
             showDetails={this._openDetailsModal}
           />
           <AssignKey
             onCreate={this._createAndMaybeAssignKey}
-            modal={action === "create"}
-            openModal={this._openAssignModal}
+            modal={action === "create" || action === 'assign'}
+            onAddNew={this._openCreateModal}
             closeModal={this._closeModals}
             selectedKey={this.state.selectedKey}
             selectKey={this._selectKey}
@@ -156,9 +156,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     this._openAssignModal();
   };
 
-  private _openAssignModal = async () => {
-    this.context.router.history.push(`/${this.context.team.name}/keys/create`);
+  private _openAssignModal = (key: IKey) => {
+    this.context.router.history.push(`/${this.context.team.name}/keys/assign/${key.id}`);
   };
+
+  private _openCreateModal = () => {
+    this.context.router.history.push(`/${this.context.team.name}/keys/create`);
+  }
 
   //used in assign key
   private _selectKey = (key: IKey) => {
