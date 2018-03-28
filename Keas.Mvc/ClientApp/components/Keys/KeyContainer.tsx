@@ -48,6 +48,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     }
 
     const { action, assetType, id } = this.context.router.route.match.params;
+    const activeAsset = !assetType || assetType === "keys";
     const selectedId = parseInt(id, 10);
     const detailKey = this.state.keys.find(k => k.id === selectedId);
     return (
@@ -62,10 +63,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           />
           <AssignKey
             onCreate={this._createAndMaybeAssignKey}
-            modal={
-              assetType === "keys" &&
-              (action === "create" || action === "assign")
-            }
+            modal={activeAsset && (action === "create" || action === "assign")}
             onAddNew={this._openCreateModal}
             closeModal={this._closeModals}
             selectedKey={detailKey}
@@ -73,7 +71,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           />
           <KeyDetails
             selectedKey={detailKey}
-            modal={assetType === "keys" && action === "details" && !!detailKey}
+            modal={activeAsset && action === "details" && !!detailKey}
             closeModal={this._closeModals}
           />
         </div>

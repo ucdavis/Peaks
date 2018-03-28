@@ -64,6 +64,8 @@ export default class EquipmentContainer extends React.Component<
     const allEquipmentList = this.props.person ? null : this.state.equipment;
 
     const { action, assetType, id } = this.context.router.route.match.params;
+    const activeAsset = !assetType || assetType === "equipment";
+
     const selectedId = parseInt(id, 10);
     const detailAsset = this.state.equipment.find(e => e.id === selectedId);
 
@@ -79,7 +81,7 @@ export default class EquipmentContainer extends React.Component<
           />
           <AssignEquipment
             onCreate={this._createAndMaybeAssignEquipment}
-            modal={assetType === "equipment" && action === "create"}
+            modal={activeAsset && action === "create"}
             openModal={this._openAssignModal}
             closeModal={this._closeModals}
             selectedEquipment={this.state.selectedEquipment}
@@ -88,9 +90,7 @@ export default class EquipmentContainer extends React.Component<
           />
           <EquipmentDetails
             selectedEquipment={detailAsset}
-            modal={
-              assetType === "equipment" && action === "details" && !!detailAsset
-            }
+            modal={activeAsset && action === "details" && !!detailAsset}
             closeModal={this._closeModals}
           />
         </div>
@@ -171,9 +171,7 @@ export default class EquipmentContainer extends React.Component<
   };
 
   private _openAssignModal = async () => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/equipment/create`
-    );
+    this.context.router.history.push(`${this._getBaseUrl()}/equipment/create`);
   };
 
   //used in assign equipment
