@@ -3,6 +3,7 @@ import { Route } from "react-router-dom";
 
 import EquipmentContainer from "../../components/Equipment/EquipmentContainer";
 import KeyContainer from "../../components/Keys/KeyContainer";
+import PeopleContainer from "../../components/People/PeopleContainer";
 import PersonContainer from "../../components/PersonContainer";
 import AssetNav from "../assets/AssetNav";
 import AssetContainer from "./AssetContainer";
@@ -18,7 +19,7 @@ export const routes = (
       path="/:team/equipment/:action?/:id?"
       component={EquipmentContainer}
     />
-    <Route path="/:team/people/:action?/:id?" component={PersonContainer} />
+    <Route path="/:team/people/:action?/:id?" component={PeopleContainer} />
     <Route
       path="/:team/person/:id?/:assetType?/:action?/:subId?"
       component={PersonContainer}
