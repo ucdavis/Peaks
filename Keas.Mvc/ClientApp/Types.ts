@@ -19,9 +19,8 @@ export interface IRouteProps {
   id: string;
   action: string;
   assetType: string;
-  subId: string;
-  subAction: string;
-  subAssetType: string;
+  personId: string;
+  personAction: string;
 }
 
 export interface IUser {
