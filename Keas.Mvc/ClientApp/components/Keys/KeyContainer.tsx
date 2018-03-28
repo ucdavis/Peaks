@@ -9,9 +9,7 @@ import KeyList from "./KeyList";
 
 interface IState {
   loading: boolean;
-  // either key assigned to this person, or all team keys
-  keys: IKey[];
-  selectedKey: IKey;
+  keys: IKey[]; // either key assigned to this person, or all team keys
 }
 
 interface IProps {
@@ -31,7 +29,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     this.state = {
       keys: [],
       loading: true,
-      selectedKey: null
     };
   }
   public async componentDidMount() {
@@ -49,10 +46,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
-    const assignedKeyList = this.props.person
-      ? this.state.keys.map(x => x.name)
-      : null;
-    const allKeyList = this.props.person ? null : this.state.keys;
 
     const { action, id } = this.context.router.route.match.params;
     const selectedId = parseInt(id, 10);
@@ -64,18 +57,16 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           <KeyList
             keys={this.state.keys}
             onRevoke={this._revokeKey}
-            onAdd={this._assignSelectedKey}
+            onAdd={this._openAssignModal}
             showDetails={this._openDetailsModal}
           />
           <AssignKey
             onCreate={this._createAndMaybeAssignKey}
-            modal={action === "create"}
-            openModal={this._openAssignModal}
+            modal={action === "create" || action === "assign"}
+            onAddNew={this._openCreateModal}
             closeModal={this._closeModals}
-            selectedKey={this.state.selectedKey}
-            selectKey={this._selectKey}
+            selectedKey={detailKey}
             person={this.props.person}
-            changeProperty={this._changeSelectedKeyProperty}
           />
           <KeyDetails
             selectedKey={detailKey}
@@ -86,10 +77,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       </div>
     );
   }
-  private _createAndMaybeAssignKey = async (person: IPerson, date: any) => {
+  private _createAndMaybeAssignKey = async (person: IPerson, key: IKey, date: any) => {
     // call API to create a key, then assign it if there is a person to assign to
-    var key = this.state.selectedKey;
-    //if we are creating a new key
+    // if we are creating a new key
     if (key.id === 0) {
       key.teamId = this.context.team.id;
       key = await this.context.fetch("/keys/create", {
@@ -109,12 +99,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       });
     }
 
-    let index = this.state.keys.findIndex(x => x.id == key.id);
-    console.log("index " + index);
+    const index = this.state.keys.findIndex(x => x.id === key.id);
     if (index !== -1) {
-      console.log("changing");
-      //update already existing entry in key
-      let updateKey = [...this.state.keys];
+      // update already existing entry in key
+      const updateKey = [...this.state.keys];
       updateKey[index] = key;
 
       this.setState({
@@ -135,43 +123,29 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       method: "POST"
     });
 
-    //remove from state
+    // remove from state
     const index = this.state.keys.indexOf(key);
     if (index > -1) {
-      let shallowCopy = [...this.state.keys];
+      const shallowCopy = [...this.state.keys];
       if (this.props.person == null) {
-        //if we are looking at all key, just update assignment
+        // if we are looking at all key, just update assignment
         shallowCopy[index] = removed;
       } else {
-        //if we are looking at a person, remove from our list of key
+        // if we are looking at a person, remove from our list of key
         shallowCopy.splice(index, 1);
       }
       this.setState({ keys: shallowCopy });
     }
   };
 
-  //pulls up assign modal from dropdown action
-  private _assignSelectedKey = (key: IKey) => {
-    this.setState({ selectedKey: key });
-    this._openAssignModal();
+  private _openAssignModal = (key: IKey) => {
+    this.context.router.history.push(
+      `/${this.context.team.name}/keys/assign/${key.id}`
+    );
   };
 
-  private _openAssignModal = async () => {
+  private _openCreateModal = () => {
     this.context.router.history.push(`/${this.context.team.name}/keys/create`);
-  };
-
-  //used in assign key
-  private _selectKey = (key: IKey) => {
-    this.setState({ selectedKey: key });
-  };
-
-  private _changeSelectedKeyProperty = (property: string, value: string) => {
-    this.setState({
-      selectedKey: {
-        ...this.state.selectedKey,
-        [property]: value
-      }
-    });
   };
 
   private _openDetailsModal = (key: IKey) => {
