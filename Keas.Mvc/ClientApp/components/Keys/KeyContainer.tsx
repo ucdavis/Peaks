@@ -74,6 +74,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             closeModal={this._closeModals}
             selectedKey={this.state.selectedKey}
             selectKey={this._selectKey}
+            person={this.props.person}
             changeProperty={this._changeSelectedKeyProperty}
           />
           <KeyDetails
