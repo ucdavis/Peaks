@@ -23,9 +23,5 @@ namespace Keas.Core.Data
         public virtual DbSet<EquipmentAttribute> EquipmentAttributes { get; set; }
 
         public virtual DbSet<History> Histories { get; set; }
-
-        // Facilities link import tables
-        public virtual DbSet<Room> Rooms { get; set; }
-        public virtual DbSet<Space> Spaces { get; set; }
     }
 }

@@ -24,10 +24,10 @@ namespace Keas.Mvc.Controllers
             return Json(people);
         }
 
-        public async Task<IActionResult> Search(int teamId, string q)
+        public async Task<IActionResult> Search(string q)
         {
             var people = await _context.People
-                .Where(x => x.Team.Id == teamId && x.Active && x.User.Email.StartsWith(q))
+                .Where(x => x.Team.Name == Team && x.Active && x.User.Email.StartsWith(q))
                 .Include(x => x.User).AsNoTracking().ToListAsync();
 
             return Json(people);

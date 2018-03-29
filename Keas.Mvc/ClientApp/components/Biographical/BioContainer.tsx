@@ -3,26 +3,25 @@ import * as React from "react";
 
 import { AppContext, IPerson } from "../../Types";
 
-interface IProps {
-    person: IPerson;
-}
-
-export default class BioContainer extends React.Component<IProps, {}> {
-  public static contextTypes = {
-    fetch: PropTypes.func
-  };
-  public context: AppContext;
-  public render() {
-    return (
-      <div className="card">
-        <div className="card-body">
-          <h4 className="card-title">{this.props.person.user.name}</h4>
-          <p className="card-text">
-            <i className="fa fa-envelope-o" aria-hidden="true" />{" "}
-            {this.props.person.user.email}
-          </p>
-        </div>
-      </div>
-    );
-  }
+export default class BioContainer extends React.Component<{}, {}> {
+    public static contextTypes = {
+        fetch: PropTypes.func,
+        person: PropTypes.object,
+    };
+    public context: AppContext;
+    public render() {
+        return (
+            <div className="card">
+                <div className="card-body">
+                    <h4 className="card-title">
+                        {this.context.person.user.name}
+                    </h4>
+                    <p className="card-text">
+                        <i className="fa fa-envelope-o" aria-hidden="true" />{" "}
+                        {this.context.person.user.email}
+                    </p>
+                </div>
+            </div>
+        );
+    }
 }
