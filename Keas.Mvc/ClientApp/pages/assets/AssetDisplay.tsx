@@ -2,28 +2,22 @@ import classnames from "classnames";
 import * as React from "react";
 import { Button, Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 
-import AccessContainer from "../../components/Access/AccessContainer";
 import EquipmentContainer from "../../components/Equipment/EquipmentContainer";
 import KeyContainer from "../../components/Keys/KeyContainer";
+import PersonContainer from "../../components/PersonContainer";
 
 import { ITeam } from "../../Types";
 
 interface IProps {
-  team: ITeam;
+  onTypeChange: (type: string) => void;
+  type: string;
 }
 
-interface IState {
-  activeTab: string;
-}
-
-export default class AssetDisplay extends React.Component<IProps, IState> {
+export default class AssetDisplay extends React.Component<IProps, {}> {
   constructor(props) {
     super(props);
 
     this.toggle = this.toggle.bind(this);
-    this.state = {
-      activeTab: "keys"
-    };
   }
 
   public render() {
@@ -33,7 +27,7 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           <NavItem>
             <NavLink
               className={classnames({
-                active: this.state.activeTab === "keys"
+                active: this.props.type === "keys"
               })}
               onClick={() => {
                 this.toggle("keys");
@@ -45,7 +39,7 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           <NavItem>
             <NavLink
               className={classnames({
-                active: this.state.activeTab === "equipment"
+                active: this.props.type === "equipment"
               })}
               onClick={() => {
                 this.toggle("equipment");
@@ -56,9 +50,9 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === "access" })}
+              className={classnames({ active: this.props.type === "2" })}
               onClick={() => {
-                this.toggle("access");
+                this.toggle("2");
               }}
             >
               Access
@@ -66,7 +60,7 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
           </NavItem>
           <NavItem>
             <NavLink
-              className={classnames({ active: this.state.activeTab === "2" })}
+              className={classnames({ active: this.props.type === "2" })}
               onClick={() => {
                 this.toggle("4");
               }}
@@ -74,13 +68,30 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
               Space
             </NavLink>
           </NavItem>
+          <NavItem>
+            <NavLink
+              className={classnames({ active: this.props.type === "people" })}
+              onClick={() => {
+                this.toggle("people");
+              }}
+            >
+              People
+            </NavLink>
+          </NavItem>
         </Nav>
-        <TabContent activeTab={this.state.activeTab}>
+        <TabContent activeTab={this.props.type}>
+          <TabPane tabId="1">
+            <div className="container">Pane 1</div>
+          </TabPane>
+          <TabPane tabId="2">
+            <div className="container">Pane 2</div>
+          </TabPane>
           <TabPane tabId="keys">{this._renderKeys()}</TabPane>
           <TabPane tabId="equipment">{this._renderEquipment()}</TabPane>
-          <TabPane tabId="access">{this._renderAccess()}</TabPane>
-          <TabPane tabId="2">
-              <div className="container">Pane 2</div>
+          <TabPane tabId="people">
+              <h1>Site of future people tab</h1>
+              <h5>Eventually this will render all the people in a team.  Clicking on one should show the person container you are seeing now, possibly in a new tab.  For now nothing here works.</h5>
+            {this._renderPeople()}
           </TabPane>
         </TabContent>
       </div>
@@ -88,25 +99,24 @@ export default class AssetDisplay extends React.Component<IProps, IState> {
   }
 
   private toggle(tab) {
-    if (this.state.activeTab !== tab) {
-      this.setState({
-        activeTab: tab
-      });
+    // go change route
+    if (this.props.type !== tab) {
+      this.props.onTypeChange(tab);
     }
   }
   private _renderKeys = () => {
-    if (this.state.activeTab === "keys") {
+    if (this.props.type === "keys") {
       return <KeyContainer />;
     }
   };
   private _renderEquipment = () => {
-      if (this.state.activeTab === "equipment") {
-          return <EquipmentContainer />;
-      }
+    if (this.props.type === "equipment") {
+      return <EquipmentContainer />;
+    }
   };
-  private _renderAccess = () => {
-      if (this.state.activeTab === "access") {
-          return <AccessContainer />
-      }
-  }
+  private _renderPeople = () => {
+    if (this.props.type === "people") {
+      return <PersonContainer />;
+    }
+  };
 }

@@ -1,17 +1,31 @@
 import PropTypes from "prop-types";
 import * as React from "react";
+import { match } from "react-router";
 
-import { AppContext } from "../../Types";
-import AssetDisplay from './AssetDisplay';
+import { AppContext, IRouteProps } from "../../Types";
+import AssetDisplay from "./AssetDisplay";
 
-export default class AssetContainer extends React.Component<{}, {}> {
+interface IProps {
+  match: match<IRouteProps>;
+}
+
+export default class AssetContainer extends React.Component<IProps, {}> {
   public static contextTypes = {
-    team: PropTypes.object
+    router: PropTypes.object,
+    team: PropTypes.object,
   };
   public context: AppContext;
   public render() {
     const team = this.context.team;
-
-    return <AssetDisplay team={team} />;
+    const selectedId = parseInt(this.props.match.params.id, 10);
+    return (
+      <AssetDisplay
+        type={this.props.match.params.assetType}
+        onTypeChange={this.onTypeChange}
+      />
+    );
   }
+  private onTypeChange = type => {
+    this.context.router.history.push(`/${this.context.team.name}/${type}`);
+  };
 }
