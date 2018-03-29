@@ -7,6 +7,7 @@ import { AppContext, IKey, IPerson } from "../../Types";
 
 interface IProps {
   onSelect: (person: IPerson) => void;
+  person?: IPerson;
 }
 
 interface IState {
@@ -21,7 +22,6 @@ interface IState {
 export default class AssignPerson extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
-    person: PropTypes.object,
     team: PropTypes.object
   };
   public context: AppContext;
@@ -36,7 +36,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
   }
 
   public render() {
-    if (this.context.person || this.state.selectedPerson) {
+    if (this.props.person || this.state.selectedPerson) {
       return this._renderExistingPerson();
     } else {
       return this._renderFindPerson();
@@ -77,7 +77,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
   };
 
   private _renderExistingPerson = () => {
-    const person = this.context.person ? this.context.person : this.state.selectedPerson;
+    const person = this.props.person ? this.props.person : this.state.selectedPerson;
     return (
       <input
         type="text"

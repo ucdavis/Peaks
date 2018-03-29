@@ -63,7 +63,9 @@ export default class EquipmentContainer extends React.Component<
       : null;
     const allEquipmentList = this.props.person ? null : this.state.equipment;
 
-    const { action, id } = this.context.router.route.match.params;
+    const { action, assetType, id } = this.context.router.route.match.params;
+    const activeAsset = !assetType || assetType === "equipment";
+
     const selectedId = parseInt(id, 10);
     const detailAsset = this.state.equipment.find(e => e.id === selectedId);
 
@@ -79,7 +81,7 @@ export default class EquipmentContainer extends React.Component<
           />
           <AssignEquipment
             onCreate={this._createAndMaybeAssignEquipment}
-            modal={action === "create"}
+            modal={activeAsset && action === "create"}
             openModal={this._openAssignModal}
             closeModal={this._closeModals}
             selectedEquipment={this.state.selectedEquipment}
@@ -88,7 +90,7 @@ export default class EquipmentContainer extends React.Component<
           />
           <EquipmentDetails
             selectedEquipment={detailAsset}
-            modal={action === "details" && !!detailAsset}
+            modal={activeAsset && action === "details" && !!detailAsset}
             closeModal={this._closeModals}
           />
         </div>
@@ -169,9 +171,7 @@ export default class EquipmentContainer extends React.Component<
   };
 
   private _openAssignModal = async () => {
-    this.context.router.history.push(
-      `/${this.context.team.name}/equipment/create`
-    );
+    this.context.router.history.push(`${this._getBaseUrl()}/equipment/create`);
   };
 
   //used in assign equipment
@@ -193,11 +193,17 @@ export default class EquipmentContainer extends React.Component<
 
   private _openDetailsModal = (equipment: IEquipment) => {
     this.context.router.history.push(
-      `/${this.context.team.name}/equipment/details/${equipment.id}`
+      `${this._getBaseUrl()}/equipment/details/${equipment.id}`
     );
   };
 
   private _closeModals = () => {
-    this.context.router.history.push(`/${this.context.team.name}/equipment`);
+    this.context.router.history.push(`${this._getBaseUrl()}/equipment`);
+  };
+
+  private _getBaseUrl = () => {
+    return this.props.person
+      ? `/${this.context.team.name}/person/details/${this.props.person.id}`
+      : `/${this.context.team.name}`;
   };
 }

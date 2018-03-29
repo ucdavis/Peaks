@@ -28,7 +28,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
     this.state = {
       keys: [],
-      loading: true,
+      loading: true
     };
   }
   public async componentDidMount() {
@@ -47,7 +47,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       return <h2>Loading...</h2>;
     }
 
-    const { action, id } = this.context.router.route.match.params;
+    const { action, assetType, id } = this.context.router.route.match.params;
+    const activeAsset = !assetType || assetType === "keys";
     const selectedId = parseInt(id, 10);
     const detailKey = this.state.keys.find(k => k.id === selectedId);
     return (
@@ -62,7 +63,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           />
           <AssignKey
             onCreate={this._createAndMaybeAssignKey}
-            modal={action === "create" || action === "assign"}
+            modal={activeAsset && (action === "create" || action === "assign")}
             onAddNew={this._openCreateModal}
             closeModal={this._closeModals}
             selectedKey={detailKey}
@@ -70,14 +71,19 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           />
           <KeyDetails
             selectedKey={detailKey}
-            modal={action === "details" && !!detailKey}
+            modal={activeAsset && action === "details" && !!detailKey}
             closeModal={this._closeModals}
           />
         </div>
       </div>
     );
   }
-  private _createAndMaybeAssignKey = async (person: IPerson, key: IKey, date: any) => {
+
+  private _createAndMaybeAssignKey = async (
+    person: IPerson,
+    key: IKey,
+    date: any
+  ) => {
     // call API to create a key, then assign it if there is a person to assign to
     // if we are creating a new key
     if (key.id === 0) {
@@ -140,20 +146,26 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
   private _openAssignModal = (key: IKey) => {
     this.context.router.history.push(
-      `/${this.context.team.name}/keys/assign/${key.id}`
+      `${this._getBaseUrl()}/keys/assign/${key.id}`
     );
   };
 
   private _openCreateModal = () => {
-    this.context.router.history.push(`/${this.context.team.name}/keys/create`);
+    this.context.router.history.push(`${this._getBaseUrl()}/keys/create`);
   };
 
   private _openDetailsModal = (key: IKey) => {
     this.context.router.history.push(
-      `/${this.context.team.name}/keys/details/${key.id}`
+      `${this._getBaseUrl()}/keys/details/${key.id}`
     );
   };
   private _closeModals = () => {
-    this.context.router.history.push(`/${this.context.team.name}/keys`);
+    this.context.router.history.push(`${this._getBaseUrl()}/keys`);
+  };
+
+  private _getBaseUrl = () => {
+    return this.props.person
+      ? `/${this.context.team.name}/person/details/${this.props.person.id}`
+      : `/${this.context.team.name}`;
   };
 }
