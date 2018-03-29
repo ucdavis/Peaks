@@ -3,9 +3,10 @@ import * as React from "react";
 
 import { AppContext, IAccess, IPerson } from "../../Types";
 
-import AssignAccess from "./AssignAccess";
-import AccessList from "./AccessList";
 import AccessDetails from "./AccessDetails";
+import AccessList from "./AccessList";
+import AssignAccess from "./AssignAccess";
+import RevokeAccess from "./RevokeAccess";
 
 interface IState {
     access: IAccess[]; // either access assigned to this person, or all team access
@@ -60,14 +61,18 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                     onAdd={this._openAssignModal}
                     showDetails={this._openDetailsModal} />
                 <AssignAccess
-                    revoking={action === "revoke"}
                     onAddNew={this._openCreateModal}
                     onCreate={this._createAndMaybeAssignAccess}
-                    onRevoke={this._revokeAccess}
-                    modal={activeAsset && (action === "create" || action === "assign" || action === "revoke")}
+                    modal={activeAsset && (action === "create" || action === "assign")}
                     closeModal={this._closeModals}
                     selectedAccess={detailAccess}
                     person={this.props.person}
+                />
+                <RevokeAccess
+                    closeModal={this._closeModals}
+                    modal={activeAsset && action === "revoke"}
+                    selectedAccess={detailAccess}
+                    onRevoke={this._revokeAccess}
                 />
                 <AccessDetails selectedAccess={detailAccess}
                     modal={activeAsset && action === "details" && !!detailAccess}

@@ -2,9 +2,10 @@
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
-import { IAccess, AppContext } from "../../Types";
+import { AppContext, IAccess } from "../../Types";
 
 interface IProps {
+    allowNew: boolean;
     selectedAccess?: IAccess;
     onSelect: (access: IAccess) => void;
     onDeselect: () => void;
@@ -26,25 +27,10 @@ export default class SearchAccess extends React.Component<IProps, IState> {
     constructor(props) {
         super(props);
         this.state = {
-            isSearchLoading: false,
             access: [],
+            isSearchLoading: false,
         };
     }
-    private _onSelected = (access: IAccess) => {
-        //onChange is called when deselected
-        if (access == null || access.name == null) {
-            this.props.onDeselect();
-        }
-        else {
-            //if teamId is not set, this is a new access
-            this.props.onSelect({
-                name: access.name,
-                id: access.teamId ? access.id : 0,
-                teamId: access.teamId ? access.teamId : 0,
-                assignments: access.teamId ? access.assignments : [],
-            });
-        }
-    };
 
     public render() {
         if (this.props.selectedAccess != null) {
@@ -55,6 +41,22 @@ export default class SearchAccess extends React.Component<IProps, IState> {
         }
     }
 
+    private _onSelected = (access: IAccess) => {
+        // onChange is called when deselected
+        if (access == null || access.name == null) {
+            this.props.onDeselect();
+        }
+        else {
+            // if teamId is not set, this is a new access
+            this.props.onSelect({
+                assignments: access.teamId ? access.assignments : [],
+                id: access.teamId ? access.id : 0,
+                name: access.name,
+                teamId: access.teamId ? access.teamId : 0,
+            });
+        }
+    };
+
     private _renderSelectAccess = () => {
 
         return (
@@ -64,8 +66,8 @@ export default class SearchAccess extends React.Component<IProps, IState> {
                     minLength={3}
                     placeholder="Search for access by name or by serial number"
                     labelKey="name"
-                    filterBy={() => true} //don't filter on top of our search
-                    allowNew={true}
+                    filterBy={() => true} // don't filter on top of our search
+                    allowNew={this.props.allowNew}
                     renderMenuItemChildren={(option, props, index) => (
                         <div>
                             <div>
@@ -87,8 +89,8 @@ export default class SearchAccess extends React.Component<IProps, IState> {
                             `/access/search?teamId=${this.context.team.id}&q=${query}`
                         );
                         this.setState({
+                            access,
                             isSearchLoading: false,
-                            access
                         });
                     }}
                     onChange={selected => {

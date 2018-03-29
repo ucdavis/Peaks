@@ -23,10 +23,8 @@ interface IProps {
     closeModal: () => void;
     modal: boolean;
     onCreate: (access: IAccess, date: any, person: IPerson) => void;
-    onRevoke: (access: IAccess, person: IPerson) => void;
     onAddNew: () => void;
     person?: IPerson;
-    revoking: boolean;
     selectedAccess: IAccess;
 }
 
@@ -71,7 +69,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
           <div>
               <Button color="danger" onClick={this.props.onAddNew}>
                   Add Access
-        </Button>
+              </Button>
               <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
                   <ModalHeader>Assign Access</ModalHeader>
                   <ModalBody>
@@ -87,23 +85,24 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                               <div className="form-group">
                                   <label>Pick an access to assign</label>
                                   <SearchAccess
+                                      allowNew={true}
                                       selectedAccess={this.state.access}
                                       onSelect={this._onSelected}
                                       onDeselect={this._onDeselected} />
                               </div>
-                              {!this.props.selectedAccess || !this.props.selectedAccess.teamId && //if we are creating a new access, edit properties
+                              {!this.props.selectedAccess || !this.props.selectedAccess.teamId && // if we are creating a new access, edit properties
                                   <AccessEditValues
                                   selectedAccess={this.props.selectedAccess}
                                   changeProperty={this._changeProperty}
                                   disableEditing={false} />
                               }
-                              {this.props.selectedAccess && !!this.props.selectedAccess.teamId &&
+                              {!!this.props.selectedAccess && !!this.props.selectedAccess.teamId &&
                                   <AccessEditValues
                                   selectedAccess={this.props.selectedAccess}
                                   disableEditing={true} />
                               }
 
-                              {!this.props.revoking && (this.state.person !== null || this.props.person !== null) &&
+                              {(this.state.person !== null || this.props.person !== null) &&
                                   <div className="form-group">
                                       <label>Set the expiration date</label>
                                       <DatePicker
@@ -118,14 +117,9 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                       </div>
                   </ModalBody>
                   <ModalFooter>
-                      {!this.props.revoking &&
                           <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState}>
                               Assign
-                </Button>}
-                      {this.props.revoking &&
-                          <Button color="primary" onClick={this._revokeSelected} disabled={!this.state.validState}>
-                              Revoke
-                </Button>}
+                         </Button>
                       {" "}
                       <Button color="secondary" onClick={this._closeModal}>
                           Close
@@ -145,13 +139,13 @@ export default class AssignAccess extends React.Component<IProps, IState> {
       });
   };
 
-  //clear everything out on close
+  // clear everything out on close
   private _closeModal = () => {
       this.setState({
         access:null,
         error: "",
-        validState: false,
         person: null,
+        validState: false,
       });
       this.props.closeModal();
   };
@@ -170,23 +164,13 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     this._closeModal();
   };
 
-  private _revokeSelected = async () => {
-    if (!this.state.validState) {
-        return;
-    }
-    const person = this.props.person ? this.props.person : this.state.person;
-
-    await this.props.onRevoke(this.state.access, person);
-
-    this._closeModal();
-    };
 
   // once we have either selected or created the access we care about
   private _onSelected = (access: IAccess) => {
       console.log("selected in assign", access);
-      //if this access is not already assigned
+      // if this access is not already assigned
 
-      //TODO: more validation of name
+      // TODO: more validation of name
       if (access.name.length > 64)
       {
           this.setState({
@@ -195,7 +179,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
           },
               this._validateState);
       }
-      //else if (this.props.assignedAccessList.findIndex(x => x == access.name) != -1)
+      // else if (this.props.assignedAccessList.findIndex(x => x == access.name) != -1)
       //{
       //    this.setState({ selectedAccess: null, error: "The access you have chosen is already assigned to this user", validAccess: false }, this._validateState);
       //}
@@ -223,23 +207,13 @@ export default class AssignAccess extends React.Component<IProps, IState> {
   private _validateState = () => {
       let valid = true;
       if (!this.state.access) {
-          console.log("1");
           valid = false;
-      } else if (!this.props.revoking &&
-          ((!this.state.person && !this.props.person) || 
-          !this._checkValidAssignmentToPerson())) {
-          console.log("2");
-          valid = false;
-      } else if (this.props.revoking && 
-          ((!this.state.person && !this.props.person) ||
-          !this._checkValidRevokeFromPerson())) {
-          console.log("3");
+      } else if ((!this.state.person && !this.props.person) || 
+          !this._checkValidAssignmentToPerson()) {
           valid = false;
       } else if (this.state.error !== "") {
-          console.log("4");
           valid = false;
-      } else if (!this.props.revoking && (!this.state.date || moment().isSameOrAfter(this.state.date))) {
-          console.log("5");
+      } else if (!this.state.date || moment().isSameOrAfter(this.state.date)) {
           valid = false;
         }
       this.setState({ validState: valid });
@@ -248,10 +222,10 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
   private _checkValidAssignmentToPerson = () => {
       let valid = true;
-      let assignments = this.state.access.assignments;
-      for(let i = 0; i < assignments.length; i++)
+      const assignments = this.state.access.assignments;
+      for (const a of assignments) 
       {
-          if (assignments[i].personId === this.state.person.id)
+          if (a.personId === this.state.person.id)
           {
               valid = false;
               break;
@@ -268,32 +242,13 @@ export default class AssignAccess extends React.Component<IProps, IState> {
       return valid;
   }
 
-  private _checkValidRevokeFromPerson = () => {
-      let valid = false;
-      let assignments = this.state.access.assignments;
-      for (let i = 0; i < assignments.length; i++) {
-          if (assignments[i].personId === this.state.person.id) {
-              valid = true;
-              break;
-          }
-      }
-      if (!valid)
-      {
-          this.setState({ error: "The user you have selected is not assigned this access." });
-      }
-      else {
-          this.setState({ error: "" });
-      }
-      return valid;
-  }
-
   private _changeDate = (newDate) => {
       this.setState({ date: newDate, error: "" }, this._validateState);
   }
 
   private _changeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      let m = moment(value, "MM/DD/YYYY", true);
+      const m = moment(value, "MM/DD/YYYY", true);
       if (m.isValid()) {
           this._changeDate(m);
       }
