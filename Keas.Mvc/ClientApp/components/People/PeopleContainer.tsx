@@ -2,20 +2,39 @@ import PropTypes from "prop-types";
 import * as React from "react";
 
 import { AppContext, IPerson } from "../../Types";
+import PeopleListItem from "./PeopleListItem";
 
-export default class PeopleContainer extends React.Component<{}, {}> {
+interface IState {
+    members: IPerson[];
+}
+export default class PeopleContainer extends React.Component<{}, IState> {
   public static contextTypes = {
+    fetch: PropTypes.func,
     router: PropTypes.object,
     team: PropTypes.object
   };
   public context: AppContext;
+  constructor(props) {
+      super(props);
+
+      this.state = {
+          members: []
+      };
+  }
+
+  public async componentDidMount() {
+      const members = await this.context.fetch(`/people/list/${this.context.team.id}`;
+      this.setState({ members });
+  }
   public render() {
+      const memberList = this.state.members.map(x => (
+          <PeopleListItem key={x.id} personId={x.id} personName={x.user.name} teamName={this.context.team.name} />));
     return (
       <div>
         <h2>
           Eventually this will display everyone in team {this.context.team.name}
         </h2>
-        <a href="/CAESDO/person/details/1">Details for Scott</a>
+        {memberList}
       </div>
     );
   }
