@@ -59,6 +59,7 @@ export interface IAccess {
   id: number;
   teamId: number;
   name: string;
+  assignments: IAccessAssignment[];
 }
 
 export interface IAccessAssignment {
@@ -66,6 +67,7 @@ export interface IAccessAssignment {
   accessId: number;
   expiresAt: Date;
   access: IAccess;
+  personId: number;
 }
 
 export interface IEquipment {

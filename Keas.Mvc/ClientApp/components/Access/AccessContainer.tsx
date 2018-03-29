@@ -8,13 +8,8 @@ import AccessList from "./AccessList";
 import AccessDetails from "./AccessDetails";
 
 interface IState {
+    access: IAccess[]; // either access assigned to this person, or all team access
     loading: boolean;
-    //either access assigned to this person, or all team access
-    access: IAccess[];
-    selectedAccess: IAccess;
-    assignModal: boolean;
-    detailsModal: boolean;
-    addingAccess: boolean;
 }
 
 interface IProps {
@@ -33,11 +28,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
 
     this.state = {
         access: [],
-        selectedAccess: null,
         loading: true,
-        assignModal: false,
-        detailsModal: false,
-        addingAccess: true,
     };
   }
   public async componentDidMount() {
@@ -53,8 +44,11 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     if (this.state.loading) {
       return <h2>Loading...</h2>;
       }
-    const assignedAccessList = this.props.person ? this.state.access.map(x => x.name) : null;
-    const allAccessList = this.props.person ? null : this.state.access;
+    const { action, assetType, id } = this.context.router.route.match.params;
+    const activeAsset = !assetType || assetType === "access";
+    const selectedId = parseInt(id, 10);
+    const detailAccess = this.state.access.find(a => a.id === selectedId);
+
     return (
       <div className="card">
         <div className="card-body">
@@ -63,28 +57,31 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                     access={this.state.access}
                     personView={this.props.person !== null}
                     onRevoke={this._openRevokeModal}
-                    onAdd={this._assignSelectedAccess}
+                    onAdd={this._openAssignModal}
                     showDetails={this._openDetailsModal} />
                 <AssignAccess
+                    revoking={action === "revoke"}
+                    onAddNew={this._openCreateModal}
                     onCreate={this._createAndMaybeAssignAccess}
                     onRevoke={this._revokeAccess}
-                    adding={this.state.addingAccess}
-                    modal={this.state.assignModal}
-                    openModal={this._openAssignModal}
-                    closeModal={this._closeAssignModal}
-                    selectedAccess={this.state.selectedAccess}
-                    selectAccess={this._selectAccess}
-                    changeProperty={this._changeSelectedAccessProperty}
+                    modal={activeAsset && (action === "create" || action === "assign" || action === "revoke")}
+                    closeModal={this._closeModals}
+                    selectedAccess={detailAccess}
                     person={this.props.person}
                 />
-                <AccessDetails selectedAccess={this.state.selectedAccess} modal={this.state.detailsModal} closeModal={this._closeDetailsModal} />
+                <AccessDetails selectedAccess={detailAccess}
+                    modal={activeAsset && action === "details" && !!detailAccess}
+                    closeModal={this._closeModals} />
         </div>
       </div>
     );
   }
-  private _createAndMaybeAssignAccess = async (person: IPerson, date: any) => {
+  private _createAndMaybeAssignAccess = async (
+      access: IAccess,
+      date: any,
+      person: IPerson
+  ) => {
       // call API to create a access, then assign it if there is a person to assign to
-      var access = this.state.selectedAccess;
       //if we are creating a new access
       if (access.id === 0) {
           access.teamId = this.context.team.id;
@@ -93,7 +90,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
               method: "POST"
           });
       }
-
 
     // if we know who to assign it to, do it now
     if (person) {
@@ -124,9 +120,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     }
   };
 
-  private _revokeAccess = async (person?: IPerson) => {
+  private _revokeAccess = async (access: IAccess, person?: IPerson) => {
 
-      var access = this.state.selectedAccess;
       // call API to actually revoke
       const revokeUrl = `/access/revoke?accessId=${access.id}&personId=${!!this.props.person ? this.props.person.id : person.id}`
       const removed: IAccess = await this.context.fetch(revokeUrl, {
@@ -149,53 +144,41 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       }
   }
 
-    //pulls up assign modal from dropdown action
-  private _assignSelectedAccess = (access: IAccess) => {
-      this.setState({ selectedAccess: access });
-      this._openAssignModal();
-  }
 
-  private _openAssignModal = async () => {
-      this.setState({ assignModal: true, addingAccess: true});
+  private _openAssignModal = (access: IAccess) => {
+      this.context.router.history.push(
+          `${this._getBaseUrl()}/access/assign/${access.id}`
+      );
   };
 
-  //clear everything out on close
-  private _closeAssignModal = () => {
-      this.setState({
-          assignModal: false,
-          selectedAccess: null,
-      });
-  };
   private _openRevokeModal = (access: IAccess) => {
       if (!!this.props.person) // if we already have the person, just revoke
       {
-          this.setState({ selectedAccess: access }, this._revokeAccess);
+          this._revokeAccess(access, this.props.person);
       }
       else // otherwise, pull up the modal
       {
-          this.setState({ assignModal: true, addingAccess: false, selectedAccess: access });
-
+          this.context.router.history.push(`${this._getBaseUrl()}/access/revoke/${access.id}`);
       }
   }
-    //used in assign access 
-  private _selectAccess = (access: IAccess) => {
-      this.setState({ selectedAccess: access });
-  }
 
-  private _changeSelectedAccessProperty = (property: string, value: string) => {
-      this.setState({
-          selectedAccess: {
-              ...this.state.selectedAccess,
-              [property]: value
-          }
-          });
-  }
+  private _openCreateModal = () => {
+      this.context.router.history.push(`${this._getBaseUrl()}/access/create`);
+  };
 
   private _openDetailsModal = (access: IAccess) => {
-      this.setState({ detailsModal: true, selectedAccess: access });
-  }
-  private _closeDetailsModal = () => {
-      this.setState({ detailsModal: !this.state.detailsModal, selectedAccess: null });
-  }
+      this.context.router.history.push(
+          `${this._getBaseUrl()}/access/details/${access.id}`
+      );
+  };
+  private _closeModals = () => {
+      this.context.router.history.push(`${this._getBaseUrl()}/access`);
+  };
+
+  private _getBaseUrl = () => {
+      return this.props.person
+          ? `/${this.context.team.name}/person/details/${this.props.person.id}`
+          : `/${this.context.team.name}`;
+  };
 
 }
