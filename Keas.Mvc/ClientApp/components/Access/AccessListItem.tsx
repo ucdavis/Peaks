@@ -21,7 +21,7 @@ export default class AccessListItem extends React.Component<IProps, {}> {
             <tr>
                 <td>{this.props.accessEntity.name}</td>
                 <td>{hasAssignment ? "Assigned" : "Unassigned"}</td>
-                <td></td>
+                <td>{this.props.accessEntity.assignments.length}</td>
                 <td></td>
                 <td>
                     <ListActionsDropdown
