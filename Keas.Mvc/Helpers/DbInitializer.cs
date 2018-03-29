@@ -12,9 +12,9 @@ namespace Keas.Mvc.Helpers
             context.Database.EnsureDeleted(); // TODO: remove
             context.Database.EnsureCreated();
 
-            if (context.Users.Any()) return; // already initialzied
+            if (context.Users.Any()) return; // already initialized
 
-            // add in some default factilities
+            // add in some default facilities
             var room1 = new Room { BldgKey = "01", FloorKey = "01", RoomKey = "01", RoomName = "Bar", RoomNumber = "12" };
             var space1 = new Space { Room = room1, ChartNum = "3", OrgId = "ADNO" };
             context.Spaces.Add(space1);
@@ -25,7 +25,13 @@ namespace Keas.Mvc.Helpers
 
             context.Users.Add(scott);
             context.Teams.Add(caes);
-            context.TeamMemberships.Add(new TeamMembership { User = scott, Team = caes, Role = "Admin" });
+
+            var keymaster = new Role { Id= 1, Name = "KeyMaster"};
+            context.TeamRoles.Add(keymaster);
+
+            
+
+            
 
             // add assets
             var jasonCaes = new Person { User = jason, Id=1, Team = caes, Group = "CRU" };
@@ -91,6 +97,9 @@ namespace Keas.Mvc.Helpers
                 Description = "Something important happened",
                 Key = key
             };
+
+            var scottKey = new TeamPermission{ Id = 1, Team = caes, TeamRole = keymaster, Person = scottCaes };
+            context.TeamPermissions.Add(scottKey);
 
             context.Histories.Add(history);
 

@@ -102,7 +102,7 @@ namespace Keas.Mvc.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateException ex)
+                catch 
                 {
                     ModelState.AddModelError("","Unable to save changes.");
                 }
