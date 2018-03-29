@@ -28,7 +28,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
   }
   public render() {
       const memberList = this.state.members.map(x => (
-          <PeopleListItem key={x.id} personId={x.id} personName={x.user.name} teamName={this.context.team.name} />));
+          <PeopleListItem key={x.id} person={x} teamName={this.context.team.name} />));
     return (
       <div>
         <h2>
