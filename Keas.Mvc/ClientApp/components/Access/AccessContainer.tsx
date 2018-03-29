@@ -56,7 +56,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                 <h4 className="card-title">Access</h4>
                 <AccessList
                     access={this.state.access}
-                    personView={this.props.person !== null}
+                    personView={this.props.person ? true : false}
                     onRevoke={this._openRevokeModal}
                     onAdd={this._openAssignModal}
                     showDetails={this._openDetailsModal} />

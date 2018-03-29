@@ -14,6 +14,28 @@ interface IProps {
 
 export default class AccessListItem extends React.Component<IProps, {}> {
 
+    public render() {
+        const hasAssignment = this.props.accessEntity.assignments.length > 0;
+        const canAdd = !this.props.personView || !hasAssignment;
+        return (
+            <tr>
+                <td>{this.props.accessEntity.name}</td>
+                <td>{hasAssignment ? "Assigned" : "Unassigned"}</td>
+                <td></td>
+                <td></td>
+                <td>
+                    <ListActionsDropdown
+                        onRevoke={this._onRevoke}
+                        canRevoke={hasAssignment}
+                        onAdd={this._onAdd}
+                        canAdd={canAdd}
+                        showDetails={this._showDetails}
+                    />
+                </td>
+            </tr>
+        );
+    }
+
     private _onRevoke = () => {
         this.props.onRevoke(this.props.accessEntity);
     }
@@ -24,25 +46,4 @@ export default class AccessListItem extends React.Component<IProps, {}> {
         this.props.showDetails(this.props.accessEntity);
     }
 
-    public render() {
-        const hasAssignment = this.props.accessEntity.assignments.length > 0;
-        const canAdd = !this.props.personView || !hasAssignment; 
-    return (
-      <tr>
-        <td>{this.props.accessEntity.name}</td>
-        <td>{hasAssignment ? "Assigned" : "Unassigned"}</td>
-        <td>
-        </td>
-        <td>
-                <ListActionsDropdown
-                    onRevoke={this._onRevoke}
-                    canRevoke={hasAssignment}
-                    onAdd={this._onAdd}
-                    canAdd={canAdd}
-                    showDetails={this._showDetails}
-                />
-        </td>
-      </tr>
-    );
-  }
 }
