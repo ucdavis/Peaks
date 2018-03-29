@@ -17,10 +17,14 @@ interface IState {
     addingAccess: boolean;
 }
 
-export default class AccessContainer extends React.Component<{}, IState> {
+interface IProps {
+    person?: IPerson;
+}
+
+export default class AccessContainer extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
-    person: PropTypes.object,
+    router: PropTypes.object,
     team: PropTypes.object
   };
   public context: AppContext;
@@ -38,8 +42,8 @@ export default class AccessContainer extends React.Component<{}, IState> {
   }
   public async componentDidMount() {
       // are we getting the person's access or the team's?
-      const accessFetchUrl = this.context.person
-          ? `/access/listassigned?id=${this.context.person.id}&teamId=${this.context.person.teamId}`
+      const accessFetchUrl = this.props.person
+          ? `/access/listassigned?id=${this.props.person.id}&teamId=${this.props.person.teamId}`
       : `/access/list?teamId=${this.context.team.id}`;
 
     const access = await this.context.fetch(accessFetchUrl);
@@ -49,15 +53,15 @@ export default class AccessContainer extends React.Component<{}, IState> {
     if (this.state.loading) {
       return <h2>Loading...</h2>;
       }
-    const assignedAccessList = this.context.person ? this.state.access.map(x => x.name) : null;
-    const allAccessList = this.context.person ? null : this.state.access;
+    const assignedAccessList = this.props.person ? this.state.access.map(x => x.name) : null;
+    const allAccessList = this.props.person ? null : this.state.access;
     return (
       <div className="card">
         <div className="card-body">
                 <h4 className="card-title">Access</h4>
                 <AccessList
                     access={this.state.access}
-                    personView={this.context.person !== null}
+                    personView={this.props.person !== null}
                     onRevoke={this._openRevokeModal}
                     onAdd={this._assignSelectedAccess}
                     showDetails={this._openDetailsModal} />
@@ -71,6 +75,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
                     selectedAccess={this.state.selectedAccess}
                     selectAccess={this._selectAccess}
                     changeProperty={this._changeSelectedAccessProperty}
+                    person={this.props.person}
                 />
                 <AccessDetails selectedAccess={this.state.selectedAccess} modal={this.state.detailsModal} closeModal={this._closeDetailsModal} />
         </div>
@@ -123,7 +128,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
 
       var access = this.state.selectedAccess;
       // call API to actually revoke
-      const revokeUrl = `/access/revoke?accessId=${access.id}&personId=${!!this.context.person ? this.context.person.id : person.id}`
+      const revokeUrl = `/access/revoke?accessId=${access.id}&personId=${!!this.props.person ? this.props.person.id : person.id}`
       const removed: IAccess = await this.context.fetch(revokeUrl, {
           method: "POST"
       });
@@ -132,7 +137,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
       const index = this.state.access.indexOf(access);
       if (index > -1) {
           let shallowCopy = [...this.state.access];
-          if (this.context.person == null) {
+          if (this.props.person == null) {
               //if we are looking at all access, just update assignment
               shallowCopy[index] = removed;
           }
@@ -162,7 +167,7 @@ export default class AccessContainer extends React.Component<{}, IState> {
       });
   };
   private _openRevokeModal = (access: IAccess) => {
-      if (!!this.context.person) // if we already have the person, just revoke
+      if (!!this.props.person) // if we already have the person, just revoke
       {
           this.setState({ selectedAccess: access }, this._revokeAccess);
       }

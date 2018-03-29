@@ -30,6 +30,7 @@ interface IProps {
     selectAccess: (access: IAccess) => void;
     selectedAccess: IAccess;
     changeProperty: (property: string, value: string) => void;
+    person?: IPerson;
 }
 
 interface IState {
@@ -71,8 +72,8 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
     if (!this.state.validState) return;
 
-    const person = this.context.person
-        ? this.context.person
+    const person = this.props.person
+        ? this.props.person
         : this.state.person;
 
     await this.props.onCreate(person, this.state.date.format());
@@ -82,8 +83,8 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
   private _revokeSelected = async () => {
 
-    const person = this.context.person
-        ? this.context.person
+    const person = this.props.person
+        ? this.props.person
         : this.state.person;
 
     await this.props.onRevoke(person);
@@ -230,7 +231,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                          <AccessEditValues selectedAccess={this.props.selectedAccess} disableEditing={true} />
                     }
 
-                    {this.props.adding && (this.state.person !== null || this.context.person !== null) && 
+                    {this.props.adding && (this.state.person !== null || this.props.person !== null) && 
                         <div className="form-group">
                             <label>Set the expiration date</label>
                             <DatePicker
