@@ -1,0 +1,39 @@
+﻿@model Keas.Mvc.Controllers.TeamAdminController.TeamAdminMembersListModel
+
+@{
+    ViewData["Title"] = "Members " + Model.Team.Name;
+}
+
+<h2>Members of @Model.Team.Name </h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                First Name
+            </th>
+            <th>
+                Last Name
+            </th>
+            <th>
+                Roles
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var member in Model.Team.Memberships) {
+        <tr>
+            <td>
+                @member.User.FirstName
+            </td>
+            <td>
+                @member.User.LastName
+            </td>
+            <td>
+            
+            </td>
+           
+        </tr>
+}
+    </tbody>
+</table>

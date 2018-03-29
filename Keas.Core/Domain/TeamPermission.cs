@@ -5,20 +5,22 @@ using System.Text;
 
 namespace Keas.Core.Domain
 {
-    class TeamPermission
+    public class TeamPermission
     {
+        [Key]
+        public int Id { get; set; }
 
         [Required]
         public Team Team { get; set; }
         public int TeamId { get; set; }
 
         [Required]
-        public User User { get; set; }
-        public string UserId { get; set; }
+        public Person Person { get; set; }
+        public int PersonId { get; set; }
 
         [Required]
-        public TeamRole TeamRole { get; set; }
-        public int TeamRoleId { get; set; }
+        public Role TeamRole { get; set; }
+        public int RoleId { get; set; }
 
     }
 }

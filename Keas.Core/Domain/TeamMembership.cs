@@ -10,9 +10,9 @@ namespace Keas.Core.Domain
         [Key]
         public int Id { get; set; }
         
-        [Required]
-        [StringLength(50)]
-        public string Role { get; set; }
+        //[Required]
+        //[StringLength(50)]
+        //public string Role { get; set; }
 
         [Required]
         public Team Team { get; set; }

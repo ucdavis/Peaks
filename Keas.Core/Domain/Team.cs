@@ -14,8 +14,8 @@ namespace Keas.Core.Domain
         public string Name { get; set; }
 
         public List<TeamMembership> Memberships { get; set; }
-        
-       // public Location Location { get; set; }
 
+       public List<TeamPermission> TeamPermissions { get; set; }
+       
     }
 }

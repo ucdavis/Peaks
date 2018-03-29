@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Keas.Core.Domain
 {
-    class TeamRole
+    public class Role
     {
         [Key]
         public int Id { get; set; }
