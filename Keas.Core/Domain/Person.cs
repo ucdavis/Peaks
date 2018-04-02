@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace Keas.Core.Domain
@@ -6,6 +7,7 @@ namespace Keas.Core.Domain
         public Person()
         {
             Active = true;
+            AccessAssignments = new List<AccessAssignment>();
         }
         public int Id { get; set; }
 
@@ -21,7 +23,7 @@ namespace Keas.Core.Domain
         public string Title { get; set; }
         public string HomePhone { get; set; }
         public string TeamPhone { get; set; }
-
-        //public List<AccessAssignment> AccessAssignments { get; set; }
+        [JsonIgnore]
+        public List<AccessAssignment> AccessAssignments { get; set; }
     }
 }

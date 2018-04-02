@@ -45,6 +45,7 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
             access.Assignments.Add(accessAssignment);
+            jasonCaes.AccessAssignments.Add(accessAssignment);
 
             var access2 = new Access
             {
@@ -60,6 +61,7 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
             access2.Assignments.Add(accessAssignment2);
+            scottCaes.AccessAssignments.Add(accessAssignment2);
 
             var keyAssignment = new KeyAssignment
             {
