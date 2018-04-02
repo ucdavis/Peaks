@@ -73,9 +73,11 @@ namespace Keas.Mvc.Controllers
             // TODO Make sure user has permssion, make sure access exists, makes sure access is in this team
             if (ModelState.IsValid)
             {
-                var access = await _context.Access.Include(x => x.Assignments).SingleAsync(x => x.Id == accessId);
+                var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person.User).SingleAsync(x => x.Id == accessId);
+                var person = await _context.People.Include(x => x.User).SingleAsync(x => x.Id == personId);
                 var accessAssingment = new AccessAssignment{
                     AccessId = accessId,
+                    Person = person,
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date),
                 };
