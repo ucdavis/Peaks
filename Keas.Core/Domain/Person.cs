@@ -22,6 +22,6 @@ namespace Keas.Core.Domain
         public string HomePhone { get; set; }
         public string TeamPhone { get; set; }
 
-        public List<AccessAssignment> AccessAssignments { get; set; }
+        //public List<AccessAssignment> AccessAssignments { get; set; }
     }
 }

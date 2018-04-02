@@ -33,6 +33,7 @@ export interface IPerson {
   userid: number;
   teamId: number;
   user: IUser;
+  accessAssignments: IAccessAssignment[];
 }
 
 export interface ITeam {
@@ -66,7 +67,8 @@ export interface IAccessAssignment {
   id: number;
   accessId: number;
   expiresAt: Date;
-  access: IAccess;
+  // access: IAccess;
+  person: IPerson;
   personId: number;
 }
 
