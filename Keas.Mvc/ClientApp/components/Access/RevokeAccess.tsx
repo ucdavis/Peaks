@@ -195,5 +195,5 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         }
         return valid;
     }
-    }
+    
 }

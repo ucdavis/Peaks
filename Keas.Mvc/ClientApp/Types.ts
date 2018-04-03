@@ -33,7 +33,6 @@ export interface IPerson {
   userid: number;
   teamId: number;
   user: IUser;
-  accessAssignments: IAccessAssignment[];
 }
 
 export interface ITeam {

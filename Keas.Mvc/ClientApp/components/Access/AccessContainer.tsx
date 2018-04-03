@@ -87,7 +87,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       person: IPerson
   ) => {
       // call API to create a access, then assign it if there is a person to assign to
-      //if we are creating a new access
+      // if we are creating a new access
       if (access.id === 0) {
           access.teamId = this.context.team.id;
           access = await this.context.fetch("/access/create", {
@@ -105,12 +105,12 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       });
       }
 
-    let index = this.state.access.findIndex(x => x.id == access.id);
+    const index = this.state.access.findIndex(x => x.id === access.id);
     console.log("index " + index);
     if (index !== -1) {
         console.log("changing");
-        //update already existing entry in access
-        let updateAccess = [...this.state.access];
+        // update already existing entry in access
+        const updateAccess = [...this.state.access];
         updateAccess[index] = access;
 
         this.setState({
@@ -133,16 +133,16 @@ export default class AccessContainer extends React.Component<IProps, IState> {
           method: "POST"
       });
 
-      //remove from state
+      // remove from state
       const index = this.state.access.indexOf(access);
       if (index > -1) {
-          let shallowCopy = [...this.state.access];
+          const shallowCopy = [...this.state.access];
           if (this.props.person == null) {
-              //if we are looking at all access, just update assignment
+              // if we are looking at all access, just update assignment
               shallowCopy[index] = removed;
           }
           else {
-              //if we are looking at a person, remove from our list of access
+              // if we are looking at a person, remove from our list of access
               shallowCopy.splice(index, 1);
           }
           this.setState({ access: shallowCopy });
