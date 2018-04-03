@@ -94,7 +94,7 @@ namespace Keas.Mvc.Controllers
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var access = await _context.Access.Include(x => x.Assignments).SingleAsync(x => x.Id == accessId);
+                var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person.User).SingleAsync(x => x.Id == accessId);
                 var accessAssignment = access.Assignments.Single(x => x.PersonId == personId);
                 access.Assignments.Remove(accessAssignment);
                 _context.AccessAssignments.Remove(accessAssignment);
