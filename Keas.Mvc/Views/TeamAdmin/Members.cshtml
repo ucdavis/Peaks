@@ -21,16 +21,17 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var member in Model.Team.Memberships) {
+@foreach (var permission in Model.Team.TeamPermissions) {
         <tr>
             <td>
-                @member.User.FirstName
+                @permission.User.FirstName
             </td>
             <td>
-                @member.User.LastName
+                @permission.User.LastName
             </td>
             <td>
-            
+            @permission.TeamRole.Name
+
             </td>
            
         </tr>
