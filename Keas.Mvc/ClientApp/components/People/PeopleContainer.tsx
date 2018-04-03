@@ -23,7 +23,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
   }
 
   public async componentDidMount() {
-      const members = await this.context.fetch(`/people/list/${this.context.team.id}`;
+      const members = await this.context.fetch(`/people/list/${this.context.team.id}`);
       this.setState({ members });
   }
   public render() {

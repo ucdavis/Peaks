@@ -56,5 +56,12 @@ namespace Keas.Mvc.Controllers
 
             return View(person);
         }
+
+        public async Task<IActionResult> GetPerson(int personId, int teamId)
+        {
+            var person = await _context.People
+                .Where(x => x.TeamId == teamId && x.Id == personId).Include(x => x.User).AsNoTracking().SingleAsync();
+            return Json(person);
+        }
     }
 }
