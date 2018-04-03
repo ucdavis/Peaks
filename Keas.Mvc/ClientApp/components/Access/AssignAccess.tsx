@@ -102,7 +102,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                   disableEditing={true} />
                               }
 
-                              {(this.state.person !== null || this.props.person !== null) &&
+                              {(!!this.state.person || !!this.props.person) &&
                                   <div className="form-group">
                                       <label>Set the expiration date</label>
                                       <DatePicker
@@ -118,7 +118,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                   </ModalBody>
                   <ModalFooter>
                           <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState}>
-                              Assign
+                              Go!
                          </Button>
                       {" "}
                       <Button color="secondary" onClick={this._closeModal}>
@@ -208,12 +208,13 @@ export default class AssignAccess extends React.Component<IProps, IState> {
       let valid = true;
       if (!this.state.access) {
           valid = false;
-      } else if ((!this.state.person && !this.props.person) || 
+      } else if ((!!this.state.person || !!this.props.person) && 
           !this._checkValidAssignmentToPerson()) {
           valid = false;
       } else if (this.state.error !== "") {
           valid = false;
-      } else if (!this.state.date || moment().isSameOrAfter(this.state.date)) {
+      } else if ((!!this.state.person || !!this.props.person) &&
+          (!this.state.date || moment().isSameOrAfter(this.state.date))) {
           valid = false;
         }
       this.setState({ validState: valid });
@@ -253,7 +254,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
           this._changeDate(m);
       }
       else {
-          this.setState({ date: null, error: "Please enter a valid date" });
+          this.setState({ date: null, error: "Please enter a valid date", validState: false });
       }
   }
 }
