@@ -3,7 +3,7 @@ import * as React from "react";
 import {
     Button,
     ListGroup,
-    ListGroupItem
+    ListGroupItem,
     Modal,
     ModalBody,
     ModalFooter,
@@ -22,7 +22,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 interface IProps {
     closeModal: () => void;
     modal: boolean;
-    onRevoke: (access: IAccess, person: IPerson) => void;
+    onRevoke: (accessAssignment: IAccessAssignment) => void;
     person?: IPerson;
     selectedAccess: IAccess;
 }
@@ -121,8 +121,9 @@ export default class AssignAccess extends React.Component<IProps, IState> {
             return;
         }
         const person = this.props.person ? this.props.person : this.state.person;
+        const accessAssignment = this.state.access.assignments.filter(x => x.personId === person.id);
 
-        await this.props.onRevoke(this.state.access, person);
+        await this.props.onRevoke(accessAssignment[0]);
 
         this._closeModal();
     };

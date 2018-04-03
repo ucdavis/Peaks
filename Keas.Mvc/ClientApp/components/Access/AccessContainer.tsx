@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 
-import { AppContext, IAccess, IPerson } from "../../Types";
+import { AppContext, IAccess, IPerson, IAccessAssignment } from "../../Types";
 
 import AccessDetails from "./AccessDetails";
 import AccessList from "./AccessList";
@@ -35,7 +35,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   public async componentDidMount() {
       // are we getting the person's access or the team's?
       const accessFetchUrl = this.props.person
-          ? `/access/listassigned?id=${this.props.person.id}&teamId=${this.props.person.teamId}`
+          ? `/access/listassigned?personId=${this.props.person.id}&teamId=${this.props.person.teamId}`
       : `/access/list?teamId=${this.context.team.id}`;
 
     const access = await this.context.fetch(accessFetchUrl);
@@ -100,9 +100,12 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     if (person) {
       const assignUrl = `/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
 
-      access = await this.context.fetch(assignUrl, {
+      const accessAssignment = await this.context.fetch(assignUrl, {
         method: "POST"
       });
+      // fetching only returns the assignment, so add it to the access in our state with the right person
+      accessAssignment.person = person;
+      access.assignments.push(accessAssignment);
       }
 
     const index = this.state.access.findIndex(x => x.id === access.id);
@@ -125,25 +128,26 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     }
   };
 
-  private _revokeAccess = async (access: IAccess, person?: IPerson) => {
+  private _revokeAccess = async (accessAssignment: IAccessAssignment) => {
 
       // call API to actually revoke
-      const revokeUrl = `/access/revoke?accessId=${access.id}&personId=${!!this.props.person ? this.props.person.id : person.id}`
-      const removed: IAccess = await this.context.fetch(revokeUrl, {
+      const removed: IAccess = await this.context.fetch("/access/revoke", {
+          body: JSON.stringify(accessAssignment),
           method: "POST"
       });
 
-      // remove from state
-      const index = this.state.access.indexOf(access);
-      if (index > -1) {
+      // find index of access in state
+      const accessIndex = this.state.access.findIndex(x => x.id === accessAssignment.accessId);
+      if (accessIndex > -1) {
           const shallowCopy = [...this.state.access];
           if (this.props.person == null) {
-              // if we are looking at all access, just update assignment
-              shallowCopy[index] = removed;
+              // if we are looking at all access, remove from access.assignments
+              const assignmentIndex = shallowCopy[accessIndex].assignments.indexOf(accessAssignment);
+              shallowCopy[accessIndex].assignments.splice(assignmentIndex, 1);
           }
           else {
-              // if we are looking at a person, remove from our list of access
-              shallowCopy.splice(index, 1);
+              // if we are looking at a person, remove access entirely
+              shallowCopy.splice(accessIndex, 1);
           }
           this.setState({ access: shallowCopy });
       }
@@ -159,7 +163,9 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   private _openRevokeModal = (access: IAccess) => {
       if (!!this.props.person) // if we already have the person, just revoke
       {
-          this._revokeAccess(access, this.props.person);
+          const accessIndex = this.state.access.indexOf(access);
+          const accessAssignment = this.state.access[accessIndex].assignments.filter(x => x.personId === this.props.person.id);
+          this._revokeAccess(accessAssignment[0]);
       }
       else // otherwise, pull up the modal
       {
