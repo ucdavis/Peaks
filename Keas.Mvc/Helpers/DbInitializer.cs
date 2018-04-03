@@ -117,7 +117,7 @@ namespace Keas.Mvc.Helpers
                 Key = key
             };
 
-            var scottKey = new TeamPermission{ Id = 1, Team = caes, TeamRole = keymaster, Person = scottCaes };
+            var scottKey = new TeamPermission{ Id = 1, Team = caes, TeamRole = keymaster, User = scott};
             context.TeamPermissions.Add(scottKey);
 
             context.Histories.Add(history);

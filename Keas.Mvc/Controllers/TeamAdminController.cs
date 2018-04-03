@@ -20,19 +20,24 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Members()
         {
-            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Name == Team);
+           var teams = await _context.Teams
+                .Include(team=> team.TeamPermissions)
+                    .ThenInclude(tp=> tp.User)
+                //.Include(tp=> tp.TeamPermissions.TeamRole)
+                .SingleOrDefaultAsync(x => x.Name == Team);
 
-            if (team == null)
+            if (teams == null)
             {
                 return NotFound();
             }
-            var viewModel = TeamAdminMembersListModel.Create(_context, team);
+            var viewModel = TeamAdminMembersListModel.Create(_context, teams);
             return View(viewModel);
         }
   
         public class TeamAdminMembersListModel
         {
             public Team Team { get; set; }
+           
             public List<TeamRoles> Roles { get; set; }
 
             public static TeamAdminMembersListModel Create(ApplicationDbContext context, Team team)
@@ -50,12 +55,13 @@ namespace Keas.Mvc.Controllers
 
         public class TeamRoles
         {
-            public Person Person { get; set; }
+            public User User { get; set; }
+           
             public IList<Role> Roles { get; set; }
 
             public TeamRoles(TeamPermission teamPermission)
             {
-                Person = teamPermission.Person;
+                User = teamPermission.User;
                 Roles = new List<Role>
                 {
                     teamPermission.TeamRole
