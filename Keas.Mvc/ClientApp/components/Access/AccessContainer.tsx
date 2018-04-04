@@ -105,8 +105,14 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       });
       // fetching only returns the assignment, so add it to the access in our state with the right person
       accessAssignment.person = person;
-      access.assignments.push(accessAssignment);
+      if (!!this.props.person)
+      {
+          // if we are on a person page, replace any fetched assignments with this one 
+          access.assignments = [];
       }
+      // then push it
+      access.assignments.push(accessAssignment);
+    }
 
     const index = this.state.access.findIndex(x => x.id === access.id);
     console.log("index " + index);

@@ -223,10 +223,11 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
   private _checkValidAssignmentToPerson = () => {
       let valid = true;
+      const person = this.props.person ? this.props.person : this.state.person;
       const assignments = this.state.access.assignments;
       for (const a of assignments) 
       {
-          if (a.personId === this.state.person.id)
+          if (a.personId === person.id)
           {
               valid = false;
               break;

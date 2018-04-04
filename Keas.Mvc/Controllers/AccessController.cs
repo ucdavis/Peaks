@@ -28,7 +28,7 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> Search(int teamId, string q)
         {
             var comparison = StringComparison.InvariantCultureIgnoreCase;
-            var access = await _context.Access.Include(x => x.Assignments)
+            var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person.User)
                 .Where(x => x.TeamId == teamId && x.Active &&
                 (x.Name.StartsWith(q, comparison))) //|| x.SerialNumber.StartsWith(q, comparison)))
                 .AsNoTracking().ToListAsync();
