@@ -2,12 +2,12 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import {
   Button,
+  ListGroup,
+  ListGroupItem,
   Modal,
   ModalBody,
   ModalFooter,
-  ModalHeader,
-  ListGroup,
-  ListGroupItem
+  ModalHeader
 } from "reactstrap";
 
 import * as moment from "moment";

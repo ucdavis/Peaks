@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 
-import { AppContext, IAccess, IPerson, IAccessAssignment } from "../../Types";
+import { AppContext, IAccess, IAccessAssignment, IPerson } from "../../Types";
 
 import AccessDetails from "./AccessDetails";
 import AccessList from "./AccessList";
