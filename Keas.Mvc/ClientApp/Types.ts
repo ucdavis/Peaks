@@ -66,7 +66,6 @@ export interface IAccessAssignment {
   id: number;
   accessId: number;
   expiresAt: Date;
-  // access: IAccess;
   person: IPerson;
   personId: number;
 }
