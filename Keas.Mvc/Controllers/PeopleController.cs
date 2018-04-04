@@ -24,6 +24,14 @@ namespace Keas.Mvc.Controllers
             return Json(people);
         }
 
+        public async Task<IActionResult> List(int id)
+        {
+            var people = await _context.People
+                .Where(x => x.Team.Id == id && x.Active)
+                .Include(x => x.User).AsNoTracking().ToListAsync();
+            return Json(people);
+        }
+
         public async Task<IActionResult> Search(int teamId, string q)
         {
             var people = await _context.People
@@ -47,6 +55,13 @@ namespace Keas.Mvc.Controllers
             }
 
             return View(person);
+        }
+
+        public async Task<IActionResult> GetPerson(int personId, int teamId)
+        {
+            var person = await _context.People
+                .Where(x => x.TeamId == teamId && x.Id == personId).Include(x => x.User).AsNoTracking().SingleAsync();
+            return Json(person);
         }
     }
 }

@@ -1,12 +1,7 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 
-import {
-  AppContext,
-  IEquipment,
-  IEquipmentAttribute,
-  IPerson
-} from "../../Types";
+import { AppContext, IEquipment, IPerson } from "../../Types";
 
 import AssignEquipment from "./AssignEquipment";
 import EquipmentDetails from "./EquipmentDetails";
@@ -14,22 +9,16 @@ import EquipmentList from "./EquipmentList";
 
 interface IState {
   loading: boolean;
-  //either equipment assigned to this person, or all team equipment
-  equipment: IEquipment[];
-  selectedEquipment: IEquipment;
+  equipment: IEquipment[]; // either equipment assigned to this person, or all team equipment
 }
 
 interface IProps {
   person?: IPerson;
 }
 
-export default class EquipmentContainer extends React.Component<
-  IProps,
-  IState
-> {
+export default class EquipmentContainer extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
-    person: PropTypes.object,
     router: PropTypes.object,
     team: PropTypes.object
   };
@@ -39,14 +28,13 @@ export default class EquipmentContainer extends React.Component<
 
     this.state = {
       equipment: [],
-      selectedEquipment: null,
       loading: true
     };
   }
   public async componentDidMount() {
     // are we getting the person's equipment or the team's?
     const equipmentFetchUrl = this.props.person
-      ? `/equipment/listassigned?id=${this.props.person.id}&teamId=${
+      ? `/equipment/listassigned?personid=${this.props.person.id}&teamId=${
           this.props.person.teamId
         }`
       : `/equipment/list/${this.context.team.id}`;
@@ -58,17 +46,11 @@ export default class EquipmentContainer extends React.Component<
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
-    const assignedEquipmentList = this.props.person
-      ? this.state.equipment.map(x => x.name)
-      : null;
-    const allEquipmentList = this.props.person ? null : this.state.equipment;
 
     const { action, assetType, id } = this.context.router.route.match.params;
     const activeAsset = !assetType || assetType === "equipment";
-
     const selectedId = parseInt(id, 10);
-    const detailAsset = this.state.equipment.find(e => e.id === selectedId);
-
+    const detailEquipment = this.state.equipment.find(e => e.id === selectedId);
     return (
       <div className="card">
         <div className="card-body">
@@ -76,34 +58,34 @@ export default class EquipmentContainer extends React.Component<
           <EquipmentList
             equipment={this.state.equipment}
             onRevoke={this._revokeEquipment}
-            onAdd={this._assignSelectedEquipment}
+            onAdd={this._openAssignModal}
             showDetails={this._openDetailsModal}
           />
           <AssignEquipment
             onCreate={this._createAndMaybeAssignEquipment}
-            modal={activeAsset && action === "create"}
-            openModal={this._openAssignModal}
+            modal={activeAsset && (action === "create" || action === "assign")}
+            onAddNew={this._openCreateModal}
             closeModal={this._closeModals}
-            selectedEquipment={this.state.selectedEquipment}
-            selectEquipment={this._selectEquipment}
-            changeProperty={this._changeSelectedEquipmentProperty}
+            selectedEquipment={detailEquipment}
+            person={this.props.person}
           />
           <EquipmentDetails
-            selectedEquipment={detailAsset}
-            modal={activeAsset && action === "details" && !!detailAsset}
+            selectedEquipment={detailEquipment}
+            modal={activeAsset && action === "details" && !!detailEquipment}
             closeModal={this._closeModals}
           />
         </div>
       </div>
     );
   }
+
   private _createAndMaybeAssignEquipment = async (
     person: IPerson,
+    equipment: IEquipment,
     date: any
   ) => {
     // call API to create a equipment, then assign it if there is a person to assign to
-    var equipment = this.state.selectedEquipment;
-    //if we are creating a new equipment
+    // if we are creating a new equipment
     if (equipment.id === 0) {
       equipment.teamId = this.context.team.id;
       equipment = await this.context.fetch("/equipment/create", {
@@ -114,21 +96,19 @@ export default class EquipmentContainer extends React.Component<
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/equipment/assign?equipmentId=${
-        equipment.id
-      }&personId=${person.id}&date=${date}`;
+      const assignUrl = `/equipment/assign?equipmentId=${equipment.id}&personId=${
+        person.id
+      }&date=${date}`;
 
       equipment = await this.context.fetch(assignUrl, {
         method: "POST"
       });
     }
 
-    let index = this.state.equipment.findIndex(x => x.id == equipment.id);
-    console.log("index " + index);
+    const index = this.state.equipment.findIndex(x => x.id === equipment.id);
     if (index !== -1) {
-      console.log("changing");
-      //update already existing entry in equipment
-      let updateEquipment = [...this.state.equipment];
+      // update already existing entry in equipment
+      const updateEquipment = [...this.state.equipment];
       updateEquipment[index] = equipment;
 
       this.setState({
@@ -149,46 +129,29 @@ export default class EquipmentContainer extends React.Component<
       method: "POST"
     });
 
-    //remove from state
+    // remove from state
     const index = this.state.equipment.indexOf(equipment);
     if (index > -1) {
-      let shallowCopy = [...this.state.equipment];
+      const shallowCopy = [...this.state.equipment];
       if (this.props.person == null) {
-        //if we are looking at all equipment, just update assignment
+        // if we are looking at all equipment, just update assignment
         shallowCopy[index] = removed;
       } else {
-        //if we are looking at a person, remove from our list of equipment
+        // if we are looking at a person, remove from our list of equipment
         shallowCopy.splice(index, 1);
       }
       this.setState({ equipment: shallowCopy });
     }
   };
 
-  //pulls up assign modal from dropdown action
-  private _assignSelectedEquipment = (equipment: IEquipment) => {
-    this.setState({ selectedEquipment: equipment });
-    this._openAssignModal();
+  private _openAssignModal = (equipment: IEquipment) => {
+    this.context.router.history.push(
+      `${this._getBaseUrl()}/equipment/assign/${equipment.id}`
+    );
   };
 
-  private _openAssignModal = async () => {
+  private _openCreateModal = () => {
     this.context.router.history.push(`${this._getBaseUrl()}/equipment/create`);
-  };
-
-  //used in assign equipment
-  private _selectEquipment = (equipment: IEquipment) => {
-    this.setState({ selectedEquipment: equipment });
-  };
-
-  private _changeSelectedEquipmentProperty = (
-    property: string,
-    value: string
-  ) => {
-    this.setState({
-      selectedEquipment: {
-        ...this.state.selectedEquipment,
-        [property]: value
-      }
-    });
   };
 
   private _openDetailsModal = (equipment: IEquipment) => {
@@ -196,7 +159,6 @@ export default class EquipmentContainer extends React.Component<
       `${this._getBaseUrl()}/equipment/details/${equipment.id}`
     );
   };
-
   private _closeModals = () => {
     this.context.router.history.push(`${this._getBaseUrl()}/equipment`);
   };
