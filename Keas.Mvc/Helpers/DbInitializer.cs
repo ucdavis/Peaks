@@ -28,7 +28,9 @@ namespace Keas.Mvc.Helpers
             context.Teams.Add(caes);
 
             var keymaster = new Role { Id= 1, Name = "KeyMaster"};
+            var equipmaster = new Role {Id = 2, Name = "EquipMaster"};
             context.TeamRoles.Add(keymaster);
+            context.TeamRoles.Add(equipmaster);
 
             
 
@@ -118,7 +120,11 @@ namespace Keas.Mvc.Helpers
             };
 
             var scottKey = new TeamPermission{ Id = 1, Team = caes, TeamRole = keymaster, User = scott};
+            var scottEquip = new TeamPermission {Id = 2, Team = caes, TeamRole = equipmaster, User = scott};
+            var jasonEquip = new TeamPermission { Id = 3, Team = caes, TeamRole = equipmaster, User = jason };
             context.TeamPermissions.Add(scottKey);
+            context.TeamPermissions.Add(scottEquip);
+            context.TeamPermissions.Add(jasonEquip);
 
             context.Histories.Add(history);
 

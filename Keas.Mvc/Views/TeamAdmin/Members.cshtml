@@ -1,19 +1,17 @@
-﻿@model Keas.Mvc.Controllers.TeamAdminController.TeamAdminMembersListModel
+﻿@model IEnumerable<Keas.Core.Domain.TeamPermission>
+@*Keas.Mvc.Controllers.TeamAdminController.TeamAdminMembersListModel*@
 
 @{
-    ViewData["Title"] = "Members " + Model.Team.Name;
-}
+        ViewData["Title"] = "Members ";
+    }
 
-<h2>Members of @Model.Team.Name </h2>
+<h2>Members of  </h2>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                First Name
-            </th>
-            <th>
-                Last Name
+                Name
             </th>
             <th>
                 Roles
@@ -21,19 +19,17 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var permission in Model.Team.TeamPermissions) {
+@foreach (var item in Model) {
         <tr>
             <td>
-                @permission.User.FirstName
+                @item.User.Name
             </td>
             <td>
-                @permission.User.LastName
-            </td>
-            <td>
-            @permission.TeamRole.Name
+            @item.TeamRole.Name
 
             </td>
-           
+
+
         </tr>
 }
     </tbody>
