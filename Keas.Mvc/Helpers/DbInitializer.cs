@@ -26,14 +26,17 @@ namespace Keas.Mvc.Helpers
             context.Users.Add(scott);
             context.Teams.Add(caes);
 
-            var keymaster = new Role { Id= 1, Name = "KeyMaster"};
-            var equipmaster = new Role {Id = 2, Name = "EquipMaster"};
-            context.TeamRoles.Add(keymaster);
-            context.TeamRoles.Add(equipmaster);
 
-            
+            // Roles
+            var keyMaster = new Role { Id= 1, Name = "KeyMaster"};
+            var equipMaster = new Role {Id = 2, Name = "EquipMaster"};
+            var departmentAdmin = new Role {Id= 3, Name = "DepartmentalAdmin"};
+            var accessMaster = new Role {Id = 4, Name = "AccessMaster"};
 
-            
+            context.Roles.Add(keyMaster);
+            context.Roles.Add(equipMaster);
+            context.Roles.Add(departmentAdmin);
+            context.Roles.Add(accessMaster);
 
             // add assets
             var jasonCaes = new Person { User = jason, Id=1, Team = caes, Group = "CRU" };
@@ -100,9 +103,9 @@ namespace Keas.Mvc.Helpers
                 Key = key
             };
 
-            var scottKey = new TeamPermission{ Id = 1, Team = caes, TeamRole = keymaster, User = scott};
-            var scottEquip = new TeamPermission {Id = 2, Team = caes, TeamRole = equipmaster, User = scott};
-            var jasonEquip = new TeamPermission { Id = 3, Team = caes, TeamRole = equipmaster, User = jason };
+            var scottKey = new TeamPermission{ Id = 1, Team = caes, TeamRole = keyMaster, User = scott};
+            var scottEquip = new TeamPermission {Id = 2, Team = caes, TeamRole = equipMaster, User = scott};
+            var jasonEquip = new TeamPermission { Id = 3, Team = caes, TeamRole = equipMaster, User = jason };
             context.TeamPermissions.Add(scottKey);
             context.TeamPermissions.Add(scottEquip);
             context.TeamPermissions.Add(jasonEquip);

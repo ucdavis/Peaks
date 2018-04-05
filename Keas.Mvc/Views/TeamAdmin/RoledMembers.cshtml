@@ -1,7 +1,7 @@
 ﻿@model Keas.Mvc.Models.TeamAdminMembersListModel
 
 @{
-        ViewData["Title"] = "Members ";
+        ViewData["Title"] = "Role Assigned Members ";
     }
 
 <h2>Members with roles in @Model.Team.Name</h2>
@@ -15,6 +15,9 @@
             <th>
                 Roles
             </th>
+            <th>
+                
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -25,9 +28,10 @@
             </td>
             <td>
             @item.RolesList
-
             </td>
-
+            <td>
+                edit/ delete
+            </td>
 
         </tr>
 }

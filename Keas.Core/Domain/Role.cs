@@ -14,6 +14,13 @@ namespace Keas.Core.Domain
         [StringLength(50)]
         public string Name { get; set; }
 
+        public class Codes
+        {
+            public const string DepartmentalAdmin = "DA";
+            public const string KeyMaster = "KM";
+            public const string EquipmentMaster = "EM";
+            public const string AccessMaster = "AM";
 
+        }
     }
 }
