@@ -24,6 +24,7 @@ namespace Keas.Mvc.Controllers
             var teampermissions = _context.TeamPermissions
                 .Include(tp => tp.User)
                 .Include(tp => tp.TeamRole)
+                .AsNoTracking()
                 .Where(x=> x.Team==team).ToList();
 
             if (team == null)
