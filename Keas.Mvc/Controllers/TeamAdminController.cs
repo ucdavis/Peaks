@@ -20,51 +20,61 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Members()
         {
-            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Name == Team);
-            var teampermissions = _context.TeamPermissions
-                .Include(tp => tp.User)
-                .Include(tp => tp.TeamRole)
-                .AsNoTracking()
-                .Where(x=> x.Team==team).ToList();
+            //var team = await _context.Teams.SingleOrDefaultAsync(x => x.Name == Team);
+
+            var team = await _context.Teams
+                .Include(t => t.TeamPermissions)
+                    .ThenInclude(tp=> tp.User)
+                .Include(t=> t.TeamPermissions)
+                    .ThenInclude(tp=>tp.TeamRole)
+                .SingleOrDefaultAsync(x => x.Name == Team);
+
+            //var teampermissions = _context.TeamPermissions
+            //    .Include(tp => tp.User)
+            //    .Include(tp => tp.TeamRole)
+            //    .AsNoTracking()
+            //    .Where(x=> x.Team==team).ToList();
 
             if (team == null)
             {
                 return NotFound();
             }
-            //var viewModel = TeamAdminMembersListModel.Create(_context, teampermissions);
-            return View(teampermissions);
+            var viewModel = TeamAdminMembersListModel.Create(team);
+            return View(viewModel);
         }
   
         public class TeamAdminMembersListModel
         {
-            public TeamPermission TeamPermission { get; set; }
+            public Team Team { get; set; }
            
-            public List<UserRoles> UserRoleses { get; set; }
-            public string TeamName { get; set; }
+            public List<UserRole> UserRoles { get; set; }
 
-            public static TeamAdminMembersListModel Create(ApplicationDbContext context, TeamPermission teamPermission)
+            public static TeamAdminMembersListModel Create(Team team)
             {
                 var viewModel = new TeamAdminMembersListModel()
                 {
-                    TeamPermission = teamPermission,
-                    UserRoleses = new List<UserRoles>(),
-                    TeamName =  teamPermission.Team.Name
+                    Team = team,
+                    UserRoles = new List<UserRole>()
                 };
 
-                viewModel.UserRoleses.Add(new UserRoles(teamPermission));
+                foreach (var teamPersmision in team.TeamPermissions)
+                {
+                    viewModel.UserRoles.Add(new UserRole(teamPersmision));
+                }
+                
 
                 return viewModel;
             }
 
         }
 
-        public class UserRoles
+        public class UserRole
         {
             public User User { get; set; }
            
             public IList<Role> Roles { get; set; }
 
-            public UserRoles(TeamPermission teamPermission)
+            public UserRole(TeamPermission teamPermission)
             {
                 User = teamPermission.User;
                 Roles = new List<Role>();

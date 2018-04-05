@@ -15,7 +15,7 @@ namespace Keas.Core.Domain
 
         public List<TeamMembership> Memberships { get; set; }
 
-       public List<TeamPermission> TeamPermissions { get; set; }
+       public ICollection<TeamPermission> TeamPermissions { get; set; }
        
     }
 }
