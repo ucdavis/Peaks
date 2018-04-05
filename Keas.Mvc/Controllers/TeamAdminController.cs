@@ -28,13 +28,7 @@ namespace Keas.Mvc.Controllers
                 .Include(t=> t.TeamPermissions)
                     .ThenInclude(tp=>tp.TeamRole)
                 .SingleOrDefaultAsync(x => x.Name == Team);
-
-            //var teampermissions = _context.TeamPermissions
-            //    .Include(tp => tp.User)
-            //    .Include(tp => tp.TeamRole)
-            //    .AsNoTracking()
-            //    .Where(x=> x.Team==team).ToList();
-
+            
             if (team == null)
             {
                 return NotFound();
@@ -57,12 +51,18 @@ namespace Keas.Mvc.Controllers
                     UserRoles = new List<UserRole>()
                 };
 
-                foreach (var teamPersmision in team.TeamPermissions)
+                foreach (var teamPermission in team.TeamPermissions)
                 {
-                    viewModel.UserRoles.Add(new UserRole(teamPersmision));
+                    if (viewModel.UserRoles.Any(a => a.User.Id == teamPermission.User.Id))
+                    {
+                        viewModel.UserRoles.Single(a => a.User.Id == teamPermission.User.Id).Roles
+                            .Add(teamPermission.TeamRole);
+                    }
+                    else
+                    {
+                        viewModel.UserRoles.Add(new UserRole(teamPermission));
+                    }
                 }
-                
-
                 return viewModel;
             }
 
