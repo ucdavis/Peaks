@@ -27,6 +27,15 @@ export default class AssetNav extends React.Component<{}, {}> {
             </NavLink>
           </li>
           <li className="nav-item">
+              <NavLink
+                  to="/CAESDO/access"
+                  className="nav-link"
+                  activeClassName="active"
+              >
+                  Access
+            </NavLink>
+          </li>
+          <li className="nav-item">
             <NavLink
               to="/CAESDO/people"
               className="nav-link"
