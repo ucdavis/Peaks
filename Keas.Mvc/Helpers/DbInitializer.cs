@@ -20,6 +20,26 @@ namespace Keas.Mvc.Helpers
             var space1 = new Space { Room = room1, ChartNum = "3", OrgId = "ADNO" };
             context.Spaces.Add(space1);
 
+            var room2 = new Room { BldgKey = "02", FloorKey = "03", RoomKey = "02", BldgName = "North Hall", RoomName = "Group/Meeting Room", RoomNumber = "308" };
+            var space2 = new Space { Room = room2, ChartNum = "3", OrgId = "ADNO" };
+            context.Spaces.Add(space2);
+
+            var room3 = new Room { BldgKey = "02", FloorKey = "03", RoomKey = "03", BldgName = "North Hall", RoomName = "Meeting Room for CAPS Staff and Large Groups", RoomNumber = "325" };
+            var space3 = new Space { Room = room3, ChartNum = "3", OrgId = "ADNO" };
+            context.Spaces.Add(space3);
+
+            var room4 = new Room { BldgKey = "02", FloorKey = "02", RoomKey = "04", BldgName = "North Hall", RoomNumber = "0206A" };
+            var space4 = new Space { Room = room4, ChartNum = "3", OrgId = "ADNO" };
+            context.Spaces.Add(space4);
+
+            var room5 = new Room { BldgKey = "02", FloorKey = "01", RoomKey = "05", BldgName = "North Hall", RoomName = "Storage", RoomNumber = "0121A" };
+            var space5 = new Space { Room = room5, ChartNum = "3", OrgId = "ADNO" };
+            context.Spaces.Add(space5);
+
+            var room6 = new Room { BldgKey = "03", FloorKey = "01", RoomKey = "06", BldgName = "South Hall", RoomName = "Storage", RoomNumber = "0121A" };
+            var space6 = new Space { Room = room6, ChartNum = "3", OrgId = "ADNO" };
+            context.Spaces.Add(space6);
+
             var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
             var jason = new User { Id = "123222", Name = "Jason", Email = "jason@email.com" };
             var caes = new Team { Id = 1, Name = "CAESDO" };
