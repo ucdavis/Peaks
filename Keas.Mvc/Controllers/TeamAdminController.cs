@@ -42,9 +42,9 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMemberRole(TeamAdminMembersAddModel model)
         {
-            if (model.Role.Id == 0)
+            if (model.RoleId == 0)
             {
-                ModelState.AddModelError("Role", "Must select valid Role");
+                ModelState.AddModelError("RoleId", "Must select valid Role");
             }
 
             var team = await _context.Teams.SingleAsync(x => x.Name == Team);
