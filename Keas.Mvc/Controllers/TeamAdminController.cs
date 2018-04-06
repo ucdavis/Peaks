@@ -86,6 +86,9 @@ namespace Keas.Mvc.Controllers
                 _context.TeamPermissions.Add(teamPermission);
                 await _context.SaveChangesAsync();
 
+                // TODO: uncomments when service message PR merged.
+                //Message = "User " + user.Name + " has been added as " + role.Name + " to the " + team.Name " team.";
+
                 return RedirectToAction(nameof(RoledMembers));
             }
             
