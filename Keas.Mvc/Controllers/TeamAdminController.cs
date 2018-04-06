@@ -39,6 +39,20 @@ namespace Keas.Mvc.Controllers
             return View(viewModel);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> AddMemberRole(TeamAdminMembersAddModel model)
+        {
+            if (model.Role.Id == 0)
+            {
+                ModelState.AddModelError("Role", "Must select valid Role");
+            }
+
+            var team = await _context.Teams.SingleAsync(x => x.Name == Team);
+
+            var viewModel = TeamAdminMembersAddModel.Create(team, _context);
+            return View(viewModel);
+        }
+
 
         public async Task<IActionResult> BulkImportMembers()
         {
