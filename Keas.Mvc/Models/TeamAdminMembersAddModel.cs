@@ -10,11 +10,11 @@ namespace Keas.Mvc.Models
     {
         [Required]
         public Team Team { get; set; }
-        [Required]
-        public Role Role { get; set; }
 
-        [Required]
-        public User User { get; set; }
+        [Display(Name = "Role to Add")]
+        public int RoleId { get; set; }
+
+        public string UserEmail { get; set; }
 
         public List<Role> Roles { get; set; }
 
