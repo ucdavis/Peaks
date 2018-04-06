@@ -4,6 +4,7 @@ using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using Keas.Core.Domain;
 
 namespace Keas.Mvc.Controllers
 {
@@ -42,14 +43,52 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMemberRole(TeamAdminMembersAddModel model)
         {
+            var team = await _context.Teams.SingleAsync(x => x.Name == Team);
+            var viewModel = TeamAdminMembersAddModel.Create(team, _context);
+            if (team == null)
+            {
+                return NotFound();
+            }
             if (model.RoleId == 0)
             {
                 ModelState.AddModelError("RoleId", "Must select valid Role");
+                return View(viewModel);
             }
 
-            var team = await _context.Teams.SingleAsync(x => x.Name == Team);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.UserEmail);
+            var role = await _context.Roles.SingleOrDefaultAsync(r => r.Id == model.RoleId);
+            
+            if (user == null)
+            {
+                ModelState.AddModelError("UserEmail", "User not found!");
+                return View(viewModel);
+            }
 
-            var viewModel = TeamAdminMembersAddModel.Create(team, _context);
+            if (role == null)
+            {
+                ModelState.AddModelError("RoleId", "Role not found!");
+                return View(viewModel);
+            }
+
+            var existingTeamPermision =
+                await _context.TeamPermissions.SingleOrDefaultAsync(tp =>
+                    tp.Team == team && tp.TeamRole == role && tp.User == user);
+
+            if (existingTeamPermision != null)
+            {
+                ModelState.AddModelError(string.Empty,"User already in that role!");
+                return View(viewModel);
+            }
+
+            var teamPermission = new TeamPermission {TeamRole = role, Team = team, User = user};
+            if (ModelState.IsValid)
+            {
+                _context.TeamPermissions.Add(teamPermission);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(RoledMembers));
+            }
+            
             return View(viewModel);
         }
 
