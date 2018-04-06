@@ -13,7 +13,7 @@ namespace Keas.Core.Domain
         [Display(Name = "Team Name")]
         public string Name { get; set; }
 
-        public List<TeamMembership> Memberships { get; set; }
+        public List<Person> People { get; set; }
 
        public ICollection<TeamPermission> TeamPermissions { get; set; }
        

@@ -8,13 +8,13 @@ namespace Keas.Mvc.Models
 {
     public class TeamAdminMembersAddModel
     {
-
+        [Required]
         public Team Team { get; set; }
         [Required]
         public Role Role { get; set; }
 
         [Required]
-        public TeamMembership TeamMembership { get; set; }
+        public User User { get; set; }
 
         public List<Role> Roles { get; set; }
 
@@ -25,9 +25,9 @@ namespace Keas.Mvc.Models
             {
                 Team = team,
             };
-
-            viewModel.Roles = context.Roles.OrderBy(x=> x.Name).ToList();
-
+            
+           viewModel.Roles = context.Roles.OrderBy(x=> x.Name).ToList();
+            viewModel.Roles.Insert(0, new Role{ Id = 0, Name = "--Select--"});
             return viewModel;
         }
 
