@@ -27,7 +27,7 @@ namespace Keas.Core.Domain
         [EmailAddress]
         public string Email { get; set; }
 
-        public List<TeamMembership> TeamMemberships { get; set; }
+        public List<Person> People { get; set; }
         public List<TeamPermission> TeamPermissions { get; set; }
     }
 }
