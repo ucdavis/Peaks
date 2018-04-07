@@ -11,7 +11,7 @@ namespace Keas.Mvc.Models
 
         public List<UserRole> UserRoles { get; set; }
 
-        public static TeamAdminMembersListModel Create(Team team)
+        public static TeamAdminMembersListModel Create(Team team, string userId)
         {
             var viewModel = new TeamAdminMembersListModel()
             {
@@ -19,6 +19,10 @@ namespace Keas.Mvc.Models
                 UserRoles = new List<UserRole>()
             };
 
+            if (userId != null)
+            {
+                team.TeamPermissions= team.TeamPermissions.Where(tp => tp.UserId == userId).ToList();
+            }
             foreach (var teamPermission in team.TeamPermissions)
             {
                 if (viewModel.UserRoles.Any(a => a.User.Id == teamPermission.User.Id))
