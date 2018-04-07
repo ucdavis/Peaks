@@ -34,7 +34,7 @@
             @item.RolesList
             </td>
             <td>
-                edit/ delete
+                @Html.ActionLink("Remove All Roles", "RemoveAllRoles", new { userId = item.User.Id})
             </td>
 
         </tr>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Keas.Core.Data;
 using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace Keas.Mvc.Controllers
 {
     public class TeamAdminController : SuperController
     {
-        // TODO: Authorize to appropriate roles. Maybe just require DA?
+        // TODO: Authorize to appropriate roles. Maybe just require DA or SystemAdmin?
 
         private readonly ApplicationDbContext _context;
 
@@ -28,7 +29,7 @@ namespace Keas.Mvc.Controllers
                     .ThenInclude(tp=>tp.TeamRole)
                 .SingleAsync(x => x.Name == Team);
             
-            var viewModel = TeamAdminMembersListModel.Create(team);
+            var viewModel = TeamAdminMembersListModel.Create(team,null);
             return View(viewModel);
         }
 
@@ -92,6 +93,19 @@ namespace Keas.Mvc.Controllers
                 return RedirectToAction(nameof(RoledMembers));
             }
             
+            return View(viewModel);
+        }
+
+        public async Task<ActionResult> RemoveAllRoles(string userId)
+        {
+            var team = await _context.Teams
+                .Include(t => t.TeamPermissions)
+                .ThenInclude(tp => tp.User)
+                .Include(t => t.TeamPermissions)
+                .ThenInclude(tp => tp.TeamRole)
+                .SingleAsync(x => x.Name == Team);
+            var viewModel = TeamAdminMembersListModel.Create(team, userId);
+
             return View(viewModel);
         }
 
