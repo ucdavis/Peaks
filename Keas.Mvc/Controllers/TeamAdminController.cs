@@ -117,27 +117,20 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveRoles(string userId, int[] roles)
         {
+            // TODO: any roles we should not list? Any roles we should not allow deleted?
             if (userId == null)
             {
                 return RedirectToAction(nameof(RoledMembers));
             }
-
-            var team = await _context.Teams
-                .Include(t => t.TeamPermissions)
-                .ThenInclude(tp => tp.User)
-                .Include(t => t.TeamPermissions)
-                .ThenInclude(tp => tp.TeamRole)
-                .SingleAsync(x => x.Name == Team);
-            var viewModel = TeamAdminMembersListModel.Create(team, userId);
-
+            
             if (roles.Length < 1)
             {
-                ModelState.AddModelError("", "Must select at least 1 role to remove!");
-                return View(viewModel);
+                return RedirectToAction(nameof(RemoveRoles), new {userId = userId});
             }
+            
             foreach (var role in roles)
             {
-                var teamPermssionToDelete = team.TeamPermissions.Single(tp => tp.RoleId == role && tp.UserId==userId);
+                var teamPermssionToDelete = _context.TeamPermissions.Single(tptd => tptd.RoleId == role && tptd.UserId == userId && tptd.Team.Name==Team);
                 _context.TeamPermissions.Remove(teamPermssionToDelete);
             }
             await _context.SaveChangesAsync();
