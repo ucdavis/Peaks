@@ -1,11 +1,10 @@
-﻿using System;
-using System.Linq;
-using Keas.Core.Data;
+﻿using Keas.Core.Data;
+using Keas.Core.Domain;
 using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Threading.Tasks;
-using Keas.Core.Domain;
 
 namespace Keas.Mvc.Controllers
 {
@@ -96,8 +95,12 @@ namespace Keas.Mvc.Controllers
             return View(viewModel);
         }
 
-        public async Task<ActionResult> RemoveAllRoles(string userId)
+        public async Task<ActionResult> RemoveRoles(string userId)
         {
+            if (userId == null)
+            {
+                return RedirectToAction(nameof(RoledMembers));
+            }
             var team = await _context.Teams
                 .Include(t => t.TeamPermissions)
                 .ThenInclude(tp => tp.User)
@@ -107,6 +110,39 @@ namespace Keas.Mvc.Controllers
             var viewModel = TeamAdminMembersListModel.Create(team, userId);
 
             return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveRoles(string userId, string[] roles)
+        {
+            if (userId == null)
+            {
+                return RedirectToAction(nameof(RoledMembers));
+            }
+
+            var team = await _context.Teams
+                .Include(t => t.TeamPermissions)
+                .ThenInclude(tp => tp.User)
+                .Include(t => t.TeamPermissions)
+                .ThenInclude(tp => tp.TeamRole)
+                .SingleAsync(x => x.Name == Team);
+            var viewModel = TeamAdminMembersListModel.Create(team, userId);
+
+            if (roles.Length < 1)
+            {
+                ModelState.AddModelError("", "Must select at least 1 role to remove!");
+                return View(viewModel);
+            }
+
+
+            //var teamPermissions = team.TeamPermissions.Where(tp => tp.UserId == userId).ToList();
+            //foreach (var teamPermission in teamPermissions)
+            //{
+            //    _context.TeamPermissions.Remove(teamPermission);
+            //}
+            //await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(RoledMembers));
         }
 
 
