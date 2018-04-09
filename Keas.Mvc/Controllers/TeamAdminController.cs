@@ -4,6 +4,7 @@ using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Keas.Mvc.Controllers
@@ -99,6 +100,7 @@ namespace Keas.Mvc.Controllers
         {
             if (userId == null)
             {
+                // TODO: Add message
                 return RedirectToAction(nameof(RoledMembers));
             }
             var team = await _context.Teams
@@ -113,7 +115,7 @@ namespace Keas.Mvc.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveRoles(string userId, string[] roles)
+        public async Task<IActionResult> RemoveRoles(string userId, int[] roles)
         {
             if (userId == null)
             {
@@ -133,15 +135,13 @@ namespace Keas.Mvc.Controllers
                 ModelState.AddModelError("", "Must select at least 1 role to remove!");
                 return View(viewModel);
             }
-
-
-            //var teamPermissions = team.TeamPermissions.Where(tp => tp.UserId == userId).ToList();
-            //foreach (var teamPermission in teamPermissions)
-            //{
-            //    _context.TeamPermissions.Remove(teamPermission);
-            //}
-            //await _context.SaveChangesAsync();
-
+            foreach (var role in roles)
+            {
+                var teamPermssionToDelete = team.TeamPermissions.Single(tp => tp.RoleId == role && tp.UserId==userId);
+                _context.TeamPermissions.Remove(teamPermssionToDelete);
+            }
+            await _context.SaveChangesAsync();
+            // TODO: Add message
             return RedirectToAction(nameof(RoledMembers));
         }
 
