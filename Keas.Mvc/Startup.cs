@@ -114,7 +114,7 @@ namespace Keas.Mvc
                     name: "Assets",
                     template: "{teamName}/{asset}/{*type}",
                     defaults: new { controller = "Asset", action = "Index" },
-                    constraints: new { asset = "(keys|equipment|access|space|people|person)" }
+                    constraints: new { asset = "(keys|equipment|access|spaces|people|person)" }
                 );
                 routes.MapRoute(
                     name: "TeamRoutes",

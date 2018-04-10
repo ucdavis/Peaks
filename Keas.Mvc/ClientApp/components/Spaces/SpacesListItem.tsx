@@ -14,7 +14,7 @@ export default class SpacesListItem extends React.Component<IProps, {}> {
         //const personUrl = `/${this.props.teamName}/person/details/${this.props.person.id}`
         return (
             <div>
-                <NavLink to="/">{this.props.space.room.roomKey}</NavLink>
+                <NavLink to="/CAESDO/spaces">{this.props.space.room.roomNumber} {this.props.space.room.bldgName}</NavLink>
             </div>
         );
     }

@@ -31,12 +31,12 @@ namespace Keas.Mvc.Controllers
             return Json(room);
         }
 
-        public async Task<IActionResult> List(string id)
+        public async Task<IActionResult> List(string orgId)
         {
-            var people = await _context.Spaces
-                .Where(x => x.OrgId == id)
+            var spaces = await _context.Spaces
+                .Where(x => x.OrgId == orgId)
                 .Include(x => x.Room).AsNoTracking().ToListAsync();
-            return Json(people);
+            return Json(spaces);
         }
 
     }
