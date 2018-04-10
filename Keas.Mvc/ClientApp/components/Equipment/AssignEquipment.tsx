@@ -12,7 +12,7 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IEquipment, IEquipmentAssignment, IPerson } from "../../Types";
+import { AppContext, IEquipment, IEquipmentAssignment, IPerson, IRoom } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
 import EquipmentEditValues from "./EquipmentEditValues";
 import SearchEquipment from "./SearchEquipment";
@@ -29,10 +29,10 @@ interface IProps {
 }
 
 interface IState {
-  person: IPerson;
   date: any;
-  error: string;
   equipment: IEquipment;
+  error: string;
+  person: IPerson;
   validState: boolean;
 }
 
@@ -46,8 +46,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       date: moment().add(3, "y"),
-      error: "",
       equipment: this.props.selectedEquipment,
+      error: "",
       person: null,
       validState: false
     };
@@ -151,6 +151,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
+      equipment: null,
       error: "",
       person: null,
       validState: false
@@ -179,8 +180,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     if (equipment.name.length > 64) {
       this.setState(
         {
+          equipment: null,
           error: "The equipment name you have chosen is too long",
-          equipment: null
         },
         this._validateState
       );
@@ -201,6 +202,15 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     this.setState({ person }, this._validateState);
   };
 
+  private _onSelectRoom = (room: IRoom) => {
+      this.setState({
+          equipment: {
+              ...this.state.equipment,
+              room
+          }
+      });
+  };
+
   private _validateState = () => {
     let valid = true;
     if (!this.state.equipment) {
@@ -210,8 +220,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     } else if (!this.state.date) {
       valid = false;
     } else if (moment().isSameOrAfter(this.state.date)) {
-      valid = false;
-    }
+        valid = false;
+    } 
     this.setState({ validState: valid });
   };
 

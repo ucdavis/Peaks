@@ -12,8 +12,9 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IKey, IKeyAssignment, IPerson } from "../../Types";
+import { AppContext, IKey, IKeyAssignment, IPerson, IRoom } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
+import AssignRoom from "../Spaces/AssignRoom";
 import KeyEditValues from "./KeyEditValues";
 import SearchKey from "./SearchKeys";
 
@@ -29,10 +30,11 @@ interface IProps {
 }
 
 interface IState {
-  person: IPerson;
   date: any;
   error: string;
   key: IKey;
+  person: IPerson;
+  room: IRoom;
   validState: boolean;
 }
 
@@ -49,6 +51,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
       error: "",
       key: this.props.selectedKey,
       person: null,
+      room: null,
       validState: false
     };
   }
@@ -90,6 +93,10 @@ export default class AssignKey extends React.Component<IProps, IState> {
                     onSelect={this._onSelected}
                     onDeselect={this._onDeselected}
                   />
+                </div>
+                <div className="form-group">
+                    <label>Room</label>
+                    <AssignRoom onSelect={this._onSelectRoom} />
                 </div>
                 {!this.state.key ||
                   (!this.state.key.teamId && ( // if we are creating a new key, edit properties
@@ -152,6 +159,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
   private _closeModal = () => {
     this.setState({
       error: "",
+      key: null,
       person: null,
       validState: false
     });
@@ -199,6 +207,10 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
   private _onSelectPerson = (person: IPerson) => {
     this.setState({ person }, this._validateState);
+  };
+
+  private _onSelectRoom = (room: IRoom) => {
+      this.setState({ room });
   };
 
   private _validateState = () => {

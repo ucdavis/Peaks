@@ -2,7 +2,7 @@
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
-import { IEquipment, AppContext } from "../../Types";
+import { AppContext, IEquipment } from "../../Types";
 
 interface IProps {
     selectedEquipment?: IEquipment;
@@ -11,8 +11,8 @@ interface IProps {
 }
 
 interface IState {
-    isSearchLoading: boolean;
     equipment: IEquipment[];
+    isSearchLoading: boolean;
 }
 
 // Search for existing equipment then send selection back to parent
@@ -26,28 +26,10 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
     constructor(props) {
         super(props);
         this.state = {
-            isSearchLoading: false,
             equipment: [],
+            isSearchLoading: false,
         };
     }
-    private _onSelected = (equipment: IEquipment) => {
-        //onChange is called when deselected
-        if (equipment == null || equipment.name == null) {
-            this.props.onDeselect();
-        }
-        else {
-            //if teamId is not set, this is a new equipment
-            this.props.onSelect({
-                name: equipment.name,
-                id: equipment.teamId ? equipment.id : 0,
-                teamId: equipment.teamId ? equipment.teamId : 0,
-                serialNumber: equipment.serialNumber ? equipment.serialNumber : "",
-                make: equipment.make ? equipment.make : "",
-                model: equipment.model ? equipment.model : "",
-                type: "Phone"
-            });
-        }
-    };
 
     public render() {
         if (this.props.selectedEquipment != null) {
@@ -55,7 +37,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
         }
         else {
             return this._renderSelectEquipment();
-        }
+        } 
     }
 
     private _renderSelectEquipment = () => {
@@ -104,6 +86,26 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
             </div>
         );
     }
+
+    private _onSelected = (equipment: IEquipment) => {
+        // onChange is called when deselected
+        if (equipment == null || equipment.name == null) {
+            this.props.onDeselect();
+        }
+        else {
+            // if teamId is not set, this is a new equipment
+            this.props.onSelect({
+                id: equipment.teamId ? equipment.id : 0,
+                make: equipment.make ? equipment.make : "",
+                model: equipment.model ? equipment.model : "",
+                name: equipment.name,
+                room: equipment.room ? equipment.room : null,
+                serialNumber: equipment.serialNumber ? equipment.serialNumber : "",
+                teamId: equipment.teamId ? equipment.teamId : 0,
+                type: "Phone"
+            });
+        }
+    };
 
     private _renderExistingEquipment = () => {
         return (
