@@ -1,25 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Text;
 
 namespace Keas.Core.Domain
 {
-    public class TeamMembership
+    public class TeamPermission
     {
         [Key]
         public int Id { get; set; }
-        
-        [Required]
-        [StringLength(50)]
-        public string Role { get; set; }
 
         [Required]
         public Team Team { get; set; }
         public int TeamId { get; set; }
-        
+
         [Required]
         public User User { get; set; }
         public string UserId { get; set; }
+
+        [Required]
+        public Role Role { get; set; }
+        public int RoleId { get; set; }
+
     }
 }
