@@ -104,3 +104,10 @@ export interface IRoom {
   roomName: string;
   roomNumber: string;
 }
+
+export interface ISpace {
+    roomKey: string;
+    room: IRoom;
+    orgId: string;
+    deptName: string;
+}

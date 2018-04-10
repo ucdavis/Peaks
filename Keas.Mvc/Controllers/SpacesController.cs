@@ -30,5 +30,14 @@ namespace Keas.Mvc.Controllers
                 .AsNoTracking().ToListAsync();
             return Json(room);
         }
+
+        public async Task<IActionResult> List(string id)
+        {
+            var people = await _context.Spaces
+                .Where(x => x.OrgId == id)
+                .Include(x => x.Room).AsNoTracking().ToListAsync();
+            return Json(people);
+        }
+
     }
 }
