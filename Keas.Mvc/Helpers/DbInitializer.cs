@@ -13,7 +13,7 @@ namespace Keas.Mvc.Helpers
             context.Database.EnsureDeleted(); // TODO: remove
             context.Database.EnsureCreated();
 
-            if (context.Users.Any()) return; // already initialzied
+            if (context.Users.Any()) return; // already initialized
 
             // add in some default factilities
             var room1 = new Room { BldgKey = "01", FloorKey = "01", RoomKey = "01", BldgName="Foo", RoomName = "Bar", RoomNumber = "12" };
@@ -46,7 +46,18 @@ namespace Keas.Mvc.Helpers
 
             context.Users.Add(scott);
             context.Teams.Add(caes);
-            context.TeamMemberships.Add(new TeamMembership { User = scott, Team = caes, Role = "Admin" });
+
+
+            // Roles
+            var keyMaster = new Role { Id= 1, Name = "KeyMaster"};
+            var equipMaster = new Role {Id = 2, Name = "EquipMaster"};
+            var departmentAdmin = new Role {Id= 3, Name = "DepartmentalAdmin"};
+            var accessMaster = new Role {Id = 4, Name = "AccessMaster"};
+
+            context.Roles.Add(keyMaster);
+            context.Roles.Add(equipMaster);
+            context.Roles.Add(departmentAdmin);
+            context.Roles.Add(accessMaster);
 
             // add assets
             var jasonCaes = new Person { User = jason, Id=1, Team = caes, Group = "CRU" };
@@ -130,6 +141,13 @@ namespace Keas.Mvc.Helpers
                 Description = "Something important happened",
                 Key = key
             };
+
+            var scottKey = new TeamPermission{ Id = 1, Team = caes, Role = keyMaster, User = scott};
+            var scottEquip = new TeamPermission {Id = 2, Team = caes, Role = equipMaster, User = scott};
+            var jasonEquip = new TeamPermission { Id = 3, Team = caes, Role = equipMaster, User = jason };
+            context.TeamPermissions.Add(scottKey);
+            context.TeamPermissions.Add(scottEquip);
+            context.TeamPermissions.Add(jasonEquip);
 
             context.Histories.Add(history);
 
