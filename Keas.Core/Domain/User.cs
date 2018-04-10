@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Keas.Core.Domain
@@ -26,8 +27,10 @@ namespace Keas.Core.Domain
         [StringLength(256)]
         [EmailAddress]
         public string Email { get; set; }
-
+        
+        [JsonIgnore]
         public List<Person> People { get; set; }
+        [JsonIgnore]
         public List<TeamPermission> TeamPermissions { get; set; }
     }
 }
