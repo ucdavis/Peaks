@@ -19,7 +19,7 @@ namespace Keas.Core.Domain
         public string UserId { get; set; }
 
         [Required]
-        public Role TeamRole { get; set; }
+        public Role Role { get; set; }
         public int RoleId { get; set; }
 
     }

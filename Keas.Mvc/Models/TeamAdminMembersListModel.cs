@@ -28,7 +28,7 @@ namespace Keas.Mvc.Models
                 if (viewModel.UserRoles.Any(a => a.User.Id == teamPermission.User.Id))
                 {
                     viewModel.UserRoles.Single(a => a.User.Id == teamPermission.User.Id).Roles
-                        .Add(teamPermission.TeamRole);
+                        .Add(teamPermission.Role);
                 }
                 else
                 {
@@ -50,7 +50,7 @@ namespace Keas.Mvc.Models
         {
             User = teamPermission.User;
             Roles = new List<Role>();
-            Roles.Add(teamPermission.TeamRole);
+            Roles.Add(teamPermission.Role);
         }
 
         public string RolesList

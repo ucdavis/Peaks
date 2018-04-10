@@ -26,7 +26,7 @@ namespace Keas.Mvc.Controllers
                 .Include(t => t.TeamPermissions)
                     .ThenInclude(tp=> tp.User)
                 .Include(t=> t.TeamPermissions)
-                    .ThenInclude(tp=>tp.TeamRole)
+                    .ThenInclude(tp=>tp.Role)
                 .SingleAsync(x => x.Name == Team);
             
             var viewModel = TeamAdminMembersListModel.Create(team,null);
@@ -73,7 +73,7 @@ namespace Keas.Mvc.Controllers
 
             var existingTeamPermision =
                 await _context.TeamPermissions.SingleOrDefaultAsync(tp =>
-                    tp.Team == team && tp.TeamRole == role && tp.User == user);
+                    tp.Team == team && tp.Role == role && tp.User == user);
 
             if (existingTeamPermision != null)
             {
@@ -81,7 +81,7 @@ namespace Keas.Mvc.Controllers
                 return View(viewModel);
             }
 
-            var teamPermission = new TeamPermission {TeamRole = role, Team = team, User = user};
+            var teamPermission = new TeamPermission {Role = role, Team = team, User = user};
             if (ModelState.IsValid)
             {
                 _context.TeamPermissions.Add(teamPermission);
@@ -104,7 +104,7 @@ namespace Keas.Mvc.Controllers
                 .Include(t => t.TeamPermissions)
                 .ThenInclude(tp => tp.User)
                 .Include(t => t.TeamPermissions)
-                .ThenInclude(tp => tp.TeamRole)
+                .ThenInclude(tp => tp.Role)
                 .SingleAsync(x => x.Name == Team);
             var viewModel = TeamAdminMembersListModel.Create(team, userId);
 
@@ -117,11 +117,13 @@ namespace Keas.Mvc.Controllers
             // TODO: any roles we should not list? Any roles we should not allow deleted?
             if (userId == null)
             {
+                Message = "User not found!";
                 return RedirectToAction(nameof(RoledMembers));
             }
             
             if (roles.Length < 1)
             {
+                Message = "Must select a role to remove.";
                 return RedirectToAction(nameof(RemoveRoles), new {userId = userId});
             }
             

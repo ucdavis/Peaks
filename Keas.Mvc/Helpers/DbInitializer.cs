@@ -122,9 +122,9 @@ namespace Keas.Mvc.Helpers
                 Key = key
             };
 
-            var scottKey = new TeamPermission{ Id = 1, Team = caes, TeamRole = keyMaster, User = scott};
-            var scottEquip = new TeamPermission {Id = 2, Team = caes, TeamRole = equipMaster, User = scott};
-            var jasonEquip = new TeamPermission { Id = 3, Team = caes, TeamRole = equipMaster, User = jason };
+            var scottKey = new TeamPermission{ Id = 1, Team = caes, Role = keyMaster, User = scott};
+            var scottEquip = new TeamPermission {Id = 2, Team = caes, Role = equipMaster, User = scott};
+            var jasonEquip = new TeamPermission { Id = 3, Team = caes, Role = equipMaster, User = jason };
             context.TeamPermissions.Add(scottKey);
             context.TeamPermissions.Add(scottEquip);
             context.TeamPermissions.Add(jasonEquip);
