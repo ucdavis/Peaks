@@ -86,10 +86,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.TeamPermissions.Add(teamPermission);
                 await _context.SaveChangesAsync();
-
-                // TODO: uncomments when service message PR merged.
-                //Message = "User " + user.Name + " has been added as " + role.Name + " to the " + team.Name " team.";
-
+                Message = "User " + user.Name + " has been added as " + role.Name + " to the " + team.Name + " team.";
                 return RedirectToAction(nameof(RoledMembers));
             }
             
@@ -100,7 +97,7 @@ namespace Keas.Mvc.Controllers
         {
             if (userId == null)
             {
-                // TODO: Add message
+                Message = "User not provided";
                 return RedirectToAction(nameof(RoledMembers));
             }
             var team = await _context.Teams
@@ -134,7 +131,8 @@ namespace Keas.Mvc.Controllers
                 _context.TeamPermissions.Remove(teamPermssionToDelete);
             }
             await _context.SaveChangesAsync();
-            // TODO: Add message
+            Message = "User removed from role.";
+            // TODO: Any reason to be more specific? E.g. "John removed from role(s) Keymaster,EquipMaster on team CAESDO".
             return RedirectToAction(nameof(RoledMembers));
         }
 

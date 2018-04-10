@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Microsoft.VisualStudio.Web.CodeGeneration.Contracts.Messaging;
 
 namespace Keas.Mvc.Controllers
 {
@@ -61,6 +62,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.Add(team);
                 await _context.SaveChangesAsync();
+                Message = "Team " + team.Name + " created.";
                 return RedirectToAction(nameof(Index));
             }
             return View(team);
