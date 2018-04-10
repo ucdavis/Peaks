@@ -22,11 +22,11 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> SearchRooms(string q)
         {
-            q = q.ToLower();
+            var queryWords = q.ToLower().Split(" ").ToList();
             var room = await _context.Rooms
-                .Where(x => (x.BldgName.ToLower().Contains(q)
-                || x.RoomName.ToLower().Contains(q) 
-                || x.RoomNumber.ToLower().Contains(q)))
+                .Where(x => (!String.IsNullOrWhiteSpace(x.BldgName) && queryWords.Any(s => x.BldgName.ToLower().Contains(s)))
+                || (!String.IsNullOrWhiteSpace(x.RoomName) && queryWords.Any(s => x.RoomName.ToLower().Contains(s)))
+                || (!String.IsNullOrWhiteSpace(x.RoomNumber) && queryWords.Any(s => x.RoomNumber.ToLower().Contains(s))))
                 .AsNoTracking().ToListAsync();
             return Json(room);
         }
