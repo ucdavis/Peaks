@@ -71,7 +71,7 @@ namespace Keas.Mvc.Controllers
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var equipment = await _context.Equipment.SingleAsync(x => x.Id == equipmentId);
+                var equipment = await _context.Equipment.Include(x => x.Room).SingleAsync(x => x.Id == equipmentId);
                 equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
 
                 _context.EquipmentAssignments.Add(equipment.Assignment);
@@ -91,9 +91,8 @@ namespace Keas.Mvc.Controllers
 
                 _context.EquipmentAssignments.Remove(eq.Assignment);
                 eq.Assignment = null;
-                eq.EquipmentAssignmentId = null;
                 await _context.SaveChangesAsync();
-                return Json(eq);
+                return Json(null);
             }
             return BadRequest(ModelState);
         }
