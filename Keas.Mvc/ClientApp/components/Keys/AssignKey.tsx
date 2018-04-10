@@ -159,6 +159,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
   private _closeModal = () => {
     this.setState({
       error: "",
+      key: null,
       person: null,
       validState: false
     });

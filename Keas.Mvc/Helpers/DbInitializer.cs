@@ -91,7 +91,7 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(5)
             };
 
-            var key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard", Assignment = keyAssignment };
+            var key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard", Assignment = keyAssignment, Room = room2 };
 
             var equipmentAssignment = new EquipmentAssignment
             {
@@ -100,7 +100,7 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment, SerialNumber = "XYZ" };
+            var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment, SerialNumber = "XYZ", Room = room3 };
 
             context.Access.Add(access);
             context.AccessAssignments.Add(accessAssignment);
@@ -119,7 +119,7 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var equip2 = new Equipment { Name = "desktop", Team = caes, Assignment = equip2Assignment, SerialNumber = "ABC" };
+            var equip2 = new Equipment { Name = "desktop", Team = caes, Assignment = equip2Assignment, SerialNumber = "ABC", Room = room4 };
 
             context.EquipmentAssignments.Add(equip2Assignment);
             context.Equipment.Add(equip2);

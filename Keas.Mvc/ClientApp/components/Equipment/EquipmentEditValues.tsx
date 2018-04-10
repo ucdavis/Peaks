@@ -1,11 +1,12 @@
 ﻿import * as React from "react";
 
-import { IEquipment } from "../../Types";
+import { IEquipment, IRoom } from "../../Types";
+import AssignRoom from "../Rooms/AssignRoom"
 
 interface IProps {
     selectedEquipment: IEquipment;
     disableEditing: boolean;
-    changeProperty?: (property: string, value: string) => void;
+    changeProperty?: (property: string, value: any) => void;
 }
 
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
@@ -58,7 +59,29 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         onChange={(e) => this.props.changeProperty("model", e.target.value)}
                     />
                 </div>
+                {this.props.disableEditing &&
+                    <div className="form-group">
+                        <label>Room</label>
+                        <input type="text"
+                            className="form-control"
+                            disabled={true}
+                            value={this.props.selectedEquipment.room ?
+                                `${this.props.selectedEquipment.room.roomKey} ${this.props.selectedEquipment.room.bldgName}` : ""}
+                        />
+                    </div>
+                }
+                {!this.props.disableEditing &&
+                    <div className="form-group">
+                        <label>Room</label>
+                        <AssignRoom onSelect={this._selectRoom} />
+                    </div>
+                }
+
             </div>
         );
     }
+
+    private _selectRoom = (room: IRoom) => {
+        this.props.changeProperty("room", room);
+    } 
 }

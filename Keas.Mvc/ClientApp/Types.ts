@@ -71,14 +71,15 @@ export interface IAccessAssignment {
 }
 
 export interface IEquipment {
+  assignment?: IEquipmentAssignment;
   id: number;
-  teamId: number;
-  name: string;
-  serialNumber: string;
   make: string;
   model: string;
+  name: string;
+  room: IRoom;
+  serialNumber: string;
+  teamId: number;
   type: string;
-  assignment?: IEquipmentAssignment;
   // attributes?: IEquipmentAttribute[];
 }
 
