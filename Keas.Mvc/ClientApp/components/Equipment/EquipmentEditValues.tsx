@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 
 import { IEquipment, IRoom } from "../../Types";
-import AssignRoom from "../Rooms/AssignRoom"
+import AssignRoom from "../Spaces/AssignRoom"
 
 interface IProps {
     selectedEquipment: IEquipment;

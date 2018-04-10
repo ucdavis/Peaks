@@ -14,7 +14,7 @@ import * as moment from "moment";
 import DatePicker from "react-datepicker";
 import { AppContext, IKey, IKeyAssignment, IPerson, IRoom } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
-import AssignRoom from "../Rooms/AssignRoom";
+import AssignRoom from "../Spaces/AssignRoom";
 import KeyEditValues from "./KeyEditValues";
 import SearchKey from "./SearchKeys";
 
