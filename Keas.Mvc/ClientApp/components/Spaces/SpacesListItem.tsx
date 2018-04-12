@@ -11,11 +11,18 @@ interface IProps {
 export default class SpacesListItem extends React.Component<IProps, {}> {
 
     public render() {
-        //const personUrl = `/${this.props.teamName}/person/details/${this.props.person.id}`
         return (
-            <div>
-                <NavLink to="/CAESDO/spaces">{this.props.space.room.roomNumber} {this.props.space.room.bldgName}</NavLink>
-            </div>
+            <tr>
+                <td>{this.props.space.room.bldgName}</td>
+                <td>{this.props.space.room.floorName}</td>
+                <td>{this.props.space.room.roomNumber}</td>
+                <td>
+                        {this.props.space.room.roomName}
+                </td>
+                <td>
+                    actions
+                </td>
+            </tr>
         );
     }
 }

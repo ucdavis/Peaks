@@ -2,7 +2,7 @@
 import * as React from "react";
 
 import { AppContext, ISpace } from "../../Types";
-import SpacesListItem from "./SpacesListItem";
+import SpacesList from "./SpacesList";
 
 interface IState {
     spaces: ISpace[];
@@ -27,11 +27,9 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         this.setState({ spaces });
     }
     public render() {
-        const spaceList = this.state.spaces.map(x => (
-            <SpacesListItem key={x.roomKey} space={x} />));
         return (
             <div>
-                {spaceList}
+                <SpacesList spaces={this.state.spaces} />
             </div>
         );
     }
