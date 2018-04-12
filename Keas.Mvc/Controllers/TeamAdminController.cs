@@ -54,6 +54,29 @@ namespace Keas.Mvc.Controllers
             return View();
         }
 
+        public async Task<IActionResult> RemoveFISOrg(int fisorgId)
+        {
+            var fisOrg = await _context.FISOrgs.Include(t=> t.Team).SingleAsync(f => f.Id == fisorgId && f.Team.Name == Team);
+            if (fisOrg == null)
+            {
+                Message = "FIS Org not found or not attached to this team";
+                return RedirectToAction(nameof(Index));
+            }
+            return View(fisOrg);
+           
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveFISOrg(FISOrg org)
+        {
+            _context.Remove(org);
+            await _context.SaveChangesAsync();
+            Message = "FIS Org removed";
+            return RedirectToAction(nameof(Index));
+
+
+        }
+
         public async Task<IActionResult> RoledMembers()
         {
             var team = await _context.Teams
