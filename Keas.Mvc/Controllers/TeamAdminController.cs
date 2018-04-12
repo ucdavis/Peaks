@@ -20,6 +20,40 @@ namespace Keas.Mvc.Controllers
             _context = context;
         }
 
+        public async Task<IActionResult> Index()
+        {
+            var team = await _context.Teams
+                .Include(o=> o.FISOrgs)
+                .SingleOrDefaultAsync(x => x.Name == Team);
+
+            return View(team);
+        }
+
+        public async Task<IActionResult> AddFISOrg()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddFISOrg(FISOrgAddModel model)
+        {
+            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Name == Team);
+            if (team == null)
+            {
+                return NotFound();
+            }
+            var FISOrg = new FISOrg { Chart = model.Chart, OrgCode = model.OrgCode, Team = team};
+            
+            if (ModelState.IsValid)
+            {
+                _context.FISOrgs.Add(FISOrg);
+                await _context.SaveChangesAsync();
+                Message = "New FIS Org added to team.";
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+        }
+
         public async Task<IActionResult> RoledMembers()
         {
             var team = await _context.Teams

@@ -1,0 +1,29 @@
+﻿@model Keas.Core.Domain.Team
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>@Model.Name</h2>
+
+<div>
+    <h4>Team</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>FIS Orgs</dt>
+        @foreach (var org in Model.FISOrgs)
+        {
+            <dd>@org.ChartAndOrg</dd>
+        }
+    </dl>
+</div>
+<div>
+    <a asp-action="AddFISOrg">Add New FIS Org</a> |
+    <a asp-action="RoledMembers">View members with roles</a>
+</div>

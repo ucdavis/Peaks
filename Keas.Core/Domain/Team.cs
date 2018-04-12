@@ -16,6 +16,8 @@ namespace Keas.Core.Domain
         public List<Person> People { get; set; }
 
        public ICollection<TeamPermission> TeamPermissions { get; set; }
+
+        public List<FISOrg> FISOrgs { get; set; }
        
     }
 }
