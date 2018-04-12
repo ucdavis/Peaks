@@ -107,6 +107,7 @@ export interface IRoom {
 }
 
 export interface ISpace {
+    id: number;
     roomKey: string;
     room: IRoom;
     orgId: string;

@@ -39,5 +39,11 @@ namespace Keas.Mvc.Controllers
             return Json(spaces);
         }
 
+        public async Task<IActionResult> GetSpaceDetails(string id)
+        {
+            var equipment = await _context.Equipment.Where(x => x.Room.RoomKey == id).AsNoTracking().ToListAsync();
+            return Json(equipment);
+        }
+
     }
 }

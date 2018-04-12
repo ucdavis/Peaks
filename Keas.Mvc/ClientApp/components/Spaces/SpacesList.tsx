@@ -6,14 +6,16 @@ import { ISpace } from "../../Types";
 
 interface IProps {
     spaces: ISpace[];
+    showDetails: (space: ISpace) => void;
 }
 
-export default class KeyList extends React.Component<IProps, {}> {
+export default class SpacesList extends React.Component<IProps, {}> {
     public render() {
         const space = this.props.spaces.map(x => (
             <SpacesListItem
                 key={x.roomKey.toString()}
                 space={x}
+                showDetails={this.props.showDetails}
             />
         ));
         return (
