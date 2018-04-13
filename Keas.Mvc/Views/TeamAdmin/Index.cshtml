@@ -19,7 +19,7 @@
         <dt>FIS Orgs</dt>
         @foreach (var org in Model.FISOrgs)
         {
-            <dd>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id">Delete</a></dd>
+            <dd>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><i class="fa fa-trash"></i></a></dd>
         }
     </dl>
 </div>
