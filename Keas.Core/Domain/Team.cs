@@ -17,7 +17,7 @@ namespace Keas.Core.Domain
 
        public ICollection<TeamPermission> TeamPermissions { get; set; }
 
-        public List<FISOrg> FISOrgs { get; set; }
+        public List<FinancialOrganization> FISOrgs { get; set; }
        
     }
 }

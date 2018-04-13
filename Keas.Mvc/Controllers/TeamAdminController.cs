@@ -42,7 +42,7 @@ namespace Keas.Mvc.Controllers
             {
                 return NotFound();
             }
-            var FISOrg = new FISOrg { Chart = model.Chart, OrgCode = model.OrgCode, Team = team};
+            var FISOrg = new FinancialOrganization { Chart = model.Chart, OrgCode = model.OrgCode, Team = team};
             
             if (ModelState.IsValid)
             {
@@ -67,7 +67,7 @@ namespace Keas.Mvc.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveFISOrg(FISOrg org)
+        public async Task<IActionResult> RemoveFISOrg(FinancialOrganization org)
         {
             _context.Remove(org);
             await _context.SaveChangesAsync();

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Keas.Core.Domain
 {
-    public class FISOrg
+    public class FinancialOrganization
     {
 
         [Key]
