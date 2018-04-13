@@ -20,6 +20,63 @@ namespace Keas.Mvc.Controllers
             _context = context;
         }
 
+        public async Task<IActionResult> Index()
+        {
+            var team = await _context.Teams
+                .Include(o=> o.FISOrgs)
+                .SingleOrDefaultAsync(x => x.Name == Team);
+
+            return View(team);
+        }
+
+        public async Task<IActionResult> AddFISOrg()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddFISOrg(FISOrgAddModel model)
+        {
+            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Name == Team);
+            if (team == null)
+            {
+                return NotFound();
+            }
+            var FISOrg = new FinancialOrganization { Chart = model.Chart, OrgCode = model.OrgCode, Team = team};
+            
+            if (ModelState.IsValid)
+            {
+                _context.FISOrgs.Add(FISOrg);
+                await _context.SaveChangesAsync();
+                Message = "New FIS Org added to team.";
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
+        }
+
+        public async Task<IActionResult> RemoveFISOrg(int fisorgId)
+        {
+            var fisOrg = await _context.FISOrgs.Include(t=> t.Team).SingleAsync(f => f.Id == fisorgId && f.Team.Name == Team);
+            if (fisOrg == null)
+            {
+                Message = "FIS Org not found or not attached to this team";
+                return RedirectToAction(nameof(Index));
+            }
+            return View(fisOrg);
+           
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveFISOrg(FinancialOrganization org)
+        {
+            _context.Remove(org);
+            await _context.SaveChangesAsync();
+            Message = "FIS Org removed";
+            return RedirectToAction(nameof(Index));
+
+
+        }
+
         public async Task<IActionResult> RoledMembers()
         {
             var team = await _context.Teams
