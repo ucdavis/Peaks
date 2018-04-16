@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,7 @@ namespace Keas.Mvc.Controllers
         }
         public IActionResult Index()
         {
-            ViewBag.Keymaster = _securityService.IsInRole(_context, "KeyMaster", Team).Result ;
+            ViewBag.Keymaster = _securityService.IsInRole(_context, Role.Codes.KeyMaster, Team).Result ;
             return View();
         }
     }
