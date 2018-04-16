@@ -33,6 +33,7 @@ namespace Keas.Mvc
 
             // setup services
             services.AddSingleton<IIdentityService, IdentityService>();
+            services.AddSingleton<ISecurityService, SecurityService>();
             
             // setup entity framework
             services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));

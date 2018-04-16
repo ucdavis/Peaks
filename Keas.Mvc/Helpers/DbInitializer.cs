@@ -41,10 +41,12 @@ namespace Keas.Mvc.Helpers
             context.Spaces.Add(space6);
 
             var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
+            var james = new User { Id = "141414", FirstName = "James", Name = "James Cubbage", Email = "jscubbage@ucdavis.edu" };
             var jason = new User { Id = "123222", Name = "Jason", Email = "jason@email.com" };
             var caes = new Team { Id = 1, Name = "CAESDO" };
 
             context.Users.Add(scott);
+            context.Users.Add(james);
             context.Teams.Add(caes);
 
 
