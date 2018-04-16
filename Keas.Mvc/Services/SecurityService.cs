@@ -1,4 +1,5 @@
-﻿using Keas.Core.Data;
+﻿using System;
+using Keas.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Security.Claims;
@@ -6,12 +7,16 @@ using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Keas.Core.Domain;
 
 namespace Keas.Mvc.Services
 {
+    
     public interface ISecurityService
     {
-        Task<bool> HasKeyMasterAccess(ApplicationDbContext context, string team);
+        Task<bool> HasKeyMasterAccess(ApplicationDbContext context, string teamName);
+
+        Task<bool> IsInRole(ApplicationDbContext context, string roleCode, string teamName);
     }
     public class SecurityService : ISecurityService
     {
@@ -23,6 +28,41 @@ namespace Keas.Mvc.Services
             _contextAccessor = contextAccessor;
         }
 
+        public async Task<bool> IsInRole(ApplicationDbContext context, string roleCode, string teamName)
+        {
+            var role = await context.Roles.SingleOrDefaultAsync(x => x.Name == roleCode);
+            if (role == null)
+            {
+                throw  new ArgumentException("Role not found");
+            }
+            var team = await context.Teams
+                .Include(t=> t.TeamPermissions)
+                    .ThenInclude(tp=> tp.User)
+                .Include(t=> t.TeamPermissions)
+                    .ThenInclude(tp=> tp.Role)
+                .SingleOrDefaultAsync(x => x.Name == teamName);
+            if (team == null)
+            {
+                throw new ArgumentException("Team not found");
+            }
+            return IsInRole(context, role, team);
+        }
+
+        private bool IsInRole(ApplicationDbContext context, Role role, Team team)
+        {
+            var user = GetUser(context).Result;
+            return team.TeamPermissions.Any(a => a.User == user && a.Role == role);
+        }
+
+        public async Task<User> GetUser(ApplicationDbContext context)
+        {
+            var userId = _contextAccessor.HttpContext.User.Identity.Name;
+            //userId = "scott@email.com";
+            var user = await context.Users.SingleOrDefaultAsync(x => x.Email == userId);
+            return user;
+        }
+        
+
         public async Task<bool> HasKeyMasterAccess(ApplicationDbContext context, string teamName)
         {
             var team = await context.Teams.SingleOrDefaultAsync(x => x.Name == teamName);
@@ -30,9 +70,8 @@ namespace Keas.Mvc.Services
             {
                 return false;
             }
-            var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            //userId = "scott@email.com";
-            var user = await context.Users.SingleOrDefaultAsync(x => x.Email == userId);
+            
+            var user = GetUser(context).Result;
             if (user == null)
             {
                 return false;

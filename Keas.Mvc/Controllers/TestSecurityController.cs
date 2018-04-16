@@ -20,7 +20,7 @@ namespace Keas.Mvc.Controllers
         }
         public IActionResult Index()
         {
-            ViewBag.Keymaster = _securityService.HasKeyMasterAccess(_context, Team).Result ;
+            ViewBag.Keymaster = _securityService.IsInRole(_context, "KeyMaster", Team).Result ;
             return View();
         }
     }
