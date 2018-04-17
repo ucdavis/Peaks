@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Keas.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -17,6 +18,8 @@ namespace Keas.Mvc.Services
         Task<bool> HasKeyMasterAccess(ApplicationDbContext context, string teamName);
 
         Task<bool> IsInRole(ApplicationDbContext context, string roleCode, string teamName);
+
+        Task<bool> IsInRoles(ApplicationDbContext context, List<Role> roles, string teamName);
     }
     public class SecurityService : ISecurityService
     {
@@ -26,6 +29,27 @@ namespace Keas.Mvc.Services
         public SecurityService(IHttpContextAccessor contextAccessor)
         {
             _contextAccessor = contextAccessor;
+        }
+
+        public async Task<bool> IsInRoles(ApplicationDbContext context, List<Role> roles, string teamName)
+        {
+            var user = GetUser(context).Result;
+            using (context)
+            {
+                var team = await context.Teams.SingleAsync(t => t.Name == teamName);
+
+                context.Entry(team)
+                    .Collection(t=> t.TeamPermissions)
+                    .Query()
+                    .Where(tp=> tp.User==user)
+                    .Load();
+                
+                if (team.TeamPermissions.Any(a=> roles.Contains(a.Role)))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public async Task<bool> IsInRole(ApplicationDbContext context, string roleCode, string teamName)

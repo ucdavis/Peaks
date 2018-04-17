@@ -21,7 +21,10 @@ namespace Keas.Mvc.Controllers
         }
         public IActionResult Index()
         {
-            ViewBag.Keymaster = _securityService.IsInRole(_context, Role.Codes.KeyMaster, Team).Result ;
+            var roles = _context.Roles
+                .Where(r => r.Name == Role.Codes.KeyMaster || r.Name == Role.Codes.DepartmentalAdmin).ToList();
+            ViewBag.Keymaster = _securityService.IsInRoles(_context, roles, Team).Result;
+                //_securityService.IsInRole(_context, Role.Codes.KeyMaster, Team).Result ;
             return View();
         }
     }
