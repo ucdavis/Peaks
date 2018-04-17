@@ -57,7 +57,6 @@ namespace Keas.Mvc.Services
         public async Task<User> GetUser(ApplicationDbContext context)
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            //userId = "scott@email.com";
             var user = await context.Users.SingleOrDefaultAsync(x => x.Email == userId);
             return user;
         }
