@@ -15,30 +15,34 @@ namespace Keas.Mvc.Services
     
     public interface ISecurityService
     {
-        Task<bool> HasKeyMasterAccess(ApplicationDbContext context, string teamName);
+        Task<bool> HasKeyMasterAccess(string teamName);
 
-        Task<bool> IsInRole(ApplicationDbContext context, string roleCode, string teamName);
+        Task<bool> IsInRole(string roleCode, string teamName);
 
-        Task<bool> IsInRoles(ApplicationDbContext context, List<Role> roles, string teamName);
+        Task<bool> IsInRoles(List<Role> roles, string teamName);
+
+        Task<bool> IsInRoles(List<Role> roles, string teamName, User user);
     }
     public class SecurityService : ISecurityService
     {
         
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ApplicationDbContext _dbContext;
 
-        public SecurityService(IHttpContextAccessor contextAccessor)
+        public SecurityService(IHttpContextAccessor contextAccessor, ApplicationDbContext dbContext)
         {
             _contextAccessor = contextAccessor;
+            _dbContext = dbContext;
         }
 
-        public async Task<bool> IsInRoles(ApplicationDbContext context, List<Role> roles, string teamName)
+        public async Task<bool> IsInRoles(List<Role> roles, string teamName)
         {
-            var user = GetUser(context).Result;
-            using (context)
+            var user = GetUser().Result;
+            using (_dbContext)
             {
-                var team = await context.Teams.SingleAsync(t => t.Name == teamName);
+                var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamName);
 
-                context.Entry(team)
+                _dbContext.Entry(team)
                     .Collection(t=> t.TeamPermissions)
                     .Query()
                     .Where(tp=> tp.User==user)
@@ -52,14 +56,34 @@ namespace Keas.Mvc.Services
             return false;
         }
 
-        public async Task<bool> IsInRole(ApplicationDbContext context, string roleCode, string teamName)
+        public async Task<bool> IsInRoles(List<Role> roles, string teamName, User user)
         {
-            var role = await context.Roles.SingleOrDefaultAsync(x => x.Name == roleCode);
+            using (_dbContext)
+            {
+                var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamName);
+
+                _dbContext.Entry(team)
+                    .Collection(t => t.TeamPermissions)
+                    .Query()
+                    .Where(tp => tp.User == user)
+                    .Load();
+
+                if (team.TeamPermissions.Any(a => roles.Contains(a.Role)))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public async Task<bool> IsInRole(string roleCode, string teamName)
+        {
+            var role = await _dbContext.Roles.SingleOrDefaultAsync(x => x.Name == roleCode);
             if (role == null)
             {
                 throw  new ArgumentException("Role not found");
             }
-            var team = await context.Teams
+            var team = await _dbContext.Teams
                 .Include(t=> t.TeamPermissions)
                     .ThenInclude(tp=> tp.User)
                 .Include(t=> t.TeamPermissions)
@@ -69,37 +93,37 @@ namespace Keas.Mvc.Services
             {
                 throw new ArgumentException("Team not found");
             }
-            return IsInRole(context, role, team);
+            return IsInRole(role, team);
         }
 
-        private bool IsInRole(ApplicationDbContext context, Role role, Team team)
+        private bool IsInRole(Role role, Team team)
         {
-            var user = GetUser(context).Result;
+            var user = GetUser().Result;
             return team.TeamPermissions.Any(a => a.User == user && a.Role == role);
         }
 
-        public async Task<User> GetUser(ApplicationDbContext context)
+        public async Task<User> GetUser()
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var user = await context.Users.SingleOrDefaultAsync(x => x.Email == userId);
+            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Email == userId);
             return user;
         }
         
 
-        public async Task<bool> HasKeyMasterAccess(ApplicationDbContext context, string teamName)
+        public async Task<bool> HasKeyMasterAccess(string teamName)
         {
-            var team = await context.Teams.SingleOrDefaultAsync(x => x.Name == teamName);
+            var team = await _dbContext.Teams.SingleOrDefaultAsync(x => x.Name == teamName);
             if (team == null)
             {
                 return false;
             }
             
-            var user = GetUser(context).Result;
+            var user = GetUser().Result;
             if (user == null)
             {
                 return false;
             }
-            var query = await context.TeamPermissions.SingleOrDefaultAsync(x => x.Team == team && (x.Role.Name == "KeyMaster" || x.Role.Name== "DepartmentalAdmin") && x.User == user) ;
+            var query = await _dbContext.TeamPermissions.SingleOrDefaultAsync(x => x.Team == team && (x.Role.Name == "KeyMaster" || x.Role.Name== "DepartmentalAdmin") && x.User == user) ;
             
             if (query == null)
             {

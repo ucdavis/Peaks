@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Keas.Mvc.Controllers
@@ -23,9 +24,15 @@ namespace Keas.Mvc.Controllers
         {
             var roles = _context.Roles
                 .Where(r => r.Name == Role.Codes.KeyMaster || r.Name == Role.Codes.DepartmentalAdmin).ToList();
-            ViewBag.Keymaster = _securityService.IsInRoles(_context, roles, Team).Result;
+            ViewBag.Keymaster = _securityService.IsInRoles(roles, Team).Result;
                 //_securityService.IsInRole(_context, Role.Codes.KeyMaster, Team).Result ;
             return View();
+        }
+
+        
+        public IActionResult Secure()
+        {
+            return View("Index");
         }
     }
 }

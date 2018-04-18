@@ -4,10 +4,13 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Mvc.Attributes;
+using Keas.Mvc.Handlers;
 using Keas.Mvc.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
@@ -33,7 +36,8 @@ namespace Keas.Mvc
 
             // setup services
             services.AddSingleton<IIdentityService, IdentityService>();
-            services.AddSingleton<ISecurityService, SecurityService>();
+            services.AddScoped<ISecurityService, SecurityService>();
+
             
             // setup entity framework
             services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));
@@ -83,7 +87,11 @@ namespace Keas.Mvc
                     identity.AddClaim(new Claim(ClaimTypes.Email, email));
                 };
             });
-
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("KeyMasterAccess", policy => policy.Requirements.Add(new VerifyKeyMasterAccess()));
+            });
+            services.AddScoped<IAuthorizationHandler, KeyMasterAccessHandler>();
             services.AddMvc();
         }
 
