@@ -31,22 +31,17 @@ namespace Keas.Mvc.Handlers
             {
                 team = mvcContext.RouteData.Values["teamName"].ToString();
             }
-            using (var newContext = _dbContext)
+
+            var user = _dbContext.Users.SingleOrDefault(u => u.Email == context.User.Identity.Name);
+            if (user != null)
             {
-                var user = newContext.Users.SingleOrDefault(u => u.Email == context.User.Identity.Name);
-                if (user != null)
+                var roles = _dbContext.Roles
+                    .Where(r => r.Name == Role.Codes.KeyMaster || r.Name == Role.Codes.DepartmentalAdmin).ToList();
+                if (_securityService.IsInRoles(roles, team, user).Result)
                 {
-                    var roles = newContext.Roles
-                        .Where(r => r.Name == Role.Codes.KeyMaster || r.Name == Role.Codes.DepartmentalAdmin).ToList();
-                    if (_securityService.IsInRoles(roles, team, user).Result)
-                    {
-                        context.Succeed(requirement);
-                    }
+                    context.Succeed(requirement);
                 }
-
             }
-
-            //context.Succeed(requirement);
             return Task.CompletedTask;
         }
 

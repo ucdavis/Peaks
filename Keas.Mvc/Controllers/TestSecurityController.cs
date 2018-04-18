@@ -29,7 +29,7 @@ namespace Keas.Mvc.Controllers
             return View();
         }
 
-        
+        [Authorize(Policy = "KeyMasterAccess")]
         public IActionResult Secure()
         {
             return View("Index");
