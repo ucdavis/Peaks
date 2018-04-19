@@ -48,9 +48,11 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
             return (<div>Loading Equipment...</div>);
         }
         const equipmentList = this.state.equipment.length > 0 ? this.state.equipment.map(x => (
-            <NavLink key={x.id} to={`../../equipment/details/${x.id}`} >
-                {x.name}
-            </NavLink>
+            <div>
+                <NavLink key={x.id} to={`../../equipment/details/${x.id}`} >
+                    {x.name}
+                </NavLink>
+            </div>
         )) : (<div>No Equipment</div>);
         return (
             <div className="form-group">
