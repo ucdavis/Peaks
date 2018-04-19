@@ -11,7 +11,8 @@ import {
     ModalHeader,
 } from "reactstrap";
 import { AppContext, ISpace } from "../../Types";
-import SpaceDetailsEquipment from "./SpaceDetailsEquipment";
+import SpacesDetailsEquipment from "./SpacesDetailsEquipment";
+import SpacesDetailsKeys from "./SpacesDetailsKeys";
 
 
 interface IProps {
@@ -36,7 +37,8 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                             <label>Room Name</label><br />
                             {this.props.selectedSpace.room.roomName}
                             </div>}
-                        <SpaceDetailsEquipment roomKey={this.props.selectedSpace.roomKey} />
+                        <SpacesDetailsKeys roomKey={this.props.selectedSpace.roomKey} />
+                        <SpacesDetailsEquipment roomKey={this.props.selectedSpace.roomKey} />
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this.props.closeModal}>

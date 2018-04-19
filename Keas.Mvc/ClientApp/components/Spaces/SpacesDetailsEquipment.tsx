@@ -33,7 +33,7 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
 
     public async componentDidMount() {
         this.setState({ loading: true });
-        const equipment = !this.props.roomKey ? null :
+        const equipment = !this.props.roomKey ? [] :
             await this.context.fetch(`/equipment/getEquipmentInRoom?roomKey=${this.props.roomKey}`);
         this.setState({ equipment, loading: false });
     }
@@ -47,11 +47,11 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
         {
             return (<div>Loading Equipment...</div>);
         }
-        const equipmentList = !!this.state.equipment ? this.state.equipment.map(x => (
+        const equipmentList = this.state.equipment.length > 0 ? this.state.equipment.map(x => (
             <NavLink key={x.id} to={`../../equipment/details/${x.id}`} >
                 {x.name}
             </NavLink>
-            )) : null;
+        )) : (<div>No Equipment</div>);
         return (
             <div className="form-group">
                 <label>Equipment</label><br />
