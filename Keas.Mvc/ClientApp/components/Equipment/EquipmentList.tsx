@@ -22,19 +22,21 @@ export default class EquipmentList extends React.Component<IProps, {}> {
               showDetails={this.props.showDetails}
           />
     ));
-    return (
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Serial</th>
-            <th>Number</th>
-            <th>Assigned?</th>
-            <th>Expiration</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>{equipment}</tbody>
-      </table>
+      return (
+      <div className="table-responsive">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Serial</th>
+              <th>Number</th>
+              <th>Assigned?</th>
+              <th>Expiration</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>{equipment}</tbody>
+        </table>
+      </div>
     );
   }
 }
