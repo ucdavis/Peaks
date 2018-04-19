@@ -48,8 +48,8 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
             return (<div>Loading Equipment...</div>);
         }
         const equipmentList = this.state.equipment.length > 0 ? this.state.equipment.map(x => (
-            <div>
-                <NavLink key={x.id} to={`../../equipment/details/${x.id}`} >
+            <div key={x.id}>
+                <NavLink to={`../../equipment/details/${x.id}`} >
                     {x.name}
                 </NavLink>
             </div>
