@@ -1,7 +1,34 @@
 ﻿
+@model int
 @{
     ViewData["Title"] = "An Error has occurred";
 }
 
 <h2>Error</h2>
+
+@{
+    var statusCode = Model;
+    var statusmessage = "";
+
+    switch (statusCode)
+    {
+        case 400:
+            statusmessage = "Bad request";
+            break;
+        case 403:
+            statusmessage = "Access Denied";
+            break;
+        case 404:
+            statusmessage = "Page not found";
+            break;
+        default:
+            statusmessage = "Something went wrong";
+            break;
+    }
+
+    <div class="jumbotron">
+        <h1>Error @Model</h1>
+        <h3>@statusmessage</h3>
+    </div>
+}
 

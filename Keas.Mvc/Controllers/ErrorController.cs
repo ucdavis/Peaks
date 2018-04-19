@@ -8,9 +8,11 @@ namespace Keas.Mvc.Controllers
 {
     public class ErrorController : Controller
     {
-        public IActionResult Index()
+        public IActionResult Index(int statusCode)
         {
-            return View();
+            return View(statusCode);
         }
+
+        
     }
 }

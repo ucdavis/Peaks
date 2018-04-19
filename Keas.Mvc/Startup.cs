@@ -113,8 +113,12 @@ namespace Keas.Mvc
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error/Index");
+                
             }
+            app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
+
 
             app.UseStaticFiles();
 
