@@ -29,8 +29,14 @@ namespace Keas.Mvc.Controllers
             return View();
         }
 
+        [Authorize(Policy = "EquipMasterAccess")]
+        public IActionResult Equip()
+        {
+            return View("Index");
+        }
+
         [Authorize(Policy = "KeyMasterAccess")]
-        public IActionResult Secure()
+        public IActionResult Key()
         {
             return View("Index");
         }

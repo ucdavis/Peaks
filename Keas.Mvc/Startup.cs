@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Core.Domain;
 using Keas.Mvc.Attributes;
 using Keas.Mvc.Handlers;
 using Keas.Mvc.Models;
@@ -89,9 +90,10 @@ namespace Keas.Mvc
             });
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("KeyMasterAccess", policy => policy.Requirements.Add(new VerifyKeyMasterAccess()));
+                options.AddPolicy("KeyMasterAccess", policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy("EquipMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.EquipmentMaster, Role.Codes.DepartmentalAdmin)));
             });
-            services.AddScoped<IAuthorizationHandler, KeyMasterAccessHandler>();
+            services.AddScoped<IAuthorizationHandler, VerifyRoleAccessHandler>();
             services.AddMvc();
         }
 
