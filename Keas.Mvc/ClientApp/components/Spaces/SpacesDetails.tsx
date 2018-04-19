@@ -7,9 +7,10 @@ import {
     ModalFooter,
     ModalHeader,
     ListGroup,
-    ListGroupItem
+    ListGroupItem,
 } from "reactstrap";
-import { ISpace, AppContext } from "ClientApp/Types";
+import { NavLink, Redirect } from "react-router-dom";
+import { IEquipment, ISpace, AppContext } from "ClientApp/Types";
 
 
 interface IProps {
@@ -19,7 +20,7 @@ interface IProps {
 }
 
 interface IState {
-    details: any[];
+    details: IEquipment[];
 }
 
     export default class SpacesDetails extends React.Component<IProps, IState> {
@@ -44,7 +45,7 @@ interface IState {
         if (nextProps.selectedSpace !== this.props.selectedSpace)
         {
             const details = !nextProps.selectedSpace ? null :
-                await this.context.fetch(`/spaces/getSpaceDetails?id=${nextProps.selectedSpace.id}`);
+                await this.context.fetch(`/spaces/getSpaceDetails?roomKey=${nextProps.selectedSpace.roomKey}`);
             this.setState({ details });
         }
     }
@@ -54,6 +55,11 @@ interface IState {
         {
             return null;
         }
+        const detailsList = !!this.state.details ? this.state.details.map(x => (
+            <NavLink key={x.id} to={`../../equipment/details/${x.id}`} >
+                {x.name}
+            </NavLink>
+        )) : null;
         return (
             <div>
                 <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
@@ -64,6 +70,10 @@ interface IState {
                             <label>Room Name</label><br />
                             {this.props.selectedSpace.room.roomName}
                             </div>}
+                            <div className="form-group">
+                                <label>Equipment</label><br />
+                                {detailsList}
+                            </div>
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this._closeModal}>
@@ -80,5 +90,11 @@ interface IState {
             details: null,
         });
         this.props.closeModal();
+    }
+
+    private _equipDetails = (id: number) => {
+        this.context.router.history.push(
+            `${this.context.team.name}/equipment/details/${id}`
+        );
     }
 }
