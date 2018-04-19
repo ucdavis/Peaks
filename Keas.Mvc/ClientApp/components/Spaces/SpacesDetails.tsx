@@ -36,44 +36,49 @@ interface IState {
         super(props);
 
         this.state = {
-            details: []
+            details: [],
         };
     }
 
     public async componentWillReceiveProps(nextProps) {
-        console.log("will1");
-        if (!!nextProps.selectedSpace && this.props.selectedSpace.roomKey !== nextProps.selectedSpace.roomKey)
+        if (nextProps.selectedSpace !== this.props.selectedSpace)
         {
-            console.log("will2");
-            const details = await this.context.fetch(`/spaces/getSpaceDetails?id=${nextProps.selectedSpace.roomKey}`);
+            const details = !nextProps.selectedSpace ? null :
+                await this.context.fetch(`/spaces/getSpaceDetails?id=${nextProps.selectedSpace.id}`);
             this.setState({ details });
         }
     }
 
     public render() {
-        if (this.props.selectedSpace == null)
+        if (!this.props.selectedSpace)
         {
             return null;
         }
-        const space = this.props.selectedSpace;
         return (
             <div>
-                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg">
-                    <ModalHeader>Details for {space.room.roomNumber} {space.room.bldgName}</ModalHeader>
+                <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
+                    <ModalHeader>Details for {this.props.selectedSpace.room.roomNumber} {this.props.selectedSpace.room.bldgName}</ModalHeader>
                     <ModalBody>
-                        {space.room.roomName &&
+                        {this.props.selectedSpace.room.roomName &&
                             <div className="form-group">
-                                <label>Room Name</label><br />
-                                {space.room.roomName}
+                            <label>Room Name</label><br />
+                            {this.props.selectedSpace.room.roomName}
                             </div>}
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="secondary" onClick={this.props.closeModal}>
+                        <Button color="secondary" onClick={this._closeModal}>
                             Close
                         </Button>
                     </ModalFooter>
                 </Modal>
             </div>
         );
+    }
+
+    private _closeModal = () => {
+        this.setState({
+            details: null,
+        });
+        this.props.closeModal();
     }
 }

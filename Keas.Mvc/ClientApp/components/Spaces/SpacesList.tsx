@@ -13,7 +13,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
     public render() {
         const space = this.props.spaces.map(x => (
             <SpacesListItem
-                key={x.roomKey.toString()}
+                key={x.id}
                 space={x}
                 showDetails={this.props.showDetails}
             />
