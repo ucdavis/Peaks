@@ -18,7 +18,7 @@ namespace Keas.Core.Domain
         {
             public const string DepartmentalAdmin = "DepartmentalAdmin";
             public const string KeyMaster = "KeyMaster";
-            public const string EquipmentMaster = "EquipmentMaster";
+            public const string EquipmentMaster = "EquipMaster";
             public const string AccessMaster = "AccessMaster";
 
         }
