@@ -116,7 +116,7 @@ namespace Keas.Mvc
                 app.UseExceptionHandler("/Error/Index");
                 
             }
-            app.UseStatusCodePagesWithReExecute("/Error/{0}");
+            app.UseStatusCodePages("text/plain", "Status code page, status code: {0}");
 
 
 
