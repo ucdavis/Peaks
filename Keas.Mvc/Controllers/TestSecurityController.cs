@@ -40,5 +40,17 @@ namespace Keas.Mvc.Controllers
         {
             return View("Index");
         }
+
+        [Authorize(Policy = "AccessMasterAccess")]
+        public IActionResult Access()
+        {
+            return View("Index");
+        }
+
+        [Authorize(Policy = "DepartmentAdminAccess")]
+        public IActionResult DeptAdmin()
+        {
+            return View("Index");
+        }
     }
 }
