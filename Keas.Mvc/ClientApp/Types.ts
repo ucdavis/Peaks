@@ -99,8 +99,17 @@ export interface IEquipmentAttribute {
 }
 
 export interface IRoom {
-  bldgName: string;
+    bldgName: string;
+    floorName: string;
   roomKey: string;
   roomName: string;
   roomNumber: string;
+}
+
+export interface ISpace {
+    id: number;
+    roomKey: string;
+    room: IRoom;
+    orgId: string;
+    deptName: string;
 }
