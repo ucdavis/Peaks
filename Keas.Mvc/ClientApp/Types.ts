@@ -89,6 +89,7 @@ export interface IEquipmentAssignment {
   equipmentId: number;
   expiresAt: Date;
   equipment: IEquipment;
+  person: IPerson;
 }
 
 export interface IEquipmentAttribute {
