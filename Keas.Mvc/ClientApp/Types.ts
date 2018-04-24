@@ -53,6 +53,7 @@ export interface IKeyAssignment {
   keyId: number;
   expiresAt: Date;
   key: IKey;
+  person: IPerson;
 }
 
 export interface IAccess {

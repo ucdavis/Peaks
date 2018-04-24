@@ -28,7 +28,7 @@ export default class KeyList extends React.Component<IProps, {}> {
                     <tr>
                         <th>Serial</th>
                         <th>Number</th>
-                        <th>Assigned?</th>
+                        <th>Assigned To</th>
                         <th>Expiration</th>
                         <th>Actions</th>
                     </tr>
