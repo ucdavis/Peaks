@@ -6,16 +6,13 @@
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>  
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="ClientApp\components\Spaces\SpacesContainer.tsx" />
-    <None Remove="ClientApp\components\Spaces\SpacesListItem.tsx" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
     <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="2.0.0" />
+    <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Keas.Core\Keas.Core.csproj" />
@@ -26,10 +23,6 @@
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\js\" />
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\components\Spaces\SpacesContainer.tsx" />
-    <TypeScriptCompile Include="ClientApp\components\Spaces\SpacesListItem.tsx" />
   </ItemGroup>
   <Target Name="DebugRunWebpack" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('wwwroot\dist') ">
     <!-- Ensure Node.js is installed -->
