@@ -68,12 +68,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.Keys.Add(key);
                 await _context.SaveChangesAsync();
-
-                //none of these has values?????
-                var userName = CurrentUserId;
-                var userid = _securityService.GetUser();
-                var user = await _context.Users.SingleOrDefaultAsync(x => x.Email == this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
-                await _eventService.TrackCreateKey(key, user);
+                await _eventService.TrackCreateKey(key, _securityService.GetUser().Result);
             }
             return Json(key);
         }
