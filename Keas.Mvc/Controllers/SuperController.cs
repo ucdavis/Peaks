@@ -11,8 +11,7 @@ namespace Keas.Mvc.Controllers
 
         private const string TempDataMessageKey = "Message";
 
-        public string CurrentUserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+       
         public string Message
         {
             get => TempData[TempDataMessageKey] as string;
