@@ -20,6 +20,12 @@ namespace Keas.Core.Domain {
         public Person Person { get; set; }
         public int PersonId { get; set; }
 
+        // Key vs Equipment vs Access 
+        public string AssetType { get; set; }
+
+        // Created, granted, accepted, declined, revoked, deleted 
+        public String ActionType { get; set; }
+
         public Key Key {get;set;}
         public Equipment Equipment { get; set; }
 
