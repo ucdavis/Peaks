@@ -2,7 +2,7 @@
 
 namespace Keas.Core.Domain
 {
-    public class EmailQueue
+    public class Notification
     {
         public int Id { get; set; }
 
@@ -16,7 +16,7 @@ namespace Keas.Core.Domain
         public string Status { get; set; }
         public DateTime DateTimeCreated { get; set; }
 
-        public EmailQueue()
+        public Notification()
         {
             Pending = true;
             DateTimeCreated = DateTime.UtcNow;

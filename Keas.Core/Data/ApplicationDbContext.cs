@@ -22,7 +22,7 @@ namespace Keas.Core.Data
         public virtual DbSet<EquipmentAssignment> EquipmentAssignments { get; set; }
         public virtual DbSet<EquipmentAttribute> EquipmentAttributes { get; set; }
         public virtual DbSet<FinancialOrganization> FISOrgs  { get; set; }
-        public virtual  DbSet<EmailQueue> EmailQueues { get; set; }
+        public virtual  DbSet<Notification> Notifications { get; set; }
 
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<TeamPermission> TeamPermissions { get; set; }
