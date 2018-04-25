@@ -97,8 +97,13 @@ namespace Keas.Mvc
                 options.AddPolicy("DepartmentAdminAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin)));
             });
             services.AddScoped<IAuthorizationHandler, VerifyRoleAccessHandler>();
-            services.AddMvc();
+            
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<IHistoryService, HistoryService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IEventService, EventService>();
+            services.AddMvc();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
