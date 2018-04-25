@@ -32,7 +32,7 @@ namespace Keas.Mvc.Services
             var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
             foreach (var user in users)
             {
-                var emailQueue = new EmailQueue
+                var emailQueue = new Notification
                 {
                     User = user,
                     History = history,
@@ -50,7 +50,7 @@ namespace Keas.Mvc.Services
             var users = await _securityService.GetUsersInRoles(roles, equipment.TeamId);
             foreach (var user in users)
             {
-                var emailQueue = new EmailQueue
+                var emailQueue = new Notification
                 {
                     User = user,
                     History = history,
@@ -68,7 +68,7 @@ namespace Keas.Mvc.Services
             var users = await _securityService.GetUsersInRoles(roles, access.TeamId);
             foreach (var user in users)
             {
-                var emailQueue = new EmailQueue
+                var emailQueue = new Notification
                 {
                     User = user,
                     History = history,
@@ -88,7 +88,7 @@ namespace Keas.Mvc.Services
             users.Add(assignedTo);
             foreach (var user in users)
             {
-                var emailQueue = new EmailQueue
+                var emailQueue = new Notification
                 {
                     User = user,
                     History = history,
