@@ -117,7 +117,7 @@ namespace Keas.Mvc.Services
         public async Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId)
         {
             List<User> users = new List<User>();
-            var teamPermissions = await _dbContext.TeamPermissions.Where(tp => tp.TeamId == teamId).Include(tp => tp.User).ToListAsync();
+            var teamPermissions = await _dbContext.TeamPermissions.Where(tp => tp.TeamId == teamId && roles.Contains(tp.Role)).Include(tp => tp.User).ToListAsync();
 
             foreach (var tp in teamPermissions)
             {
