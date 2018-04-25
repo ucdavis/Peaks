@@ -24,7 +24,7 @@ namespace Keas.Core.Domain {
         public string AssetType { get; set; }
 
         // Created, granted, accepted, declined, revoked, deleted 
-        public String ActionType { get; set; }
+        public string ActionType { get; set; }
 
         public Key Key {get;set;}
         public Equipment Equipment { get; set; }
