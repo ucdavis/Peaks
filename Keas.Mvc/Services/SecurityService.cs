@@ -24,6 +24,9 @@ namespace Keas.Mvc.Services
         Task<bool> IsInRoles(List<Role> roles, string teamName, User user);
 
         Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId);
+        Task<User> GetUser();
+
+
     }
     public class SecurityService : ISecurityService
     {
