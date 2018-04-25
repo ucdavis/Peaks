@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +16,14 @@ namespace Keas.Mvc.Controllers
     public class KeysController : SuperController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEventService _eventService;
+        private readonly ISecurityService _securityService;
 
-        public KeysController(ApplicationDbContext context)
+        public KeysController(ApplicationDbContext context, IEventService eventService, ISecurityService securityService)
         {
             this._context = context;
+            _eventService = eventService;
+            _securityService = securityService;
         }
 
         public string GetTeam()
@@ -62,6 +68,10 @@ namespace Keas.Mvc.Controllers
             {
                 _context.Keys.Add(key);
                 await _context.SaveChangesAsync();
+                var userName = this.User.Identity.Name;
+                var userid = _securityService.GetUser();
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.Email == this.User.FindFirstValue(ClaimTypes.NameIdentifier)); ;
+                await _eventService.TrackCreateKey(key, user);
             }
             return Json(key);
         }
