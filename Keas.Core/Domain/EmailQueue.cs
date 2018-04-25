@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Keas.Core.Helpers;
 
 namespace Keas.Core.Domain
 {
