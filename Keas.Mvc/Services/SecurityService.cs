@@ -22,6 +22,8 @@ namespace Keas.Mvc.Services
         Task<bool> IsInRoles(List<Role> roles, string teamName);
 
         Task<bool> IsInRoles(List<Role> roles, string teamName, User user);
+
+        Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId);
     }
     public class SecurityService : ISecurityService
     {
@@ -108,7 +110,22 @@ namespace Keas.Mvc.Services
             var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Email == userId);
             return user;
         }
-        
+
+        public async Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId)
+        {
+            List<User> users = new List<User>();
+            var teamPermissions = _dbContext.TeamPermissions.Where(tp => tp.TeamId == teamId).Include(tp => tp.User).ToList();
+
+            foreach (var tp in teamPermissions)
+            {
+                if (!users.Any(a => a.Id == tp.UserId))
+                {
+                    users.Add(tp.User);
+                }
+            }
+
+            return users;
+        }
 
         public async Task<bool> HasKeyMasterAccess(string teamName)
         {
