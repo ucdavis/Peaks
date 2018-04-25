@@ -7,6 +7,7 @@ const doFetch = async (url: string, init?: RequestInit): Promise<any> => {
             ["Accept", "application/json"],
             ["Content-Type", "application/json"],
         ],
+        credentials: "include",
     });
 
     if (!res.ok) { throw new Error(res.statusText); }
