@@ -36,6 +36,13 @@ namespace Keas.Mvc.Controllers
             return Json(keys);
         }
 
+        public async Task<IActionResult> GetKeysInRoom(string roomKey)
+        {
+            var equipment = await _context.Keys.Where(x => x.Room.RoomKey == roomKey).AsNoTracking().ToListAsync();
+            return Json(equipment);
+        }
+
+
         public async Task<IActionResult> ListAssigned(int personId, int teamId) {
             var keyAssignments = await _context.Keys.Where(x=> x.Assignment.PersonId == personId && x.TeamId == teamId).Include(x=> x.Assignment).AsNoTracking().ToArrayAsync();
 

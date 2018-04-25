@@ -147,9 +147,11 @@ namespace Keas.Mvc.Helpers
             var scottKey = new TeamPermission{ Id = 1, Team = caes, Role = keyMaster, User = scott};
             var scottEquip = new TeamPermission {Id = 2, Team = caes, Role = equipMaster, User = scott};
             var jasonEquip = new TeamPermission { Id = 3, Team = caes, Role = equipMaster, User = jason };
+            var jamesKey = new TeamPermission{Id = 4, Team = caes, Role = keyMaster, User = james};
             context.TeamPermissions.Add(scottKey);
             context.TeamPermissions.Add(scottEquip);
             context.TeamPermissions.Add(jasonEquip);
+            context.TeamPermissions.Add(jamesKey);
 
             context.Histories.Add(history);
 

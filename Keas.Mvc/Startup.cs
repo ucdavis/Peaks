@@ -4,12 +4,17 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Core.Domain;
+using Keas.Mvc.Attributes;
+using Keas.Mvc.Handlers;
 using Keas.Mvc.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +38,8 @@ namespace Keas.Mvc
 
             // setup services
             services.AddSingleton<IIdentityService, IdentityService>();
-            services.AddSingleton<ISecurityService, SecurityService>();
+            services.AddScoped<ISecurityService, SecurityService>();
+
             
             // setup entity framework
             services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));
@@ -83,8 +89,16 @@ namespace Keas.Mvc
                     identity.AddClaim(new Claim(ClaimTypes.Email, email));
                 };
             });
-
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("KeyMasterAccess", policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy("EquipMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.EquipmentMaster, Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy("AccessMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy("DepartmentAdminAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin)));
+            });
+            services.AddScoped<IAuthorizationHandler, VerifyRoleAccessHandler>();
             services.AddMvc();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,8 +115,12 @@ namespace Keas.Mvc
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Error/Index");
+                
             }
+            app.UseStatusCodePages("text/plain", "Status code page, status code: {0}");
+
+
 
             app.UseStaticFiles();
 
@@ -115,7 +133,7 @@ namespace Keas.Mvc
                     name: "Assets",
                     template: "{teamName}/{asset}/{*type}",
                     defaults: new { controller = "Asset", action = "Index" },
-                    constraints: new { asset = "(keys|equipment|access|space|people|person)" }
+                    constraints: new { asset = "(keys|equipment|access|spaces|people|person)" }
                 );
                 routes.MapRoute(
                     name: "TeamRoutes",

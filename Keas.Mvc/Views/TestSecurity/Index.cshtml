@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Index</h2>
+
+KeyMaster: @ViewBag.Keymaster
+
+@*@if ((await AuthorizationService.AuthorizeAsync(User, "KeyMasterAccess")).Succeeded)
+{
+    <p>This paragraph is displayed because you fulfilled PolicyName.</p>
+}*@

@@ -6,8 +6,8 @@ import EquipmentContainer from "../../components/Equipment/EquipmentContainer";
 import KeyContainer from "../../components/Keys/KeyContainer";
 import PeopleContainer from "../../components/People/PeopleContainer";
 import PersonContainer from "../../components/PersonContainer";
+import SpacesContainer from "../../components/Spaces/SpacesContainer";
 import AssetNav from "../assets/AssetNav";
-import AssetContainer from "./AssetContainer";
 
 // examples of common routes
 // /CAESDO/keys/display/12
@@ -21,10 +21,14 @@ export const routes = (
       component={EquipmentContainer}
     />
     <Route path="/:team/access/:action?/:id?" component={AccessContainer} />
+    <Route
+        path="/:team/spaces/:action?/:id?" component={SpacesContainer}
+    />
     <Route path="/:team/people/:action?/:id?" component={PeopleContainer} />
     <Route
       path="/:team/person/:personAction/:personId/:assetType?/:action?/:id?"
       component={PersonContainer}
     />
+
   </AssetNav>
 );

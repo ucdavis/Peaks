@@ -16,10 +16,10 @@ namespace Keas.Core.Domain
 
         public class Codes
         {
-            public const string DepartmentalAdmin = "DA";
-            public const string KeyMaster = "KM";
-            public const string EquipmentMaster = "EM";
-            public const string AccessMaster = "AM";
+            public const string DepartmentalAdmin = "DepartmentalAdmin";
+            public const string KeyMaster = "KeyMaster";
+            public const string EquipmentMaster = "EquipMaster";
+            public const string AccessMaster = "AccessMaster";
 
         }
     }
