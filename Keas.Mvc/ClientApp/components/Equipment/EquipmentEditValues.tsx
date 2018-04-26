@@ -2,11 +2,13 @@
 
 import { IEquipment, IRoom } from "../../Types";
 import AssignRoom from "../Spaces/AssignRoom"
+import CreateAttribute from "./CreateAttribute";
 
 interface IProps {
     selectedEquipment: IEquipment;
     disableEditing: boolean;
     changeProperty?: (property: string, value: any) => void;
+    addAttribute?: (key: string, value: string) => void;
 }
 
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
@@ -59,6 +61,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         onChange={(e) => this.props.changeProperty("model", e.target.value)}
                     />
                 </div>
+                <CreateAttribute equipment={this.props.selectedEquipment} addAttribute={this.props.addAttribute} />
                 {this.props.disableEditing &&
                     <div className="form-group">
                         <label>Room</label>

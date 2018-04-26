@@ -148,6 +148,21 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     });
   };
 
+  private _addAttribute = (key: string, value: string) => {
+    this.setState({
+      equipment: {
+        ...this.state.equipment,
+        attributes: {
+          ...this.state.equipment.attributes,
+          equipment: this.state.equipment,
+          key,
+          value
+          
+        }
+      }
+    });
+  }
+
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
