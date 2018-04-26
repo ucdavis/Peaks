@@ -97,7 +97,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                       selectedEquipment={this.state.equipment}
                       changeProperty={this._changeProperty}
                       disableEditing={false}
-                      addAttribute={this._addAttribute}
+                      addAttributes={this._addAttributes}
                     />
                   ))}
                 {this.state.equipment &&
@@ -149,14 +149,11 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     });
   };
 
-  private _addAttribute = (attribute: IEquipmentAttribute) => {
+  private _addAttributes = (attributes: IEquipmentAttribute[]) => {
     this.setState({
       equipment: {
         ...this.state.equipment,
-        attributes: [
-          ...this.state.equipment.attributes,
-          attribute    
-        ]
+        attributes
       }
     });
   }

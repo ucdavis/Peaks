@@ -6,109 +6,77 @@ import {
 } from "reactstrap";
 
 import { AppContext, IEquipment, IEquipmentAttribute } from "../../Types";
-
+import EquipmentAttribute from "./EquipmentAttribute";
 
 interface IProps {
   equipment: IEquipment;
   disableAdd: boolean;
-  addAttribute: (attribute: IEquipmentAttribute) => void;
+  addAttributes: (attribute: IEquipmentAttribute[]) => void;
 }
 
 interface IState {
-    addingAttribute: boolean;
-    attribute: IEquipmentAttribute;
-    valid: boolean;
+    attributes: IEquipmentAttribute[];
 }
 
 export default class EquipmentAttributes extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-        addingAttribute: false,
-        attribute: {
-          equipmentId: this.props.equipment.id,
-          key: "",
-          value: "",
-        },
-        valid: false,
+        attributes: !this.props.equipment.attributes ? [] : this.props.equipment.attributes,
     };
   }
 
   public render() {
-    const attributes = this.props.equipment.attributes ? this.props.equipment.attributes.map( x=> (
-      <div key={x.key} className="form-group">
-          <label>{x.key}: </label> {x.value}
-      </div>
-  )) : "";
+    const attributeList = this.state.attributes.map((attr, i) => (
+      <EquipmentAttribute key={`attr-${i}`} 
+        attribute={attr} 
+        index={i}
+        onEdit={this._onEditAttribute}/>
+    ));
     return (
       <div>
         <label>Atrributes</label>
-        {!this.props.disableAdd &&
-        <Button color="secondary" onClick={this._toggle}>
-          +
-        </Button>}
-        {attributes}
-        <Collapse isOpen={this.state.addingAttribute}>
-                <div className="form-group">
-                    <label>Attribute Key</label>
-                    <input type="text"
-                        className="form-control"
-                        value={this.state.attribute.key}
-                        onChange={(e) => this._changeProperty("key", e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Attribute Value</label>
-                    <input type="text"
-                        className="form-control"
-                        value={this.state.attribute.value}
-                        onChange={(e) => this._changeProperty("value", e.target.value)}
-                    />
-                </div>
-                <Button color="primary" disabled={!this.state.valid} onClick={this._addAttribute}>Add attribute</Button>
-        </Collapse>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          {attributeList}
+          <tfoot>
+            <tr>
+              <td colSpan={2}>
+                <Button className="btn btn-primary" id="add-new" onClick={this._onAddAttribute}>
+                  Add New
+                </Button>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
     );
   }
 
-  private _toggle = () => {
-      this.setState({addingAttribute: true});
-  }
-
-  private _changeProperty = (property: string, val: string) => {
-    this.setState({
-        ...this.state,
-        attribute: {
-          ...this.state.attribute,
-          [property]: val
-        }
-    }, this._validate);
-  };
-
-  private _validate = () => {
-    let valid = true;
-    if(!this.state.attribute.key || !this.state.attribute.value)
-    {
-      valid = false;
-    }
-    this.setState({valid});
-  }
-
-  private _addAttribute = () => {
-    if(!this.state.valid)
-    {
-      return;
-    }
-    this.props.addAttribute(this.state.attribute);
-    this.setState({
-      addingAttribute: false,
-      attribute: {
+  private _onAddAttribute = () => {
+    const attributes = [
+      ...this.state.attributes,
+      {
+        // equipment: this.props.equipment,
         equipmentId: this.props.equipment.id,
         key: "",
         value: "",
-      },
-      valid: false,
-  });
+      }
+    ];
+
+    this.setState({attributes});
   }
 
+  private _onEditAttribute = (i: number, key: string, value: string) => {
+    const attributes = this.state.attributes;
+    attributes[i].key = key;
+    attributes[i].value = value;
+
+    this.setState({attributes});
+  }
 }

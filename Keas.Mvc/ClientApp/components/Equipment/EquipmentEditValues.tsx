@@ -8,7 +8,7 @@ interface IProps {
     selectedEquipment: IEquipment;
     disableEditing: boolean;
     changeProperty?: (property: string, value: any) => void;
-    addAttribute?: (attribute: IEquipmentAttribute) => void;
+    addAttributes?: (attribute: IEquipmentAttribute[]) => void;
 }
 
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
@@ -62,7 +62,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     />
                 </div>
                 <EquipmentAttributes 
-                    addAttribute={this.props.addAttribute}
+                    addAttributes={this.props.addAttributes}
                     disableAdd={this.props.disableEditing}
                     equipment={this.props.selectedEquipment} 
                     />
