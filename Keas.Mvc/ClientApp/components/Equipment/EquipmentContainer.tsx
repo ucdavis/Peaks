@@ -103,6 +103,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       equipment = await this.context.fetch(assignUrl, {
         method: "POST"
       });
+      equipment.assignment.person = person;
     }
 
     const index = this.state.equipment.findIndex(x => x.id === equipment.id);

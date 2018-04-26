@@ -53,6 +53,7 @@ export interface IKeyAssignment {
   keyId: number;
   expiresAt: Date;
   key: IKey;
+  person: IPerson;
 }
 
 export interface IAccess {
@@ -88,6 +89,7 @@ export interface IEquipmentAssignment {
   equipmentId: number;
   expiresAt: Date;
   equipment: IEquipment;
+  person: IPerson;
 }
 
 export interface IEquipmentAttribute {
