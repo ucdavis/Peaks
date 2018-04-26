@@ -10,6 +10,7 @@ import { AppContext, IEquipment, IEquipmentAttribute } from "../../Types";
 
 interface IProps {
   equipment: IEquipment;
+  disableAdd: boolean;
   addAttribute: (attribute: IEquipmentAttribute) => void;
 }
 
@@ -42,9 +43,10 @@ export default class EquipmentAttributes extends React.Component<IProps, IState>
     return (
       <div>
         <label>Atrributes</label>
+        {!this.props.disableAdd &&
         <Button color="secondary" onClick={this._toggle}>
           +
-        </Button>
+        </Button>}
         {attributes}
         <Collapse isOpen={this.state.addingAttribute}>
                 <div className="form-group">
