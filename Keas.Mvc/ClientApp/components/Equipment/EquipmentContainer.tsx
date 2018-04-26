@@ -100,9 +100,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         person.id
       }&date=${date}`;
 
+      const attributes = equipment.attributes;
+
       equipment = await this.context.fetch(assignUrl, {
         method: "POST"
       });
+      equipment.attributes = attributes;
     }
 
     const index = this.state.equipment.findIndex(x => x.id === equipment.id);

@@ -19,7 +19,7 @@ interface IState {
     valid: boolean;
 }
 
-export default class CreateAttribute extends React.Component<IProps, IState> {
+export default class EquipmentAttributes extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -34,12 +34,18 @@ export default class CreateAttribute extends React.Component<IProps, IState> {
   }
 
   public render() {
+    const attributes = this.props.equipment.attributes ? this.props.equipment.attributes.map( x=> (
+      <div key={x.key} className="form-group">
+          <label>{x.key}: </label> {x.value}
+      </div>
+  )) : "";
     return (
       <div>
-        <label>Add Atrribute</label>
+        <label>Atrributes</label>
         <Button color="secondary" onClick={this._toggle}>
           +
         </Button>
+        {attributes}
         <Collapse isOpen={this.state.addingAttribute}>
                 <div className="form-group">
                     <label>Attribute Key</label>
@@ -92,6 +98,15 @@ export default class CreateAttribute extends React.Component<IProps, IState> {
       return;
     }
     this.props.addAttribute(this.state.attribute);
+    this.setState({
+      addingAttribute: false,
+      attribute: {
+        equipmentId: this.props.equipment.id,
+        key: "",
+        value: "",
+      },
+      valid: false,
+  });
   }
 
 }

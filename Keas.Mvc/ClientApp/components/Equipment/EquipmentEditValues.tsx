@@ -2,7 +2,7 @@
 
 import { IEquipment, IEquipmentAttribute, IRoom } from "../../Types";
 import AssignRoom from "../Spaces/AssignRoom"
-import CreateAttribute from "./CreateAttribute";
+import EquipmentAttributes from "./EquipmentAttributes";
 
 interface IProps {
     selectedEquipment: IEquipment;
