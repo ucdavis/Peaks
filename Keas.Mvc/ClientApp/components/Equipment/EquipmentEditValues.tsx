@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
 
-import { IEquipment, IRoom } from "../../Types";
+import { IEquipment, IEquipmentAttribute, IRoom } from "../../Types";
 import AssignRoom from "../Spaces/AssignRoom"
 import CreateAttribute from "./CreateAttribute";
 
@@ -8,7 +8,7 @@ interface IProps {
     selectedEquipment: IEquipment;
     disableEditing: boolean;
     changeProperty?: (property: string, value: any) => void;
-    addAttribute?: (key: string, value: string) => void;
+    addAttribute?: (attribute: IEquipmentAttribute) => void;
 }
 
 export default class EquipmentEditValues extends React.Component<IProps, {}> {

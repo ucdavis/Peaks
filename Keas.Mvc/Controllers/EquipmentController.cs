@@ -8,6 +8,7 @@ using Keas.Core.Domain;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Keas.Mvc.Controllers
 {
@@ -45,7 +46,10 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> ListAssigned(int personId, int teamId)
         {
             var equipmentAssignments = await _context.Equipment.Where(x => x.Assignment.PersonId == personId && x.TeamId == teamId)
-                .Include(x => x.Assignment).Include(x => x.Room).AsNoTracking().ToArrayAsync();
+                .Include(x => x.Assignment)
+                .Include(x => x.Room)
+                .Include(x => x.Attributes)
+                .AsNoTracking().ToArrayAsync();
 
             return Json(equipmentAssignments);
         }
@@ -53,8 +57,11 @@ namespace Keas.Mvc.Controllers
         // List all equipments for a team
         public async Task<IActionResult> List(int id)
         {
-            var equipments = await _context.Equipment.Where(x => x.TeamId == id).Include(x => x.Assignment)
-                .Include(x => x.Room).AsNoTracking().ToArrayAsync();
+            var equipments = await _context.Equipment.Where(x => x.TeamId == id)
+                .Include(x => x.Assignment)
+                .Include(x => x.Room)
+                .Include(x => x.Attributes)
+                .AsNoTracking().ToArrayAsync();
 
             return Json(equipments);
         }

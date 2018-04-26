@@ -12,7 +12,7 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IEquipment, IEquipmentAssignment, IPerson, IRoom } from "../../Types";
+import { AppContext, IEquipment, IEquipmentAssignment, IPerson, IRoom, IEquipmentAttribute } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
 import EquipmentEditValues from "./EquipmentEditValues";
 import SearchEquipment from "./SearchEquipment";
@@ -97,6 +97,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                       selectedEquipment={this.state.equipment}
                       changeProperty={this._changeProperty}
                       disableEditing={false}
+                      addAttribute={this._addAttribute}
                     />
                   ))}
                 {this.state.equipment &&
@@ -148,17 +149,14 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     });
   };
 
-  private _addAttribute = (key: string, value: string) => {
+  private _addAttribute = (attribute: IEquipmentAttribute) => {
     this.setState({
       equipment: {
         ...this.state.equipment,
-        attributes: {
+        attributes: [
           ...this.state.equipment.attributes,
-          equipment: this.state.equipment,
-          key,
-          value
-          
-        }
+          attribute    
+        ]
       }
     });
   }
@@ -179,6 +177,9 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     if (!this.state.validState) {
       return;
     }
+
+    console.log("in assign");
+    console.log(this.state.equipment);
 
     const person = this.props.person ? this.props.person : this.state.person;
 

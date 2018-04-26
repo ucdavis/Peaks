@@ -80,7 +80,7 @@ export interface IEquipment {
   serialNumber: string;
   teamId: number;
   type: string;
-  attributes?: IEquipmentAttribute[];
+  attributes: IEquipmentAttribute[];
 }
 
 export interface IEquipmentAssignment {
@@ -91,7 +91,7 @@ export interface IEquipmentAssignment {
 }
 
 export interface IEquipmentAttribute {
-  id: number;
+  id?: number;
   equipmentId: number;
   key: string;
   value: string;

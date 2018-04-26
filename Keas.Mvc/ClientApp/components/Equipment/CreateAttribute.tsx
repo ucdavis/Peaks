@@ -10,22 +10,26 @@ import { AppContext, IEquipment, IEquipmentAttribute } from "../../Types";
 
 interface IProps {
   equipment: IEquipment;
-  addAttribute: (key: string, value: string) => void;
+  addAttribute: (attribute: IEquipmentAttribute) => void;
 }
 
 interface IState {
-    adddingAttribute: boolean;
-    key: string;
-    value: string;
+    addingAttribute: boolean;
+    attribute: IEquipmentAttribute;
+    valid: boolean;
 }
 
 export default class CreateAttribute extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-        adddingAttribute: false,
-        key: "",
-        value: "",
+        addingAttribute: false,
+        attribute: {
+          equipmentId: this.props.equipment.id,
+          key: "",
+          value: "",
+        },
+        valid: false,
     };
   }
 
@@ -33,32 +37,61 @@ export default class CreateAttribute extends React.Component<IProps, IState> {
     return (
       <div>
         <label>Add Atrribute</label>
-        <Button color="danger" onClick={this._openInput}>
+        <Button color="secondary" onClick={this._toggle}>
           +
         </Button>
-        <Collapse isOpen={this.state.adddingAttribute}>
+        <Collapse isOpen={this.state.addingAttribute}>
                 <div className="form-group">
                     <label>Attribute Key</label>
                     <input type="text"
                         className="form-control"
-                        value={this.state.key}
+                        value={this.state.attribute.key}
                         onChange={(e) => this._changeProperty("key", e.target.value)}
                     />
                 </div>
+                <div className="form-group">
+                    <label>Attribute Value</label>
+                    <input type="text"
+                        className="form-control"
+                        value={this.state.attribute.value}
+                        onChange={(e) => this._changeProperty("value", e.target.value)}
+                    />
+                </div>
+                <Button color="primary" disabled={!this.state.valid} onClick={this._addAttribute}>Add attribute</Button>
         </Collapse>
       </div>
     );
   }
 
-  private _openInput = () => {
-      this.setState({adddingAttribute: true});
+  private _toggle = () => {
+      this.setState({addingAttribute: true});
   }
 
-  private _changeProperty = (key: string, value: string) => {
+  private _changeProperty = (property: string, val: string) => {
     this.setState({
         ...this.state,
-        [key]: value
-    });
+        attribute: {
+          ...this.state.attribute,
+          [property]: val
+        }
+    }, this._validate);
   };
+
+  private _validate = () => {
+    let valid = true;
+    if(!this.state.attribute.key || !this.state.attribute.value)
+    {
+      valid = false;
+    }
+    this.setState({valid});
+  }
+
+  private _addAttribute = () => {
+    if(!this.state.valid)
+    {
+      return;
+    }
+    this.props.addAttribute(this.state.attribute);
+  }
 
 }
