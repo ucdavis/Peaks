@@ -11,23 +11,13 @@ import EquipmentAttribute from "./EquipmentAttribute";
 interface IProps {
   equipment: IEquipment;
   disableAdd: boolean;
-  addAttributes: (attribute: IEquipmentAttribute[]) => void;
+  updateAttributes: (attribute: IEquipmentAttribute[]) => void;
 }
 
-interface IState {
-    attributes: IEquipmentAttribute[];
-}
-
-export default class EquipmentAttributes extends React.Component<IProps, IState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-        attributes: !this.props.equipment.attributes ? [] : this.props.equipment.attributes,
-    };
-  }
+export default class EquipmentAttributes extends React.Component<IProps, {}> {
 
   public render() {
-    const attributeList = this.state.attributes.map((attr, i) => (
+    const attributeList = this.props.equipment.attributes.map((attr, i) => (
       <EquipmentAttribute key={`attr-${i}`} 
         attribute={attr} 
         index={i}
@@ -60,7 +50,7 @@ export default class EquipmentAttributes extends React.Component<IProps, IState>
 
   private _onAddAttribute = () => {
     const attributes = [
-      ...this.state.attributes,
+      ...this.props.equipment.attributes,
       {
         // equipment: this.props.equipment,
         equipmentId: this.props.equipment.id,
@@ -68,15 +58,14 @@ export default class EquipmentAttributes extends React.Component<IProps, IState>
         value: "",
       }
     ];
-
-    this.setState({attributes});
+    this.props.updateAttributes(attributes);
   }
 
   private _onEditAttribute = (i: number, key: string, value: string) => {
-    const attributes = this.state.attributes;
+    const attributes = this.props.equipment.attributes;
     attributes[i].key = key;
     attributes[i].value = value;
 
-    this.setState({attributes});
+    this.props.updateAttributes(attributes);
   }
 }

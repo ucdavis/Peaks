@@ -24,9 +24,9 @@ export default class EquipmentAttribute extends React.Component<IProps, IState> 
   constructor(props) {
     super(props);
     this.state = {
-        key: "",
+        key: this.props.attribute.key,
         valid: false,
-        value: "",
+        value: this.props.attribute.value,
     };
   }
 
