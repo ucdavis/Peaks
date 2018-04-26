@@ -53,7 +53,7 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
       ...this.props.equipment.attributes,
       {
         // equipment: this.props.equipment,
-        equipmentId: this.props.equipment.id,
+        equipmentId: 0,
         key: "",
         value: "",
       }

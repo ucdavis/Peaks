@@ -180,7 +180,12 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
     const person = this.props.person ? this.props.person : this.state.person;
 
-    await this.props.onCreate(person, this.state.equipment, this.state.date.format());
+    const equipment = this.state.equipment;
+    equipment.attributes = equipment.attributes.filter(x => !!x.key && !!x.value);
+
+    console.log(equipment);
+
+    await this.props.onCreate(person, equipment, this.state.date.format());
 
     this._closeModal();
   };

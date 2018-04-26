@@ -95,7 +95,14 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
         else {
             // if teamId is not set, this is a new equipment
             this.props.onSelect({
-                attributes: [],
+                attributes: !!equipment.attributes ? equipment.attributes : 
+                [ 
+                {
+                    equipmentId: 0,
+                    key: "",
+                    value: "",
+                  }
+                ],
                 id: equipment.teamId ? equipment.id : 0,
                 make: equipment.make ? equipment.make : "",
                 model: equipment.model ? equipment.model : "",
