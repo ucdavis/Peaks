@@ -41,7 +41,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Key Created",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Key",
                 ActionType = "Created",
                 Key = key
@@ -57,7 +56,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Access Created",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Access",
                 ActionType = "Created",
                 Access = access
@@ -73,7 +71,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Equipment Created",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Equipment",
                 ActionType = "Created",
                 Equipment = equipment
@@ -89,7 +86,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Key Updated",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Key",
                 ActionType = "Updated",
                 Key = key
@@ -105,7 +101,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Access Updated",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Access",
                 ActionType = "Updated",
                 Access = access
@@ -121,7 +116,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Equipment Updated",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Equipment",
                 ActionType = "Updated",
                 Equipment = equipment
@@ -136,7 +130,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Key Inactivated",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Key",
                 ActionType = "Inactivated",
                 Key = key
@@ -152,7 +145,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Access Inactivated",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Access",
                 ActionType = "Inactivated",
                 Access = access
@@ -168,7 +160,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Equipment Inactivated",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Equipment",
                 ActionType = "Inactivated",
                 Equipment = equipment
@@ -184,7 +175,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Key Assigned to " + key.Assignment.Person.User.Name,
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Key",
                 ActionType = "Assigned",
                 Key = key
@@ -200,7 +190,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Access Assigned to ",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Access",
                 ActionType = "Assigned",
                 Access = access
@@ -216,7 +205,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Equipment Assigned to " + equipment.Assignment.Person.User.Name,
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Equipment",
                 ActionType = "Assigned",
                 Equipment = equipment
@@ -232,7 +220,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Key Unassigned",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Key",
                 ActionType = "Unassigned",
                 Key = key
@@ -248,7 +235,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Access Unassigned",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Access",
                 ActionType = "Unassigned",
                 Access = access
@@ -264,7 +250,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Equipment Unassigned",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Equipment",
                 ActionType = "Unassigned",
                 Equipment = equipment
@@ -280,7 +265,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Key Accepted",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Key",
                 ActionType = "Accepted",
                 Key = key
@@ -296,7 +280,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Access Accepted",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Access",
                 ActionType = "Accepted",
                 Access = access
@@ -312,7 +295,6 @@ namespace Keas.Mvc.Services
             {
                 Description = "Equipment Accepted",
                 Actor = user,
-                ActorName = user.Name,
                 AssetType = "Equipment",
                 ActionType = "Accepted",
                 Equipment = equipment
