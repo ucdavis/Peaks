@@ -22,7 +22,7 @@ namespace Keas.Mvc.Handlers
             _securityService = securityService;
         }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, VerifyRoleAccess requirement)
+        protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, VerifyRoleAccess requirement)
         {
             string team = "";
             if (context.Resource is AuthorizationFilterContext mvcContext)
@@ -33,15 +33,12 @@ namespace Keas.Mvc.Handlers
             var user = _dbContext.Users.SingleOrDefault(u => u.Email == context.User.Identity.Name);
             if (user != null)
             {
-                //var roles = _dbContext.Roles
-                //    .Where(r => r.Name == Role.Codes.KeyMaster || r.Name == Role.Codes.DepartmentalAdmin).ToList();
                 var roles = _dbContext.Roles.Where(r => requirement.RoleStrings.Contains(r.Name)).ToList();
-                if (_securityService.IsInRoles(roles, team, user).Result)
+                if (await _securityService.IsInRoles(roles, team, user))
                 {
                     context.Succeed(requirement);
                 }
             }
-            return Task.CompletedTask;
         }
     }
 }
