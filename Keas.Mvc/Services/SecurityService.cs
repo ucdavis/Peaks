@@ -9,6 +9,7 @@ using System.Web;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Keas.Core.Domain;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Keas.Mvc.Services
 {
@@ -116,24 +117,8 @@ namespace Keas.Mvc.Services
 
         public async Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId)
         {
-            List<User> users = new List<User>();
-            var teamPermissions = await _dbContext.TeamPermissions.Include(tp=> tp.User).Where(x => x.TeamId == teamId && roles.Contains(x.Role)).ToListAsync();
-
-            foreach (var tp in teamPermissions)
-            {
-                if (users.Count == 0)
-                {
-                    users.Add(tp.User);
-                }
-                else
-                {
-                    if (!users.Any(a => a.Id == tp.UserId))
-                    {
-                        users.Add(tp.User);
-                    }
-                }
-            }
-
+            var users = _dbContext.TeamPermissions.Where(x => x.TeamId == teamId && roles.Any(r=> r.Id==x.RoleId)).Select(tp=>tp.User).Distinct().ToList();
+            
             return users;
         }
 
