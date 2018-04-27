@@ -32,13 +32,13 @@ namespace Keas.Mvc.Services
             var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
             foreach (var user in users)
             {
-                var emailQueue = new Notification
+                var notification = new Notification
                 {
                     User = user,
                     History = history,
-                    Details = string.Format("{0} By {1}.", history.Description, history.ActorName)
+                    Details = string.Format("{0} By {1}.", history.Description, history.Actor.Name)
                 };
-                _dbContext.EmailQueues.Add(emailQueue);
+                _dbContext.Notifications.Add(notification);
             }
             await _dbContext.SaveChangesAsync();
         }
@@ -50,13 +50,13 @@ namespace Keas.Mvc.Services
             var users = await _securityService.GetUsersInRoles(roles, equipment.TeamId);
             foreach (var user in users)
             {
-                var emailQueue = new Notification
+                var notification = new Notification
                 {
                     User = user,
                     History = history,
-                    Details = string.Format("{0} By {1}.", history.Description, history.ActorName)
+                    Details = string.Format("{0} By {1}.", history.Description, history.Actor.Name)
                 };
-                _dbContext.EmailQueues.Add(emailQueue);
+                _dbContext.Notifications.Add(notification);
             }
             await _dbContext.SaveChangesAsync();
         }
@@ -68,13 +68,13 @@ namespace Keas.Mvc.Services
             var users = await _securityService.GetUsersInRoles(roles, access.TeamId);
             foreach (var user in users)
             {
-                var emailQueue = new Notification
+                var notification = new Notification
                 {
                     User = user,
                     History = history,
-                    Details = string.Format("{0} By {1}.", history.Description, history.ActorName)
+                    Details = string.Format("{0} By {1}.", history.Description, history.Actor.Name)
                 };
-                _dbContext.EmailQueues.Add(emailQueue);
+                _dbContext.Notifications.Add(notification);
             }
             await _dbContext.SaveChangesAsync();
         }
@@ -88,13 +88,13 @@ namespace Keas.Mvc.Services
             users.Add(assignedTo);
             foreach (var user in users)
             {
-                var emailQueue = new Notification
+                var notification = new Notification
                 {
                     User = user,
                     History = history,
-                    Details = string.Format("{0} By {1}.", history.Description, history.ActorName)
+                    Details = string.Format("{0} By {1}.", history.Description, history.Actor.Name)
                 };
-                _dbContext.EmailQueues.Add(emailQueue);
+                _dbContext.Notifications.Add(notification);
             }
             await _dbContext.SaveChangesAsync();
         }
