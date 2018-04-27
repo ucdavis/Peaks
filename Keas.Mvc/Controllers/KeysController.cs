@@ -68,7 +68,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.Keys.Add(key);
                 await _context.SaveChangesAsync();
-                await _eventService.TrackCreateKey(key, _securityService.GetUser().Result);
+                await _eventService.TrackCreateKey(key, await _securityService.GetUser());
             }
             return Json(key);
         }
