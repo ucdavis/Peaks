@@ -7,7 +7,7 @@ namespace Keas.Core.Domain {
         {
             ActedDate = DateTime.UtcNow;
         }
-        [Key]
+       
         public int Id { get; set; }
 
         [Required]
