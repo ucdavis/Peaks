@@ -7,6 +7,7 @@ using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
@@ -22,8 +23,8 @@ namespace Keas.Mvc.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var roles = _context.Roles
-                .Where(r => r.Name == Role.Codes.KeyMaster || r.Name == Role.Codes.DepartmentalAdmin).ToList();
+            var roles = await _context.Roles
+                .Where(r => r.Name == Role.Codes.KeyMaster || r.Name == Role.Codes.DepartmentalAdmin).ToListAsync();
             ViewBag.Keymaster = await _securityService.IsInRoles(roles, Team);
             return View();
         }
