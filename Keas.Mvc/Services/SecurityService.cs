@@ -16,8 +16,6 @@ namespace Keas.Mvc.Services
     
     public interface ISecurityService
     {
-        Task<bool> HasKeyMasterAccess(string teamName);
-
         Task<bool> IsInRole(string roleCode, string teamName);
 
         Task<bool> IsInRoles(List<Role> roles, string teamName);
@@ -43,7 +41,7 @@ namespace Keas.Mvc.Services
 
         public async Task<bool> IsInRoles(List<Role> roles, string teamName)
         {
-            var user = GetUser().Result;
+            var user = await GetUser();
             using (_dbContext)
             {
                 var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamName);
@@ -99,12 +97,12 @@ namespace Keas.Mvc.Services
             {
                 throw new ArgumentException("Team not found");
             }
-            return IsInRole(role, team);
+            return await IsInRole(role, team);
         }
 
-        private bool IsInRole(Role role, Team team)
+        private async Task<bool> IsInRole(Role role, Team team)
         {
-            var user = GetUser().Result;
+            var user = await GetUser();
             return team.TeamPermissions.Any(a => a.User == user && a.Role == role);
         }
 
@@ -121,28 +119,6 @@ namespace Keas.Mvc.Services
             
             return users;
         }
-
-        public async Task<bool> HasKeyMasterAccess(string teamName)
-        {
-            var team = await _dbContext.Teams.SingleOrDefaultAsync(x => x.Name == teamName);
-            if (team == null)
-            {
-                return false;
-            }
-            
-            var user = GetUser().Result;
-            if (user == null)
-            {
-                return false;
-            }
-            var query = await _dbContext.TeamPermissions.SingleOrDefaultAsync(x => x.Team == team && (x.Role.Name == "KeyMaster" || x.Role.Name== "DepartmentalAdmin") && x.User == user) ;
-            
-            if (query == null)
-            {
-                return false;
-            }
-            return true;
-
-        }
+        
     }
 }
