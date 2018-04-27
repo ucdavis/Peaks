@@ -20,12 +20,11 @@ namespace Keas.Mvc.Controllers
             _securityService = securityService;
             _context = context;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             var roles = _context.Roles
                 .Where(r => r.Name == Role.Codes.KeyMaster || r.Name == Role.Codes.DepartmentalAdmin).ToList();
-            ViewBag.Keymaster = _securityService.IsInRoles(roles, Team).Result;
-                //_securityService.IsInRole(_context, Role.Codes.KeyMaster, Team).Result ;
+            ViewBag.Keymaster = await _securityService.IsInRoles(roles, Team);
             return View();
         }
 
