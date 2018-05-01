@@ -50,7 +50,7 @@ export default class EquipmentAttribute extends React.Component<IProps, IState> 
                         onChange={(e) => this._changeProperty("value",e.target.value)} />
                 </td>
                 <td>
-                    <button className="btn btn-outline-danger" onClick={() => this.props.onRemove(this.props.index)}>
+                    <button type="button" className="btn btn-outline-danger" onClick={() => this.props.onRemove(this.props.index)}>
                         <i className="fa fa-trash" />
                     </button>
                 </td>
