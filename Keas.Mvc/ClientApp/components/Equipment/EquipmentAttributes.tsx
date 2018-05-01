@@ -21,7 +21,8 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
       <EquipmentAttribute key={`attr-${i}`} 
         attribute={attr} 
         index={i}
-        onEdit={this._onEditAttribute}/>
+        onEdit={this._onEditAttribute}
+        onRemove={this._onRemoveAttribute}/>
     ));
     return (
       <div>
@@ -31,12 +32,13 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
             <tr>
               <th>Key</th>
               <th>Value</th>
+              <th>Remove</th>
             </tr>
           </thead>
           {attributeList}
           <tfoot>
             <tr>
-              <td colSpan={2}>
+              <td colSpan={3}>
                 <Button className="btn btn-primary" id="add-new" onClick={this._onAddAttribute}>
                   Add New
                 </Button>
@@ -62,9 +64,16 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
   }
 
   private _onEditAttribute = (i: number, key: string, value: string) => {
-    const attributes = this.props.equipment.attributes;
+    let attributes = this.props.equipment.attributes;
     attributes[i].key = key;
     attributes[i].value = value;
+
+    this.props.updateAttributes(attributes);
+  }
+
+  private _onRemoveAttribute = (i: number) => {
+    let attributes = this.props.equipment.attributes;
+    attributes.splice(i,1);
 
     this.props.updateAttributes(attributes);
   }

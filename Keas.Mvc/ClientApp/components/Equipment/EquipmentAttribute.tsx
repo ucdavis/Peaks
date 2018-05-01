@@ -12,6 +12,7 @@ interface IProps {
   attribute: IEquipmentAttribute;
   index: number;
   onEdit: (i: number, key: string, value: string) => void;
+  onRemove: (i:number) => void;
 }
 
 interface IState {
@@ -47,6 +48,11 @@ export default class EquipmentAttribute extends React.Component<IProps, IState> 
                         value={this.state.value} 
                         onBlur={this._onBlur}
                         onChange={(e) => this._changeProperty("value",e.target.value)} />
+                </td>
+                <td>
+                    <button className="btn btn-outline-danger" onClick={() => this.props.onRemove(this.props.index)}>
+                        <i className="fa fa-trash" />
+                    </button>
                 </td>
             </tr>
         </tbody>
