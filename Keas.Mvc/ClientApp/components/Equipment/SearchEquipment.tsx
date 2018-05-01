@@ -49,7 +49,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     minLength={3}
                     placeholder="Search for equipment by name or by serial number"
                     labelKey="name"
-                    filterBy={() => true} //don't filter on top of our search
+                    filterBy={() => true} // don't filter on top of our search
                     allowNew={true}
                     renderMenuItemChildren={(option, props, index) => (
                         <div>
@@ -72,8 +72,8 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                             `/equipment/search?teamId=${this.context.team.id}&q=${query}`
                         );
                         this.setState({
+                            equipment,
                             isSearchLoading: false,
-                            equipment
                         });
                     }}
                     onChange={selected => {
