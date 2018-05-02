@@ -12,6 +12,7 @@ namespace Keas.Mvc.Services
         Task EquipmentCreatedUpdatedInactive(Equipment equipment, History history);
         Task AccessCreatedUpdatedInactive(Access access, History history);
         Task KeyAssigned(Key key, History history);
+        Task KeyUnAssigned(Key key, History history);
 
     }
     public class NotificationService : INotificationService
@@ -28,8 +29,8 @@ namespace Keas.Mvc.Services
         // Assume we email all Team KeyMasters & DepartmentalAdmins
         public async Task KeyCreatedUpdatedInactive(Key key, History history)
         {
-            var roles = _dbContext.Roles
-                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToList();
+            var roles = await _dbContext.Roles
+                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
             foreach (var user in users)
             {
@@ -46,8 +47,8 @@ namespace Keas.Mvc.Services
 
         public async Task EquipmentCreatedUpdatedInactive(Equipment equipment, History history)
         {
-            var roles = _dbContext.Roles
-                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToList();
+            var roles = await _dbContext.Roles
+                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, equipment.TeamId);
             foreach (var user in users)
             {
@@ -64,8 +65,8 @@ namespace Keas.Mvc.Services
 
         public async Task AccessCreatedUpdatedInactive(Access access, History history)
         {
-            var roles = _dbContext.Roles
-                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.AccessMaster).ToList();
+            var roles = await _dbContext.Roles
+                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.AccessMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, access.TeamId);
             foreach (var user in users)
             {
@@ -82,8 +83,8 @@ namespace Keas.Mvc.Services
 
         public async Task KeyAssigned(Key key, History history)
         {
-            var roles = _dbContext.Roles
-                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToList();
+            var roles = await _dbContext.Roles
+                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
             var assignedTo = await _dbContext.Users.SingleAsync(u => u == key.Assignment.Person.User);
             users.Add(assignedTo);
@@ -98,6 +99,25 @@ namespace Keas.Mvc.Services
                 _dbContext.Notifications.Add(notification);
             }
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task KeyUnAssigned(Key key, History history)
+        {
+            var roles = await _dbContext.Roles
+                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
+            var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
+            foreach (var user in users)
+            {
+                var notification = new Notification
+                {
+                    User = user,
+                    History = history,
+                    Details = history.Description
+                };
+                _dbContext.Notifications.Add(notification);
+            }
+            await _dbContext.SaveChangesAsync();
+
         }
 
 
