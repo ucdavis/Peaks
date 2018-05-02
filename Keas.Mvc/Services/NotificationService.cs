@@ -11,6 +11,7 @@ namespace Keas.Mvc.Services
         Task KeyCreatedUpdatedInactive(Key key, History history);
         Task EquipmentCreatedUpdatedInactive(Equipment equipment, History history);
         Task AccessCreatedUpdatedInactive(Access access, History history);
+        Task KeyAssigned(Key key, History history);
 
     }
     public class NotificationService : INotificationService
@@ -36,7 +37,7 @@ namespace Keas.Mvc.Services
                 {
                     User = user,
                     History = history,
-                    Details = string.Format("{0} By {1}.", history.Description, history.Actor.Name)
+                    Details = history.Description
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -54,7 +55,7 @@ namespace Keas.Mvc.Services
                 {
                     User = user,
                     History = history,
-                    Details = string.Format("{0} By {1}.", history.Description, history.Actor.Name)
+                    Details = history.Description
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -72,7 +73,7 @@ namespace Keas.Mvc.Services
                 {
                     User = user,
                     History = history,
-                    Details = string.Format("{0} By {1}.", history.Description, history.Actor.Name)
+                    Details = history.Description
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -92,7 +93,7 @@ namespace Keas.Mvc.Services
                 {
                     User = user,
                     History = history,
-                    Details = string.Format("{0} By {1}.", history.Description, history.Actor.Name)
+                    Details = history.Description
                 };
                 _dbContext.Notifications.Add(notification);
             }
