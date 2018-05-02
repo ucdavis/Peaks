@@ -6,6 +6,7 @@ namespace Keas.Mvc.Services
     public interface IEventService
     {
         Task TrackCreateKey(Key key, User user);
+        Task TrackAssignKey(Key key, User user);
 
     }
     public class EventService : IEventService
@@ -23,6 +24,13 @@ namespace Keas.Mvc.Services
         {
             var history = await _historyService.KeyCreated(key, user);
             await _notificationService.KeyCreatedUpdatedInactive(key, history);
+        }
+
+        public async Task TrackAssignKey(Key key, User user)
+        {
+            var history = await _historyService.KeyAssigned(key, user);
+            await _notificationService.KeyAssigned(key, history);
+
         }
     }
 }
