@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,14 @@ namespace Keas.Mvc.Controllers
     public class EquipmentController : SuperController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEventService _eventService;
+        private readonly ISecurityService _securityService;
 
-        public EquipmentController(ApplicationDbContext context)
+        public EquipmentController(ApplicationDbContext context, IEventService eventService, ISecurityService securityService)
         {
             this._context = context;
+            _eventService = eventService;
+            _securityService = securityService;
         }
 
         public string GetTeam()
@@ -67,6 +72,7 @@ namespace Keas.Mvc.Controllers
                 var room = await _context.Rooms.SingleAsync(x => x.RoomKey == equipment.Room.RoomKey);
                 equipment.Room = room;
                 _context.Equipment.Add(equipment);
+                await _eventService.TrackCreateEquipment(equipment, await _securityService.GetUser());
                 await _context.SaveChangesAsync();
             }
             return Json(equipment);
