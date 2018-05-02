@@ -43,6 +43,19 @@ namespace Keas.Mvc.Controllers
             return Json(equipment);
         }
 
+        public async Task<IActionResult> CommonAttributeKeys(int teamId) 
+        {
+            var keys = await _context.EquipmentAttributes
+            //.Where(x => x.Equipment.TeamId == teamId)
+            .GroupBy(x => x.Key)
+            // .Where(x => x.Count() > 1)
+            .Take(5)
+            .OrderByDescending(x => x.Count())
+            .Select(x => x.Key).AsNoTracking().ToListAsync();
+
+            return Json(keys);
+        }
+
         public async Task<IActionResult> ListAssigned(int personId, int teamId)
         {
             var equipmentAssignments = await _context.Equipment.Where(x => x.Assignment.PersonId == personId && x.TeamId == teamId)

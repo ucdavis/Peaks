@@ -14,11 +14,37 @@ interface IProps {
   updateAttributes: (attribute: IEquipmentAttribute[]) => void;
 }
 
-export default class EquipmentAttributes extends React.Component<IProps, {}> {
+interface IState {
+  commonKeys: string[];
+  loading: boolean;
+}
+
+export default class EquipmentAttributes extends React.Component<IProps, IState> {
+    public static contextTypes = {
+      fetch: PropTypes.func,
+      person: PropTypes.object,
+      team: PropTypes.object
+  };
+  public context: AppContext;
+  constructor(props) {
+      super(props);
+      this.state = {
+          commonKeys: [],
+          loading: true,
+      };
+  }
+
+  public async componentDidMount() {
+    const equipmentFetchUrl = `/equipment/commonAttributeKeys/${this.context.team.id}`;
+
+    const commonKeys = await this.context.fetch(equipmentFetchUrl);
+    this.setState({ commonKeys, loading: false });
+  }
 
   public render() {
     const attributeList = this.props.equipment.attributes.map((attr, i) => (
       <EquipmentAttribute key={`attr-${i}`} 
+        commonKeys={this.state.commonKeys}
         attribute={attr} 
         index={i}
         onEdit={this._onEditAttribute}
@@ -54,7 +80,6 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
     const attributes = [
       ...this.props.equipment.attributes,
       {
-        // equipment: this.props.equipment,
         equipmentId: 0,
         key: "",
         value: "",
@@ -64,7 +89,7 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
   }
 
   private _onEditAttribute = (i: number, key: string, value: string) => {
-    let attributes = this.props.equipment.attributes;
+    const attributes = this.props.equipment.attributes;
     attributes[i].key = key;
     attributes[i].value = value;
 
@@ -72,9 +97,10 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
   }
 
   private _onRemoveAttribute = (i: number) => {
-    let attributes = this.props.equipment.attributes;
+    const attributes = this.props.equipment.attributes;
     attributes.splice(i,1);
 
     this.props.updateAttributes(attributes);
   }
+  
 }

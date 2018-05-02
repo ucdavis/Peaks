@@ -1,5 +1,7 @@
 import PropTypes from "prop-types";
 import * as React from "react";
+import { Typeahead } from "react-bootstrap-typeahead";
+
 import {
   Button,
   Collapse
@@ -7,9 +9,9 @@ import {
 
 import { AppContext, IEquipment, IEquipmentAttribute } from "../../Types";
 
-
 interface IProps {
   attribute: IEquipmentAttribute;
+  commonKeys: string[];
   index: number;
   onEdit: (i: number, key: string, value: string) => void;
   onRemove: (i:number) => void;
@@ -36,11 +38,16 @@ export default class EquipmentAttribute extends React.Component<IProps, IState> 
         <tbody>
             <tr key={`attribute-${this.props.index}`}>
                 <td>
-                    <input 
-                        type="text" className="form-control"
-                        value={this.state.key} 
-                        onBlur={this._onBlur}
-                        onChange={(e) => this._changeProperty("key",e.target.value)} />
+                        <Typeahead
+                            labelKey="key"
+                            allowNew={true}
+                            options={this.props.commonKeys}
+                            onChange={(selected) =>{ 
+                                if(selected && selected.length === 1) {
+                                    this._changeProperty("key",selected[0].key)} 
+                                }}
+                            onBlur={this._onBlur}
+                            />
                 </td>
                 <td>
                     <input 
@@ -67,7 +74,7 @@ export default class EquipmentAttribute extends React.Component<IProps, IState> 
   };
 
   private _onBlur = () => {
-      if(!this.state.key.trim())
+      if(!this.state.key || !this.state.key.trim())
       {
           return null;
       }
