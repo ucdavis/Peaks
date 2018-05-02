@@ -173,7 +173,7 @@ namespace Keas.Mvc.Services
         {
             var historyEntry = new History
             {
-                Description = "Key Assigned to " + key.Assignment.Person.User.Name + "by " + us,
+                Description = "Key Assigned to " + key.Assignment.Person.User.Name + "by " + user.Name,
                 Actor = user,
                 AssetType = "Key",
                 ActionType = "Assigned",
