@@ -109,8 +109,10 @@ namespace Keas.Mvc.Controllers
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date),
                 };
+                accessAssingment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
                 _context.AccessAssignments.Add(accessAssingment);
                 await _context.SaveChangesAsync();
+                await _eventService.TrackAssignAccess(accessAssingment, await _securityService.GetUser());
                 return Json(accessAssingment);
             }
             return BadRequest(ModelState);

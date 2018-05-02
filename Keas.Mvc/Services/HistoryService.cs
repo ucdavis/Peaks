@@ -16,7 +16,7 @@ namespace Keas.Mvc.Services
         Task<History> AccessInactivated(Access access, User user);
         Task<History> EquipmentInactivated(Equipment equipment, User user);
         Task<History> KeyAssigned(Key key, User user);
-        Task<History> AccessAssigned(Access access, User user);
+        Task<History> AccessAssigned(AccessAssignment accessAssignment, User user);
         Task<History> EquipmentAssigned(Equipment equipment, User user);
         Task<History> KeyUnassigned(Key key, User user);
         Task<History> AccessUnassigned(Access access, User user);
@@ -184,16 +184,15 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History> AccessAssigned(Access access, User user)
+        public async Task<History> AccessAssigned(AccessAssignment accessAssignment, User user)
         {
             var historyEntry = new History
             {
-                //TODO get who this was assigned to
-                Description = "Access Assigned to  by " + user.Name,
+                Description = "Access Assigned to " + accessAssignment.Person.User.Name + " by " + user.Name,
                 Actor = user,
                 AssetType = "Access",
                 ActionType = "Assigned",
-                Access = access
+                AccessId = accessAssignment.AccessId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();

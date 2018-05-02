@@ -12,7 +12,7 @@ namespace Keas.Mvc.Services
         Task TrackAssignEquipment(Equipment equipment, User user);
         Task TrackUnAssignEquipment(Equipment equipment, User user);
         Task TrackCreateAccess(Access access, User user);
-        Task TrackAssignAccess(Access access, User user);
+        Task TrackAssignAccess(AccessAssignment accessAssignment, User user);
         Task TrackUnAssignAccess(Access access, User user);
 
     }
@@ -70,10 +70,10 @@ namespace Keas.Mvc.Services
             await _notificationService.AccessCreatedUpdatedInactive(access, history);
         }
 
-        public async Task TrackAssignAccess(Access access, User user)
+        public async Task TrackAssignAccess(AccessAssignment accessAssignment, User user)
         {
-            var history = await _historyService.AccessAssigned(access, user);
-            //await _notificationService.AccessAssigned(access, history);
+            var history = await _historyService.AccessAssigned(accessAssignment, user);
+            await _notificationService.AccessAssigned(accessAssignment, history);
 
         }
 
