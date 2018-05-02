@@ -88,10 +88,12 @@ namespace Keas.Mvc.Controllers
             {
                 var equipment = await _context.Equipment.Include(x => x.Room).SingleAsync(x => x.Id == equipmentId);
                 equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
+                equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
 
                 _context.EquipmentAssignments.Add(equipment.Assignment);
 
                 await _context.SaveChangesAsync();
+                await _eventService.TrackAssignEquipment(equipment, await _securityService.GetUser());
                 return Json(equipment);
             }
             return BadRequest(ModelState);
@@ -107,6 +109,7 @@ namespace Keas.Mvc.Controllers
                 _context.EquipmentAssignments.Remove(eq.Assignment);
                 eq.Assignment = null;
                 await _context.SaveChangesAsync();
+                await _eventService.TrackUnAssignEquipment(equipment, await _securityService.GetUser());
                 return Json(null);
             }
             return BadRequest(ModelState);
