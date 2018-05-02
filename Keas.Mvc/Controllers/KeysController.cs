@@ -102,6 +102,7 @@ namespace Keas.Mvc.Controllers
                 k.Assignment = null;
                 k.KeyAssignmentId = null;
                 await _context.SaveChangesAsync();
+                await _eventService.TrackUnAssignKey(key, await _securityService.GetUser());
                 return Json(k);
             }
             return BadRequest(ModelState);
