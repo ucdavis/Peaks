@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,14 @@ namespace Keas.Mvc.Controllers
     public class AccessController : SuperController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEventService _eventService;
+        private readonly ISecurityService _securityService;
 
-        public AccessController(ApplicationDbContext context)
+        public AccessController(ApplicationDbContext context, IEventService eventService, ISecurityService securityService)
         {
             this._context = context;
+            _eventService = eventService;
+            _securityService = securityService;
         }
 
         public string GetTeam()
@@ -88,8 +93,10 @@ namespace Keas.Mvc.Controllers
             {
                 _context.Access.Add(access);
                 await _context.SaveChangesAsync();
+                await _eventService.TrackCreateAccess(access, await _securityService.GetUser());
+                return Json(access);
             }
-            return Json(access);
+            return BadRequest(ModelState);
         }
 
         public async Task<IActionResult> Assign(int accessId, int personId, string date)
