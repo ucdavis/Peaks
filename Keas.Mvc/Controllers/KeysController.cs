@@ -80,10 +80,12 @@ namespace Keas.Mvc.Controllers
             {
                 var key = await _context.Keys.SingleAsync(x => x.Id == keyId);
                 key.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
+                key.Assignment.Person = await _context.People.Include(p=> p.User).SingleAsync(p=> p.Id==personId);
 
                 _context.KeyAssignments.Add(key.Assignment);
 
                 await _context.SaveChangesAsync();
+                await _eventService.TrackAssignKey(key, await _securityService.GetUser());
                 return Json(key);
             }
             return BadRequest(ModelState);
