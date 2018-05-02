@@ -125,6 +125,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.AccessAssignments.Remove(accessAssignment);
                 await _context.SaveChangesAsync();
+                await _eventService.TrackUnAssignAccess(accessAssignment, await _securityService.GetUser());
                 return Json(accessAssignment);
             }
             return BadRequest(ModelState);
