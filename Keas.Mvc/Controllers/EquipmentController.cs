@@ -69,8 +69,11 @@ namespace Keas.Mvc.Controllers
             // TODO Make sure user has permissions
             if (ModelState.IsValid)
             {
-                var room = await _context.Rooms.SingleAsync(x => x.RoomKey == equipment.Room.RoomKey);
-                equipment.Room = room;
+                if (equipment.Room != null)
+                {
+                   var room = await _context.Rooms.SingleAsync(x => x.RoomKey == equipment.Room.RoomKey);
+                    equipment.Room = room;
+                }
                 _context.Equipment.Add(equipment);
                 await _eventService.TrackCreateEquipment(equipment, await _securityService.GetUser());
                 await _context.SaveChangesAsync();
