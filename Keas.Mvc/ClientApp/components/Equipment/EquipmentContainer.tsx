@@ -106,6 +106,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         method: "POST"
       });
       equipment.attributes = attributes;
+      equipment.assignment.person = person;
     }
 
     const index = this.state.equipment.findIndex(x => x.id === equipment.id);

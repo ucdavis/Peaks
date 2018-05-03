@@ -12,7 +12,28 @@ interface IProps {
 
 
 export default class EquipmentListItem extends React.Component<IProps, {}> {
-
+    public render() {
+        const hasAssignment = !!this.props.equipmentEntity.assignment;
+        return (
+          <tr>
+            <td>{this.props.equipmentEntity.serialNumber}</td>
+            <td>{this.props.equipmentEntity.name}</td>
+            <td>{hasAssignment ? this.props.equipmentEntity.assignment.person.user.name : ""}</td>
+            <td>
+              {hasAssignment ? this.props.equipmentEntity.assignment.expiresAt : ""}
+            </td>
+            <td>
+                    <ListActionsDropdown
+                        onRevoke={this._onRevoke}
+                        canRevoke={hasAssignment}
+                        onAdd={this._onAdd}
+                        canAdd={!hasAssignment}
+                        showDetails={this._showDetails}
+                    />
+            </td>
+          </tr>
+        );
+      }
     private _onRevoke = () => {
         this.props.onRevoke(this.props.equipmentEntity);
     }
@@ -22,27 +43,4 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
     private _showDetails = () => {
         this.props.showDetails(this.props.equipmentEntity);
     }
-
-  public render() {
-    const hasAssignment = !!this.props.equipmentEntity.assignment;
-    return (
-      <tr>
-        <td>{this.props.equipmentEntity.serialNumber}</td>
-        <td>{this.props.equipmentEntity.name}</td>
-        <td>{hasAssignment ? "Assigned" : "Unassigned"}</td>
-        <td>
-          {hasAssignment ? this.props.equipmentEntity.assignment.expiresAt : ""}
-        </td>
-        <td>
-                <ListActionsDropdown
-                    onRevoke={this._onRevoke}
-                    canRevoke={hasAssignment}
-                    onAdd={this._onAdd}
-                    canAdd={!hasAssignment}
-                    showDetails={this._showDetails}
-                />
-        </td>
-      </tr>
-    );
-  }
 }

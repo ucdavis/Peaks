@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace Keas.Mvc.Controllers
     public class AccessController : SuperController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEventService _eventService;
 
-        public AccessController(ApplicationDbContext context)
+        public AccessController(ApplicationDbContext context, IEventService eventService)
         {
             this._context = context;
+            _eventService = eventService;
         }
 
         public string GetTeam()
@@ -88,8 +91,10 @@ namespace Keas.Mvc.Controllers
             {
                 _context.Access.Add(access);
                 await _context.SaveChangesAsync();
+                await _eventService.TrackCreateAccess(access);
+                return Json(access);
             }
-            return Json(access);
+            return BadRequest(ModelState);
         }
 
         public async Task<IActionResult> Assign(int accessId, int personId, string date)
@@ -102,8 +107,10 @@ namespace Keas.Mvc.Controllers
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date),
                 };
+                accessAssingment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
                 _context.AccessAssignments.Add(accessAssingment);
                 await _context.SaveChangesAsync();
+                await _eventService.TrackAssignAccess(accessAssingment, Team);
                 return Json(accessAssingment);
             }
             return BadRequest(ModelState);
@@ -116,6 +123,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.AccessAssignments.Remove(accessAssignment);
                 await _context.SaveChangesAsync();
+                await _eventService.TrackUnAssignAccess(accessAssignment, Team);
                 return Json(accessAssignment);
             }
             return BadRequest(ModelState);

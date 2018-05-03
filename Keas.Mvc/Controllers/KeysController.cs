@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +16,12 @@ namespace Keas.Mvc.Controllers
     public class KeysController : SuperController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEventService _eventService;
 
-        public KeysController(ApplicationDbContext context)
+        public KeysController(ApplicationDbContext context, IEventService eventService)
         {
             this._context = context;
+            _eventService = eventService;
         }
 
         public string GetTeam()
@@ -44,14 +48,21 @@ namespace Keas.Mvc.Controllers
 
 
         public async Task<IActionResult> ListAssigned(int personId, int teamId) {
-            var keyAssignments = await _context.Keys.Where(x=> x.Assignment.PersonId == personId && x.TeamId == teamId).Include(x=> x.Assignment).AsNoTracking().ToArrayAsync();
+            var keyAssignments = await _context.Keys
+                .Where(x=> x.Assignment.PersonId == personId && x.TeamId == teamId)
+                .Include(x=> x.Assignment)
+                .ThenInclude(x => x.Person.User)
+                .AsNoTracking().ToArrayAsync();
 
             return Json(keyAssignments);
         }
 
         // List all keys for a team
         public async Task<IActionResult> List(int id) {
-            var keys = await _context.Keys.Where(x=> x.TeamId == id).Include(x=> x.Assignment).AsNoTracking().ToArrayAsync();
+            var keys = await _context.Keys.Where(x=> x.TeamId == id)
+                .Include(x=> x.Assignment)
+                .ThenInclude(x => x.Person.User)
+                .AsNoTracking().ToArrayAsync();
 
             return Json(keys);
         }
@@ -62,6 +73,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.Keys.Add(key);
                 await _context.SaveChangesAsync();
+                await _eventService.TrackCreateKey(key);
             }
             return Json(key);
         }
@@ -73,10 +85,12 @@ namespace Keas.Mvc.Controllers
             {
                 var key = await _context.Keys.SingleAsync(x => x.Id == keyId);
                 key.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
+                key.Assignment.Person = await _context.People.Include(p=> p.User).SingleAsync(p=> p.Id==personId);
 
                 _context.KeyAssignments.Add(key.Assignment);
 
                 await _context.SaveChangesAsync();
+                await _eventService.TrackAssignKey(key);
                 return Json(key);
             }
             return BadRequest(ModelState);
@@ -93,6 +107,7 @@ namespace Keas.Mvc.Controllers
                 k.Assignment = null;
                 k.KeyAssignmentId = null;
                 await _context.SaveChangesAsync();
+                await _eventService.TrackUnAssignKey(key);
                 return Json(k);
             }
             return BadRequest(ModelState);
