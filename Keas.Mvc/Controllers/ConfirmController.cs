@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Keas.Core.Data;
+﻿using Keas.Core.Data;
+using Keas.Mvc.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Keas.Mvc.Controllers
 {
@@ -23,11 +21,9 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await _securityService.GetUser();
-            var keyPending = _context.Keys.Where(k=> !k.Assignment.IsConfirmed && k.Assignment.Person.User == user);
-            var equipmentPending =
-                _context.Equipment.Where(e => !e.Assignment.IsConfirmed && e.Assignment.Person.User == user);
+            var viewModel = await ConfirmListModel.Create(Team, _context, user);
 
-            return View();
+            return View(viewModel);
         }
     }
 }

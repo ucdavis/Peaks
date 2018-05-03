@@ -1,0 +1,52 @@
+﻿@model Keas.Mvc.Models.ConfirmListModel
+
+@{
+    ViewData["Title"] = "Confirm Assignments";
+}
+
+<h2>Confirm Assignents</h2>
+
+<h2>Keys</h2>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Serial #</th>
+        <th>Room</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Keys) {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.SerialNumber</td>
+            <td>@item.Room</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h2>Equipment</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Serial #</th>
+            <th>Make</th>
+            <th>Model</th>
+            <th>Room</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Equipment)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.SerialNumber</td>
+                <td>@item.Make</td>
+                <td>@item.Model</td>
+                <td>@item.Room</td>
+            </tr>
+        }
+    </tbody>
+</table>
