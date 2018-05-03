@@ -75,7 +75,6 @@ namespace Keas.Mvc.Controllers
         // List all equipments for a team
         public async Task<IActionResult> List(int id)
         {
-
             var equipments = await _context.Equipment
                 .Where(x => x.TeamId == id)
                 .Include(x => x.Assignment)
