@@ -16,13 +16,11 @@ namespace Keas.Mvc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
-        private readonly ISecurityService _securityService;
 
-        public EquipmentController(ApplicationDbContext context, IEventService eventService, ISecurityService securityService)
+        public EquipmentController(ApplicationDbContext context, IEventService eventService)
         {
             this._context = context;
             _eventService = eventService;
-            _securityService = securityService;
         }
 
         public string GetTeam()
@@ -75,7 +73,7 @@ namespace Keas.Mvc.Controllers
                     equipment.Room = room;
                 }
                 _context.Equipment.Add(equipment);
-                await _eventService.TrackCreateEquipment(equipment, await _securityService.GetUser());
+                await _eventService.TrackCreateEquipment(equipment);
                 await _context.SaveChangesAsync();
             }
             return Json(equipment);
@@ -93,7 +91,7 @@ namespace Keas.Mvc.Controllers
                 _context.EquipmentAssignments.Add(equipment.Assignment);
 
                 await _context.SaveChangesAsync();
-                await _eventService.TrackAssignEquipment(equipment, await _securityService.GetUser());
+                await _eventService.TrackAssignEquipment(equipment);
                 return Json(equipment);
             }
             return BadRequest(ModelState);
@@ -109,7 +107,7 @@ namespace Keas.Mvc.Controllers
                 _context.EquipmentAssignments.Remove(eq.Assignment);
                 eq.Assignment = null;
                 await _context.SaveChangesAsync();
-                await _eventService.TrackUnAssignEquipment(equipment, await _securityService.GetUser());
+                await _eventService.TrackUnAssignEquipment(equipment);
                 return Json(null);
             }
             return BadRequest(ModelState);

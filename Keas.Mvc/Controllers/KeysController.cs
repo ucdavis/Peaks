@@ -17,13 +17,11 @@ namespace Keas.Mvc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
-        private readonly ISecurityService _securityService;
 
-        public KeysController(ApplicationDbContext context, IEventService eventService, ISecurityService securityService)
+        public KeysController(ApplicationDbContext context, IEventService eventService)
         {
             this._context = context;
             _eventService = eventService;
-            _securityService = securityService;
         }
 
         public string GetTeam()
@@ -68,7 +66,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.Keys.Add(key);
                 await _context.SaveChangesAsync();
-                await _eventService.TrackCreateKey(key, await _securityService.GetUser());
+                await _eventService.TrackCreateKey(key);
             }
             return Json(key);
         }
@@ -85,7 +83,7 @@ namespace Keas.Mvc.Controllers
                 _context.KeyAssignments.Add(key.Assignment);
 
                 await _context.SaveChangesAsync();
-                await _eventService.TrackAssignKey(key, await _securityService.GetUser());
+                await _eventService.TrackAssignKey(key);
                 return Json(key);
             }
             return BadRequest(ModelState);
@@ -102,7 +100,7 @@ namespace Keas.Mvc.Controllers
                 k.Assignment = null;
                 k.KeyAssignmentId = null;
                 await _context.SaveChangesAsync();
-                await _eventService.TrackUnAssignKey(key, await _securityService.GetUser());
+                await _eventService.TrackUnAssignKey(key);
                 return Json(k);
             }
             return BadRequest(ModelState);

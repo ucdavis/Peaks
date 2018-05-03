@@ -16,13 +16,11 @@ namespace Keas.Mvc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
-        private readonly ISecurityService _securityService;
 
-        public AccessController(ApplicationDbContext context, IEventService eventService, ISecurityService securityService)
+        public AccessController(ApplicationDbContext context, IEventService eventService)
         {
             this._context = context;
             _eventService = eventService;
-            _securityService = securityService;
         }
 
         public string GetTeam()
@@ -93,7 +91,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.Access.Add(access);
                 await _context.SaveChangesAsync();
-                await _eventService.TrackCreateAccess(access, await _securityService.GetUser());
+                await _eventService.TrackCreateAccess(access);
                 return Json(access);
             }
             return BadRequest(ModelState);
@@ -112,7 +110,7 @@ namespace Keas.Mvc.Controllers
                 accessAssingment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
                 _context.AccessAssignments.Add(accessAssingment);
                 await _context.SaveChangesAsync();
-                await _eventService.TrackAssignAccess(accessAssingment, await _securityService.GetUser(), Team);
+                await _eventService.TrackAssignAccess(accessAssingment, Team);
                 return Json(accessAssingment);
             }
             return BadRequest(ModelState);
@@ -125,7 +123,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.AccessAssignments.Remove(accessAssignment);
                 await _context.SaveChangesAsync();
-                await _eventService.TrackUnAssignAccess(accessAssignment, await _securityService.GetUser(), Team);
+                await _eventService.TrackUnAssignAccess(accessAssignment, Team);
                 return Json(accessAssignment);
             }
             return BadRequest(ModelState);
