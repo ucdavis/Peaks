@@ -193,7 +193,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     const person = this.props.person ? this.props.person : this.state.person;
 
     const equipment = this.state.equipment;
-    equipment.attributes = equipment.attributes.filter(x => !!x.key && !!x.value);
+    equipment.attributes = equipment.attributes.filter(x => !!x.key);
 
     console.log(equipment);
 
