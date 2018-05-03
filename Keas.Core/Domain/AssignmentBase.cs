@@ -6,6 +6,7 @@ namespace Keas.Core.Domain
         public AssignmentBase()
         {
             RequestedAt = DateTime.UtcNow;
+            IsConfirmed = false;
         }
 
         public int Id { get; set; }
@@ -22,5 +23,7 @@ namespace Keas.Core.Domain
         public DateTime? ApprovedAt { get; set; }
 
         public DateTime ExpiresAt { get; set; }
+
+        public bool IsConfirmed { get; set; }
     }
 }
