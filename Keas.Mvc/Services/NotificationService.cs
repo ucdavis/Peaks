@@ -15,8 +15,8 @@ namespace Keas.Mvc.Services
         Task KeyUnAssigned(Key key, History history);
         Task EquipmentAssigned(Equipment equipment, History history);
         Task EquipmentUnAssigned(Equipment equipment, History history);
-        Task AccessAssigned(AccessAssignment accessAssignment, History history);
-        Task AccessUnAssigned(AccessAssignment accessAssignment, History history);
+        Task AccessAssigned(AccessAssignment accessAssignment, History history, string teamName);
+        Task AccessUnAssigned(AccessAssignment accessAssignment, History history, string teamName);
 
     }
     public class NotificationService : INotificationService
@@ -162,11 +162,11 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task AccessAssigned(AccessAssignment accessAssignment, History history)
+        public async Task AccessAssigned(AccessAssignment accessAssignment, History history, string teamName)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.AccessMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, accessAssignment);
+            var users = await _securityService.GetUsersInRoles(roles, teamName);
             var assignedTo = await _dbContext.Users.SingleAsync(u => u == accessAssignment.Person.User);
             users.Add(assignedTo);
             foreach (var user in users)
@@ -182,11 +182,11 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task AccessUnAssigned(AccessAssignment accessAssignment, History history)
+        public async Task AccessUnAssigned(AccessAssignment accessAssignment, History history, string teamName)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.AccessMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, accessAssignment);
+            var users = await _securityService.GetUsersInRoles(roles, teamName);
             foreach (var user in users)
             {
                 var notification = new Notification

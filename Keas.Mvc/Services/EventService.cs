@@ -12,8 +12,8 @@ namespace Keas.Mvc.Services
         Task TrackAssignEquipment(Equipment equipment, User user);
         Task TrackUnAssignEquipment(Equipment equipment, User user);
         Task TrackCreateAccess(Access access, User user);
-        Task TrackAssignAccess(AccessAssignment accessAssignment, User user);
-        Task TrackUnAssignAccess(AccessAssignment accessAssignment, User user);
+        Task TrackAssignAccess(AccessAssignment accessAssignment, User user, string teamName);
+        Task TrackUnAssignAccess(AccessAssignment accessAssignment, User user, string teamName);
 
     }
     public class EventService : IEventService
@@ -70,17 +70,17 @@ namespace Keas.Mvc.Services
             await _notificationService.AccessCreatedUpdatedInactive(access, history);
         }
 
-        public async Task TrackAssignAccess(AccessAssignment accessAssignment, User user)
+        public async Task TrackAssignAccess(AccessAssignment accessAssignment, User user, string teamName)
         {
             var history = await _historyService.AccessAssigned(accessAssignment, user);
-            await _notificationService.AccessAssigned(accessAssignment, history);
+            await _notificationService.AccessAssigned(accessAssignment, history, teamName);
 
         }
 
-        public async Task TrackUnAssignAccess(AccessAssignment accessAssignment, User user)
+        public async Task TrackUnAssignAccess(AccessAssignment accessAssignment, User user, string teamName)
         {
             var history = await _historyService.AccessUnassigned(accessAssignment, user);
-            await _notificationService.AccessUnAssigned(accessAssignment, history);
+            await _notificationService.AccessUnAssigned(accessAssignment, history, teamName);
         }
 
     }

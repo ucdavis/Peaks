@@ -112,7 +112,7 @@ namespace Keas.Mvc.Controllers
                 accessAssingment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
                 _context.AccessAssignments.Add(accessAssingment);
                 await _context.SaveChangesAsync();
-                await _eventService.TrackAssignAccess(accessAssingment, await _securityService.GetUser());
+                await _eventService.TrackAssignAccess(accessAssingment, await _securityService.GetUser(), Team);
                 return Json(accessAssingment);
             }
             return BadRequest(ModelState);
@@ -125,7 +125,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.AccessAssignments.Remove(accessAssignment);
                 await _context.SaveChangesAsync();
-                await _eventService.TrackUnAssignAccess(accessAssignment, await _securityService.GetUser());
+                await _eventService.TrackUnAssignAccess(accessAssignment, await _securityService.GetUser(), Team);
                 return Json(accessAssignment);
             }
             return BadRequest(ModelState);
