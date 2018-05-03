@@ -65,7 +65,7 @@ export default class AssignRoom extends React.Component<IProps, IState> {
                     onSearch={async query => {
                         this.setState({ isSearchLoading: true });
                         const rooms = await this.context.fetch(
-                            `/spaces/searchRooms?q=${query}`
+                            `/api/${this.context.team.name}/spaces/searchRooms?q=${query}`
                         );
                         this.setState({
                             isSearchLoading: false,

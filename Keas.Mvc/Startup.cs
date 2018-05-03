@@ -133,7 +133,12 @@ namespace Keas.Mvc
 
             app.UseMvc(routes =>
             {
-
+                routes.MapRoute(
+                    name: "API",
+                    template: "api/{teamName}/{controller}/{action}/{id?}",
+                    defaults: new { controller = "people", action = "Index" },
+                    constraints: new { controller = "(keys|equipment|access|spaces|people|person)" }
+                );
                 routes.MapRoute(
                     name: "Assets",
                     template: "{teamName}/{asset}/{*type}",

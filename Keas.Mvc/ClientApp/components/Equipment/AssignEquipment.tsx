@@ -57,7 +57,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   // pull the common attributes here so we only do it once
   public async componentDidMount() {
-    const equipmentFetchUrl = `/equipment/commonAttributeKeys/${this.context.team.id}`;
+    const equipmentFetchUrl = `/api/${this.context.team.name}/equipment/commonAttributeKeys/${this.context.team.id}`;
 
     const commonAttributeKeys = await this.context.fetch(equipmentFetchUrl);
     this.setState({ commonAttributeKeys});

@@ -34,7 +34,7 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
     public async componentDidMount() {
         this.setState({ loading: true });
         const equipment = !this.props.roomKey ? [] :
-            await this.context.fetch(`/equipment/getEquipmentInRoom?roomKey=${this.props.roomKey}`);
+            await this.context.fetch(`/api/${this.context.team.name}/equipment/getEquipmentInRoom?roomKey=${this.props.roomKey}`);
         this.setState({ equipment, loading: false });
     }
 

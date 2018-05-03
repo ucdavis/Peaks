@@ -23,7 +23,7 @@ export default class PersonContainer extends React.Component<{}, IState> {
   }
 
   public async componentDidMount() {
-      const person = await this.context.fetch(`/people/getPerson?personId=${this.context.router.route.match.params.personId}&teamId=${this.context.team.id}`);
+      const person = await this.context.fetch(`/api/${this.context.team.name}/people/getPerson?personId=${this.context.router.route.match.params.personId}&teamId=${this.context.team.id}`);
       this.setState({ person });
   }
 

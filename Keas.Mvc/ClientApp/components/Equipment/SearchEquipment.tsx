@@ -69,7 +69,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     onSearch={async query => {
                         this.setState({ isSearchLoading: true });
                         const equipment = await this.context.fetch(
-                            `/equipment/search?teamId=${this.context.team.id}&q=${query}`
+                            `/api/${this.context.team.name}/equipment/search?teamId=${this.context.team.id}&q=${query}`
                         );
                         this.setState({
                             equipment,

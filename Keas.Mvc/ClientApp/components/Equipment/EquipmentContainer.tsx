@@ -34,10 +34,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   public async componentDidMount() {
     // are we getting the person's equipment or the team's?
     const equipmentFetchUrl = this.props.person
-      ? `/equipment/listassigned?personid=${this.props.person.id}&teamId=${
+      ? `/api/${this.context.team.name}/equipment/listassigned?personid=${this.props.person.id}&teamId=${
           this.props.person.teamId
         }`
-      : `/equipment/list/${this.context.team.id}`;
+      : `/api/${this.context.team.name}/equipment/list/${this.context.team.id}`;
 
     const equipment = await this.context.fetch(equipmentFetchUrl);
     this.setState({ equipment, loading: false });
@@ -89,7 +89,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     // if we are creating a new equipment
     if (equipment.id === 0) {
       equipment.teamId = this.context.team.id;
-      equipment = await this.context.fetch("/equipment/create", {
+      equipment = await this.context.fetch(`/api/${this.context.team.name}/equipment/create`, {
         body: JSON.stringify(equipment),
         method: "POST"
       });
@@ -98,7 +98,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/equipment/assign?equipmentId=${equipment.id}&personId=${
+      const assignUrl = `/api/${this.context.team.name}/equipment/assign?equipmentId=${equipment.id}&personId=${
         person.id
       }&date=${date}`;
 
@@ -128,7 +128,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
   private _revokeEquipment = async (equipment: IEquipment) => {
     // call API to actually revoke
-    const removed: IEquipment = await this.context.fetch("/equipment/revoke", {
+    const removed: IEquipment = await this.context.fetch(`/api/${this.context.team.name}/equipment/revoke`, {
       body: JSON.stringify(equipment),
       method: "POST"
     });

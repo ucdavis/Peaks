@@ -84,7 +84,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                     onSearch={async query => {
                         this.setState({ isSearchLoading: true });
                         const keys = await this.context.fetch(
-                            `/keys/search?teamId=${this.context.team.id}&q=${query}`
+                            `/api/${this.context.team.name}/keys/search?teamId=${this.context.team.id}&q=${query}`
                         );
                         this.setState({
                             isSearchLoading: false,
