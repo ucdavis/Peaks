@@ -9,45 +9,21 @@ import { AppContext, IEquipment, IEquipmentAttribute } from "../../Types";
 import EquipmentAttribute from "./EquipmentAttribute";
 
 interface IProps {
+  commonKeys: string[]
+  disableEdit: boolean;
   equipment: IEquipment;
-  disableAdd: boolean;
   updateAttributes: (attribute: IEquipmentAttribute[]) => void;
 }
 
-interface IState {
-  commonKeys: string[];
-  loading: boolean;
-}
-
-export default class EquipmentAttributes extends React.Component<IProps, IState> {
-    public static contextTypes = {
-      fetch: PropTypes.func,
-      person: PropTypes.object,
-      team: PropTypes.object
-  };
-  public context: AppContext;
-  constructor(props) {
-      super(props);
-      this.state = {
-          commonKeys: [],
-          loading: true,
-      };
-  }
-
-  public async componentDidMount() {
-    const equipmentFetchUrl = `/equipment/commonAttributeKeys/${this.context.team.id}`;
-
-    const commonKeys = await this.context.fetch(equipmentFetchUrl);
-    this.setState({ commonKeys, loading: false });
-  }
-
+export default class EquipmentAttributes extends React.Component<IProps, {}> {
   public render() {
     const attributeList = this.props.equipment.attributes.map((attr, i) => (
       <EquipmentAttribute key={`attr-${i}`} 
-        commonKeys={this.state.commonKeys}
+        disabledEdit={this.props.disableEdit}
+        commonKeys={this.props.commonKeys}
         attribute={attr} 
         index={i}
-        onEdit={this._onEditAttribute}
+        changeProperty={this._onEditAttribute}
         onRemove={this._onRemoveAttribute}/>
     ));
     return (
@@ -58,10 +34,12 @@ export default class EquipmentAttributes extends React.Component<IProps, IState>
             <tr>
               <th>Key</th>
               <th>Value</th>
-              <th>Remove</th>
+              {!this.props.disableEdit &&
+                <th>Remove</th>}
             </tr>
           </thead>
           {attributeList}
+          {!this.props.disableEdit && 
           <tfoot>
             <tr>
               <td colSpan={3}>
@@ -70,7 +48,7 @@ export default class EquipmentAttributes extends React.Component<IProps, IState>
                 </Button>
               </td>
             </tr>
-          </tfoot>
+          </tfoot>}
         </table>
       </div>
     );
@@ -88,11 +66,12 @@ export default class EquipmentAttributes extends React.Component<IProps, IState>
     this.props.updateAttributes(attributes);
   }
 
-  private _onEditAttribute = (i: number, key: string, value: string) => {
+  private _onEditAttribute = (i: number, prop: string, val: string) => {
     const attributes = this.props.equipment.attributes;
-    attributes[i].key = key;
-    attributes[i].value = value;
-
+    attributes[i] = {
+      ...attributes[i],
+      [prop]: val
+    }
     this.props.updateAttributes(attributes);
   }
 
