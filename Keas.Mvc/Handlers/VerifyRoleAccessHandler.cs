@@ -8,6 +8,7 @@ using Keas.Mvc.Attributes;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Handlers
 {
@@ -33,7 +34,7 @@ namespace Keas.Mvc.Handlers
             var user = _dbContext.Users.SingleOrDefault(u => u.Email == context.User.Identity.Name);
             if (user != null)
             {
-                var roles = _dbContext.Roles.Where(r => requirement.RoleStrings.Contains(r.Name)).ToList();
+                var roles = await _dbContext.Roles.Where(r => requirement.RoleStrings.Contains(r.Name)).ToListAsync();
                 if (await _securityService.IsInRoles(roles, team, user))
                 {
                     context.Succeed(requirement);
