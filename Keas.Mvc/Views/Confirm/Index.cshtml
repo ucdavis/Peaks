@@ -29,7 +29,7 @@
             {
                 <td>&nbsp;</td>
             }
-            <td><a href="@Url.Action("AcceptKey", new {keyId = item.Id})">accept</a></td>
+            <td><a href="@Url.Action("AcceptKey", new {keyId = item.Id})" class="btn btn-primary">Confirm</a></td>
         </tr>
     }
     </tbody>
@@ -63,7 +63,7 @@
                 {
                     <td>&nbsp;</td>
                 }
-                <td>accept</td>
+                <td><a href="@Url.Action("AcceptEquipment", new {equipmentId = item.Id})" class="btn btn-primary">Confirm</a></td>
             </tr>
         }
     </tbody>
