@@ -61,5 +61,34 @@ namespace Keas.Mvc.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> AcceptAll()
+        {
+            var user = await _securityService.GetUser();
+            var viewModel = await ConfirmUpdateModel.Create(Team, _context, user);
+            if (viewModel.Equipment.Count == 0 && viewModel.Keys.Count == 0)
+            {
+                Message = "You have no pending items to accept";
+                // TODO Find good place to redirect to. Ignores redirects to non-async actionresults.
+                RedirectToAction("Index", "Home");
+            }
+
+            foreach (var key in viewModel.Keys)
+            {
+                key.Assignment.IsConfirmed = true;
+                key.Assignment.ConfirmedAt = DateTime.UtcNow;
+                _context.Update(key);
+            }
+            foreach (var equipment in viewModel.Equipment)
+            {
+                equipment.Assignment.IsConfirmed = true;
+                equipment.Assignment.ConfirmedAt = DateTime.UtcNow;
+                _context.Update(equipment);
+            }
+            await _context.SaveChangesAsync();
+            Message = "All keys and equipment confirmed!";
+            // TODO Find good place to redirect to. Ignores redirects to non-async actionresults.
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
