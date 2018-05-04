@@ -25,5 +25,7 @@ namespace Keas.Core.Domain
         public DateTime ExpiresAt { get; set; }
 
         public bool IsConfirmed { get; set; }
+        public DateTime? ConfirmedAt { get; set; }
+
     }
 }
