@@ -64,7 +64,9 @@ namespace Keas.Mvc.Helpers
             // add assets
             var jasonCaes = new Person { User = jason, Id=1, Team = caes, Group = "CRU" };
             var scottCaes = new Person { User = scott, Id=2, Team = caes, Group = "CRU" };
+            var jamesCaes = new Person {User = james, Id = 3, Team = caes, Group = "CRU"};
 
+            context.People.Add(jamesCaes);
 
             var access = new Access
             {
