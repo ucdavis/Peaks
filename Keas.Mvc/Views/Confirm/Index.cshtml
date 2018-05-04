@@ -20,7 +20,15 @@
         <tr>
             <td>@item.Name</td>
             <td>@item.SerialNumber</td>
-            <td>@item.Room</td>
+            @if (@item.Room != null)
+            {
+                <td>>@item.Room.RoomName (@item.Room.RoomNumber @item.Room.BldgName)</td>
+            }
+            else
+            {
+                <td>&nbsp;</td>
+            }
+            
         </tr>
     }
     </tbody>
@@ -45,7 +53,14 @@
                 <td>@item.SerialNumber</td>
                 <td>@item.Make</td>
                 <td>@item.Model</td>
-                <td>@item.Room</td>
+                @if (@item.Room != null)
+                {
+                    <td>>@item.Room.RoomName (@item.Room.RoomNumber @item.Room.BldgName)</td>
+                }
+                else
+                {
+                    <td>&nbsp;</td>
+                }
             </tr>
         }
     </tbody>
