@@ -5,6 +5,7 @@ using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
@@ -33,12 +34,30 @@ namespace Keas.Mvc.Controllers
             return View(viewModel);
         }
 
-        public async Task<IActionResult> AcceptKey(int keyid)
+        
+        public async Task<IActionResult> AcceptKey(int keyId)
         {
-            var keyAssignment = _context.Keys.Where(k => k.Id == keyid).Select(ka => ka.Assignment).First();
+            var keyAssignment = await _context.Keys.Where(k => k.Id == keyId).Select(ka => ka.Assignment).FirstAsync();
             keyAssignment.IsConfirmed = true;
             keyAssignment.ConfirmedAt = DateTime.UtcNow;
             _context.Update(keyAssignment);
+            await _context.SaveChangesAsync();
+
+            Message = "Key confirmed.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> AcceptEquipment(int equipmentId)
+        {
+            var equipmentAssignment = await 
+                _context.Equipment.Where(e => e.Id == equipmentId).Select(eq => eq.Assignment).FirstAsync();
+            equipmentAssignment.IsConfirmed = true;
+            equipmentAssignment.ConfirmedAt = DateTime.UtcNow;
+            _context.Update(equipmentAssignment);
+            await _context.SaveChangesAsync();
+
+            Message = "Equipment confirmed.";
 
             return RedirectToAction(nameof(Index));
         }
