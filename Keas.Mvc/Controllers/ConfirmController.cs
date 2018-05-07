@@ -22,8 +22,8 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var user = await _securityService.GetUser();
-            var viewModel = await ConfirmListModel.Create(Team, _context, user);
+            var person = await _securityService.GetPerson(Team);
+            var viewModel = await ConfirmListModel.Create(_context,person);
             if (viewModel.Equipment.Count == 0 && viewModel.Keys.Count==0)
             {
                 Message = "You have no pending items to accept";
@@ -64,8 +64,8 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> AcceptAll()
         {
-            var user = await _securityService.GetUser();
-            var viewModel = await ConfirmUpdateModel.Create(Team, _context, user);
+            var person = await _securityService.GetPerson(Team);
+            var viewModel = await ConfirmUpdateModel.Create(_context, person);
             if (viewModel.Equipment.Count == 0 && viewModel.Keys.Count == 0)
             {
                 Message = "You have no pending items to accept";
