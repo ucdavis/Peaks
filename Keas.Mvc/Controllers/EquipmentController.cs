@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,12 @@ namespace Keas.Mvc.Controllers
     public class EquipmentController : SuperController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEventService _eventService;
 
-        public EquipmentController(ApplicationDbContext context)
+        public EquipmentController(ApplicationDbContext context, IEventService eventService)
         {
             this._context = context;
+            _eventService = eventService;
         }
 
         public string GetTeam()
@@ -72,9 +75,13 @@ namespace Keas.Mvc.Controllers
             // TODO Make sure user has permissions
             if (ModelState.IsValid)
             {
-                var room = await _context.Rooms.SingleAsync(x => x.RoomKey == equipment.Room.RoomKey);
-                equipment.Room = room;
+                if (equipment.Room != null)
+                {
+                   var room = await _context.Rooms.SingleAsync(x => x.RoomKey == equipment.Room.RoomKey);
+                    equipment.Room = room;
+                }
                 _context.Equipment.Add(equipment);
+                await _eventService.TrackCreateEquipment(equipment);
                 await _context.SaveChangesAsync();
             }
             return Json(equipment);
@@ -87,10 +94,12 @@ namespace Keas.Mvc.Controllers
             {
                 var equipment = await _context.Equipment.Include(x => x.Room).SingleAsync(x => x.Id == equipmentId);
                 equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
+                equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
 
                 _context.EquipmentAssignments.Add(equipment.Assignment);
 
                 await _context.SaveChangesAsync();
+                await _eventService.TrackAssignEquipment(equipment);
                 return Json(equipment);
             }
             return BadRequest(ModelState);
@@ -106,6 +115,7 @@ namespace Keas.Mvc.Controllers
                 _context.EquipmentAssignments.Remove(eq.Assignment);
                 eq.Assignment = null;
                 await _context.SaveChangesAsync();
+                await _eventService.TrackUnAssignEquipment(equipment);
                 return Json(null);
             }
             return BadRequest(ModelState);

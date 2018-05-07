@@ -25,6 +25,9 @@ namespace Keas.Mvc.Services
         Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId);
         Task<User> GetUser();
 
+        Task<Person> GetPerson(string teamName);
+        Task<List<User>> GetUsersInRoles(List<Role> roles, string teamName);
+
 
     }
     public class SecurityService : ISecurityService
@@ -113,12 +116,27 @@ namespace Keas.Mvc.Services
             return user;
         }
 
+        public async Task<Person> GetPerson(string teamName)
+        {
+            var userId = _contextAccessor.HttpContext.User.Identity.Name;
+            var person =
+                await _dbContext.People.SingleOrDefaultAsync(p => p.User.Email == userId && p.Team.Name == teamName);
+            return person;
+        }
+
         public async Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId)
         {
             var users = await _dbContext.TeamPermissions.Where(x => x.TeamId == teamId && roles.Any(r=> r.Id==x.RoleId)).Select(tp=>tp.User).Distinct().ToListAsync();
             
             return users;
         }
-        
+
+        public async Task<List<User>> GetUsersInRoles(List<Role> roles, string teamName)
+        {
+            var users = await _dbContext.TeamPermissions.Where(x => x.Team.Name== teamName && roles.Any(r => r.Id == x.RoleId)).Select(tp => tp.User).Distinct().ToListAsync();
+
+            return users;
+        }
+
     }
 }
