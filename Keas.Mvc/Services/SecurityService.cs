@@ -24,6 +24,8 @@ namespace Keas.Mvc.Services
 
         Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId);
         Task<User> GetUser();
+
+        Task<Person> GetPerson(string teamName);
         Task<List<User>> GetUsersInRoles(List<Role> roles, string teamName);
 
 
@@ -112,6 +114,14 @@ namespace Keas.Mvc.Services
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
             var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Email == userId);
             return user;
+        }
+
+        public async Task<Person> GetPerson(string teamName)
+        {
+            var userId = _contextAccessor.HttpContext.User.Identity.Name;
+            var person =
+                await _dbContext.People.SingleOrDefaultAsync(p => p.User.Email == userId && p.Team.Name == teamName);
+            return person;
         }
 
         public async Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId)
