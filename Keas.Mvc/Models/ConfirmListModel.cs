@@ -14,12 +14,12 @@ namespace Keas.Mvc.Models
         public List<Equipment> Equipment { get; set; }
 
        
-        public static async Task<ConfirmListModel> Create(string teamName, ApplicationDbContext context, User user)
+        public static async Task<ConfirmListModel> Create(ApplicationDbContext context, Person person)
         {
             var viewModel = new ConfirmListModel
             {
-                Keys = await context.Keys.Include(k=> k.Room).Where(k => !k.Assignment.IsConfirmed && k.Assignment.Person.User == user && k.Team.Name == teamName).ToListAsync(),
-                Equipment = await context.Equipment.Include(e=> e.Room).Where(e => !e.Assignment.IsConfirmed && e.Assignment.Person.User == user && e.Team.Name == teamName).ToListAsync()
+                Keys = await context.Keys.Include(k=> k.Room).Where(k => !k.Assignment.IsConfirmed && k.Assignment.Person == person).ToListAsync(),
+                Equipment = await context.Equipment.Include(e=> e.Room).Where(e => !e.Assignment.IsConfirmed && e.Assignment.Person==person).ToListAsync()
             };
             
             return viewModel;
