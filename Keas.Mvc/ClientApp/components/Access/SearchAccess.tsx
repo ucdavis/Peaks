@@ -86,7 +86,7 @@ export default class SearchAccess extends React.Component<IProps, IState> {
                     onSearch={async query => {
                         this.setState({ isSearchLoading: true });
                         const access = await this.context.fetch(
-                            `/api/${this.context.team.name}/access/search?teamId=${this.context.team.id}&q=${query}`
+                            `/api/${this.context.team.name}/access/search?q=${query}`
                         );
                         this.setState({
                             access,

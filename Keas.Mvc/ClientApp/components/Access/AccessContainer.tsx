@@ -35,8 +35,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   public async componentDidMount() {
       // are we getting the person's access or the team's?
       const accessFetchUrl = this.props.person
-          ? `/api/${this.context.team.name}/access/listassigned?personId=${this.props.person.id}&teamId=${this.props.person.teamId}`
-      : `/api/${this.context.team.name}/access/list?teamId=${this.context.team.id}`;
+          ? `/api/${this.context.team.name}/access/listassigned?personId=${this.props.person.id}`
+      : `/api/${this.context.team.name}/access/list/`;
 
     const access = await this.context.fetch(accessFetchUrl);
     this.setState({ access , loading: false });
