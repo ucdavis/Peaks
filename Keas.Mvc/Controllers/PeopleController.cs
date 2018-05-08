@@ -32,7 +32,7 @@ namespace Keas.Mvc.Controllers
             return Json(people);
         }
 
-        public async Task<IActionResult> Search(string Team, string q)
+        public async Task<IActionResult> Search(string q)
         {
             var people = await _context.People
                 .Where(x => x.Team.Name == Team && x.Active && x.User.Email.StartsWith(q))
