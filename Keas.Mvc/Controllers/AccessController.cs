@@ -28,25 +28,26 @@ namespace Keas.Mvc.Controllers
             return Team;
         }
 
-        public async Task<IActionResult> Search(int teamId, string q)
+        public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.InvariantCultureIgnoreCase;
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person.User)
-                .Where(x => x.TeamId == teamId && x.Active &&
+                .Where(x => x.Team.Name == Team && x.Active &&
                 (x.Name.StartsWith(q, comparison))) //|| x.SerialNumber.StartsWith(q, comparison)))
                 .AsNoTracking().ToListAsync();
 
             return Json(access);
         }
 
-        public async Task<IActionResult> ListAssigned(int personId, int teamId) {
+        public async Task<IActionResult> ListAssigned(int personId) {
             var assignedAccess = await _context.Access 
-                .Where(x => x.Active && x.TeamId == teamId && x.Assignments.Any(y => y.PersonId == personId))
+                .Where(x => x.Active && x.Team.Name == Team && x.Assignments.Any(y => y.PersonId == personId))
                 .Select(a => new Access()
                 {
                     Id = a.Id,
                     Name = a.Name,
                     TeamId = a.TeamId,
+                    Team = a.Team,
                     Assignments = a.Assignments.Where(b => b.PersonId == personId).Select(
                             c => new AccessAssignment()
                             {
@@ -72,13 +73,14 @@ namespace Keas.Mvc.Controllers
             return Json(assignedAccess);
         }
 
-        public async Task<IActionResult> List(int teamId)
+        public async Task<IActionResult> List()
         {
             var accessList = await _context.Access
-                .Where(x => x.Team.Id == teamId)
+                .Where(x => x.Team.Name == Team)
                 .Include(x=> x.Assignments)
                 .ThenInclude(x => x.Person)
                 .ThenInclude(x => x.User)
+                .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
 
             return Json(accessList);

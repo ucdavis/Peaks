@@ -42,7 +42,7 @@ namespace Keas.Mvc.Helpers
 
             var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
             var james = new User { Id = "141414", FirstName = "James", Name = "James Cubbage", Email = "jscubbage@ucdavis.edu" };
-            var jason = new User { Id = "123222", Name = "Jason", Email = "jason@email.com" };
+            var laura = new User { Id = "123222", Name = "Laura Holstege", Email = "laholstege@ucdavis.edu" };
             var caes = new Team { Id = 1, Name = "CAESDO" };
 
             context.Users.Add(scott);
@@ -62,7 +62,7 @@ namespace Keas.Mvc.Helpers
             context.Roles.Add(accessMaster);
 
             // add assets
-            var jasonCaes = new Person { User = jason, Id=1, Team = caes, Group = "CRU" };
+            var lauraCaes = new Person { User = laura, Id=1, Team = caes, Group = "CRU" };
             var scottCaes = new Person { User = scott, Id=2, Team = caes, Group = "CRU" };
             var jamesCaes = new Person {User = james, Id = 3, Team = caes, Group = "CRU"};
 
@@ -75,12 +75,12 @@ namespace Keas.Mvc.Helpers
             var accessAssignment = new AccessAssignment
             {
                 //Access = access,
-                Person = jasonCaes,
+                Person = lauraCaes,
                 RequestedBy = scott,
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
             access.Assignments.Add(accessAssignment);
-            jasonCaes.AccessAssignments.Add(accessAssignment);
+            lauraCaes.AccessAssignments.Add(accessAssignment);
 
             var access2 = new Access
             {
@@ -100,9 +100,9 @@ namespace Keas.Mvc.Helpers
 
             var keyAssignment = new KeyAssignment
             {
-                Person = jasonCaes,
-                PersonId = jasonCaes.Id,
-                RequestedBy = jason,
+                Person = lauraCaes,
+                PersonId = lauraCaes.Id,
+                RequestedBy = laura,
                 ExpiresAt = DateTime.UtcNow.AddYears(5)
             };
 
@@ -110,7 +110,7 @@ namespace Keas.Mvc.Helpers
 
             var equipmentAssignment = new EquipmentAssignment
             {
-                Person = jasonCaes,
+                Person = lauraCaes,
                 RequestedBy = scott,
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
@@ -129,7 +129,7 @@ namespace Keas.Mvc.Helpers
 
             var equip2Assignment = new EquipmentAssignment
             {
-                Person = jasonCaes,
+                Person = lauraCaes,
                 RequestedBy = scott,
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
@@ -140,7 +140,7 @@ namespace Keas.Mvc.Helpers
             context.Equipment.Add(equip2);
             
             var history = new History {
-                Person = jasonCaes,
+                Person = lauraCaes,
                 Actor = scott,
                 Description = "Something important happened",
                 Key = key
@@ -148,12 +148,18 @@ namespace Keas.Mvc.Helpers
 
             var scottKey = new TeamPermission{ Id = 1, Team = caes, Role = keyMaster, User = scott};
             var scottEquip = new TeamPermission {Id = 2, Team = caes, Role = equipMaster, User = scott};
-            var scottAccess = new TeamPermission {Id = 5, Team = caes, Role = accessMaster, User = scott};
-            var jasonEquip = new TeamPermission { Id = 3, Team = caes, Role = equipMaster, User = jason };
-            var jamesDa = new TeamPermission{Id = 4, Team = caes, Role = departmentAdmin, User = james};
+            var scottAccess = new TeamPermission {Id = 3, Team = caes, Role = accessMaster, User = scott};
+            var lauraKey = new TeamPermission{ Id = 4, Team = caes, Role = keyMaster, User = laura};
+            var lauraEquip = new TeamPermission {Id = 5, Team = caes, Role = equipMaster, User = laura};
+            var lauraAccess = new TeamPermission {Id = 6, Team = caes, Role = accessMaster, User = laura};
+            var jamesDa = new TeamPermission{Id = 7, Team = caes, Role = departmentAdmin, User = james};
             context.TeamPermissions.Add(scottKey);
             context.TeamPermissions.Add(scottEquip);
-            context.TeamPermissions.Add(jasonEquip);
+
+            context.TeamPermissions.Add(lauraEquip);
+            context.TeamPermissions.Add(lauraKey);
+            context.TeamPermissions.Add(lauraAccess);
+
             context.TeamPermissions.Add(jamesDa);
             context.TeamPermissions.Add(scottAccess);
 

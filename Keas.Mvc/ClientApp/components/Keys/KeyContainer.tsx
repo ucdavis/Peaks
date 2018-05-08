@@ -34,10 +34,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   public async componentDidMount() {
     // are we getting the person's key or the team's?
     const keyFetchUrl = this.props.person
-      ? `/keys/listassigned?personid=${this.props.person.id}&teamId=${
-          this.props.person.teamId
-        }`
-      : `/keys/list/${this.context.team.id}`;
+      ? `/api/${this.context.team.name}/keys/listassigned?personid=${this.props.person.id}`
+      : `/api/${this.context.team.name}/keys/list/`;
 
     const keys = await this.context.fetch(keyFetchUrl);
     this.setState({ keys, loading: false });
@@ -88,7 +86,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     // if we are creating a new key
     if (key.id === 0) {
       key.teamId = this.context.team.id;
-      key = await this.context.fetch("/keys/create", {
+      key = await this.context.fetch("/api/${this.context.team.name}/keys/create", {
         body: JSON.stringify(key),
         method: "POST"
       });
@@ -96,7 +94,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/keys/assign?keyId=${key.id}&personId=${
+      const assignUrl = `/api/${this.context.team.name}/keys/assign?keyId=${key.id}&personId=${
         person.id
       }&date=${date}`;
 
@@ -125,7 +123,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
   private _revokeKey = async (key: IKey) => {
     // call API to actually revoke
-    const removed: IKey = await this.context.fetch("/keys/revoke", {
+    const removed: IKey = await this.context.fetch("/api/${this.context.team.name}/keys/revoke", {
       body: JSON.stringify(key),
       method: "POST"
     });

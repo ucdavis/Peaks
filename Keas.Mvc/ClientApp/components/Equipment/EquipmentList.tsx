@@ -23,7 +23,7 @@ export default class EquipmentList extends React.Component<IProps, {}> {
           />
     ));
       return (
-      <div className="table-responsive">
+      <div className="table">
         <table className="table">
           <thead>
             <tr>

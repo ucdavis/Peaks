@@ -29,11 +29,11 @@ namespace Keas.Mvc.Controllers
             return Team;
         }
 
-        public async Task<IActionResult> Search(int teamId, string q)
+        public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.InvariantCultureIgnoreCase;
             var keys = await _context.Keys
-                .Where(x => x.Team.Id == teamId && x.Active && x.Assignment == null &&
+                .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
                 .AsNoTracking().ToListAsync();
 
@@ -47,21 +47,23 @@ namespace Keas.Mvc.Controllers
         }
 
 
-        public async Task<IActionResult> ListAssigned(int personId, int teamId) {
+        public async Task<IActionResult> ListAssigned(int personId) {
             var keyAssignments = await _context.Keys
-                .Where(x=> x.Assignment.PersonId == personId && x.TeamId == teamId)
+                .Where(x=> x.Assignment.PersonId == personId && x.Team.Name == Team)
                 .Include(x=> x.Assignment)
                 .ThenInclude(x => x.Person.User)
+                .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
 
             return Json(keyAssignments);
         }
 
         // List all keys for a team
-        public async Task<IActionResult> List(int id) {
-            var keys = await _context.Keys.Where(x=> x.TeamId == id)
+        public async Task<IActionResult> List() {
+            var keys = await _context.Keys.Where(x=> x.Team.Name == Team)
                 .Include(x=> x.Assignment)
                 .ThenInclude(x => x.Person.User)
+                .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
 
             return Json(keys);
@@ -83,7 +85,7 @@ namespace Keas.Mvc.Controllers
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var key = await _context.Keys.SingleAsync(x => x.Id == keyId);
+                var key = await _context.Keys.Where(x => x.Team.Name == Team).SingleAsync(x => x.Id == keyId);
                 key.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
                 key.Assignment.Person = await _context.People.Include(p=> p.User).SingleAsync(p=> p.Id==personId);
 
@@ -101,7 +103,7 @@ namespace Keas.Mvc.Controllers
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var k = await _context.Keys.Include(x => x.Assignment).SingleAsync(x => x.Id == key.Id);
+                var k = await _context.Keys.Where(x => x.Team.Name == Team).Include(x => x.Assignment).SingleAsync(x => x.Id == key.Id);
 
                 _context.KeyAssignments.Remove(k.Assignment);
                 k.Assignment = null;

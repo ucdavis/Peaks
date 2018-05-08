@@ -49,7 +49,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     minLength={3}
                     placeholder="Search for equipment by name or by serial number"
                     labelKey="name"
-                    filterBy={() => true} //don't filter on top of our search
+                    filterBy={() => true} // don't filter on top of our search
                     allowNew={true}
                     renderMenuItemChildren={(option, props, index) => (
                         <div>
@@ -69,11 +69,11 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     onSearch={async query => {
                         this.setState({ isSearchLoading: true });
                         const equipment = await this.context.fetch(
-                            `/equipment/search?teamId=${this.context.team.id}&q=${query}`
+                            `/api/${this.context.team.name}/equipment/search?q=${query}`
                         );
                         this.setState({
+                            equipment,
                             isSearchLoading: false,
-                            equipment
                         });
                     }}
                     onChange={selected => {
@@ -95,6 +95,14 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
         else {
             // if teamId is not set, this is a new equipment
             this.props.onSelect({
+                attributes: !!equipment.attributes ? equipment.attributes : 
+                [ 
+                {
+                    equipmentId: 0,
+                    key: "",
+                    value: "",
+                  }
+                ],
                 id: equipment.teamId ? equipment.id : 0,
                 make: equipment.make ? equipment.make : "",
                 model: equipment.model ? equipment.model : "",

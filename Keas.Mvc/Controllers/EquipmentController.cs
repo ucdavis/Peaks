@@ -9,6 +9,7 @@ using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Keas.Mvc.Controllers
 {
@@ -28,11 +29,11 @@ namespace Keas.Mvc.Controllers
             return Team;
         }
 
-        public async Task<IActionResult> Search(int teamId, string q)
+        public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.InvariantCultureIgnoreCase;
             var equipment = await _context.Equipment
-                .Where(x => x.Team.Id == teamId && x.Active && x.Assignment == null &&
+                .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
                 .AsNoTracking().ToListAsync();
 
@@ -45,26 +46,42 @@ namespace Keas.Mvc.Controllers
             return Json(equipment);
         }
 
-        public async Task<IActionResult> ListAssigned(int personId, int teamId)
+        public async Task<IActionResult> CommonAttributeKeys() 
+        {
+            var keys = await _context.EquipmentAttributes
+            .Where(x => x.Equipment.Team.Name == Team)
+            .GroupBy(x => x.Key)
+            .Take(5)
+            .OrderByDescending(x => x.Count())
+            .Select(x => x.Key).AsNoTracking().ToListAsync();
+
+            return Json(keys);
+        }
+
+        public async Task<IActionResult> ListAssigned(int personId)
         {
             var equipmentAssignments = await _context.Equipment
-                .Where(x => x.Assignment.PersonId == personId && x.TeamId == teamId)
+                .Where(x => x.Assignment.PersonId == personId && x.Team.Name == Team)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person.User)
                 .Include(x => x.Room)
+                .Include(x => x.Attributes)
+                .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
 
             return Json(equipmentAssignments);
         }
 
         // List all equipments for a team
-        public async Task<IActionResult> List(int id)
+        public async Task<IActionResult> List()
         {
             var equipments = await _context.Equipment
-                .Where(x => x.TeamId == id)
+                .Where(x => x.Team.Name == Team)
                 .Include(x => x.Assignment)
                 .ThenInclude(x=>x.Person.User)
                 .Include(x => x.Room)
+                .Include(x => x.Attributes)
+                .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
 
             return Json(equipments);
@@ -92,7 +109,7 @@ namespace Keas.Mvc.Controllers
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var equipment = await _context.Equipment.Include(x => x.Room).SingleAsync(x => x.Id == equipmentId);
+                var equipment = await _context.Equipment.Where(x => x.Team.Name == Team).Include(x => x.Room).SingleAsync(x => x.Id == equipmentId);
                 equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
                 equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
 
@@ -110,7 +127,7 @@ namespace Keas.Mvc.Controllers
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var eq = await _context.Equipment.Include(x => x.Assignment).SingleAsync(x => x.Id == equipment.Id);
+                var eq = await _context.Equipment.Where(x => x.Team.Name == Team).Include(x => x.Assignment).SingleAsync(x => x.Id == equipment.Id);
 
                 _context.EquipmentAssignments.Remove(eq.Assignment);
                 eq.Assignment = null;

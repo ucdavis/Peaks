@@ -1,12 +1,15 @@
 ﻿import * as React from "react";
 
-import { IEquipment, IRoom } from "../../Types";
+import { IEquipment, IEquipmentAttribute, IRoom } from "../../Types";
 import AssignRoom from "../Spaces/AssignRoom"
+import EquipmentAttributes from "./EquipmentAttributes";
 
 interface IProps {
-    selectedEquipment: IEquipment;
-    disableEditing: boolean;
     changeProperty?: (property: string, value: any) => void;
+    commonAttributeKeys?: string[];
+    disableEditing: boolean;
+    selectedEquipment: IEquipment;
+    updateAttributes?: (attribute: IEquipmentAttribute[]) => void;
 }
 
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
@@ -69,6 +72,12 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         onChange={(e) => this.props.changeProperty("model", e.target.value)}
                     />
                 </div>
+                <EquipmentAttributes 
+                    updateAttributes={this.props.updateAttributes}
+                    disableEdit={this.props.disableEditing}
+                    equipment={this.props.selectedEquipment} 
+                    commonKeys={this.props.commonAttributeKeys}
+                    />
                 {this.props.disableEditing &&
                     <div className="form-group">
                         <label>Room</label>
