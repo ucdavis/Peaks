@@ -137,5 +137,12 @@ namespace Keas.Mvc.Controllers
             }
             return BadRequest(ModelState);
         }
+
+        public async Task<IActionResult> GetHistory(int id)
+        {
+            var history = await _context.Histories.Where(x => x.AssetType == "Equipment" && x.EquipmentId == id).AsNoTracking().ToListAsync();
+
+            return Json(history);
+        }
     }
 }
