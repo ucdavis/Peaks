@@ -28,20 +28,20 @@ namespace Keas.Mvc.Controllers
             return Team;
         }
 
-        public async Task<IActionResult> Search(string teamName, string q)
+        public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.InvariantCultureIgnoreCase;
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person.User)
-                .Where(x => x.Team.Name == teamName && x.Active &&
+                .Where(x => x.Team.Name == Team && x.Active &&
                 (x.Name.StartsWith(q, comparison))) //|| x.SerialNumber.StartsWith(q, comparison)))
                 .AsNoTracking().ToListAsync();
 
             return Json(access);
         }
 
-        public async Task<IActionResult> ListAssigned(string teamName, int personId) {
+        public async Task<IActionResult> ListAssigned(int personId) {
             var assignedAccess = await _context.Access 
-                .Where(x => x.Active && x.Team.Name == teamName && x.Assignments.Any(y => y.PersonId == personId))
+                .Where(x => x.Active && x.Team.Name == Team && x.Assignments.Any(y => y.PersonId == personId))
                 .Select(a => new Access()
                 {
                     Id = a.Id,
@@ -73,10 +73,10 @@ namespace Keas.Mvc.Controllers
             return Json(assignedAccess);
         }
 
-        public async Task<IActionResult> List(string teamName)
+        public async Task<IActionResult> List()
         {
             var accessList = await _context.Access
-                .Where(x => x.Team.Name == teamName)
+                .Where(x => x.Team.Name == Team)
                 .Include(x=> x.Assignments)
                 .ThenInclude(x => x.Person)
                 .ThenInclude(x => x.User)
@@ -86,7 +86,7 @@ namespace Keas.Mvc.Controllers
             return Json(accessList);
         }
 
-        public async Task<IActionResult> Create(string teamName, [FromBody]Access access)
+        public async Task<IActionResult> Create([FromBody]Access access)
         {
             // TODO Make sure user has permissions
             if (ModelState.IsValid)
@@ -99,7 +99,7 @@ namespace Keas.Mvc.Controllers
             return BadRequest(ModelState);
         }
 
-        public async Task<IActionResult> Assign(string teamName, int accessId, int personId, string date)
+        public async Task<IActionResult> Assign(int accessId, int personId, string date)
         {
             // TODO Make sure user has permssion, make sure access exists, makes sure access is in this team
             if (ModelState.IsValid)
@@ -118,7 +118,7 @@ namespace Keas.Mvc.Controllers
             return BadRequest(ModelState);
         }
 
-        public async Task<IActionResult> Revoke(string teamName, [FromBody] AccessAssignment accessAssignment)
+        public async Task<IActionResult> Revoke([FromBody] AccessAssignment accessAssignment)
         {
             //TODO: check permissions
             if (ModelState.IsValid)

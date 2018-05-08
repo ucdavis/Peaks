@@ -24,18 +24,18 @@ namespace Keas.Mvc.Controllers
             return Json(people);
         }
 
-        public async Task<IActionResult> List(string teamName)
+        public async Task<IActionResult> List()
         {
             var people = await _context.People
-                .Where(x => x.Team.Name == teamName && x.Active)
+                .Where(x => x.Team.Name == Team && x.Active)
                 .Include(x => x.User).AsNoTracking().ToListAsync();
             return Json(people);
         }
 
-        public async Task<IActionResult> Search(string teamName, string q)
+        public async Task<IActionResult> Search(string Team, string q)
         {
             var people = await _context.People
-                .Where(x => x.Team.Name == teamName && x.Active && x.User.Email.StartsWith(q))
+                .Where(x => x.Team.Name == Team && x.Active && x.User.Email.StartsWith(q))
                 .Include(x => x.User).AsNoTracking().ToListAsync();
 
             return Json(people);
@@ -57,10 +57,10 @@ namespace Keas.Mvc.Controllers
             return View(person);
         }
 
-        public async Task<IActionResult> GetPerson(string teamName, int personId)
+        public async Task<IActionResult> GetPerson(int personId)
         {
             var person = await _context.People
-                .Where(x => x.Team.Name == teamName && x.Id == personId).Include(x => x.User).AsNoTracking().SingleAsync();
+                .Where(x => x.Team.Name == Team && x.Id == personId).Include(x => x.User).AsNoTracking().SingleAsync();
             return Json(person);
         }
     }
