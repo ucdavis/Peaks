@@ -130,7 +130,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
     // once we have either selected or created the access we care about
     private _onSelected = (access: IAccess) => {
-        console.log("selected in revoke", access);
         // if this access is not already assigned
 
         // TODO: more validation of name
@@ -141,10 +140,10 @@ export default class AssignAccess extends React.Component<IProps, IState> {
             },
                 this._validateState);
         }
-        //else if (this.props.assignedAccessList.findIndex(x => x == access.name) != -1)
-        //{
+        // else if (this.props.assignedAccessList.findIndex(x => x == access.name) != -1)
+        // {
         //    this.setState({ selectedAccess: null, error: "The access you have chosen is already assigned to this user", validAccess: false }, this._validateState);
-        //}
+        // }
         else {
             this.setState({
                 access,

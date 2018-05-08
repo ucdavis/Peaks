@@ -115,9 +115,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     }
 
     const index = this.state.access.findIndex(x => x.id === access.id);
-    console.log("index " + index);
     if (index !== -1) {
-        console.log("changing");
         // update already existing entry in access
         const updateAccess = [...this.state.access];
         updateAccess[index] = access;

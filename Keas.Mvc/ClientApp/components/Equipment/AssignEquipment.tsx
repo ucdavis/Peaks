@@ -187,15 +187,9 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       return;
     }
 
-    console.log("in assign");
-    console.log(this.state.equipment);
-
     const person = this.props.person ? this.props.person : this.state.person;
-
     const equipment = this.state.equipment;
     equipment.attributes = equipment.attributes.filter(x => !!x.key);
-
-    console.log(equipment);
 
     await this.props.onCreate(person, equipment, this.state.date.format());
 
