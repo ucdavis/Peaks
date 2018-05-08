@@ -57,8 +57,15 @@ export default class EquipmentAttribute extends React.Component<IProps, {}> {
             options={this.props.commonKeys}
             onChange={(selected) =>{ 
                 if(selected && selected.length === 1) {
-                    this.props.changeProperty(this.props.index,"key",selected[0])} 
-                }}
+                    if(!!selected[0].key){
+                        // if user selects new from dropdown, it is an object
+                        this.props.changeProperty(this.props.index,"key",selected[0].key); 
+                    }
+                    else {
+                        // otherwise, it's a string
+                        this.props.changeProperty(this.props.index,"key",selected[0]);
+                    }
+                }}}
             onInputChange={(input) => {
                 this.props.changeProperty(this.props.index,"key",input)
             }}
