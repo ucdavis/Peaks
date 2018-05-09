@@ -40,9 +40,9 @@ namespace Keas.Mvc.Helpers
             var space6 = new Space { Room = room6, ChartNum = "3", OrgId = "ADNO" };
             context.Spaces.Add(space6);
 
-            var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
-            var james = new User { Id = "141414", FirstName = "James", Name = "James Cubbage", Email = "jscubbage@ucdavis.edu" };
-            var laura = new User { Id = "123222", Name = "Laura Holstege", Email = "laholstege@ucdavis.edu" };
+            var scott = new User { Id = "1000029584", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
+            var james = new User { Id = "1000025056", FirstName = "James", Name = "James Cubbage", Email = "jscubbage@ucdavis.edu" };
+            var laura = new User { Id = "1000243041", Name = "Laura Holstege", Email = "laholstege@ucdavis.edu" };
             var caes = new Team { Id = 1, Name = "CAESDO" };
 
             context.Users.Add(scott);
