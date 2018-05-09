@@ -167,6 +167,9 @@ namespace Keas.Mvc.Helpers
             context.TeamPermissions.Add(jamesDa);
             context.TeamPermissions.Add(scottAccess);
 
+            var JamesAdmin = new SystemPermission {Id = 1, Role = admin, User = james};
+            context.SystemPermissions.Add(JamesAdmin);
+
             context.Histories.Add(history);
 
             context.SaveChanges();

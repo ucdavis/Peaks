@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Keas.Core.Domain
 {
-    public class SystemPermissions
+    public class SystemPermission
     {
         public int Id { get; set; }
 

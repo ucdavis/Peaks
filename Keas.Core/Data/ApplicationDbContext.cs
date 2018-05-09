@@ -26,6 +26,7 @@ namespace Keas.Core.Data
 
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<TeamPermission> TeamPermissions { get; set; }
+        public virtual DbSet<SystemPermission> SystemPermissions { get; set; }
 
         public virtual DbSet<History> Histories { get; set; }
 
