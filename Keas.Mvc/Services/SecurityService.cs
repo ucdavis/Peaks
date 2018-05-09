@@ -59,6 +59,11 @@ namespace Keas.Mvc.Services
                 {
                     return true;
                 }
+                var admin = await _dbContext.SystemPermissions.Where(sp => sp.User == user).ToListAsync();
+                if (admin.Any(b => roles.Contains(b.Role)))
+                {
+                    return true;
+                }
             }
             return false;
         }
@@ -76,6 +81,12 @@ namespace Keas.Mvc.Services
                     .Load();
 
                 if (team.TeamPermissions.Any(a => roles.Contains(a.Role)))
+                {
+                    return true;
+                }
+
+                var admin = await _dbContext.SystemPermissions.Where(sp => sp.User == user).ToListAsync();
+                if (admin.Any(b => roles.Contains(b.Role)))
                 {
                     return true;
                 }
