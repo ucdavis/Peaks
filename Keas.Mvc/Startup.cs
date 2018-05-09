@@ -91,10 +91,10 @@ namespace Keas.Mvc
             });
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("KeyMasterAccess", policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin)));
-                options.AddPolicy("EquipMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.EquipmentMaster, Role.Codes.DepartmentalAdmin)));
-                options.AddPolicy("AccessMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin)));
-                options.AddPolicy("DepartmentAdminAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy("KeyMasterAccess", policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
+                options.AddPolicy("EquipMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.EquipmentMaster, Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
+                options.AddPolicy("AccessMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
+                options.AddPolicy("DepartmentAdminAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
             });
             services.AddScoped<IAuthorizationHandler, VerifyRoleAccessHandler>();
             
