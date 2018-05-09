@@ -55,11 +55,15 @@ namespace Keas.Mvc.Helpers
             var equipMaster = new Role {Id = 2, Name = "EquipMaster"};
             var departmentAdmin = new Role {Id= 3, Name = "DepartmentalAdmin"};
             var accessMaster = new Role {Id = 4, Name = "AccessMaster"};
+            var admin = new Role {Id = 5, Name = "Admin", IsAdmin = true};
+            var emulate = new Role {Id = 6, Name = "EmulationUser", IsAdmin = true};
 
             context.Roles.Add(keyMaster);
             context.Roles.Add(equipMaster);
             context.Roles.Add(departmentAdmin);
             context.Roles.Add(accessMaster);
+            context.Roles.Add(admin);
+            context.Roles.Add(emulate);
 
             // add assets
             var lauraCaes = new Person { User = laura, Id=1, Team = caes, Group = "CRU" };

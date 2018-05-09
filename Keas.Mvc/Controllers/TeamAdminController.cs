@@ -94,7 +94,7 @@ namespace Keas.Mvc.Controllers
         {
             var team = await _context.Teams.SingleAsync(x => x.Name == Team);
             
-            var viewModel = TeamAdminMembersAddModel.Create(team, _context);
+            var viewModel = await TeamAdminMembersAddModel.Create(team, _context);
             return View(viewModel);
         }
 
@@ -102,7 +102,7 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> AddMemberRole(TeamAdminMembersAddModel model)
         {
             var team = await _context.Teams.SingleAsync(x => x.Name == Team);
-            var viewModel = TeamAdminMembersAddModel.Create(team, _context);
+            var viewModel = await TeamAdminMembersAddModel.Create(team, _context);
             if (team == null)
             {
                 return NotFound();
