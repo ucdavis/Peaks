@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace Keas.Core.Domain
 {
-    public class User
+    public class User: IdentityUser
     {
         // IAM (campus identity) ID
         [Key]
