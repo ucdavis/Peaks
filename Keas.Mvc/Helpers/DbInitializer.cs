@@ -140,7 +140,7 @@ namespace Keas.Mvc.Helpers
             context.Equipment.Add(equip2);
             
             var history = new History {
-                Person = lauraCaes,
+                Target = lauraCaes,
                 Actor = scott,
                 Description = "Something important happened",
                 AssetType = "Key",
@@ -148,7 +148,7 @@ namespace Keas.Mvc.Helpers
             };
 
             var history2 = new History {
-                Person = lauraCaes,
+                Target = lauraCaes,
                 Actor = scott,
                 Description = "Something important happened 2",
                 AssetType = "Equipment",

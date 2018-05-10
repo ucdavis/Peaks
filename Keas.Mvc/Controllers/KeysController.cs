@@ -103,7 +103,9 @@ namespace Keas.Mvc.Controllers
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var k = await _context.Keys.Where(x => x.Team.Name == Team).Include(x => x.Assignment).SingleAsync(x => x.Id == key.Id);
+                var k = await _context.Keys.Where(x => x.Team.Name == Team).Include(x => x.Assignment)
+                    .ThenInclude(x => x.Person.User)
+                    .SingleAsync(x => x.Id == key.Id);
 
                 _context.KeyAssignments.Remove(k.Assignment);
                 k.Assignment = null;

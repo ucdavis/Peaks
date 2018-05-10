@@ -58,7 +58,7 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
           }
           {this.props.controller === "people" &&
             <Button onClick={this._loadHistories} disabled={this.state.reloading}>
-              Reload Histories {" "}
+              Reload History {" "}
               {this.state.reloaded ? <i className="fa fa-check" /> : null}
               {this.state.reloading ? <i className="fa fa-spin fa-circle-o-notch" /> : null}
             </Button> }
