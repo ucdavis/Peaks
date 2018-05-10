@@ -23,9 +23,6 @@ namespace Keas.Mvc.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var roles = await _context.Roles
-                .Where(r => r.Name == Role.Codes.KeyMaster || r.Name == Role.Codes.DepartmentalAdmin).ToListAsync();
-            ViewBag.Keymaster = await _securityService.IsInRoles(roles, Team);
             return View();
         }
 
