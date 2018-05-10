@@ -5,11 +5,10 @@ import {
     Modal,
     ModalBody,
     ModalFooter,
-    ModalHeader,
-    ListGroup,
-    ListGroupItem
+    ModalHeader
 } from "reactstrap";
-import { IKey } from "ClientApp/Types";
+import { IKey } from "../../Types";
+import HistoryContainer from "../History/HistoryContainer";
 import KeyEditValues from "./KeyEditValues";
 
 
@@ -24,7 +23,9 @@ export default class KeyDetails extends React.Component<IProps, {}> {
 
     public render() {
         if (this.props.selectedKey == null)
+        {
             return null;
+        }
         const key = this.props.selectedKey;
         return (
             <div>
@@ -32,6 +33,7 @@ export default class KeyDetails extends React.Component<IProps, {}> {
                     <ModalHeader>Details for {key.name}</ModalHeader>
                     <ModalBody>
                         <KeyEditValues selectedKey={key} disableEditing={true} />
+                        <HistoryContainer type="keys" id={key.id} />
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this.props.closeModal}>

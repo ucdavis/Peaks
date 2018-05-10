@@ -150,7 +150,39 @@ namespace Keas.Mvc.Helpers
             var history2 = new History {
                 Person = lauraCaes,
                 Actor = scott,
-                Description = "Something else important happened",
+                Description = "Something important happened 2",
+                AssetType = "Equipment",
+                Equipment = equipment
+            };
+
+            var history3 = new History {
+                Person = lauraCaes,
+                Actor = scott,
+                Description = "Something important happened 3",
+                AssetType = "Equipment",
+                Equipment = equipment
+            };
+
+            var history4 = new History {
+                Person = lauraCaes,
+                Actor = scott,
+                Description = "Something important happened 4",
+                AssetType = "Equipment",
+                Equipment = equipment
+            };
+
+            var history5 = new History {
+                Person = lauraCaes,
+                Actor = scott,
+                Description = "Something important happened 5",
+                AssetType = "Equipment",
+                Equipment = equipment
+            };
+
+            var history6 = new History {
+                Person = lauraCaes,
+                Actor = scott,
+                Description = "Something important happened 6",
                 AssetType = "Equipment",
                 Equipment = equipment
             };
@@ -174,6 +206,11 @@ namespace Keas.Mvc.Helpers
 
             context.Histories.Add(history);
             context.Histories.Add(history2);
+            context.Histories.Add(history3);
+            context.Histories.Add(history4);
+            context.Histories.Add(history5);
+            context.Histories.Add(history6);
+
 
             context.SaveChanges();
         }

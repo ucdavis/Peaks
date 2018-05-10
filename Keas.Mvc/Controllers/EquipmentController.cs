@@ -140,7 +140,10 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> GetHistory(int id)
         {
-            var history = await _context.Histories.Where(x => x.AssetType == "Equipment" && x.EquipmentId == id).AsNoTracking().ToListAsync();
+            var history = await _context.Histories
+                .Where(x => x.AssetType == "Equipment" && x.Equipment.Team.Name == Team && x.EquipmentId == id)
+                .Take(5)
+                .AsNoTracking().ToListAsync();
 
             return Json(history);
         }

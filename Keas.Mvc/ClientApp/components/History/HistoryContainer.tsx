@@ -12,6 +12,8 @@ interface IState {
 
 interface IProps {
   person?: IPerson;
+  type?: string;
+  id?: number;
 }
 
 export default class HistoryContainer extends React.Component<IProps, IState> {
@@ -33,7 +35,7 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
     // are we getting the person's key or the team's?
     const historyFetchUrl = this.props.person
       ? `/api/${this.context.team.name}/people/getHistory/${this.props.person.id}`
-      : `/api/${this.context.team.name}/keys/list/`;
+      : `/api/${this.context.team.name}/${this.props.type}/getHistory/${this.props.id}`;
 
     const histories = await this.context.fetch(historyFetchUrl);
     this.setState({ histories, loading: false });
@@ -47,7 +49,11 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
       <div className="card">
         <div className="card-body">
           <h4 className="card-title">History</h4>
-            <HistoryList histories={this.state.histories} />
+          {this.state.histories.length > 0 && 
+            <HistoryList histories={this.state.histories} />}
+          {this.state.histories.length < 1 &&
+            <p>No histories were found</p>
+          }
         </div>
       </div>
     );
