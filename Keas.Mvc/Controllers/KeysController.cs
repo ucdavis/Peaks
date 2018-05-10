@@ -119,6 +119,7 @@ namespace Keas.Mvc.Controllers
         {
             var history = await _context.Histories
                 .Where(x => x.AssetType == "Key" && x.Equipment.Team.Name == Team && x.EquipmentId == id)
+                .OrderByDescending(x => x.ActedDate)
                 .Take(5)
                 .AsNoTracking().ToListAsync();
 

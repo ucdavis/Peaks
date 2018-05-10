@@ -127,7 +127,9 @@ namespace Keas.Mvc.Controllers
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var eq = await _context.Equipment.Where(x => x.Team.Name == Team).Include(x => x.Assignment).SingleAsync(x => x.Id == equipment.Id);
+                var eq = await _context.Equipment.Where(x => x.Team.Name == Team)
+                    .Include(x => x.Assignment).ThenInclude(x => x.Person.User)
+                    .SingleAsync(x => x.Id == equipment.Id);
 
                 _context.EquipmentAssignments.Remove(eq.Assignment);
                 eq.Assignment = null;
@@ -142,6 +144,7 @@ namespace Keas.Mvc.Controllers
         {
             var history = await _context.Histories
                 .Where(x => x.AssetType == "Equipment" && x.Equipment.Team.Name == Team && x.EquipmentId == id)
+                .OrderByDescending(x => x.ActedDate)
                 .Take(5)
                 .AsNoTracking().ToListAsync();
 
