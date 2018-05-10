@@ -105,7 +105,6 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> RemoveRoles(string userId, int[] roles)
         {
-            // TODO: any roles we should not list? Any roles we should not allow deleted?
             if (userId == null)
             {
                 Message = "User not found!";
@@ -120,12 +119,12 @@ namespace Keas.Mvc.Controllers
 
             foreach (var role in roles)
             {
-                var teamPermssionToDelete = _context.TeamPermissions.Single(tptd => tptd.RoleId == role && tptd.UserId == userId && tptd.Team.Name == Team);
-                _context.TeamPermissions.Remove(teamPermssionToDelete);
+                var systemPermission =
+                    await _context.SystemPermissions.SingleAsync(sptd => sptd.RoleId == role && sptd.UserId == userId);
+                _context.SystemPermissions.Remove(systemPermission);
             }
             await _context.SaveChangesAsync();
             Message = "User removed from role.";
-            // TODO: Any reason to be more specific? E.g. "John removed from role(s) Keymaster,EquipMaster on team CAESDO".
             return RedirectToAction(nameof(RoledMembers));
         }
     }

@@ -1,7 +1,42 @@
-﻿
+﻿@model Keas.Mvc.Models.AdminMembersListModel
+
 @{
-    ViewData["Title"] = "RemoveRoles";
+    ViewData["Title"] = "Remove Admin Roles";
 }
 
-<h2>RemoveRoles</h2>
+<h2>Remove Admin Role</h2>
+
+@foreach(var item in Model.UserRoles) { 
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="RemoveRoles">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" name="userId" value="@item.User.Id"/>
+                <ul>
+                    <li>
+                        <div class="form-group">
+                            <div class="control-label">Name</div>
+                            <div class="form-control">@item.User.Name</div>
+                        </div>
+                    </li>
+
+                    <li>
+                        <div class="editor-label">Check Roles to delete</div>
+                        @foreach (var role in item.Roles)
+                        {
+                            <input type="checkbox" value="@role.Id" name="roles"/>
+                            @role.Name
+                            <br/>
+                            <br/>
+                        }
+                    </li>
+                    <li>
+                        <input class="btn btn-default" type="submit" value="Remove role(s)"/> | @Html.ActionLink("Cancel", "RoledMembers")
+                    </li>
+                </ul>
+
+            </form>
+        </div>
+    </div>
+}
 
