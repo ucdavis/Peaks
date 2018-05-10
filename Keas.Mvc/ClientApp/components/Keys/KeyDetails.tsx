@@ -33,7 +33,7 @@ export default class KeyDetails extends React.Component<IProps, {}> {
                     <ModalHeader>Details for {key.name}</ModalHeader>
                     <ModalBody>
                         <KeyEditValues selectedKey={key} disableEditing={true} />
-                        <HistoryContainer type="keys" id={key.id} />
+                        <HistoryContainer controller="keys" id={key.id} />
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this.props.closeModal}>

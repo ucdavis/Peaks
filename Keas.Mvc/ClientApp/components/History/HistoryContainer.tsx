@@ -14,9 +14,8 @@ interface IState {
 }
 
 interface IProps {
-  person?: IPerson;
-  type?: string;
-  id?: number;
+  controller: string;
+  id: number;
 }
 
 export default class HistoryContainer extends React.Component<IProps, IState> {
@@ -38,9 +37,7 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
   }
   public async componentDidMount() {
       this.setState({loading: true});
-      const historyFetchUrl = this.props.person
-      ? `/api/${this.context.team.name}/people/getHistory/${this.props.person.id}`
-      : `/api/${this.context.team.name}/${this.props.type}/getHistory/${this.props.id}`;
+      const historyFetchUrl = `/api/${this.context.team.name}/${this.props.controller}/getHistory/${this.props.id}`;
 
     const histories = await this.context.fetch(historyFetchUrl);
     this.setState({ histories, loading: false });  
@@ -59,7 +56,7 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
           {this.state.histories.length < 1 &&
             <p>No histories were found</p>
           }
-          {!!this.props.person &&
+          {this.props.controller === "people" &&
             <Button onClick={this._loadHistories} disabled={this.state.reloading}>
               Reload Histories {" "}
               {this.state.reloaded ? <i className="fa fa-check" /> : null}
@@ -72,9 +69,7 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
 
   private _loadHistories = async () => {
         this.setState({reloading: true, reloaded: false});
-        const historyFetchUrl = this.props.person
-        ? `/api/${this.context.team.name}/people/getHistory/${this.props.person.id}`
-        : `/api/${this.context.team.name}/${this.props.type}/getHistory/${this.props.id}`;
+        const historyFetchUrl = `/api/${this.context.team.name}/${this.props.controller}/getHistory/${this.props.id}`;
   
       const histories = await this.context.fetch(historyFetchUrl);
       this.setState({ histories, reloading: false, reloaded: true });

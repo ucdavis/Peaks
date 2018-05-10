@@ -20,7 +20,7 @@ export default class Person extends React.Component<IProps, {}> {
         <KeyContainer person={this.props.person} />
         <AccessContainer person={this.props.person} />
         <EquipmentContainer person={this.props.person} />
-        <HistoryContainer person={this.props.person} />
+        <HistoryContainer controller="people" id={this.props.person.id} />
       </div>
     );
   }
