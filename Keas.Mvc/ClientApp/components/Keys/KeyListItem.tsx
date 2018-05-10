@@ -8,6 +8,7 @@ interface IProps {
     onRevoke: (key: IKey) => void;
     onAdd: (key: IKey) => void;
     showDetails: (key: IKey) => void;
+    onEdit: (key: IKey) => void;
 }
 
 
@@ -29,6 +30,7 @@ export default class KeyListItem extends React.Component<IProps, {}> {
                         onAdd={this._onAdd}
                         canAdd={!hasAssignment}
                         showDetails={this._showDetails}
+                        onEdit={this._onEdit}
                     />
             </td>
           </tr>
@@ -42,5 +44,8 @@ export default class KeyListItem extends React.Component<IProps, {}> {
     }
     private _showDetails = () => {
         this.props.showDetails(this.props.keyEntity);
+    }
+    private _onEdit = () => {
+        this.props.onEdit(this.props.keyEntity);
     }
 }

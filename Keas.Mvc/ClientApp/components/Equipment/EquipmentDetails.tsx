@@ -6,10 +6,8 @@ import {
     ModalBody,
     ModalFooter,
     ModalHeader,
-    ListGroup,
-    ListGroupItem
 } from "reactstrap";
-import { IEquipment } from "ClientApp/Types";
+import { IEquipment } from "../../Types";
 import EquipmentEditValues from "./EquipmentEditValues";
 
 
@@ -23,8 +21,10 @@ interface IProps {
 export default class EquipmentDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedEquipment == null)
+        if (this.props.selectedEquipment == null) 
+        {
             return null;
+        }
         const equipment = this.props.selectedEquipment;
         return (
             <div>

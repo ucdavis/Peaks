@@ -35,6 +35,7 @@ namespace Keas.Mvc.Controllers
             var equipment = await _context.Equipment
                 .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
+                .Include(x => x.Room)
                 .AsNoTracking().ToListAsync();
 
             return Json(equipment);

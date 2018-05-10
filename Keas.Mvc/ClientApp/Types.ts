@@ -42,6 +42,7 @@ export interface ITeam {
 
 export interface IKey {
   id: number;
+  team: ITeam;
   teamId: number;
   name: string;
   serialNumber: string;

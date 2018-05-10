@@ -36,7 +36,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         <label>Assigned To</label>
                         <input type="text"
                             className="form-control"
-                            disabled={this.props.disableEditing}
+                            disabled={true}
                             value={this.props.selectedKey.assignment.person ? this.props.selectedKey.assignment.person.user.name : ""}
                             />
                     </div>
@@ -44,7 +44,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         <label>Expires at</label>
                         <input type="text"
                             className="form-control"
-                            disabled={this.props.disableEditing}
+                            disabled={true}
                             value={this.props.selectedKey.assignment.expiresAt ? this.props.selectedKey.assignment.expiresAt.toString() : ""}
                             />
                     </div>
