@@ -56,7 +56,7 @@ namespace Keas.Mvc.Helpers
             var departmentAdmin = new Role {Id= 3, Name = "DepartmentalAdmin"};
             var accessMaster = new Role {Id = 4, Name = "AccessMaster"};
             var admin = new Role {Id = 5, Name = "Admin", IsAdmin = true};
-            var emulate = new Role {Id = 6, Name = "EmulationUser", IsAdmin = true};
+            //var emulate = new Role {Id = 6, Name = "EmulationUser", IsAdmin = true};
 
             context.Roles.Add(keyMaster);
             context.Roles.Add(equipMaster);
