@@ -20,6 +20,8 @@ namespace Keas.Mvc.Services
 
         Task<bool> IsInRoles(List<Role> roles, string teamName);
 
+        Task<bool> IsInAdminRoles(List<Role> roles, User user);
+
         Task<bool> IsInRoles(List<Role> roles, string teamName, User user);
 
         Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId);
@@ -45,51 +47,56 @@ namespace Keas.Mvc.Services
         public async Task<bool> IsInRoles(List<Role> roles, string teamName)
         {
             var user = await GetUser();
-            using (_dbContext)
-            {
-                var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamName);
+            var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamName);
 
-                _dbContext.Entry(team)
-                    .Collection(t=> t.TeamPermissions)
-                    .Query()
-                    .Where(tp=> tp.User==user)
-                    .Load();
+            _dbContext.Entry(team)
+                .Collection(t=> t.TeamPermissions)
+                .Query()
+                .Where(tp=> tp.User==user)
+                .Load();
                 
-                if (team.TeamPermissions.Any(a=> roles.Contains(a.Role)))
-                {
-                    return true;
-                }
-                var admin = await _dbContext.SystemPermissions.Where(sp => sp.User == user).ToListAsync();
-                if (admin.Any(b => roles.Contains(b.Role)))
-                {
-                    return true;
-                }
+            if (team.TeamPermissions.Any(a=> roles.Contains(a.Role)))
+            {
+                return true;
             }
+            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User == user).ToListAsync();
+            if (admin.Any(b => roles.Contains(b.Role)))
+            {
+                return true;
+            }
+            
             return false;
         }
 
         public async Task<bool> IsInRoles(List<Role> roles, string teamName, User user)
         {
-            using (_dbContext)
+            var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamName);
+
+            _dbContext.Entry(team)
+                .Collection(t => t.TeamPermissions)
+                .Query()
+                .Where(tp => tp.User == user)
+                .Load();
+
+            if (team.TeamPermissions.Any(a => roles.Contains(a.Role)))
             {
-                var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamName);
+                return true;
+            }
 
-                _dbContext.Entry(team)
-                    .Collection(t => t.TeamPermissions)
-                    .Query()
-                    .Where(tp => tp.User == user)
-                    .Load();
+            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User == user).ToListAsync();
+            if (admin.Any(b => roles.Contains(b.Role)))
+            {
+                return true;
+            }
+            return false;
+        }
 
-                if (team.TeamPermissions.Any(a => roles.Contains(a.Role)))
-                {
-                    return true;
-                }
-
-                var admin = await _dbContext.SystemPermissions.Where(sp => sp.User == user).ToListAsync();
-                if (admin.Any(b => roles.Contains(b.Role)))
-                {
-                    return true;
-                }
+        public async Task<bool> IsInAdminRoles(List<Role> roles, User user)
+        {
+            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User == user).ToListAsync();
+            if (admin.Any(b => roles.Contains(b.Role)))
+            {
+                return true;
             }
             return false;
         }
