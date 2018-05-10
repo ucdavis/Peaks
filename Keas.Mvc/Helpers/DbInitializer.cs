@@ -63,7 +63,7 @@ namespace Keas.Mvc.Helpers
             context.Roles.Add(departmentAdmin);
             context.Roles.Add(accessMaster);
             context.Roles.Add(admin);
-            context.Roles.Add(emulate);
+            //context.Roles.Add(emulate);
 
             // add assets
             var lauraCaes = new Person { User = laura, Id=1, Team = caes, Group = "CRU" };
