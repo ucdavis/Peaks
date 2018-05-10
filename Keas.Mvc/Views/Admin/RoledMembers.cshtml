@@ -1,0 +1,43 @@
+﻿@model Keas.Mvc.Models.AdminMembersListModel
+
+@{
+    ViewData["Title"] = "Admins ";
+}
+
+<h2>Users with Admin Roles</h2>
+
+<p>
+    <a asp-action="AddAdmin">Add new Admin.</a>
+</p>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Roles
+        </th>
+        <th>
+                
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.UserRoles) {
+        <tr>
+            <td>
+                @item.User.Name
+            </td>
+            <td>
+                @item.RolesList
+            </td>
+            <td>
+                @Html.ActionLink("Remove Role(s)", "RemoveRoles", new { userId = item.User.Id})
+            </td>
+
+        </tr>
+    }
+    </tbody>
+</table>

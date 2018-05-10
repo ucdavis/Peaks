@@ -28,14 +28,24 @@ namespace Keas.Mvc.Handlers
             string team = "";
             if (context.Resource is AuthorizationFilterContext mvcContext)
             {
-                team = mvcContext.RouteData.Values["teamName"].ToString();
+                if (mvcContext.RouteData.Values["teamName"] != null)
+                {
+                    team = mvcContext.RouteData.Values["teamName"].ToString();
+                }
             }
 
             var user = _dbContext.Users.SingleOrDefault(u => u.Email == context.User.Identity.Name);
+            var roles = await _dbContext.Roles.Where(r => requirement.RoleStrings.Contains(r.Name)).ToListAsync();
+            if (user != null && team!="")
+            {
+                if (await _securityService.IsInRoles(roles, team, user))
+                {
+                    context.Succeed(requirement);
+                }
+            }
             if (user != null)
             {
-                var roles = await _dbContext.Roles.Where(r => requirement.RoleStrings.Contains(r.Name)).ToListAsync();
-                if (await _securityService.IsInRoles(roles, team, user))
+                if (await _securityService.IsInAdminRoles(roles, user))
                 {
                     context.Succeed(requirement);
                 }
