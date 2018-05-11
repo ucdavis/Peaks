@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Extensions.Internal;
 
 namespace Keas.Mvc.Controllers
 {
@@ -195,6 +196,19 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(RoledMembers));
         }
 
+
+        public async Task<IActionResult> Members()
+        {
+            var model = await _context.People.Include(p=> p.User).Where(p=> p.Team.Name==Team).ToListAsync();
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> EditMember(int id)
+        {
+            var model = await _context.People.Include(p => p.User).SingleAsync(x => x.Id == id);
+            return View(model);
+        }
 
         public async Task<IActionResult> BulkImportMembers()
         {
