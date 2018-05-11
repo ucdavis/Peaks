@@ -11,6 +11,7 @@ namespace Keas.Core.Domain
         // TODO: make this a unique field
         [StringLength(128)]
         [Display(Name = "Team Name")]
+        [Required]
         public string Name { get; set; }
 
         public List<Person> People { get; set; }
