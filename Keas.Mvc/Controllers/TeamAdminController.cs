@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Mvc.Services;
 using Microsoft.EntityFrameworkCore.Extensions.Internal;
+using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace Keas.Mvc.Controllers
 {
@@ -235,44 +236,49 @@ namespace Keas.Mvc.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateMember(Person person)
+        public async Task<IActionResult> CreateMember(CreateMemberPersonModel person)
         {
-            var exisitngPerson = await _context.People.SingleOrDefaultAsync(p => p.Team.Name == Team && p.UserId == person.User.Id);
-            if (exisitngPerson!=null)
+            if (ModelState.IsValid)
             {
-                Message = "User is already a member of this team!";
-                return RedirectToAction(nameof(EditMember), new {id = exisitngPerson.Id});
-            }
-            var user = person.User;
-            var existingUser = await _context.Users.Where(x => x.Id == user.Id).AnyAsync();
-            if (!existingUser)
-            {
-                var newUser = new User
+                var exisitngPerson =
+                    await _context.People.SingleOrDefaultAsync(p => p.Team.Name == Team && p.UserId == person.User.Id);
+                if (exisitngPerson != null)
                 {
-                    Id = user.Id,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Name = user.Name,
-                    Email = user.Email
+                    Message = "User is already a member of this team!";
+                    return RedirectToAction(nameof(EditMember), new {id = exisitngPerson.Id});
+                }
+                var user = person.User;
+                var existingUser = await _context.Users.Where(x => x.Id == user.Id).AnyAsync();
+                if (!existingUser)
+                {
+                    var newUser = new User
+                    {
+                        Id = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Name = user.Name,
+                        Email = user.Email
+                    };
+                    _context.Users.Add(newUser);
+                }
+                var team = await _context.Teams.SingleAsync(t => t.Name == Team);
+                var newPerson = new Person
+                {
+                    Team = team,
+                    UserId = user.Id,
+                    Group = person.Group,
+                    Title = person.Title,
+                    HomePhone = person.HomePhone,
+                    TeamPhone = person.TeamPhone
                 };
-                _context.Users.Add(newUser);
+                _context.People.Add(newPerson);
+                await _context.SaveChangesAsync();
+                Message = newPerson.User.Name + " added to team.";
+
+
+                return RedirectToAction(nameof(Members));
             }
-            var team = await _context.Teams.SingleAsync(t => t.Name == Team);
-            var newPerson = new Person
-            {
-                Team = team,
-                UserId = user.Id,
-                Group = person.Group,
-                Title = person.Title,
-                HomePhone = person.HomePhone,
-                TeamPhone = person.TeamPhone
-            };
-            _context.People.Add(newPerson);
-            await _context.SaveChangesAsync();
-            Message = newPerson.User.Name;
-
-
-            return RedirectToAction(nameof(Members));
+            return View();
         }
 
         public async Task<IActionResult> EditMember(int id)
@@ -304,12 +310,6 @@ namespace Keas.Mvc.Controllers
                 }
             }
             return View(person);
-
-            //personToEdit.Active = person.Active;
-            //personToEdit.Group = person.Group;
-            //personToEdit.Title = person.Title;
-            //personToEdit.HomePhone = person.HomePhone;
-            //personToEdit.TeamPhone = person.TeamPhone;
         }
 
         public async Task<IActionResult> BulkImportMembers()
