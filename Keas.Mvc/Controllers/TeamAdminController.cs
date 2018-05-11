@@ -228,23 +228,36 @@ namespace Keas.Mvc.Controllers
             }
             return Json(users);
         }
-
-        public async Task<IActionResult> Search(string q)
-        {
-            var people = await _context.Users.Where(x => (x.Email.StartsWith(q) || x.Name.ToLower().StartsWith(q.ToLower()))).AsNoTracking().ToListAsync();
-            if (people.Count == 0)
-            {
-                var test =  await _identityService.GetUserId(q);
-                return Content(test);
-            }
-
-
-            return Json(people);
-        }
-
-
+        
         public async Task<IActionResult> CreateMember()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateMember(Person person)
+        {
+            var exisitngPerson = await _context.People.SingleOrDefaultAsync(p => p.Team.Name == Team && p.UserId == person.User.Id);
+            if (exisitngPerson!=null)
+            {
+                Message = "User is already a member of this team!";
+                return RedirectToAction(nameof(EditMember), new {id = exisitngPerson.Id});
+            }
+            var user = person.User;
+            var existingUser = await _context.Users.Where(x => x.Id == user.Id).AnyAsync();
+            if (!existingUser)
+            {
+                var newUser = new User
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Name = user.Name,
+                    Email = user.Email
+                };
+                _context.Users.Add(user);
+            }
+
             return View();
         }
 
