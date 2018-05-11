@@ -255,10 +255,24 @@ namespace Keas.Mvc.Controllers
                     Name = user.Name,
                     Email = user.Email
                 };
-                _context.Users.Add(user);
+                _context.Users.Add(newUser);
             }
+            var team = await _context.Teams.SingleAsync(t => t.Name == Team);
+            var newPerson = new Person
+            {
+                Team = team,
+                UserId = user.Id,
+                Group = person.Group,
+                Title = person.Title,
+                HomePhone = person.HomePhone,
+                TeamPhone = person.TeamPhone
+            };
+            _context.People.Add(newPerson);
+            await _context.SaveChangesAsync();
+            Message = newPerson.User.Name;
 
-            return View();
+
+            return RedirectToAction(nameof(Members));
         }
 
         public async Task<IActionResult> EditMember(int id)
