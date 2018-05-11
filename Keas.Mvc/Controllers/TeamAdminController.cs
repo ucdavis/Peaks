@@ -204,10 +204,63 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> DetailsMember(int id)
+        {
+            var model = await _context.People.Include(p => p.User).SingleAsync(x => x.Id == id);
+            return View(model);
+        }
+
+        public async Task<IActionResult> SearchUser(string searchTerm)
+        {
+            var users = await _context.Users.Where(x => x.Email.StartsWith(searchTerm) || x.Name.StartsWith(searchTerm)).AsNoTracking().ToListAsync();
+            if (users.Count == 0)
+            {
+                
+            }
+            return Json(users);
+        }
+
+
+        public async Task<IActionResult> CreateMember()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> EditMember(int id)
         {
             var model = await _context.People.Include(p => p.User).SingleAsync(x => x.Id == id);
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditMember(int id, Person person)
+        {
+            if (id != person.Id)
+            {
+                return NotFound();
+            }
+            var personToEdit = await _context.People.SingleAsync(x => x.Id == person.Id);
+
+           
+            if (await TryUpdateModelAsync<Person>(personToEdit, "", t => t.Active, t=> t.Group, t=> t.Title, t=> t.HomePhone, t=> t.TeamPhone))
+            {
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Members));
+                }
+                catch
+                {
+                    ModelState.AddModelError("", "Unable to save changes.");
+                }
+            }
+            return View(person);
+
+            //personToEdit.Active = person.Active;
+            //personToEdit.Group = person.Group;
+            //personToEdit.Title = person.Title;
+            //personToEdit.HomePhone = person.HomePhone;
+            //personToEdit.TeamPhone = person.TeamPhone;
         }
 
         public async Task<IActionResult> BulkImportMembers()
