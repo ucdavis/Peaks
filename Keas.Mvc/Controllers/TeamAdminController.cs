@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Mvc.Services;
 using Microsoft.EntityFrameworkCore.Extensions.Internal;
 
 namespace Keas.Mvc.Controllers
@@ -15,10 +16,12 @@ namespace Keas.Mvc.Controllers
         // TODO: Authorize to appropriate roles. Maybe just require DA or SystemAdmin?
 
         private readonly ApplicationDbContext _context;
+        private readonly IIdentityService _identityService;
 
-        public TeamAdminController(ApplicationDbContext context)
+        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService)
         {
             _context = context;
+            _identityService = identityService;
         }
 
         public async Task<IActionResult> Index()
@@ -212,12 +215,31 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> SearchUser(string searchTerm)
         {
-            var users = await _context.Users.Where(x => x.Email.StartsWith(searchTerm) || x.Name.StartsWith(searchTerm)).AsNoTracking().ToListAsync();
-            if (users.Count == 0)
+            var users = await _context.Users.Where(x => x.Email.StartsWith(searchTerm) || x.Name.StartsWith(searchTerm)).AsNoTracking().FirstOrDefaultAsync();
+            if (users==null)
             {
-                
+                var iamId = await _identityService.GetUserId(searchTerm);
+                if (iamId != null && iamId.Length > 5)
+                {
+                    var user = _identityService.GetUser(iamId);
+                    return Json(user);
+                }
+                //getIAM ID, then get user data.
             }
             return Json(users);
+        }
+
+        public async Task<IActionResult> Search(string q)
+        {
+            var people = await _context.Users.Where(x => (x.Email.StartsWith(q) || x.Name.ToLower().StartsWith(q.ToLower()))).AsNoTracking().ToListAsync();
+            if (people.Count == 0)
+            {
+                var test =  await _identityService.GetUserId(q);
+                return Content(test);
+            }
+
+
+            return Json(people);
         }
 
 
