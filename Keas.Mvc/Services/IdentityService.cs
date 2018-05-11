@@ -12,7 +12,7 @@ namespace Keas.Mvc.Services
     public interface IIdentityService
     {
         Task<string> GetUserId(string email);
-        Task<User> GetUser(string id);
+        Task<User> GetUser(string id, string email);
     }
 
     public class IdentityService : IIdentityService
@@ -41,7 +41,7 @@ namespace Keas.Mvc.Services
             }
         }
 
-        public async Task<User> GetUser(string id)
+        public async Task<User> GetUser(string id, string email)
         {
             // return info for the user identified by this email address in IAM
             using (var client = new HttpClient())
@@ -60,7 +60,9 @@ namespace Keas.Mvc.Services
                     {
                         FirstName= results.responseData.results[0].oFirstName,
                         LastName = results.responseData.results[0].oLastName,
-                        Name = results.responseData.results[0].dFullName
+                        Name = results.responseData.results[0].dFullName,
+                        Id = id,
+                        Email = email
                     };
                     return user;
                 }

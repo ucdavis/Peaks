@@ -221,7 +221,7 @@ namespace Keas.Mvc.Controllers
                 var iamId = await _identityService.GetUserId(searchTerm);
                 if (iamId != null && iamId.Length > 5)
                 {
-                    var user = _identityService.GetUser(iamId);
+                    var user = _identityService.GetUser(iamId, searchTerm);
                     return Json(user);
                 }
                 //getIAM ID, then get user data.
