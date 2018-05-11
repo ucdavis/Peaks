@@ -78,11 +78,23 @@ Enter email address: <input type="text" id="searchText"/> <input type="button" o
             var api = "@Url.Action("SearchUser")";
             $.getJSON(api, { searchTerm: search })
                 .done(function(json) {
-                    if (json.name != null) {
-                        populate(json.id, json.firstName, json.lastName, json.name, json.email);
+                    if (json != null) {
+                        if (json.name != null) {
+                            populate(json.id, json.firstName, json.lastName, json.name, json.email);
+                        } else {
+                            populate(json.result.id,
+                                json.result.firstName,
+                                json.result.lastName,
+                                json.result.name,
+                                json.result.email);
+                        }
                     } else {
-                        populate(json.result.id, json.result.firstName, json.result.lastName, json.result.name, json.result.email );
+                        alert("No user was found!");
                     }
+                })
+                .fail(function(jqxhr, textStatus, error) {
+                    var err = textStatus + ", " + error;
+                    alert("An error occured trying to find user: " + err);
                 });
         };
 
