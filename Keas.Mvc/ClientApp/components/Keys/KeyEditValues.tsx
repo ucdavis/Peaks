@@ -17,17 +17,17 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                     <label>Name</label>
                     <input type="text"
                         className="form-control"
-                        disabled={true}
+                        disabled={this.props.disableEditing}
                         value={this.props.selectedKey.name ? this.props.selectedKey.name : ""}
+                        onChange={(e) => this.props.changeProperty("name", e.target.value)}
                     />
                 </div>
                 <div className="form-group">
                     <label>Serial Number</label>
                     <input type="text"
                         className="form-control"
-                        disabled={this.props.disableEditing}
+                        disabled={true}
                         value={this.props.selectedKey.serialNumber ? this.props.selectedKey.serialNumber : ""}
-                        onChange={(e) => this.props.changeProperty("serialNumber", e.target.value)}
                     />
                 </div>
                 {this.props.selectedKey.assignment != null &&

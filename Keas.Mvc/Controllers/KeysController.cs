@@ -101,14 +101,14 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Update([FromBody]Key key)
         {
-            //TODO: check permissions
+            //TODO: check permissions, make sure SN isn't edited 
             if (ModelState.IsValid)
             {
                 var k = await _context.Keys.Where(x => x.Team.Name == Team).SingleAsync(x => x.Id == key.Id);
-                k.SerialNumber = key.SerialNumber;
+                k = key;
                 await _context.SaveChangesAsync();
                 await _eventService.TrackUpdateKey(key);
-                return Json(key);
+                return Json(k);
             }
             return BadRequest(ModelState);
         }
