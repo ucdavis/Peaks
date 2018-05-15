@@ -94,7 +94,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     // if we are creating a new key
     if (key.id === 0) {
       key.team = this.context.team;
-      key = await this.context.fetch("/api/${this.context.team.name}/keys/create", {
+      key = await this.context.fetch(`/api/${this.context.team.name}/keys/create`, {
         body: JSON.stringify(key),
         method: "POST"
       });
@@ -131,7 +131,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
   private _revokeKey = async (key: IKey) => {
     // call API to actually revoke
-    const removed: IKey = await this.context.fetch("/api/${this.context.team.name}/keys/revoke", {
+    const removed: IKey = await this.context.fetch(`/api/${this.context.team.name}/keys/revoke`, {
       body: JSON.stringify(key),
       method: "POST"
     });
@@ -160,7 +160,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       return;
     }
 
-    const updated: IKey = await this.context.fetch("/api/${this.context.taem.name}/keys/update", {
+    const updated: IKey = await this.context.fetch(`/api/${this.context.team.name}/keys/update`, {
       body: JSON.stringify(key),
       method: "POST"
     });

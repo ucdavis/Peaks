@@ -33,7 +33,7 @@ interface IState {
   validState: boolean;
 }
 
-export default class AssignKey extends React.Component<IProps, IState> {
+export default class EditKey extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
     team: PropTypes.object
@@ -56,9 +56,13 @@ export default class AssignKey extends React.Component<IProps, IState> {
   }
 
   public render() {
+    if(!this.state.key)
+    {
+      return null;
+    }
     return (
       <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
-        <ModalHeader>Assign Key</ModalHeader>
+        <ModalHeader>Edit Key</ModalHeader>
         <ModalBody>
           <div className="container-fluid">
             <form>

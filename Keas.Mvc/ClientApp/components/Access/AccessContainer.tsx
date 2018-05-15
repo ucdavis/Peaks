@@ -90,7 +90,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       // if we are creating a new access
       if (access.id === 0) {
           access.teamId = this.context.team.id;
-          access = await this.context.fetch("/api/${this.context.team.name}/access/create", {
+          access = await this.context.fetch(`/api/${this.context.team.name}/access/create`, {
               body: JSON.stringify(access),
               method: "POST"
           });
