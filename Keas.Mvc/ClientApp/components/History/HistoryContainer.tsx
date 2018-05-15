@@ -31,15 +31,13 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
     this.state = {
       histories: [],
       loading: true,
-      reloaded: false,
-      reloading: false,
+      reloaded: false, // controls checkmark to show that histories have been refreshed
+      reloading: false, // controls loading icon while fetching
     };
   }
   public async componentDidMount() {
-      this.setState({loading: true});
-      const historyFetchUrl = `/api/${this.context.team.name}/${this.props.controller}/getHistory/${this.props.id}`;
-
-    const histories = await this.context.fetch(historyFetchUrl);
+    this.setState({loading: true});
+    const histories = await this._getHistories();
     this.setState({ histories, loading: false });  
   }
   public render() {
@@ -57,7 +55,7 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
             <p>No histories were found</p>
           }
           {this.props.controller === "people" &&
-            <Button onClick={this._loadHistories} disabled={this.state.reloading}>
+            <Button onClick={this._reloadHistories} disabled={this.state.reloading}>
               Reload History {" "}
               {this.state.reloaded ? <i className="fa fa-check" /> : null}
               {this.state.reloading ? <i className="fa fa-spin fa-circle-o-notch" /> : null}
@@ -67,12 +65,17 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
     );
   }
 
-  private _loadHistories = async () => {
-        this.setState({reloading: true, reloaded: false});
-        const historyFetchUrl = `/api/${this.context.team.name}/${this.props.controller}/getHistory/${this.props.id}`;
+  private _reloadHistories = async () => {
+    this.setState({reloading: true, reloaded: false});
+    const histories = await this._getHistories();
+    this.setState({ histories, reloading: false, reloaded: true });
+  }
+
+  private _getHistories = async () => {
+    const historyFetchUrl = `/api/${this.context.team.name}/${this.props.controller}/getHistory/${this.props.id}`;
   
-      const histories = await this.context.fetch(historyFetchUrl);
-      this.setState({ histories, reloading: false, reloaded: true });
+    const histories = await this.context.fetch(historyFetchUrl);
+    return histories;
   }
 
 }
