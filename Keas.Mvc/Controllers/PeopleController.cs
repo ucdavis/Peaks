@@ -63,5 +63,14 @@ namespace Keas.Mvc.Controllers
                 .Where(x => x.Team.Name == Team && x.Id == personId).Include(x => x.User).AsNoTracking().SingleAsync();
             return Json(person);
         }
+
+        public async Task<IActionResult> GetHistory(int id)
+        {
+            var history = await _context.Histories.Where(x => x.TargetId == id)
+                .OrderByDescending(x => x.ActedDate)
+                .Take(5).AsNoTracking().ToListAsync();
+
+            return Json(history);
+        }
     }
 }

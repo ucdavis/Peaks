@@ -114,3 +114,11 @@ export interface ISpace {
     orgId: string;
     deptName: string;
 }
+
+export interface IHistory {
+  description: string;
+  actedDate: Date;
+  actionType?: string;
+  assetType?: string;
+  id: number;
+}

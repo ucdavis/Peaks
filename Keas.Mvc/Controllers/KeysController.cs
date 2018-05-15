@@ -103,7 +103,9 @@ namespace Keas.Mvc.Controllers
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var k = await _context.Keys.Where(x => x.Team.Name == Team).Include(x => x.Assignment).SingleAsync(x => x.Id == key.Id);
+                var k = await _context.Keys.Where(x => x.Team.Name == Team).Include(x => x.Assignment)
+                    .ThenInclude(x => x.Person.User)
+                    .SingleAsync(x => x.Id == key.Id);
 
                 _context.KeyAssignments.Remove(k.Assignment);
                 k.Assignment = null;
@@ -113,6 +115,17 @@ namespace Keas.Mvc.Controllers
                 return Json(k);
             }
             return BadRequest(ModelState);
+        }
+
+        public async Task<IActionResult> GetHistory(int id)
+        {
+            var history = await _context.Histories
+                .Where(x => x.AssetType == "Key" && x.Equipment.Team.Name == Team && x.EquipmentId == id)
+                .OrderByDescending(x => x.ActedDate)
+                .Take(5)
+                .AsNoTracking().ToListAsync();
+
+            return Json(history);
         }
     }
 }

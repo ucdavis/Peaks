@@ -144,10 +144,19 @@ namespace Keas.Mvc.Helpers
             context.Equipment.Add(equip2);
             
             var history = new History {
-                Person = lauraCaes,
+                Target = lauraCaes,
                 Actor = scott,
                 Description = "Something important happened",
+                AssetType = "Key",
                 Key = key
+            };
+
+            var history2 = new History {
+                Target = lauraCaes,
+                Actor = scott,
+                Description = "Something important happened 2",
+                AssetType = "Equipment",
+                Equipment = equipment
             };
 
             var scottKey = new TeamPermission{ Id = 1, Team = caes, Role = keyMaster, User = scott};
@@ -171,6 +180,7 @@ namespace Keas.Mvc.Helpers
             context.SystemPermissions.Add(JamesAdmin);
 
             context.Histories.Add(history);
+            context.Histories.Add(history2);
 
             context.SaveChanges();
         }

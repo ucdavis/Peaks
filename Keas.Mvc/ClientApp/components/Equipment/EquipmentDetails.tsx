@@ -5,11 +5,10 @@ import {
     Modal,
     ModalBody,
     ModalFooter,
-    ModalHeader,
-    ListGroup,
-    ListGroupItem
+    ModalHeader
 } from "reactstrap";
-import { IEquipment } from "ClientApp/Types";
+import { IEquipment } from "../../Types";
+import HistoryContainer from "../History/HistoryContainer";
 import EquipmentEditValues from "./EquipmentEditValues";
 
 
@@ -24,7 +23,9 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
 
     public render() {
         if (this.props.selectedEquipment == null)
+        {
             return null;
+        }
         const equipment = this.props.selectedEquipment;
         return (
             <div>
@@ -32,6 +33,7 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
                     <ModalHeader>Details for {equipment.name}</ModalHeader>
                     <ModalBody>
                         <EquipmentEditValues selectedEquipment={equipment} disableEditing={true} />
+                        <HistoryContainer controller="equipment" id={equipment.id}/>
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this.props.closeModal}>

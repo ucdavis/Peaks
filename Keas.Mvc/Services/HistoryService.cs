@@ -48,7 +48,8 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Key",
                 ActionType = "Created",
-                Key = key
+                Key = key,
+                TargetId = key.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -80,7 +81,7 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Equipment",
                 ActionType = "Created",
-                Equipment = equipment
+                Equipment = equipment,
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -112,7 +113,7 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Access",
                 ActionType = "Updated",
-                Access = access
+                Access = access,
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -128,7 +129,7 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Equipment",
                 ActionType = "Updated",
-                Equipment = equipment
+                Equipment = equipment,
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -191,7 +192,8 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Key",
                 ActionType = "Assigned",
-                Key = key
+                Key = key,
+                TargetId = key.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -223,7 +225,8 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Equipment",
                 ActionType = "Assigned",
-                Equipment = equipment
+                Equipment = equipment,
+                TargetId = equipment.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -239,7 +242,8 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Key",
                 ActionType = "Unassigned",
-                Key = key
+                Key = key,
+                TargetId = key.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -255,7 +259,8 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Access",
                 ActionType = "Unassigned",
-                AccessId = accessAssignment.AccessId
+                AccessId = accessAssignment.AccessId,
+                TargetId = accessAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -271,7 +276,8 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Equipment",
                 ActionType = "Unassigned",
-                Equipment = equipment
+                Equipment = equipment,
+                TargetId = equipment.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
