@@ -135,7 +135,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   private _revokeAccess = async (accessAssignment: IAccessAssignment) => {
 
       // call API to actually revoke
-      const removed: IAccess = await this.context.fetch("/api/${this.context.team.name}/access/revoke", {
+      const removed: IAccess = await this.context.fetch(`/api/${this.context.team.name}/access/revoke`, {
           body: JSON.stringify(accessAssignment),
           method: "POST"
       });
