@@ -123,6 +123,20 @@ namespace Keas.Mvc.Controllers
             return BadRequest(ModelState);
         }
 
+        public async Task<IActionResult> Update([FromBody]Equipment equipment)
+        {
+            //TODO: check permissions, make sure SN isn't edited 
+            if (ModelState.IsValid)
+            {
+                var eq = await _context.Equipment.Where(x => x.Team.Name == Team).SingleAsync(x => x.Id == equipment.Id);
+                eq = equipment;
+                await _context.SaveChangesAsync();
+                await _eventService.TrackUpdateEquipment(equipment);
+                return Json(eq);
+            }
+            return BadRequest(ModelState);
+        }
+
         public async Task<IActionResult> Revoke([FromBody]Equipment equipment)
         {
             //TODO: check permissions

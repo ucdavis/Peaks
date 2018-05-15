@@ -8,6 +8,7 @@ interface IProps {
     onRevoke: (equipment: IEquipment) => void;
     onAdd: (equipment: IEquipment) => void;
     showDetails: (equipment: IEquipment) => void;
+    onEdit: (equipment: IEquipment) => void;
 }
 
 
@@ -29,6 +30,7 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
                         onAdd={this._onAdd}
                         canAdd={!hasAssignment}
                         showDetails={this._showDetails}
+                        onEdit={this._onEdit}
                     />
             </td>
           </tr>
@@ -42,5 +44,8 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
     }
     private _showDetails = () => {
         this.props.showDetails(this.props.equipmentEntity);
+    }
+    private _onEdit = () => {
+        this.props.onEdit(this.props.equipmentEntity);
     }
 }

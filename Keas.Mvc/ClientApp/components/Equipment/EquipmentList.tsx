@@ -9,6 +9,7 @@ interface IProps {
     onRevoke: (equipment: IEquipment) => void;
     onAdd: (equipment: IEquipment) => void;
     showDetails: (equipment: IEquipment) => void;
+    onEdit: (equipment: IEquipment) => void;
 }
 
 export default class EquipmentList extends React.Component<IProps, {}> {
@@ -20,6 +21,7 @@ export default class EquipmentList extends React.Component<IProps, {}> {
               onRevoke={this.props.onRevoke}
               onAdd={this.props.onAdd}
               showDetails={this.props.showDetails}
+              onEdit={this.props.onEdit}
           />
     ));
       return (

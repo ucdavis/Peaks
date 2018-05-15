@@ -21,8 +21,9 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <label>Name</label>
                     <input type="text"
                         className="form-control"
-                        disabled={true}
+                        disabled={this.props.disableEditing}
                         value={this.props.selectedEquipment.name ? this.props.selectedEquipment.name : ""}
+                        onChange={(e) => this.props.changeProperty("name", e.target.value)}
                     />
                 </div>
                 <div className="form-group">
@@ -40,16 +41,16 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <label>Assigned To</label>
                     <input type="text"
                         className="form-control"
-                        disabled={this.props.disableEditing}
-                        value={this.props.selectedEquipment.assignment.person ? this.props.selectedEquipment.assignment.person.user.name : ""}
+                        disabled={true}
+                        value={this.props.selectedEquipment.assignment.person.user.name}
                         />
                 </div>
                 <div className="form-group">
                     <label>Expires at</label>
                     <input type="text"
                         className="form-control"
-                        disabled={this.props.disableEditing}
-                        value={this.props.selectedEquipment.assignment.expiresAt ? this.props.selectedEquipment.assignment.expiresAt.toString() : ""}
+                        disabled={true}
+                        value={this.props.selectedEquipment.assignment.expiresAt.toString()}
                         />
                 </div>
                 </div>
