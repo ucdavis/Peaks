@@ -9,6 +9,7 @@ namespace Keas.Mvc.Controllers
     
     public class AssetController : SuperController
     {
+        // TODO Is this controller needed????
         private readonly ApplicationDbContext _context;
 
         public AssetController(ApplicationDbContext context)
