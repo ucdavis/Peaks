@@ -36,5 +36,9 @@ namespace Keas.Core.Domain {
         public Access Access { get; set; }
         public int? AccessId { get; set; }
 
+        public Workstation Workstation { get; set; }
+        public int? WorkstationId { get; set; }
+        
+
     }
 }
