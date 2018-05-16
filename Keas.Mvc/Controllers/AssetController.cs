@@ -1,18 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Keas.Core.Data;
-using Keas.Core.Domain;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Keas.Mvc.Controllers
 {
+    [Authorize(Policy = "DepartmentAdminAccess")]
     public class AssetController : SuperController
     {
+        // TODO Is this controller needed????
         private readonly ApplicationDbContext _context;
 
         public AssetController(ApplicationDbContext context)
