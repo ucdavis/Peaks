@@ -9,7 +9,7 @@ namespace Keas.Mvc.Controllers
     
     public class AssetController : SuperController
     {
-        // TODO Is this controller needed????
+        // TODO Decorate with security policy? Dept Admin? Any role? When I tried, I created a Json loop with Team & Teampermission!
         private readonly ApplicationDbContext _context;
 
         public AssetController(ApplicationDbContext context)
