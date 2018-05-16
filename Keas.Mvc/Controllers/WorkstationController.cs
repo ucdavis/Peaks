@@ -52,7 +52,7 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var workstationAssignments = await _context.Workstations
-                .Where(w => w.Assignment.PersonId == personId)
+                .Where(w => w.Assignment.PersonId == personId && w.Team.Name==Team)
                 .Include(w => w.Assignment)
                 .ThenInclude(w => w.Person.User)
                 .Include(w => w.Space)
