@@ -14,7 +14,7 @@ namespace Keas.Core.Domain
         
         public Space Space { get; set; }
         public int SpaceId { get; set; }
-
+        
         public WorkstationAssignment Assignment { get; set; }
         public int? WorkstationAssignmentId { get; set; }
 
