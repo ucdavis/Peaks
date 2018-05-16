@@ -24,6 +24,12 @@ namespace Keas.Mvc.Services
         Task<History> KeyAccepted(Key key);
         Task<History> AccessAccepted(Access access);
         Task<History> EquipmentAccepted(Equipment equipment);
+        Task<History> WorkstationCreated(Workstation workstation);
+        Task<History> WorkstationUpdated(Workstation workstation);
+        Task<History> WorkstationInactivated(Workstation workstation);
+        Task<History> WorkstationAssigned(Workstation workstation);
+        Task<History> WorkstationUnassigned(Workstation workstation);
+        Task<History> WorkstationAccepted(Workstation workstation);
 
     }
 
@@ -332,6 +338,103 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
+        public async Task<History> WorkstationCreated(Workstation workstation)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Workstation Created by " + user.Name,
+                Actor = user,
+                AssetType = "Workstation",
+                ActionType = "Created",
+                Workstation = workstation,
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+
+        public async Task<History> WorkstationUpdated(Workstation workstation)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Workstation Updated by " + user.Name,
+                Actor = user,
+                AssetType = "Workstation",
+                ActionType = "Updated",
+                Workstation = workstation,
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+
+        public async Task<History>WorkstationInactivated(Workstation workstation)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Workstation Inactivated by " + user.Name,
+                Actor = user,
+                AssetType = "Workstation",
+                ActionType = "Inactivated",
+                Workstation = workstation
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+
+        public async Task<History> WorkstationAssigned(Workstation workstation)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Workstation Assigned to " + workstation.Assignment.Person.User.Name + " by " + user.Name,
+                Actor = user,
+                AssetType = "Workstation",
+                ActionType = "Assigned",
+                Workstation = workstation,
+                TargetId = workstation.Assignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+
+        public async Task<History> WorkstationUnassigned(Workstation workstation)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Workstation Unassigned  by " + user.Name,
+                Actor = user,
+                AssetType = "Workstation",
+                ActionType = "Unassigned",
+                Workstation = workstation,
+                TargetId = workstation.Assignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+
+        public async Task<History> WorkstationAccepted(Workstation workstation)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Workstation Accepted by " + user.Name,
+                Actor = user,
+                AssetType = "Workstation",
+                ActionType = "Accepted",
+                Workstation = workstation
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
     }
 }
 
