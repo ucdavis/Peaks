@@ -1,18 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using Keas.Core.Data;
-using Keas.Core.Domain;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Keas.Mvc.Controllers
 {
+   // [Authorize(Policy = "AnyRole")]
     public class AssetController : SuperController
     {
+        // TODO Decorate with security policy? Dept Admin? Any role? When I tried, I created a Json loop with Team & Teampermission!
         private readonly ApplicationDbContext _context;
 
         public AssetController(ApplicationDbContext context)

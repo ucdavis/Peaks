@@ -1,17 +1,17 @@
 ﻿using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Models;
+using Keas.Mvc.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Keas.Mvc.Services;
-using Microsoft.EntityFrameworkCore.Extensions.Internal;
-using Microsoft.EntityFrameworkCore.Query.Internal;
 
 namespace Keas.Mvc.Controllers
 {
+    [Authorize(Policy = "DepartmentAdminAccess")]
     public class TeamAdminController : SuperController
     {
         // TODO: Authorize to appropriate roles. Maybe just require DA or SystemAdmin?

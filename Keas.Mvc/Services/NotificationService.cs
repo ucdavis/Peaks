@@ -17,7 +17,9 @@ namespace Keas.Mvc.Services
         Task EquipmentUnAssigned(Equipment equipment, History history);
         Task AccessAssigned(AccessAssignment accessAssignment, History history, string teamName);
         Task AccessUnAssigned(AccessAssignment accessAssignment, History history, string teamName);
-
+        Task WorkstationCreatedUpdatedInactive(Workstation workstation, History history);
+        Task WorkstationAssigned(Workstation workstation, History history);
+        Task WorkstationUnAssigned(Workstation workstation, History history);
     }
     public class NotificationService : INotificationService
     {
@@ -200,6 +202,61 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task WorkstationCreatedUpdatedInactive(Workstation workstation, History history)
+        {
+            var roles = await _dbContext.Roles
+                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
+            var users = await _securityService.GetUsersInRoles(roles, workstation.TeamId);
+            foreach (var user in users)
+            {
+                var notification = new Notification
+                {
+                    User = user,
+                    History = history,
+                    Details = history.Description
+                };
+                _dbContext.Notifications.Add(notification);
+            }
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task WorkstationAssigned(Workstation workstation, History history)
+        {
+            var roles = await _dbContext.Roles
+                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
+            var users = await _securityService.GetUsersInRoles(roles, workstation.TeamId);
+            var assignedTo = await _dbContext.Users.SingleAsync(u => u == workstation.Assignment.Person.User);
+            users.Add(assignedTo);
+            foreach (var user in users)
+            {
+                var notification = new Notification
+                {
+                    User = user,
+                    History = history,
+                    Details = history.Description
+                };
+                _dbContext.Notifications.Add(notification);
+            }
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task WorkstationUnAssigned(Workstation workstation, History history)
+        {
+            var roles = await _dbContext.Roles
+                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
+            var users = await _securityService.GetUsersInRoles(roles, workstation.TeamId);
+            foreach (var user in users)
+            {
+                var notification = new Notification
+                {
+                    User = user,
+                    History = history,
+                    Details = history.Description
+                };
+                _dbContext.Notifications.Add(notification);
+            }
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }
 

@@ -94,7 +94,9 @@ namespace Keas.Mvc
                 options.AddPolicy("KeyMasterAccess", policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
                 options.AddPolicy("EquipMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.EquipmentMaster, Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
                 options.AddPolicy("AccessMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
+                options.AddPolicy("SpaceMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.SpaceMaster,Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
                 options.AddPolicy("DepartmentAdminAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
+                options.AddPolicy("AnyRole", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.SpaceMaster, Role.Codes.Admin, Role.Codes.DepartmentalAdmin, Role.Codes.AccessMaster, Role.Codes.EquipmentMaster, Role.Codes.KeyMaster)));
                 options.AddPolicy("SystemAdminAccess", policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.Admin)));
             });
             services.AddScoped<IAuthorizationHandler, VerifyRoleAccessHandler>();
