@@ -19,8 +19,8 @@ namespace Keas.Core.Domain {
 
         public DateTime ActedDate { get; set; }
 
-        public Person Person { get; set; }
-        public int? PersonId { get; set; }
+        public Person Target { get; set; }
+        public int? TargetId { get; set; }
 
         // Key vs Equipment vs Access 
         public string AssetType { get; set; }
@@ -35,6 +35,10 @@ namespace Keas.Core.Domain {
 
         public Access Access { get; set; }
         public int? AccessId { get; set; }
+
+        public Workstation Workstation { get; set; }
+        public int? WorkstationId { get; set; }
+        
 
     }
 }

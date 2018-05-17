@@ -17,6 +17,10 @@ namespace Keas.Mvc.Services
         Task TrackAssignAccess(AccessAssignment accessAssignment, string teamName);
         Task TrackUnAssignAccess(AccessAssignment accessAssignment, string teamName);
         Task TrackUpdateAccess(Access access);
+        Task TrackCreateWorkstation(Workstation workstation);
+        Task TrackAssignWorkstation(Workstation workstation);
+        Task TrackUnAssignWorkstation(Workstation workstation);
+
 
     }
     public class EventService : IEventService
@@ -103,6 +107,23 @@ namespace Keas.Mvc.Services
             await _notificationService.AccessCreatedUpdatedInactive(access, history);
         }
 
+        public async Task TrackCreateWorkstation(Workstation workstation)
+        {
+            var history = await _historyService.WorkstationCreated(workstation);
+            await _notificationService.WorkstationCreatedUpdatedInactive(workstation, history);
+        }
+
+        public async Task TrackAssignWorkstation(Workstation workstation)
+        {
+            var history = await _historyService.WorkstationAssigned(workstation);
+            await _notificationService.WorkstationAssigned(workstation, history);
+        }
+
+        public async Task TrackUnAssignWorkstation(Workstation workstation)
+        {
+            var history = await _historyService.WorkstationUnassigned(workstation);
+            await _notificationService.WorkstationUnAssigned(workstation, history);
+        }
     }
 }
 

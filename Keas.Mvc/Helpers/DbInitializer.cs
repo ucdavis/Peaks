@@ -55,11 +55,17 @@ namespace Keas.Mvc.Helpers
             var equipMaster = new Role {Id = 2, Name = "EquipMaster"};
             var departmentAdmin = new Role {Id= 3, Name = "DepartmentalAdmin"};
             var accessMaster = new Role {Id = 4, Name = "AccessMaster"};
+            var spaceMaster = new Role {Id = 6, Name = "SpaceMaster"};
+            var admin = new Role {Id = 5, Name = "Admin", IsAdmin = true};
+            //var emulate = new Role {Id = 6, Name = "EmulationUser", IsAdmin = true};
 
             context.Roles.Add(keyMaster);
             context.Roles.Add(equipMaster);
             context.Roles.Add(departmentAdmin);
             context.Roles.Add(accessMaster);
+            context.Roles.Add(spaceMaster);
+            context.Roles.Add(admin);
+            //context.Roles.Add(emulate);
 
             // add assets
             var lauraCaes = new Person { User = laura, Id=1, Team = caes, Group = "CRU" };
@@ -140,10 +146,19 @@ namespace Keas.Mvc.Helpers
             context.Equipment.Add(equip2);
             
             var history = new History {
-                Person = lauraCaes,
+                Target = lauraCaes,
                 Actor = scott,
                 Description = "Something important happened",
+                AssetType = "Key",
                 Key = key
+            };
+
+            var history2 = new History {
+                Target = lauraCaes,
+                Actor = scott,
+                Description = "Something important happened 2",
+                AssetType = "Equipment",
+                Equipment = equipment
             };
 
             var scottKey = new TeamPermission{ Id = 1, Team = caes, Role = keyMaster, User = scott};
@@ -163,7 +178,11 @@ namespace Keas.Mvc.Helpers
             context.TeamPermissions.Add(jamesDa);
             context.TeamPermissions.Add(scottAccess);
 
+            var JamesAdmin = new SystemPermission {Id = 1, Role = admin, User = james};
+            context.SystemPermissions.Add(JamesAdmin);
+
             context.Histories.Add(history);
+            context.Histories.Add(history2);
 
             context.SaveChanges();
         }

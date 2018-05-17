@@ -8,6 +8,7 @@ import {
     ModalHeader,
 } from "reactstrap";
 import { IEquipment } from "../../Types";
+import HistoryContainer from "../History/HistoryContainer";
 import EquipmentEditValues from "./EquipmentEditValues";
 
 
@@ -32,6 +33,7 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
                     <ModalHeader>Details for {equipment.name}</ModalHeader>
                     <ModalBody>
                         <EquipmentEditValues selectedEquipment={equipment} disableEditing={true} />
+                        <HistoryContainer controller="equipment" id={equipment.id}/>
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this.props.closeModal}>

@@ -1,6 +1,8 @@
 ﻿using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Models;
+using Keas.Mvc.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,15 +11,18 @@ using System.Threading.Tasks;
 
 namespace Keas.Mvc.Controllers
 {
+    [Authorize(Policy = "DepartmentAdminAccess")]
     public class TeamAdminController : SuperController
     {
         // TODO: Authorize to appropriate roles. Maybe just require DA or SystemAdmin?
 
         private readonly ApplicationDbContext _context;
+        private readonly IIdentityService _identityService;
 
-        public TeamAdminController(ApplicationDbContext context)
+        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService)
         {
             _context = context;
+            _identityService = identityService;
         }
 
         public async Task<IActionResult> Index()
@@ -94,7 +99,7 @@ namespace Keas.Mvc.Controllers
         {
             var team = await _context.Teams.SingleAsync(x => x.Name == Team);
             
-            var viewModel = TeamAdminMembersAddModel.Create(team, _context);
+            var viewModel = await TeamAdminMembersAddModel.Create(team, _context);
             return View(viewModel);
         }
 
@@ -102,7 +107,7 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> AddMemberRole(TeamAdminMembersAddModel model)
         {
             var team = await _context.Teams.SingleAsync(x => x.Name == Team);
-            var viewModel = TeamAdminMembersAddModel.Create(team, _context);
+            var viewModel = await TeamAdminMembersAddModel.Create(team, _context);
             if (team == null)
             {
                 return NotFound();
@@ -195,6 +200,117 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(RoledMembers));
         }
 
+
+        public async Task<IActionResult> Members()
+        {
+            var model = await _context.People.Include(p=> p.User).Where(p=> p.Team.Name==Team).ToListAsync();
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> DetailsMember(int id)
+        {
+            var model = await _context.People.Include(p => p.User).SingleAsync(x => x.Id == id);
+            return View(model);
+        }
+
+        public async Task<IActionResult> SearchUser(string searchTerm)
+        {
+            var users = await _context.Users.Where(x => x.Email.StartsWith(searchTerm) || x.Name.StartsWith(searchTerm)).AsNoTracking().FirstOrDefaultAsync();
+            if (users==null)
+            {
+                var iamId = await _identityService.GetUserId(searchTerm);
+                if (iamId != null && iamId.Length > 5)
+                {
+                    var user = _identityService.GetUser(iamId, searchTerm);
+                    return Json(user);
+                }
+                //getIAM ID, then get user data.
+            }
+            return Json(users);
+        }
+        
+        public async Task<IActionResult> CreateMember()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateMember(CreateMemberPersonModel person)
+        {
+            if (ModelState.IsValid)
+            {
+                var exisitngPerson =
+                    await _context.People.SingleOrDefaultAsync(p => p.Team.Name == Team && p.UserId == person.User.Id);
+                if (exisitngPerson != null)
+                {
+                    Message = "User is already a member of this team!";
+                    return RedirectToAction(nameof(EditMember), new {id = exisitngPerson.Id});
+                }
+                var user = person.User;
+                var existingUser = await _context.Users.Where(x => x.Id == user.Id).AnyAsync();
+                if (!existingUser)
+                {
+                    var newUser = new User
+                    {
+                        Id = user.Id,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Name = user.Name,
+                        Email = user.Email
+                    };
+                    _context.Users.Add(newUser);
+                }
+                var team = await _context.Teams.SingleAsync(t => t.Name == Team);
+                var newPerson = new Person
+                {
+                    Team = team,
+                    UserId = user.Id,
+                    Group = person.Group,
+                    Title = person.Title,
+                    HomePhone = person.HomePhone,
+                    TeamPhone = person.TeamPhone
+                };
+                _context.People.Add(newPerson);
+                await _context.SaveChangesAsync();
+                Message = newPerson.User.Name + " added to team.";
+
+
+                return RedirectToAction(nameof(Members));
+            }
+            return View();
+        }
+
+        public async Task<IActionResult> EditMember(int id)
+        {
+            var model = await _context.People.Include(p => p.User).SingleAsync(x => x.Id == id);
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditMember(int id, Person person)
+        {
+            if (id != person.Id)
+            {
+                return NotFound();
+            }
+            var personToEdit = await _context.People.SingleAsync(x => x.Id == person.Id);
+
+           
+            if (await TryUpdateModelAsync<Person>(personToEdit, "", t => t.Active, t=> t.Group, t=> t.Title, t=> t.HomePhone, t=> t.TeamPhone))
+            {
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Members));
+                }
+                catch
+                {
+                    ModelState.AddModelError("", "Unable to save changes.");
+                }
+            }
+            return View(person);
+        }
 
         public async Task<IActionResult> BulkImportMembers()
         {

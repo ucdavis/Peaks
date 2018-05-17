@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using Keas.Core.Data;
+﻿using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Keas.Mvc.Controllers
 {
+    [Authorize(Policy = "KeyMasterAccess")]
     public class KeysController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -121,7 +119,9 @@ namespace Keas.Mvc.Controllers
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var k = await _context.Keys.Where(x => x.Team.Name == Team).Include(x => x.Assignment).SingleAsync(x => x.Id == key.Id);
+                var k = await _context.Keys.Where(x => x.Team.Name == Team).Include(x => x.Assignment)
+                    .ThenInclude(x => x.Person.User)
+                    .SingleAsync(x => x.Id == key.Id);
 
                 _context.KeyAssignments.Remove(k.Assignment);
                 k.Assignment = null;
@@ -131,6 +131,17 @@ namespace Keas.Mvc.Controllers
                 return Json(k);
             }
             return BadRequest(ModelState);
+        }
+
+        public async Task<IActionResult> GetHistory(int id)
+        {
+            var history = await _context.Histories
+                .Where(x => x.AssetType == "Key" && x.Equipment.Team.Name == Team && x.EquipmentId == id)
+                .OrderByDescending(x => x.ActedDate)
+                .Take(5)
+                .AsNoTracking().ToListAsync();
+
+            return Json(history);
         }
     }
 }
