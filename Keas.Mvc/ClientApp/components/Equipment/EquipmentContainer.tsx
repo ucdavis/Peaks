@@ -175,6 +175,8 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       method: "POST"
     });
 
+    updated.assignment = equipment.assignment;
+
     // update already existing entry in key
     const updateEquipment = [...this.state.equipment];
     updateEquipment[index] = updated;

@@ -118,7 +118,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
         ...this.state.equipment,
         attributes
       }
-    });
+    }, this._validateState);
   }
 
   // assign the selected key even if we have to create it
@@ -127,6 +127,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
       return;
     }
 
+    this.state.equipment.attributes = this.state.equipment.attributes.filter(x => !!x.key);
 
     await this.props.onEdit(this.state.equipment);
 

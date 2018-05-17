@@ -125,13 +125,28 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Update([FromBody]Equipment equipment)
         {
-            //TODO: check permissions, make sure SN isn't edited 
+            //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var eq = await _context.Equipment.Where(x => x.Team.Name == Team).SingleAsync(x => x.Id == equipment.Id);
-                eq = equipment;
+                var eq = await _context.Equipment.Where(x => x.Team.Name == Team)
+                    .Include(x => x.Room).Include(x => x.Attributes)
+                    .SingleAsync(x => x.Id == equipment.Id);
+                    
+                eq.Make = equipment.Make;
+                eq.Model = equipment.Model;
+                eq.Name = equipment.Name;
+                eq.SerialNumber = equipment.SerialNumber;
+                
+                eq.Attributes.Clear();
+                equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
+
+                if(eq.Room.RoomKey != equipment.Room.RoomKey)
+                {
+                    eq.Room = await _context.Rooms.SingleAsync(x => x.RoomKey == equipment.Room.RoomKey);
+                }
+
                 await _context.SaveChangesAsync();
-                await _eventService.TrackUpdateEquipment(equipment);
+                await _eventService.TrackUpdateEquipment(eq);
                 return Json(eq);
             }
             return BadRequest(ModelState);

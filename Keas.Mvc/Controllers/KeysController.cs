@@ -104,8 +104,11 @@ namespace Keas.Mvc.Controllers
             //TODO: check permissions, make sure SN isn't edited 
             if (ModelState.IsValid)
             {
-                var k = await _context.Keys.Where(x => x.Team.Name == Team).SingleAsync(x => x.Id == key.Id);
-                k = key;
+                var k = await _context.Keys.Where(x => x.Team.Name == Team)
+                    .Include(x=> x.Assignment).ThenInclude(x => x.Person.User)
+                    .Include(x=> x.Team)
+                    .SingleAsync(x => x.Id == key.Id);
+                k.Name = key.Name;
                 await _context.SaveChangesAsync();
                 await _eventService.TrackUpdateKey(key);
                 return Json(k);
