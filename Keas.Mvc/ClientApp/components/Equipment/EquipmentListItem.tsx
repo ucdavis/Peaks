@@ -25,27 +25,15 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
             </td>
             <td>
                     <ListActionsDropdown
-                        onRevoke={this._onRevoke}
+                        onRevoke={() => this.props.onRevoke(this.props.equipmentEntity)}
                         canRevoke={hasAssignment}
-                        onAdd={this._onAdd}
+                        onAdd={() => this.props.onAdd(this.props.equipmentEntity)}
                         canAdd={!hasAssignment}
-                        showDetails={this._showDetails}
-                        onEdit={this._onEdit}
+                        showDetails={() => this.props.showDetails(this.props.equipmentEntity)}
+                        onEdit={() => this.props.onEdit(this.props.equipmentEntity)}
                     />
             </td>
           </tr>
         );
       }
-    private _onRevoke = () => {
-        this.props.onRevoke(this.props.equipmentEntity);
-    }
-    private _onAdd = () => {
-        this.props.onAdd(this.props.equipmentEntity);
-    }
-    private _showDetails = () => {
-        this.props.showDetails(this.props.equipmentEntity);
-    }
-    private _onEdit = () => {
-        this.props.onEdit(this.props.equipmentEntity);
-    }
 }
