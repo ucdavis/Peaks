@@ -16,6 +16,7 @@ namespace Keas.Mvc.Services
         Task TrackCreateAccess(Access access);
         Task TrackAssignAccess(AccessAssignment accessAssignment, string teamName);
         Task TrackUnAssignAccess(AccessAssignment accessAssignment, string teamName);
+        Task TrackUpdateAccess(Access access);
 
     }
     public class EventService : IEventService
@@ -95,6 +96,11 @@ namespace Keas.Mvc.Services
         {
             var history = await _historyService.AccessUnassigned(accessAssignment);
             await _notificationService.AccessUnAssigned(accessAssignment, history, teamName);
+        }
+        public async Task TrackUpdateAccess(Access access) 
+        {
+            var history = await _historyService.AccessUpdated(access);
+            await _notificationService.AccessCreatedUpdatedInactive(access, history);
         }
 
     }

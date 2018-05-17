@@ -117,6 +117,20 @@ namespace Keas.Mvc.Controllers
             }
             return BadRequest(ModelState);
         }
+        public async Task<IActionResult> Update([FromBody]Access access)
+        {
+            //TODO: check permissions, make sure SN isn't edited 
+            if (ModelState.IsValid)
+            {
+                var a = await _context.Access.Where(x => x.Team.Name == Team)
+                    .SingleAsync(x => x.Id == access.Id);
+                a.Name = access.Name;
+                await _context.SaveChangesAsync();
+                await _eventService.TrackUpdateAccess(a);
+                return Json(access);
+            }
+            return BadRequest(ModelState);
+        }
 
         public async Task<IActionResult> Revoke([FromBody] AccessAssignment accessAssignment)
         {

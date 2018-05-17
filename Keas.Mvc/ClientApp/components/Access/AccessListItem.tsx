@@ -8,6 +8,7 @@ interface IProps {
     personView: boolean;
     onRevoke: (access: IAccess) => void;
     onAdd: (access: IAccess) => void;
+    onEdit: (access: IAccess) => void;
     showDetails: (access: IAccess) => void;
 }
 
@@ -31,6 +32,7 @@ export default class AccessListItem extends React.Component<IProps, {}> {
                         canRevoke={hasAssignment}
                         onAdd={this._onAdd}
                         canAdd={canAdd}
+                        onEdit={() => this.props.onEdit(this.props.accessEntity)}
                         showDetails={this._showDetails}
                     />
                 </td>

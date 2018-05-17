@@ -9,6 +9,7 @@ interface IProps {
     personView: boolean;
     onRevoke: (access: IAccess) => void;
     onAdd: (access: IAccess) => void;
+    onEdit: (access: IAccess) => void;
     showDetails: (access: IAccess) => void;
 }
 
@@ -21,6 +22,7 @@ export default class AccessList extends React.Component<IProps, {}> {
               personView={this.props.personView}
               onRevoke={this.props.onRevoke}
               onAdd={this.props.onAdd}
+              onEdit={this.props.onEdit}
               showDetails={this.props.showDetails}
           />
     ));
