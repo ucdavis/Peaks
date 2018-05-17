@@ -100,6 +100,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                       changeProperty={this._changeProperty}
                       disableEditing={false}
                       updateAttributes={this._updateAttributes}
+                      hideName={true}
                     />
                   ))}
                 {this.state.equipment &&
@@ -108,7 +109,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                       selectedEquipment={this.state.equipment}
                       commonAttributeKeys={this.props.commonAttributeKeys}
                       disableEditing={true}
-                    />
+                      hideName={true}
+                      />
                   )}
 
                 {(!!this.state.person || !!this.props.person) && (
