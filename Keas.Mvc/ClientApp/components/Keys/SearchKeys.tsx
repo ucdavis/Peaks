@@ -109,7 +109,6 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 id: key.teamId ? key.id : 0,
                 name: key.name,
                 serialNumber: key.serialNumber ? key.serialNumber : "",
-                team: this.context.team,
                 teamId: key.teamId ? key.teamId : 0,
             });
         }

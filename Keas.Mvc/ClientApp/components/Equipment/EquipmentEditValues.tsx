@@ -9,7 +9,7 @@ interface IProps {
     commonAttributeKeys?: string[];
     disableEditing: boolean;
     selectedEquipment: IEquipment;
-    hideName?: boolean;
+    creating?: boolean;
     updateAttributes?: (attribute: IEquipmentAttribute[]) => void;
 }
 
@@ -18,7 +18,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
     public render() {
         return (
             <div>
-                {!this.props.hideName &&
+                {!this.props.creating &&
                 <div className="form-group">
                     <label>Name</label>
                     <input type="text"
@@ -33,6 +33,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <input type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
+                        autoFocus={!this.props.disableEditing && this.props.creating}
                         value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
                         onChange={(e) => this.props.changeProperty("serialNumber", e.target.value)}
                     />

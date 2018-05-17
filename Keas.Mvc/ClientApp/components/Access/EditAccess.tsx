@@ -102,8 +102,8 @@ export default class EditAccess extends React.Component<IProps, IState> {
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
-      error: "",
       access: null,
+      error: "",
       validState: false
     });
     this.props.closeModal();
