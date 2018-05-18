@@ -181,9 +181,9 @@ namespace Keas.Mvc.Helpers
             context.TeamPermissions.Add(scottAccess);
 
             var JamesAdmin = new SystemPermission {Id = 1, Role = admin, User = james};
-            var AdamAdmin = new SystemPermission {Id = 1, Role = admin, User = adam};
+            var AdamAdmin = new SystemPermission {Id = 2, Role = admin, User = adam};
             context.SystemPermissions.Add(JamesAdmin);
-            // context.SystemPermissions.Add(AdamAdmin); // This breaks things
+            context.SystemPermissions.Add(AdamAdmin);
 
             context.Histories.Add(history);
             context.Histories.Add(history2);
