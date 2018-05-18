@@ -43,10 +43,12 @@ namespace Keas.Mvc.Helpers
             var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
             var james = new User { Id = "141414", FirstName = "James", Name = "James Cubbage", Email = "jscubbage@ucdavis.edu" };
             var laura = new User { Id = "123222", Name = "Laura Holstege", Email = "laholstege@ucdavis.edu" };
+            var adam  = new User { Id = "151515", FirstName = "Adam", Name = "Adam Getchell", Email = "acgetchell@ucdavis.edu"};
             var caes = new Team { Id = 1, Name = "CAESDO" };
 
             context.Users.Add(scott);
             context.Users.Add(james);
+            context.Users.Add(adam);
             context.Teams.Add(caes);
 
 
@@ -179,7 +181,9 @@ namespace Keas.Mvc.Helpers
             context.TeamPermissions.Add(scottAccess);
 
             var JamesAdmin = new SystemPermission {Id = 1, Role = admin, User = james};
+            var AdamAdmin = new SystemPermission {Id = 1, Role = admin, User = adam};
             context.SystemPermissions.Add(JamesAdmin);
+            // context.SystemPermissions.Add(AdamAdmin); // This breaks things
 
             context.Histories.Add(history);
             context.Histories.Add(history2);
