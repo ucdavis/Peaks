@@ -15,11 +15,11 @@ export default class SpacesListItem extends React.Component<IProps, {}> {
     public render() {
         return (
                 <tr>
-                    <td>{this.props.space.room.bldgName}</td>
-                    <td>{this.props.space.room.floorName}</td>
-                    <td>{this.props.space.room.roomNumber}</td>
+                    <td>{this.props.space.bldgName}</td>
+                    <td>{this.props.space.floorName}</td>
+                    <td>{this.props.space.roomNumber}</td>
                     <td>
-                            {this.props.space.room.roomName}
+                            {this.props.space.roomName}
                     </td>
                     <td>
                         <Button color="secondary" onClick={(e) => this.props.showDetails(this.props.space)}>

@@ -77,7 +77,7 @@ export interface IEquipment {
   make: string;
   model: string;
   name: string;
-  room: IRoom;
+  space: ISpace;
   serialNumber: string;
   teamId: number;
   type: string;
@@ -99,20 +99,16 @@ export interface IEquipmentAttribute {
   value: string;
 }
 
-export interface IRoom {
-    bldgName: string;
-    floorName: string;
-  roomKey: string;
-  roomName: string;
-  roomNumber: string;
-}
 
 export interface ISpace {
     id: number;
     roomKey: string;
-    room: IRoom;
     orgId: string;
     deptName: string;
+    bldgName: string;
+    floorName: string;
+    roomName: string;
+    roomNumber: string;
 }
 
 export interface IHistory {

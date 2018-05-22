@@ -38,7 +38,7 @@ namespace Keas.Mvc.Controllers
             return Json(equipment);
         }
 
-        public async Task<IActionResult> GetEquipmentInRoom(string roomKey)
+        public async Task<IActionResult> GetEquipmentInSpace(string roomKey)
         {
             var equipment = await _context.Equipment.Where(x => x.Space.RoomKey == roomKey).AsNoTracking().ToListAsync();
             return Json(equipment);

@@ -86,7 +86,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     // if we are creating a new key
     if (key.id === 0) {
       key.teamId = this.context.team.id;
-      key = await this.context.fetch("/api/${this.context.team.name}/keys/create", {
+      key = await this.context.fetch(`/api/${this.context.team.name}/keys/create`, {
         body: JSON.stringify(key),
         method: "POST"
       });

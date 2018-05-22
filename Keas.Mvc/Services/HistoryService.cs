@@ -54,8 +54,7 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Key",
                 ActionType = "Created",
-                Key = key,
-                TargetId = key.Assignment.PersonId
+                Key = key
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();

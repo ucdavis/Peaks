@@ -30,12 +30,12 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
         return (
             <div>
                 <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg">
-                    <ModalHeader>Details for {this.props.selectedSpace.room.roomNumber} {this.props.selectedSpace.room.bldgName}</ModalHeader>
+                    <ModalHeader>Details for {this.props.selectedSpace.roomNumber} {this.props.selectedSpace.bldgName}</ModalHeader>
                     <ModalBody>
-                        {this.props.selectedSpace.room.roomName &&
+                        {this.props.selectedSpace.roomName &&
                             <div className="form-group">
                             <label>Room Name</label><br />
-                            {this.props.selectedSpace.room.roomName}
+                            {this.props.selectedSpace.roomName}
                             </div>}
                         <SpacesDetailsKeys roomKey={this.props.selectedSpace.roomKey} />
                         <SpacesDetailsEquipment roomKey={this.props.selectedSpace.roomKey} />

@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 
-import { IEquipment, IEquipmentAttribute, IRoom } from "../../Types";
-import AssignRoom from "../Spaces/AssignRoom"
+import { IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
+import AssignSpace from "../Spaces/AssignSpace";
 import EquipmentAttributes from "./EquipmentAttributes";
 
 interface IProps {
@@ -84,15 +84,15 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         <input type="text"
                             className="form-control"
                             disabled={true}
-                            value={this.props.selectedEquipment.room ?
-                                `${this.props.selectedEquipment.room.roomKey} ${this.props.selectedEquipment.room.bldgName}` : ""}
+                            value={this.props.selectedEquipment.space ?
+                                `${this.props.selectedEquipment.space.roomKey} ${this.props.selectedEquipment.space.bldgName}` : ""}
                         />
                     </div>
                 }
                 {!this.props.disableEditing &&
                     <div className="form-group">
                         <label>Room</label>
-                        <AssignRoom onSelect={this._selectRoom} />
+                        <AssignSpace onSelect={this._selectSpace} />
                     </div>
                 }
 
@@ -100,7 +100,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
         );
     }
 
-    private _selectRoom = (room: IRoom) => {
-        this.props.changeProperty("room", room);
+    private _selectSpace = (space: ISpace) => {
+        this.props.changeProperty("space", space);
     } 
 }
