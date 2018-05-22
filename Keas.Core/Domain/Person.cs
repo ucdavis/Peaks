@@ -23,7 +23,6 @@ namespace Keas.Core.Domain
         public string Title { get; set; }
         public string HomePhone { get; set; }
         public string TeamPhone { get; set; }
-        [JsonIgnore]
         public List<AccessAssignment> AccessAssignments { get; set; }
     }
 }
