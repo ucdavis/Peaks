@@ -23,9 +23,9 @@
         <tr>
             <td>@item.Name</td>
             <td>@item.SerialNumber</td>
-            @if (@item.Room != null)
+            @if (@item.Space != null)
             {
-                <td>>@item.Room.RoomName (@item.Room.RoomNumber @item.Room.BldgName)</td>
+                <td>>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
             }
             else
             {
@@ -57,9 +57,9 @@
                 <td>@item.SerialNumber</td>
                 <td>@item.Make</td>
                 <td>@item.Model</td>
-                @if (@item.Room != null)
+                @if (@item.Space != null)
                 {
-                    <td>>@item.Room.RoomName (@item.Room.RoomNumber @item.Room.BldgName)</td>
+                    <td>>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
                 }
                 else
                 {
