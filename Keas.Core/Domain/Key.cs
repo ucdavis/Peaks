@@ -9,7 +9,8 @@ namespace Keas.Core.Domain
         public string SerialNumber { get; set; }
 
         public string LockId { get; set; }
-        public Room Room { get; set; }
+        public Space Space { get; set; }
+        public int? SpaceId { get; set; }
 
         public KeyAssignment Assignment { get; set; }
         public int? KeyAssignmentId { get; set; }

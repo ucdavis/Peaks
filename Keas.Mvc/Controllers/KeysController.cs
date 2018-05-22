@@ -40,7 +40,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> GetKeysInRoom(string roomKey)
         {
-            var equipment = await _context.Keys.Where(x => x.Room.RoomKey == roomKey).AsNoTracking().ToListAsync();
+            var equipment = await _context.Keys.Where(x => x.Space.RoomKey == roomKey).AsNoTracking().ToListAsync();
             return Json(equipment);
         }
 

@@ -35,7 +35,7 @@ namespace Keas.Mvc.Controllers
         {
             var spaces = await _context.Spaces
                 .Where(x => x.OrgId == orgId)
-                .Include(x => x.Room).AsNoTracking().ToListAsync();
+                .AsNoTracking().ToListAsync();
             return Json(spaces);
         }
 

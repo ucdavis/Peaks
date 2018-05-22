@@ -40,7 +40,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> GetEquipmentInRoom(string roomKey)
         {
-            var equipment = await _context.Equipment.Where(x => x.Room.RoomKey == roomKey).AsNoTracking().ToListAsync();
+            var equipment = await _context.Equipment.Where(x => x.Space.RoomKey == roomKey).AsNoTracking().ToListAsync();
             return Json(equipment);
         }
 
@@ -62,7 +62,7 @@ namespace Keas.Mvc.Controllers
                 .Where(x => x.Assignment.PersonId == personId && x.Team.Name == Team)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person.User)
-                .Include(x => x.Room)
+                .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
@@ -77,7 +77,7 @@ namespace Keas.Mvc.Controllers
                 .Where(x => x.Team.Name == Team)
                 .Include(x => x.Assignment)
                 .ThenInclude(x=>x.Person.User)
-                .Include(x => x.Room)
+                .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
@@ -90,10 +90,10 @@ namespace Keas.Mvc.Controllers
             // TODO Make sure user has permissions
             if (ModelState.IsValid)
             {
-                if (equipment.Room != null)
+                if (equipment.Space != null)
                 {
-                   var room = await _context.Rooms.SingleAsync(x => x.RoomKey == equipment.Room.RoomKey);
-                    equipment.Room = room;
+                   var space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
+                    equipment.Space = space;
                 }
                 _context.Equipment.Add(equipment);
                 await _eventService.TrackCreateEquipment(equipment);
@@ -107,7 +107,7 @@ namespace Keas.Mvc.Controllers
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var equipment = await _context.Equipment.Where(x => x.Team.Name == Team).Include(x => x.Room).SingleAsync(x => x.Id == equipmentId);
+                var equipment = await _context.Equipment.Where(x => x.Team.Name == Team).Include(x => x.Space).SingleAsync(x => x.Id == equipmentId);
                 equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
                 equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
 
