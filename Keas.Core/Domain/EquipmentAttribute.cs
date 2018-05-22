@@ -4,7 +4,6 @@ namespace Keas.Core.Domain
 {
     public class EquipmentAttribute {
         public int Id { get; set; }
-        [JsonIgnore]
         public Equipment Equipment { get; set; }
         public int EquipmentId { get; set; }
 
