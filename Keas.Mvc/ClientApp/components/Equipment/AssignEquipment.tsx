@@ -26,10 +26,10 @@ interface IProps {
   closeModal: () => void;
   selectedEquipment: IEquipment;
   person?: IPerson;
+  commonAttributeKeys: string[];
 }
 
 interface IState {
-  commonAttributeKeys: string[];
   date: any;
   equipment: IEquipment;
   error: string;
@@ -46,21 +46,12 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      commonAttributeKeys: [],
       date: moment().add(3, "y"),
       equipment: this.props.selectedEquipment,
       error: "",
       person: null,
       validState: false
     };
-  }
-
-  // pull the common attributes here so we only do it once
-  public async componentDidMount() {
-    const equipmentFetchUrl = `/api/${this.context.team.name}/equipment/commonAttributeKeys/`;
-
-    const commonAttributeKeys = await this.context.fetch(equipmentFetchUrl);
-    this.setState({ commonAttributeKeys});
   }
 
   // make sure we change the equipment we are updating if the parent changes selected equipment
@@ -105,19 +96,21 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                   (!this.state.equipment.teamId && ( // if we are creating a new equipment, edit properties
                     <EquipmentEditValues
                       selectedEquipment={this.state.equipment}
-                      commonAttributeKeys={this.state.commonAttributeKeys}
+                      commonAttributeKeys={this.props.commonAttributeKeys}
                       changeProperty={this._changeProperty}
                       disableEditing={false}
                       updateAttributes={this._updateAttributes}
+                      hideName={true}
                     />
                   ))}
                 {this.state.equipment &&
                   !!this.state.equipment.teamId && (
                     <EquipmentEditValues
                       selectedEquipment={this.state.equipment}
-                      commonAttributeKeys={this.state.commonAttributeKeys}
+                      commonAttributeKeys={this.props.commonAttributeKeys}
                       disableEditing={true}
-                    />
+                      hideName={true}
+                      />
                   )}
 
                 {(!!this.state.person || !!this.props.person) && (

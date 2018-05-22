@@ -9,6 +9,7 @@ interface IProps {
     canAdd?: boolean;
 
     showDetails?: () => void;
+    onEdit?: () => void;
 }
 
 interface IState {
@@ -34,9 +35,11 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
                         <DropdownItem onClick={this.props.onAdd} >Assign</DropdownItem>}
                     {this.props.canRevoke &&
                         <DropdownItem onClick={this.props.onRevoke} > Revoke</DropdownItem>}
+                    {this.props.onEdit != null &&
+                        <DropdownItem onClick={this.props.onEdit} >Edit</DropdownItem>}
                     {this.props.showDetails != null &&
                         <DropdownItem onClick={this.props.showDetails} > Show Details</DropdownItem>}
-                </DropdownMenu>
+                    </DropdownMenu>
             </Dropdown>
         );
     }

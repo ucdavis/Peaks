@@ -33,6 +33,7 @@ namespace Keas.Mvc.Controllers
             var equipment = await _context.Equipment
                 .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
+                .Include(x => x.Room)
                 .AsNoTracking().ToListAsync();
 
             return Json(equipment);
@@ -116,6 +117,35 @@ namespace Keas.Mvc.Controllers
                 await _context.SaveChangesAsync();
                 await _eventService.TrackAssignEquipment(equipment);
                 return Json(equipment);
+            }
+            return BadRequest(ModelState);
+        }
+
+        public async Task<IActionResult> Update([FromBody]Equipment equipment)
+        {
+            //TODO: check permissions
+            if (ModelState.IsValid)
+            {
+                var eq = await _context.Equipment.Where(x => x.Team.Name == Team)
+                    .Include(x => x.Room).Include(x => x.Attributes)
+                    .SingleAsync(x => x.Id == equipment.Id);
+                    
+                eq.Make = equipment.Make;
+                eq.Model = equipment.Model;
+                eq.Name = equipment.Name;
+                eq.SerialNumber = equipment.SerialNumber;
+                
+                eq.Attributes.Clear();
+                equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
+
+                if(eq.Room.RoomKey != equipment.Room.RoomKey)
+                {
+                    eq.Room = await _context.Rooms.SingleAsync(x => x.RoomKey == equipment.Room.RoomKey);
+                }
+
+                await _context.SaveChangesAsync();
+                await _eventService.TrackUpdateEquipment(eq);
+                return Json(eq);
             }
             return BadRequest(ModelState);
         }

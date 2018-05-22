@@ -9,6 +9,7 @@ interface IProps {
     commonAttributeKeys?: string[];
     disableEditing: boolean;
     selectedEquipment: IEquipment;
+    creating?: boolean;
     updateAttributes?: (attribute: IEquipmentAttribute[]) => void;
 }
 
@@ -17,19 +18,22 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
     public render() {
         return (
             <div>
+                {!this.props.creating &&
                 <div className="form-group">
                     <label>Name</label>
                     <input type="text"
                         className="form-control"
-                        disabled={true}
+                        disabled={this.props.disableEditing}
                         value={this.props.selectedEquipment.name ? this.props.selectedEquipment.name : ""}
+                        onChange={(e) => this.props.changeProperty("name", e.target.value)}
                     />
-                </div>
+                </div>}
                 <div className="form-group">
                     <label>Serial Number</label>
                     <input type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
+                        autoFocus={!this.props.disableEditing && this.props.creating}
                         value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
                         onChange={(e) => this.props.changeProperty("serialNumber", e.target.value)}
                     />
@@ -40,16 +44,16 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <label>Assigned To</label>
                     <input type="text"
                         className="form-control"
-                        disabled={this.props.disableEditing}
-                        value={this.props.selectedEquipment.assignment.person ? this.props.selectedEquipment.assignment.person.user.name : ""}
+                        disabled={true}
+                        value={this.props.selectedEquipment.assignment.person.user.name}
                         />
                 </div>
                 <div className="form-group">
                     <label>Expires at</label>
                     <input type="text"
                         className="form-control"
-                        disabled={this.props.disableEditing}
-                        value={this.props.selectedEquipment.assignment.expiresAt ? this.props.selectedEquipment.assignment.expiresAt.toString() : ""}
+                        disabled={true}
+                        value={this.props.selectedEquipment.assignment.expiresAt.toString()}
                         />
                 </div>
                 </div>
@@ -85,16 +89,17 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             className="form-control"
                             disabled={true}
                             value={this.props.selectedEquipment.space ?
-                                `${this.props.selectedEquipment.space.roomKey} ${this.props.selectedEquipment.space.bldgName}` : ""}
+                                `${this.props.selectedEquipment.space.roomNumber} ${this.props.selectedEquipment.space.bldgName}` : ""}
                         />
                     </div>
                 }
                 {!this.props.disableEditing &&
                     <div className="form-group">
                         <label>Room</label>
-                        <AssignSpace onSelect={this._selectSpace} />
-                    </div>
-                }
+
+                <AssignSpace onSelect={this._selectSpace} defaultRoom={this.props.selectedEquipment.space} />
+                    </div>}
+              
 
             </div>
         );

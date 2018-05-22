@@ -5,7 +5,8 @@ import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 import { AppContext, ISpace } from "../../Types";
 
 interface IProps {
-    onSelect: (space: ISpace) => void;
+   onSelect: (space: ISpace) => void;
+    defaultSpace?: ISpace;
 }
 
 interface IState {
@@ -38,15 +39,17 @@ export default class AssignSpace extends React.Component<IProps, IState> {
                     isLoading={this.state.isSearchLoading}
                     minLength={2}
                     placeholder="Search for space"
+                    defaultInputValue={this.props.defaultRoom ?  
+                        this.props.defaultSpace.roomNumber + " " + this.props.defaultSpace.bldgName : ""}
                     labelKey={(option: ISpace) =>
                         `${option.roomNumber} ${option.bldgName}`
                     }                    filterBy={() => true} 
                     renderMenuItemChildren={(option, props, index) => (
                         <div>
                             <div>
-                                {!!option.spaceNumber &&
-                                    <Highlighter key="spaceNumber" search={props.text}>
-                                        {option.spaceNumber}
+                                {!!option.roomNumber &&
+                                    <Highlighter key="roomNumber" search={props.text}>
+                                        {option.roomNumber}
                                     </Highlighter>}
                                 {" "}
                                 {!!option.bldgName &&
@@ -57,7 +60,7 @@ export default class AssignSpace extends React.Component<IProps, IState> {
                             {!!option.roomName &&
                                 <div>
                                     <small>
-                                        <Highlighter key="spaceName" search={props.text}>{option.roomName}</Highlighter>
+                                        <Highlighter key="roomName" search={props.text}>{option.roomName}</Highlighter>
                                     </small>
                                 </div>}
                         </div>
