@@ -20,7 +20,7 @@ namespace Keas.Mvc.Controllers
             this._context = context;
         }
 
-        public async Task<IActionResult> SearchRooms(string q)
+        public async Task<IActionResult> SearchSpaces(string q)
         {
             var queryWords = q.ToLower().Split(" ").ToList();
             var space = await _context.Spaces

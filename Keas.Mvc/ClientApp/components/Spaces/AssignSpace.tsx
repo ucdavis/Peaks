@@ -39,7 +39,7 @@ export default class AssignSpace extends React.Component<IProps, IState> {
                     isLoading={this.state.isSearchLoading}
                     minLength={2}
                     placeholder="Search for space"
-                    defaultInputValue={this.props.defaultRoom ?  
+                    defaultInputValue={this.props.defaultSpace ?  
                         this.props.defaultSpace.roomNumber + " " + this.props.defaultSpace.bldgName : ""}
                     labelKey={(option: ISpace) =>
                         `${option.roomNumber} ${option.bldgName}`

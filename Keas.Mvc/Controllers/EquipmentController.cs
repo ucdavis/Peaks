@@ -33,7 +33,7 @@ namespace Keas.Mvc.Controllers
             var equipment = await _context.Equipment
                 .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
-                .Include(x => x.Room)
+                .Include(x => x.Space)
                 .AsNoTracking().ToListAsync();
 
             return Json(equipment);
@@ -127,7 +127,7 @@ namespace Keas.Mvc.Controllers
             if (ModelState.IsValid)
             {
                 var eq = await _context.Equipment.Where(x => x.Team.Name == Team)
-                    .Include(x => x.Room).Include(x => x.Attributes)
+                    .Include(x => x.Space).Include(x => x.Attributes)
                     .SingleAsync(x => x.Id == equipment.Id);
                     
                 eq.Make = equipment.Make;
@@ -138,9 +138,9 @@ namespace Keas.Mvc.Controllers
                 eq.Attributes.Clear();
                 equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
 
-                if(eq.Room.RoomKey != equipment.Room.RoomKey)
+                if(eq.Space.RoomKey != equipment.Space.RoomKey)
                 {
-                    eq.Room = await _context.Rooms.SingleAsync(x => x.RoomKey == equipment.Room.RoomKey);
+                    eq.Space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
                 }
 
                 await _context.SaveChangesAsync();

@@ -33,7 +33,7 @@ namespace Keas.Mvc.Controllers
             var keys = await _context.Keys
                 .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
-                .Include(x => x.Room)
+                .Include(x => x.Space)
                 .AsNoTracking().ToListAsync();
 
             return Json(keys);
