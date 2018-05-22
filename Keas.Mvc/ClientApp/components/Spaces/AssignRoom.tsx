@@ -6,6 +6,7 @@ import { AppContext, IRoom } from "../../Types";
 
 interface IProps {
     onSelect: (room: IRoom) => void;
+    defaultRoom?: IRoom;
 }
 
 interface IState {
@@ -38,6 +39,8 @@ export default class AssignRoom extends React.Component<IProps, IState> {
                     isLoading={this.state.isSearchLoading}
                     minLength={2}
                     placeholder="Search for room"
+                    defaultInputValue={this.props.defaultRoom ?  
+                        this.props.defaultRoom.roomNumber + " " + this.props.defaultRoom.bldgName : ""}
                     labelKey={(option: IRoom) =>
                         `${option.roomNumber} ${option.bldgName}`
                     }                    filterBy={() => true} 

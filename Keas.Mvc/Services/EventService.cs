@@ -8,12 +8,15 @@ namespace Keas.Mvc.Services
         Task TrackCreateKey(Key key);
         Task TrackAssignKey(Key key);
         Task TrackUnAssignKey(Key key);
+        Task TrackUpdateKey(Key key);
         Task TrackCreateEquipment(Equipment equipment);
         Task TrackAssignEquipment(Equipment equipment);
         Task TrackUnAssignEquipment(Equipment equipment);
+        Task TrackUpdateEquipment(Equipment equipment);
         Task TrackCreateAccess(Access access);
         Task TrackAssignAccess(AccessAssignment accessAssignment, string teamName);
         Task TrackUnAssignAccess(AccessAssignment accessAssignment, string teamName);
+        Task TrackUpdateAccess(Access access);
         Task TrackCreateWorkstation(Workstation workstation);
         Task TrackAssignWorkstation(Workstation workstation);
         Task TrackUnAssignWorkstation(Workstation workstation);
@@ -50,6 +53,12 @@ namespace Keas.Mvc.Services
             await _notificationService.KeyUnAssigned(key, history);
         }
 
+        public async Task TrackUpdateKey(Key key) 
+        {
+            var history = await _historyService.KeyUpdated(key);
+            await _notificationService.KeyCreatedUpdatedInactive(key, history);
+        }
+
         public async Task TrackCreateEquipment(Equipment equipment)
         {
             var history = await _historyService.EquipmentCreated(equipment);
@@ -67,6 +76,12 @@ namespace Keas.Mvc.Services
             var history = await _historyService.EquipmentUnassigned(equipment);
             await _notificationService.EquipmentUnAssigned(equipment, history);
         }
+        public async Task TrackUpdateEquipment(Equipment equipment) 
+        {
+            var history = await _historyService.EquipmentUpdated(equipment);
+            await _notificationService.EquipmentCreatedUpdatedInactive(equipment, history);
+        }
+
 
         public async Task TrackCreateAccess(Access access)
         {
@@ -85,6 +100,11 @@ namespace Keas.Mvc.Services
         {
             var history = await _historyService.AccessUnassigned(accessAssignment);
             await _notificationService.AccessUnAssigned(accessAssignment, history, teamName);
+        }
+        public async Task TrackUpdateAccess(Access access) 
+        {
+            var history = await _historyService.AccessUpdated(access);
+            await _notificationService.AccessCreatedUpdatedInactive(access, history);
         }
 
         public async Task TrackCreateWorkstation(Workstation workstation)

@@ -94,7 +94,8 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                   <AccessEditValues
                                   selectedAccess={this.props.selectedAccess}
                                   changeProperty={this._changeProperty}
-                                  disableEditing={false} />
+                                  disableEditing={false} 
+                                  creating={true}/>
                               }
                               {!!this.props.selectedAccess && !!this.props.selectedAccess.teamId &&
                                   <AccessEditValues

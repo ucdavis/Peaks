@@ -9,6 +9,7 @@ interface IProps {
     onRevoke: (key: IKey) => void;
     onAdd: (key: IKey) => void;
     showDetails: (key: IKey) => void;
+    onEdit: (key: IKey) => void;
 }
 
 export default class KeyList extends React.Component<IProps, {}> {
@@ -20,6 +21,7 @@ export default class KeyList extends React.Component<IProps, {}> {
                 onRevoke={this.props.onRevoke}
                 onAdd={this.props.onAdd}
                 showDetails={this.props.showDetails}
+                onEdit={this.props.onEdit}
             />
         ));
         return (

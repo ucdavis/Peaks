@@ -8,6 +8,7 @@ interface IProps {
     onRevoke: (key: IKey) => void;
     onAdd: (key: IKey) => void;
     showDetails: (key: IKey) => void;
+    onEdit: (key: IKey) => void;
 }
 
 
@@ -24,23 +25,15 @@ export default class KeyListItem extends React.Component<IProps, {}> {
             </td>
             <td>
                     <ListActionsDropdown
-                        onRevoke={this._onRevoke}
+                        onRevoke={() => this.props.onRevoke(this.props.keyEntity)}
                         canRevoke={hasAssignment}
-                        onAdd={this._onAdd}
+                        onAdd={() => this.props.onAdd(this.props.keyEntity)}
                         canAdd={!hasAssignment}
-                        showDetails={this._showDetails}
+                        showDetails={() => this.props.showDetails(this.props.keyEntity)}
+                        onEdit={() => this.props.onEdit(this.props.keyEntity)}
                     />
             </td>
           </tr>
         );
       }
-    private _onRevoke = () => {
-        this.props.onRevoke(this.props.keyEntity);
-    }
-    private _onAdd = () => {
-        this.props.onAdd(this.props.keyEntity);
-    }
-    private _showDetails = () => {
-        this.props.showDetails(this.props.keyEntity);
-    }
 }

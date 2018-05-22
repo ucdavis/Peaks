@@ -33,6 +33,7 @@ namespace Keas.Mvc.Controllers
             var keys = await _context.Keys
                 .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
+                .Include(x => x.Room)
                 .AsNoTracking().ToListAsync();
 
             return Json(keys);
@@ -92,6 +93,23 @@ namespace Keas.Mvc.Controllers
                 await _context.SaveChangesAsync();
                 await _eventService.TrackAssignKey(key);
                 return Json(key);
+            }
+            return BadRequest(ModelState);
+        }
+
+        public async Task<IActionResult> Update([FromBody]Key key)
+        {
+            //TODO: check permissions, make sure SN isn't edited 
+            if (ModelState.IsValid)
+            {
+                var k = await _context.Keys.Where(x => x.Team.Name == Team)
+                    .Include(x=> x.Assignment).ThenInclude(x => x.Person.User)
+                    .Include(x=> x.Team)
+                    .SingleAsync(x => x.Id == key.Id);
+                k.Name = key.Name;
+                await _context.SaveChangesAsync();
+                await _eventService.TrackUpdateKey(key);
+                return Json(k);
             }
             return BadRequest(ModelState);
         }

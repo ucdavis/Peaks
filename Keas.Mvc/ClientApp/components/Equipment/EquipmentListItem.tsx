@@ -8,6 +8,7 @@ interface IProps {
     onRevoke: (equipment: IEquipment) => void;
     onAdd: (equipment: IEquipment) => void;
     showDetails: (equipment: IEquipment) => void;
+    onEdit: (equipment: IEquipment) => void;
 }
 
 
@@ -24,23 +25,15 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
             </td>
             <td>
                     <ListActionsDropdown
-                        onRevoke={this._onRevoke}
+                        onRevoke={() => this.props.onRevoke(this.props.equipmentEntity)}
                         canRevoke={hasAssignment}
-                        onAdd={this._onAdd}
+                        onAdd={() => this.props.onAdd(this.props.equipmentEntity)}
                         canAdd={!hasAssignment}
-                        showDetails={this._showDetails}
+                        showDetails={() => this.props.showDetails(this.props.equipmentEntity)}
+                        onEdit={() => this.props.onEdit(this.props.equipmentEntity)}
                     />
             </td>
           </tr>
         );
       }
-    private _onRevoke = () => {
-        this.props.onRevoke(this.props.equipmentEntity);
-    }
-    private _onAdd = () => {
-        this.props.onAdd(this.props.equipmentEntity);
-    }
-    private _showDetails = () => {
-        this.props.showDetails(this.props.equipmentEntity);
-    }
 }
