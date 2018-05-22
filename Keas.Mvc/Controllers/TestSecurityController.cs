@@ -21,7 +21,7 @@ namespace Keas.Mvc.Controllers
             _securityService = securityService;
             _context = context;
         }
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View();
         }

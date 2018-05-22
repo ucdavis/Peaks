@@ -20,22 +20,22 @@ namespace Keas.Mvc.Controllers
             this._context = context;
         }
 
-        public async Task<IActionResult> SearchRooms(string q)
+        public async Task<IActionResult> SearchSpaces(string q)
         {
             var queryWords = q.ToLower().Split(" ").ToList();
-            var room = await _context.Rooms
+            var space = await _context.Spaces
                 .Where(x => (!String.IsNullOrWhiteSpace(x.BldgName) && queryWords.Any(s => x.BldgName.ToLower().Contains(s)))
                 || (!String.IsNullOrWhiteSpace(x.RoomName) && queryWords.Any(s => x.RoomName.ToLower().Contains(s)))
                 || (!String.IsNullOrWhiteSpace(x.RoomNumber) && queryWords.Any(s => x.RoomNumber.ToLower().Contains(s))))
                 .AsNoTracking().ToListAsync();
-            return Json(room);
+            return Json(space);
         }
 
         public async Task<IActionResult> List(string orgId)
         {
             var spaces = await _context.Spaces
                 .Where(x => x.OrgId == orgId)
-                .Include(x => x.Room).AsNoTracking().ToListAsync();
+                .AsNoTracking().ToListAsync();
             return Json(spaces);
         }
 

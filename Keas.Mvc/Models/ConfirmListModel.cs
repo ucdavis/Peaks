@@ -18,8 +18,8 @@ namespace Keas.Mvc.Models
         {
             var viewModel = new ConfirmListModel
             {
-                Keys = await context.Keys.Include(k=> k.Room).Where(k => !k.Assignment.IsConfirmed && k.Assignment.Person == person).ToListAsync(),
-                Equipment = await context.Equipment.Include(e=> e.Room).Where(e => !e.Assignment.IsConfirmed && e.Assignment.Person==person).ToListAsync()
+                Keys = await context.Keys.Include(k=> k.Space).Where(k => !k.Assignment.IsConfirmed && k.Assignment.Person == person).ToListAsync(),
+                Equipment = await context.Equipment.Include(e=> e.Space).Where(e => !e.Assignment.IsConfirmed && e.Assignment.Person==person).ToListAsync()
             };
             
             return viewModel;
