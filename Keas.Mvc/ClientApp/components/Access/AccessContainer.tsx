@@ -8,6 +8,7 @@ import AccessList from "./AccessList";
 import AssignAccess from "./AssignAccess";
 import EditAccess from "./EditAccess";
 import RevokeAccess from "./RevokeAccess";
+import Denied from "../Shared/Denied";
 
 interface IState {
     access: IAccess[]; // either access assigned to this person, or all team access
@@ -21,6 +22,7 @@ interface IProps {
 export default class AccessContainer extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
+    permissions: PropTypes.array,
     router: PropTypes.object,
     team: PropTypes.object
   };
@@ -43,6 +45,13 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     this.setState({ access , loading: false });
   }
   public render() {
+    const permissionArray = ['AccessMaster', 'DepartmentalAdmin', 'Admin'];
+    if (!this.context.permissions.some(r => permissionArray.includes(r))) {
+        return (
+            <Denied viewName="Access" />
+        );
+    }
+
     if (this.state.loading) {
       return <h2>Loading...</h2>;
       }

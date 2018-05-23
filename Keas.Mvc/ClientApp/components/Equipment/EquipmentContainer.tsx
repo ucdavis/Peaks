@@ -7,6 +7,7 @@ import AssignEquipment from "./AssignEquipment";
 import EditEquipment from "./EditEquipment";
 import EquipmentDetails from "./EquipmentDetails";
 import EquipmentList from "./EquipmentList";
+import Denied from "../Shared/Denied";
 
 interface IState {
   commonAttributeKeys: string[];
@@ -21,6 +22,7 @@ interface IProps {
 export default class EquipmentContainer extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
+    permissions: PropTypes.array,
     router: PropTypes.object,
     team: PropTypes.object
   };
@@ -47,6 +49,13 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     this.setState({ commonAttributeKeys, equipment, loading: false });
   }
   public render() {
+    const permissionArray = ['EquipMaster', 'DepartmentalAdmin', 'Admin'];
+    if (!this.context.permissions.some(r => permissionArray.includes(r))) {
+        return (
+            <Denied viewName="Equipment" />
+        );
+    }
+
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }

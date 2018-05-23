@@ -7,6 +7,7 @@ import AssignKey from "./AssignKey";
 import EditKey from "./EditKey";
 import KeyDetails from "./KeyDetails";
 import KeyList from "./KeyList";
+import Denied from "../Shared/Denied";
 
 interface IState {
   loading: boolean;
@@ -46,12 +47,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const permissionArray = ['KeyMaster', 'DepartmentalAdmin', 'Admin'];
     if (!this.context.permissions.some(r => permissionArray.includes(r))) {
         return (
-            <div className="card">
-                <div className="card-body">
-                    <h4 className="card-title">Key</h4>
-                    <div>You do not have permission to see Keys.</div>
-                </div>
-            </div>
+            <Denied viewName="Keys" />
         );
     }
 
