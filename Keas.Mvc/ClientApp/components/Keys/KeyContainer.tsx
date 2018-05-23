@@ -20,6 +20,7 @@ interface IProps {
 export default class KeyContainer extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
+    permissions: PropTypes.array,
     router: PropTypes.object,
     team: PropTypes.object
   };
@@ -42,6 +43,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     this.setState({ keys, loading: false });
   }
   public render() {
+    const permissionArray = ['KeyMaster', 'DepartmentalAdmin', 'Admin'];
+    if (!this.context.permissions.some(r => permissionArray.includes(r))) {
+        return <div>You do not have permission to see this</div>;
+    }
+
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
@@ -206,4 +212,5 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       ? `/${this.context.team.name}/person/details/${this.props.person.id}`
       : `/${this.context.team.name}`;
   };
+  
 }

@@ -13,7 +13,7 @@ namespace Keas.Mvc.Controllers
    [Authorize(Policy = "AnyRole")]
     public class AssetController : SuperController
     {
-        // TODO Decorate with security policy? Dept Admin? Any role? When I tried, I created a Json loop with Team & Teampermission!
+       
         private readonly ApplicationDbContext _context;
         private readonly ISecurityService _securityService;
 
