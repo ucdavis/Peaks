@@ -1,4 +1,6 @@
 using Keas.Core.Data;
+using Keas.Core.Domain;
+using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +27,9 @@ namespace Keas.Mvc.Controllers
                 return NotFound();
             }
 
-            return View(team);
+            var model = new AssetModel { Team = team };
+
+            return View(model);
         }
     }
 }
