@@ -31,10 +31,10 @@ namespace Keas.Mvc.Controllers
                 return NotFound();
             }
 
-            var permissions = await _securityService.GetUserRolesInTeam(team);
+            var permissions = await _securityService.GetUserRolesInTeamOrAdmin(team);
 
-            var permissionNames = permissions.Select(p => p.Role.Name).ToArray();
-
+            var permissionNames = permissions.Select(p => p.Name).ToArray();
+ 
             var model = new AssetModel { Team = team, Permissions = permissionNames };
 
             return View(model);

@@ -31,6 +31,8 @@ namespace Keas.Mvc.Services
         Task<List<User>> GetUsersInRoles(List<Role> roles, string teamName);
 
         Task<List<TeamPermission>> GetUserRolesInTeam(Team team);
+
+        Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team);
     }
     public class SecurityService : ISecurityService
     {
@@ -159,6 +161,15 @@ namespace Keas.Mvc.Services
         public async Task<List<TeamPermission>> GetUserRolesInTeam(Team team) {
             var userEmail = _contextAccessor.HttpContext.User.Identity.Name;
             var userPermissions = await _dbContext.TeamPermissions.Where(x => x.TeamId == team.Id && x.User.Email == userEmail).ToListAsync();
+            return userPermissions;
+        }
+
+        public async Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team)
+        {
+            var userEmail = _contextAccessor.HttpContext.User.Identity.Name;
+            var userPermissions = await _dbContext.TeamPermissions.Where(x => x.TeamId == team.Id && x.User.Email == userEmail).Select(tp=> tp.Role).ToListAsync();
+            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User.Email == userEmail).Select(sp=> sp.Role).ToListAsync();
+            userPermissions.AddRange(admin);
             return userPermissions;
         }
     }
