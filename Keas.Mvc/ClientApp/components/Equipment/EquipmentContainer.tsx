@@ -8,6 +8,7 @@ import EditEquipment from "./EditEquipment";
 import EquipmentDetails from "./EquipmentDetails";
 import EquipmentList from "./EquipmentList";
 import Denied from "../Shared/Denied";
+import { PermissionsUtil } from "../../util/permissions"; 
 
 interface IState {
   commonAttributeKeys: string[];
@@ -49,8 +50,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     this.setState({ commonAttributeKeys, equipment, loading: false });
   }
   public render() {
-    const permissionArray = ['EquipMaster', 'DepartmentalAdmin', 'Admin'];
-    if (!this.context.permissions.some(r => permissionArray.includes(r))) {
+    if (!PermissionsUtil.canViewEquipment(this.context.permissions)) {
         return (
             <Denied viewName="Equipment" />
         );

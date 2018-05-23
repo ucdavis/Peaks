@@ -4,6 +4,7 @@ import * as React from "react";
 import { AppContext, IPerson } from "../../Types";
 import PeopleListItem from "./PeopleListItem";
 import Denied from "../Shared/Denied";
+import { PermissionsUtil } from "../../util/permissions"; 
 
 interface IState {
     members: IPerson[];
@@ -29,8 +30,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
       this.setState({ members });
   }
   public render() {
-    const permissionArray = ['EquipMaster', 'KeyMaster', 'AccessMaster','SpaceMaster', 'DepartmentalAdmin', 'Admin'];
-    if (!this.context.permissions.some(r => permissionArray.includes(r))) {
+    if (!PermissionsUtil.canViewPeople(this.context.permissions)) {
         return (
             <Denied viewName="People" />
         );

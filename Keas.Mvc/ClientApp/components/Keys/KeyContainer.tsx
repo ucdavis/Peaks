@@ -8,6 +8,7 @@ import EditKey from "./EditKey";
 import KeyDetails from "./KeyDetails";
 import KeyList from "./KeyList";
 import Denied from "../Shared/Denied";
+import {PermissionsUtil} from "../../util/permissions"; 
 
 interface IState {
   loading: boolean;
@@ -44,8 +45,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     this.setState({ keys, loading: false });
   }
   public render() {
-    const permissionArray = ['KeyMaster', 'DepartmentalAdmin', 'Admin'];
-    if (!this.context.permissions.some(r => permissionArray.includes(r))) {
+    if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
         return (
             <Denied viewName="Keys" />
         );

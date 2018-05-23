@@ -5,6 +5,7 @@ import { AppContext, ISpace } from "../../Types";
 import SpacesDetails from "./SpacesDetails";
 import SpacesList from "./SpacesList";
 import Denied from "../Shared/Denied";
+import { PermissionsUtil } from "../../util/permissions"; 
 
 interface IState {
     spaces: ISpace[];
@@ -31,7 +32,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
     }
     public render() {
         const permissionArray = ['SpaceMaster', 'DepartmentalAdmin', 'Admin'];
-        if (!this.context.permissions.some(r => permissionArray.includes(r))) {
+        if (!PermissionsUtil.canViewSpace(this.context.permissions)) {
             return (
                 <Denied viewName="Space" />
             );
