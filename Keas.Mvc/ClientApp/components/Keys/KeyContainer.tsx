@@ -45,7 +45,14 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   public render() {
     const permissionArray = ['KeyMaster', 'DepartmentalAdmin', 'Admin'];
     if (!this.context.permissions.some(r => permissionArray.includes(r))) {
-        return <div>You do not have permission to see this</div>;
+        return (
+            <div className="card">
+                <div className="card-body">
+                    <h4 className="card-title">Key</h4>
+                    <div>You do not have permission to see Keys.</div>
+                </div>
+            </div>
+        );
     }
 
     if (this.state.loading) {
