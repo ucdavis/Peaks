@@ -34,7 +34,7 @@ namespace Keas.Mvc.Helpers
             var space6 = new Space { BldgKey = "03", FloorKey = "01", RoomKey = "06", BldgName = "South Hall", RoomName = "Storage", RoomNumber = "0121A", ChartNum = "3", OrgId = "ADNO" };
             context.Spaces.Add(space6);
 
-            var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
+            var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "srkirkland@ucdavis.edu" };
             var james = new User { Id = "141414", FirstName = "James", Name = "James Cubbage", Email = "jscubbage@ucdavis.edu" };
             var laura = new User { Id = "123222", Name = "Laura Holstege", Email = "laholstege@ucdavis.edu" };
             var caes = new Team { Id = 1, Name = "CAESDO" };

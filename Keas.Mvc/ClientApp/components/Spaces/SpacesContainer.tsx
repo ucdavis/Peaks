@@ -4,6 +4,8 @@ import * as React from "react";
 import { AppContext, ISpace } from "../../Types";
 import SpacesDetails from "./SpacesDetails";
 import SpacesList from "./SpacesList";
+import Denied from "../Shared/Denied";
+import { PermissionsUtil } from "../../util/permissions"; 
 
 interface IState {
     spaces: ISpace[];
@@ -11,6 +13,7 @@ interface IState {
 export default class SpacesContainer extends React.Component<{}, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
+        permissions: PropTypes.array,
         router: PropTypes.object,
         team: PropTypes.object
     };
@@ -28,6 +31,12 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         this.setState({ spaces });
     }
     public render() {
+        const permissionArray = ['SpaceMaster', 'DepartmentalAdmin', 'Admin'];
+        if (!PermissionsUtil.canViewSpace(this.context.permissions)) {
+            return (
+                <Denied viewName="Space" />
+            );
+        }
 
         const { action, assetType, id } = this.context.router.route.match.params;
         const activeAsset = !assetType || assetType === "spaces";
