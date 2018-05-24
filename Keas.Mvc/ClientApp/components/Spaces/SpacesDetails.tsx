@@ -50,5 +50,5 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
         );
     }
 
-    }
+    
 }

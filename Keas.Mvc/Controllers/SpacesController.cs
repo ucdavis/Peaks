@@ -36,7 +36,25 @@ namespace Keas.Mvc.Controllers
             var spaces = await _context.Spaces
                 .Where(x => x.OrgId == orgId)
                 .AsNoTracking().ToListAsync();
-            return Json(spaces);
+
+            var equipment = await _context.Equipment
+                .Where(x => x.Team.Name == Team)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var keys = await _context.Keys
+                .Where(x => x.Team.Name == Team)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var joined = from s in spaces
+                join eq in equipment on s.Id equals eq.SpaceId into eqGroup
+                join k in keys on s.Id equals k.SpaceId into keyGroup
+                select new {space = s, id = s.Id, equipmentCount = eqGroup.Count(), keyCount = keyGroup.Count()};
+            
+            var joinedList = joined.ToList();
+
+            return Json(joinedList);
         }
 
     }

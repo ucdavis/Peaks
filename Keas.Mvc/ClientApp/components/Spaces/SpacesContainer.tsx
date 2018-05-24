@@ -1,12 +1,13 @@
 ﻿import PropTypes from "prop-types";
 import * as React from "react";
 
-import { AppContext, ISpace } from "../../Types";
+import { AppContext, ISpace, ISpaceInfo } from "../../Types";
 import SpacesDetails from "./SpacesDetails";
 import SpacesList from "./SpacesList";
 
 interface IState {
-    spaces: ISpace[];
+    loading: boolean;
+    spaces: ISpaceInfo[];
 }
 export default class SpacesContainer extends React.Component<{}, IState> {
     public static contextTypes = {
@@ -19,20 +20,24 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         super(props);
 
         this.state = {
+            loading: true,
             spaces: []
         };
     }
 
     public async componentDidMount() {
         const spaces = await this.context.fetch(`/api/${this.context.team.name}/spaces/list?orgId=ADNO`);
-        this.setState({ spaces });
+        this.setState({ loading: false, spaces });
     }
     public render() {
 
+        if(this.state.loading) {
+            return <h2>Loading...</h2>;
+        }
         const { action, assetType, id } = this.context.router.route.match.params;
         const activeAsset = !assetType || assetType === "spaces";
         const selectedId = parseInt(id, 10);
-        const selectedSpace = this.state.spaces.find(k => k.id === selectedId);
+        const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
 
         return (
             <div>
@@ -41,8 +46,8 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                     showDetails={this._openDetailsModal} />
                 <SpacesDetails
                     closeModal={this._closeModals}
-                    modal={activeAsset && action === "details" && !!selectedSpace}
-                    selectedSpace={selectedSpace}
+                    modal={activeAsset && action === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space)}
+                    selectedSpace={selectedSpaceInfo ? selectedSpaceInfo.space : null}
                     />
             </div>
         );

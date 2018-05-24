@@ -2,10 +2,10 @@
 
 import SpacesListItem from "./SpacesListItem";
 
-import { ISpace } from "../../Types";
+import { ISpace, ISpaceInfo } from "../../Types";
 
 interface IProps {
-    spaces: ISpace[];
+    spaces: ISpaceInfo[];
     showDetails: (space: ISpace) => void;
 }
 
@@ -13,8 +13,8 @@ export default class SpacesList extends React.Component<IProps, {}> {
     public render() {
         const space = this.props.spaces.map(x => (
             <SpacesListItem
-                key={x.roomKey}
-                space={x}
+                key={x.space.roomKey}
+                spaceInfo={x}
                 showDetails={this.props.showDetails}
             />
         ));
@@ -26,6 +26,8 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         <th>Floor</th>
                         <th>Room</th>
                         <th>Name</th>
+                        <th>Key Count</th>
+                        <th>Equipment Count</th>
                         <th>Actions</th>
                     </tr>
                 </thead>

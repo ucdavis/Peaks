@@ -100,6 +100,13 @@ export interface IEquipmentAttribute {
 }
 
 
+export interface ISpaceInfo {
+  space: ISpace;
+  id: number;
+  equipmentCount: number;
+  keyCount: number;
+}
+
 export interface ISpace {
     id: number;
     roomKey: string;
