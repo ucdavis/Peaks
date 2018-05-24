@@ -47,10 +47,21 @@ namespace Keas.Mvc.Controllers
                 .AsNoTracking()
                 .ToListAsync();
 
+            var workstations = await _context.Workstations
+                .Where(x => x.Team.Name == Team)
+                .Include(x => x.Assignment)
+                .AsNoTracking()
+                .ToListAsync();
+
             var joined = from s in spaces
                 join eq in equipment on s.Id equals eq.SpaceId into eqGroup
                 join k in keys on s.Id equals k.SpaceId into keyGroup
-                select new {space = s, id = s.Id, equipmentCount = eqGroup.Count(), keyCount = keyGroup.Count()};
+                join w in workstations on s.Id equals w.SpaceId into wsGroup
+                select new {space = s, id = s.Id, 
+                    equipmentCount = eqGroup.Count(), 
+                    keyCount = keyGroup.Count(),
+                    workstationsAvailable = wsGroup.Where(x => x.Assignment == null).Count(),
+                    workstationsTotal = wsGroup.Count()};
             
             var joinedList = joined.ToList();
 

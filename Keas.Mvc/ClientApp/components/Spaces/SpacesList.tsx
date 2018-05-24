@@ -28,6 +28,8 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         <th>Name</th>
                         <th>Key Count</th>
                         <th>Equipment Count</th>
+                        <th>Total Workstations</th>
+                        <th>Available Workstations</th>
                         <th>Actions</th>
                     </tr>
                 </thead>

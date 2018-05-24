@@ -23,6 +23,8 @@ export default class SpacesListItem extends React.Component<IProps, {}> {
                     </td>
                     <td>{this.props.spaceInfo.keyCount}</td>
                     <td>{this.props.spaceInfo.equipmentCount}</td>
+                    <td>{this.props.spaceInfo.workstationsTotal}</td>
+                    <td>{this.props.spaceInfo.workstationsAvailable}</td>
                     <td>
                         <Button color="secondary" onClick={(e) => this.props.showDetails(this.props.spaceInfo.space)}>
                         View Details

@@ -105,6 +105,8 @@ export interface ISpaceInfo {
   id: number;
   equipmentCount: number;
   keyCount: number;
+  workstationsAvailable: number;
+  workstationsTotal: number;
 }
 
 export interface ISpace {
@@ -116,6 +118,13 @@ export interface ISpace {
     floorName: string;
     roomName: string;
     roomNumber: string;
+}
+
+export interface IWorkstation {
+  id: number;
+  name: string;
+  space: ISpace;
+  teamId: number;
 }
 
 export interface IHistory {

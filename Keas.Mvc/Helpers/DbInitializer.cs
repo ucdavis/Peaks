@@ -155,6 +155,45 @@ namespace Keas.Mvc.Helpers
                 Equipment = equipment
             };
 
+            var workstationAssignment1 = new WorkstationAssignment
+            {
+                Person = lauraCaes,
+                RequestedBy = scott,
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+
+            var workstation1 = new Workstation { 
+                Name = "Laura's Workstation", 
+                Team = caes, 
+                Assignment = workstationAssignment1, 
+                Space = space3 };
+
+            context.WorkstationAssignments.Add(workstationAssignment1);
+            context.Workstations.Add(workstation1);
+
+            var workstationAssignment2 = new WorkstationAssignment
+            {
+                Person = scottCaes,
+                RequestedBy = scott,
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+
+            var workstation2 = new Workstation { 
+                Name = "Scott's Workstation", 
+                Team = caes, 
+                Assignment = workstationAssignment2, 
+                Space = space3 };
+
+            context.WorkstationAssignments.Add(workstationAssignment2);
+            context.Workstations.Add(workstation2);
+
+            var workstation3 = new Workstation { 
+                Name = "Empty Workstation", 
+                Team = caes, 
+                Space = space3 };
+            context.Workstations.Add(workstation3);
+
+            
             var scottKey = new TeamPermission{ Id = 1, Team = caes, Role = keyMaster, User = scott};
             var scottEquip = new TeamPermission {Id = 2, Team = caes, Role = equipMaster, User = scott};
             var scottAccess = new TeamPermission {Id = 3, Team = caes, Role = accessMaster, User = scott};
