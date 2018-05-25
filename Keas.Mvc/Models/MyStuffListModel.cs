@@ -40,7 +40,7 @@ namespace Keas.Mvc.Models
                         ).ToList()
                     })
                     .AsNoTracking().ToListAsync(),
-                Workstations = await context.Workstations.Include(w=> w.Assignment).Where(w=> w.Assignment.Person==person).AsNoTracking().ToListAsync(),
+                Workstations = await context.Workstations.Include(w=> w.Assignment).Include(w=> w.Space).Where(w=> w.Assignment.Person==person).AsNoTracking().ToListAsync(),
                 Histories = await context.Histories.Where(x => x.Target == person)
                     .OrderByDescending(x => x.ActedDate)
                     .Take(10).AsNoTracking().ToListAsync()

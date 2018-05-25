@@ -93,6 +93,7 @@
                     <th>Type</th>
                     <th>Room</th>
                     <th>Expiration</th>
+                    <th>Accepted?</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -100,8 +101,9 @@
                 {
                     <tr>
                         <td>@workstation.Type</td>
-                        <td>@workstation.Space.RoomName</td>
+                        <td>@workstation.Space.RoomNumber @workstation.Space.BldgName</td>
                         <td>@workstation.Assignment.ExpiresAt.ToShortDateString()</td>
+                        <td>@Html.CheckBoxFor(w=> workstation.Assignment.IsConfirmed)</td>
                     </tr>
                 }
                 </tbody>

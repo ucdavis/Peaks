@@ -108,6 +108,10 @@ namespace Keas.Mvc.Helpers
 
             var key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard", Assignment = keyAssignment, Space = space2 };
 
+            var workstationAssignment = new WorkstationAssignment{ Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(3)};
+            var workstation = new Workstation{Name = "Corner desk", Team = caes, Type = "Desk", Space = space2, Assignment = workstationAssignment};
+            context.Workstations.Add(workstation);
+
             var equipmentAssignment = new EquipmentAssignment
             {
                 Person = lauraCaes,
