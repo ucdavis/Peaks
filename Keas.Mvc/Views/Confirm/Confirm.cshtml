@@ -40,33 +40,61 @@
 <h2>Equipment</h2>
 <table class="table">
     <thead>
-        <tr>
-            <th>Name</th>
-            <th>Serial #</th>
-            <th>Make</th>
-            <th>Model</th>
-            <th>Room</th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>Name</th>
+        <th>Serial #</th>
+        <th>Make</th>
+        <th>Model</th>
+        <th>Room</th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Equipment)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.SerialNumber</td>
-                <td>@item.Make</td>
-                <td>@item.Model</td>
-                @if (@item.Space != null)
-                {
-                    <td>>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
-                }
-                else
-                {
-                    <td>&nbsp;</td>
-                }
-                <td><a href="@Url.Action("AcceptEquipment", new {equipmentId = item.Id})" class="btn btn-primary">Confirm</a></td>
-            </tr>
-        }
+    @foreach (var item in Model.Equipment)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.SerialNumber</td>
+            <td>@item.Make</td>
+            <td>@item.Model</td>
+            @if (@item.Space != null)
+            {
+                <td>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
+            }
+            else
+            {
+                <td>&nbsp;</td>
+            }
+            <td><a href="@Url.Action("AcceptEquipment", new {equipmentId = item.Id})" class="btn btn-primary">Confirm</a></td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<h2>Workstations</h2>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Type</th>
+        <th>Room</th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Workstations)
+    {
+        <tr>
+            <td>@item.Type</td>
+            @if (@item.Space != null)
+            {
+                <td>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
+            }
+            else
+            {
+                <td>&nbsp;</td>   
+            }
+            <td><a href="@Url.Action("AcceptWorkstation", new {workstationId = item.Id})" class="btn btn-primary">Confirm</a></td>
+        </tr>
+    }
     </tbody>
 </table>

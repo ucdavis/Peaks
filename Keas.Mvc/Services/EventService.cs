@@ -22,7 +22,9 @@ namespace Keas.Mvc.Services
         Task TrackUnAssignWorkstation(Workstation workstation);
         Task TrackAcceptKey(Key key);
         Task TrackAcceptEquipment(Equipment equipment);
-        
+        Task TrackAcceptWorkstation(Workstation workstation);
+
+
 
 
     }
@@ -138,6 +140,11 @@ namespace Keas.Mvc.Services
         {
             var history = await _historyService.EquipmentAccepted(equipment);
             await _notificationService.EquipmentAccepted(equipment, history);
+        }
+        public async Task TrackAcceptWorkstation(Workstation workstation)
+        {
+            var history = await _historyService.WorkstationAccepted(workstation);
+            await _notificationService.WorkstationAccepted(workstation, history);
         }
     }
 }

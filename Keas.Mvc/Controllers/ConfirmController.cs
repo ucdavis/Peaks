@@ -33,7 +33,7 @@ namespace Keas.Mvc.Controllers
         {
             var person = await _securityService.GetPerson(Team);
             var viewModel = await ConfirmListModel.Create(_context,person);
-            if (viewModel.Equipment.Count == 0 && viewModel.Keys.Count==0)
+            if (viewModel.Equipment.Count == 0 && viewModel.Keys.Count==0 && viewModel.Workstations.Count==0)
             {
                 Message = "You have no pending items to accept";
                 RedirectToAction(nameof(MyStuff));
@@ -54,7 +54,25 @@ namespace Keas.Mvc.Controllers
             await _eventService.TrackAcceptKey(key);
             Message = "Key confirmed.";
 
-            return RedirectToAction(nameof(MyStuff));
+            return RedirectToAction(nameof(Confirm));
+        }
+
+        public async Task<IActionResult> AcceptWorkstation(int workstationId)
+        {
+            var workstationAssignment = await _context.Workstations.Where(w => w.Id == workstationId)
+                .Select(wa => wa.Assignment).FirstAsync();
+            workstationAssignment.IsConfirmed = true;
+            workstationAssignment.ConfirmedAt = DateTime.UtcNow;;
+            _context.Update(workstationAssignment);
+            await _context.SaveChangesAsync();
+
+            var workstation = await _context.Workstations
+                .Where(w => w.WorkstationAssignmentId == workstationAssignment.Id).FirstAsync();
+            await _eventService.TrackAcceptWorkstation(workstation);
+            Message = "Workstation confirmed.";
+
+            return RedirectToAction(nameof(Confirm));
+
         }
 
         public async Task<IActionResult> AcceptEquipment(int equipmentId)
@@ -71,7 +89,7 @@ namespace Keas.Mvc.Controllers
             await _eventService.TrackAcceptEquipment(equipment);
             Message = "Equipment confirmed.";
 
-            return RedirectToAction(nameof(MyStuff));
+            return RedirectToAction(nameof(Confirm));
         }
 
         public async Task<IActionResult> AcceptAll()
@@ -97,6 +115,13 @@ namespace Keas.Mvc.Controllers
                 equipment.Assignment.ConfirmedAt = DateTime.UtcNow;
                 _context.Update(equipment);
                 await _eventService.TrackAcceptEquipment(equipment);
+            }
+            foreach (var workstation in viewModel.Workstations)
+            {
+                workstation.Assignment.IsConfirmed = true;
+                workstation.Assignment.ConfirmedAt = DateTime.UtcNow;
+                _context.Update(workstation);
+                await _eventService.TrackAcceptWorkstation(workstation);
             }
             await _context.SaveChangesAsync();
             Message = "All keys and equipment confirmed!";
