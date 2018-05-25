@@ -1,0 +1,103 @@
+﻿@model Keas.Mvc.Models.MyStuffListModel
+
+@{
+    ViewData["Title"] = "MyStuff";
+}
+
+<h2>MyStuff</h2>
+
+<div>
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Keys</h4>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Serial</th>
+                    <th>Name</th>
+                    <th>Expiration</th>
+                    <th>Accepted?</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var key in Model.Keys)
+                {
+                    <tr>
+                        <td>@key.SerialNumber</td>
+                        <td>@key.Name</td>
+                        <td>@key.Assignment.ExpiresAt.ToShortDateString()</td>
+                        <td>@Html.CheckBoxFor(k=> key.Assignment.IsConfirmed)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h4>Equipment</h4>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Serial</th>
+                    <th>Name</th>
+                    <th>Expiration</th>
+                    <th>Accepted?</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var equipment in Model.Equipment)
+                {
+                    <tr>
+                        <td>@equipment.SerialNumber</td>
+                        <td>@equipment.Name</td>
+                        <td>@equipment.Assignment.ExpiresAt.ToShortDateString()</td>
+                        <td>@Html.CheckBoxFor(e=> equipment.Assignment.IsConfirmed)</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h4>Access</h4>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Expiration</th>
+                </tr>
+                </thead>
+                @foreach (var access in Model.Access)
+                {
+                    <tr>
+                        <td>@access.Name</td>
+                        <td>@access.Assignments.First().ExpiresAt</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h4>History</h4>
+            <table class="table">
+                <thead>
+                <tr>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var history in Model.Histories)
+                {
+                    <tr>
+                        <td>@history.ActedDate.ToShortDateString()</td>
+                        <td>@history.Description</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
