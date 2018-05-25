@@ -30,25 +30,12 @@ namespace Keas.Mvc.Models
                     {
                         Id = a.Id,
                         Name = a.Name,
-                        TeamId = a.TeamId,
-                        Team = a.Team,
                         Assignments = a.Assignments.Where(b => b.Person == person).Select(
                             c => new AccessAssignment()
                             {
                                 AccessId = c.AccessId,
                                 ExpiresAt = c.ExpiresAt,
-                                Id = c.Id,
-                                PersonId = c.PersonId,
-                                Person = new Person()
-                                {
-                                    Id = c.PersonId,
-                                    TeamId = a.TeamId,
-                                    User = new User()
-                                    {
-                                        Name = c.Person.User.Name,
-                                        Email = c.Person.User.Email,
-                                    }
-                                },
+                                Id = c.Id
                             }
                         ).ToList()
                     })
