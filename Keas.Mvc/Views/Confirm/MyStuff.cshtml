@@ -72,13 +72,39 @@
                     <th>Expiration</th>
                 </tr>
                 </thead>
-                @foreach (var access in Model.Access)
+                <tbody>
+                    @foreach (var access in Model.Access)
+                    {
+                        <tr>
+                            <td>@access.Name</td>
+                            <td>@access.Assignments.First().ExpiresAt.ToShortDateString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h4>Workstations</h4>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Room</th>
+                    <th>Expiration</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var workstation in Model.Workstations)
                 {
                     <tr>
-                        <td>@access.Name</td>
-                        <td>@access.Assignments.First().ExpiresAt</td>
+                        <td>@workstation.Type</td>
+                        <td>@workstation.Space.RoomName</td>
+                        <td>@workstation.Assignment.ExpiresAt.ToShortDateString()</td>
                     </tr>
                 }
+                </tbody>
             </table>
         </div>
     </div>
