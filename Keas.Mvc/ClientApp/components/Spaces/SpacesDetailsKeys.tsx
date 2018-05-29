@@ -45,20 +45,42 @@ export default class SpacesDetailsKeys extends React.Component<IProps, IState> {
         }
         if (this.state.loading)
         {
-            return (<div>Loading Equipment...</div>);
+            return (<div>Loading Keys...</div>);
         }
-        const keysList = this.state.keys.length > 0 ? this.state.keys.map(x => (
-            <div key={x.id}>
-                <NavLink to={`../../keys/details/${x.id}`} >
-                    {x.name}
-                </NavLink>
-            </div>
-        )) : (<div>No Keys</div>);
         return (
             <div className="form-group">
-                <label>Keys</label><br />
-                {keysList}
+                <h5>Keys</h5>
+                {this.state.keys.length > 0 ? this._renderTable() : "No Keys"}
             </div>
         );
+    }
+
+    private _renderTable = () => {
+        const keysBody = this.state.keys.map(x => (
+            <tr key={x.id}>
+                <td>{x.name}</td>
+                <td>{x.serialNumber}</td>
+                <td>{x.assignment ? x.assignment.person.user.name : ""}</td>
+                <td>{x.assignment ? x.assignment.expiresAt : ""}</td>
+                <td>
+                    <NavLink to={`../../keys/details/${x.id}`} >
+                        View Details
+                    </NavLink>
+                </td>
+            </tr>
+        ));
+
+        return(<table className="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Serial Number</th>
+                <th>Assigned To</th>
+                <th>Expires At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>{keysBody}</tbody>
+    </table>);
     }
 }
