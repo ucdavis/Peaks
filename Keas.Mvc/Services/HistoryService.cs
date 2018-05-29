@@ -298,7 +298,8 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Key",
                 ActionType = "Accepted",
-                Key = key
+                Key = key,
+                TargetId = key.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -330,7 +331,8 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Equipment",
                 ActionType = "Accepted",
-                Equipment = equipment
+                Equipment = equipment,
+                TargetId = equipment.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -428,7 +430,8 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Workstation",
                 ActionType = "Accepted",
-                Workstation = workstation
+                Workstation = workstation,
+                TargetId = workstation.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
