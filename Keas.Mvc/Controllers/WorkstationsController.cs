@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 namespace Keas.Mvc.Controllers
 {
     [Authorize(Policy = "SpaceMasterAccess")]
-    public class WorkstationController : SuperController
+    public class WorkstationsController : SuperController
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
 
-        public WorkstationController(ApplicationDbContext context, IEventService eventService)
+        public WorkstationsController(ApplicationDbContext context, IEventService eventService)
         {
             _context = context;
             _eventService = eventService;
