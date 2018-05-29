@@ -2,6 +2,7 @@
 import * as React from "react";
 import { NavLink, Redirect } from "react-router-dom";
 import { AppContext, IKey } from "../../Types";
+import KeyList from "../Keys/KeyList";
 
 interface IProps {
     spaceId: number;
@@ -50,37 +51,15 @@ export default class SpacesDetailsKeys extends React.Component<IProps, IState> {
         return (
             <div className="form-group">
                 <h5><i className="fas fa-key fa-xs"></i> Keys</h5>
-                {this.state.keys.length > 0 ? this._renderTable() : "No Keys"}
+                {this.state.keys.length > 0 ? 
+                    <KeyList keys={this.state.keys} showDetails={this._openDetailsModal} /> : "No Keys"}
             </div>
         );
     }
 
-    private _renderTable = () => {
-        const keysBody = this.state.keys.map(x => (
-            <tr key={x.id}>
-                <td>{x.name}</td>
-                <td>{x.serialNumber}</td>
-                <td>{x.assignment ? x.assignment.person.user.name : ""}</td>
-                <td>{x.assignment ? x.assignment.expiresAt : ""}</td>
-                <td>
-                    <NavLink to={`../../keys/details/${x.id}`} >
-                        View Details
-                    </NavLink>
-                </td>
-            </tr>
-        ));
-
-        return(<table className="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Serial Number</th>
-                <th>Assigned To</th>
-                <th>Expires At</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>{keysBody}</tbody>
-    </table>);
-    }
+    private _openDetailsModal = (key: IKey) => {
+        this.context.router.history.push(
+            `../../keys/details/${key.id}`
+        );
+    };
 }

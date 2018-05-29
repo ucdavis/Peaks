@@ -2,6 +2,7 @@
 import * as React from "react";
 import { NavLink, Redirect } from "react-router-dom";
 import { AppContext, IEquipment } from "../../Types";
+import EquipmentList from "../Equipment/EquipmentList";
 
 interface IProps {
     spaceId: number;
@@ -50,37 +51,15 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
         return (
             <div className="form-group">
                 <h5><i className="fas fa-laptop fa-xs"></i> Equipment</h5>
-                {this.state.equipment.length > 0 ? this._renderTable() : "No Equipment"}
+                {this.state.equipment.length > 0 ? 
+                    <EquipmentList equipment={this.state.equipment} showDetails={this._openDetailsModal} /> : "No Equipment"}
             </div>
         );
     }
 
-    private _renderTable = () => {
-        const equipBody = this.state.equipment.map(x => (
-            <tr key={x.id}>
-                <td>{x.name}</td>
-                <td>{x.serialNumber}</td>
-                <td>{x.assignment ? x.assignment.person.user.name : ""}</td>
-                <td>{x.assignment ? x.assignment.expiresAt : ""}</td>
-                <td>
-                    <NavLink to={`../../equipment/details/${x.id}`} >
-                        View Details
-                    </NavLink>
-                </td>
-            </tr>
-        ));
-
-        return(<table className="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Serial Number</th>
-                <th>Assigned To</th>
-                <th>Expires At</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>{equipBody}</tbody>
-    </table>);
-    }
+    private _openDetailsModal = (equipment: IEquipment) => {
+        this.context.router.history.push(
+            `../../equipment/details/${equipment.id}`
+        );
+    };
 }

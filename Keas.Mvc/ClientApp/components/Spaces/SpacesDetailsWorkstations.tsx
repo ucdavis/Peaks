@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import { NavLink, Redirect } from "react-router-dom";
 import { AppContext, IWorkstation } from "../../Types";
+import WorkstationList from "./../Workstations/WorkstationList";
 
 interface IProps {
     spaceId: number;
@@ -50,35 +51,15 @@ export default class SpacesDetailsWorkstations extends React.Component<IProps, I
         return (
             <div className="form-group">
                 <h5><i className="fas fa-user fa-xs"></i> Workstations</h5>
-                {this.state.workstations.length > 0 ? this._renderTable() : "No Workstations"}
+                {this.state.workstations.length > 0 ? 
+                    <WorkstationList workstations={this.state.workstations} showDetails={this._openDetailsModal} /> : "No Keys"}
             </div>
         );
     }
 
-    private _renderTable = () => {
-        const workstationsBody = this.state.workstations.map(x => (
-            <tr key={x.id}>
-                <td>{x.name}</td>
-                <td>{x.assignment ? x.assignment.person.user.name : ""}</td>
-                <td>{x.assignment ? x.assignment.expiresAt : ""}</td>
-                <td>
-                    <NavLink to={`../../workstations/details/${x.id}`} >
-                        View Details
-                    </NavLink>
-                </td>
-            </tr>
-        ));
-
-        return(<table className="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Assigned To</th>
-                <th>Expires At</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>{workstationsBody}</tbody>
-    </table>);
-    }
+    private _openDetailsModal = (workstation: IWorkstation) => {
+        this.context.router.history.push(
+            `../../workstations/details/${workstation.id}`
+        );
+    };
 }

@@ -1,23 +1,23 @@
 import * as React from "react";
 
-import EquipmentListItem from "./EquipmentListItem";
+import WorkstationListItem from "./WorkstationListItem";
 
-import { IEquipment } from "../../Types";
+import { IWorkstation } from "../../Types";
 
 interface IProps {
-    equipment: IEquipment[];
-    onRevoke?: (equipment: IEquipment) => void;
-    onAdd?: (equipment: IEquipment) => void;
-    showDetails?: (equipment: IEquipment) => void;
-    onEdit?: (equipment: IEquipment) => void;
+    workstations: IWorkstation[];
+    onRevoke?: (workstation: IWorkstation) => void;
+    onAdd?: (workstation: IWorkstation) => void;
+    showDetails?: (workstation: IWorkstation) => void;
+    onEdit?: (workstation: IWorkstation) => void;
 }
 
-export default class EquipmentList extends React.Component<IProps, {}> {
+export default class WorkstationList extends React.Component<IProps, {}> {
   public render() {
-      const equipment = this.props.equipment.map(x => (
-          <EquipmentListItem
+      const workstations = this.props.workstations.map(x => (
+          <WorkstationListItem
               key={x.id.toString()}
-              equipmentEntity={x}
+              workstationEntity={x}
               onRevoke={this.props.onRevoke}
               onAdd={this.props.onAdd}
               showDetails={this.props.showDetails}
@@ -29,14 +29,13 @@ export default class EquipmentList extends React.Component<IProps, {}> {
         <table className="table">
           <thead>
             <tr>
-              <th>Serial</th>
               <th>Number</th>
               <th>Assigned To</th>
               <th>Expiration</th>
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>{equipment}</tbody>
+          <tbody>{workstations}</tbody>
         </table>
       </div>
     );

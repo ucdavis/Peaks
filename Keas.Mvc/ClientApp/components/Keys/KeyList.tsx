@@ -6,10 +6,10 @@ import { IKey } from "../../Types";
 
 interface IProps {
     keys: IKey[];
-    onRevoke: (key: IKey) => void;
-    onAdd: (key: IKey) => void;
-    showDetails: (key: IKey) => void;
-    onEdit: (key: IKey) => void;
+    onRevoke?: (key: IKey) => void;
+    onAdd?: (key: IKey) => void;
+    showDetails?: (key: IKey) => void;
+    onEdit?: (key: IKey) => void;
 }
 
 export default class KeyList extends React.Component<IProps, {}> {
