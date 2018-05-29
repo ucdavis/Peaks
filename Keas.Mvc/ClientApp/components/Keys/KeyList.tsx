@@ -32,7 +32,7 @@ export default class KeyList extends React.Component<IProps, {}> {
                         <th>Number</th>
                         <th>Assigned To</th>
                         <th>Expiration</th>
-                        <th>Actions</th>
+                        <th className="actions">Actions</th>
                     </tr>
                 </thead>
                 <tbody>{key}</tbody>
