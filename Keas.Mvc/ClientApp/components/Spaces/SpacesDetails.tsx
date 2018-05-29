@@ -35,11 +35,11 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                     <ModalBody>
                         {this.props.selectedSpace.roomName &&
                             <div className="form-group">
-                            <label>Room Name</label><br />
+                            <h5>Room Name</h5>
                             {this.props.selectedSpace.roomName}
                             </div>}
                         <SpacesDetailsKeys spaceId={this.props.selectedSpace.id} />
-                        <SpacesDetailsEquipment roomKey={this.props.selectedSpace.roomKey} />
+                        <SpacesDetailsEquipment spaceId={this.props.selectedSpace.id} />
                         <SpacesDetailsWorkstations spaceId={this.props.selectedSpace.id} />
                     </ModalBody>
                     <ModalFooter>

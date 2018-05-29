@@ -108,6 +108,8 @@ namespace Keas.Mvc.Helpers
 
             var key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard", Assignment = keyAssignment, Space = space2 };
 
+            var key2 = new Key { SerialNumber = "SN2", Team = caes, Name = "North Hall Keycard", Space = space3 };
+
             var equipmentAssignment = new EquipmentAssignment
             {
                 Person = lauraCaes,
@@ -124,6 +126,7 @@ namespace Keas.Mvc.Helpers
 
             context.Keys.Add(key);
             context.KeyAssignments.Add(keyAssignment);
+            context.Keys.Add(key2);
             context.EquipmentAssignments.Add(equipmentAssignment);
             context.Equipment.Add(equipment);
 

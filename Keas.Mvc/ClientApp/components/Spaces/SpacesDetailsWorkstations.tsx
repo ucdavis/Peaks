@@ -49,7 +49,7 @@ export default class SpacesDetailsWorkstations extends React.Component<IProps, I
         }
         return (
             <div className="form-group">
-                <label>Workstations</label><br />
+                <h5>Workstations</h5>
                 {this.state.workstations.length > 0 ? this._renderTable() : "No Workstations"}
             </div>
         );

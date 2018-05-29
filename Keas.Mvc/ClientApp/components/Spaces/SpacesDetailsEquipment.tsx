@@ -4,7 +4,7 @@ import { NavLink, Redirect } from "react-router-dom";
 import { AppContext, IEquipment } from "../../Types";
 
 interface IProps {
-    roomKey: string;
+    spaceId: number;
 }
 
 interface IState {
@@ -33,13 +33,13 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
 
     public async componentDidMount() {
         this.setState({ loading: true });
-        const equipment = !this.props.roomKey ? [] :
-            await this.context.fetch(`/api/${this.context.team.name}/equipment/getEquipmentInSpace?roomKey=${this.props.roomKey}`);
+        const equipment = !!this.props.spaceId === null ? [] :
+            await this.context.fetch(`/api/${this.context.team.name}/equipment/getEquipmentInSpace?spaceId=${this.props.spaceId}`);
         this.setState({ equipment, loading: false });
     }
 
     public render() {
-        if (!this.props.roomKey)
+        if (this.props.spaceId === null)
         {
             return null;
         }
@@ -47,18 +47,40 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
         {
             return (<div>Loading Equipment...</div>);
         }
-        const equipmentList = this.state.equipment.length > 0 ? this.state.equipment.map(x => (
-            <div key={x.id}>
-                <NavLink to={`../../equipment/details/${x.id}`} >
-                    {x.name}
-                </NavLink>
-            </div>
-        )) : (<div>No Equipment</div>);
         return (
             <div className="form-group">
-                <label>Equipment</label><br />
-                {equipmentList}
+                <h5>Equipment</h5>
+                {this.state.equipment.length > 0 ? this._renderTable() : "No Equipment"}
             </div>
         );
+    }
+
+    private _renderTable = () => {
+        const equipBody = this.state.equipment.map(x => (
+            <tr key={x.id}>
+                <td>{x.name}</td>
+                <td>{x.serialNumber}</td>
+                <td>{x.assignment ? x.assignment.person.user.name : ""}</td>
+                <td>{x.assignment ? x.assignment.expiresAt : ""}</td>
+                <td>
+                    <NavLink to={`../../equipment/details/${x.id}`} >
+                        View Details
+                    </NavLink>
+                </td>
+            </tr>
+        ));
+
+        return(<table className="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Serial Number</th>
+                <th>Assigned To</th>
+                <th>Expires At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>{equipBody}</tbody>
+    </table>);
     }
 }
