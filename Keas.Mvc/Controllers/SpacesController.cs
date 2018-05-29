@@ -33,39 +33,25 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> List(string orgId)
         {
-            var spaces = await _context.Spaces
-                .Where(x => x.OrgId == orgId)
-                .AsNoTracking().ToListAsync();
+            //TODO clean up workstations query
+            var spaces = 
+                from space in _context.Spaces.Where(x => x.OrgId == orgId)
+                select new
+                {
+                    space = space,
+                    id = space.Id,
+                    equipmentCount = 
+                        (from eq in _context.Equipment where eq.SpaceId == space.Id && eq.Active select eq ).Count(),
+                    keyCount = 
+                        (from k in _context.Keys where k.SpaceId == space.Id && k.Active select k ).Count(),
+                    workstationsTotal = 
+                        (from w in _context.Workstations where w.SpaceId == space.Id && w.Active select w).Count(),
+                    workstationsAvailable = 
+                        (from w in _context.Workstations where w.SpaceId == space.Id && w.Active && w.Assignment != null select w).Count(),
+                };
 
-            var equipment = await _context.Equipment
-                .Where(x => x.Team.Name == Team)
-                .AsNoTracking()
-                .ToListAsync();
 
-            var keys = await _context.Keys
-                .Where(x => x.Team.Name == Team)
-                .AsNoTracking()
-                .ToListAsync();
-
-            var workstations = await _context.Workstations
-                .Where(x => x.Team.Name == Team)
-                .Include(x => x.Assignment)
-                .AsNoTracking()
-                .ToListAsync();
-
-            var joined = from s in spaces
-                join eq in equipment on s.Id equals eq.SpaceId into eqGroup
-                join k in keys on s.Id equals k.SpaceId into keyGroup
-                join w in workstations on s.Id equals w.SpaceId into wsGroup
-                select new {space = s, id = s.Id, 
-                    equipmentCount = eqGroup.Count(), 
-                    keyCount = keyGroup.Count(),
-                    workstationsAvailable = wsGroup.Where(x => x.Assignment == null).Count(),
-                    workstationsTotal = wsGroup.Count()};
-            
-            var joinedList = joined.ToList();
-
-            return Json(joinedList);
+            return Json(spaces);
         }
 
     }
