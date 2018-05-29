@@ -106,7 +106,7 @@ export interface ISpaceInfo {
   equipmentCount: number;
   keyCount: number;
   workstationsTotal: number;
-  workstationsAvailable: number;
+  workstationsInUse: number;
 }
 
 export interface ISpace {

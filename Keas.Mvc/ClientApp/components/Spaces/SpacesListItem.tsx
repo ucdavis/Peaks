@@ -21,10 +21,9 @@ export default class SpacesListItem extends React.Component<IProps, {}> {
                     <td>
                             {this.props.spaceInfo.space.roomName}
                     </td>
-                    <td>{this.props.spaceInfo.keyCount}</td>
-                    <td>{this.props.spaceInfo.equipmentCount}</td>
-                    <td>{this.props.spaceInfo.workstationsTotal}</td>
-                    <td>{this.props.spaceInfo.workstationsAvailable}</td>
+                    <td><i className="fas fa-key"></i> {this.props.spaceInfo.keyCount}</td>
+                    <td><i className="fas fa-laptop"></i> {this.props.spaceInfo.equipmentCount}</td>
+                    <td><i className="fas fa-user"></i> {this.props.spaceInfo.workstationsInUse}/{this.props.spaceInfo.workstationsTotal}</td>
                     <td>
                         <Button color="secondary" onClick={(e) => this.props.showDetails(this.props.spaceInfo.space)}>
                         View Details

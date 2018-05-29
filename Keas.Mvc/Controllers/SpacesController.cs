@@ -46,7 +46,7 @@ namespace Keas.Mvc.Controllers
                         (from k in _context.Keys where k.SpaceId == space.Id && k.Active select k ).Count(),
                     workstationsTotal = 
                         (from w in _context.Workstations where w.SpaceId == space.Id && w.Active select w).Count(),
-                    workstationsAvailable = 
+                    workstationsInUse = 
                         (from w in _context.Workstations where w.SpaceId == space.Id && w.Active && w.Assignment != null select w).Count(),
                 };
 

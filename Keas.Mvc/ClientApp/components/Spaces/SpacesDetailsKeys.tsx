@@ -49,7 +49,7 @@ export default class SpacesDetailsKeys extends React.Component<IProps, IState> {
         }
         return (
             <div className="form-group">
-                <h5>Keys</h5>
+                <h5><i className="fas fa-key fa-xs"></i> Keys</h5>
                 {this.state.keys.length > 0 ? this._renderTable() : "No Keys"}
             </div>
         );

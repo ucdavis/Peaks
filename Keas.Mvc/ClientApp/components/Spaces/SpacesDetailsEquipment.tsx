@@ -49,7 +49,7 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
         }
         return (
             <div className="form-group">
-                <h5>Equipment</h5>
+                <h5><i className="fas fa-laptop fa-xs"></i> Equipment</h5>
                 {this.state.equipment.length > 0 ? this._renderTable() : "No Equipment"}
             </div>
         );
