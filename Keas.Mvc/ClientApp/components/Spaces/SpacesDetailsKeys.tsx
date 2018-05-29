@@ -4,7 +4,7 @@ import { NavLink, Redirect } from "react-router-dom";
 import { AppContext, IKey } from "../../Types";
 
 interface IProps {
-    roomKey: string;
+    spaceId: number;
 }
 
 interface IState {
@@ -33,13 +33,13 @@ export default class SpacesDetailsKeys extends React.Component<IProps, IState> {
 
     public async componentDidMount() {
         this.setState({ loading: true });
-        const keys = !this.props.roomKey ? [] :
-            await this.context.fetch(`/api/${this.context.team.name}/keys/getKeysInSpace?roomKey=${this.props.roomKey}`);
+        const keys = !!this.props.spaceId === null ? [] :
+            await this.context.fetch(`/api/${this.context.team.name}/keys/getKeysInSpace?spaceId=${this.props.spaceId}`);
         this.setState({ keys, loading: false });
     }
 
     public render() {
-        if (!this.props.roomKey)
+        if (this.props.spaceId === null)
         {
             return null;
         }

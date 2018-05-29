@@ -32,15 +32,15 @@ namespace Keas.Mvc.Controllers
             return Json(workstation);
         }
 
-        public async Task<IActionResult> GetWorkstationInSpace(int spaceId)
+        public async Task<IActionResult> GetWorkstationsInSpace(int spaceId)
         {
-            var workstation = await _context.Workstations
+            var workstations = await _context.Workstations
                 .Where(x => x.Space.Id == spaceId && x.Team.Name == Team && x.Active)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person.User)
                 .AsNoTracking()
                 .ToListAsync();
-            return Json(workstation);
+            return Json(workstations);
         }
 
         public async Task<IActionResult> CommonAttributeKeys()

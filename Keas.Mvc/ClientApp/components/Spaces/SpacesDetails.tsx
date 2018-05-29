@@ -38,7 +38,7 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                             <label>Room Name</label><br />
                             {this.props.selectedSpace.roomName}
                             </div>}
-                        <SpacesDetailsKeys roomKey={this.props.selectedSpace.roomKey} />
+                        <SpacesDetailsKeys spaceId={this.props.selectedSpace.id} />
                         <SpacesDetailsEquipment roomKey={this.props.selectedSpace.roomKey} />
                         <SpacesDetailsWorkstations spaceId={this.props.selectedSpace.id} />
                     </ModalBody>
