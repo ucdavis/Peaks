@@ -141,13 +141,13 @@ namespace Keas.Mvc
                     name: "API",
                     template: "api/{teamName}/{controller}/{action}/{id?}",
                     defaults: new { controller = "people", action = "Index" },
-                    constraints: new { controller = "(keys|equipment|access|spaces|people|person)" }
+                    constraints: new { controller = "(keys|equipment|access|spaces|people|person|workstation)" }
                 );
                 routes.MapRoute(
                     name: "Assets",
                     template: "{teamName}/{asset}/{*type}",
                     defaults: new { controller = "Asset", action = "Index" },
-                    constraints: new { asset = "(keys|equipment|access|spaces|people|person)" }
+                    constraints: new { asset = "(keys|equipment|access|spaces|people|person|workstation)" }
                 );
                 routes.MapRoute(
                     name: "TeamRoutes",

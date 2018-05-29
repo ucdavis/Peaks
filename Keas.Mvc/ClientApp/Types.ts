@@ -105,8 +105,8 @@ export interface ISpaceInfo {
   id: number;
   equipmentCount: number;
   keyCount: number;
-  workstationsAvailable: number;
   workstationsTotal: number;
+  workstationsAvailable: number;
 }
 
 export interface ISpace {
@@ -125,6 +125,14 @@ export interface IWorkstation {
   name: string;
   space: ISpace;
   teamId: number;
+  assignment?: IWorkstationAssignment;
+}
+
+export interface IWorkstationAssignment {
+  id: number;
+  workstationId: number;
+  expiresAt: Date;
+  person: IPerson;
 }
 
 export interface IHistory {

@@ -13,6 +13,7 @@ import {
 import { AppContext, ISpace } from "../../Types";
 import SpacesDetailsEquipment from "./SpacesDetailsEquipment";
 import SpacesDetailsKeys from "./SpacesDetailsKeys";
+import SpacesDetailsWorkstations from "./SpacesDetailsWorkstations";
 
 
 interface IProps {
@@ -39,6 +40,7 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                             </div>}
                         <SpacesDetailsKeys roomKey={this.props.selectedSpace.roomKey} />
                         <SpacesDetailsEquipment roomKey={this.props.selectedSpace.roomKey} />
+                        <SpacesDetailsWorkstations spaceId={this.props.selectedSpace.id} />
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this.props.closeModal}>
