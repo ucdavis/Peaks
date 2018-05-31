@@ -22,8 +22,9 @@ export const routes = (
     />
     <Route path="/:team/access/:action?/:id?" component={AccessContainer} />
     <Route
-        path="/:team/spaces/:action?/:id?" component={SpacesContainer}
+        path="/:team/:assetType(spaces|workstations)/:action?/:id?" component={SpacesContainer}
     />
+
     <Route path="/:team/people/:action?/:id?" component={PeopleContainer} />
     <Route
       path="/:team/person/:personAction/:personId/:assetType?/:action?/:id?"

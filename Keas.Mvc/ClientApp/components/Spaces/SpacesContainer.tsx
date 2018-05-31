@@ -2,6 +2,7 @@
 import * as React from "react";
 
 import { AppContext, ISpace, ISpaceInfo } from "../../Types";
+import WorkstationDetails from "../Workstations/WorkstationDetails";
 import SpacesDetails from "./SpacesDetails";
 import SpacesList from "./SpacesList";
 
@@ -35,7 +36,8 @@ export default class SpacesContainer extends React.Component<{}, IState> {
             return <h2>Loading...</h2>;
         }
         const { action, assetType, id } = this.context.router.route.match.params;
-        const activeAsset = !assetType || assetType === "spaces";
+        const activeSpaceAsset = !assetType || assetType === "spaces";
+        const activeWorkstationAsset = !assetType || assetType === "workstations";
         const selectedId = parseInt(id, 10);
         const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
 
@@ -46,8 +48,14 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                     showDetails={this._openDetailsModal} />
                 <SpacesDetails
                     closeModal={this._closeModals}
-                    modal={activeAsset && action === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space)}
+                    modal={activeSpaceAsset && action === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space)}
                     selectedSpace={selectedSpaceInfo ? selectedSpaceInfo.space : null}
+                    />
+                <WorkstationDetails
+                    closeModal={this._closeModals}
+                    returnToSpaceDetails={this._returnToSpaceDetails}
+                    modal={activeWorkstationAsset && action === "details"}
+                    workstationId={Number.isInteger(selectedId) ? selectedId : null}
                     />
             </div>
         );
@@ -62,6 +70,10 @@ export default class SpacesContainer extends React.Component<{}, IState> {
     private _closeModals = () => {
         this.context.router.history.push(`${this._getBaseUrl()}/spaces`);
     };
+
+    private _returnToSpaceDetails = (spaceId: number) => {
+        this.context.router.history.push(`${this._getBaseUrl()}/spaces/details/${spaceId}`);
+    }
 
     private _getBaseUrl = () => {
         return `/${this.context.team.name}`;

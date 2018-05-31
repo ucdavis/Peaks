@@ -32,6 +32,18 @@ namespace Keas.Mvc.Controllers
             return Json(workstation);
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var workstation = await _context.Workstations
+                .Where(w => w.Team.Name == Team && w.Active && w.Id == id)
+                .Include(x => x.Space)
+                .Include(x => x.Assignment)
+                .ThenInclude(x => x.Person.User)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+            return Json(workstation);
+        }
+
         public async Task<IActionResult> GetWorkstationsInSpace(int spaceId)
         {
             var workstations = await _context.Workstations

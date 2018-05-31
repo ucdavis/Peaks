@@ -51,7 +51,7 @@ namespace Keas.Mvc.Controllers
                 };
 
 
-            return Json(spaces);
+            return Json(await spaces.ToListAsync());
         }
 
     }

@@ -35,7 +35,7 @@ export default class SpacesDetailsWorkstations extends React.Component<IProps, I
     public async componentDidMount() {
         this.setState({ loading: true });
         const workstations = this.props.spaceId === null ? [] :
-            await this.context.fetch(`/api/${this.context.team.name}/workstation/getWorkstationsInSpace?spaceId=${this.props.spaceId}`);
+            await this.context.fetch(`/api/${this.context.team.name}/workstations/getWorkstationsInSpace?spaceId=${this.props.spaceId}`);
         this.setState({ workstations, loading: false });
     }
 
