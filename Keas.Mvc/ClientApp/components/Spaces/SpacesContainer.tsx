@@ -36,8 +36,8 @@ export default class SpacesContainer extends React.Component<{}, IState> {
             return <h2>Loading...</h2>;
         }
         const { action, assetType, id } = this.context.router.route.match.params;
-        const activeSpaceAsset = !assetType || assetType === "spaces";
-        const activeWorkstationAsset = !assetType || assetType === "workstations";
+        const activeSpaceAsset = assetType === "spaces";
+        const activeWorkstationAsset = assetType === "workstations";
         const selectedId = parseInt(id, 10);
         const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
 
