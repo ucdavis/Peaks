@@ -161,7 +161,7 @@ namespace Keas.Mvc.Helpers
 
             var scottKey = new TeamPermission{ Id = 1, Team = caes, Role = keyMaster, User = scott};
             var scottEquip = new TeamPermission {Id = 2, Team = caes, Role = equipMaster, User = scott};
-            var scottAccess = new TeamPermission {Id = 3, Team = caes, Role = accessMaster, User = scott};
+            var scottDa = new TeamPermission {Id = 3, Team = caes, Role = departmentAdmin, User = scott};
             var lauraKey = new TeamPermission{ Id = 4, Team = caes, Role = keyMaster, User = laura};
             var lauraEquip = new TeamPermission {Id = 5, Team = caes, Role = equipMaster, User = laura};
             var lauraAccess = new TeamPermission {Id = 6, Team = caes, Role = accessMaster, User = laura};
@@ -174,7 +174,7 @@ namespace Keas.Mvc.Helpers
             context.TeamPermissions.Add(lauraAccess);
 
             context.TeamPermissions.Add(jamesDa);
-            context.TeamPermissions.Add(scottAccess);
+            context.TeamPermissions.Add(scottDa);
 
             var jamesAdmin = new SystemPermission {Id = 1, Role = admin, User = james};
             context.SystemPermissions.Add(jamesAdmin);
