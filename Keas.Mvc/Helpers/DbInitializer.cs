@@ -62,9 +62,9 @@ namespace Keas.Mvc.Helpers
             //context.Roles.Add(emulate);
 
             // add assets
-            var lauraCaes = new Person { User = laura, Id=1, Team = caes, Group = "CRU" };
-            var scottCaes = new Person { User = scott, Id=2, Team = caes, Group = "CRU" };
-            var jamesCaes = new Person {User = james, Id = 3, Team = caes, Group = "CRU"};
+            var lauraCaes = new Person { User = laura, Id=1, Team = caes, Group = "CRU", Tags = "CRU"};
+            var scottCaes = new Person { User = scott, Id=2, Team = caes, Group = "CRU", Tags = "CRU" };
+            var jamesCaes = new Person {User = james, Id = 3, Team = caes, Group = "CRU", Tags = "CRU" };
 
             context.People.Add(jamesCaes);
 
@@ -109,7 +109,7 @@ namespace Keas.Mvc.Helpers
             var key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard", Assignment = keyAssignment, Space = space2 };
 
             var workstationAssignment = new WorkstationAssignment{ Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(3)};
-            var workstation = new Workstation{Name = "Corner desk", Team = caes, Type = "Desk", Space = space2, Assignment = workstationAssignment};
+            var workstation = new Workstation{Name = "Corner desk", Team = caes, Type = "Desk", Space = space2, Assignment = workstationAssignment, Tags = "CRU"};
             context.Workstations.Add(workstation);
 
             var equipmentAssignment = new EquipmentAssignment
@@ -119,7 +119,7 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment, SerialNumber = "XYZ", Space = space3 };
+            var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment, SerialNumber = "XYZ", Space = space3, Tags = "CRU,Computer" };
 
             context.Access.Add(access);
             context.AccessAssignments.Add(accessAssignment);
@@ -138,7 +138,7 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var equip2 = new Equipment { Name = "desktop", Team = caes, Assignment = equip2Assignment, SerialNumber = "ABC", Space = space4 };
+            var equip2 = new Equipment { Name = "desktop", Team = caes, Assignment = equip2Assignment, SerialNumber = "ABC", Space = space4, Tags = "CRU,Cellphone" };
 
             context.EquipmentAssignments.Add(equip2Assignment);
             context.Equipment.Add(equip2);
@@ -178,6 +178,17 @@ namespace Keas.Mvc.Helpers
 
             var jamesAdmin = new SystemPermission {Id = 1, Role = admin, User = james};
             context.SystemPermissions.Add(jamesAdmin);
+
+            var CruTag = new TeamTag { Tag = "CRU", Team = caes };
+            var ASITag = new TeamTag { Tag = "ASI", Team = caes };
+            var CABATag = new TeamTag { Tag = "CABA", Team = caes };
+            var computerTag = new TeamTag { Tag = "Computer", Team = caes };
+            var cellPhoneTag = new TeamTag { Tag = "Cellphone", Team = caes };
+            context.TeamTags.Add(CruTag);
+            context.TeamTags.Add(ASITag);
+            context.TeamTags.Add(CABATag);
+            context.TeamTags.Add(computerTag);
+            context.TeamTags.Add(cellPhoneTag);
 
             context.Histories.Add(history);
             context.Histories.Add(history2);
