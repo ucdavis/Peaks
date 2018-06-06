@@ -6,7 +6,11 @@ namespace Keas.Core.Domain
     {
 
         [Key]
+        public int Id { get; set; }
+
+        // TODO: make this a unique field
         [StringLength(128)]
+        [Required]
         public string Tag { get; set; }
 
 

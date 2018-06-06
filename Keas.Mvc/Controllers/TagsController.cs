@@ -41,7 +41,7 @@ namespace Keas.Mvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var team = _context.Teams.First(t => t.Name == Team);
+                var team = await _context.Teams.FirstAsync(t => t.Name == Team);
                 newTag.Team = team;
                 _context.TeamTags.Add(newTag);
                 await _context.SaveChangesAsync();
@@ -53,30 +53,48 @@ namespace Keas.Mvc.Controllers
         // GET: Tags/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var tag = await _context.TeamTags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
+            if (tag == null)
+            {
+                return NotFound();
+            }
+            return View(tag);
         }
 
         // POST: Tags/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, TeamTag updatedTag)
         {
-            try
+            if (id != updatedTag.Id)
             {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
+            var tagToUpdate = await _context.TeamTags.SingleAsync(t => t.Id == id);
+            if (await TryUpdateModelAsync<TeamTag>(tagToUpdate, "", t => t.Tag))
             {
-                return View();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch
+                {
+                    ModelState.AddModelError("", "Unable to save changes.");
+                }
             }
+            return View(updatedTag);
         }
 
         // GET: Tags/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            return View();
+            var tag = await _context.TeamTags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
+            if (tag == null)
+            {
+                return NotFound();
+            }
+            return View(tag);
         }
 
         // POST: Tags/Delete/5
