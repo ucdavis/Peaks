@@ -48,6 +48,7 @@ namespace Keas.Mvc.Controllers
                 Message = "Tag created.";
                 return RedirectToAction(nameof(Index));
             }
+            Message = "An error occurred. Tag could not be created.";
             return View();
         }
 
