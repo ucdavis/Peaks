@@ -45,6 +45,7 @@ namespace Keas.Mvc.Controllers
                 newTag.Team = team;
                 _context.TeamTags.Add(newTag);
                 await _context.SaveChangesAsync();
+                Message = "Tag created.";
                 return RedirectToAction(nameof(Index));
             }
             return View();
@@ -76,6 +77,7 @@ namespace Keas.Mvc.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
+                    Message = "Tag updated.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch
@@ -100,18 +102,12 @@ namespace Keas.Mvc.Controllers
         // POST: Tags/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, TeamTag deleteTag)
         {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _context.Remove(deleteTag);
+            await _context.SaveChangesAsync();
+            Message = "Tag deleted.";
+            return RedirectToAction(nameof(Index));
         }
     }
 }
