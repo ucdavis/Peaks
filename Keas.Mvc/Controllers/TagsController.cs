@@ -72,7 +72,7 @@ namespace Keas.Mvc.Controllers
             {
                 return NotFound();
             }
-            var tagToUpdate = await _context.Tags.SingleAsync(t => t.Id == id);
+            var tagToUpdate = await _context.Tags.SingleAsync(t => t.Id == id && t.Team.Name==Team);
             if (await TryUpdateModelAsync<Tag>(tagToUpdate, "", t => t.Name))
             {
                 try
