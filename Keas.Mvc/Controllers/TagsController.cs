@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Core.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
@@ -20,9 +22,9 @@ namespace Keas.Mvc.Controllers
         }
 
         // GET: Tags
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            var model = _context.TeamTags.Where(t => t.Team.Name == Team).OrderBy(t=> t.Tag).ToList();
+            var model = await _context.TeamTags.Where(t => t.Team.Name == Team).OrderBy(t=> t.Tag).ToListAsync();
             return View(model);
         }
 
@@ -35,22 +37,21 @@ namespace Keas.Mvc.Controllers
         // POST: Tags/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create( TeamTag newTag)
         {
-            try
+            if (ModelState.IsValid)
             {
-                // TODO: Add insert logic here
-
+                var team = _context.Teams.First(t => t.Name == Team);
+                newTag.Team = team;
+                _context.TeamTags.Add(newTag);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            catch
-            {
-                return View();
-            }
+            return View();
         }
 
         // GET: Tags/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
             return View();
         }
@@ -58,7 +59,7 @@ namespace Keas.Mvc.Controllers
         // POST: Tags/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(int id, IFormCollection collection)
         {
             try
             {
@@ -73,7 +74,7 @@ namespace Keas.Mvc.Controllers
         }
 
         // GET: Tags/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             return View();
         }
@@ -81,7 +82,7 @@ namespace Keas.Mvc.Controllers
         // POST: Tags/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id, IFormCollection collection)
         {
             try
             {
