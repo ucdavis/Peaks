@@ -36,6 +36,7 @@ namespace Keas.Mvc.Controllers
 
         // POST: Tags/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create( TeamTag newTag)
         {
             if (ModelState.IsValid)
@@ -64,6 +65,7 @@ namespace Keas.Mvc.Controllers
 
         // POST: Tags/Edit/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(int id, TeamTag updatedTag)
         {
             if (id != updatedTag.Id)
@@ -100,6 +102,7 @@ namespace Keas.Mvc.Controllers
 
         // POST: Tags/Delete/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, TeamTag deleteTag)
         {
             _context.Remove(deleteTag);

@@ -5,7 +5,6 @@ using System.Security.Claims;
 namespace Keas.Mvc.Controllers
 {
     [Authorize]
-    [AutoValidateAntiforgeryToken]
     public class SuperController : Controller
     {
         public string Team => ControllerContext.RouteData.Values["teamName"] as string;
