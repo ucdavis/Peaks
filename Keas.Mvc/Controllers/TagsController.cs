@@ -24,7 +24,7 @@ namespace Keas.Mvc.Controllers
         // GET: Tags
         public async Task<ActionResult> Index()
         {
-            var model = await _context.TeamTags.Where(t => t.Team.Name == Team).OrderBy(t=> t.Tag).ToListAsync();
+            var model = await _context.Tags.Where(t => t.Team.Name == Team).OrderBy(t=> t.Name).ToListAsync();
             return View(model);
         }
 
@@ -37,13 +37,13 @@ namespace Keas.Mvc.Controllers
         // POST: Tags/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create( TeamTag newTag)
+        public async Task<ActionResult> Create( Tag newTag)
         {
             if (ModelState.IsValid)
             {
                 var team = await _context.Teams.FirstAsync(t => t.Name == Team);
                 newTag.Team = team;
-                _context.TeamTags.Add(newTag);
+                _context.Tags.Add(newTag);
                 await _context.SaveChangesAsync();
                 Message = "Tag created.";
                 return RedirectToAction(nameof(Index));
@@ -55,7 +55,7 @@ namespace Keas.Mvc.Controllers
         // GET: Tags/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            var tag = await _context.TeamTags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
+            var tag = await _context.Tags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
             if (tag == null)
             {
                 return NotFound();
@@ -66,14 +66,14 @@ namespace Keas.Mvc.Controllers
         // POST: Tags/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, TeamTag updatedTag)
+        public async Task<ActionResult> Edit(int id, Tag updatedTag)
         {
             if (id != updatedTag.Id)
             {
                 return NotFound();
             }
-            var tagToUpdate = await _context.TeamTags.SingleAsync(t => t.Id == id);
-            if (await TryUpdateModelAsync<TeamTag>(tagToUpdate, "", t => t.Tag))
+            var tagToUpdate = await _context.Tags.SingleAsync(t => t.Id == id);
+            if (await TryUpdateModelAsync<Tag>(tagToUpdate, "", t => t.Name))
             {
                 try
                 {
@@ -92,7 +92,7 @@ namespace Keas.Mvc.Controllers
         // GET: Tags/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            var tag = await _context.TeamTags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
+            var tag = await _context.Tags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
             if (tag == null)
             {
                 return NotFound();
@@ -103,9 +103,9 @@ namespace Keas.Mvc.Controllers
         // POST: Tags/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(int id, TeamTag deleteTag)
+        public async Task<ActionResult> Delete(int id, Tag deleteTag)
         {
-            var tagToDelete = await _context.TeamTags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
+            var tagToDelete = await _context.Tags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
             _context.Remove(tagToDelete);
             await _context.SaveChangesAsync();
             Message = "Tag deleted.";

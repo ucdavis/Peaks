@@ -179,16 +179,16 @@ namespace Keas.Mvc.Helpers
             var jamesAdmin = new SystemPermission {Id = 1, Role = admin, User = james};
             context.SystemPermissions.Add(jamesAdmin);
 
-            var CruTag = new TeamTag { Tag = "CRU", Team = caes };
-            var ASITag = new TeamTag { Tag = "ASI", Team = caes };
-            var CABATag = new TeamTag { Tag = "CABA", Team = caes };
-            var computerTag = new TeamTag { Tag = "Computer", Team = caes };
-            var cellPhoneTag = new TeamTag { Tag = "Cellphone", Team = caes };
-            context.TeamTags.Add(CruTag);
-            context.TeamTags.Add(ASITag);
-            context.TeamTags.Add(CABATag);
-            context.TeamTags.Add(computerTag);
-            context.TeamTags.Add(cellPhoneTag);
+            var CruTag = new Tag { Name = "CRU", Team = caes };
+            var ASITag = new Tag { Name = "ASI", Team = caes };
+            var CABATag = new Tag { Name = "CABA", Team = caes };
+            var computerTag = new Tag { Name = "Computer", Team = caes };
+            var cellPhoneTag = new Tag { Name = "Cellphone", Team = caes };
+            context.Tags.Add(CruTag);
+            context.Tags.Add(ASITag);
+            context.Tags.Add(CABATag);
+            context.Tags.Add(computerTag);
+            context.Tags.Add(cellPhoneTag);
 
             context.Histories.Add(history);
             context.Histories.Add(history2);

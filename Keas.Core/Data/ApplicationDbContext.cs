@@ -37,6 +37,6 @@ namespace Keas.Core.Data
         // Facilities link import tables
         public virtual DbSet<Space> Spaces { get; set; }
 
-        public virtual DbSet<TeamTag> TeamTags { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
     }
 }

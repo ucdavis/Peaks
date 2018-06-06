@@ -2,7 +2,7 @@
 
 namespace Keas.Core.Domain
 {
-    public class TeamTag
+    public class Tag
     {
 
         [Key]
@@ -11,7 +11,7 @@ namespace Keas.Core.Domain
         // TODO: make this a unique field
         [StringLength(128)]
         [Required]
-        public string Tag { get; set; }
+        public string Name { get; set; }
 
 
         public Team Team { get; set; }
