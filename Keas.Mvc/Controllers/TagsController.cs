@@ -105,7 +105,8 @@ namespace Keas.Mvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(int id, TeamTag deleteTag)
         {
-            _context.Remove(deleteTag);
+            var tagToDelete = await _context.TeamTags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
+            _context.Remove(tagToDelete);
             await _context.SaveChangesAsync();
             Message = "Tag deleted.";
             return RedirectToAction(nameof(Index));
