@@ -46,30 +46,19 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                 </div>
                 </div>
                 }
-                {this.props.disableEditing &&
-                    <div className="form-group">
-                        <label>Room</label>
-                        <input type="text"
-                            className="form-control"
-                            disabled={true}
-                            value={this.props.selectedWorkstation.space ?
-                                `${this.props.selectedWorkstation.space.roomNumber} ${this.props.selectedWorkstation.space.bldgName}` : ""}
-                        />
-                    </div>
-                }
-                {!this.props.disableEditing &&
-                    <div className="form-group">
-                        <label>Room</label>
-
-                <AssignSpace onSelect={this._selectSpace} defaultSpace={this.props.selectedWorkstation.space} />
-                    </div>}
+                
+                <div className="form-group">
+                    <label>Room</label>
+                    <input type="text"
+                        className="form-control"
+                        disabled={true}
+                        value={this.props.selectedWorkstation.space ?
+                            `${this.props.selectedWorkstation.space.roomNumber} ${this.props.selectedWorkstation.space.bldgName}` : ""}
+                    />
+                </div>
               
 
             </div>
         );
     }
-
-    private _selectSpace = (space: ISpace) => {
-        this.props.changeProperty("space", space);
-    } 
 }

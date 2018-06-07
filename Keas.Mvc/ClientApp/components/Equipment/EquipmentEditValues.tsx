@@ -97,7 +97,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <div className="form-group">
                         <label>Room</label>
 
-                <AssignSpace onSelect={this._selectSpace} defaultSpace={this.props.selectedEquipment.space} />
+                    <AssignSpace onSelect={this._selectSpace} defaultSpace={this.props.selectedEquipment.space} />
                     </div>}
               
 

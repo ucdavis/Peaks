@@ -167,6 +167,25 @@ namespace Keas.Mvc.Controllers
             return BadRequest(ModelState);
         }
 
+        public async Task<IActionResult> Update([FromBody]Workstation workstation)
+        {
+            //TODO: check permissions
+            if (ModelState.IsValid)
+            {
+                var w = await _context.Workstations.Where(x => x.Team.Name == Team)
+                    .SingleAsync(x => x.Id == workstation.Id);
+                    
+                w.Name = workstation.Name;
+
+                //eq.Attributes.Clear();
+                //equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
+
+                await _context.SaveChangesAsync();
+                return Json(w);
+            }
+            return BadRequest(ModelState);
+        }
+
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories

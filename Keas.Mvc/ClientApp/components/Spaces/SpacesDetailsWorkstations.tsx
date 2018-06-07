@@ -52,7 +52,10 @@ export default class SpacesDetailsWorkstations extends React.Component<IProps, I
             <div className="form-group">
                 <h5><i className="fas fa-user fa-xs"></i> Workstations</h5>
                 {this.state.workstations.length > 0 ? 
-                    <WorkstationList workstations={this.state.workstations} showDetails={this._openDetailsModal} /> : "No Keys"}
+                    <WorkstationList 
+                        workstations={this.state.workstations} 
+                        showDetails={this._openDetailsModal}
+                        onEdit={this._openEditModal} /> : "No Keys"}
             </div>
         );
     }
@@ -60,6 +63,12 @@ export default class SpacesDetailsWorkstations extends React.Component<IProps, I
     private _openDetailsModal = (workstation: IWorkstation) => {
         this.context.router.history.push(
             `../../workstations/details/${workstation.id}`
+        );
+    };
+    
+    private _openEditModal = (workstation: IWorkstation) => {
+        this.context.router.history.push(
+            `../../workstations/edit/${workstation.id}`
         );
     };
 }

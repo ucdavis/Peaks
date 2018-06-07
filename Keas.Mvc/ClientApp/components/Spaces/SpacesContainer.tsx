@@ -1,7 +1,8 @@
 ﻿import PropTypes from "prop-types";
 import * as React from "react";
 
-import { AppContext, ISpace, ISpaceInfo } from "../../Types";
+import { AppContext, ISpace, ISpaceInfo, IWorkstation } from "../../Types";
+import EditWorkstation from "../Workstations/EditWorkstation";
 import WorkstationDetails from "../Workstations/WorkstationDetails";
 import SpacesDetails from "./SpacesDetails";
 import SpacesList from "./SpacesList";
@@ -55,6 +56,12 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                     closeModal={this._closeModals}
                     returnToSpaceDetails={this._returnToSpaceDetails}
                     modal={activeWorkstationAsset && action === "details"}
+                    workstationId={Number.isInteger(selectedId) ? selectedId : null}
+                    />
+                <EditWorkstation
+                    closeModal={this._closeModals}
+                    returnToSpaceDetails={this._returnToSpaceDetails}
+                    modal={activeWorkstationAsset && action === "edit"}
                     workstationId={Number.isInteger(selectedId) ? selectedId : null}
                     />
             </div>
