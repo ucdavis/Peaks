@@ -21,7 +21,7 @@ interface IProps {
     creating: boolean;
     returnToSpaceDetails: (spaceId: number) => void;
     spaceId?: number;
-    updateCount: (spaceId: number) => void;
+    updateCount: (spaceId: number, created: boolean, assigned:boolean) => void;
     workstationId: number;
 }
 
@@ -63,10 +63,11 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
     }
 
     public componentDidMount() {
-        if(this.props.modal && this.props.workstationId !== null) {
+        // if we are assigning, pull workstation data
+        if(this.props.modal && !this.props.creating && this.props.workstationId !== null) {
             this._loadData(this.props.workstationId);
-        }
-        else if(this.props.modal && this.props.spaceId !== null) {
+        } // otherwise, pull the space data for the new workstation
+        else if(this.props.modal && this.props.creating && this.props.spaceId !== null) {
             this._loadSpace(this.props.spaceId);
         }
     }
@@ -256,12 +257,12 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                 this.state.person.id
               }&date=${this.state.date.format()}`;
         
-              const returned = await this.context.fetch(assignUrl, {
+              workstation = await this.context.fetch(assignUrl, {
                 method: "POST"
               });
         }
 
-        this.props.updateCount(this.state.workstation.space.id);
+        this.props.updateCount(this.state.workstation.space.id, this.props.creating, !!workstation.assignment);
         this.props.returnToSpaceDetails(this.state.workstation.space.id);
       };
       

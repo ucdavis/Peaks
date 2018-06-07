@@ -98,12 +98,19 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         this.context.router.history.push(`${this._getBaseUrl()}/spaces/details/${spaceId}`);
     }
 
-    private _workstationAssigned = (spaceId: number) => {
+    private _workstationAssigned = (spaceId: number, created: boolean, assigned: boolean) => {
         const index = this.state.spaces.findIndex(x => x.id === spaceId);
         if(index > -1)
         {
             const spaces = [...this.state.spaces];
-            spaces[index].workstationsInUse++;
+            if(created)
+            {
+                spaces[index].workstationsTotal++;
+            }
+            if(assigned)
+            {
+                spaces[index].workstationsInUse++;
+            }
             this.setState({spaces});
         } 
     }
