@@ -55,7 +55,7 @@ namespace Keas.Mvc
             .AddCookie()
             .AddCAS(options => {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.CasServerUrlBase = "https://cas.ucdavis.edu/cas/";
+                options.CasServerUrlBase = Configuration["Authentication:CasBaseUrl"];
                 options.Events.OnTicketReceived = async context => { 
                     var c = context;
 
@@ -79,10 +79,11 @@ namespace Keas.Mvc
                     identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
                     identity.RemoveClaim(identity.FindFirst(ClaimTypes.Name));
-                    identity.AddClaim(new Claim(ClaimTypes.Name, user.Name));
+                    identity.AddClaim(new Claim(ClaimTypes.Name, user.Id));
 
                     identity.AddClaim(new Claim(ClaimTypes.GivenName, user.FirstName));
                     identity.AddClaim(new Claim(ClaimTypes.Surname, user.LastName));
+                    identity.AddClaim(new Claim("name", user.Name));
                     identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
 
                     await Task.FromResult(0); 
