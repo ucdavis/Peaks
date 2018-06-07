@@ -70,8 +70,10 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                     closeModal={this._closeModals}
                     updateCount={this._workstationAssigned}
                     returnToSpaceDetails={this._returnToSpaceDetails}
-                    modal={activeWorkstationAsset && action === "assign"}
-                    workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null} />
+                    modal={activeWorkstationAsset && action === "assign" || action ==="create"}
+                    workstationId={activeWorkstationAsset && action === "assign" && Number.isInteger(selectedId) ? selectedId : null}
+                    spaceId={activeWorkstationAsset && action === "create" && Number.isInteger(selectedId) ? selectedId : null}
+                    creating={action === "create"} />
                 <RevokeWorkstation
                     closeModal={this._closeModals}
                     updateCount={this._workstationRevoked}

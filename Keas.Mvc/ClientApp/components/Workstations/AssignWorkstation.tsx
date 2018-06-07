@@ -18,7 +18,9 @@ import WorkstationEditValues from "./WorkstationEditValues";
 interface IProps {
     modal: boolean;
     closeModal: () => void;
+    creating: boolean;
     returnToSpaceDetails: (spaceId: number) => void;
+    spaceId?: number;
     updateCount: (spaceId: number) => void;
     workstationId: number;
 }
@@ -50,7 +52,13 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
             loading: false,
             person: null,
             validState: false,
-            workstation: null,
+            workstation: {
+                assignment: null,
+                id: 0,
+                name: "",
+                space: null,
+                teamId: 0
+            }     
         };
     }
 
@@ -58,29 +66,45 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         if(this.props.modal && this.props.workstationId !== null) {
             this._loadData(this.props.workstationId);
         }
+        else if(this.props.modal && this.props.spaceId !== null) {
+            this._loadSpace(this.props.spaceId);
+        }
     }
 
     public componentDidUpdate(prevProps) {
-        if(!this.props.modal && prevProps.modal && this.props.workstationId === null) {
+        if(!this.props.modal && prevProps.modal && this.props.workstationId === null && this.props.spaceId === null) {
             // if we've closed this modal, reset state
-            console.log("reset");
             this.setState({
                 date: moment().add(3, "y"),
                 error: "",
                 loading: false,
                 person: null,
                 validState: false,
-                workstation: null
+                workstation: {
+                    assignment: null,
+                    id: 0,
+                    name: "",
+                    space: null,
+                    teamId: 0,
+                }    
             });
         }
-        else if(this.props.modal && this.props.workstationId !== prevProps.workstationId)
+        else if(this.props.modal && !!this.props.workstationId &&
+                this.props.workstationId !== prevProps.workstationId)
         {
+            // if we are assigning a workstation 
             this._loadData(this.props.workstationId);
         }
+        else if(this.props.modal && !!this.props.spaceId &&
+                this.props.spaceId !== prevProps.spaceId)
+       {
+           // if we are creating a workstation 
+           this._loadSpace(this.props.spaceId);
+       }    
     }
 
     public render() {
-        if (this.props.workstationId === null) 
+        if (this.props.workstationId === null && this.props.spaceId === null) 
         {
             return null;
         }
@@ -90,8 +114,8 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         }
         return (
             <div>
-                {!!this.state.workstation && this._renderFound()}
-                {!this.state.workstation && this._renderNotFound()}
+                {!!this.state.workstation.space && this._renderFound()}
+                {!this.state.workstation.space && this._renderNotFound()}
             </div>
         );
     }
@@ -127,13 +151,19 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     onSelect={this._onSelectPerson}
                   />
                 </div>
-                {this.state.workstation &&
-                  !!this.state.workstation.teamId && (
+                {this.props.creating && // if we are creating a new workstation, edit properties
+                    <WorkstationEditValues
+                      selectedWorkstation={this.state.workstation}
+                      changeProperty={this._changeProperty}
+                      disableEditing={false}
+                    />
+                  }
+                {!this.props.creating &&
                     <WorkstationEditValues
                       selectedWorkstation={this.state.workstation}
                       disableEditing={true}
                       />
-                  )}
+                  }
 
                 {(!!this.state.person) && (
                   <div className="form-group">
@@ -172,6 +202,13 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         this.setState({ workstation, loading: false });
     }
 
+    private _loadSpace = async (id: number) => {
+        this.setState({ loading: true });
+        const space =
+            await this.context.fetch(`/api/${this.context.team.name}/spaces/details?id=${id}`);
+        this.setState({ workstation: {...this.state.workstation, space}, loading: false });
+    }
+
     private _changeProperty = (property: string, value: string) => {
       this.setState({
         workstation: {
@@ -185,7 +222,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         let valid = true;
         if (!this.state.workstation) {
           valid = false;
-        } else if (!this.state.person) {
+        } else if (!this.props.creating && !this.state.person) {
             valid = false;
         } else if (this.state.error !== "") {
           valid = false;
@@ -201,15 +238,25 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         if (!this.state.validState) {
           return;
         }
+
+        let workstation = this.state.workstation;
+        if(workstation.teamId === 0 && this.props.creating) // if creating a new one
+        {
+            workstation.teamId = this.context.team.id;
+            workstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/create`, {
+                body: JSON.stringify(workstation),
+                method: "POST"
+              });
+        }
     
         // this.state.workstation.attributes = this.state.workstation.attributes.filter(x => !!x.key);
         
-        if(!!this.state.person) {
-            const assignUrl = `/api/${this.context.team.name}/workstations/assign?workstationId=${this.state.workstation.id}&personId=${
+        if(!!this.state.person) { // if assigning
+            const assignUrl = `/api/${this.context.team.name}/workstations/assign?workstationId=${workstation.id}&personId=${
                 this.state.person.id
               }&date=${this.state.date.format()}`;
         
-              const workstation = await this.context.fetch(assignUrl, {
+              const returned = await this.context.fetch(assignUrl, {
                 method: "POST"
               });
         }

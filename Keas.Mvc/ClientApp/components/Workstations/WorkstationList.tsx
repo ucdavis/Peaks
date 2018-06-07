@@ -1,5 +1,7 @@
 import * as React from "react";
-
+import {
+  Button
+} from "reactstrap";
 import WorkstationListItem from "./WorkstationListItem";
 
 import { IWorkstation } from "../../Types";
@@ -8,6 +10,7 @@ interface IProps {
     workstations: IWorkstation[];
     onRevoke?: (workstation: IWorkstation) => void;
     onAdd?: (workstation: IWorkstation) => void;
+    onCreate?: () => void;
     showDetails?: (workstation: IWorkstation) => void;
     onEdit?: (workstation: IWorkstation) => void;
 }
@@ -37,6 +40,9 @@ export default class WorkstationList extends React.Component<IProps, {}> {
           </thead>
           <tbody>{workstations}</tbody>
         </table>
+        <Button color="danger" onClick={() => this.props.onCreate()}>
+          Add Equipment
+        </Button>
       </div>
     );
   }

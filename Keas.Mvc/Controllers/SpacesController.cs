@@ -54,5 +54,14 @@ namespace Keas.Mvc.Controllers
             return Json(await spaces.ToListAsync());
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var space = await _context.Spaces
+                .Where(w => w.Active && w.Id == id)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+            return Json(space);
+        }
+
     }
 }
