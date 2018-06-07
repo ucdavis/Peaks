@@ -12,7 +12,7 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson, IRoom } from "../../Types";
+import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
 import EquipmentEditValues from "./EquipmentEditValues";
 import SearchEquipment from "./SearchEquipment";
@@ -217,15 +217,6 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   private _onSelectPerson = (person: IPerson) => {
     this.setState({ person }, this._validateState);
-  };
-
-  private _onSelectRoom = (room: IRoom) => {
-      this.setState({
-          equipment: {
-              ...this.state.equipment,
-              room
-          }
-      });
   };
 
   private _validateState = () => {

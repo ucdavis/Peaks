@@ -55,7 +55,9 @@ export default class SpacesDetailsWorkstations extends React.Component<IProps, I
                     <WorkstationList 
                         workstations={this.state.workstations} 
                         showDetails={this._openDetailsModal}
-                        onEdit={this._openEditModal} /> : "No Keys"}
+                        onEdit={this._openEditModal}
+                        onAdd={this._openAssignModal} 
+                        onRevoke={this._openRevokeModal}/> : "No Keys"}
             </div>
         );
     }
@@ -71,4 +73,15 @@ export default class SpacesDetailsWorkstations extends React.Component<IProps, I
             `../../workstations/edit/${workstation.id}`
         );
     };
+
+    private _openAssignModal = (workstation: IWorkstation) => {
+        this.context.router.history.push(
+            `../../workstations/assign/${workstation.id}`
+        );
+    };
+
+    private _openRevokeModal = (workstation: IWorkstation) => {
+        this.context.router.history.push(
+            `../../workstations/revoke/${workstation.id}`
+        );    }
 }

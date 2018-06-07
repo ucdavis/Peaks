@@ -16,17 +16,16 @@ interface IProps {
     modal: boolean;
     closeModal: () => void;
     returnToSpaceDetails: (spaceId: number) => void;
+    updateCount: (spaceId: number) => void;
     workstationId: number;
 }
 
 interface IState{
-    error: string;
     loading: boolean;
-    validState: boolean;
     workstation: IWorkstation;
 }
 
-export default class EditWorkstation extends React.Component<IProps, IState> {
+export default class RevokeWorkstation extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
         router: PropTypes.object,
@@ -39,9 +38,7 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
-            error: "",
             loading: false,
-            validState: false,
             workstation: null,
         };
     }
@@ -53,10 +50,7 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
     }
 
     public componentDidUpdate(prevProps) {
-        if(!this.props.modal && prevProps.modal) {
-            console.log("test");
-        }
-        else if(this.props.modal && this.props.workstationId !== prevProps.workstationId)
+        if(this.props.modal && this.props.workstationId !== prevProps.workstationId)
         {
             this._loadData(this.props.workstationId);
         }
@@ -97,20 +91,18 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
     private _renderFound = () => {
         return (
             <Modal isOpen={this.props.modal} 
-                toggle={this.props.closeModal} 
+                toggle={() => this.props.returnToSpaceDetails(this.state.workstation.space.id)} 
                 size="lg">
-                <ModalHeader>Edit Workstation</ModalHeader>
+                <ModalHeader>Details for {this.state.workstation.name}</ModalHeader>
                 <ModalBody>
-                    <WorkstationEditValues selectedWorkstation={this.state.workstation} 
-                        disableEditing={false} 
-                        changeProperty={this._changeProperty}/>
+                    <WorkstationEditValues selectedWorkstation={this.state.workstation} disableEditing={true}/>
                 </ModalBody>
                 <ModalFooter>
                     <Button color="secondary" onClick={() => this.props.returnToSpaceDetails(this.state.workstation.space.id)}>
                         Return To Space
                     </Button>
-                    <Button color="primary" onClick={this._editSelected}>
-                        Save
+                    <Button color="primary" onClick={this._revokeWorkstation}>
+                        Confirm Revoke
                     </Button>
                     <Button color="secondary" onClick={this.props.closeModal}>
                         Close
@@ -127,39 +119,16 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
         this.setState({ workstation, loading: false });
     }
 
-    private _changeProperty = (property: string, value: string) => {
-      this.setState({
-        workstation: {
-          ...this.state.workstation,
-          [property]: value
+    private _revokeWorkstation = async () => {
+        if(!this.state.workstation)
+        {
+            return null;
         }
-      }, this._validateState);
-    };
-
-    private _validateState = () => {
-        let valid = true;
-        if (!this.state.workstation) {
-          valid = false;
-        } else if (this.state.error !== "") {
-          valid = false;
-        }
-        this.setState({ validState: valid });
-      };
-
-    private _editSelected = async () => {
-        if (!this.state.validState) {
-          return;
-        }
-    
-        // this.state.workstation.attributes = this.state.workstation.attributes.filter(x => !!x.key);
-        
-        const updated: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/update`, {
+        const removed: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/revoke`, {
             body: JSON.stringify(this.state.workstation),
             method: "POST"
           });
-    
+        this.props.updateCount(this.state.workstation.space.id);
         this.props.returnToSpaceDetails(this.state.workstation.space.id);
-      };
-    
-    
+    }
 }

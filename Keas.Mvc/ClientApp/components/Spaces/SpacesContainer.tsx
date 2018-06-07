@@ -2,7 +2,9 @@
 import * as React from "react";
 
 import { AppContext, ISpace, ISpaceInfo, IWorkstation } from "../../Types";
+import AssignWorkstation from "../Workstations/AssignWorkstation";
 import EditWorkstation from "../Workstations/EditWorkstation";
+import RevokeWorkstation from "../Workstations/RevokeWorkstation";
 import WorkstationDetails from "../Workstations/WorkstationDetails";
 import SpacesDetails from "./SpacesDetails";
 import SpacesList from "./SpacesList";
@@ -56,14 +58,26 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                     closeModal={this._closeModals}
                     returnToSpaceDetails={this._returnToSpaceDetails}
                     modal={activeWorkstationAsset && action === "details"}
-                    workstationId={Number.isInteger(selectedId) ? selectedId : null}
+                    workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null}
                     />
                 <EditWorkstation
                     closeModal={this._closeModals}
                     returnToSpaceDetails={this._returnToSpaceDetails}
                     modal={activeWorkstationAsset && action === "edit"}
-                    workstationId={Number.isInteger(selectedId) ? selectedId : null}
+                    workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null}
                     />
+                <AssignWorkstation
+                    closeModal={this._closeModals}
+                    updateCount={this._workstationAssigned}
+                    returnToSpaceDetails={this._returnToSpaceDetails}
+                    modal={activeWorkstationAsset && action === "assign"}
+                    workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null} />
+                <RevokeWorkstation
+                    closeModal={this._closeModals}
+                    updateCount={this._workstationRevoked}
+                    returnToSpaceDetails={this._returnToSpaceDetails}
+                    modal={activeWorkstationAsset && action === "revoke"}
+                    workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null} />
             </div>
         );
     }
@@ -80,6 +94,26 @@ export default class SpacesContainer extends React.Component<{}, IState> {
 
     private _returnToSpaceDetails = (spaceId: number) => {
         this.context.router.history.push(`${this._getBaseUrl()}/spaces/details/${spaceId}`);
+    }
+
+    private _workstationAssigned = (spaceId: number) => {
+        const index = this.state.spaces.findIndex(x => x.id === spaceId);
+        if(index > -1)
+        {
+            const spaces = [...this.state.spaces];
+            spaces[index].workstationsInUse++;
+            this.setState({spaces});
+        } 
+    }
+
+    private _workstationRevoked = (spaceId: number) => {
+        const index = this.state.spaces.findIndex(x => x.id === spaceId);
+        if(index > -1)
+        {
+            const spaces = [...this.state.spaces];
+            spaces[index].workstationsInUse--;
+            this.setState({spaces});
+        }     
     }
 
     private _getBaseUrl = () => {
