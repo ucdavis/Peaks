@@ -1,7 +1,4 @@
 import * as React from "react";
-import {
-  Button
-} from "reactstrap";
 import WorkstationListItem from "./WorkstationListItem";
 
 import { IWorkstation } from "../../Types";
@@ -40,9 +37,6 @@ export default class WorkstationList extends React.Component<IProps, {}> {
           </thead>
           <tbody>{workstations}</tbody>
         </table>
-        <Button color="danger" onClick={() => this.props.onCreate()}>
-          Add Equipment
-        </Button>
       </div>
     );
   }

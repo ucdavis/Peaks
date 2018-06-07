@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 import { NavLink, Redirect } from "react-router-dom";
+import { Button } from "reactstrap";
 import { AppContext, IWorkstation } from "../../Types";
 import WorkstationList from "./../Workstations/WorkstationList";
 
@@ -49,6 +50,7 @@ export default class SpacesDetailsWorkstations extends React.Component<IProps, I
             return (<div>Loading Workstations...</div>);
         }
         return (
+            <div>
             <div className="form-group">
                 <h5><i className="fas fa-user fa-xs"></i> Workstations</h5>
                 {this.state.workstations.length > 0 ? 
@@ -60,6 +62,10 @@ export default class SpacesDetailsWorkstations extends React.Component<IProps, I
                         onCreate={this._openCreateModal}
                         onRevoke={this._openRevokeModal}/> : "No Keys"}
             </div>
+            <Button color="danger" onClick={() => this._openCreateModal()}>
+                    Add Equipment
+                </Button>
+                </div>
         );
     }
 
