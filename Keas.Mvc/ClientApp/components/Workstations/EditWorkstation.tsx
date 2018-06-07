@@ -53,8 +53,14 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
     }
 
     public componentDidUpdate(prevProps) {
-        if(!this.props.modal && prevProps.modal) {
-            console.log("test");
+        if(!this.props.modal && prevProps.modal && this.props.workstationId === null) {
+            // if we've closed this modal, reset state
+            this.setState({
+                error: "",
+                loading: false,
+                validState: false,
+                workstation: null
+            });
         }
         else if(this.props.modal && this.props.workstationId !== prevProps.workstationId)
         {

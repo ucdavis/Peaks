@@ -62,9 +62,10 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
 
     public componentDidUpdate(prevProps) {
         if(!this.props.modal && prevProps.modal && this.props.workstationId === null) {
-            console.log("test");
+            // if we've closed this modal, reset state
+            console.log("reset");
             this.setState({
-                date: moment().add(3,"y"),
+                date: moment().add(3, "y"),
                 error: "",
                 loading: false,
                 person: null,
@@ -131,7 +132,6 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     <WorkstationEditValues
                       selectedWorkstation={this.state.workstation}
                       disableEditing={true}
-                      creating={true}
                       />
                   )}
 

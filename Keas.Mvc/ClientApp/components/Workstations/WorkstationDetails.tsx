@@ -49,7 +49,15 @@ export default class WorkstationDetails extends React.Component<IProps, IState> 
     }
 
     public componentDidUpdate(prevProps) {
-        if(this.props.modal && this.props.workstationId !== prevProps.workstationId)
+        if(!this.props.modal && prevProps.modal && this.props.workstationId === null) {
+            // if we've closed this modal, reset state
+            console.log("reset");
+            this.setState({
+                loading: false,
+                workstation: null
+            });
+        }
+        else if(this.props.modal && this.props.workstationId !== prevProps.workstationId)
         {
             this._loadData(this.props.workstationId);
         }
