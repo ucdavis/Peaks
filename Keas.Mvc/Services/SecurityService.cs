@@ -132,7 +132,7 @@ namespace Keas.Mvc.Services
         public async Task<User> GetUser()
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Email == userId);
+            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == userId);
             return user;
         }
 
@@ -140,7 +140,7 @@ namespace Keas.Mvc.Services
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
             var person =
-                await _dbContext.People.SingleOrDefaultAsync(p => p.User.Email == userId && p.Team.Name == teamName);
+                await _dbContext.People.SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Name == teamName);
             return person;
         }
 
@@ -159,16 +159,16 @@ namespace Keas.Mvc.Services
         }
 
         public async Task<List<TeamPermission>> GetUserRolesInTeam(Team team) {
-            var userEmail = _contextAccessor.HttpContext.User.Identity.Name;
-            var userPermissions = await _dbContext.TeamPermissions.Where(x => x.TeamId == team.Id && x.User.Email == userEmail).ToListAsync();
+            var userId = _contextAccessor.HttpContext.User.Identity.Name;
+            var userPermissions = await _dbContext.TeamPermissions.Where(x => x.TeamId == team.Id && x.User.Id == userId).ToListAsync();
             return userPermissions;
         }
 
         public async Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team)
         {
-            var userEmail = _contextAccessor.HttpContext.User.Identity.Name;
-            var userPermissions = await _dbContext.TeamPermissions.Where(x => x.TeamId == team.Id && x.User.Email == userEmail).Select(tp=> tp.Role).ToListAsync();
-            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User.Email == userEmail).Select(sp=> sp.Role).ToListAsync();
+            var userId = _contextAccessor.HttpContext.User.Identity.Name;
+            var userPermissions = await _dbContext.TeamPermissions.Where(x => x.TeamId == team.Id && x.User.Id == userId).Select(tp=> tp.Role).ToListAsync();
+            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User.Id == userId).Select(sp=> sp.Role).ToListAsync();
             userPermissions.AddRange(admin);
             return userPermissions;
         }
