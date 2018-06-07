@@ -8,18 +8,22 @@ import { History } from "history";
 
 interface IProps {
   team: ITeam;
+  permissions: string[];
+  antiForgeryToken: string;
 }
 
 // Provider
 export default class App extends React.Component<IProps, {}> {
   public static childContextTypes = {
     fetch: PropTypes.func,
+    permissions: PropTypes.array,
     team: PropTypes.object
   };
   public getChildContext() {
     // define context here
     return {
-      fetch: createFetch(),
+      fetch: createFetch(this.props.antiForgeryToken),
+      permissions: this.props.permissions,
       team: this.props.team
     };
   }

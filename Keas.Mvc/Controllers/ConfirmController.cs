@@ -13,22 +13,30 @@ namespace Keas.Mvc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ISecurityService _securityService;
+        private readonly IEventService _eventService;
 
-        public ConfirmController(ApplicationDbContext context, ISecurityService _securityService)
+        public ConfirmController(ApplicationDbContext context, ISecurityService _securityService, IEventService _eventService)
         {
             _context = context;
             this._securityService = _securityService;
+            this._eventService = _eventService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> MyStuff()
+        {
+            var person = await _securityService.GetPerson(Team);
+            var viewmodel = await MyStuffListModel.Create(_context, person);
+            return View(viewmodel);
+        }
+
+        public async Task<IActionResult> Confirm()
         {
             var person = await _securityService.GetPerson(Team);
             var viewModel = await ConfirmListModel.Create(_context,person);
-            if (viewModel.Equipment.Count == 0 && viewModel.Keys.Count==0)
+            if (viewModel.Equipment.Count == 0 && viewModel.Keys.Count==0 && viewModel.Workstations.Count==0)
             {
                 Message = "You have no pending items to accept";
-                // TODO Find good place to redirect to. Ignores redirects to non-async actionresults.
-                RedirectToAction("Index", "Home");
+                RedirectToAction(nameof(MyStuff));
             }
 
             return View(viewModel);
@@ -42,10 +50,29 @@ namespace Keas.Mvc.Controllers
             keyAssignment.ConfirmedAt = DateTime.UtcNow;
             _context.Update(keyAssignment);
             await _context.SaveChangesAsync();
-
+            var key = await _context.Keys.Where(k => k.KeyAssignmentId == keyAssignment.Id).FirstAsync();
+            await _eventService.TrackAcceptKey(key);
             Message = "Key confirmed.";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Confirm));
+        }
+
+        public async Task<IActionResult> AcceptWorkstation(int workstationId)
+        {
+            var workstationAssignment = await _context.Workstations.Where(w => w.Id == workstationId)
+                .Select(wa => wa.Assignment).FirstAsync();
+            workstationAssignment.IsConfirmed = true;
+            workstationAssignment.ConfirmedAt = DateTime.UtcNow;;
+            _context.Update(workstationAssignment);
+            await _context.SaveChangesAsync();
+
+            var workstation = await _context.Workstations
+                .Where(w => w.WorkstationAssignmentId == workstationAssignment.Id).FirstAsync();
+            await _eventService.TrackAcceptWorkstation(workstation);
+            Message = "Workstation confirmed.";
+
+            return RedirectToAction(nameof(Confirm));
+
         }
 
         public async Task<IActionResult> AcceptEquipment(int equipmentId)
@@ -57,9 +84,12 @@ namespace Keas.Mvc.Controllers
             _context.Update(equipmentAssignment);
             await _context.SaveChangesAsync();
 
+            var equipment = await _context.Equipment.Where(e => e.EquipmentAssignmentId == equipmentAssignment.Id)
+                .FirstAsync();
+            await _eventService.TrackAcceptEquipment(equipment);
             Message = "Equipment confirmed.";
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Confirm));
         }
 
         public async Task<IActionResult> AcceptAll()
@@ -69,8 +99,7 @@ namespace Keas.Mvc.Controllers
             if (viewModel.Equipment.Count == 0 && viewModel.Keys.Count == 0)
             {
                 Message = "You have no pending items to accept";
-                // TODO Find good place to redirect to. Ignores redirects to non-async actionresults.
-                RedirectToAction("Index", "Home");
+                RedirectToAction(nameof(MyStuff));
             }
 
             foreach (var key in viewModel.Keys)
@@ -78,17 +107,25 @@ namespace Keas.Mvc.Controllers
                 key.Assignment.IsConfirmed = true;
                 key.Assignment.ConfirmedAt = DateTime.UtcNow;
                 _context.Update(key);
+                await _eventService.TrackAcceptKey(key);
             }
             foreach (var equipment in viewModel.Equipment)
             {
                 equipment.Assignment.IsConfirmed = true;
                 equipment.Assignment.ConfirmedAt = DateTime.UtcNow;
                 _context.Update(equipment);
+                await _eventService.TrackAcceptEquipment(equipment);
+            }
+            foreach (var workstation in viewModel.Workstations)
+            {
+                workstation.Assignment.IsConfirmed = true;
+                workstation.Assignment.ConfirmedAt = DateTime.UtcNow;
+                _context.Update(workstation);
+                await _eventService.TrackAcceptWorkstation(workstation);
             }
             await _context.SaveChangesAsync();
             Message = "All keys and equipment confirmed!";
-            // TODO Find good place to redirect to. Ignores redirects to non-async actionresults.
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(MyStuff));
         }
     }
 }

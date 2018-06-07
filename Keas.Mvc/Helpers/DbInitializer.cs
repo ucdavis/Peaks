@@ -34,7 +34,7 @@ namespace Keas.Mvc.Helpers
             var space6 = new Space { BldgKey = "03", FloorKey = "01", RoomKey = "06", BldgName = "South Hall", RoomName = "Storage", RoomNumber = "0121A", ChartNum = "3", OrgId = "ADNO" };
             context.Spaces.Add(space6);
 
-            var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "scott@email.com" };
+            var scott = new User { Id = "123124", FirstName = "Scott", Name = "Scott Kirkland", Email = "srkirkland@ucdavis.edu" };
             var james = new User { Id = "141414", FirstName = "James", Name = "James Cubbage", Email = "jscubbage@ucdavis.edu" };
             var laura = new User { Id = "123222", Name = "Laura Holstege", Email = "laholstege@ucdavis.edu" };
             var caes = new Team { Id = 1, Name = "CAESDO" };
@@ -62,9 +62,9 @@ namespace Keas.Mvc.Helpers
             //context.Roles.Add(emulate);
 
             // add assets
-            var lauraCaes = new Person { User = laura, Id=1, Team = caes, Group = "CRU" };
-            var scottCaes = new Person { User = scott, Id=2, Team = caes, Group = "CRU" };
-            var jamesCaes = new Person {User = james, Id = 3, Team = caes, Group = "CRU"};
+            var lauraCaes = new Person { User = laura, Id=1, Team = caes, Group = "CRU", Tags = "CRU"};
+            var scottCaes = new Person { User = scott, Id=2, Team = caes, Group = "CRU", Tags = "CRU" };
+            var jamesCaes = new Person {User = james, Id = 3, Team = caes, Group = "CRU", Tags = "CRU" };
 
             context.People.Add(jamesCaes);
 
@@ -109,6 +109,9 @@ namespace Keas.Mvc.Helpers
             var key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard", Assignment = keyAssignment, Space = space2 };
 
             var key2 = new Key { SerialNumber = "SN2", Team = caes, Name = "North Hall Keycard", Space = space3 };
+            var workstationAssignment = new WorkstationAssignment{ Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(3)};
+            var workstation = new Workstation{Name = "Corner desk", Team = caes, Type = "Desk", Space = space2, Assignment = workstationAssignment, Tags = "CRU"};
+            context.Workstations.Add(workstation);
 
             var equipmentAssignment = new EquipmentAssignment
             {
@@ -117,7 +120,7 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment, SerialNumber = "XYZ", Space = space3 };
+            var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment, SerialNumber = "XYZ", Space = space3, Tags = "CRU,Computer" };
 
             context.Access.Add(access);
             context.AccessAssignments.Add(accessAssignment);
@@ -137,7 +140,7 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var equip2 = new Equipment { Name = "desktop", Team = caes, Assignment = equip2Assignment, SerialNumber = "ABC", Space = space4 };
+            var equip2 = new Equipment { Name = "desktop", Team = caes, Assignment = equip2Assignment, SerialNumber = "ABC", Space = space4, Tags = "CRU,Cellphone" };
 
             context.EquipmentAssignments.Add(equip2Assignment);
             context.Equipment.Add(equip2);
@@ -218,6 +221,17 @@ namespace Keas.Mvc.Helpers
 
             var jamesAdmin = new SystemPermission {Id = 1, Role = admin, User = james};
             context.SystemPermissions.Add(jamesAdmin);
+
+            var CruTag = new Tag { Name = "CRU", Team = caes };
+            var ASITag = new Tag { Name = "ASI", Team = caes };
+            var CABATag = new Tag { Name = "CABA", Team = caes };
+            var computerTag = new Tag { Name = "Computer", Team = caes };
+            var cellPhoneTag = new Tag { Name = "Cellphone", Team = caes };
+            context.Tags.Add(CruTag);
+            context.Tags.Add(ASITag);
+            context.Tags.Add(CABATag);
+            context.Tags.Add(computerTag);
+            context.Tags.Add(cellPhoneTag);
 
             context.Histories.Add(history);
             context.Histories.Add(history2);

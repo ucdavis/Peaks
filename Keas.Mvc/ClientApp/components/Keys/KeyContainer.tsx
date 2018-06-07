@@ -7,6 +7,8 @@ import AssignKey from "./AssignKey";
 import EditKey from "./EditKey";
 import KeyDetails from "./KeyDetails";
 import KeyList from "./KeyList";
+import Denied from "../Shared/Denied";
+import {PermissionsUtil} from "../../util/permissions"; 
 
 interface IState {
   loading: boolean;
@@ -20,6 +22,7 @@ interface IProps {
 export default class KeyContainer extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
+    permissions: PropTypes.array,
     router: PropTypes.object,
     team: PropTypes.object
   };
@@ -42,6 +45,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     this.setState({ keys, loading: false });
   }
   public render() {
+    if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
+        return (
+            <Denied viewName="Keys" />
+        );
+    }
+
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
@@ -206,4 +215,5 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       ? `/${this.context.team.name}/person/details/${this.props.person.id}`
       : `/${this.context.team.name}`;
   };
+  
 }

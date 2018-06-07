@@ -13,6 +13,7 @@ export interface AppContext {
     };
   };
   team: ITeam;
+  permissions: string[];
 }
 
 export interface IRouteProps {

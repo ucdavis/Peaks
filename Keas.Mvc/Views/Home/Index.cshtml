@@ -4,26 +4,41 @@
 
 <h1>Home</h1>
 
-<ul>
-    <li>
-        <a asp-action="Index" asp-controller="People" asp-route-teamName="CAESDO">Team People View</a>
-    </li>
-    <li>
-        <a href="/CAESDO/people/1">Person Details</a>
-    </li>
-    <li>
-        <a href="/CAESDO/keys">Team Assets</a>
-    </li>
-    <li>
-        <a href="/CAESDO/Confirm/Index">Accept assigned items</a>
-    </li>
-    <li>
-        <a href="/Team/Index">Teams in system</a>
-    </li>
-    <li>
-        <a href="/CAESDO/TeamAdmin">Administer Team</a>
-    </li>
-    <li>
-        <a href="/Admin/Index">System Administration</a>
-    </li>
-</ul>
+<dl>
+    <dt>Team CAES</dt>
+    <dd>
+        <ul>
+            <li>
+                <a asp-action="Index" asp-controller="People" asp-route-teamName="CAESDO">Team People View</a>
+            </li>
+            <li>
+                <a href="/CAESDO/people/1">Person Details</a>
+            </li>
+            <li>
+                <a href="/CAESDO/keys">Team Assets</a>
+            </li>
+            <li>
+                <a href="/CAESDO/Confirm/Mystuff">MyStuff</a>
+            </li>
+
+            <li>
+                <a href="/CAESDO/TeamAdmin">Administer Team</a>
+            </li>
+            <li>
+                <a href="/CAESDO/Tags">Tags for Team CAES</a>
+            </li>
+
+        </ul>
+    </dd>
+    <dt>System Admin</dt>
+    <dd>
+        <ul>
+            <li>
+                <a href="/Team/Index">Teams in system</a>
+            </li>
+            <li>
+                <a href="/Admin/Index">System Administration</a>
+            </li>
+        </ul>
+    </dd>
+</dl>

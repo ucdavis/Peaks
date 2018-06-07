@@ -8,6 +8,8 @@ import RevokeWorkstation from "../Workstations/RevokeWorkstation";
 import WorkstationDetails from "../Workstations/WorkstationDetails";
 import SpacesDetails from "./SpacesDetails";
 import SpacesList from "./SpacesList";
+import Denied from "../Shared/Denied";
+import { PermissionsUtil } from "../../util/permissions"; 
 
 interface IState {
     loading: boolean;
@@ -16,6 +18,7 @@ interface IState {
 export default class SpacesContainer extends React.Component<{}, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
+        permissions: PropTypes.array,
         router: PropTypes.object,
         team: PropTypes.object
     };
@@ -34,6 +37,12 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         this.setState({ loading: false, spaces });
     }
     public render() {
+        const permissionArray = ['SpaceMaster', 'DepartmentalAdmin', 'Admin'];
+        if (!PermissionsUtil.canViewSpace(this.context.permissions)) {
+            return (
+                <Denied viewName="Space" />
+            );
+        }
 
         if(this.state.loading) {
             return <h2>Loading...</h2>;
