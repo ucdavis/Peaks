@@ -60,7 +60,7 @@ export default class SpacesDetailsWorkstations extends React.Component<IProps, I
                         onEdit={this._openEditModal}
                         onAdd={this._openAssignModal} 
                         onCreate={this._openCreateModal}
-                        onRevoke={this._openRevokeModal}/> : "No Keys"}
+                        onRevoke={this._openRevokeModal}/> : "No Workstations"}
             </div>
             <Button color="danger" onClick={() => this._openCreateModal()}>
                     Add Equipment
