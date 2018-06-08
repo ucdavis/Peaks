@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Ietws;
@@ -14,6 +15,7 @@ namespace Keas.Mvc.Services
     {
         Task<string> GetUserId(string email);
         Task<User> GetUser(string id, string email);
+        Task<User> GetByKerberos(string kerb);
     }
 
     public class IdentityService : IIdentityService
@@ -54,6 +56,33 @@ namespace Keas.Mvc.Services
                 return user;
             }
             return null;
+        }
+
+        public async Task<User> GetByKerberos(string kerb)
+        {
+            var clientws = new IetClient(_authSettings.IamKey);
+            var ucdKerbResult = await clientws.Kerberos.Search(KerberosSearchField.userId, kerb);
+            
+            if (ucdKerbResult.ResponseData.Results.Length == 0)
+            {
+                return null;
+            }
+
+            var ucdKerbPerson = ucdKerbResult.ResponseData.Results.Single();
+
+            // find their email
+            var ucdContactResult = await clientws.Contacts.Get(ucdKerbPerson.IamId);
+            
+            var ucdContact = ucdContactResult.ResponseData.Results.First();
+
+            return new User()
+            {
+                FirstName = ucdKerbPerson.DFirstName,
+                LastName = ucdKerbPerson.DLastName,
+                Name = ucdKerbPerson.DFullName,
+                Id = ucdKerbPerson.UserId,
+                Email = ucdContact.Email
+            };
         }
     }    
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AspNetCore.Security.CAS;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Attributes;
@@ -47,48 +48,48 @@ namespace Keas.Mvc
             // add openID connect auth backed by a cookie signin scheme
             services.AddAuthentication(options =>
             {
-                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = OpenIdConnectDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CasDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CasDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = CasDefaults.AuthenticationScheme;
             })
             .AddCookie()
-            .AddOpenIdConnect(options =>
-            {
+            .AddCAS(options => {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.GetClaimsFromUserInfoEndpoint = true;
-                options.ClientId = Configuration["Authentication:ClientId"];
-                options.Authority = $"https://login.microsoftonline.com/{Configuration["Authentication:Tenant"]}";
-                options.Events.OnRedirectToIdentityProvider = context =>
-                {
-                    // this allows us to go straight to the UCD login
-                    context.ProtocolMessage.SetParameter("domain_hint", Configuration["Authentication:Domain"]);
+                options.CasServerUrlBase = Configuration["Authentication:CasBaseUrl"];
+                options.Events.OnTicketReceived = async context => { 
+                    var c = context;
 
-                    return Task.FromResult(0);
-                };
-                options.Events.OnTokenValidated = async context =>
-                {
                     var identity = (ClaimsIdentity) context.Principal.Identity;
 
-                    // email comes across in upn claim
-                    var email = identity?.FindFirst(ClaimTypes.Upn).Value;
+                    // kerb comes across in name & name identifier
+                    var kerb = identity?.FindFirst(ClaimTypes.NameIdentifier).Value;
 
-                    if (string.IsNullOrWhiteSpace(email)) return;
+                    if (string.IsNullOrWhiteSpace(kerb)) return;
 
                     var identityService = services.BuildServiceProvider().GetService<IIdentityService>();
 
-                    var userId = await identityService.GetUserId(email);
+                    var user = await identityService.GetByKerberos(kerb);
 
-                    if (string.IsNullOrWhiteSpace(userId))
+                    if (user == null)
                     {
                         throw new InvalidOperationException("Could not retrieve user information from IAM");
                     }
 
                     identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier));
-                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));
+                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
 
-                    identity.AddClaim(new Claim(ClaimTypes.Email, email));
+                    identity.RemoveClaim(identity.FindFirst(ClaimTypes.Name));
+                    identity.AddClaim(new Claim(ClaimTypes.Name, user.Id));
+
+                    identity.AddClaim(new Claim(ClaimTypes.GivenName, user.FirstName));
+                    identity.AddClaim(new Claim(ClaimTypes.Surname, user.LastName));
+                    identity.AddClaim(new Claim("name", user.Name));
+                    identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+
+                    await Task.FromResult(0); 
                 };
             });
+
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("KeyMasterAccess", policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
