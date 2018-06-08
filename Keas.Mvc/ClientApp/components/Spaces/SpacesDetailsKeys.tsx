@@ -34,7 +34,7 @@ export default class SpacesDetailsKeys extends React.Component<IProps, IState> {
 
     public async componentDidMount() {
         this.setState({ loading: true });
-        const keys = !!this.props.spaceId === null ? [] :
+        const keys = this.props.spaceId === null ? [] :
             await this.context.fetch(`/api/${this.context.team.name}/keys/getKeysInSpace?spaceId=${this.props.spaceId}`);
         this.setState({ keys, loading: false });
     }
