@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace Keas.Core.Domain
 {
@@ -16,6 +17,7 @@ namespace Keas.Core.Domain
 
         public List<Person> People { get; set; }
 
+        [JsonIgnore]
        public ICollection<TeamPermission> TeamPermissions { get; set; }
 
         public List<FinancialOrganization> FISOrgs { get; set; }
