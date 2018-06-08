@@ -108,6 +108,7 @@ namespace Keas.Mvc.Helpers
 
             var key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard", Assignment = keyAssignment, Space = space2 };
 
+            var key2 = new Key { SerialNumber = "SN2", Team = caes, Name = "North Hall Keycard", Space = space3 };
             var workstationAssignment = new WorkstationAssignment{ Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(3)};
             var workstation = new Workstation{Name = "Corner desk", Team = caes, Type = "Desk", Space = space2, Assignment = workstationAssignment, Tags = "CRU"};
             context.Workstations.Add(workstation);
@@ -128,6 +129,7 @@ namespace Keas.Mvc.Helpers
 
             context.Keys.Add(key);
             context.KeyAssignments.Add(keyAssignment);
+            context.Keys.Add(key2);
             context.EquipmentAssignments.Add(equipmentAssignment);
             context.Equipment.Add(equipment);
 
@@ -159,19 +161,60 @@ namespace Keas.Mvc.Helpers
                 Equipment = equipment
             };
 
+            var workstationAssignment1 = new WorkstationAssignment
+            {
+                Person = lauraCaes,
+                RequestedBy = scott,
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+
+            var workstation1 = new Workstation { 
+                Name = "Laura's Workstation", 
+                Team = caes, 
+                Assignment = workstationAssignment1, 
+                Space = space3 };
+
+            context.WorkstationAssignments.Add(workstationAssignment1);
+            context.Workstations.Add(workstation1);
+
+            var workstationAssignment2 = new WorkstationAssignment
+            {
+                Person = scottCaes,
+                RequestedBy = scott,
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
+
+            var workstation2 = new Workstation { 
+                Name = "Scott's Workstation", 
+                Team = caes, 
+                Assignment = workstationAssignment2, 
+                Space = space3 };
+
+            context.WorkstationAssignments.Add(workstationAssignment2);
+            context.Workstations.Add(workstation2);
+
+            var workstation3 = new Workstation { 
+                Name = "Empty Workstation", 
+                Team = caes, 
+                Space = space3 };
+            context.Workstations.Add(workstation3);
+
+            
             var scottKey = new TeamPermission{ Id = 1, Team = caes, Role = keyMaster, User = scott};
             var scottEquip = new TeamPermission {Id = 2, Team = caes, Role = equipMaster, User = scott};
             var scottAccess = new TeamPermission {Id = 3, Team = caes, Role = accessMaster, User = scott};
             var lauraKey = new TeamPermission{ Id = 4, Team = caes, Role = keyMaster, User = laura};
             var lauraEquip = new TeamPermission {Id = 5, Team = caes, Role = equipMaster, User = laura};
             var lauraAccess = new TeamPermission {Id = 6, Team = caes, Role = accessMaster, User = laura};
-            var jamesDa = new TeamPermission{Id = 7, Team = caes, Role = departmentAdmin, User = james};
+            var lauraSpace = new TeamPermission {Id = 7, Team = caes, Role = spaceMaster, User = laura};
+            var jamesDa = new TeamPermission{Id = 8, Team = caes, Role = departmentAdmin, User = james};
             context.TeamPermissions.Add(scottKey);
             context.TeamPermissions.Add(scottEquip);
 
             context.TeamPermissions.Add(lauraEquip);
             context.TeamPermissions.Add(lauraKey);
             context.TeamPermissions.Add(lauraAccess);
+            context.TeamPermissions.Add(lauraSpace);
 
             context.TeamPermissions.Add(jamesDa);
             context.TeamPermissions.Add(scottAccess);

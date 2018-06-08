@@ -38,7 +38,7 @@ export default class EquipmentAttribute extends React.Component<IProps, {}> {
                 {!this.props.disabledEdit &&
                 <td>
                     <button type="button" className="btn btn-outline-danger" onClick={() => this.props.onRemove(this.props.index)}>
-                        <i className="fa fa-trash" />
+                        <i className="fas fa-trash" />
                     </button>
                 </td>}
             </tr>

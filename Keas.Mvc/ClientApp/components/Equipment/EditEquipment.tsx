@@ -12,9 +12,7 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IEquipment, IEquipmentAttribute, IPerson, IRoom } from "../../Types";
-import AssignPerson from "../Biographical/AssignPerson";
-import AssignRoom from "../Spaces/AssignRoom";
+import { AppContext, IEquipment, IEquipmentAttribute } from "../../Types";
 import EquipmentEditValues from "./EquipmentEditValues";
 import SearchEquipment from "./SearchEquipment";
 
@@ -83,7 +81,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
             onClick={this._editSelected}
             disabled={!this.state.validState}
           >
-            Update Key
+            Update Equipment
           </Button>{" "}
           <Button color="secondary" onClick={this._closeModal}>
             Close

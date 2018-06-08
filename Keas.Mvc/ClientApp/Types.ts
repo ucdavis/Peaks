@@ -101,6 +101,15 @@ export interface IEquipmentAttribute {
 }
 
 
+export interface ISpaceInfo {
+  space: ISpace;
+  id: number;
+  equipmentCount: number;
+  keyCount: number;
+  workstationsTotal: number;
+  workstationsInUse: number;
+}
+
 export interface ISpace {
     id: number;
     roomKey: string;
@@ -110,6 +119,21 @@ export interface ISpace {
     floorName: string;
     roomName: string;
     roomNumber: string;
+}
+
+export interface IWorkstation {
+  id: number;
+  name: string;
+  space: ISpace;
+  teamId: number;
+  assignment?: IWorkstationAssignment;
+}
+
+export interface IWorkstationAssignment {
+  id: number;
+  workstationId: number;
+  expiresAt: Date;
+  person: IPerson;
 }
 
 export interface IHistory {

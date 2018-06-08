@@ -5,10 +5,10 @@ import ListActionsDropdown from "../ListActionsDropdown";
 
 interface IProps {
     keyEntity: IKey;
-    onRevoke: (key: IKey) => void;
-    onAdd: (key: IKey) => void;
-    showDetails: (key: IKey) => void;
-    onEdit: (key: IKey) => void;
+    onRevoke?: (key: IKey) => void;
+    onAdd?: (key: IKey) => void;
+    showDetails?: (key: IKey) => void;
+    onEdit?: (key: IKey) => void;
 }
 
 
@@ -25,12 +25,14 @@ export default class KeyListItem extends React.Component<IProps, {}> {
             </td>
             <td>
                     <ListActionsDropdown
-                        onRevoke={() => this.props.onRevoke(this.props.keyEntity)}
-                        canRevoke={hasAssignment}
-                        onAdd={() => this.props.onAdd(this.props.keyEntity)}
-                        canAdd={!hasAssignment}
-                        showDetails={() => this.props.showDetails(this.props.keyEntity)}
-                        onEdit={() => this.props.onEdit(this.props.keyEntity)}
+                        onRevoke={!!this.props.onRevoke && hasAssignment ? 
+                          () => this.props.onRevoke(this.props.keyEntity) : null}
+                        onAdd={!!this.props.onAdd && !hasAssignment ? 
+                          () => this.props.onAdd(this.props.keyEntity) : null}
+                        showDetails={!!this.props.showDetails ? 
+                          () => this.props.showDetails(this.props.keyEntity) : null}
+                        onEdit={!!this.props.onEdit ? 
+                          () => this.props.onEdit(this.props.keyEntity) : null}
                     />
             </td>
           </tr>

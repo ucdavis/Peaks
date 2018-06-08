@@ -105,6 +105,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                     <KeyEditValues
                       selectedKey={this.state.key}
                       disableEditing={true}
+                      creating={true}
                     />
                   )}
 

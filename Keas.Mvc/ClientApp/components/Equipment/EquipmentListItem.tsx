@@ -5,10 +5,10 @@ import ListActionsDropdown from "../ListActionsDropdown";
 
 interface IProps {
     equipmentEntity: IEquipment;
-    onRevoke: (equipment: IEquipment) => void;
-    onAdd: (equipment: IEquipment) => void;
-    showDetails: (equipment: IEquipment) => void;
-    onEdit: (equipment: IEquipment) => void;
+    onRevoke?: (equipment: IEquipment) => void;
+    onAdd?: (equipment: IEquipment) => void;
+    showDetails?: (equipment: IEquipment) => void;
+    onEdit?: (equipment: IEquipment) => void;
 }
 
 
@@ -24,14 +24,16 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
               {hasAssignment ? this.props.equipmentEntity.assignment.expiresAt : ""}
             </td>
             <td>
-                    <ListActionsDropdown
-                        onRevoke={() => this.props.onRevoke(this.props.equipmentEntity)}
-                        canRevoke={hasAssignment}
-                        onAdd={() => this.props.onAdd(this.props.equipmentEntity)}
-                        canAdd={!hasAssignment}
-                        showDetails={() => this.props.showDetails(this.props.equipmentEntity)}
-                        onEdit={() => this.props.onEdit(this.props.equipmentEntity)}
-                    />
+              <ListActionsDropdown
+                onRevoke={!!this.props.onRevoke && hasAssignment ? 
+                  () => this.props.onRevoke(this.props.equipmentEntity) : null}
+                onAdd={!!this.props.onAdd && !hasAssignment ? 
+                  () => this.props.onAdd(this.props.equipmentEntity) : null}
+                showDetails={!!this.props.showDetails ? 
+                  () => this.props.showDetails(this.props.equipmentEntity) : null}
+                onEdit={!!this.props.onEdit ? 
+                  () => this.props.onEdit(this.props.equipmentEntity) : null}
+                />
             </td>
           </tr>
         );

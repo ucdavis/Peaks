@@ -33,10 +33,34 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> List(string orgId)
         {
-            var spaces = await _context.Spaces
-                .Where(x => x.OrgId == orgId)
-                .AsNoTracking().ToListAsync();
-            return Json(spaces);
+            //TODO clean up workstations query
+            var spaces = 
+                from space in _context.Spaces.Where(x => x.OrgId == orgId)
+                select new
+                {
+                    space = space,
+                    id = space.Id,
+                    equipmentCount = 
+                        (from eq in _context.Equipment where eq.SpaceId == space.Id && eq.Active select eq ).Count(),
+                    keyCount = 
+                        (from k in _context.Keys where k.SpaceId == space.Id && k.Active select k ).Count(),
+                    workstationsTotal = 
+                        (from w in _context.Workstations where w.SpaceId == space.Id && w.Active select w).Count(),
+                    workstationsInUse = 
+                        (from w in _context.Workstations where w.SpaceId == space.Id && w.Active && w.Assignment != null select w).Count(),
+                };
+
+
+            return Json(await spaces.ToListAsync());
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var space = await _context.Spaces
+                .Where(w => w.Active && w.Id == id)
+                .AsNoTracking()
+                .SingleOrDefaultAsync();
+            return Json(space);
         }
 
     }

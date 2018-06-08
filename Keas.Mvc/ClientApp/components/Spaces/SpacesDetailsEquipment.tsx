@@ -2,9 +2,10 @@
 import * as React from "react";
 import { NavLink, Redirect } from "react-router-dom";
 import { AppContext, IEquipment } from "../../Types";
+import EquipmentList from "../Equipment/EquipmentList";
 
 interface IProps {
-    roomKey: string;
+    spaceId: number;
 }
 
 interface IState {
@@ -33,13 +34,13 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
 
     public async componentDidMount() {
         this.setState({ loading: true });
-        const equipment = !this.props.roomKey ? [] :
-            await this.context.fetch(`/api/${this.context.team.name}/equipment/getEquipmentInSpace?roomKey=${this.props.roomKey}`);
+        const equipment = this.props.spaceId === null ? [] :
+            await this.context.fetch(`/api/${this.context.team.name}/equipment/getEquipmentInSpace?spaceId=${this.props.spaceId}`);
         this.setState({ equipment, loading: false });
     }
 
     public render() {
-        if (!this.props.roomKey)
+        if (this.props.spaceId === null)
         {
             return null;
         }
@@ -47,18 +48,18 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
         {
             return (<div>Loading Equipment...</div>);
         }
-        const equipmentList = this.state.equipment.length > 0 ? this.state.equipment.map(x => (
-            <div key={x.id}>
-                <NavLink to={`../../equipment/details/${x.id}`} >
-                    {x.name}
-                </NavLink>
-            </div>
-        )) : (<div>No Equipment</div>);
         return (
             <div className="form-group">
-                <label>Equipment</label><br />
-                {equipmentList}
+                <h5><i className="fas fa-laptop fa-xs"></i> Equipment</h5>
+                {this.state.equipment.length > 0 ? 
+                    <EquipmentList equipment={this.state.equipment} showDetails={this._openDetailsModal} /> : "No Equipment"}
             </div>
         );
     }
+
+    private _openDetailsModal = (equipment: IEquipment) => {
+        this.context.router.history.push(
+            `../../equipment/details/${equipment.id}`
+        );
+    };
 }
