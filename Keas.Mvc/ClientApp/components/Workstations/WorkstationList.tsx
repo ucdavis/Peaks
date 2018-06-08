@@ -29,7 +29,7 @@ export default class WorkstationList extends React.Component<IProps, {}> {
         <table className="table">
           <thead>
             <tr>
-              <th>Number</th>
+              <th>Name</th>
               <th>Assigned To</th>
               <th>Expiration</th>
               <th className="actions">Actions</th>

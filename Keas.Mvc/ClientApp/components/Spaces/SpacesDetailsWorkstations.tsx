@@ -63,7 +63,7 @@ export default class SpacesDetailsWorkstations extends React.Component<IProps, I
                         onRevoke={this._openRevokeModal}/> : "No Workstations"}
             </div>
             <Button color="danger" onClick={() => this._openCreateModal()}>
-                    Add Equipment
+                    Add Workstation
                 </Button>
                 </div>
         );
