@@ -48,8 +48,11 @@ namespace Keas.Mvc.Controllers
                         (from w in _context.Workstations where w.SpaceId == space.Id && w.Active select w).Count(),
                     workstationsInUse = 
                         (from w in _context.Workstations where w.SpaceId == space.Id && w.Active && w.Assignment != null select w).Count(),
-                };
-
+                    tags = 
+                        String.Join(",",
+                        (from w in _context.Workstations where w.SpaceId == space.Id && w.Active && !String.IsNullOrWhiteSpace(w.Tags)
+                            select w.Tags).ToArray()),
+                    };
 
             return Json(await spaces.ToListAsync());
         }
@@ -63,5 +66,10 @@ namespace Keas.Mvc.Controllers
             return Json(space);
         }
 
+        public async Task<IActionResult> ListTags() 
+        {
+            var tags = await _context.Tags.Where(x => x.Team.Name == Team).Select(x => x.Name).AsNoTracking().ToListAsync();
+            return Json(tags);
+        }
     }
 }

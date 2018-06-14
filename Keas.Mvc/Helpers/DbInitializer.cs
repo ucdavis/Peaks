@@ -172,6 +172,7 @@ namespace Keas.Mvc.Helpers
                 Name = "Laura's Workstation", 
                 Team = caes, 
                 Assignment = workstationAssignment1, 
+                Tags = "Student,Standing Desk",
                 Space = space3 };
 
             context.WorkstationAssignments.Add(workstationAssignment1);
@@ -188,7 +189,8 @@ namespace Keas.Mvc.Helpers
                 Name = "Scott's Workstation", 
                 Team = caes, 
                 Assignment = workstationAssignment2, 
-                Space = space3 };
+                Tags = "Standing Desk",
+                Space = space4 };
 
             context.WorkstationAssignments.Add(workstationAssignment2);
             context.Workstations.Add(workstation2);
@@ -198,6 +200,19 @@ namespace Keas.Mvc.Helpers
                 Team = caes, 
                 Space = space3 };
             context.Workstations.Add(workstation3);
+
+            var tag1 = new Tag {
+                Name = "Student",
+                Team = caes
+            };
+
+            var tag2 = new Tag {
+                Name = "Standing Desk",
+                Team = caes
+            };
+
+            context.Tags.Add(tag1);
+            context.Add(tag2);
 
             
             var scottKey = new TeamPermission{ Id = 1, Team = caes, Role = keyMaster, User = scott};
