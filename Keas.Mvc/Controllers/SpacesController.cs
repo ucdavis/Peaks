@@ -65,11 +65,5 @@ namespace Keas.Mvc.Controllers
                 .SingleOrDefaultAsync();
             return Json(space);
         }
-
-        public async Task<IActionResult> ListTags() 
-        {
-            var tags = await _context.Tags.Where(x => x.Team.Name == Team).Select(x => x.Name).AsNoTracking().ToListAsync();
-            return Json(tags);
-        }
     }
 }

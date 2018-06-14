@@ -11,7 +11,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
-    [Authorize(Policy = "DepartmentAdminAccess")]
     public class TagsController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -21,6 +20,7 @@ namespace Keas.Mvc.Controllers
             _context = context;
         }
 
+        [Authorize(Policy = "DepartmentAdminAccess")]
         // GET: Tags
         public async Task<ActionResult> Index()
         {
@@ -28,12 +28,14 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        [Authorize(Policy = "DepartmentAdminAccess")]
         // GET: Tags/Create
         public ActionResult Create()
         {
             return View();
         }
-
+        
+        [Authorize(Policy = "DepartmentAdminAccess")]
         // POST: Tags/Create
         [HttpPost]
         public async Task<ActionResult> Create( Tag newTag)
@@ -50,7 +52,8 @@ namespace Keas.Mvc.Controllers
             Message = "An error occurred. Tag could not be created.";
             return View();
         }
-
+        
+        [Authorize(Policy = "DepartmentAdminAccess")]
         // GET: Tags/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
@@ -61,7 +64,8 @@ namespace Keas.Mvc.Controllers
             }
             return View(tag);
         }
-
+        
+        [Authorize(Policy = "DepartmentAdminAccess")]
         // POST: Tags/Edit/5
         [HttpPost]
         public async Task<ActionResult> Edit(int id, Tag updatedTag)
@@ -86,7 +90,8 @@ namespace Keas.Mvc.Controllers
             }
             return View(updatedTag);
         }
-
+        
+        [Authorize(Policy = "DepartmentAdminAccess")]
         // GET: Tags/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
@@ -97,7 +102,8 @@ namespace Keas.Mvc.Controllers
             }
             return View(tag);
         }
-
+        
+        [Authorize(Policy = "DepartmentAdminAccess")]
         // POST: Tags/Delete/5
         [HttpPost]
         public async Task<ActionResult> Delete(int id, Tag deleteTag)
@@ -107,6 +113,12 @@ namespace Keas.Mvc.Controllers
             await _context.SaveChangesAsync();
             Message = "Tag deleted.";
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> ListTags() 
+        {
+            var tags = await _context.Tags.Where(x => x.Team.Name == Team).Select(x => x.Name).AsNoTracking().ToListAsync();
+            return Json(tags);
         }
     }
 }

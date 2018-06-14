@@ -39,7 +39,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
 
     public async componentDidMount() {
         const spaces = await this.context.fetch(`/api/${this.context.team.name}/spaces/list?orgId=ADNO`);
-        const tags = await this.context.fetch(`/api/${this.context.team.name}/spaces/listTags`);
+        const tags = await this.context.fetch(`/api/${this.context.team.name}/tags/listTags`);
         this.setState({ loading: false, allSpaces: spaces, filteredSpaces: spaces, tags });
     }
     public render() {
