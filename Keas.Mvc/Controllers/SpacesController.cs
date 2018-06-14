@@ -57,6 +57,13 @@ namespace Keas.Mvc.Controllers
             return Json(await spaces.ToListAsync());
         }
 
+        public async Task<IActionResult> GetTagsInSpace(int spaceId) 
+        {
+            var tags = await _context.Workstations.Where(x => x.Active && x.SpaceId == spaceId && !String.IsNullOrWhiteSpace(x.Tags)).Select(x => x.Tags).ToArrayAsync();
+            return Json(String.Join(",",tags));
+
+        }
+
         public async Task<IActionResult> Details(int id)
         {
             var space = await _context.Spaces

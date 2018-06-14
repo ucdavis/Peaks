@@ -82,6 +82,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                     tags={this.state.tags}
                     modal={activeWorkstationAsset && action === "edit"}
                     workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null}
+                    editWorkstation={this._workstationEdited}
                     />
                 <AssignWorkstation
                     closeModal={this._closeModals}
@@ -141,6 +142,17 @@ export default class SpacesContainer extends React.Component<{}, IState> {
             allSpaces[index].workstationsInUse--;
             this.setState({allSpaces});
         }     
+    }
+
+    private _workstationEdited = async (spaceId: number) => {
+        const index = this.state.allSpaces.findIndex(x => x.id === spaceId);
+        if(index > -1 )
+        {
+            const tags = await this.context.fetch(`/api/${this.context.team.name}/spaces/getTagsInSpace?spaceId=${spaceId}`);
+            const allSpaces = [...this.state.allSpaces];
+            allSpaces[index].tags = tags;
+            this.setState({allSpaces});        
+        }
     }
 
     private _getBaseUrl = () => {

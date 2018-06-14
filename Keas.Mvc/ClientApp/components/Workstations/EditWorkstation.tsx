@@ -18,6 +18,7 @@ interface IProps {
     returnToSpaceDetails: (spaceId: number) => void;
     tags: string[];
     workstationId: number;
+    editWorkstation: (spaceId: number) => void;
 }
 
 interface IState{
@@ -158,14 +159,13 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
         if (!this.state.validState) {
           return;
         }
-    
-        // this.state.workstation.attributes = this.state.workstation.attributes.filter(x => !!x.key);
-        
+            
         const updated: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/update`, {
             body: JSON.stringify(this.state.workstation),
             method: "POST"
           });
     
+        this.props.editWorkstation(this.state.workstation.space.id);
         this.props.returnToSpaceDetails(this.state.workstation.space.id);
       };
     

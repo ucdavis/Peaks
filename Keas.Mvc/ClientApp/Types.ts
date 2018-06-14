@@ -126,7 +126,7 @@ export interface IWorkstation {
   id: number;
   name: string;
   space: ISpace;
-  tags: string[];
+  tags: string;
   teamId: number;
   assignment?: IWorkstationAssignment;
 }
