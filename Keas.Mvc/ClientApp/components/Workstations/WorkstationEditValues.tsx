@@ -2,10 +2,11 @@
 
 import { ISpace, IWorkstation } from "../../Types";
 import AssignSpace from "../Spaces/AssignSpace";
+import SearchTags from "../Tags/SearchTags";
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
-    commonAttributeKeys?: string[];
+    tags?: string[];
     disableEditing: boolean;
     selectedWorkstation: IWorkstation;
     creating?: boolean;
@@ -57,6 +58,14 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                     />
                 </div>
               
+                <div className="form-group">
+                    <label>Tags</label>
+                    <SearchTags 
+                        tags={this.props.tags} 
+                        disabled={this.props.disableEditing}
+                        defaultValues={!!this.props.selectedWorkstation.tags ? this.props.selectedWorkstation.tags.split(",") : []}
+                        onSelect={(e) => this.props.changeProperty("tags", e.join(","))} />
+                </div>
 
             </div>
         );

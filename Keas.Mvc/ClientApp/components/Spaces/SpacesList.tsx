@@ -24,7 +24,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
         }
         else
         {
-            space = (<tr><td colSpan="8">No Spaces Were Found</td></tr>)
+            space = (<tr><td colSpan={8}>No Spaces Were Found</td></tr>)
         }
 
         return (

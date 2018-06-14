@@ -61,7 +61,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
 
         return (
             <div>
-                <SearchTags tags={this.state.tags} onSelect={this._filterSpaces}/>
+                <SearchTags tags={this.state.tags} onSelect={this._filterSpaces} disabled={false}/>
                 <SpacesList
                     spaces={this.state.filteredSpaces}
                     showDetails={this._openDetailsModal} />
@@ -79,6 +79,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                 <EditWorkstation
                     closeModal={this._closeModals}
                     returnToSpaceDetails={this._returnToSpaceDetails}
+                    tags={this.state.tags}
                     modal={activeWorkstationAsset && action === "edit"}
                     workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null}
                     />
@@ -89,6 +90,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                     modal={activeWorkstationAsset && action === "assign" || action ==="create"}
                     workstationId={activeWorkstationAsset && action === "assign" && Number.isInteger(selectedId) ? selectedId : null}
                     spaceId={activeWorkstationAsset && action === "create" && Number.isInteger(selectedId) ? selectedId : null}
+                    tags={this.state.tags}
                     creating={action === "create"} />
                 <RevokeWorkstation
                     closeModal={this._closeModals}

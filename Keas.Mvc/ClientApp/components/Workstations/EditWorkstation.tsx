@@ -16,6 +16,7 @@ interface IProps {
     modal: boolean;
     closeModal: () => void;
     returnToSpaceDetails: (spaceId: number) => void;
+    tags: string[];
     workstationId: number;
 }
 
@@ -108,6 +109,7 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
                 <ModalHeader>Edit Workstation</ModalHeader>
                 <ModalBody>
                     <WorkstationEditValues selectedWorkstation={this.state.workstation} 
+                        tags={this.props.tags}
                         disableEditing={false} 
                         changeProperty={this._changeProperty}/>
                 </ModalBody>

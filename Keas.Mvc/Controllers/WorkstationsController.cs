@@ -176,6 +176,7 @@ namespace Keas.Mvc.Controllers
                     .SingleAsync(x => x.Id == workstation.Id);
                     
                 w.Name = workstation.Name;
+                w.Tags = workstation.Tags;
 
                 //eq.Attributes.Clear();
                 //equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
