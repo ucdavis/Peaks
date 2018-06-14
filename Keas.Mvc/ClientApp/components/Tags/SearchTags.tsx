@@ -20,6 +20,8 @@ export default class SearchTags extends React.Component<IProps, {}> {
                     onChange={selected => {
                         this.props.onSelect(selected);
                     }}
+                    highlightOnlyResult={true}
+                    selectHintOnEnter={true}
                     placeholder="Search for tags"
                 />
             </div>
