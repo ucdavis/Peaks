@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Keas.Mvc.Controllers
+namespace Keas.Mvc.Controllers.Api
 {
     public class SpacesController : SuperController
     {

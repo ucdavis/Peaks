@@ -11,16 +11,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
-    public class TagsController : SuperController
+    //[Authorize(Policy = "DepartmentAdminAccess")]
+    public class TagsManagerController : SuperController
     {
         private readonly ApplicationDbContext _context;
 
-        public TagsController(ApplicationDbContext context)
+        public TagsManagerController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        [Authorize(Policy = "DepartmentAdminAccess")]
         // GET: Tags
         public async Task<ActionResult> Index()
         {
@@ -28,14 +28,12 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
-        [Authorize(Policy = "DepartmentAdminAccess")]
         // GET: Tags/Create
         public ActionResult Create()
         {
             return View();
         }
         
-        [Authorize(Policy = "DepartmentAdminAccess")]
         // POST: Tags/Create
         [HttpPost]
         public async Task<ActionResult> Create( Tag newTag)
@@ -53,7 +51,6 @@ namespace Keas.Mvc.Controllers
             return View();
         }
         
-        [Authorize(Policy = "DepartmentAdminAccess")]
         // GET: Tags/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
@@ -65,7 +62,6 @@ namespace Keas.Mvc.Controllers
             return View(tag);
         }
         
-        [Authorize(Policy = "DepartmentAdminAccess")]
         // POST: Tags/Edit/5
         [HttpPost]
         public async Task<ActionResult> Edit(int id, Tag updatedTag)
@@ -91,7 +87,6 @@ namespace Keas.Mvc.Controllers
             return View(updatedTag);
         }
         
-        [Authorize(Policy = "DepartmentAdminAccess")]
         // GET: Tags/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
@@ -103,7 +98,6 @@ namespace Keas.Mvc.Controllers
             return View(tag);
         }
         
-        [Authorize(Policy = "DepartmentAdminAccess")]
         // POST: Tags/Delete/5
         [HttpPost]
         public async Task<ActionResult> Delete(int id, Tag deleteTag)
