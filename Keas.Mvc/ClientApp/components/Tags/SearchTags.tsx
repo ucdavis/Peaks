@@ -4,7 +4,7 @@ import { Highlighter, Typeahead } from "react-bootstrap-typeahead";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 interface IProps {
-    onSelect?: (tag: string[]) => void;
+    onSelect: (tag: string[]) => void;
     disabled: boolean;
     defaultValues?: string[];
     tags: string[];
