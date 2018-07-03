@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
-    //[Authorize(Policy = "DepartmentAdminAccess")]
+    [Authorize(Policy = "DepartmentAdminAccess")]
     public class TagsManagerController : SuperController
     {
         private readonly ApplicationDbContext _context;
