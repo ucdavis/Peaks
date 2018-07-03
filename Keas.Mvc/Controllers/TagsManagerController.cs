@@ -108,11 +108,5 @@ namespace Keas.Mvc.Controllers
             Message = "Tag deleted.";
             return RedirectToAction(nameof(Index));
         }
-
-        public async Task<IActionResult> ListTags() 
-        {
-            var tags = await _context.Tags.Where(x => x.Team.Name == Team).Select(x => x.Name).AsNoTracking().ToListAsync();
-            return Json(tags);
-        }
     }
 }
