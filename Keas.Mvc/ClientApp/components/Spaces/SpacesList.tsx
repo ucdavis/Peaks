@@ -11,13 +11,22 @@ interface IProps {
 
 export default class SpacesList extends React.Component<IProps, {}> {
     public render() {
-        const space = this.props.spaces.map(x => (
-            <SpacesListItem
-                key={x.space.roomKey}
-                spaceInfo={x}
-                showDetails={this.props.showDetails}
-            />
-        ));
+        let space = null;
+        if(!!this.props.spaces && this.props.spaces.length > 0)
+        {
+            space = this.props.spaces.map(x => (
+                <SpacesListItem
+                    key={x.space.roomKey}
+                    spaceInfo={x}
+                    showDetails={this.props.showDetails}
+                />
+            ));
+        }
+        else
+        {
+            space = (<tr><td colSpan={8}>No Spaces Were Found</td></tr>)
+        }
+
         return (
             <table className="table">
                 <thead>

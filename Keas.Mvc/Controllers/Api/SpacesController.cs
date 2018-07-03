@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Keas.Mvc.Controllers
+namespace Keas.Mvc.Controllers.Api
 {
     public class SpacesController : SuperController
     {
@@ -48,10 +48,20 @@ namespace Keas.Mvc.Controllers
                         (from w in _context.Workstations where w.SpaceId == space.Id && w.Active select w).Count(),
                     workstationsInUse = 
                         (from w in _context.Workstations where w.SpaceId == space.Id && w.Active && w.Assignment != null select w).Count(),
-                };
-
+                    tags = 
+                        String.Join(",",
+                        (from w in _context.Workstations where w.SpaceId == space.Id && w.Active && !String.IsNullOrWhiteSpace(w.Tags)
+                            select w.Tags).ToArray()),
+                    };
 
             return Json(await spaces.ToListAsync());
+        }
+
+        public async Task<IActionResult> GetTagsInSpace(int spaceId) 
+        {
+            var tags = await _context.Workstations.Where(x => x.Active && x.SpaceId == spaceId && !String.IsNullOrWhiteSpace(x.Tags)).Select(x => x.Tags).ToArrayAsync();
+            return Json(String.Join(",",tags));
+
         }
 
         public async Task<IActionResult> Details(int id)
@@ -62,6 +72,5 @@ namespace Keas.Mvc.Controllers
                 .SingleOrDefaultAsync();
             return Json(space);
         }
-
     }
 }

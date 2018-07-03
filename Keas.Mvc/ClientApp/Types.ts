@@ -108,6 +108,7 @@ export interface ISpaceInfo {
   keyCount: number;
   workstationsTotal: number;
   workstationsInUse: number;
+  tags: string; // comma separated list of workstation tags in this space 
 }
 
 export interface ISpace {
@@ -125,6 +126,7 @@ export interface IWorkstation {
   id: number;
   name: string;
   space: ISpace;
+  tags: string;
   teamId: number;
   assignment?: IWorkstationAssignment;
 }

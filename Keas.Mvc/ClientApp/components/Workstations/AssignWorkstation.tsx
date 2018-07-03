@@ -21,6 +21,7 @@ interface IProps {
     creating: boolean;
     returnToSpaceDetails: (spaceId: number) => void;
     spaceId?: number;
+    tags: string[];
     updateCount: (spaceId: number, created: boolean, assigned:boolean) => void;
     workstationId: number;
 }
@@ -57,6 +58,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                 id: 0,
                 name: "",
                 space: null,
+                tags:"",
                 teamId: 0
             }     
         };
@@ -86,6 +88,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     id: 0,
                     name: "",
                     space: null,
+                    tags:"",
                     teamId: 0,
                 }    
             });
@@ -154,6 +157,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                 </div>
                 {this.props.creating && // if we are creating a new workstation, edit properties
                     <WorkstationEditValues
+                      tags={this.props.tags}
                       selectedWorkstation={this.state.workstation}
                       changeProperty={this._changeProperty}
                       disableEditing={false}

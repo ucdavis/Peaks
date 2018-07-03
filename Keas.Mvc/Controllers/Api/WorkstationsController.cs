@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Keas.Mvc.Controllers
+namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = "SpaceMasterAccess")]
     public class WorkstationsController : SuperController
@@ -176,6 +176,7 @@ namespace Keas.Mvc.Controllers
                     .SingleAsync(x => x.Id == workstation.Id);
                     
                 w.Name = workstation.Name;
+                w.Tags = workstation.Tags;
 
                 //eq.Attributes.Clear();
                 //equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));

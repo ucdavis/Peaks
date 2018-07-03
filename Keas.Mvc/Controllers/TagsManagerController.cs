@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Keas.Mvc.Controllers
 {
     [Authorize(Policy = "DepartmentAdminAccess")]
-    public class TagsController : SuperController
+    public class TagsManagerController : SuperController
     {
         private readonly ApplicationDbContext _context;
 
-        public TagsController(ApplicationDbContext context)
+        public TagsManagerController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -33,7 +33,7 @@ namespace Keas.Mvc.Controllers
         {
             return View();
         }
-
+        
         // POST: Tags/Create
         [HttpPost]
         public async Task<ActionResult> Create( Tag newTag)
@@ -50,7 +50,7 @@ namespace Keas.Mvc.Controllers
             Message = "An error occurred. Tag could not be created.";
             return View();
         }
-
+        
         // GET: Tags/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
@@ -61,7 +61,7 @@ namespace Keas.Mvc.Controllers
             }
             return View(tag);
         }
-
+        
         // POST: Tags/Edit/5
         [HttpPost]
         public async Task<ActionResult> Edit(int id, Tag updatedTag)
@@ -86,7 +86,7 @@ namespace Keas.Mvc.Controllers
             }
             return View(updatedTag);
         }
-
+        
         // GET: Tags/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
@@ -97,7 +97,7 @@ namespace Keas.Mvc.Controllers
             }
             return View(tag);
         }
-
+        
         // POST: Tags/Delete/5
         [HttpPost]
         public async Task<ActionResult> Delete(int id, Tag deleteTag)

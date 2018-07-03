@@ -107,8 +107,8 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                 make: equipment.make ? equipment.make : "",
                 model: equipment.model ? equipment.model : "",
                 name: equipment.name,
-                room: equipment.room ? equipment.room : null,
                 serialNumber: equipment.serialNumber ? equipment.serialNumber : "",
+                space: equipment.space ? equipment.space : null,
                 teamId: equipment.teamId ? equipment.teamId : 0,
                 type: "Phone"
             });
