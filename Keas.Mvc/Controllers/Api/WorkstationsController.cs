@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Keas.Mvc.Controllers
+namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = "SpaceMasterAccess")]
     public class WorkstationsController : SuperController
