@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Keas.Mvc.Controllers.Api
+namespace Keas.Mvc.Controllers
 {
     [Authorize(Policy = "AccessMasterAccess")]
     public class AccessController : SuperController
@@ -113,20 +113,6 @@ namespace Keas.Mvc.Controllers.Api
                 await _context.SaveChangesAsync();
                 await _eventService.TrackAssignAccess(accessAssingment, Team);
                 return Json(accessAssingment);
-            }
-            return BadRequest(ModelState);
-        }
-        public async Task<IActionResult> Update([FromBody]Access access)
-        {
-            //TODO: check permissions, make sure SN isn't edited 
-            if (ModelState.IsValid)
-            {
-                var a = await _context.Access.Where(x => x.Team.Name == Team)
-                    .SingleAsync(x => x.Id == access.Id);
-                a.Name = access.Name;
-                await _context.SaveChangesAsync();
-                await _eventService.TrackUpdateAccess(a);
-                return Json(access);
             }
             return BadRequest(ModelState);
         }

@@ -6,10 +6,9 @@ import { IEquipment } from "../../Types";
 
 interface IProps {
     equipment: IEquipment[];
-    onRevoke?: (equipment: IEquipment) => void;
-    onAdd?: (equipment: IEquipment) => void;
-    showDetails?: (equipment: IEquipment) => void;
-    onEdit?: (equipment: IEquipment) => void;
+    onRevoke: (equipment: IEquipment) => void;
+    onAdd: (equipment: IEquipment) => void;
+    showDetails: (equipment: IEquipment) => void;
 }
 
 export default class EquipmentList extends React.Component<IProps, {}> {
@@ -21,7 +20,6 @@ export default class EquipmentList extends React.Component<IProps, {}> {
               onRevoke={this.props.onRevoke}
               onAdd={this.props.onAdd}
               showDetails={this.props.showDetails}
-              onEdit={this.props.onEdit}
           />
     ));
       return (
@@ -33,7 +31,7 @@ export default class EquipmentList extends React.Component<IProps, {}> {
               <th>Number</th>
               <th>Assigned To</th>
               <th>Expiration</th>
-              <th className="actions">Actions</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>{equipment}</tbody>

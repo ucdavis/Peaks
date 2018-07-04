@@ -6,10 +6,9 @@ import { IKey } from "../../Types";
 
 interface IProps {
     keys: IKey[];
-    onRevoke?: (key: IKey) => void;
-    onAdd?: (key: IKey) => void;
-    showDetails?: (key: IKey) => void;
-    onEdit?: (key: IKey) => void;
+    onRevoke: (key: IKey) => void;
+    onAdd: (key: IKey) => void;
+    showDetails: (key: IKey) => void;
 }
 
 export default class KeyList extends React.Component<IProps, {}> {
@@ -21,7 +20,6 @@ export default class KeyList extends React.Component<IProps, {}> {
                 onRevoke={this.props.onRevoke}
                 onAdd={this.props.onAdd}
                 showDetails={this.props.showDetails}
-                onEdit={this.props.onEdit}
             />
         ));
         return (
@@ -32,7 +30,7 @@ export default class KeyList extends React.Component<IProps, {}> {
                         <th>Number</th>
                         <th>Assigned To</th>
                         <th>Expiration</th>
-                        <th className="actions">Actions</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>{key}</tbody>

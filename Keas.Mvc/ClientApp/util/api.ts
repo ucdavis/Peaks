@@ -1,28 +1,23 @@
 import "isomorphic-fetch";
 
-const doFetch = async (
-  url: string,
-  antiForgeryToken: string,
-  init?: RequestInit
-): Promise<any> => {
-  const res = await fetch(url, {
-    ...init,
-    credentials: "include",
-    headers: [
-      ["Accept", "application/json"],
-      ["Content-Type", "application/json"],
-      ["RequestVerificationToken", antiForgeryToken]
-    ]
-  });
+const doFetch = async (url: string, init?: RequestInit): Promise<any> => {
+    const res = await fetch(url, {
+        ...init,
+        headers: [
+            ["Accept", "application/json"],
+            ["Content-Type", "application/json"],
+        ],
+        credentials: "include",
+    });
 
-  if (!res.ok) {
-    throw new Error(res.statusText);
-  }
+    if (!res.ok) { throw new Error(res.statusText); }
 
-  return await res.json();
+    return await res.json();
 };
 
-const createFetch = (antiForgeryToken: string) => (url, init) =>
-  doFetch(url, antiForgeryToken, init);
+const createFetch = () => doFetch;
 
-export { createFetch, doFetch };
+export {
+    createFetch,
+    doFetch,
+};

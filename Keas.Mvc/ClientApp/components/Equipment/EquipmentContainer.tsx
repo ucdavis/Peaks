@@ -4,14 +4,10 @@ import * as React from "react";
 import { AppContext, IEquipment, IPerson } from "../../Types";
 
 import AssignEquipment from "./AssignEquipment";
-import EditEquipment from "./EditEquipment";
 import EquipmentDetails from "./EquipmentDetails";
 import EquipmentList from "./EquipmentList";
-import Denied from "../Shared/Denied";
-import { PermissionsUtil } from "../../util/permissions"; 
 
 interface IState {
-  commonAttributeKeys: string[];
   loading: boolean;
   equipment: IEquipment[]; // either equipment assigned to this person, or all team equipment
 }
@@ -23,7 +19,6 @@ interface IProps {
 export default class EquipmentContainer extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
-    permissions: PropTypes.array,
     router: PropTypes.object,
     team: PropTypes.object
   };
@@ -32,7 +27,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     super(props);
 
     this.state = {
-      commonAttributeKeys: [],
       equipment: [],
       loading: true
     };
@@ -43,19 +37,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       ? `/api/${this.context.team.name}/equipment/listassigned?personid=${this.props.person.id}`
       : `/api/${this.context.team.name}/equipment/list/`;
 
-    const attrFetchUrl = `/api/${this.context.team.name}/equipment/commonAttributeKeys/`;
-
-    const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
     const equipment = await this.context.fetch(equipmentFetchUrl);
-    this.setState({ commonAttributeKeys, equipment, loading: false });
+    this.setState({ equipment, loading: false });
   }
   public render() {
-    if (!PermissionsUtil.canViewEquipment(this.context.permissions)) {
-        return (
-            <Denied viewName="Equipment" />
-        );
-    }
-
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
@@ -73,7 +58,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             onRevoke={this._revokeEquipment}
             onAdd={this._openAssignModal}
             showDetails={this._openDetailsModal}
-            onEdit={this._openEditModal}
           />
           <AssignEquipment
             onCreate={this._createAndMaybeAssignEquipment}
@@ -82,20 +66,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             closeModal={this._closeModals}
             selectedEquipment={detailEquipment}
             person={this.props.person}
-            commonAttributeKeys={this.state.commonAttributeKeys}
           />
           <EquipmentDetails
             selectedEquipment={detailEquipment}
             modal={activeAsset && action === "details" && !!detailEquipment}
             closeModal={this._closeModals}
           />
-          <EditEquipment 
-            selectedEquipment={detailEquipment}
-            onEdit={this._editEquipment}
-            closeModal={this._closeModals}
-            modal={activeAsset && (action === "edit")}
-            commonAttributeKeys={this.state.commonAttributeKeys}
-            />
         </div>
       </div>
     );
@@ -170,31 +146,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     }
   };
 
-  private _editEquipment = async (equipment: IEquipment) =>
-  {
-    const index = this.state.equipment.findIndex(x => x.id === equipment.id);
-
-    if(index === -1 ) // should always already exist
-    {
-      return;
-    }
-
-    const updated: IEquipment = await this.context.fetch(`/api/${this.context.team.name}/equipment/update`, {
-      body: JSON.stringify(equipment),
-      method: "POST"
-    });
-
-    updated.assignment = equipment.assignment;
-
-    // update already existing entry in key
-    const updateEquipment = [...this.state.equipment];
-    updateEquipment[index] = updated;
-
-    this.setState({
-      ...this.state,
-      equipment: updateEquipment
-    }); 
-  }
   private _openAssignModal = (equipment: IEquipment) => {
     this.context.router.history.push(
       `${this._getBaseUrl()}/equipment/assign/${equipment.id}`
@@ -210,12 +161,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       `${this._getBaseUrl()}/equipment/details/${equipment.id}`
     );
   };
-
-  private _openEditModal = (equipment: IEquipment) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/equipment/edit/${equipment.id}`
-    );
-  }
   private _closeModals = () => {
     this.context.router.history.push(`${this._getBaseUrl()}/equipment`);
   };

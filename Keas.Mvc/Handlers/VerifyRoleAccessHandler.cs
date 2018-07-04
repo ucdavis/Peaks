@@ -34,7 +34,7 @@ namespace Keas.Mvc.Handlers
                 }
             }
 
-            var user = _dbContext.Users.SingleOrDefault(u => u.Id == context.User.Identity.Name);
+            var user = _dbContext.Users.SingleOrDefault(u => u.Email == context.User.Identity.Name);
             var roles = await _dbContext.Roles.Where(r => requirement.RoleStrings.Contains(r.Name)).ToListAsync();
             if (user != null && team!="")
             {

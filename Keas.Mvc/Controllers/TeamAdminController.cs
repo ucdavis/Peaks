@@ -34,7 +34,7 @@ namespace Keas.Mvc.Controllers
             return View(team);
         }
 
-        public IActionResult AddFISOrg()
+        public async Task<IActionResult> AddFISOrg()
         {
             return View();
         }
@@ -230,7 +230,7 @@ namespace Keas.Mvc.Controllers
             return Json(users);
         }
         
-        public IActionResult CreateMember()
+        public async Task<IActionResult> CreateMember()
         {
             return View();
         }
@@ -312,7 +312,7 @@ namespace Keas.Mvc.Controllers
             return View(person);
         }
 
-        public  IActionResult BulkImportMembers()
+        public async Task<IActionResult> BulkImportMembers()
         {
             //TODO: Import from IAM using FIS Org code => PPS Dept ID => IAM bulk load call
             throw new NotImplementedException();

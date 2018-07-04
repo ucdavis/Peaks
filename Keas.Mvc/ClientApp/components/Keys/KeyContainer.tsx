@@ -4,11 +4,8 @@ import * as React from "react";
 import { AppContext, IKey, IPerson } from "../../Types";
 
 import AssignKey from "./AssignKey";
-import EditKey from "./EditKey";
 import KeyDetails from "./KeyDetails";
 import KeyList from "./KeyList";
-import Denied from "../Shared/Denied";
-import {PermissionsUtil} from "../../util/permissions"; 
 
 interface IState {
   loading: boolean;
@@ -22,7 +19,6 @@ interface IProps {
 export default class KeyContainer extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
-    permissions: PropTypes.array,
     router: PropTypes.object,
     team: PropTypes.object
   };
@@ -45,12 +41,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     this.setState({ keys, loading: false });
   }
   public render() {
-    if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
-        return (
-            <Denied viewName="Keys" />
-        );
-    }
-
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
@@ -67,7 +57,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             keys={this.state.keys}
             onRevoke={this._revokeKey}
             onAdd={this._openAssignModal}
-            onEdit={this._openEditModal}
             showDetails={this._openDetailsModal}
           />
           <AssignKey
@@ -83,12 +72,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             modal={activeAsset && action === "details" && !!detailKey}
             closeModal={this._closeModals}
           />
-          <EditKey 
-            onEdit={this._editKey} 
-            closeModal={this._closeModals}
-            modal={activeAsset && (action === "edit")}
-            selectedKey={detailKey}
-          />
         </div>
       </div>
     );
@@ -103,7 +86,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     // if we are creating a new key
     if (key.id === 0) {
       key.teamId = this.context.team.id;
-      key = await this.context.fetch(`/api/${this.context.team.name}/keys/create`, {
+      key = await this.context.fetch("/api/${this.context.team.name}/keys/create", {
         body: JSON.stringify(key),
         method: "POST"
       });
@@ -140,7 +123,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
   private _revokeKey = async (key: IKey) => {
     // call API to actually revoke
-    const removed: IKey = await this.context.fetch(`/api/${this.context.team.name}/keys/revoke`, {
+    const removed: IKey = await this.context.fetch("/api/${this.context.team.name}/keys/revoke", {
       body: JSON.stringify(key),
       method: "POST"
     });
@@ -160,30 +143,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     }
   };
 
-  private _editKey = async (key: IKey) =>
-  {
-    const index = this.state.keys.findIndex(x => x.id === key.id);
-
-    if(index === -1 ) // should always already exist
-    {
-      return;
-    }
-
-    const updated: IKey = await this.context.fetch(`/api/${this.context.team.name}/keys/update`, {
-      body: JSON.stringify(key),
-      method: "POST"
-    });
-
-    // update already existing entry in key
-    const updateKey = [...this.state.keys];
-    updateKey[index] = updated;
-
-    this.setState({
-      ...this.state,
-      keys: updateKey
-    }); 
-  }
-
   private _openAssignModal = (key: IKey) => {
     this.context.router.history.push(
       `${this._getBaseUrl()}/keys/assign/${key.id}`
@@ -199,13 +158,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       `${this._getBaseUrl()}/keys/details/${key.id}`
     );
   };
-
-  private _openEditModal = (key: IKey) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/keys/edit/${key.id}`
-    );
-  };
-
   private _closeModals = () => {
     this.context.router.history.push(`${this._getBaseUrl()}/keys`);
   };
@@ -215,5 +167,4 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       ? `/${this.context.team.name}/person/details/${this.props.person.id}`
       : `/${this.context.team.name}`;
   };
-  
 }

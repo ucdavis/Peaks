@@ -20,9 +20,6 @@ namespace Keas.Mvc.Services
         Task WorkstationCreatedUpdatedInactive(Workstation workstation, History history);
         Task WorkstationAssigned(Workstation workstation, History history);
         Task WorkstationUnAssigned(Workstation workstation, History history);
-        Task KeyAccepted(Key key, History history);
-        Task EquipmentAccepted(Equipment equipment, History history);
-        Task WorkstationAccepted(Workstation workstation, History history);
     }
     public class NotificationService : INotificationService
     {
@@ -244,60 +241,6 @@ namespace Keas.Mvc.Services
         }
 
         public async Task WorkstationUnAssigned(Workstation workstation, History history)
-        {
-            var roles = await _dbContext.Roles
-                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, workstation.TeamId);
-            foreach (var user in users)
-            {
-                var notification = new Notification
-                {
-                    User = user,
-                    History = history,
-                    Details = history.Description
-                };
-                _dbContext.Notifications.Add(notification);
-            }
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task KeyAccepted(Key key, History history)
-        {
-            var roles = await _dbContext.Roles
-                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
-            foreach (var user in users)
-            {
-                var notification = new Notification
-                {
-                    User = user,
-                    History = history,
-                    Details = history.Description
-                };
-                _dbContext.Notifications.Add(notification);
-            }
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task EquipmentAccepted(Equipment equipment, History history)
-        {
-            var roles = await _dbContext.Roles
-                .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, equipment.TeamId);
-            foreach (var user in users)
-            {
-                var notification = new Notification
-                {
-                    User = user,
-                    History = history,
-                    Details = history.Description
-                };
-                _dbContext.Notifications.Add(notification);
-            }
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public async Task WorkstationAccepted(Workstation workstation, History history)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();

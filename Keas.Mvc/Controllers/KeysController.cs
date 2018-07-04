@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Keas.Mvc.Controllers.Api
+namespace Keas.Mvc.Controllers
 {
     [Authorize(Policy = "KeyMasterAccess")]
     public class KeysController : SuperController
@@ -33,22 +33,17 @@ namespace Keas.Mvc.Controllers.Api
             var keys = await _context.Keys
                 .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
-                .Include(x => x.Space)
                 .AsNoTracking().ToListAsync();
 
             return Json(keys);
         }
 
-        public async Task<IActionResult> GetKeysInSpace(int spaceId)
+        public async Task<IActionResult> GetKeysInRoom(string roomKey)
         {
-            var keys = await _context.Keys
-                .Where(x => x.Space.Id == spaceId && x.Team.Name == Team && x.Active)
-                .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person.User)
-                .AsNoTracking()
-                .ToListAsync();
-            return Json(keys);
+            var equipment = await _context.Keys.Where(x => x.Room.RoomKey == roomKey).AsNoTracking().ToListAsync();
+            return Json(equipment);
         }
+
 
         public async Task<IActionResult> ListAssigned(int personId) {
             var keyAssignments = await _context.Keys
@@ -97,23 +92,6 @@ namespace Keas.Mvc.Controllers.Api
                 await _context.SaveChangesAsync();
                 await _eventService.TrackAssignKey(key);
                 return Json(key);
-            }
-            return BadRequest(ModelState);
-        }
-
-        public async Task<IActionResult> Update([FromBody]Key key)
-        {
-            //TODO: check permissions, make sure SN isn't edited 
-            if (ModelState.IsValid)
-            {
-                var k = await _context.Keys.Where(x => x.Team.Name == Team)
-                    .Include(x=> x.Assignment).ThenInclude(x => x.Person.User)
-                    .Include(x=> x.Team)
-                    .SingleAsync(x => x.Id == key.Id);
-                k.Name = key.Name;
-                await _context.SaveChangesAsync();
-                await _eventService.TrackUpdateKey(key);
-                return Json(k);
             }
             return BadRequest(ModelState);
         }

@@ -6,10 +6,7 @@ import { AppContext, IAccess, IAccessAssignment, IPerson } from "../../Types";
 import AccessDetails from "./AccessDetails";
 import AccessList from "./AccessList";
 import AssignAccess from "./AssignAccess";
-import EditAccess from "./EditAccess";
 import RevokeAccess from "./RevokeAccess";
-import Denied from "../Shared/Denied";
-import { PermissionsUtil } from "../../util/permissions"; 
 
 interface IState {
     access: IAccess[]; // either access assigned to this person, or all team access
@@ -23,7 +20,6 @@ interface IProps {
 export default class AccessContainer extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
-    permissions: PropTypes.array,
     router: PropTypes.object,
     team: PropTypes.object
   };
@@ -46,12 +42,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     this.setState({ access , loading: false });
   }
   public render() {
-      if (!PermissionsUtil.canViewAccess(this.context.permissions)) {
-        return (
-            <Denied viewName="Access" />
-        );
-    }
-
     if (this.state.loading) {
       return <h2>Loading...</h2>;
       }
@@ -69,9 +59,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                     personView={this.props.person ? true : false}
                     onRevoke={this._openRevokeModal}
                     onAdd={this._openAssignModal}
-                    onEdit={this._openEditModal}
-                    showDetails={this._openDetailsModal}
-                     />
+                    showDetails={this._openDetailsModal} />
                 <AssignAccess
                     onAddNew={this._openCreateModal}
                     onCreate={this._createAndMaybeAssignAccess}
@@ -89,12 +77,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                 <AccessDetails selectedAccess={detailAccess}
                     modal={activeAsset && action === "details" && !!detailAccess}
                     closeModal={this._closeModals} />
-                <EditAccess 
-                    onEdit={this._editAccess}
-                    closeModal={this._closeModals}
-                    modal={activeAsset && (action === "edit")}
-                    selectedAccess={detailAccess}
-                    />
         </div>
       </div>
     );
@@ -108,7 +90,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       // if we are creating a new access
       if (access.id === 0) {
           access.teamId = this.context.team.id;
-          access = await this.context.fetch(`/api/${this.context.team.name}/access/create`, {
+          access = await this.context.fetch("/api/${this.context.team.name}/access/create", {
               body: JSON.stringify(access),
               method: "POST"
           });
@@ -153,7 +135,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   private _revokeAccess = async (accessAssignment: IAccessAssignment) => {
 
       // call API to actually revoke
-      const removed: IAccess = await this.context.fetch(`/api/${this.context.team.name}/access/revoke`, {
+      const removed: IAccess = await this.context.fetch("/api/${this.context.team.name}/access/revoke", {
           body: JSON.stringify(accessAssignment),
           method: "POST"
       });
@@ -175,29 +157,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       }
   }
 
-  private _editAccess = async (access: IAccess) =>
-  {
-    const index = this.state.access.findIndex(x => x.id === access.id);
-
-    if(index === -1 ) // should always already exist
-    {
-      return;
-    }
-
-    const updated: IAccess = await this.context.fetch(`/api/${this.context.team.name}/access/update`, {
-      body: JSON.stringify(access),
-      method: "POST"
-    });
-
-    // update already existing entry in key
-    const updateAccess = [...this.state.access];
-    updateAccess[index] = updated;
-
-    this.setState({
-      ...this.state,
-      access: updateAccess
-    }); 
-  }
 
   private _openAssignModal = (access: IAccess) => {
       this.context.router.history.push(
@@ -227,13 +186,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
           `${this._getBaseUrl()}/access/details/${access.id}`
       );
   };
-
-  private _openEditModal = (access: IAccess) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/access/edit/${access.id}`
-    );
-  };
-
   private _closeModals = () => {
       this.context.router.history.push(`${this._getBaseUrl()}/access`);
   };

@@ -38,7 +38,7 @@ export default class EquipmentAttribute extends React.Component<IProps, {}> {
                 {!this.props.disabledEdit &&
                 <td>
                     <button type="button" className="btn btn-outline-danger" onClick={() => this.props.onRemove(this.props.index)}>
-                        <i className="fas fa-trash" />
+                        <i className="fa fa-trash" />
                     </button>
                 </td>}
             </tr>
@@ -55,7 +55,6 @@ export default class EquipmentAttribute extends React.Component<IProps, {}> {
             allowNew={true}
             disabled={this.props.disabledEdit}
             options={this.props.commonKeys}
-            defaultInputValue={this.props.attribute.key ? this.props.attribute.key : ""}
             onChange={(selected) =>{ 
                 if(selected && selected.length === 1) {
                     if(!!selected[0].key){

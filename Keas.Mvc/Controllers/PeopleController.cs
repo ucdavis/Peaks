@@ -5,7 +5,7 @@ using Keas.Core.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Keas.Mvc.Controllers.Api
+namespace Keas.Mvc.Controllers
 {
     public class PeopleController : SuperController
     {
@@ -14,6 +14,14 @@ namespace Keas.Mvc.Controllers.Api
         public PeopleController(ApplicationDbContext context)
         {
             this._context = context;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            // Get all people who are part of a team
+            var people = await _context.People.Where(x => x.Team.Name == Team && x.Active).AsNoTracking().ToListAsync();
+
+            return Json(people);
         }
 
         public async Task<IActionResult> List()

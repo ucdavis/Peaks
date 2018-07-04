@@ -30,9 +30,7 @@ namespace Keas.Mvc.Services
         Task<Person> GetPerson(string teamName);
         Task<List<User>> GetUsersInRoles(List<Role> roles, string teamName);
 
-        Task<List<TeamPermission>> GetUserRolesInTeam(Team team);
 
-        Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team);
     }
     public class SecurityService : ISecurityService
     {
@@ -132,7 +130,7 @@ namespace Keas.Mvc.Services
         public async Task<User> GetUser()
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == userId);
+            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Email == userId);
             return user;
         }
 
@@ -140,7 +138,7 @@ namespace Keas.Mvc.Services
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
             var person =
-                await _dbContext.People.SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Name == teamName);
+                await _dbContext.People.SingleOrDefaultAsync(p => p.User.Email == userId && p.Team.Name == teamName);
             return person;
         }
 
@@ -158,19 +156,5 @@ namespace Keas.Mvc.Services
             return users;
         }
 
-        public async Task<List<TeamPermission>> GetUserRolesInTeam(Team team) {
-            var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var userPermissions = await _dbContext.TeamPermissions.Where(x => x.TeamId == team.Id && x.User.Id == userId).ToListAsync();
-            return userPermissions;
-        }
-
-        public async Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team)
-        {
-            var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var userPermissions = await _dbContext.TeamPermissions.Where(x => x.TeamId == team.Id && x.User.Id == userId).Select(tp=> tp.Role).ToListAsync();
-            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User.Id == userId).Select(sp=> sp.Role).ToListAsync();
-            userPermissions.AddRange(admin);
-            return userPermissions;
-        }
     }
 }

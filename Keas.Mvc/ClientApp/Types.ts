@@ -13,7 +13,6 @@ export interface AppContext {
     };
   };
   team: ITeam;
-  permissions: string[];
 }
 
 export interface IRouteProps {
@@ -78,7 +77,7 @@ export interface IEquipment {
   make: string;
   model: string;
   name: string;
-  space: ISpace;
+  room: IRoom;
   serialNumber: string;
   teamId: number;
   type: string;
@@ -100,42 +99,20 @@ export interface IEquipmentAttribute {
   value: string;
 }
 
-
-export interface ISpaceInfo {
-  space: ISpace;
-  id: number;
-  equipmentCount: number;
-  keyCount: number;
-  workstationsTotal: number;
-  workstationsInUse: number;
-  tags: string; // comma separated list of workstation tags in this space 
+export interface IRoom {
+    bldgName: string;
+    floorName: string;
+  roomKey: string;
+  roomName: string;
+  roomNumber: string;
 }
 
 export interface ISpace {
     id: number;
     roomKey: string;
+    room: IRoom;
     orgId: string;
     deptName: string;
-    bldgName: string;
-    floorName: string;
-    roomName: string;
-    roomNumber: string;
-}
-
-export interface IWorkstation {
-  id: number;
-  name: string;
-  space: ISpace;
-  tags: string;
-  teamId: number;
-  assignment?: IWorkstationAssignment;
-}
-
-export interface IWorkstationAssignment {
-  id: number;
-  workstationId: number;
-  expiresAt: Date;
-  person: IPerson;
 }
 
 export interface IHistory {

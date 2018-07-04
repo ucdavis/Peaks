@@ -4,7 +4,6 @@ using System.Security.Claims;
 
 namespace Keas.Mvc.Controllers
 {
-    [AutoValidateAntiforgeryToken]
     [Authorize]
     public class SuperController : Controller
     {

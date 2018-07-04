@@ -2,22 +2,21 @@
 import * as React from "react";
 
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
-import { AppContext, ISpace } from "../../Types";
+import { AppContext, IRoom } from "../../Types";
 
 interface IProps {
-   onSelect: (space: ISpace) => void;
-    defaultSpace?: ISpace;
+    onSelect: (room: IRoom) => void;
 }
 
 interface IState {
     isSearchLoading: boolean;
-    spaces: ISpace[];
-    selectedSpace: ISpace;
+    rooms: IRoom[];
+    selectedRoom: IRoom;
 }
 
 // TODO: need a way to clear out selected person
 // Assign a person via search lookup, unless a person is already provided
-export default class AssignSpace extends React.Component<IProps, IState> {
+export default class AssignRoom extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
         team: PropTypes.object
@@ -27,8 +26,8 @@ export default class AssignSpace extends React.Component<IProps, IState> {
         super(props);
         this.state = {
             isSearchLoading: false,
-            spaces: [],
-            selectedSpace: null,
+            rooms: [],
+            selectedRoom: null,
         };
     }
 
@@ -38,10 +37,8 @@ export default class AssignSpace extends React.Component<IProps, IState> {
                 <AsyncTypeahead
                     isLoading={this.state.isSearchLoading}
                     minLength={2}
-                    placeholder="Search for space"
-                    defaultInputValue={this.props.defaultSpace ?  
-                        this.props.defaultSpace.roomNumber + " " + this.props.defaultSpace.bldgName : ""}
-                    labelKey={(option: ISpace) =>
+                    placeholder="Search for room"
+                    labelKey={(option: IRoom) =>
                         `${option.roomNumber} ${option.bldgName}`
                     }                    filterBy={() => true} 
                     renderMenuItemChildren={(option, props, index) => (
@@ -67,21 +64,21 @@ export default class AssignSpace extends React.Component<IProps, IState> {
                     )}
                     onSearch={async query => {
                         this.setState({ isSearchLoading: true });
-                        const spaces = await this.context.fetch(
-                            `/api/${this.context.team.name}/spaces/searchSpaces?q=${query}`
+                        const rooms = await this.context.fetch(
+                            `/api/${this.context.team.name}/spaces/searchRooms?q=${query}`
                         );
                         this.setState({
                             isSearchLoading: false,
-                            spaces
+                            rooms
                         });
                     }}
                     onChange={selected => {
                         if (selected && selected.length === 1) {
-                            this.setState({ selectedSpace: selected[0] });
+                            this.setState({ selectedRoom: selected[0] });
                             this.props.onSelect(selected[0]);
                         }
                     }}
-                    options={this.state.spaces}
+                    options={this.state.rooms}
                 />
             </div>
         );

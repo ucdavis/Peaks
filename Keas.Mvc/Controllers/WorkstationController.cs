@@ -8,15 +8,15 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Keas.Mvc.Controllers.Api
+namespace Keas.Mvc.Controllers
 {
     [Authorize(Policy = "SpaceMasterAccess")]
-    public class WorkstationsController : SuperController
+    public class WorkstationController : SuperController
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
 
-        public WorkstationsController(ApplicationDbContext context, IEventService eventService)
+        public WorkstationController(ApplicationDbContext context, IEventService eventService)
         {
             _context = context;
             _eventService = eventService;
@@ -32,27 +32,11 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstation);
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> GetWorkstationInRoom(string roomKey)
         {
-            var workstation = await _context.Workstations
-                .Where(w => w.Team.Name == Team && w.Active && w.Id == id)
-                .Include(x => x.Space)
-                .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person.User)
-                .AsNoTracking()
-                .SingleOrDefaultAsync();
-            return Json(workstation);
-        }
-
-        public async Task<IActionResult> GetWorkstationsInSpace(int spaceId)
-        {
-            var workstations = await _context.Workstations
-                .Where(x => x.Space.Id == spaceId && x.Team.Name == Team && x.Active)
-                .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person.User)
-                .AsNoTracking()
+            var workstation = await _context.Workstations.Where(x => x.Space.RoomKey == roomKey).AsNoTracking()
                 .ToListAsync();
-            return Json(workstations);
+            return Json(workstation);
         }
 
         public async Task<IActionResult> CommonAttributeKeys()
@@ -163,26 +147,6 @@ namespace Keas.Mvc.Controllers.Api
                 await _context.SaveChangesAsync();
                 await _eventService.TrackUnAssignWorkstation(workstation);
                 return Json(null);
-            }
-            return BadRequest(ModelState);
-        }
-
-        public async Task<IActionResult> Update([FromBody]Workstation workstation)
-        {
-            //TODO: check permissions
-            if (ModelState.IsValid)
-            {
-                var w = await _context.Workstations.Where(x => x.Team.Name == Team)
-                    .SingleAsync(x => x.Id == workstation.Id);
-                    
-                w.Name = workstation.Name;
-                w.Tags = workstation.Tags;
-
-                //eq.Attributes.Clear();
-                //equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
-
-                await _context.SaveChangesAsync();
-                return Json(w);
             }
             return BadRequest(ModelState);
         }

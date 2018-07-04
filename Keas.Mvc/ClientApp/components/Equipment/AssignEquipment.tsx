@@ -12,7 +12,7 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson } from "../../Types";
+import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson, IRoom } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
 import EquipmentEditValues from "./EquipmentEditValues";
 import SearchEquipment from "./SearchEquipment";
@@ -26,10 +26,10 @@ interface IProps {
   closeModal: () => void;
   selectedEquipment: IEquipment;
   person?: IPerson;
-  commonAttributeKeys: string[];
 }
 
 interface IState {
+  commonAttributeKeys: string[];
   date: any;
   equipment: IEquipment;
   error: string;
@@ -46,12 +46,21 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
+      commonAttributeKeys: [],
       date: moment().add(3, "y"),
       equipment: this.props.selectedEquipment,
       error: "",
       person: null,
       validState: false
     };
+  }
+
+  // pull the common attributes here so we only do it once
+  public async componentDidMount() {
+    const equipmentFetchUrl = `/api/${this.context.team.name}/equipment/commonAttributeKeys/`;
+
+    const commonAttributeKeys = await this.context.fetch(equipmentFetchUrl);
+    this.setState({ commonAttributeKeys});
   }
 
   // make sure we change the equipment we are updating if the parent changes selected equipment
@@ -96,21 +105,19 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                   (!this.state.equipment.teamId && ( // if we are creating a new equipment, edit properties
                     <EquipmentEditValues
                       selectedEquipment={this.state.equipment}
-                      commonAttributeKeys={this.props.commonAttributeKeys}
+                      commonAttributeKeys={this.state.commonAttributeKeys}
                       changeProperty={this._changeProperty}
                       disableEditing={false}
                       updateAttributes={this._updateAttributes}
-                      creating={true}
                     />
                   ))}
                 {this.state.equipment &&
                   !!this.state.equipment.teamId && (
                     <EquipmentEditValues
                       selectedEquipment={this.state.equipment}
-                      commonAttributeKeys={this.props.commonAttributeKeys}
+                      commonAttributeKeys={this.state.commonAttributeKeys}
                       disableEditing={true}
-                      creating={true}
-                      />
+                    />
                   )}
 
                 {(!!this.state.person || !!this.props.person) && (
@@ -217,6 +224,15 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   private _onSelectPerson = (person: IPerson) => {
     this.setState({ person }, this._validateState);
+  };
+
+  private _onSelectRoom = (room: IRoom) => {
+      this.setState({
+          equipment: {
+              ...this.state.equipment,
+              room
+          }
+      });
   };
 
   private _validateState = () => {

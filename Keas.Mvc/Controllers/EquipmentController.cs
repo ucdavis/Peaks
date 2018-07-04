@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Keas.Mvc.Controllers.Api
+namespace Keas.Mvc.Controllers
 {
     [Authorize(Policy = "EquipMasterAccess")]
     public class EquipmentController : SuperController
@@ -33,19 +33,14 @@ namespace Keas.Mvc.Controllers.Api
             var equipment = await _context.Equipment
                 .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
-                .Include(x => x.Space)
                 .AsNoTracking().ToListAsync();
 
             return Json(equipment);
         }
-        public async Task<IActionResult> GetEquipmentInSpace(int spaceId)
+
+        public async Task<IActionResult> GetEquipmentInRoom(string roomKey)
         {
-            var equipment = await _context.Equipment
-                .Where(x => x.Space.Id == spaceId && x.Team.Name == Team && x.Active)
-                .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person.User)
-                .AsNoTracking()
-                .ToListAsync();
+            var equipment = await _context.Equipment.Where(x => x.Room.RoomKey == roomKey).AsNoTracking().ToListAsync();
             return Json(equipment);
         }
 
@@ -67,7 +62,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Assignment.PersonId == personId && x.Team.Name == Team)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person.User)
-                .Include(x => x.Space)
+                .Include(x => x.Room)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
@@ -82,7 +77,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Team.Name == Team)
                 .Include(x => x.Assignment)
                 .ThenInclude(x=>x.Person.User)
-                .Include(x => x.Space)
+                .Include(x => x.Room)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
@@ -95,10 +90,10 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permissions
             if (ModelState.IsValid)
             {
-                if (equipment.Space != null)
+                if (equipment.Room != null)
                 {
-                   var space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
-                    equipment.Space = space;
+                   var room = await _context.Rooms.SingleAsync(x => x.RoomKey == equipment.Room.RoomKey);
+                    equipment.Room = room;
                 }
                 _context.Equipment.Add(equipment);
                 await _eventService.TrackCreateEquipment(equipment);
@@ -112,7 +107,7 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var equipment = await _context.Equipment.Where(x => x.Team.Name == Team).Include(x => x.Space).SingleAsync(x => x.Id == equipmentId);
+                var equipment = await _context.Equipment.Where(x => x.Team.Name == Team).Include(x => x.Room).SingleAsync(x => x.Id == equipmentId);
                 equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
                 equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
 
@@ -121,35 +116,6 @@ namespace Keas.Mvc.Controllers.Api
                 await _context.SaveChangesAsync();
                 await _eventService.TrackAssignEquipment(equipment);
                 return Json(equipment);
-            }
-            return BadRequest(ModelState);
-        }
-
-        public async Task<IActionResult> Update([FromBody]Equipment equipment)
-        {
-            //TODO: check permissions
-            if (ModelState.IsValid)
-            {
-                var eq = await _context.Equipment.Where(x => x.Team.Name == Team)
-                    .Include(x => x.Space).Include(x => x.Attributes)
-                    .SingleAsync(x => x.Id == equipment.Id);
-                    
-                eq.Make = equipment.Make;
-                eq.Model = equipment.Model;
-                eq.Name = equipment.Name;
-                eq.SerialNumber = equipment.SerialNumber;
-                
-                eq.Attributes.Clear();
-                equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
-
-                if(eq.Space.RoomKey != equipment.Space.RoomKey)
-                {
-                    eq.Space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
-                }
-
-                await _context.SaveChangesAsync();
-                await _eventService.TrackUpdateEquipment(eq);
-                return Json(eq);
             }
             return BadRequest(ModelState);
         }

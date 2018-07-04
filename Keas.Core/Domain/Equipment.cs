@@ -16,8 +16,7 @@ namespace Keas.Core.Domain
         public string Make { get; set; }
         public string Model { get; set; }
 
-        public Space Space { get; set; }
-        public int? SpaceId { get; set; }
+        public Room Room { get; set; }
 
         public EquipmentAssignment Assignment { get; set; }
         public int? EquipmentAssignmentId { get; set; }

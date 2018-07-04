@@ -4,6 +4,7 @@ namespace Keas.Core.Domain
 {
     public class WorkstationAttribute {
         public int Id { get; set; }
+        [JsonIgnore]
         public Workstation Workstation { get; set; }
         public int WorkstationId { get; set; }
 

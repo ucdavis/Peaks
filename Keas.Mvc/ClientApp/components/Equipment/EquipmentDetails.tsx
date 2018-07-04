@@ -5,7 +5,7 @@ import {
     Modal,
     ModalBody,
     ModalFooter,
-    ModalHeader,
+    ModalHeader
 } from "reactstrap";
 import { IEquipment } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
@@ -22,7 +22,7 @@ interface IProps {
 export default class EquipmentDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedEquipment == null) 
+        if (this.props.selectedEquipment == null)
         {
             return null;
         }

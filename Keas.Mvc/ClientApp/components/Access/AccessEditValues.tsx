@@ -6,7 +6,6 @@ interface IProps {
     selectedAccess: IAccess;
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
-    creating?: boolean;
 }
 
 export default class AccessEditValues extends React.Component<IProps, {}> {
@@ -34,16 +33,14 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
 
         return (
             <div>
-                {!this.props.creating &&
                 <div className="form-group">
                     <label>Name</label>
                     <input type="text"
                         className="form-control"
-                        disabled={this.props.disableEditing}
+                        disabled={true}
                         value={this.props.selectedAccess.name ? this.props.selectedAccess.name : ""}
-                        onChange={(e) => this.props.changeProperty("name", e.target.value)}
                     />
-                </div>}
+                </div>
                 {assignments}
             </div>
         );

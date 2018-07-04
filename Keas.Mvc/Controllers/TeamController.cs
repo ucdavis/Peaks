@@ -53,6 +53,7 @@ namespace Keas.Mvc.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Team team)
         {
             if (ModelState.IsValid)
@@ -85,6 +86,7 @@ namespace Keas.Mvc.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         // Updated as per MS docs https://docs.microsoft.com/en-us/aspnet/core/data/ef-mvc/crud
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Team team)
         {
             if (id != team.Id)

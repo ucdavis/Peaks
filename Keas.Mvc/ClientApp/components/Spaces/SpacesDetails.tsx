@@ -13,7 +13,6 @@ import {
 import { AppContext, ISpace } from "../../Types";
 import SpacesDetailsEquipment from "./SpacesDetailsEquipment";
 import SpacesDetailsKeys from "./SpacesDetailsKeys";
-import SpacesDetailsWorkstations from "./SpacesDetailsWorkstations";
 
 
 interface IProps {
@@ -31,16 +30,15 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
         return (
             <div>
                 <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg">
-                    <ModalHeader>Details for {this.props.selectedSpace.roomNumber} {this.props.selectedSpace.bldgName}</ModalHeader>
+                    <ModalHeader>Details for {this.props.selectedSpace.room.roomNumber} {this.props.selectedSpace.room.bldgName}</ModalHeader>
                     <ModalBody>
-                        {this.props.selectedSpace.roomName &&
+                        {this.props.selectedSpace.room.roomName &&
                             <div className="form-group">
-                            <h5>Room Name</h5>
-                            {this.props.selectedSpace.roomName}
+                            <label>Room Name</label><br />
+                            {this.props.selectedSpace.room.roomName}
                             </div>}
-                        <SpacesDetailsKeys spaceId={this.props.selectedSpace.id} />
-                        <SpacesDetailsEquipment spaceId={this.props.selectedSpace.id} />
-                        <SpacesDetailsWorkstations spaceId={this.props.selectedSpace.id} />
+                        <SpacesDetailsKeys roomKey={this.props.selectedSpace.roomKey} />
+                        <SpacesDetailsEquipment roomKey={this.props.selectedSpace.roomKey} />
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={this.props.closeModal}>
@@ -52,5 +50,5 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
         );
     }
 
-    
+    }
 }

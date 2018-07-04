@@ -1,18 +1,14 @@
-@model Keas.Mvc.Models.AssetModel
+@model Keas.Core.Domain.Team
 @{
     ViewData["Title"] = "Team Assets";
 }
 
 <div id="react-app">Loading...</div>
 
-@Html.AntiForgeryToken()
-
 @section scripts {
     <script>
         window.App = {};
-        window.App.teamData = @Json.Serialize(Model.Team);
-        window.App.permissionsData = @Json.Serialize(Model.Permissions);
-        window.App.antiForgeryToken = document.getElementsByName('__RequestVerificationToken')[0].value;
+        window.App.teamData = @Json.Serialize(Model);
     </script>
 
     <script src="~/dist/vendor.js" asp-append-version="true"></script>

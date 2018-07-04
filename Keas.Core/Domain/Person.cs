@@ -19,12 +19,11 @@ namespace Keas.Core.Domain
         public string UserId { get; set; }
 
         public string Group { get; set; }
-
-        public string Tags { get; set; }
         // METADATA
         public string Title { get; set; }
         public string HomePhone { get; set; }
         public string TeamPhone { get; set; }
+        [JsonIgnore]
         public List<AccessAssignment> AccessAssignments { get; set; }
     }
 }

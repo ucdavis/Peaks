@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using AspNetCore.Security.CAS;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Attributes;
@@ -48,48 +47,48 @@ namespace Keas.Mvc
             // add openID connect auth backed by a cookie signin scheme
             services.AddAuthentication(options =>
             {
-                options.DefaultChallengeScheme = CasDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CasDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = CasDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = OpenIdConnectDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = OpenIdConnectDefaults.AuthenticationScheme;
             })
             .AddCookie()
-            .AddCAS(options => {
+            .AddOpenIdConnect(options =>
+            {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.CasServerUrlBase = Configuration["Authentication:CasBaseUrl"];
-                options.Events.OnTicketReceived = async context => { 
-                    var c = context;
+                options.GetClaimsFromUserInfoEndpoint = true;
+                options.ClientId = Configuration["Authentication:ClientId"];
+                options.Authority = $"https://login.microsoftonline.com/{Configuration["Authentication:Tenant"]}";
+                options.Events.OnRedirectToIdentityProvider = context =>
+                {
+                    // this allows us to go straight to the UCD login
+                    context.ProtocolMessage.SetParameter("domain_hint", Configuration["Authentication:Domain"]);
 
+                    return Task.FromResult(0);
+                };
+                options.Events.OnTokenValidated = async context =>
+                {
                     var identity = (ClaimsIdentity) context.Principal.Identity;
 
-                    // kerb comes across in name & name identifier
-                    var kerb = identity?.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    // email comes across in upn claim
+                    var email = identity?.FindFirst(ClaimTypes.Upn).Value;
 
-                    if (string.IsNullOrWhiteSpace(kerb)) return;
+                    if (string.IsNullOrWhiteSpace(email)) return;
 
                     var identityService = services.BuildServiceProvider().GetService<IIdentityService>();
 
-                    var user = await identityService.GetByKerberos(kerb);
+                    var userId = await identityService.GetUserId(email);
 
-                    if (user == null)
+                    if (string.IsNullOrWhiteSpace(userId))
                     {
                         throw new InvalidOperationException("Could not retrieve user information from IAM");
                     }
 
                     identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier));
-                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userId));
 
-                    identity.RemoveClaim(identity.FindFirst(ClaimTypes.Name));
-                    identity.AddClaim(new Claim(ClaimTypes.Name, user.Id));
-
-                    identity.AddClaim(new Claim(ClaimTypes.GivenName, user.FirstName));
-                    identity.AddClaim(new Claim(ClaimTypes.Surname, user.LastName));
-                    identity.AddClaim(new Claim("name", user.Name));
-                    identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
-
-                    await Task.FromResult(0); 
+                    identity.AddClaim(new Claim(ClaimTypes.Email, email));
                 };
             });
-
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("KeyMasterAccess", policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
@@ -106,9 +105,8 @@ namespace Keas.Mvc
             services.AddScoped<IHistoryService, HistoryService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IEventService, EventService>();
-            services.AddMvc().AddJsonOptions(options => {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            });
+            services.AddMvc();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -142,13 +140,13 @@ namespace Keas.Mvc
                     name: "API",
                     template: "api/{teamName}/{controller}/{action}/{id?}",
                     defaults: new { controller = "people", action = "Index" },
-                    constraints: new { controller = "(keys|equipment|access|spaces|people|person|workstations|tags)" }
+                    constraints: new { controller = "(keys|equipment|access|spaces|people|person)" }
                 );
                 routes.MapRoute(
                     name: "Assets",
                     template: "{teamName}/{asset}/{*type}",
                     defaults: new { controller = "Asset", action = "Index" },
-                    constraints: new { asset = "(keys|equipment|access|spaces|people|person|workstations)" }
+                    constraints: new { asset = "(keys|equipment|access|spaces|people|person)" }
                 );
                 routes.MapRoute(
                     name: "TeamRoutes",
