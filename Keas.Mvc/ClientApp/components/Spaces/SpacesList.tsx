@@ -1,6 +1,9 @@
 ﻿import * as React from "react";
 
 import SpacesListItem from "./SpacesListItem";
+import ReactTable from "react-table";
+import "react-table/react-table.css";
+import { Button } from "reactstrap";
 
 import { ISpace, ISpaceInfo } from "../../Types";
 
@@ -11,38 +14,49 @@ interface IProps {
 
 export default class SpacesList extends React.Component<IProps, {}> {
     public render() {
-        let space = null;
-        if(!!this.props.spaces && this.props.spaces.length > 0)
-        {
-            space = this.props.spaces.map(x => (
-                <SpacesListItem
-                    key={x.space.roomKey}
-                    spaceInfo={x}
-                    showDetails={this.props.showDetails}
-                />
-            ));
-        }
-        else
-        {
-            space = (<tr><td colSpan={8}>No Spaces Were Found</td></tr>)
-        }
-
         return (
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th>Building</th>
-                        <th>Floor</th>
-                        <th>Room</th>
-                        <th>Name</th>
-                        <th>Keys</th>
-                        <th>Equipment</th>
-                        <th>Workstations</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>{space}</tbody>
-            </table>
+            <ReactTable
+                data={this.props.spaces}
+                columns = {[
+                    {
+                        Header: "Building",
+                        accessor: "space.bldgName"
+                    },
+                    {
+                        Header: "Floor",
+                        accessor: "space.floorName"
+                    },
+                    {
+                        Header: "Room Number",
+                        accessor: "space.roomNumber"
+                    },
+                    {
+                        Header: "Room Name",
+                        accessor: "space.roomName"
+                    },
+                    {
+                        Header: "Keys",
+                        accessor: "keyCount"
+                    },
+                    {
+                        Header: "Equipment",
+                        accessor: "equipmentCount"
+                    },
+                    {
+                        Header: "Workstations",
+                        accessor: "workstationsInUse"
+                    },
+                    {
+                        Header: "Actions",
+                        Cell: row => (
+                            <Button color="secondary" onClick={() => this.props.showDetails(row.original.space)}>
+                            View Details
+                            </Button>
+                        )
+                    },
+                    
+                ]}
+            />
         );
     }
 }
