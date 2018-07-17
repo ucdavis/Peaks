@@ -17,6 +17,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
         return (
             <ReactTable
                 data={this.props.spaces}
+                filterable={true}
                 columns = {[
                     {
                         Header: "Building",
@@ -36,15 +37,24 @@ export default class SpacesList extends React.Component<IProps, {}> {
                     },
                     {
                         Header: "Keys",
-                        accessor: "keyCount"
+                        accessor: "keyCount",
+                        Cell: row => (
+                            <span><i className="fas fa-key"></i> {row.original.keyCount}</span>
+                        )
                     },
                     {
                         Header: "Equipment",
-                        accessor: "equipmentCount"
+                        accessor: "equipmentCount",
+                        Cell: row => (
+                            <span><i className="fas fa-laptop"></i> {row.original.equipmentCount}</span>
+                        )
                     },
                     {
                         Header: "Workstations",
-                        accessor: "workstationsInUse"
+                        accessor: "workstationsInUse",  
+                        Cell: row => (
+                            <span><i className="fas fa-user"></i> {row.original.workstationsInUse} / {row.original.workstationsTotal}</span>
+                        )
                     },
                     {
                         Header: "Actions",
