@@ -51,13 +51,30 @@ export default class SpacesList extends React.Component<IProps, {}> {
                     },
                     {
                         Header: "Workstations",
-                        accessor: "workstationsInUse",  
+                        filterMethod: (filter, row) => {
+                            if( filter.value === "all") {
+                                return true;
+                            }
+                            if( filter.value === "available") {
+                                return (row._original.workstationsTotal - row._original.workstationsInUse) > 0;
+                            }
+                        },
+                        Filter: ({filter, onChange}) => 
+                            <select onChange={e => onChange(e.target.value)}
+                            style={{width: "100%"}}
+                            value={filter ? filter.value : "all"}
+                            >
+                                <option value="all">Show All</option>
+                                <option value="available">Available</option>
+                            </select>,
                         Cell: row => (
                             <span><i className="fas fa-user"></i> {row.original.workstationsInUse} / {row.original.workstationsTotal}</span>
                         )
                     },
                     {
                         Header: "Actions",
+                        filterable: false,
+                        sortable: false,
                         Cell: row => (
                             <Button color="secondary" onClick={() => this.props.showDetails(row.original.space)}>
                             View Details
