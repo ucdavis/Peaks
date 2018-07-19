@@ -18,22 +18,35 @@ export default class SpacesList extends React.Component<IProps, {}> {
             <ReactTable
                 data={this.props.spaces}
                 filterable={true}
+                minRows={1}
                 columns = {[
                     {
                         Header: "Building",
-                        accessor: "space.bldgName"
+                        accessor: (row) => row.space.roomNumber + row.space.bldgName,
+                        filterMethod: (filter, row) => {
+                            return row[filter.id].toLowerCase().indexOf(filter.value.toLowerCase()) !== -1;
+                        },
+                        Cell: row => (
+                                <span>{row.original.space.roomNumber} {row.original.space.bldgName}</span>
+                            )
                     },
-                    {
-                        Header: "Floor",
-                        accessor: "space.floorName"
-                    },
-                    {
-                        Header: "Room Number",
-                        accessor: "space.roomNumber"
-                    },
+                    // {
+                    //     Header: "Floor",
+                    //     accessor: "space.floorName"
+                    // },
+                    // {
+                    //     Header: "Room Number",
+                    //     accessor: "space.roomNumber"
+                    // },
                     {
                         Header: "Room Name",
-                        accessor: "space.roomName"
+                        accessor: "space.roomName",
+                        filterMethod: (filter, row) => 
+                            !!row[filter.id] &&
+                            row[filter.id].toLowerCase().indexOf(filter.value) !== -1,
+                        Cell: row => (
+                            <span>{row.original.space.roomName}</span>
+                        )
                     },
                     {
                         Header: "Keys",
