@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Keas.Jobs.SendMail": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
