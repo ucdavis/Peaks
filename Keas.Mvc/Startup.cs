@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -103,6 +105,11 @@ namespace Keas.Mvc
             services.AddScoped<IAuthorizationHandler, VerifyRoleAccessHandler>();
             
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            //Added for Email Template View Engine
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+            services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
+
             services.AddScoped<IHistoryService, HistoryService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IEventService, EventService>();
