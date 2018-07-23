@@ -1,0 +1,132 @@
+<style type="text/css">
+  body,
+  html,
+  .body {
+    background: #f3f3f3 !important;
+  }
+</style>
+
+<container>
+
+  <spacer size="16"></spacer>
+
+  <row>
+      <columns>
+          <h1>Order Number @Model.Id </h1>
+          <h2>Anlab Work Request Billing</h2>
+          <p>A new work request has been placed that requires your attention.</p>
+          <spacer size="16"></spacer>
+          <callout class="primary">
+              <row>
+                  <columns large="6">
+                      <p>
+                          <strong>Client Type</strong><br />@order.Payment.ClientType<br /><br />
+                          <strong>@(order.Payment.ClientType == "uc" ? "Campus Name" : "Company Name")</strong><br />@order.OtherPaymentInfo.CompanyName<br /><br />
+                          <strong>Account Contact Name</strong><br />@order.OtherPaymentInfo.AcName<br /><br />
+                          <strong>Account Contact Address</strong><br />@order.OtherPaymentInfo.AcAddr<br /><br />
+                      </p>
+                  </columns>
+                  <columns large="6">
+                      <p>
+                          <strong>Payment Type</strong><br />@order.OtherPaymentInfo.PaymentType<br /><br />
+                          @if(!String.IsNullOrWhiteSpace(order.OtherPaymentInfo.PoNum))
+                          {
+                          <strong>PO Number</strong><br />@order.OtherPaymentInfo.PoNum<br /><br />
+                          }
+                          <strong>Account Contact Email</strong><br />@order.OtherPaymentInfo.AcEmail<br /><br />
+                          <strong>Account Contact Phone Number</strong><br />@order.OtherPaymentInfo.AcPhone<br /><br />
+                          @if(order.OtherPaymentInfo.PaymentType == "IOC"){
+                          <strong>UC Account #</strong><br />@order.Payment.Account<br /><br />
+                          }
+                      </p>
+                  </columns>
+              </row>
+          </callout>
+          <h4>Order Details</h4>
+          <row>
+              <columns large="6">
+                  <p>
+                      <strong>Quantity</strong><br />@order.Quantity<br />
+                  </p>
+              </columns>
+              <columns large="6">
+                  <p>
+
+                  </p>
+              </columns>
+          </row>
+          <table>
+              <thead>
+                  <tr>
+                      <th><b>Analysis</b></th>
+                      <th><b>Per Test</b></th>
+                      <th><b>Setup</b></th>
+                      <th><b>Test Total</b></th>
+                  </tr>
+              </thead>
+              <tbody>
+                  @foreach (var test in order.SelectedTests)
+                  {
+                  var temp = @Model.GetTestDetails().Where(a => a.Id == test.Id).FirstOrDefault();
+                  if (!temp.Public)
+                  {
+                  continue;
+                  }
+                  <tr>
+                      <td width="50%">@test.Analysis</td>
+                      <td>@test.Cost.ToString("C")</td>
+                      <td>@test.SetupCost.ToString("C")</td>
+                      <td>@test.Total.ToString("C")</td>
+                  </tr>
+                  }
+              </tbody>
+              <tfoot>
+                  <tr>
+                      <td></td>
+                      <th colspan="2"><b>Processing Fee</b></th>
+                      <td>
+                          @if (string.Equals(order.Payment.ClientType, "uc", StringComparison.OrdinalIgnoreCase))
+                          {
+                          <span>@(String.Format("{0:C}", order.InternalProcessingFee))</span>
+                          }
+                          else
+                          {
+                          <span>@(String.Format("{0:C}", order.ExternalProcessingFee))</span>
+                          }
+                      </td>
+                  </tr>
+                  @if(order.AdjustmentAmount != 0)
+                  {
+                  <tr>
+                      <td></td>
+                      <th colspan="2"><b>Adjustment Amount</b></th>
+                      <th>@(String.Format("{0:C}", order.AdjustmentAmount))</th>
+                  </tr>
+                  }
+                  <tr>
+                      <td></td>
+                      <th colspan="2"><b>Grand Total</b></th>
+                      <th>@(String.Format("{0:C}", order.GrandTotal))</th>
+                  </tr>
+              </tfoot>
+          </table>
+          <spacer size="16"></spacer>
+          <hr />
+      </columns>
+  </row>
+  <row class="footer text-center">
+      <columns large="2">
+          <img src='@image' alt="">
+      </columns>
+      <columns large="2">
+          <p>
+              Email us at <a href="mailto:anlab@ucdavis.edu">anlab@ucdavis.edu</a> 
+          </p>
+          <p>
+              UC Davis Analytical Lab <br />
+              University of California Davis, California <br />
+              95616-5270
+          </p>
+      </columns>
+  </row>
+</container>

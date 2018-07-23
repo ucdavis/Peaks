@@ -1,0 +1,138 @@
+<style type="text/css">
+  body,
+  html,
+  .body {
+    background: #f3f3f3 !important;
+  }
+</style>
+
+<container>
+
+  <spacer size="16"></spacer>
+
+  <row>
+    <columns>
+      <h1>Work Order Confirmation</h1>
+        <p>Thank you for submitting your work request to the Analytical Lab.  Information regarding how to send in your samples can be found at <a asp-protocol="@protocol" asp-host="@host" asp-controller="Pages" asp-action="using-the-lab" asp->Using the lab</a> </p>
+
+      <spacer size="16"></spacer>
+
+      <callout class="secondary">
+        <row>
+          <columns large="6">
+              <p>
+                  <strong>Online Order Number</strong><br />@Model.Id<br /><br />
+                  <strong>Project Title/Location</strong><br />@order.Project<br /><br />
+                  <strong>Payment Method</strong><br />@order.Payment.ClientType.PaymentMethodDescription()<br /><br />
+                  @if(order.ClientInfo.ClientId != null)
+                  {
+                  <strong>Client Id</strong><br />@order.ClientInfo.ClientId<br /><br />
+                  }
+                  <strong>Client Name</strong> <br />@order.ClientInfo.Name
+              </p>
+          </columns>
+          <columns large="6">
+              <p>
+                  <strong>Created By</strong><br />@createdBy<br /><br />
+                  <strong>Sample Type</strong><br />@order.SampleType<br /><br />
+                  @if (!String.IsNullOrWhiteSpace(order.Commodity))
+                  {
+                  <strong>Commodity</strong><br />@order.Commodity<br /><br />
+                  }
+                  <strong># of Samples</strong><br />@order.Quantity<br /><br />
+                  @if (order.DateSampled != null)
+                  {
+                  <strong>Date Sampled</strong><br />@order.DateSampled.ToShortDateString()
+                  }
+              </p>
+          </columns>
+        </row>
+      </callout>
+
+      <callout class="primary">
+        <p>Order Total: <strong>@order.Total.ToString("C")</strong></p>
+      </callout>
+
+      <h4>Order Details</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th><b>Test(s)</b></th>
+                    <th><b>Per Test</b></th>
+                    <th><b>Setup</b></th>
+                    <th><b>Test Total</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var test in order.SelectedTests)
+                {
+                var temp = @Model.GetTestDetails().Where(a => a.Id == test.Id).FirstOrDefault();
+                if (!temp.Public)
+                {
+                continue;
+                }
+                <tr>
+                    <td width="50%">@test.Analysis</td>
+                    <td>@test.Cost.ToString("C")</td>
+                    <td>@test.SetupCost.ToString("C")</td>
+                    <td>@test.Total.ToString("C")</td>
+                </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td></td>
+                    <th colspan="2"><b>Processing Fee</b></th>
+                    <td>
+                        @if (string.Equals(order.Payment.ClientType, "uc", StringComparison.OrdinalIgnoreCase))
+                        {
+                        <span>@(String.Format("{0:C}", order.InternalProcessingFee))</span>
+                        }
+                        else
+                        {
+                        <span>@(String.Format("{0:C}", order.ExternalProcessingFee))</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <th colspan="2"><b>Grand Total</b></th>
+                    <th>@(String.Format("{0:C}", order.GrandTotal))</th>
+                </tr>
+            </tfoot>
+        </table>
+
+        <spacer size="16"></spacer>
+
+        @if (!String.IsNullOrWhiteSpace(order.AdditionalInfo))
+        {
+        <callout class="secondary">
+            <p>
+        <strong>Additional Info</strong>
+        <div style="white-space: pre-wrap">@Html.Raw(Html.Encode(order.AdditionalInfo))</div></p>
+            </callout>
+        }
+      <hr/>
+
+      <h4>What's Next?</h4>
+
+      <p>Once we receive your samples we will email you a confirmation.</p>
+    </columns>
+  </row>
+  <row class="footer text-center">
+    <columns large="2">
+      <img src='@image' alt="">
+    </columns>
+    <columns large="2">
+        <p>
+            Email us at <a href="mailto:anlab@ucdavis.edu">anlab@ucdavis.edu</a> 
+        </p>
+        <p>
+            UC Davis Analytical Lab <br />
+            <a href="tel:5307520147">530 752-0147</a> <br/>
+            University of California Davis, California <br />
+            95616-5270
+        </p>
+    </columns>
+  </row>
+</container>

@@ -1,0 +1,11 @@
+{
+  "azure": {
+      "accountName": "[External]",
+      "accountKey": "[External]",
+      "containerName": "email-assets",
+      "url": "[External]"
+  },
+  "sparkpost": {
+      "apikey": "[External]"
+  }
+}
