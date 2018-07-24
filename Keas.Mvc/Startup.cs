@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AspNetCore.Security.CAS;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Core.Models;
 using Keas.Mvc.Attributes;
 using Keas.Mvc.Handlers;
 using Keas.Mvc.Models;
@@ -109,6 +110,8 @@ namespace Keas.Mvc
             //Added for Email Template View Engine
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
+            services.AddTransient<ViewRenderService>();
+            services.Configure<EmailSettings>(Configuration.GetSection("Email"));
 
             services.AddScoped<IHistoryService, HistoryService>();
             services.AddScoped<INotificationService, NotificationService>();
