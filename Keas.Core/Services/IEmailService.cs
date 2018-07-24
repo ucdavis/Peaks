@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using Keas.Core.Domain;
 using System.Net;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Models;
 using Microsoft.Extensions.Options;
+using RazorLight;
 
 namespace Keas.Core.Services
 {
     public interface IEmailService
     {
-        void SendMessage(User user);
+        Task SendMessage(User user);
     }
 
     public class EmailService : IEmailService
@@ -27,8 +30,14 @@ namespace Keas.Core.Services
             //_dbContext = dbContext;
             _emailSettings = emailSettings.Value;
         }
-        public void SendMessage(User user)
+        public async Task SendMessage(User user)
         {
+            var path = Path.GetFullPath(".");
+
+            var engine = new RazorLightEngineBuilder()
+                .UseFilesystemProject(path)
+                .UseMemoryCachingProvider()
+                .Build();
             //var notifications = _dbContext.Notifications.Where(a => a.User == user && a.Pending).ToArray();
             //TODO: Do something with these notifications to build them into a single email.
 
@@ -40,7 +49,19 @@ namespace Keas.Core.Services
 
             message.Subject = "Keas Notification";
             message.IsBodyHtml = false;
-            message.Body = "<p>Hello World!</p>"; //Ok, so the ViewrenderService is in the MVC project. I don't think I can call it here... In other projects we almost always store the email in a table and just loop through that here...
+
+
+            try
+            {
+                message.Body = await engine.CompileRenderAsync("/EmailTemplates/_Test.cshtml", "This Was Replaced");            
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+
+
             var mimeType = new System.Net.Mime.ContentType("text/html");
 
             var alternate = AlternateView.CreateAlternateViewFromString(message.Body, mimeType);

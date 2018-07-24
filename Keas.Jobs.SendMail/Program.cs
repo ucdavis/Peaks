@@ -59,7 +59,7 @@ namespace Keas.Jobs.SendMail
             //TODO: db stuff 
             //var dbContext = Provider.GetService<ApplicationDbContext>();
 
-            EmailService.SendMessage(null); //TODO: Pass param?
+            EmailService.SendMessage(null).GetAwaiter().GetResult(); //TODO: Pass param?
         }
     }
 }
