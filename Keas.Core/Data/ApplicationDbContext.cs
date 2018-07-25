@@ -38,5 +38,14 @@ namespace Keas.Core.Data
         public virtual DbSet<Space> Spaces { get; set; }
 
         public virtual DbSet<Tag> Tags { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Person>()
+                .HasMany(e => e.AccessAssignments)
+                .WithOne()
+                .HasForeignKey(e => e.AccessId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }
