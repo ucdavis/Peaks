@@ -38,7 +38,11 @@ namespace Keas.Core.Services
                 .UseFilesystemProject(path)
                 .UseMemoryCachingProvider()
                 .Build();
-            var notifications = _dbContext.Notifications.ToArray();
+            var notifications = _dbContext.Notifications.Where(a => a.Pending && a.User == user).ToArray();
+            if (notifications.Length <= 0)
+            {
+                return;
+            }
             //TODO: Do something with these notifications to build them into a single email.
 
             var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };
@@ -51,9 +55,11 @@ namespace Keas.Core.Services
             message.IsBodyHtml = false;
 
 
+            var displayText = $"{notifications.First().User.Name} {notifications.Length}";
+
             try
             {
-                message.Body = await engine.CompileRenderAsync("/EmailTemplates/_Test.cshtml", "This Was Replaced");            
+                message.Body = await engine.CompileRenderAsync("/EmailTemplates/_Test.cshtml", displayText);            
             }
             catch (Exception e)
             {
@@ -61,6 +67,13 @@ namespace Keas.Core.Services
                 throw;
             }
 
+            foreach (var notification in notifications)
+            {
+                notification.Pending = false;
+                notification.DateTimeSent = DateTime.UtcNow;
+                _dbContext.Notifications.Update(notification);                
+            }
+            await _dbContext.SaveChangesAsync();
 
             var mimeType = new System.Net.Mime.ContentType("text/html");
 

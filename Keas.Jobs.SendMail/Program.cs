@@ -55,8 +55,18 @@ namespace Keas.Jobs.SendMail
 
             //TODO: db stuff 
             var dbContext = Provider.GetService<ApplicationDbContext>();
+            var counter = 0;
+            var usersWithPendingNotifications = dbContext.Notifications.Where(a => a.Pending).Select(s => s.User).Distinct().ToArray();
+            if (usersWithPendingNotifications.Any())
+            {
+                foreach (var user in usersWithPendingNotifications)
+                {
+                    EmailService.SendMessage(user).GetAwaiter().GetResult(); //TODO: Pass param?
+                    counter++;
+                }
+            }
+            Console.WriteLine($"Done! Sent {counter}");
 
-            EmailService.SendMessage(null).GetAwaiter().GetResult(); //TODO: Pass param?
         }
     }
 }
