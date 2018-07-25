@@ -37,7 +37,7 @@ namespace Keas.Mvc.Helpers
             var scott = new User { Id = "postit", FirstName = "Scott", Name = "Scott Kirkland", Email = "srkirkland@ucdavis.edu" };
             var james = new User { Id = "jscub", FirstName = "James", Name = "James Cubbage", Email = "jscubbage@ucdavis.edu" };
             var laura = new User { Id = "holstege", Name = "Laura Holstege", Email = "laholstege@ucdavis.edu" };
-            var caes = new Team { Id = 1, Name = "CAESDO" };
+            var caes = new Team {  Name = "CAESDO" };
 
             context.Users.Add(scott);
             context.Users.Add(james);
@@ -45,12 +45,12 @@ namespace Keas.Mvc.Helpers
 
 
             // Roles
-            var keyMaster = new Role { Id= 1, Name = "KeyMaster"};
-            var equipMaster = new Role {Id = 2, Name = "EquipMaster"};
-            var departmentAdmin = new Role {Id= 3, Name = "DepartmentalAdmin"};
-            var accessMaster = new Role {Id = 4, Name = "AccessMaster"};
-            var spaceMaster = new Role {Id = 6, Name = "SpaceMaster"};
-            var admin = new Role {Id = 5, Name = "Admin", IsAdmin = true};
+            var keyMaster = new Role {  Name = "KeyMaster"};
+            var equipMaster = new Role {Name = "EquipMaster"};
+            var departmentAdmin = new Role {Name = "DepartmentalAdmin"};
+            var accessMaster = new Role { Name = "AccessMaster"};
+            var spaceMaster = new Role { Name = "SpaceMaster"};
+            var admin = new Role { Name = "Admin", IsAdmin = true};
             //var emulate = new Role {Id = 6, Name = "EmulationUser", IsAdmin = true};
 
             context.Roles.Add(keyMaster);
@@ -62,9 +62,9 @@ namespace Keas.Mvc.Helpers
             //context.Roles.Add(emulate);
 
             // add assets
-            var lauraCaes = new Person { User = laura, Id=1, Team = caes, Group = "CRU", Tags = "CRU"};
-            var scottCaes = new Person { User = scott, Id=2, Team = caes, Group = "CRU", Tags = "CRU" };
-            var jamesCaes = new Person {User = james, Id = 3, Team = caes, Group = "CRU", Tags = "CRU" };
+            var lauraCaes = new Person { User = laura, Team = caes, Group = "CRU", Tags = "CRU"};
+            var scottCaes = new Person { User = scott, Team = caes, Group = "CRU", Tags = "CRU" };
+            var jamesCaes = new Person {User = james,  Team = caes, Group = "CRU", Tags = "CRU" };
 
             context.People.Add(jamesCaes);
 
@@ -215,14 +215,14 @@ namespace Keas.Mvc.Helpers
             context.Add(tag2);
 
             
-            var scottKey = new TeamPermission{ Id = 1, Team = caes, Role = keyMaster, User = scott};
-            var scottEquip = new TeamPermission {Id = 2, Team = caes, Role = equipMaster, User = scott};
-            var scottAccess = new TeamPermission {Id = 3, Team = caes, Role = accessMaster, User = scott};
-            var lauraKey = new TeamPermission{ Id = 4, Team = caes, Role = keyMaster, User = laura};
-            var lauraEquip = new TeamPermission {Id = 5, Team = caes, Role = equipMaster, User = laura};
-            var lauraAccess = new TeamPermission {Id = 6, Team = caes, Role = accessMaster, User = laura};
-            var lauraSpace = new TeamPermission {Id = 7, Team = caes, Role = spaceMaster, User = laura};
-            var jamesDa = new TeamPermission{Id = 8, Team = caes, Role = departmentAdmin, User = james};
+            var scottKey = new TeamPermission    {Team = caes, Role = keyMaster, User = scott};
+            var scottEquip = new TeamPermission  {Team = caes, Role = equipMaster, User = scott};
+            var scottAccess = new TeamPermission {Team = caes, Role = accessMaster, User = scott};
+            var lauraKey = new TeamPermission    {Team = caes, Role = keyMaster, User = laura};
+            var lauraEquip = new TeamPermission  {Team = caes, Role = equipMaster, User = laura};
+            var lauraAccess = new TeamPermission {Team = caes, Role = accessMaster, User = laura};
+            var lauraSpace = new TeamPermission  {Team = caes, Role = spaceMaster, User = laura};
+            var jamesDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = james};
             context.TeamPermissions.Add(scottKey);
             context.TeamPermissions.Add(scottEquip);
 
@@ -234,7 +234,7 @@ namespace Keas.Mvc.Helpers
             context.TeamPermissions.Add(jamesDa);
             context.TeamPermissions.Add(scottAccess);
 
-            var jamesAdmin = new SystemPermission {Id = 1, Role = admin, User = james};
+            var jamesAdmin = new SystemPermission { Role = admin, User = james};
             context.SystemPermissions.Add(jamesAdmin);
 
             var CruTag = new Tag { Name = "CRU", Team = caes };
