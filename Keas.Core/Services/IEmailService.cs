@@ -21,13 +21,13 @@ namespace Keas.Core.Services
 
     public class EmailService : IEmailService
     {
-        //private readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
         private readonly EmailSettings _emailSettings;
 
-        //public EmailService(ApplicationDbContext dbContext, IOptions<EmailSettings> emailSettings)
-        public EmailService(IOptions<EmailSettings> emailSettings)
+        public EmailService(ApplicationDbContext dbContext, IOptions<EmailSettings> emailSettings)
+        //public EmailService(IOptions<EmailSettings> emailSettings)
         {
-            //_dbContext = dbContext;
+            _dbContext = dbContext;
             _emailSettings = emailSettings.Value;
         }
         public async Task SendMessage(User user)
@@ -38,7 +38,7 @@ namespace Keas.Core.Services
                 .UseFilesystemProject(path)
                 .UseMemoryCachingProvider()
                 .Build();
-            //var notifications = _dbContext.Notifications.Where(a => a.User == user && a.Pending).ToArray();
+            var notifications = _dbContext.Notifications.ToArray();
             //TODO: Do something with these notifications to build them into a single email.
 
             var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };

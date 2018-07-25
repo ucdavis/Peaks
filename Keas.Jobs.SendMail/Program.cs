@@ -22,11 +22,10 @@ namespace Keas.Jobs.SendMail
         {
             Console.WriteLine("Hello World!");
 
-
             // Use this to get configuration info, environmental comes in from azure
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json");
+               .SetBasePath(Directory.GetCurrentDirectory())
+               .AddJsonFile("appsettings.json");
             var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             if (string.Equals(environmentName, "development", StringComparison.OrdinalIgnoreCase))
             {
@@ -44,10 +43,8 @@ namespace Keas.Jobs.SendMail
             IServiceCollection services = new ServiceCollection();
             services.AddOptions();
             //TODO: DbConnection
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-            //);
-            //services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));
+            services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
 
 
             services.AddTransient<IEmailService, EmailService>();
@@ -57,7 +54,7 @@ namespace Keas.Jobs.SendMail
             EmailService = Provider.GetService<IEmailService>();
 
             //TODO: db stuff 
-            //var dbContext = Provider.GetService<ApplicationDbContext>();
+            var dbContext = Provider.GetService<ApplicationDbContext>();
 
             EmailService.SendMessage(null).GetAwaiter().GetResult(); //TODO: Pass param?
         }
