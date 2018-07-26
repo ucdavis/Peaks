@@ -32,7 +32,7 @@
                 <tr>
                     <td>@notification.Details</td>
                     <td>@notification.Status</td>
-                    <td>@notification.DateTimeCreated.ToString("g")</td>
+                    <td>@notification.DateTimeCreated.ToPacificTime().ToString("g")</td>
                 </tr>
             }
             </tbody>
