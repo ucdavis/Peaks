@@ -11,9 +11,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jobs", "Jobs", "{6E8D7F17-56E5-456C-BD9B-977B8B9FEBCD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keas.Jobs.Core", "Keas.Jobs.Core\Keas.Jobs.Core.csproj", "{AF95CE25-8364-4880-9994-1617628DE68F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keas.Jobs.Core", "Keas.Jobs.Core\Keas.Jobs.Core.csproj", "{AF95CE25-8364-4880-9994-1617628DE68F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keas.Jobs.SendMail", "Keas.Jobs.SendMail\Keas.Jobs.SendMail.csproj", "{37EDA0C6-8728-4DA0-A204-F5168082067D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keas.Jobs.SendMail", "Keas.Jobs.SendMail\Keas.Jobs.SendMail.csproj", "{37EDA0C6-8728-4DA0-A204-F5168082067D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FoundationEmails", "FoundationEmails", "{544D7171-AFA4-4E21-9A5D-592B185CEBC6}"
+	ProjectSection(SolutionItems) = preProject
+		emails-template\src\pages\keas-notification.html = emails-template\src\pages\keas-notification.html
+		emails-template\dist\keas-notification.html = emails-template\dist\keas-notification.html
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

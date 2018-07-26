@@ -55,11 +55,9 @@ namespace Keas.Core.Services
             message.IsBodyHtml = false;
 
 
-            var displayText = $"{notifications.First().User.Name} {notifications.Length}";
-
             try
             {
-                message.Body = await engine.CompileRenderAsync("/EmailTemplates/_Test.cshtml", displayText);            
+                message.Body = await engine.CompileRenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList());            
             }
             catch (Exception e)
             {
