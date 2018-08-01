@@ -21,8 +21,9 @@ export default class SpacesList extends React.Component<IProps, {}> {
                 minRows={1}
                 columns = {[
                     {
-                        Header: "Building",
-                        accessor: (row) => row.space.roomNumber + row.space.bldgName,
+                        Header: "Room",
+                        accessor: (row) => row.space.roomNumber + " " + row.space.bldgName,
+                        id: "room",
                         filterMethod: (filter, row) => {
                             return row[filter.id].toLowerCase().indexOf(filter.value.toLowerCase()) !== -1;
                         },
@@ -46,21 +47,24 @@ export default class SpacesList extends React.Component<IProps, {}> {
                             row[filter.id].toLowerCase().indexOf(filter.value) !== -1,
                         Cell: row => (
                             <span>{row.original.space.roomName}</span>
-                        )
+                        ),
+                        className: "word-wrap"
                     },
                     {
                         Header: "Keys",
                         accessor: "keyCount",
                         Cell: row => (
                             <span><i className="fas fa-key"></i> {row.original.keyCount}</span>
-                        )
+                        ),
+                        maxWidth: 150
                     },
                     {
                         Header: "Equipment",
                         accessor: "equipmentCount",
                         Cell: row => (
                             <span><i className="fas fa-laptop"></i> {row.original.equipmentCount}</span>
-                        )
+                        ),
+                        maxWidth: 150
                     },
                     {
                         Header: "Workstations",
@@ -82,7 +86,8 @@ export default class SpacesList extends React.Component<IProps, {}> {
                             </select>,
                         Cell: row => (
                             <span><i className="fas fa-user"></i> {row.original.workstationsInUse} / {row.original.workstationsTotal}</span>
-                        )
+                        ),
+                        maxWidth: 150
                     },
                     {
                         Header: "Actions",
@@ -92,7 +97,8 @@ export default class SpacesList extends React.Component<IProps, {}> {
                             <Button color="secondary" onClick={() => this.props.showDetails(row.original.space)}>
                             View Details
                             </Button>
-                        )
+                        ),
+                        maxWidth: 150,
                     },
                     
                 ]}
