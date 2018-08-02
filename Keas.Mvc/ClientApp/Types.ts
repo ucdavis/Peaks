@@ -80,7 +80,7 @@ export interface IEquipment {
   name: string;
   space: ISpace;
   serialNumber: string;
-  tags: string[]; 
+  tags: string; 
   teamId: number;
   type: string;
   attributes: IEquipmentAttribute[];

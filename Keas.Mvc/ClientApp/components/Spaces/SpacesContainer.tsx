@@ -72,7 +72,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         <div className="card">
             <div className="card-body">
                 <h4 className="card-title">Spaces</h4>
-                <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterSpaces} disabled={false}/>
+                <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
                 <SpacesList
                     spaces={filteredSpaces}
                     showDetails={this._openDetailsModal} />
@@ -171,7 +171,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         return `/${this.context.team.name}`;
     };
 
-    private _filterSpaces = (filters: string[]) => {
+    private _filterTags = (filters: string[]) => {
         this.setState({filters});
     }
 

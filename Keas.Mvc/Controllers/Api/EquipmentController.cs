@@ -138,6 +138,7 @@ namespace Keas.Mvc.Controllers.Api
                 eq.Model = equipment.Model;
                 eq.Name = equipment.Name;
                 eq.SerialNumber = equipment.SerialNumber;
+                eq.Tags = equipment.Tags;
                 
                 eq.Attributes.Clear();
                 equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));

@@ -84,7 +84,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       <div className="card">
         <div className="card-body">
           <h4 className="card-title">Equipment</h4>
-          <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterEquipment} disabled={false}/>
+          <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
           <EquipmentList
             equipment={filteredEquipment}
             onRevoke={this._revokeEquipment}
@@ -99,6 +99,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             closeModal={this._closeModals}
             selectedEquipment={detailEquipment}
             person={this.props.person}
+            tags={this.state.tags}
             commonAttributeKeys={this.state.commonAttributeKeys}
           />
           <EquipmentDetails
@@ -111,6 +112,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             onEdit={this._editEquipment}
             closeModal={this._closeModals}
             modal={activeAsset && (action === "edit")}
+            tags={this.state.tags}
             commonAttributeKeys={this.state.commonAttributeKeys}
             />
         </div>
@@ -213,7 +215,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     }); 
   }
 
-  private _filterEquipment = (filters: string[]) => {
+  private _filterTags = (filters: string[]) => {
     this.setState({filters});
 }
 
