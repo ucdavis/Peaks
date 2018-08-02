@@ -6,7 +6,7 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 interface IProps {
     onSelect: (tag: string[]) => void;
     disabled: boolean;
-    defaultValues?: string[];
+    selected: string[];
     tags: string[];
 }
 
@@ -23,7 +23,7 @@ export default class SearchTags extends React.Component<IProps, {}> {
                     onChange={selected => {
                         this.props.onSelect(selected);
                     }}
-                    selected={this.props.defaultValues}
+                    selected={this.props.selected}
                     highlightOnlyResult={true}
                     selectHintOnEnter={true}
                     placeholder="Search for tags"

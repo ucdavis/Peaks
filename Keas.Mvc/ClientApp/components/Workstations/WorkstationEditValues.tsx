@@ -63,7 +63,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                     <SearchTags 
                         tags={this.props.tags} 
                         disabled={this.props.disableEditing}
-                        defaultValues={!!this.props.selectedWorkstation.tags ? this.props.selectedWorkstation.tags.split(",") : []}
+                        selected={!!this.props.selectedWorkstation.tags ? this.props.selectedWorkstation.tags.split(",") : []}
                         onSelect={(e) => this.props.changeProperty("tags", e.join(","))} />
                 </div>
 
