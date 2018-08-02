@@ -9,4 +9,11 @@
 
 .actions {
     overflow: visible !important;
+    display: flex;
+    flex: 1 1 7% !important;
 } /* this makes only the actions cell able to overflow */
+
+.table-10p {
+    display: flex;
+    flex: 1 1 10% !important;
+}

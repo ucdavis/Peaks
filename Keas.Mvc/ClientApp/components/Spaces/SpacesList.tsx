@@ -43,21 +43,24 @@ export default class SpacesList extends React.Component<IProps, {}> {
                     {
                         Header: "Keys",
                         accessor: "keyCount",
+                        headerClassName: "table-10p",
+                        className: "table-10p",
                         Cell: row => (
                             <span><i className="fas fa-key"></i> {row.original.keyCount}</span>
                         ),
-                        maxWidth: 150
                     },
                     {
                         Header: "Equipment",
                         accessor: "equipmentCount",
+                        headerClassName: "table-10p",
+                        className: "table-10p",
                         Cell: row => (
                             <span><i className="fas fa-laptop"></i> {row.original.equipmentCount}</span>
-                        ),
-                        maxWidth: 150
-                    },
+                        ),                    },
                     {
                         Header: "Workstations",
+                        headerClassName: "table-10p",
+                        className: "table-10p",
                         filterMethod: (filter, row) => {
                             if( filter.value === "all") {
                                 return true;
@@ -77,12 +80,14 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         Cell: row => (
                             <span><i className="fas fa-user"></i> {row.original.workstationsInUse} / {row.original.workstationsTotal}</span>
                         ),
-                        maxWidth: 150
                     },
                     {
                         Header: "Actions",
+                        headerClassName: "spaces-details",
                         filterable: false,
                         sortable: false,
+                        resizable: false,
+                        className: "spaces-details",
                         Cell: row => (
                             <Button color="secondary" onClick={() => this.props.showDetails(row.original.space)}>
                             View Details

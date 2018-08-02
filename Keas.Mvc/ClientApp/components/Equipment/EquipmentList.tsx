@@ -50,8 +50,10 @@ export default class EquipmentList extends React.Component<IProps, {}> {
             },
             {
                 Header: "Actions",
+                headerClassName: "actions",
                 filterable: false,
                 sortable: false,
+                resizable: false,
                 className: "actions",
                 Cell: row => (
                     <ListActionsDropdown
@@ -65,7 +67,6 @@ export default class EquipmentList extends React.Component<IProps, {}> {
                         () => this.props.onEdit(row.original) : null}
                 />
                 ),
-                maxWidth: 75
             },
             
         ]}
