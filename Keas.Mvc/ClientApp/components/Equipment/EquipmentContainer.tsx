@@ -7,14 +7,16 @@ import AssignEquipment from "./AssignEquipment";
 import EditEquipment from "./EditEquipment";
 import EquipmentDetails from "./EquipmentDetails";
 import EquipmentList from "./EquipmentList";
+import SearchAttributes from "./SearchAttributes";
 import Denied from "../Shared/Denied";
 import { PermissionsUtil } from "../../util/permissions"; 
 
 interface IState {
+  attributeFilters: string[];
   commonAttributeKeys: string[];
   equipment: IEquipment[]; // either equipment assigned to this person, or all team equipment
-  filters: string[];
   loading: boolean;
+  tagFilters: string[];
   tags: string[];
 }
 
@@ -34,10 +36,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     super(props);
 
     this.state = {
+      attributeFilters: [],
       commonAttributeKeys: [],
       equipment: [],
-      filters: [],
       loading: true,
+      tagFilters: [],
       tags: []
     };
   }
@@ -71,20 +74,22 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     const activeAsset = !assetType || assetType === "equipment";
     const selectedId = parseInt(id, 10);
     const detailEquipment = this.state.equipment.find(e => e.id === selectedId);
-    let filteredEquipment = [];
-    if(!!this.state.filters && this.state.filters.length > 0)
+    let filteredEquipment = this.state.equipment;
+    if(!!this.state.tagFilters && this.state.tagFilters.length > 0)
     {
-        filteredEquipment = this.state.equipment.filter(x => this._checkFilters(x, this.state.filters));
+      debugger;
+      filteredEquipment = filteredEquipment.filter(x => this._checkTagFilters(x, this.state.tagFilters));
     }
-    else 
+    if(!!this.state.attributeFilters && this.state.attributeFilters.length > 0)
     {
-        filteredEquipment = this.state.equipment;
+      filteredEquipment = filteredEquipment.filter(x => this._checkAttributeFilters(x, this.state.attributeFilters));
     }
     return (
       <div className="card">
         <div className="card-body">
           <h4 className="card-title">Equipment</h4>
-          <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
+          <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
+          <SearchAttributes selected={this.state.attributeFilters} onSelect={this._filterAttributes} disabled={false} />
           <EquipmentList
             equipment={filteredEquipment}
             onRevoke={this._revokeEquipment}
@@ -216,13 +221,29 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   }
 
   private _filterTags = (filters: string[]) => {
-    this.setState({filters});
+    this.setState({tagFilters: filters});
 }
 
-  private _checkFilters = (equipment: IEquipment, filters: string[]) => {
+  private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
+    debugger;
     for (const filter of filters) {
         if(equipment.tags.indexOf(filter) === -1)
         {
+            return false;
+        }
+    }
+    return true;
+  }
+
+  private _filterAttributes = (filters: string[]) => {
+    this.setState({attributeFilters: filters});
+  }
+
+  private _checkAttributeFilters = (equipment: IEquipment, filters) => {
+    for (const filter of filters) {
+        if(equipment.attributes.findIndex(x => x.key.toLowerCase() === filter.label.toLowerCase()) === -1)
+        {
+          // if we cannot find an index where some of our filter matches the key
             return false;
         }
     }
