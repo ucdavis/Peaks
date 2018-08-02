@@ -3,6 +3,7 @@ import * as React from "react";
 import { NavLink, Redirect } from "react-router-dom";
 import { AppContext, IEquipment } from "../../Types";
 import EquipmentList from "../Equipment/EquipmentList";
+import ListActionsDropdown from "../ListActionsDropdown";
 
 interface IProps {
     spaceId: number;
@@ -52,7 +53,7 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
             <div className="form-group">
                 <h5><i className="fas fa-laptop fa-xs"></i> Equipment</h5>
                 {this.state.equipment.length > 0 ? 
-                    <EquipmentList equipment={this.state.equipment} showDetails={this._openDetailsModal} /> : "No Equipment"}
+                    this._renderList() : "No Equipment"}
             </div>
         );
     }
@@ -62,4 +63,46 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
             `../../equipment/details/${equipment.id}`
         );
     };
+
+    private _renderList = () => {
+        const equipment = this.state.equipment.map(x => (
+            this._renderListItem(x)
+      ));
+
+      return (
+        <div className="table">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Serial</th>
+                <th>Number</th>
+                <th>Assigned To</th>
+                <th>Expiration</th>
+                <th className="actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody>{equipment}</tbody>
+          </table>
+        </div>
+      );
+    }
+
+    private _renderListItem = (equipment: IEquipment) => {
+        const hasAssignment = !!equipment.assignment;
+        return (
+          <tr key={equipment.id}>
+            <td>{equipment.serialNumber}</td>
+            <td>{equipment.name}</td>
+            <td>{hasAssignment ? equipment.assignment.person.user.name : ""}</td>
+            <td>
+              {hasAssignment ? equipment.assignment.expiresAt : ""}
+            </td>
+            <td>
+              <ListActionsDropdown
+                showDetails={() => this._openDetailsModal(equipment)}
+                />
+            </td>
+          </tr>
+        );
+    }
 }
