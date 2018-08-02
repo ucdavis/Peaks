@@ -60,7 +60,9 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         const selectedSpaceInfo = this.state.allSpaces.find(k => k.id === selectedId);
 
         return (
-            <div>
+        <div className="card">
+            <div className="card-body">
+                <h4 className="card-title">Spaces</h4>
                 <SearchTags tags={this.state.tags} onSelect={this._filterSpaces} disabled={false}/>
                 <SpacesList
                     spaces={this.state.filteredSpaces}
@@ -99,6 +101,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                     returnToSpaceDetails={this._returnToSpaceDetails}
                     modal={activeWorkstationAsset && action === "revoke"}
                     workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null} />
+                </div>
             </div>
         );
     }

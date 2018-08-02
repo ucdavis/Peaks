@@ -1,6 +1,4 @@
 ﻿import * as React from "react";
-
-import SpacesListItem from "./SpacesListItem";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Button } from "reactstrap";
@@ -31,14 +29,6 @@ export default class SpacesList extends React.Component<IProps, {}> {
                                 <span>{row.original.space.roomNumber} {row.original.space.bldgName}</span>
                             )
                     },
-                    // {
-                    //     Header: "Floor",
-                    //     accessor: "space.floorName"
-                    // },
-                    // {
-                    //     Header: "Room Number",
-                    //     accessor: "space.roomNumber"
-                    // },
                     {
                         Header: "Room Name",
                         accessor: "space.roomName",

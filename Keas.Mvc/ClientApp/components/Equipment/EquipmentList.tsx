@@ -1,8 +1,8 @@
 import * as React from "react";
-
-import EquipmentListItem from "./EquipmentListItem";
-
+import ReactTable from "react-table";
+import "react-table/react-table.css";
 import { IEquipment } from "../../Types";
+import ListActionsDropdown from "../ListActionsDropdown";
 
 interface IProps {
     equipment: IEquipment[];
@@ -14,31 +14,62 @@ interface IProps {
 
 export default class EquipmentList extends React.Component<IProps, {}> {
   public render() {
-      const equipment = this.props.equipment.map(x => (
-          <EquipmentListItem
-              key={x.id.toString()}
-              equipmentEntity={x}
-              onRevoke={this.props.onRevoke}
-              onAdd={this.props.onAdd}
-              showDetails={this.props.showDetails}
-              onEdit={this.props.onEdit}
-          />
-    ));
       return (
-      <div className="table">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Serial</th>
-              <th>Number</th>
-              <th>Assigned To</th>
-              <th>Expiration</th>
-              <th className="actions">Actions</th>
-            </tr>
-          </thead>
-          <tbody>{equipment}</tbody>
-        </table>
-      </div>
+        <ReactTable
+        data={this.props.equipment}
+        filterable={true}
+        minRows={1}
+        columns = {[
+            {
+                Header: "Serial Number",
+                accessor: "serialNumber",
+                filterMethod: (filter, row) => 
+                    !!row[filter.id] &&
+                    row[filter.id].toLowerCase().indexOf(filter.value) !== -1,
+            },
+            {
+                Header: "Name",
+                accessor: "name",
+                filterMethod: (filter, row) => 
+                    !!row[filter.id] &&
+                    row[filter.id].toLowerCase().indexOf(filter.value) !== -1,
+            },
+            {
+                Header: "Assigned To",
+                accessor: "assignment.person.user.name",
+                filterMethod: (filter, row) => 
+                !!row[filter.id] &&
+                row[filter.id].toLowerCase().indexOf(filter.value) !== -1,
+            },
+            {
+                Header: "Expiration",
+                accessor: "assignment.expiresAt",
+                filterMethod: (filter, row) => 
+                    !!row[filter.id] &&
+                    row[filter.id].toLowerCase().indexOf(filter.value) !== -1,
+            },
+            {
+                Header: "Actions",
+                filterable: false,
+                sortable: false,
+                className: "actions",
+                Cell: row => (
+                    <ListActionsDropdown
+                        onRevoke={!!this.props.onRevoke && !!row.original.assignment ? 
+                        () => this.props.onRevoke(row.original) : null}
+                        onAdd={!!this.props.onAdd && !row.assignment ? 
+                        () => this.props.onAdd(row.original) : null}
+                        showDetails={!!this.props.showDetails ? 
+                        () => this.props.showDetails(row.original) : null}
+                        onEdit={!!this.props.onEdit ? 
+                        () => this.props.onEdit(row.original) : null}
+                />
+                ),
+                maxWidth: 75
+            },
+            
+        ]}
+    />
     );
   }
 }
