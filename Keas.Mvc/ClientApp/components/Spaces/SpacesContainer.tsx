@@ -176,12 +176,6 @@ export default class SpacesContainer extends React.Component<{}, IState> {
     }
 
     private _checkFilters = (space: ISpaceInfo, filters: string[]) => {
-        for (const filter of filters) {
-            if(space.tags.indexOf(filter) === -1)
-            {
-                return false;
-            }
-        }
-        return true;
+        return filters.every(f => space.tags.indexOf(f) !== -1);
     }
 }

@@ -250,13 +250,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 }
 
   private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
-    for (const filter of filters) {
-        if(equipment.tags.indexOf(filter) === -1)
-        {
-            return false;
-        }
-    }
-    return true;
+    return filters.every(f => equipment.tags.indexOf(f) !== -1);
   }
 
   private _filterAttributes = (filters: string[]) => {
