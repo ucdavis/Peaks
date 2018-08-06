@@ -125,11 +125,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     else
     {
       let filteredEquipment = this.state.equipment;
-      if(!!this.state.tagFilters && this.state.tagFilters.length > 0)
+      if(this.state.tagFilters.length > 0)
       {
         filteredEquipment = filteredEquipment.filter(x => this._checkTagFilters(x, this.state.tagFilters));
       }
-      if(!!this.state.attributeFilters && this.state.attributeFilters.length > 0)
+      if(this.state.attributeFilters.length > 0)
       {
         filteredEquipment = filteredEquipment.filter(x => this._checkAttributeFilters(x, this.state.attributeFilters));
       }
