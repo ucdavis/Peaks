@@ -26,21 +26,21 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                 accessor: "serialNumber",
                 filterMethod: (filter, row) => 
                     !!row[filter.id] &&
-                    row[filter.id].toLowerCase().indexOf(filter.value) !== -1,
+                    row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
             },
             {
                 Header: "Name",
                 accessor: "name",
                 filterMethod: (filter, row) => 
                     !!row[filter.id] &&
-                    row[filter.id].toLowerCase().indexOf(filter.value) !== -1,
+                    row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
             },
             {
                 Header: "Assigned To",
                 accessor: "assignment.person.user.name",
                 filterMethod: (filter, row) => 
                 !!row[filter.id] &&
-                row[filter.id].toLowerCase().indexOf(filter.value) !== -1,
+                row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
             },
             {
                 Header: "Expiration",
