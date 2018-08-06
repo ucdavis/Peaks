@@ -32,7 +32,7 @@ export default class WorkstationList extends React.Component<IProps, {}> {
               <th>Name</th>
               <th>Assigned To</th>
               <th>Expiration</th>
-              <th className="actions">Actions</th>
+              <th className="list-actions">Actions</th>
             </tr>
           </thead>
           <tbody>{workstations}</tbody>

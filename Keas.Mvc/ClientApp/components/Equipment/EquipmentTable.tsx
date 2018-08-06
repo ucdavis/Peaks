@@ -84,11 +84,11 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
             },
             {
                 Header: "Actions",
-                headerClassName: "actions",
+                headerClassName: "table-actions",
                 filterable: false,
                 sortable: false,
                 resizable: false,
-                className: "actions",
+                className: "table-actions",
                 Cell: row => (
                     <ListActionsDropdown
                         onRevoke={!!this.props.onRevoke && !!row.original.assignment ? 

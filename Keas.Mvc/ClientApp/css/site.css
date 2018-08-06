@@ -7,7 +7,7 @@
     overflow: visible !important;
 } /* for the actions dropdown menu */
 
-.actions {
+.table-actions {
     overflow: visible !important;
     display: flex;
     flex: 1 1 7% !important;
@@ -16,4 +16,8 @@
 .table-10p {
     display: flex;
     flex: 1 1 10% !important;
+}
+
+th.list-actions {
+    width: 10%;
 }
