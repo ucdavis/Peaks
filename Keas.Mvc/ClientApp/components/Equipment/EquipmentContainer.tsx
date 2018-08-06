@@ -7,6 +7,7 @@ import AssignEquipment from "./AssignEquipment";
 import EditEquipment from "./EditEquipment";
 import EquipmentDetails from "./EquipmentDetails";
 import EquipmentList from "./EquipmentList";
+import EquipmentTable from "./EquipmentTable";
 import SearchAttributes from "./SearchAttributes";
 import Denied from "../Shared/Denied";
 import { PermissionsUtil } from "../../util/permissions"; 
@@ -55,7 +56,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
     const equipment = await this.context.fetch(equipmentFetchUrl);
 
-    const tags = await this.context.fetch(`/api/${this.context.team.name}/tags/listTags`);
+    const tags = !!this.props.person ? [] : await this.context.fetch(`/api/${this.context.team.name}/tags/listTags`);
 
     this.setState({ commonAttributeKeys, equipment, loading: false, tags });
   }
@@ -74,29 +75,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     const activeAsset = !assetType || assetType === "equipment";
     const selectedId = parseInt(id, 10);
     const detailEquipment = this.state.equipment.find(e => e.id === selectedId);
-    let filteredEquipment = this.state.equipment;
-    if(!!this.state.tagFilters && this.state.tagFilters.length > 0)
-    {
-      debugger;
-      filteredEquipment = filteredEquipment.filter(x => this._checkTagFilters(x, this.state.tagFilters));
-    }
-    if(!!this.state.attributeFilters && this.state.attributeFilters.length > 0)
-    {
-      filteredEquipment = filteredEquipment.filter(x => this._checkAttributeFilters(x, this.state.attributeFilters));
-    }
     return (
       <div className="card">
         <div className="card-body">
           <h4 className="card-title">Equipment</h4>
-          <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
-          <SearchAttributes selected={this.state.attributeFilters} onSelect={this._filterAttributes} disabled={false} />
-          <EquipmentList
-            equipment={filteredEquipment}
-            onRevoke={this._revokeEquipment}
-            onAdd={this._openAssignModal}
-            showDetails={this._openDetailsModal}
-            onEdit={this._openEditModal}
-          />
+          {this._renderTableOrList()}
           <AssignEquipment
             onCreate={this._createAndMaybeAssignEquipment}
             modal={activeAsset && (action === "create" || action === "assign")}
@@ -123,6 +106,48 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         </div>
       </div>
     );
+  }
+
+  private _renderTableOrList = () => {
+    if(!!this.props.person)
+    {
+      return(
+      <div>
+        <EquipmentList
+          equipment={this.state.equipment}
+          onRevoke={this._revokeEquipment}
+          onAdd={this._openAssignModal}
+          showDetails={this._openDetailsModal}
+          onEdit={this._openEditModal}
+        />
+    </div>);
+    }
+    else
+    {
+      let filteredEquipment = this.state.equipment;
+      if(!!this.state.tagFilters && this.state.tagFilters.length > 0)
+      {
+        filteredEquipment = filteredEquipment.filter(x => this._checkTagFilters(x, this.state.tagFilters));
+      }
+      if(!!this.state.attributeFilters && this.state.attributeFilters.length > 0)
+      {
+        filteredEquipment = filteredEquipment.filter(x => this._checkAttributeFilters(x, this.state.attributeFilters));
+      }
+      return(
+        <div>
+          <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
+          <SearchAttributes selected={this.state.attributeFilters} onSelect={this._filterAttributes} disabled={false} />
+          <EquipmentTable
+            equipment={filteredEquipment}
+            onRevoke={this._revokeEquipment}
+            onAdd={this._openAssignModal}
+            showDetails={this._openDetailsModal}
+            onEdit={this._openEditModal}
+          />
+        </div>
+      );
+
+    }
   }
 
   private _createAndMaybeAssignEquipment = async (
