@@ -22,9 +22,9 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         Header: "Room",
                         accessor: (row) => row.space.roomNumber + " " + row.space.bldgName,
                         id: "room",
-                        filterMethod: (filter, row) => {
-                            !!row[filter.id] && row[filter.id].toLowerCase().includes(filter.value.toLowerCase());
-                        },
+                        filterMethod: (filter, row) => 
+                            !!row[filter.id] && row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                        ,
                         Cell: row => (
                                 <span>{row.original.space.roomNumber} {row.original.space.bldgName}</span>
                             )
