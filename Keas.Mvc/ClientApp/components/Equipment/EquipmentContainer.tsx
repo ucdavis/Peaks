@@ -56,7 +56,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
     const equipment = await this.context.fetch(equipmentFetchUrl);
 
-    const tags = !!this.props.person ? [] : await this.context.fetch(`/api/${this.context.team.name}/tags/listTags`);
+    const tags = await this.context.fetch(`/api/${this.context.team.name}/tags/listTags`);
 
     this.setState({ commonAttributeKeys, equipment, loading: false, tags });
   }
