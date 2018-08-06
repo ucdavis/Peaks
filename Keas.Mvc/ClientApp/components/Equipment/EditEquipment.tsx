@@ -24,6 +24,7 @@ interface IProps {
   closeModal: () => void;
   commonAttributeKeys: string[];
   selectedEquipment: IEquipment;
+  tags: string[];
 }
 
 interface IState {
@@ -71,6 +72,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
                     disableEditing={false}
                     updateAttributes={this._updateAttributes}
                     commonAttributeKeys={this.props.commonAttributeKeys}
+                    tags={this.props.tags}
                   />
             </form>
           </div>

@@ -1,3 +1,23 @@
-th.actions {
+.word-wrap {
+ white-space: pre-line !important;
+ word-wrap: break-word;   
+}
+
+.ReactTable .rt-tbody, .ReactTable .rt-table {
+    overflow: visible !important;
+} /* for the actions dropdown menu */
+
+.table-actions {
+    overflow: visible !important;
+    display: flex;
+    flex: 1 1 7% !important;
+} /* this makes only the actions cell able to overflow */
+
+.table-10p {
+    display: flex;
+    flex: 1 1 10% !important;
+}
+
+th.list-actions {
     width: 10%;
 }

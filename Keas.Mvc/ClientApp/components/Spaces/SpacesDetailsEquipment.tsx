@@ -1,6 +1,5 @@
 ﻿import PropTypes from "prop-types";
 import * as React from "react";
-import { NavLink, Redirect } from "react-router-dom";
 import { AppContext, IEquipment } from "../../Types";
 import EquipmentList from "../Equipment/EquipmentList";
 
@@ -52,7 +51,8 @@ export default class SpacesDetailsEquipment extends React.Component<IProps, ISta
             <div className="form-group">
                 <h5><i className="fas fa-laptop fa-xs"></i> Equipment</h5>
                 {this.state.equipment.length > 0 ? 
-                    <EquipmentList equipment={this.state.equipment} showDetails={this._openDetailsModal} /> : "No Equipment"}
+                    <EquipmentList equipment={this.state.equipment} showDetails={this._openDetailsModal} /> 
+                    : "No Equipment"}
             </div>
         );
     }

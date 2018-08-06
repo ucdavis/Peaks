@@ -26,6 +26,7 @@ interface IProps {
   closeModal: () => void;
   selectedEquipment: IEquipment;
   person?: IPerson;
+  tags: string[];
   commonAttributeKeys: string[];
 }
 
@@ -101,6 +102,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                       disableEditing={false}
                       updateAttributes={this._updateAttributes}
                       creating={true}
+                      tags={this.props.tags}
                     />
                   ))}
                 {this.state.equipment &&
@@ -110,6 +112,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                       commonAttributeKeys={this.props.commonAttributeKeys}
                       disableEditing={true}
                       creating={true}
+                      tags={this.props.tags}
                       />
                   )}
 

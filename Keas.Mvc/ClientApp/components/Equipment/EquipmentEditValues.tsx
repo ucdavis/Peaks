@@ -2,14 +2,16 @@
 
 import { IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
 import AssignSpace from "../Spaces/AssignSpace";
+import SearchTags from "../Tags/SearchTags";
 import EquipmentAttributes from "./EquipmentAttributes";
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
     commonAttributeKeys?: string[];
+    creating?: boolean;
     disableEditing: boolean;
     selectedEquipment: IEquipment;
-    creating?: boolean;
+    tags?: string[];
     updateAttributes?: (attribute: IEquipmentAttribute[]) => void;
 }
 
@@ -82,6 +84,16 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     equipment={this.props.selectedEquipment} 
                     commonKeys={this.props.commonAttributeKeys}
                     />
+
+                <div className="form-group">
+                    <label>Tags</label>
+                    <SearchTags 
+                        tags={this.props.tags} 
+                        disabled={this.props.disableEditing}
+                        selected={!!this.props.selectedEquipment.tags ? this.props.selectedEquipment.tags.split(",") : []}
+                        onSelect={(e) => this.props.changeProperty("tags", e.join(","))} />
+                </div>
+
                 {this.props.disableEditing &&
                     <div className="form-group">
                         <label>Room</label>
