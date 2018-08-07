@@ -34,6 +34,15 @@ export interface IPerson {
   userid: number;
   teamId: number;
   user: IUser;
+  tags: string;
+}
+
+export interface IPersonInfo {
+  person: IPerson;
+  id: number;
+  accessCount: number;
+  equipmentCount: number;
+  keyCount: number;
 }
 
 export interface ITeam {

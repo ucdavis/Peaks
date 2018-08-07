@@ -1,16 +1,17 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 
-import { AppContext, IPerson } from "../../Types";
+import { AppContext, IPersonInfo, IPerson } from "../../Types";
 import PeopleTable from "./PeopleTable";
 import Denied from "../Shared/Denied";
 import { PermissionsUtil } from "../../util/permissions"; 
 import SearchTags from "../Tags/SearchTags";
+import PersonDetails from "./PersonDetails";
 
 interface IState {
   filters: string[];
   loading: boolean;
-  people: IPerson[];
+  people: IPersonInfo[];
   tags: string[];
 }
 export default class PeopleContainer extends React.Component<{}, IState> {
@@ -38,6 +39,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
 
     this.setState({ loading: false, people, tags });
   }
+
   public render() {
     if (!PermissionsUtil.canViewPeople(this.context.permissions)) {
         return (
@@ -47,27 +49,36 @@ export default class PeopleContainer extends React.Component<{}, IState> {
 
     if(this.state.loading) {
       return <h2>Loading...</h2>;
-  }
+    }
 
-  let filteredPeople = this.state.people;
+    const { action, assetType, id } = this.context.router.route.match.params;
+    const activeAsset = !assetType || assetType === "people";
+    const selectedId = parseInt(id, 10);
+    const detailPerson = this.state.people.find(e => e.id === selectedId);
+
+    let filteredPeople = this.state.people;
     if(this.state.filters.length > 0)
     {
-      filteredPeople = filteredPeople.filter(x => this._checkTagFilters(x, this.state.filters));
+      filteredPeople = filteredPeople.filter(x => this._checkTagFilters(x.person, this.state.filters));
     }
-  return(
-    <div className="card">
-      <div className="card-body">
-        <h4 className="card-title">People</h4>
-        <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
-        <PeopleTable
-          people={filteredPeople}
-          onRevoke={this._revokeEquipment}
-          onAdd={this._openAssignModal}
-          showDetails={this._openDetailsModal}
-          onEdit={this._openEditModal}
-          />
+    
+    return(
+      <div className="card">
+        <div className="card-body">
+          <h4 className="card-title">People</h4>
+          <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
+          <PeopleTable
+            people={filteredPeople}
+            showDetails={this._openDetailsModal}
+            onEdit={this._openEditModal}
+            />
+            <PersonDetails
+              selectedPerson={!!detailPerson ? detailPerson.person : null}
+              modal={activeAsset && action === "details" && !!detailPerson && !!detailPerson.person}
+              closeModal={this._closeModals}
+            />
+        </div>
       </div>
-    </div>
     );
   }
 
@@ -166,13 +177,13 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     this.setState({filters: filters});
 }
 
-  private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
-    return filters.every(f => equipment.tags.includes(f));
+  private _checkTagFilters = (person: IPerson, filters: string[]) => {
+    return filters.every(f => person.tags.includes(f));
   }
 
-  private _openAssignModal = (equipment: Person) => {
+  private _openAssignModal = (person: IPerson) => {
     this.context.router.history.push(
-      `${this._getBaseUrl()}/people/assign/${equipment.id}`
+      `${this._getBaseUrl()}/people/assign/${person.id}`
     );
   };
 

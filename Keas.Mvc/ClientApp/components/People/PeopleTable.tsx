@@ -2,11 +2,11 @@ import * as moment from "moment";
 import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-import { IPerson } from "../../Types";
+import { IPerson, IPersonInfo } from "../../Types";
 import ListActionsDropdown from "../ListActionsDropdown";
 
 interface IProps {
-    people: IPerson[];
+    people: IPersonInfo[];
     onRevoke?: (equipment: IPerson) => void;
     onAdd?: (equipment: IPerson) => void;
     showDetails?: (equipment: IPerson) => void;
@@ -23,17 +23,44 @@ export default class PeopleTable extends React.Component<IProps, {}> {
         columns = {[
             {
                 Header: "Name",
-                accessor: "user.name",
+                accessor: "person.user.name",
                 filterMethod: (filter, row) => 
                     !!row[filter.id] &&
                     row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
             },
             {
                 Header: "Email",
-                accessor: "user.email",
+                accessor: "person.user.email",
                 filterMethod: (filter, row) => 
                     !!row[filter.id] &&
                     row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
+            },
+            {
+                Header: "Keys",
+                accessor: "keyCount",
+                headerClassName: "table-10p",
+                className: "table-10p",
+                Cell: row => (
+                    <span><i className="fas fa-key"></i> {row.original.keyCount}</span>
+                ),
+            },
+            {
+                Header: "Equipment",
+                accessor: "equipmentCount",
+                headerClassName: "table-10p",
+                className: "table-10p",
+                Cell: row => (
+                    <span><i className="fas fa-laptop"></i> {row.original.equipmentCount}</span>
+                ),                    
+            },
+            {
+                Header: "Access",
+                accessor: "accessCount",
+                headerClassName: "table-10p",
+                className: "table-10p",
+                Cell: row => (
+                    <span><i className="fas fa-id-card"></i> {row.original.accessCount}</span>
+                ),
             },
             // {
             //     Header: "Assigned To",

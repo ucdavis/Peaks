@@ -56,7 +56,8 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         className: "table-10p",
                         Cell: row => (
                             <span><i className="fas fa-laptop"></i> {row.original.equipmentCount}</span>
-                        ),                    },
+                        ),                    
+                    },
                     {
                         Header: "Workstations",
                         headerClassName: "table-10p",

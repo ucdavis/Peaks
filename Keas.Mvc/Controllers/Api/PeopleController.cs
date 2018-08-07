@@ -18,10 +18,20 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> List()
         {
-            var people = await _context.People
-                .Where(x => x.Team.Name == Team && x.Active)
-                .Include(x => x.User).AsNoTracking().ToListAsync();
-            return Json(people);
+            var people = 
+            from person in _context.People.Where(x => x.Team.Name == Team && x.Active).Include(x => x.User) // TODO: have some way to show inactive?
+            select new
+            {
+                person = person,
+                id = person.Id,
+                accessCount = 
+                    (from a in _context.AccessAssignments where a.PersonId == person.Id select a).Count(),
+                equipmentCount = 
+                    (from eq in _context.EquipmentAssignments where eq.PersonId == person.Id select eq ).Count(),
+                keyCount = 
+                    (from k in _context.KeyAssignments where k.PersonId == person.Id select k ).Count()
+                };
+            return Json(await people.ToListAsync());
         }
 
         public async Task<IActionResult> Search(string q)
