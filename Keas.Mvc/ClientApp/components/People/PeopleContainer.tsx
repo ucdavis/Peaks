@@ -51,11 +51,11 @@ export default class PeopleContainer extends React.Component<{}, IState> {
       return <h2>Loading...</h2>;
     }
 
-    const { action, assetType, id } = this.context.router.route.match.params;
+    const { personAction, assetType, personId } = this.context.router.route.match.params;
     const activeAsset = !assetType || assetType === "people";
-    const selectedId = parseInt(id, 10);
+    const selectedId = parseInt(personId, 10);
     const detailPerson = this.state.people.find(e => e.id === selectedId);
-
+    
     let filteredPeople = this.state.people;
     if(this.state.filters.length > 0)
     {
@@ -74,7 +74,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
             />
             <PersonDetails
               selectedPerson={!!detailPerson ? detailPerson.person : null}
-              modal={activeAsset && action === "details" && !!detailPerson && !!detailPerson.person}
+              modal={activeAsset && personAction === "details" && !!detailPerson && !!detailPerson.person}
               closeModal={this._closeModals}
             />
         </div>

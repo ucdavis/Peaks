@@ -25,11 +25,9 @@ export const routes = (
         path="/:team/:assetType(spaces|workstations)/:action?/:id?" component={SpacesContainer}
     />
 
-    <Route path="/:team/people/:action?/:id?" component={PeopleContainer} />
     <Route
-      path="/:team/person/:personAction/:personId/:assetType?/:action?/:id?"
-      component={PersonContainer}
-    />
+      path="/:team/people/:personAction?/:personId?/:assetType?/:action?/:id?"
+      component={PeopleContainer} />
 
   </AssetNav>
 );

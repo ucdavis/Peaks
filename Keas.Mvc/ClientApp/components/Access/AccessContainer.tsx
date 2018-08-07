@@ -240,7 +240,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
 
   private _getBaseUrl = () => {
       return this.props.person
-          ? `/${this.context.team.name}/person/details/${this.props.person.id}`
+          ? `/${this.context.team.name}/people/details/${this.props.person.id}`
           : `/${this.context.team.name}`;
   };
 

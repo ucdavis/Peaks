@@ -16,7 +16,6 @@ export default class Person extends React.Component<IProps, {}> {
   public render() {
     return (
       <div>
-        <BioContainer person={this.props.person} />
         <KeyContainer person={this.props.person} />
         <AccessContainer person={this.props.person} />
         <EquipmentContainer person={this.props.person} />
