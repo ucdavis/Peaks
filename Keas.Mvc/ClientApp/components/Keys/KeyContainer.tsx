@@ -62,7 +62,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     return (
       <div className="card">
         <div className="card-body">
-          <h4 className="card-title">Key</h4>
+        <h4 className="card-title"><i className="fas fa-key fa-xs"/> Keys</h4>
           <KeyList
             keys={this.state.keys}
             onRevoke={this._revokeKey}

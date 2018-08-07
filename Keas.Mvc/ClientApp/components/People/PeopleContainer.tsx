@@ -64,7 +64,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     return(
       <div className="card">
         <div className="card-body">
-          <h4 className="card-title">People</h4>
+          <h4 className="card-title"><i className="fas fa-users fa-xs"/> People</h4>
           <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
           <PeopleTable
             people={filteredPeople}

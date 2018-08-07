@@ -63,7 +63,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     return (
       <div className="card">
         <div className="card-body">
-                <h4 className="card-title">Access</h4>
+                <h4 className="card-title"><i className="fas fa-id-card fa-xs"/> Access</h4>
                 <AccessList
                     access={this.state.access}
                     personView={this.props.person ? true : false}

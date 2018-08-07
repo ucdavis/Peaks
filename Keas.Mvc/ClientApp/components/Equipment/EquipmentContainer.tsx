@@ -78,7 +78,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     return (
       <div className="card">
         <div className="card-body">
-          <h4 className="card-title">Equipment</h4>
+        <h4 className="card-title"><i className="fas fa-laptop fa-xs"/> Equipment</h4>
           {this._renderTableOrList()}
           <AssignEquipment
             onCreate={this._createAndMaybeAssignEquipment}
