@@ -52,7 +52,6 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     }
 
     const { personAction, assetType, personId } = this.context.router.route.match.params;
-    const activeAsset = !assetType || assetType === "people";
     const selectedId = parseInt(personId, 10);
     const detailPerson = this.state.people.find(e => e.id === selectedId);
     
@@ -74,7 +73,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
             />
             <PersonDetails
               selectedPerson={!!detailPerson ? detailPerson.person : null}
-              modal={activeAsset && personAction === "details" && !!detailPerson && !!detailPerson.person}
+              modal={personAction === "details" && !!detailPerson && !!detailPerson.person}
               closeModal={this._closeModals}
             />
         </div>
