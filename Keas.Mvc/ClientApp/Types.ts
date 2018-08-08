@@ -45,6 +45,7 @@ export interface IPersonInfo {
   accessCount: number;
   equipmentCount: number;
   keyCount: number;
+  workstationCount: number;
 }
 
 export interface ITeam {

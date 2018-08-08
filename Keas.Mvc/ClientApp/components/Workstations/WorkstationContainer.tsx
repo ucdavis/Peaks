@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import { NavLink, Redirect } from "react-router-dom";
 import { Button } from "reactstrap";
-import { AppContext, IWorkstation } from "../../Types";
+import { AppContext, IWorkstation, IPerson } from "../../Types";
 import AssignWorkstation from "../Workstations/AssignWorkstation";
 import EditWorkstation from "../Workstations/EditWorkstation";
 import RevokeWorkstation from "../Workstations/RevokeWorkstation";
@@ -92,7 +92,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     private _renderSpaceView = () => {
         return(
         <div className="form-group">
-            <h5><i className="fas fa-key fa-xs"/> Workstations</h5>
+            <h5><i className="fas fa-user fa-xs"/> Workstations</h5>
             {this._renderWorkstations()}
         </div>
             );
@@ -102,7 +102,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         const { action, assetType, id } = this.context.router.route.match.params;
         const activeAsset = assetType === "workstations";
         const selectedId = parseInt(id, 10);
-        const selectedSpaceInfo = this.state.workstations.find(k => k.id === selectedId);
+        const selectedWorkstation = this.state.workstations.find(k => k.id === selectedId);
 
         return(
             <div>
@@ -120,31 +120,122 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                 <WorkstationDetails
                     closeModal={this._closeModals}
                     modal={activeAsset && action === "details"}
-                    workstationId={activeAsset && Number.isInteger(selectedId) ? selectedId : null}
+                    selectedWorkstation={selectedWorkstation}
                     />
                 <EditWorkstation
                     closeModal={this._closeModals}
                     tags={this.props.tags}
                     modal={activeAsset && action === "edit"}
-                    workstationId={activeAsset && Number.isInteger(selectedId) ? selectedId : null}
-                    editWorkstation={this.props.workstationEdited}
+                    selectedWorkstation={selectedWorkstation}
+                    onEdit={this._editWorkstation}
                     />
                 <AssignWorkstation
                     closeModal={this._closeModals}
-                    updateCount={this.props.workstationAssigned}
                     modal={activeAsset && action === "assign" || action ==="create"}
-                    workstationId={activeAsset && action === "assign" && Number.isInteger(selectedId) ? selectedId : null}
-                    spaceId={activeAsset && action === "create" && Number.isInteger(selectedId) ? selectedId : null}
+                    selectedWorkstation={selectedWorkstation}
                     tags={this.props.tags}
-                    creating={action === "create"} />
+                    onCreate={this._createAndMaybeAssignWorkstation}
+                    onAddNew={this._openCreateModal} />
                 <RevokeWorkstation
                     closeModal={this._closeModals}
-                    updateCount={this.props.workstationRevoked}
+                    revokeWorkstation={this._revokeWorkstation}
                     modal={activeAsset && action === "revoke"}
-                    workstationId={activeAsset && Number.isInteger(selectedId) ? selectedId : null} />
+                    selectedWorkstation={selectedWorkstation} />
             </div>
         );
     }
+
+    private _createAndMaybeAssignWorkstation = async (
+        person: IPerson,
+        workstation: IWorkstation,
+        date: any
+      ) => {
+        // call API to create a workstation, then assign it if there is a person to assign to
+        // if we are creating a new workstation
+        if (workstation.id === 0) {
+          workstation.teamId = this.context.team.id;
+          workstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/create`, {
+            body: JSON.stringify(workstation),
+            method: "POST"
+          });
+        }
+    
+        // if we know who to assign it to, do it now
+        if (person) {
+          const assignUrl = `/api/${this.context.team.name}/workstations/assign?workstationId=${workstation.id}&personId=${
+            person.id
+          }&date=${date}`;
+    
+          workstation = await this.context.fetch(assignUrl, {
+            method: "POST"
+          });
+          workstation.assignment.person = person;
+        }
+    
+        const index = this.state.workstations.findIndex(x => x.id === workstation.id);
+        if (index !== -1) {
+          // update already existing entry in workstation
+          const updateWorkstation = [...this.state.workstations];
+          updateWorkstation[index] = workstation;
+    
+          this.setState({
+            ...this.state,
+            workstations: updateWorkstation
+          });
+        } else {
+          this.setState({
+            workstations: [...this.state.workstations, workstation]
+          });
+        }
+      };
+    
+      private _revokeWorkstation = async (workstation: IWorkstation) => {
+        // call API to actually revoke
+        const removed: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/revoke`, {
+          body: JSON.stringify(workstation),
+          method: "POST"
+        });
+     
+        // remove from state
+        const index = this.state.workstations.indexOf(workstation);
+        if (index > -1) {
+          const shallowCopy = [...this.state.workstations];
+          if (!this.props.personId && !!this.props.spaceId) {
+              // if we are looking at all workstation, just update assignment
+           shallowCopy[index].assignment = null;
+          } else {
+            // if we are looking at a person, remove from our list of workstation
+            shallowCopy.splice(index, 1);
+          }
+          this.setState({ workstations: shallowCopy });
+        }
+      };
+    
+      private _editWorkstation = async (workstation: IWorkstation) =>
+      {
+        const index = this.state.workstations.findIndex(x => x.id === workstation.id);
+    
+        if(index === -1 ) // should always already exist
+        {
+          return;
+        }
+    
+        const updated: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/update`, {
+          body: JSON.stringify(workstation),
+          method: "POST"
+        });
+    
+        updated.assignment = workstation.assignment;
+    
+        // update already existing entry in key
+        const updateWorkstation = [...this.state.workstations];
+        updateWorkstation[index] = updated;
+    
+        this.setState({
+          ...this.state,
+          workstations: updateWorkstation
+        }); 
+      }
 
     private _openDetailsModal = (workstation: IWorkstation) => {
         this.context.router.history.push(

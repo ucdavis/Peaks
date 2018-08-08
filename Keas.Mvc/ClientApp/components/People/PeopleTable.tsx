@@ -54,12 +54,21 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 ),                    
             },
             {
-                Header: "Access",
+                Header: "Accesses",
                 accessor: "accessCount",
                 headerClassName: "table-10p",
                 className: "table-10p",
                 Cell: row => (
                     <span><i className="fas fa-id-card"></i> {row.original.accessCount}</span>
+                ),
+            },
+            {
+                Header: "Workstations",
+                accessor: "workstationCount",
+                headerClassName: "table-10p",
+                className: "table-10p",
+                Cell: row => (
+                    <span><i className="fas fa-user"></i> {row.original.accessCount}</span>
                 ),
             },
             // {

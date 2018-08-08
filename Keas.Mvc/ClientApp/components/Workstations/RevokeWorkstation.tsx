@@ -15,13 +15,12 @@ import WorkstationEditValues from "./WorkstationEditValues";
 interface IProps {
     modal: boolean;
     closeModal: () => void;
-    updateCount: (spaceId: number) => void;
-    workstationId: number;
+    revokeWorkstation: (workstation: IWorkstation) => void;
+    selectedWorkstation: IWorkstation;
 }
 
 interface IState{
     loading: boolean;
-    workstation: IWorkstation;
 }
 
 export default class RevokeWorkstation extends React.Component<IProps, IState> {
@@ -38,25 +37,11 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
 
         this.state = {
             loading: false,
-            workstation: null,
         };
     }
 
-    public componentDidMount() {
-        if(this.props.modal && this.props.workstationId !== null) {
-            this._loadData(this.props.workstationId);
-        }
-    }
-
-    public componentDidUpdate(prevProps) {
-        if(this.props.modal && this.props.workstationId !== prevProps.workstationId)
-        {
-            this._loadData(this.props.workstationId);
-        }
-    }
-
     public render() {
-        if (this.props.workstationId === null) 
+        if (!this.props.selectedWorkstation) 
         {
             return null;
         }
@@ -66,35 +51,12 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
         }
         return (
             <div>
-                {!!this.state.workstation && this._renderFound()}
-                {!this.state.workstation && this._renderNotFound()}
-            </div>
-        );
-    }
-
-    private _renderNotFound = () => {
-        return (
-            <Modal isOpen={this.props.modal}
-                toggle={this.props.closeModal} 
-                size="lg">
-                <ModalHeader>Workstation not found, please try again</ModalHeader>
-                <ModalFooter>
-                    <Button color="secondary" onClick={this.props.closeModal}>
-                        Close
-                    </Button>
-                </ModalFooter>
-            </Modal>
-        );
-    }
-
-    private _renderFound = () => {
-        return (
             <Modal isOpen={this.props.modal} 
                 toggle={this.props.closeModal} 
                 size="lg">
-                <ModalHeader>Details for {this.state.workstation.name}</ModalHeader>
+                <ModalHeader>Details for {this.props.selectedWorkstation.name}</ModalHeader>
                 <ModalBody>
-                    <WorkstationEditValues selectedWorkstation={this.state.workstation} disableEditing={true}/>
+                    <WorkstationEditValues selectedWorkstation={this.props.selectedWorkstation} disableEditing={true}/>
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" onClick={this._revokeWorkstation}>
@@ -104,27 +66,16 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
                         Close
                     </Button>
                 </ModalFooter>
-            </Modal>
+            </Modal>            </div>
         );
     }
 
-    private _loadData = async (id: number) => {
-        this.setState({ loading: true });
-        const workstation =
-            await this.context.fetch(`/api/${this.context.team.name}/workstations/details?id=${id}`);
-        this.setState({ workstation, loading: false });
-    }
-
     private _revokeWorkstation = async () => {
-        if(!this.state.workstation)
+        if(!this.props.selectedWorkstation)
         {
             return null;
         }
-        const removed: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/revoke`, {
-            body: JSON.stringify(this.state.workstation),
-            method: "POST"
-          });
-        this.props.updateCount(this.state.workstation.space.id);
-        this.props.returnToSpaceDetails(this.state.workstation.space.id);
+        await this.props.revokeWorkstation(this.props.selectedWorkstation);
+        this.props.closeModal();
     }
 }

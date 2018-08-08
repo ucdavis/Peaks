@@ -19,8 +19,9 @@ interface IProps {
     goBack: () => void;
     selectedPerson: IPerson;
     tags: string[];
-    workstationAssigned: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
-    workstationRevoked: (type: string, spaceId: number, personId: number) => void;
+    assignedOrCreated: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
+    revokedOrDeleted: (type: string, spaceId: number, personId: number) => void;
+    edited: (type: string, spaceId: number, personId: number) => void;
 }
 
 
@@ -49,8 +50,9 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                         <WorkstationContainer 
                             personId={this.props.selectedPerson.id} 
                             tags={this.props.tags}
-                            workstationAssigned={this.props.workstationAssigned}
-                            workstationRevoked={this.props.workstationRevoked}/>
+                            workstationAssigned={this.props.assignedOrCreated}
+                            workstationRevoked={this.props.revokedOrDeleted}
+                            workstationEdited={this.props.edited}/>
                         <HistoryContainer controller="people" id={this.props.selectedPerson.id} />
                 </div>
                 <hr/>

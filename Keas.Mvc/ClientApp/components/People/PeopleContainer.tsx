@@ -78,7 +78,11 @@ export default class PeopleContainer extends React.Component<{}, IState> {
               <PersonDetails
                 selectedPerson={!!detailPerson ? detailPerson.person : null}
                 tags={this.state.tags}
-                goBack={this._goBack}/>}
+                goBack={this._goBack}
+                assignedOrCreated={this._assetAssigned}
+                revokedOrDeleted={this._assetRevoked}
+                edited={this._assetEdited}
+                />}
         </div>
       </div>
     );
@@ -176,7 +180,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
   }
 
   // managing counts
-  private _workstationAssigned = (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => {
+  private _assetAssigned = (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => {
     const index = this.state.people.findIndex(x => x.id === personId);
     if(index > -1)
     {
@@ -191,12 +195,14 @@ export default class PeopleContainer extends React.Component<{}, IState> {
           case "access":
             people[index].accessCount++;
             break;
+          case "workstation":
+            people[index].workstationCount++
         }
         this.setState({people});
     } 
 }
 
-private _workstationRevoked = (type: string, spaceId: number, personId: number) => {
+private _assetRevoked = (type: string, spaceId: number, personId: number) => {
   const index = this.state.people.findIndex(x => x.id === personId);
   if(index > -1)
   {
@@ -211,9 +217,15 @@ private _workstationRevoked = (type: string, spaceId: number, personId: number) 
         case "access":
           people[index].accessCount--;
           break;
+        case "workstation":
+          people[index].workstationCount--;
       }
       this.setState({people});
   } 
+}
+
+private _assetEdited = (type: string, spaceId: number, personId: number) => {
+  // don't need to edit tags
 }
 
   // tags 
