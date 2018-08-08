@@ -113,32 +113,37 @@ export default class WorkstationContainer extends React.Component<IProps, IState
 
     private _openDetailsModal = (workstation: IWorkstation) => {
         this.context.router.history.push(
-            `../../workstations/details/${workstation.id}`
+            `${this._getBaseUrl()}/workstations/details/${workstation.id}`
         );
     };
     
     private _openEditModal = (workstation: IWorkstation) => {
         this.context.router.history.push(
-            `../../workstations/edit/${workstation.id}`
+            `${this._getBaseUrl()}/workstations/edit/${workstation.id}`
         );
     };
 
     private _openAssignModal = (workstation: IWorkstation) => {
         this.context.router.history.push(
-            `../../workstations/assign/${workstation.id}`
+            `${this._getBaseUrl()}/workstations/assign/${workstation.id}`
         );
     };
 
     private _openCreateModal = () => {
         this.context.router.history.push(
-            `../../workstations/create/${this.props.spaceId}`
+            `${this._getBaseUrl()}/workstations/create/${this.props.spaceId}`
         );
     };
 
     private _openRevokeModal = (workstation: IWorkstation) => {
         this.context.router.history.push(
-            `../../workstations/revoke/${workstation.id}`
+            `${this._getBaseUrl()}/workstations/revoke/${workstation.id}`
         );    
     }
     
+    private _getBaseUrl = () => {
+        return this.props.personId
+          ? `/${this.context.team.name}/people/details/${this.props.personId}`
+          : `/${this.context.team.name}`;
+      };
 }
