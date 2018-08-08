@@ -3,7 +3,7 @@
  word-wrap: break-word;   
 }
 
-.ReactTable .rt-tbody, .ReactTable .rt-table {
+.ReactTable .rt-tbody {
     overflow: visible !important;
 } /* for the actions dropdown menu */
 
