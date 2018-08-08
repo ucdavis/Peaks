@@ -15,7 +15,7 @@ import WorkstationEditValues from "./WorkstationEditValues";
 interface IProps {
     modal: boolean;
     closeModal: () => void;
-    returnToSpaceDetails: (spaceId: number) => void;
+    //returnToSpaceDetails: (spaceId: number) => void;
     workstationId: number;
 }
 
@@ -97,14 +97,14 @@ export default class WorkstationDetails extends React.Component<IProps, IState> 
     private _renderFound = () => {
         return (
             <Modal isOpen={this.props.modal} 
-                toggle={() => this.props.returnToSpaceDetails(this.state.workstation.space.id)} 
+                toggle={() => this.props.closeModal()} 
                 size="lg">
                 <ModalHeader>Details for {this.state.workstation.name}</ModalHeader>
                 <ModalBody>
                     <WorkstationEditValues selectedWorkstation={this.state.workstation} disableEditing={true}/>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={() => this.props.returnToSpaceDetails(this.state.workstation.space.id)}>
+                    <Button color="primary" onClick={() => this.props.closeModal()}>
                         Return To Space
                     </Button>
                     <Button color="secondary" onClick={this.props.closeModal}>

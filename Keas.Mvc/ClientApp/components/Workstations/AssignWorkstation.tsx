@@ -19,10 +19,9 @@ interface IProps {
     modal: boolean;
     closeModal: () => void;
     creating: boolean;
-    returnToSpaceDetails: (spaceId: number) => void;
     spaceId?: number;
     tags: string[];
-    updateCount: (spaceId: number, created: boolean, assigned:boolean) => void;
+    updateCount: (type: string, spaceId: number, personId: number, created: boolean, assigned:boolean) => void;
     workstationId: number;
 }
 
@@ -186,9 +185,6 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
             </div>
           </ModalBody>
                 <ModalFooter>
-                    <Button color="secondary" onClick={() => this.props.returnToSpaceDetails(this.state.workstation.space.id)}>
-                        Return To Space
-                    </Button>
                     <Button color="primary" onClick={this._assignSelected}>
                         Save
                     </Button>
@@ -266,8 +262,10 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
               });
         }
 
-        this.props.updateCount(this.state.workstation.space.id, this.props.creating, !!workstation.assignment);
-        this.props.returnToSpaceDetails(this.state.workstation.space.id);
+        this.props.updateCount("workstation", this.state.workstation.space.id, 
+            !!this.state.workstation.assignment ? this.state.workstation.assignment.person.id : null,
+            this.props.creating, !!workstation.assignment);
+        this.props.closeModal();
       };
       
 

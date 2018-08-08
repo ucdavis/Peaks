@@ -22,6 +22,8 @@ export interface IRouteProps {
   assetType: string;
   personId: string;
   personAction: string;
+  spaceId: string;
+  spaceAction: string;
 }
 
 export interface IUser {

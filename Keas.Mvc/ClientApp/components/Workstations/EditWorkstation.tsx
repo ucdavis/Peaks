@@ -15,10 +15,9 @@ import WorkstationEditValues from "./WorkstationEditValues";
 interface IProps {
     modal: boolean;
     closeModal: () => void;
-    returnToSpaceDetails: (spaceId: number) => void;
     tags: string[];
     workstationId: number;
-    editWorkstation: (spaceId: number) => void;
+    editWorkstation: (type: string, spaceId: number, personId: number) => void;
 }
 
 interface IState{
@@ -115,9 +114,6 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
                         changeProperty={this._changeProperty}/>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="secondary" onClick={() => this.props.returnToSpaceDetails(this.state.workstation.space.id)}>
-                        Return To Space
-                    </Button>
                     <Button color="primary" onClick={this._editSelected}>
                         Save
                     </Button>
@@ -164,9 +160,10 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
             body: JSON.stringify(this.state.workstation),
             method: "POST"
           });
-    
-        this.props.editWorkstation(this.state.workstation.space.id);
-        this.props.returnToSpaceDetails(this.state.workstation.space.id);
+        // send both space and person id so we can use this to update either PeopleTable or SpacesTable
+        this.props.editWorkstation("workstation", this.state.workstation.space.id, 
+            !!this.state.workstation.assignment ? this.state.workstation.assignment.person.id : null);
+        this.props.closeModal();
       };
     
     

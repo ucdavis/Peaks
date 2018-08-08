@@ -3,10 +3,6 @@ import * as React from "react";
 
 import { AppContext, ISpace, ISpaceInfo, IWorkstation } from "../../Types";
 import SearchTags from "../Tags/SearchTags";
-import AssignWorkstation from "../Workstations/AssignWorkstation";
-import EditWorkstation from "../Workstations/EditWorkstation";
-import RevokeWorkstation from "../Workstations/RevokeWorkstation";
-import WorkstationDetails from "../Workstations/WorkstationDetails";
 import SpacesDetails from "./SpacesDetails";
 import SpacesList from "./SpacesList";
 import Denied from "../Shared/Denied";
@@ -53,10 +49,9 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         if(this.state.loading) {
             return <h2>Loading...</h2>;
         }
-        const { action, assetType, id } = this.context.router.route.match.params;
-        const activeSpaceAsset = assetType === "spaces";
+        const { spaceAction, spaceId, assetType, action, id } = this.context.router.route.match.params;
         const activeWorkstationAsset = assetType === "workstations";
-        const selectedId = parseInt(id, 10);
+        const selectedId = parseInt(spaceId, 10);
         const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
         let filteredSpaces = [];
         if(!!this.state.filters && this.state.filters.length > 0)
@@ -72,44 +67,23 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         <div className="card">
             <div className="card-body">
                 <h4 className="card-title"><i className="fas fa-building fa-xs"/> Spaces</h4>
-                <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
-                <SpacesList
-                    spaces={filteredSpaces}
-                    showDetails={this._openDetailsModal} />
-                <SpacesDetails
+                {!spaceAction && !activeWorkstationAsset &&
+                    <div>
+                    <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
+                    <SpacesList
+                        spaces={filteredSpaces}
+                        showDetails={this._openDetailsModal} />
+                    </div>}
+                { spaceAction === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space) &&
+                    <SpacesDetails
                     closeModal={this._closeModals}
-                    modal={activeSpaceAsset && action === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space)}
                     selectedSpace={selectedSpaceInfo ? selectedSpaceInfo.space : null}
-                    />
-                <WorkstationDetails
-                    closeModal={this._closeModals}
-                    returnToSpaceDetails={this._returnToSpaceDetails}
-                    modal={activeWorkstationAsset && action === "details"}
-                    workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null}
-                    />
-                <EditWorkstation
-                    closeModal={this._closeModals}
-                    returnToSpaceDetails={this._returnToSpaceDetails}
                     tags={this.state.tags}
-                    modal={activeWorkstationAsset && action === "edit"}
-                    workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null}
-                    editWorkstation={this._workstationEdited}
-                    />
-                <AssignWorkstation
-                    closeModal={this._closeModals}
-                    updateCount={this._workstationAssigned}
-                    returnToSpaceDetails={this._returnToSpaceDetails}
-                    modal={activeWorkstationAsset && action === "assign" || action ==="create"}
-                    workstationId={activeWorkstationAsset && action === "assign" && Number.isInteger(selectedId) ? selectedId : null}
-                    spaceId={activeWorkstationAsset && action === "create" && Number.isInteger(selectedId) ? selectedId : null}
-                    tags={this.state.tags}
-                    creating={action === "create"} />
-                <RevokeWorkstation
-                    closeModal={this._closeModals}
-                    updateCount={this._workstationRevoked}
-                    returnToSpaceDetails={this._returnToSpaceDetails}
-                    modal={activeWorkstationAsset && action === "revoke"}
-                    workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null} />
+                    workstationAssigned={this._workstationAssigned}
+                    workstationRevoked={this._workstationRevoked}
+                    workstationEdited={this._workstationEdited}
+                    />}
+
                 </div>
             </div>
         );
@@ -125,12 +99,8 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         this.context.router.history.push(`${this._getBaseUrl()}/spaces`);
     };
 
-    private _returnToSpaceDetails = (spaceId: number) => {
-        this.context.router.history.push(`${this._getBaseUrl()}/spaces/details/${spaceId}`);
-    }
-
-    private _workstationAssigned = (spaceId: number, created: boolean, assigned: boolean) => {
-        const index = this.state.spaces.findIndex(x => x.id === spaceId);
+    private _workstationAssigned = (id: number, created: boolean, assigned: boolean) => {
+        const index = this.state.spaces.findIndex(x => x.id === id);
         if(index > -1)
         {
             const spaces = [...this.state.spaces];
@@ -146,8 +116,8 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         } 
     }
 
-    private _workstationRevoked = (spaceId: number) => {
-        const index = this.state.spaces.findIndex(x => x.id === spaceId);
+    private _workstationRevoked = (id: number) => {
+        const index = this.state.spaces.findIndex(x => x.id === id);
         if(index > -1)
         {
             const spaces = [...this.state.spaces];
@@ -156,11 +126,11 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         }     
     }
 
-    private _workstationEdited = async (spaceId: number) => {
-        const index = this.state.spaces.findIndex(x => x.id === spaceId);
+    private _workstationEdited = async (id: number) => {
+        const index = this.state.spaces.findIndex(x => x.id === id);
         if(index > -1 )
         {
-            const tags = await this.context.fetch(`/api/${this.context.team.name}/spaces/getTagsInSpace?spaceId=${spaceId}`);
+            const tags = await this.context.fetch(`/api/${this.context.team.name}/spaces/getTagsInSpace?spaceId=${id}`);
             const spaces = [...this.state.spaces];
             spaces[index].tags = tags;
             this.setState({spaces});  

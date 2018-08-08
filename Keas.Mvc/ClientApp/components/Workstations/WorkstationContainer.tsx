@@ -3,11 +3,19 @@ import * as React from "react";
 import { NavLink, Redirect } from "react-router-dom";
 import { Button } from "reactstrap";
 import { AppContext, IWorkstation } from "../../Types";
+import AssignWorkstation from "../Workstations/AssignWorkstation";
+import EditWorkstation from "../Workstations/EditWorkstation";
+import RevokeWorkstation from "../Workstations/RevokeWorkstation";
+import WorkstationDetails from "../Workstations/WorkstationDetails";
 import WorkstationList from "./../Workstations/WorkstationList";
 
 interface IProps {
     spaceId?: number;
     personId?: number;
+    tags: string[];
+    workstationAssigned: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
+    workstationRevoked: (type: string, spaceId: number, personId: number) => void;
+    workstationEdited: (type: string, spaceId: number, personId: number) => void; 
 }
 
 interface IState {
@@ -71,22 +79,13 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     }
 
     private _renderPersonView = () => {
+
         return(
         <div className="card">
             <div className="card-body">
-                <h4 className="card-title"><i className="fas fa-user fa-xs"/> Workstations</h4>
-                {this.state.workstations.length > 0 ? 
-                    <WorkstationList 
-                            workstations={this.state.workstations} 
-                            showDetails={this._openDetailsModal}
-                            onEdit={this._openEditModal}
-                            onAdd={this._openAssignModal} 
-                            onCreate={this._openCreateModal}
-                            onRevoke={this._openRevokeModal}/> : "No Workstations"}
-                    <Button color="danger" onClick={() => this._openCreateModal()}>
-                        Add Workstation
-                    </Button>
-                </div>
+            <h4 className="card-title"><i className="fas fa-user fa-xs"/> Workstations</h4>
+                {this._renderWorkstations()}
+            </div>
             </div>);
     }
 
@@ -94,21 +93,57 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         return(
         <div className="form-group">
             <h5><i className="fas fa-key fa-xs"/> Workstations</h5>
+            {this._renderWorkstations()}
+        </div>
+            );
+    }
+
+    private _renderWorkstations = () => {
+        const { action, assetType, id } = this.context.router.route.match.params;
+        const activeAsset = assetType === "workstations";
+        const selectedId = parseInt(id, 10);
+        const selectedSpaceInfo = this.state.workstations.find(k => k.id === selectedId);
+
+        return(
             <div>
             {this.state.workstations.length > 0 ? 
                 <WorkstationList 
-                    workstations={this.state.workstations} 
-                    showDetails={this._openDetailsModal}
-                    onEdit={this._openEditModal}
-                    onAdd={this._openAssignModal} 
-                    onCreate={this._openCreateModal}
-                    onRevoke={this._openRevokeModal}/> : "No Workstations"}
-                    </div>
-                    <Button color="danger" onClick={() => this._openCreateModal()}>
-                        Add Workstation
-                    </Button>
-        </div>
-            );
+                        workstations={this.state.workstations} 
+                        showDetails={this._openDetailsModal}
+                        onEdit={this._openEditModal}
+                        onAdd={this._openAssignModal} 
+                        onCreate={this._openCreateModal}
+                        onRevoke={this._openRevokeModal}/> : <div>No Workstations</div>}
+                <Button color="danger" onClick={() => this._openCreateModal()}>
+                    Add Workstation
+                </Button>
+                <WorkstationDetails
+                    closeModal={this._closeModals}
+                    modal={activeAsset && action === "details"}
+                    workstationId={activeAsset && Number.isInteger(selectedId) ? selectedId : null}
+                    />
+                <EditWorkstation
+                    closeModal={this._closeModals}
+                    tags={this.props.tags}
+                    modal={activeAsset && action === "edit"}
+                    workstationId={activeAsset && Number.isInteger(selectedId) ? selectedId : null}
+                    editWorkstation={this.props.workstationEdited}
+                    />
+                <AssignWorkstation
+                    closeModal={this._closeModals}
+                    updateCount={this.props.workstationAssigned}
+                    modal={activeAsset && action === "assign" || action ==="create"}
+                    workstationId={activeAsset && action === "assign" && Number.isInteger(selectedId) ? selectedId : null}
+                    spaceId={activeAsset && action === "create" && Number.isInteger(selectedId) ? selectedId : null}
+                    tags={this.props.tags}
+                    creating={action === "create"} />
+                <RevokeWorkstation
+                    closeModal={this._closeModals}
+                    updateCount={this.props.workstationRevoked}
+                    modal={activeAsset && action === "revoke"}
+                    workstationId={activeAsset && Number.isInteger(selectedId) ? selectedId : null} />
+            </div>
+        );
     }
 
     private _openDetailsModal = (workstation: IWorkstation) => {
@@ -140,10 +175,21 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             `${this._getBaseUrl()}/workstations/revoke/${workstation.id}`
         );    
     }
+
+    private _closeModals = () => {
+        if(!!this.props.personId && !this.props.spaceId)
+        {
+            this.context.router.history.push(`${this._getBaseUrl()}/people`);
+        }
+        else if(!this.props.personId && !!this.props.spaceId)
+        {
+            this.context.router.history.push(`${this._getBaseUrl()}/spaces`);
+        }
+    };
     
     private _getBaseUrl = () => {
         return this.props.personId
           ? `/${this.context.team.name}/people/details/${this.props.personId}`
-          : `/${this.context.team.name}`;
+          : `/${this.context.team.name}/spaces/details/${this.props.spaceId}`;
       };
 }

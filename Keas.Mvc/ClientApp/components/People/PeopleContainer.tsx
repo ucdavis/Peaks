@@ -65,17 +65,20 @@ export default class PeopleContainer extends React.Component<{}, IState> {
       <div className="card">
         <div className="card-body">
           <h4 className="card-title"><i className="fas fa-users fa-xs"/> People</h4>
-          <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
-          <PeopleTable
-            people={filteredPeople}
-            showDetails={this._openDetailsModal}
-            onEdit={this._openEditModal}
+          {!personAction && 
+          <div>
+            <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
+            <PeopleTable
+              people={filteredPeople}
+              showDetails={this._openDetailsModal}
+              onEdit={this._openEditModal}
             />
-            <PersonDetails
-              selectedPerson={!!detailPerson ? detailPerson.person : null}
-              modal={personAction === "details" && !!detailPerson && !!detailPerson.person}
-              closeModal={this._closeModals}
-            />
+            </div>}
+            {personAction === "details" && !!detailPerson && !!detailPerson.person &&
+              <PersonDetails
+                selectedPerson={!!detailPerson ? detailPerson.person : null}
+                tags={this.state.tags}
+                goBack={this._goBack}/>}
         </div>
       </div>
     );
@@ -172,6 +175,48 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     // }); 
   }
 
+  // managing counts
+  private _workstationAssigned = (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => {
+    const index = this.state.people.findIndex(x => x.id === personId);
+    if(index > -1)
+    {
+        const people = [...this.state.people];
+        switch(type) {
+          case "equipment": 
+            people[index].equipmentCount++;
+            break;
+          case "key":
+            people[index].keyCount++;
+            break;
+          case "access":
+            people[index].accessCount++;
+            break;
+        }
+        this.setState({people});
+    } 
+}
+
+private _workstationRevoked = (type: string, spaceId: number, personId: number) => {
+  const index = this.state.people.findIndex(x => x.id === personId);
+  if(index > -1)
+  {
+      const people = [...this.state.people];
+      switch(type) {
+        case "equipment": 
+          people[index].equipmentCount--;
+          break;
+        case "key":
+          people[index].keyCount--;
+          break;
+        case "access":
+          people[index].accessCount--;
+          break;
+      }
+      this.setState({people});
+  } 
+}
+
+  // tags 
   private _filterTags = (filters: string[]) => {
     this.setState({filters: filters});
 }
@@ -180,6 +225,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     return filters.every(f => person.tags.includes(f));
   }
 
+  // controls for modal opening to manage people
   private _openAssignModal = (person: IPerson) => {
     this.context.router.history.push(
       `${this._getBaseUrl()}/people/assign/${person.id}`
@@ -201,7 +247,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
       `${this._getBaseUrl()}/people/edit/${equipment.id}`
     );
   }
-  private _closeModals = () => {
+  private _goBack = () => {
     this.context.router.history.push(`${this._getBaseUrl()}/people`);
   };
 
