@@ -79,9 +79,9 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                     closeModal={this._closeModals}
                     selectedSpace={selectedSpaceInfo ? selectedSpaceInfo.space : null}
                     tags={this.state.tags}
-                    workstationAssigned={this._workstationAssigned}
-                    workstationRevoked={this._workstationRevoked}
-                    workstationEdited={this._workstationEdited}
+                    assignedOrCreated={this._assetAssignedOrCreated}
+                    revokedOrDeleted={this._assetRevokedOrDeleted}
+                    edited={this._assetEdited}
                     />}
 
                 </div>
@@ -99,38 +99,57 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         this.context.router.history.push(`${this._getBaseUrl()}/spaces`);
     };
 
-    private _workstationAssigned = (id: number, created: boolean, assigned: boolean) => {
-        const index = this.state.spaces.findIndex(x => x.id === id);
+      // managing counts
+    private _assetAssignedOrCreated = (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => {
+        const index = this.state.spaces.findIndex(x => x.id === spaceId);
         if(index > -1)
         {
             const spaces = [...this.state.spaces];
-            if(created)
-            {
-                spaces[index].workstationsTotal++;
-            }
-            if(assigned)
-            {
-                spaces[index].workstationsInUse++;
+            switch(type) {
+            case "equipment": 
+                spaces[index].equipmentCount++;
+                break;
+            case "key":
+                spaces[index].keyCount++;
+                break;
+            case "workstation":
+                if(created) {
+                    spaces[index].workstationsTotal++;
+                }
+                if(assigned)
+                {
+                    spaces[index].workstationsInUse++;
+                }
             }
             this.setState({spaces});
         } 
     }
 
-    private _workstationRevoked = (id: number) => {
-        const index = this.state.spaces.findIndex(x => x.id === id);
-        if(index > -1)
-        {
-            const spaces = [...this.state.spaces];
+    private _assetRevokedOrDeleted = (type: string, spaceId: number, personId: number) => {
+    const index = this.state.spaces.findIndex(x => x.id === spaceId);
+    if(index > -1)
+    {
+        // TODO: add flag for deleting and also edit workstationsTotal
+        const spaces = [...this.state.spaces];
+        switch(type) {
+            case "equipment": 
+            spaces[index].equipmentCount--;
+            break;
+            case "key":
+            spaces[index].keyCount--;
+            break;
+            case "workstation":
             spaces[index].workstationsInUse--;
-            this.setState({spaces});
-        }     
+        }
+        this.setState({spaces});
+    } 
     }
 
-    private _workstationEdited = async (id: number) => {
-        const index = this.state.spaces.findIndex(x => x.id === id);
+    private _assetEdited = async (type: string, spaceId: number, personId: number) => {
+        const index = this.state.spaces.findIndex(x => x.id === spaceId);
         if(index > -1 )
         {
-            const tags = await this.context.fetch(`/api/${this.context.team.name}/spaces/getTagsInSpace?spaceId=${id}`);
+            const tags = await this.context.fetch(`/api/${this.context.team.name}/spaces/getTagsInSpace?spaceId=${spaceId}`);
             const spaces = [...this.state.spaces];
             spaces[index].tags = tags;
             this.setState({spaces});  

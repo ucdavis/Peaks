@@ -41,7 +41,7 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
     }
 
     public render() {
-        if (!this.props.selectedWorkstation) 
+        if (!this.props.selectedWorkstation || !this.props.selectedWorkstation.assignment) 
         {
             return null;
         }
@@ -75,7 +75,7 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
         {
             return null;
         }
-        await this.props.revokeWorkstation(this.props.selectedWorkstation);
+        this.props.revokeWorkstation(this.props.selectedWorkstation);
         this.props.closeModal();
     }
 }

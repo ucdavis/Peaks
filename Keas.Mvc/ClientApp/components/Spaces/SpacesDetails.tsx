@@ -19,9 +19,9 @@ import SpacesDetailsKeys from "./SpacesDetailsKeys";
 interface IProps {
     closeModal: () => void;
     selectedSpace: ISpace;
-    workstationAssigned: (id: number, created: boolean, assigned: boolean) => void;
-    workstationRevoked: (id: number) => void;
-    workstationEdited: (id: number) => void;
+    assignedOrCreated: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
+    revokedOrDeleted: (type: string, spaceId: number, personId: number) => void;
+    edited: (type: string, spaceId: number, personId: number) => void;
     tags: string[];
 }
 
@@ -53,9 +53,9 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                     <WorkstationContainer 
                         spaceId={this.props.selectedSpace.id} 
                         tags={this.props.tags}
-                        workstationAssigned={this.props.workstationAssigned}
-                        workstationEdited={this.props.workstationEdited}
-                        workstationRevoked={this.props.workstationRevoked}
+                        workstationAssigned={this.props.assignedOrCreated}
+                        workstationEdited={this.props.edited}
+                        workstationRevoked={this.props.revokedOrDeleted}
                     />
                 </div>
                 <hr/>

@@ -150,6 +150,9 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         workstation: IWorkstation,
         date: any
       ) => {
+        let created = false;
+        let assigned = false;
+        
         // call API to create a workstation, then assign it if there is a person to assign to
         // if we are creating a new workstation
         if (workstation.id === 0) {
@@ -158,6 +161,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             body: JSON.stringify(workstation),
             method: "POST"
           });
+          created = true;
         }
     
         // if we know who to assign it to, do it now
@@ -170,6 +174,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             method: "POST"
           });
           workstation.assignment.person = person;
+          assigned = true;
         }
     
         const index = this.state.workstations.findIndex(x => x.id === workstation.id);
@@ -187,11 +192,13 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             workstations: [...this.state.workstations, workstation]
           });
         }
+        this.props.workstationAssigned("workstation", workstation.space.id, person ? person.id : null, created, assigned);
+
       };
     
-      private _revokeWorkstation = async (workstation: IWorkstation) => {
+      private _revokeWorkstation = (workstation: IWorkstation) => {
         // call API to actually revoke
-        const removed: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/revoke`, {
+        const removed: IWorkstation = this.context.fetch(`/api/${this.context.team.name}/workstations/revoke`, {
           body: JSON.stringify(workstation),
           method: "POST"
         });
@@ -208,6 +215,8 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             shallowCopy.splice(index, 1);
           }
           this.setState({ workstations: shallowCopy });
+
+          this.props.workstationRevoked("workstation", this.props.spaceId, this.props.personId);
         }
       };
     
@@ -235,6 +244,8 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           ...this.state,
           workstations: updateWorkstation
         }); 
+
+        this.props.workstationEdited("workstation", workstation.space.id, !!workstation.assignment ? workstation.assignment.person.id : null);
       }
 
     private _openDetailsModal = (workstation: IWorkstation) => {
