@@ -42,7 +42,12 @@ module.exports = env => {
             include: /ClientApp/,
             use: "awesome-typescript-loader?silent=true"
           },
-          { test: /\.css$/, use: isDevBuild ? ['style-loader', cssLoader] : ExtractTextPlugin.extract({ use: cssLoader }) },
+          {
+            test: /\.css$/,
+            use: isDevBuild
+              ? ["style-loader", "css-loader"]
+              : ExtractTextPlugin.extract({ use: "css-loader?minimize" })
+          }, 
           { test: /\.scss$/, use: isDevBuild ? ['style-loader', 'css-loader', 'sass-loader'] : ExtractTextPlugin.extract({ use: ['css-loader', 'sass-loader'] }) },
           { test: /\.(png|jpg|jpeg|gif|svg)$/, use: "url-loader?limit=25000" }
         ]
