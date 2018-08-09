@@ -46,7 +46,11 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                         <BioContainer person={this.props.selectedPerson} />
                         <KeyContainer person={this.props.selectedPerson} />
                         <EquipmentContainer person={this.props.selectedPerson} />
-                        <AccessContainer person={this.props.selectedPerson} />
+                        <AccessContainer person={this.props.selectedPerson} 
+                            accessAssigned={this.props.assignedOrCreated}
+                            accessRevoked={this.props.revokedOrDeleted}
+                            accessEdited={this.props.edited}/>
+                        />
                         <WorkstationContainer 
                             person={this.props.selectedPerson} 
                             tags={this.props.tags}
