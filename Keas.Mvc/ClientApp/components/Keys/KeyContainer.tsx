@@ -41,9 +41,15 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   }
   public async componentDidMount() {
     // are we getting the person's key or the team's?
-    const keyFetchUrl = this.props.person
-      ? `/api/${this.context.team.name}/keys/listassigned?personid=${this.props.person.id}`
-      : `/api/${this.context.team.name}/keys/list/`;
+    let keyFetchUrl =  "";
+    if(!!this.props.person)
+    {
+      keyFetchUrl = `/api/${this.context.team.name}/keys/listassigned?personid=${this.props.person.id}`;
+    } else if(!!this.props.spaceId) {
+      keyFetchUrl = `/api/${this.context.team.name}/keys/getEquipmentInSpace?spaceId=${this.props.spaceId}`;
+    } else {
+      keyFetchUrl = `/api/${this.context.team.name}/keys/list/`;
+    }
 
     const keys = await this.context.fetch(keyFetchUrl);
     this.setState({ keys, loading: false });

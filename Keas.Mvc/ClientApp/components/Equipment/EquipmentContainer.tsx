@@ -51,9 +51,15 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   }
   public async componentDidMount() {
     // are we getting the person's equipment or the team's?
-    const equipmentFetchUrl = this.props.person
-      ? `/api/${this.context.team.name}/equipment/listassigned?personid=${this.props.person.id}`
-      : `/api/${this.context.team.name}/equipment/list/`;
+    let equipmentFetchUrl =  "";
+    if(!!this.props.person)
+    {
+      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/listassigned?personid=${this.props.person.id}`;
+    } else if(!!this.props.spaceId) {
+      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/getEquipmentInSpace?spaceId=${this.props.spaceId}`;
+    } else {
+      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/list/`;
+    }
 
     const attrFetchUrl = `/api/${this.context.team.name}/equipment/commonAttributeKeys/`;
 
