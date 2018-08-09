@@ -46,7 +46,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     {
       keyFetchUrl = `/api/${this.context.team.name}/keys/listassigned?personid=${this.props.person.id}`;
     } else if(!!this.props.spaceId) {
-      keyFetchUrl = `/api/${this.context.team.name}/keys/getEquipmentInSpace?spaceId=${this.props.spaceId}`;
+      keyFetchUrl = `/api/${this.context.team.name}/keys/getKeysInSpace?spaceId=${this.props.spaceId}`;
     } else {
       keyFetchUrl = `/api/${this.context.team.name}/keys/list/`;
     }
