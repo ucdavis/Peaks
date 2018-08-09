@@ -14,6 +14,7 @@ import { AppContext, ISpace } from "../../Types";
 import EquipmentContainer from "../Equipment/EquipmentContainer";
 import KeyContainer from "../Keys/KeyContainer";
 import WorkstationContainer from "../Workstations/WorkstationContainer";
+import SpaceDetailContainer from "./SpaceDetailContainer";
 
 interface IProps {
     closeModal: () => void;
@@ -40,13 +41,9 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                     </Button>
                 </div>
                 <hr />
-                <h5>Details for {this.props.selectedSpace.roomNumber} {this.props.selectedSpace.bldgName}</h5>
                 <div>
                     {this.props.selectedSpace.roomName &&
-                        <div className="form-group">
-                        <h5>Room Name</h5>
-                        {this.props.selectedSpace.roomName}
-                        </div>}
+                    <SpaceDetailContainer space={this.props.selectedSpace}/>}
                     <KeyContainer spaceId={this.props.selectedSpace.id}
                         keyAssigned={this.props.assignedOrCreated}
                         keyEdited={this.props.edited}

@@ -41,7 +41,6 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                     </Button>
                 </div>
                 <hr />
-                <h5>Details for {this.props.selectedPerson.user.name} </h5>
                 <div>
                         <BioContainer person={this.props.selectedPerson} />
                         <KeyContainer person={this.props.selectedPerson}
