@@ -187,7 +187,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
     };
 
     private _filterTags = (filters: string[]) => {
-        this.setState({filters});
+        this.setState({tagFilters: filters});
     }
 
     private _checkFilters = (space: ISpaceInfo, filters: string[]) => {
