@@ -22,7 +22,11 @@ interface IState {
 }
 
 interface IProps {
+  equipmentAssigned?: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
+  equipmentRevoked?: (type: string, spaceId: number, personId: number) => void;
+  equipmentEdited?: (type: string, spaceId: number, personId: number) => void; 
   person?: IPerson;
+  spaceId?: number;
 }
 
 export default class EquipmentContainer extends React.Component<IProps, IState> {
@@ -155,6 +159,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     equipment: IEquipment,
     date: any
   ) => {
+    let created = false;
+    let assigned = false;
+
     const attributes = equipment.attributes;
     // call API to create a equipment, then assign it if there is a person to assign to
     // if we are creating a new equipment
@@ -165,6 +172,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         method: "POST"
       });
       equipment.attributes = attributes;
+      created = true;
     }
 
     // if we know who to assign it to, do it now
@@ -178,6 +186,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       });
       equipment.attributes = attributes;
       equipment.assignment.person = person;
+      assigned = true;
     }
 
     const index = this.state.equipment.findIndex(x => x.id === equipment.id);
@@ -194,6 +203,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       this.setState({
         equipment: [...this.state.equipment, equipment]
       });
+    }
+
+    if(!!this.props.equipmentAssigned)
+    {
+        this.props.equipmentAssigned("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
     }
   };
 
@@ -216,6 +230,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         shallowCopy.splice(index, 1);
       }
       this.setState({ equipment: shallowCopy });
+      if(!!this.props.equipmentRevoked)
+      {
+          this.props.equipmentRevoked("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null);
+      }
     }
   };
 
@@ -243,6 +261,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       ...this.state,
       equipment: updateEquipment
     }); 
+
+    if(!!this.props.equipmentEdited)
+    {
+        this.props.equipmentEdited("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null);
+    }
   }
 
   private _filterTags = (filters: string[]) => {

@@ -16,7 +16,11 @@ interface IState {
 }
 
 interface IProps {
+  keyAssigned?: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
+  keyRevoked?: (type: string, spaceId: number, personId: number) => void;
+  keyEdited?: (type: string, spaceId: number, personId: number) => void; 
   person?: IPerson;
+  spaceId?: number;
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
@@ -99,6 +103,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     key: IKey,
     date: any
   ) => {
+    let created = false;
+    let assigned = false;
     // call API to create a key, then assign it if there is a person to assign to
     // if we are creating a new key
     if (key.id === 0) {
@@ -107,6 +113,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         body: JSON.stringify(key),
         method: "POST"
       });
+      created = true;
     }
 
     // if we know who to assign it to, do it now
@@ -119,6 +126,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         method: "POST"
       });
       key.assignment.person = person;
+      assigned = true;
     }
 
     const index = this.state.keys.findIndex(x => x.id === key.id);
@@ -135,6 +143,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       this.setState({
         keys: [...this.state.keys, key]
       });
+    }
+    if(!!this.props.keyAssigned)
+    {
+        this.props.keyAssigned("key", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
     }
   };
 
@@ -157,7 +169,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         shallowCopy.splice(index, 1);
       }
       this.setState({ keys: shallowCopy });
-    }
+
+      if(!!this.props.keyRevoked)
+      {
+        this.props.keyRevoked("key", this.props.spaceId, this.props.person ? this.props.person.id : null);
+      }    }
   };
 
   private _editKey = async (key: IKey) =>
@@ -182,6 +198,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       ...this.state,
       keys: updateKey
     }); 
+
+    if(!!this.props.keyEdited)
+    {
+      this.props.keyEdited("key", this.props.spaceId, this.props.person ? this.props.person.id : null);
+    }
   }
 
   private _openAssignModal = (key: IKey) => {
