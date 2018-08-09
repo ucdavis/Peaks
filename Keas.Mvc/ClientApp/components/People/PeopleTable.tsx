@@ -6,11 +6,13 @@ import { IPerson, IPersonInfo } from "../../Types";
 import ListActionsDropdown from "../ListActionsDropdown";
 
 interface IProps {
+    filtered: any[];
     people: IPersonInfo[];
     onRevoke?: (equipment: IPerson) => void;
     onAdd?: (equipment: IPerson) => void;
     showDetails?: (equipment: IPerson) => void;
     onEdit?: (equipment: IPerson) => void;
+    updateFilters: (filters: any[]) => void;
 }
 
 export default class PeopleTable extends React.Component<IProps, {}> {
@@ -19,6 +21,8 @@ export default class PeopleTable extends React.Component<IProps, {}> {
         <ReactTable
         data={this.props.people}
         filterable={true}
+        filtered={this.props.filtered}
+        onFilteredChange={filtered => this.props.updateFilters(filtered)}
         minRows={1}
         columns = {[
             {
@@ -38,6 +42,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             {
                 Header: "Keys",
                 accessor: "keyCount",
+                filterable: false,
                 headerClassName: "table-10p",
                 className: "table-10p",
                 Cell: row => (
@@ -47,6 +52,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             {
                 Header: "Equipment",
                 accessor: "equipmentCount",
+                filterable: false,
                 headerClassName: "table-10p",
                 className: "table-10p",
                 Cell: row => (
@@ -56,6 +62,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             {
                 Header: "Accesses",
                 accessor: "accessCount",
+                filterable: false,
                 headerClassName: "table-10p",
                 className: "table-10p",
                 Cell: row => (
@@ -65,6 +72,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             {
                 Header: "Workstations",
                 accessor: "workstationCount",
+                filterable: false,
                 headerClassName: "table-10p",
                 className: "table-10p",
                 Cell: row => (
