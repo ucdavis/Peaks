@@ -93,7 +93,7 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                     <ListActionsDropdown
                         onRevoke={!!this.props.onRevoke && !!row.original.assignment ? 
                         () => this.props.onRevoke(row.original) : null}
-                        onAdd={!!this.props.onAdd && !row.assignment ? 
+                        onAdd={!!this.props.onAdd && !row.original.assignment ? 
                         () => this.props.onAdd(row.original) : null}
                         showDetails={!!this.props.showDetails ? 
                         () => this.props.showDetails(row.original) : null}
