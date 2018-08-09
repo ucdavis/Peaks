@@ -4,7 +4,7 @@ import * as React from "react";
 import { AppContext, ISpace, ISpaceInfo, IWorkstation } from "../../Types";
 import SearchTags from "../Tags/SearchTags";
 import SpacesDetails from "./SpacesDetails";
-import SpacesList from "./SpacesList";
+import SpacesTable from "./SpacesTable";
 import Denied from "../Shared/Denied";
 import { PermissionsUtil } from "../../util/permissions"; 
 
@@ -87,7 +87,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         return (
             <div>
             <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
-            <SpacesList
+            <SpacesTable
                 spaces={filteredSpaces}
                 showDetails={this._openDetailsModal} 
                 filtered={this.state.tableFilters}

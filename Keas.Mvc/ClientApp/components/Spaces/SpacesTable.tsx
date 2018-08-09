@@ -12,7 +12,7 @@ interface IProps {
     updateFilters: (filters: any[]) => void;
 }
 
-export default class SpacesList extends React.Component<IProps, {}> {
+export default class SpacesTable extends React.Component<IProps, {}> {
     constructor(props) {
         super(props);
 
