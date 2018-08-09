@@ -83,7 +83,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                 <div className="form-group">
                   <label htmlFor="assignto">Assign To</label>
                   <AssignPerson
-                    person={this.state.person}
+                    person={this.props.person || this.state.person}
                     onSelect={this._onSelectPerson}
                   />
                 </div>
@@ -102,7 +102,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                       />
                   }
 
-                {(!!this.state.person) && (
+                {(!!this.state.person || !!this.props.person) && (
                   <div className="form-group">
                     <label>Set the expiration date</label>
                     <DatePicker
@@ -136,7 +136,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         ...this.state.workstation,
         [property]: value
       }
-    });
+    }, this._validateState);
   };
 
   // clear everything out on close
@@ -218,7 +218,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
     if (m.isValid()) {
       this._changeDate(m);
     } else {
-      this.setState({ date: null, error: "Please enter a valid date" });
+      this.setState({ date: null, error: "Please enter a valid date" }, this._validateState);
     }
   };
 }
