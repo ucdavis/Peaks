@@ -105,6 +105,11 @@ namespace Keas.Mvc.Controllers.Api
                     var space = await _context.Spaces.SingleAsync(s => s.RoomKey == workstation.Space.RoomKey);
                     workstation.Space = space;
                 }
+                if(workstation.Space == null)
+                {
+                    var space = await _context.Spaces.SingleAsync(s => s.RoomKey == "01");
+                    workstation.Space = space;
+                }
                 _context.Workstations.Add(workstation);
                 await _eventService.TrackCreateWorkstation(workstation);
                 await _context.SaveChangesAsync();
