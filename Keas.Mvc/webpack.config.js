@@ -6,11 +6,20 @@ const bundleOutputDir = "./wwwroot/dist";
 
 module.exports = env => {
   const isDevBuild = !(env && env.prod);
+  const cssLoader = {
+    loader: 'css-loader',
+    options: {
+      modules: true,
+      importLoaders: 1,
+      localIdentName: '[name]__[local]___[hash:base64:5]',
+      sourceMap: true
+    }
+  };
   return [
     {
       stats: { modules: false },
       entry: {
-        // main: "./ClientApp/boot.tsx",
+        root: "./ClientApp/root.tsx",
         asset: "./ClientApp/pages/assets/boot.tsx",
         vendor: [
           "event-source-polyfill",
@@ -24,7 +33,7 @@ module.exports = env => {
       output: {
         path: path.join(__dirname, bundleOutputDir),
         filename: "[name].js",
-        publicPath: "/"
+        publicPath: "/dist/"
       },
       module: {
         rules: [
@@ -33,12 +42,8 @@ module.exports = env => {
             include: /ClientApp/,
             use: "awesome-typescript-loader?silent=true"
           },
-          {
-            test: /\.css$/,
-            use: isDevBuild
-              ? ["style-loader", "css-loader"]
-              : ExtractTextPlugin.extract({ use: "css-loader?minimize" })
-          },
+          { test: /\.css$/, use: isDevBuild ? ['style-loader', cssLoader] : ExtractTextPlugin.extract({ use: cssLoader }) },
+          { test: /\.scss$/, use: isDevBuild ? ['style-loader', 'css-loader', 'sass-loader'] : ExtractTextPlugin.extract({ use: ['css-loader', 'sass-loader'] }) },
           { test: /\.(png|jpg|jpeg|gif|svg)$/, use: "url-loader?limit=25000" }
         ]
       },
@@ -48,7 +53,7 @@ module.exports = env => {
           "process.env.NODE_ENV": isDevBuild ? '"development"' : '"production"'
         }),
         new webpack.optimize.CommonsChunkPlugin({
-          name: "vendor",
+          name: ["vendor", "root"],
           minChunks: Infinity
         })
       ].concat(
@@ -66,7 +71,7 @@ module.exports = env => {
           : [
               // Plugins that apply in production builds only
               new webpack.optimize.UglifyJsPlugin(),
-              new ExtractTextPlugin("site.css")
+              new ExtractTextPlugin({ filename: '[name].css', allChunks: true })
             ]
       )
     }

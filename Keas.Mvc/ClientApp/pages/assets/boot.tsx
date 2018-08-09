@@ -8,8 +8,6 @@ import * as RoutesModule from "./routes";
 
 const routes = RoutesModule.routes;
 
-import "../../css/site.css";
-
 declare var window: any;
 
 function renderApp() {
