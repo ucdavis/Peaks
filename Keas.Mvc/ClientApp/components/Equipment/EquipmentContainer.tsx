@@ -318,8 +318,15 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   };
 
   private _getBaseUrl = () => {
-    return this.props.person
-      ? `/${this.context.team.name}/people/details/${this.props.person.id}`
-      : `/${this.context.team.name}`;
+    if(!!this.props.person)
+    {
+      return `/${this.context.team.name}/people/details/${this.props.person.id}`;
+    } else if(!!this.props.spaceId)
+    {
+      return `/${this.context.team.name}/spaces/details/${this.props.spaceId}`;
+    } else {
+      return `/${this.context.team.name}`;
+    }
+    
   };
 }
