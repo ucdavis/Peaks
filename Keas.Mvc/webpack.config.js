@@ -10,7 +10,7 @@ module.exports = env => {
     {
       stats: { modules: false },
       entry: {
-        main: "./ClientApp/boot.tsx",
+        // main: "./ClientApp/boot.tsx",
         asset: "./ClientApp/pages/assets/boot.tsx",
         vendor: [
           "event-source-polyfill",
