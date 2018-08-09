@@ -6,17 +6,28 @@ import { Button } from "reactstrap";
 import { ISpace, ISpaceInfo } from "../../Types";
 
 interface IProps {
+    filtered: any[];
     spaces: ISpaceInfo[];
     showDetails: (space: ISpace) => void;
+    updateFilters: (filters: any[]) => void;
 }
 
 export default class SpacesList extends React.Component<IProps, {}> {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            filtered: []
+        };
+    }
     public render() {
         return (
             <ReactTable
                 data={this.props.spaces}
                 filterable={true}
                 minRows={1}
+                filtered={this.props.filtered}
+                onFilteredChange={filtered => this.props.updateFilters(filtered)}
                 columns = {[
                     {
                         Header: "Room",
@@ -45,6 +56,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         accessor: "keyCount",
                         headerClassName: "table-10p",
                         className: "table-10p",
+                        filterable: false,
                         Cell: row => (
                             <span><i className="fas fa-key"></i> {row.original.keyCount}</span>
                         ),
@@ -54,6 +66,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         accessor: "equipmentCount",
                         headerClassName: "table-10p",
                         className: "table-10p",
+                        filterable: false,
                         Cell: row => (
                             <span><i className="fas fa-laptop"></i> {row.original.equipmentCount}</span>
                         ),                    
@@ -62,6 +75,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         Header: "Workstations",
                         headerClassName: "table-10p",
                         className: "table-10p",
+                        filterable: false,
                         filterMethod: (filter, row) => {
                             if( filter.value === "all") {
                                 return true;

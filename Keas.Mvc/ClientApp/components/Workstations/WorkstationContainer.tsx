@@ -192,13 +192,13 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             workstations: [...this.state.workstations, workstation]
           });
         }
-        this.props.workstationAssigned("workstation", workstation.space.id, person ? person.id : null, created, assigned);
+        this.props.workstationAssigned("workstation", this.props.spaceId, this.props.personId, created, assigned);
 
       };
     
-      private _revokeWorkstation = (workstation: IWorkstation) => {
+      private _revokeWorkstation = async (workstation: IWorkstation) => {
         // call API to actually revoke
-        const removed: IWorkstation = this.context.fetch(`/api/${this.context.team.name}/workstations/revoke`, {
+        const removed: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/revoke`, {
           body: JSON.stringify(workstation),
           method: "POST"
         });
@@ -245,7 +245,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           workstations: updateWorkstation
         }); 
 
-        this.props.workstationEdited("workstation", workstation.space.id, !!workstation.assignment ? workstation.assignment.person.id : null);
+        this.props.workstationEdited("workstation", this.props.spaceId, this.props.personId);
       }
 
     private _openDetailsModal = (workstation: IWorkstation) => {

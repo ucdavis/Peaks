@@ -75,7 +75,7 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
         {
             return null;
         }
-        this.props.revokeWorkstation(this.props.selectedWorkstation);
+        await this.props.revokeWorkstation(this.props.selectedWorkstation);
         this.props.closeModal();
     }
 }

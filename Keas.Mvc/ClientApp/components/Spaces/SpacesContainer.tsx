@@ -10,8 +10,9 @@ import { PermissionsUtil } from "../../util/permissions";
 
 interface IState {
     spaces: ISpaceInfo[];
-    filters: string[];
     loading: boolean;
+    tableFilters: any[]; // object containing filters on table
+    tagFilters: string[];
     tags: string[];
 }
 export default class SpacesContainer extends React.Component<{}, IState> {
@@ -26,10 +27,11 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         super(props);
 
         this.state = {
-            filters: [],
             loading: true,
             spaces: [],
-            tags: []
+            tableFilters: [],
+            tagFilters: [],
+            tags: [],
         };
     }
 
@@ -54,9 +56,9 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         const selectedId = parseInt(spaceId, 10);
         const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
         let filteredSpaces = [];
-        if(!!this.state.filters && this.state.filters.length > 0)
+        if(!!this.state.tagFilters && this.state.tagFilters.length > 0)
         {
-            filteredSpaces = this.state.spaces.filter(x => this._checkFilters(x, this.state.filters));
+            filteredSpaces = this.state.spaces.filter(x => this._checkFilters(x, this.state.tagFilters));
         }
         else 
         {
@@ -69,10 +71,13 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                 <h4 className="card-title"><i className="fas fa-building fa-xs"/> Spaces</h4>
                 {!spaceAction && !activeWorkstationAsset &&
                     <div>
-                    <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
+                    <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
                     <SpacesList
                         spaces={filteredSpaces}
-                        showDetails={this._openDetailsModal} />
+                        showDetails={this._openDetailsModal} 
+                        filtered={this.state.tableFilters}
+                        updateFilters={this._updateTableFilters}
+                        />
                     </div>}
                 { spaceAction === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space) &&
                     <SpacesDetails
@@ -87,6 +92,10 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                 </div>
             </div>
         );
+    }
+
+    private _updateTableFilters = (filters: any[]) => {
+        this.setState({tableFilters: filters});
     }
 
     private _openDetailsModal = (space: ISpace) => {
