@@ -67,81 +67,52 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         {
             return (<div>Loading Workstations...</div>);
         }
-        return (
-            <div>
-                {!!this.props.person && !this.props.spaceId &&
-                    this._renderPersonView()}
-                {!this.props.person && !!this.props.spaceId &&
-                   this._renderSpaceView()
-                }
-            </div>
-        );
-    }
-
-    private _renderPersonView = () => {
-
-        return(
-        <div className="card">
-            <div className="card-body">
-            <h4 className="card-title"><i className="fas fa-user fa-xs"/> Workstations</h4>
-                {this._renderWorkstations()}
-            </div>
-            </div>);
-    }
-
-    private _renderSpaceView = () => {
-        return(
-        <div className="form-group">
-            <h5><i className="fas fa-user fa-xs"/> Workstations</h5>
-            {this._renderWorkstations()}
-        </div>
-            );
-    }
-
-    private _renderWorkstations = () => {
         const { action, assetType, id } = this.context.router.route.match.params;
         const activeAsset = assetType === "workstations";
         const selectedId = parseInt(id, 10);
         const selectedWorkstation = this.state.workstations.find(k => k.id === selectedId);
 
-        return(
-            <div>
-            {this.state.workstations.length > 0 ? 
-                <WorkstationList 
-                        workstations={this.state.workstations} 
-                        showDetails={this._openDetailsModal}
-                        onEdit={this._openEditModal}
-                        onAdd={this._openAssignModal} 
-                        onCreate={this._openCreateModal}
-                        onRevoke={this._openRevokeModal}/> : <div>No Workstations</div>}
-                <Button color="danger" onClick={() => this._openCreateModal()}>
-                    Add Workstation
-                </Button>
-                <WorkstationDetails
-                    closeModal={this._closeModals}
-                    modal={activeAsset && action === "details"}
-                    selectedWorkstation={selectedWorkstation}
-                    />
-                <EditWorkstation
-                    closeModal={this._closeModals}
-                    tags={this.props.tags}
-                    modal={activeAsset && action === "edit"}
-                    selectedWorkstation={selectedWorkstation}
-                    onEdit={this._editWorkstation}
-                    />
-                <AssignWorkstation
-                    closeModal={this._closeModals}
-                    modal={activeAsset && (action === "assign" || action ==="create")}
-                    person={this.props.person}
-                    selectedWorkstation={selectedWorkstation}
-                    tags={this.props.tags}
-                    onCreate={this._createAndMaybeAssignWorkstation}
-                    onAddNew={this._openCreateModal} />
-                <RevokeWorkstation
-                    closeModal={this._closeModals}
-                    revokeWorkstation={this._revokeWorkstation}
-                    modal={activeAsset && action === "revoke"}
-                    selectedWorkstation={selectedWorkstation} />
+        return (
+            <div className="card">
+                <div className="card-body">
+                    <h4 className="card-title"><i className="fas fa-user fa-xs"/> Workstations</h4>
+                        {this.state.workstations.length > 0 ? 
+                            <WorkstationList 
+                                    workstations={this.state.workstations} 
+                                    showDetails={this._openDetailsModal}
+                                    onEdit={this._openEditModal}
+                                    onAdd={this._openAssignModal} 
+                                    onCreate={this._openCreateModal}
+                                    onRevoke={this._openRevokeModal}/> : <div>No Workstations</div>}
+                            <Button color="danger" onClick={() => this._openCreateModal()}>
+                                Add Workstation
+                            </Button>
+                            <WorkstationDetails
+                                closeModal={this._closeModals}
+                                modal={activeAsset && action === "details"}
+                                selectedWorkstation={selectedWorkstation}
+                                />
+                            <EditWorkstation
+                                closeModal={this._closeModals}
+                                tags={this.props.tags}
+                                modal={activeAsset && action === "edit"}
+                                selectedWorkstation={selectedWorkstation}
+                                onEdit={this._editWorkstation}
+                                />
+                            <AssignWorkstation
+                                closeModal={this._closeModals}
+                                modal={activeAsset && (action === "assign" || action ==="create")}
+                                person={this.props.person}
+                                selectedWorkstation={selectedWorkstation}
+                                tags={this.props.tags}
+                                onCreate={this._createAndMaybeAssignWorkstation}
+                                onAddNew={this._openCreateModal} />
+                            <RevokeWorkstation
+                                closeModal={this._closeModals}
+                                revokeWorkstation={this._revokeWorkstation}
+                                modal={activeAsset && action === "revoke"}
+                                selectedWorkstation={selectedWorkstation} />
+                </div>
             </div>
         );
     }

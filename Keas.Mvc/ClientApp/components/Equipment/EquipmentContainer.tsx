@@ -113,7 +113,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   }
 
   private _renderTableOrList = () => {
-    if(!!this.props.person)
+    if(!!this.props.person || !!this.props.spaceId)
     {
       return(
       <div>

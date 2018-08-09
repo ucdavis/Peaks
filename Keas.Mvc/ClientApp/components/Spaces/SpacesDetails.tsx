@@ -11,10 +11,9 @@ import {
     ModalHeader,
 } from "reactstrap";
 import { AppContext, ISpace } from "../../Types";
+import EquipmentContainer from "../Equipment/EquipmentContainer";
+import KeyContainer from "../Keys/KeyContainer";
 import WorkstationContainer from "../Workstations/WorkstationContainer";
-import SpacesDetailsEquipment from "./SpacesDetailsEquipment";
-import SpacesDetailsKeys from "./SpacesDetailsKeys";
-
 
 interface IProps {
     closeModal: () => void;
@@ -48,8 +47,14 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                         <h5>Room Name</h5>
                         {this.props.selectedSpace.roomName}
                         </div>}
-                    <SpacesDetailsKeys spaceId={this.props.selectedSpace.id} />
-                    <SpacesDetailsEquipment spaceId={this.props.selectedSpace.id} />
+                    <KeyContainer spaceId={this.props.selectedSpace.id}
+                        keyAssigned={this.props.assignedOrCreated}
+                        keyEdited={this.props.edited}
+                        keyRevoked={this.props.revokedOrDeleted} />
+                    <EquipmentContainer spaceId={this.props.selectedSpace.id} 
+                        equipmentAssigned={this.props.assignedOrCreated}
+                        equipmentEdited={this.props.edited}
+                        equipmentRevoked={this.props.revokedOrDeleted}/>
                     <WorkstationContainer 
                         spaceId={this.props.selectedSpace.id} 
                         tags={this.props.tags}
