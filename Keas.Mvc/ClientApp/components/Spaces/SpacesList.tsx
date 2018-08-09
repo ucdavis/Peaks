@@ -89,6 +89,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         Header: "Workstations",
                         headerClassName: "table-10p",
                         className: "table-10p",
+                        accessor: "workstationsCount",
                         filterMethod: (filter, row) => {
                             if( filter.value === "all") {
                                 return true;
