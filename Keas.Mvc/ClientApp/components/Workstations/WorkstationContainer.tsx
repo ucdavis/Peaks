@@ -15,7 +15,7 @@ interface IProps {
     tags: string[];
     workstationAssigned: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
     workstationRevoked: (type: string, spaceId: number, personId: number) => void;
-    workstationEdited: (type: string, spaceId: number, personId: number) => void; 
+    workstationEdited?: (type: string, spaceId: number, personId: number) => void; 
 }
 
 interface IState {
@@ -193,7 +193,10 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             workstations: [...this.state.workstations, workstation]
           });
         }
-        this.props.workstationAssigned("workstation", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
+        if(!!this.props.workstationAssigned)
+        {
+            this.props.workstationAssigned("workstation", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
+        }
 
       };
     
@@ -217,7 +220,10 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           }
           this.setState({ workstations: shallowCopy });
 
-          this.props.workstationRevoked("workstation", this.props.spaceId, this.props.person ? this.props.person.id : null);
+          if(!!this.props.workstationRevoked)
+          {
+            this.props.workstationRevoked("workstation", this.props.spaceId, this.props.person ? this.props.person.id : null);
+          }
         }
       };
     
@@ -246,7 +252,10 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           workstations: updateWorkstation
         }); 
 
-        this.props.workstationEdited("workstation", this.props.spaceId, !!this.props.person ? this.props.person.id : null);
+        if(!!this.props.workstationEdited)
+        {
+            this.props.workstationEdited("workstation", this.props.spaceId, !!this.props.person ? this.props.person.id : null);
+        }
       }
 
     private _openDetailsModal = (workstation: IWorkstation) => {

@@ -21,7 +21,7 @@ interface IProps {
     tags: string[];
     assignedOrCreated: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
     revokedOrDeleted: (type: string, spaceId: number, personId: number) => void;
-    edited: (type: string, spaceId: number, personId: number) => void;
+    edited?: (type: string, spaceId: number, personId: number) => void;
 }
 
 

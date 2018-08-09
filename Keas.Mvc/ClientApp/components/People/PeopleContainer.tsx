@@ -100,7 +100,6 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         goBack={this._goBack}
         assignedOrCreated={this._assetAssigned}
         revokedOrDeleted={this._assetRevoked}
-        edited={this._assetEdited}
       />
     );
   }
@@ -243,10 +242,6 @@ private _assetRevoked = (type: string, spaceId: number, personId: number) => {
       }
       this.setState({people});
   } 
-}
-
-private _assetEdited = (type: string, spaceId: number, personId: number) => {
-  // don't need to edit tags
 }
 
   // tags 
