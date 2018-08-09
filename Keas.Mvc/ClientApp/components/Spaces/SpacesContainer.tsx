@@ -12,7 +12,7 @@ interface IState {
     spaces: ISpaceInfo[];
     loading: boolean;
     tableFilters: any[]; // object containing filters on table
-    tagFilters: string[];
+    tagFilters: string[]; // array of filters from SearchTags
     tags: string[];
 }
 export default class SpacesContainer extends React.Component<{}, IState> {
@@ -55,6 +55,26 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         const activeWorkstationAsset = assetType === "workstations";
         const selectedId = parseInt(spaceId, 10);
         const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
+
+
+        return (
+        <div className="card">
+            <div className="card-body">
+                <h4 className="card-title"><i className="fas fa-building fa-xs"/> Spaces</h4>
+                {!spaceAction && !activeWorkstationAsset &&
+                    this._renderTableView()
+                }
+                { spaceAction === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space) &&
+                    this._renderDetailsView(selectedSpaceInfo.space)
+                }
+
+                </div>
+            </div>
+        );
+    }
+
+    // if we are at route teamName/spaces
+    private _renderTableView = () => {
         let filteredSpaces = [];
         if(!!this.state.tagFilters && this.state.tagFilters.length > 0)
         {
@@ -64,33 +84,30 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         {
             filteredSpaces = this.state.spaces;
         }
-
         return (
-        <div className="card">
-            <div className="card-body">
-                <h4 className="card-title"><i className="fas fa-building fa-xs"/> Spaces</h4>
-                {!spaceAction && !activeWorkstationAsset &&
-                    <div>
-                    <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
-                    <SpacesList
-                        spaces={filteredSpaces}
-                        showDetails={this._openDetailsModal} 
-                        filtered={this.state.tableFilters}
-                        updateFilters={this._updateTableFilters}
-                        />
-                    </div>}
-                { spaceAction === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space) &&
-                    <SpacesDetails
+            <div>
+            <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
+            <SpacesList
+                spaces={filteredSpaces}
+                showDetails={this._openDetailsModal} 
+                filtered={this.state.tableFilters}
+                updateFilters={this._updateTableFilters}
+                />
+            </div>
+        );
+    }
+
+    // if we are at route teamName/spaces/details/spaceId
+    private _renderDetailsView = (selectedSpace: ISpace) => {
+        return(
+            <SpacesDetails
                     closeModal={this._closeModals}
-                    selectedSpace={selectedSpaceInfo ? selectedSpaceInfo.space : null}
+                    selectedSpace={selectedSpace}
                     tags={this.state.tags}
                     assignedOrCreated={this._assetAssignedOrCreated}
                     revokedOrDeleted={this._assetRevokedOrDeleted}
                     edited={this._assetEdited}
-                    />}
-
-                </div>
-            </div>
+                    />
         );
     }
 
