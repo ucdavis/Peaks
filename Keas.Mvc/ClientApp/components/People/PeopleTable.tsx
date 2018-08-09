@@ -2,6 +2,7 @@ import * as moment from "moment";
 import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import { Button } from "reactstrap";
 import { IPerson, IPersonInfo } from "../../Types";
 import ListActionsDropdown from "../ListActionsDropdown";
 
@@ -25,6 +26,20 @@ export default class PeopleTable extends React.Component<IProps, {}> {
         onFilteredChange={filtered => this.props.updateFilters(filtered)}
         minRows={1}
         columns = {[
+            {
+                Header: "Actions",
+                headerClassName: "spaces-details",
+                filterable: false,
+                sortable: false,
+                resizable: false,
+                className: "spaces-details",
+                Cell: row => (
+                    <Button color="secondary" onClick={() => this.props.showDetails(row.original)}>
+                    View Details
+                    </Button>
+                ),
+                maxWidth: 150,
+            },
             {
                 Header: "Name",
                 accessor: "person.user.name",
@@ -126,26 +141,6 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             //             <option value="6weeks">Expiring within 6 weeks</option>
             //         </select>,
             // },
-            {
-                Header: "Actions",
-                headerClassName: "table-actions",
-                filterable: false,
-                sortable: false,
-                resizable: false,
-                className: "table-actions",
-                Cell: row => (
-                    <ListActionsDropdown
-                        onRevoke={!!this.props.onRevoke && !!row.original.assignment ? 
-                        () => this.props.onRevoke(row.original) : null}
-                        onAdd={!!this.props.onAdd && !row.assignment ? 
-                        () => this.props.onAdd(row.original) : null}
-                        showDetails={!!this.props.showDetails ? 
-                        () => this.props.showDetails(row.original) : null}
-                        onEdit={!!this.props.onEdit ? 
-                        () => this.props.onEdit(row.original) : null}
-                />
-                ),
-            },
             
         ]}
     />

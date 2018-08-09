@@ -30,6 +30,20 @@ export default class SpacesList extends React.Component<IProps, {}> {
                 onFilteredChange={filtered => this.props.updateFilters(filtered)}
                 columns = {[
                     {
+                        Header: "Actions",
+                        headerClassName: "spaces-details",
+                        filterable: false,
+                        sortable: false,
+                        resizable: false,
+                        className: "spaces-details",
+                        Cell: row => (
+                            <Button color="secondary" onClick={() => this.props.showDetails(row.original.space)}>
+                            View Details
+                            </Button>
+                        ),
+                        maxWidth: 150,
+                    },
+                    {
                         Header: "Room",
                         accessor: (row) => row.space.roomNumber + " " + row.space.bldgName,
                         id: "room",
@@ -95,20 +109,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
                             <span><i className="fas fa-user"></i> {row.original.workstationsInUse} / {row.original.workstationsTotal}</span>
                         ),
                     },
-                    {
-                        Header: "Actions",
-                        headerClassName: "spaces-details",
-                        filterable: false,
-                        sortable: false,
-                        resizable: false,
-                        className: "spaces-details",
-                        Cell: row => (
-                            <Button color="secondary" onClick={() => this.props.showDetails(row.original.space)}>
-                            View Details
-                            </Button>
-                        ),
-                        maxWidth: 150,
-                    },
+
                     
                 ]}
             />
