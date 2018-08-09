@@ -75,7 +75,6 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         Header: "Workstations",
                         headerClassName: "table-10p",
                         className: "table-10p",
-                        filterable: false,
                         filterMethod: (filter, row) => {
                             if( filter.value === "all") {
                                 return true;
