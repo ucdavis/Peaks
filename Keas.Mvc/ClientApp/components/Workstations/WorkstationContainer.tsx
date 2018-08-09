@@ -11,7 +11,7 @@ import WorkstationList from "./../Workstations/WorkstationList";
 
 interface IProps {
     spaceId?: number;
-    personId?: number;
+    person?: IPerson;
     tags: string[];
     workstationAssigned: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
     workstationRevoked: (type: string, spaceId: number, personId: number) => void;
@@ -45,12 +45,12 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     public async componentDidMount() {
         this.setState({ loading: true });
         let workstations = [];
-        if(!this.props.spaceId && !!this.props.personId)
+        if(!this.props.spaceId && !!this.props.person)
         {
             workstations = 
-                await this.context.fetch(`/api/${this.context.team.name}/workstations/getWorkstationsAssigned?personId=${this.props.personId}`);
+                await this.context.fetch(`/api/${this.context.team.name}/workstations/getWorkstationsAssigned?personId=${this.props.person.id}`);
         }
-        if(!!this.props.spaceId && !this.props.personId)
+        if(!!this.props.spaceId && !this.props.person)
         {
             workstations = 
                 await this.context.fetch(`/api/${this.context.team.name}/workstations/getWorkstationsInSpace?spaceId=${this.props.spaceId}`);
@@ -69,9 +69,9 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         }
         return (
             <div>
-                {!!this.props.personId && !this.props.spaceId &&
+                {!!this.props.person && !this.props.spaceId &&
                     this._renderPersonView()}
-                {!this.props.personId && !!this.props.spaceId &&
+                {!this.props.person && !!this.props.spaceId &&
                    this._renderSpaceView()
                 }
             </div>
@@ -131,7 +131,8 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                     />
                 <AssignWorkstation
                     closeModal={this._closeModals}
-                    modal={activeAsset && action === "assign" || action ==="create"}
+                    modal={activeAsset && (action === "assign" || action ==="create")}
+                    person={this.props.person}
                     selectedWorkstation={selectedWorkstation}
                     tags={this.props.tags}
                     onCreate={this._createAndMaybeAssignWorkstation}
@@ -192,7 +193,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             workstations: [...this.state.workstations, workstation]
           });
         }
-        this.props.workstationAssigned("workstation", this.props.spaceId, this.props.personId, created, assigned);
+        this.props.workstationAssigned("workstation", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
 
       };
     
@@ -207,7 +208,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         const index = this.state.workstations.indexOf(workstation);
         if (index > -1) {
           const shallowCopy = [...this.state.workstations];
-          if (!this.props.personId && !!this.props.spaceId) {
+          if (!this.props.person && !!this.props.spaceId) {
               // if we are looking at all workstation, just update assignment
            shallowCopy[index].assignment = null;
           } else {
@@ -216,7 +217,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           }
           this.setState({ workstations: shallowCopy });
 
-          this.props.workstationRevoked("workstation", this.props.spaceId, this.props.personId);
+          this.props.workstationRevoked("workstation", this.props.spaceId, this.props.person ? this.props.person.id : null);
         }
       };
     
@@ -245,7 +246,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           workstations: updateWorkstation
         }); 
 
-        this.props.workstationEdited("workstation", this.props.spaceId, this.props.personId);
+        this.props.workstationEdited("workstation", this.props.spaceId, !!this.props.person ? this.props.person.id : null);
       }
 
     private _openDetailsModal = (workstation: IWorkstation) => {
@@ -268,7 +269,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
 
     private _openCreateModal = () => {
         this.context.router.history.push(
-            `${this._getBaseUrl()}/workstations/create/${this.props.spaceId}`
+            `${this._getBaseUrl()}/workstations/create/`
         );
     };
 
@@ -279,19 +280,19 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     }
 
     private _closeModals = () => {
-        if(!!this.props.personId && !this.props.spaceId)
+        if(!!this.props.person && !this.props.spaceId)
         {
-            this.context.router.history.push(`${this._getBaseUrl()}/people`);
+            this.context.router.history.push(`${this._getBaseUrl()}`);
         }
-        else if(!this.props.personId && !!this.props.spaceId)
+        else if(!this.props.person && !!this.props.spaceId)
         {
-            this.context.router.history.push(`${this._getBaseUrl()}/spaces`);
+            this.context.router.history.push(`${this._getBaseUrl()}`);
         }
     };
     
     private _getBaseUrl = () => {
-        return this.props.personId
-          ? `/${this.context.team.name}/people/details/${this.props.personId}`
+        return this.props.person
+          ? `/${this.context.team.name}/people/details/${this.props.person.id}`
           : `/${this.context.team.name}/spaces/details/${this.props.spaceId}`;
       };
 }
