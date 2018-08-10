@@ -108,6 +108,8 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(5)
             };
 
+            var keyAssignment2 = new KeyAssignment { Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(5)};
+
             var key = new Key { Number = "A1", Team = caes, Name = "38 Mrak Keycard"};
             var key1Space = new KeyXSpace {Key = key, Space = space2};
             var key1Serial = new Serial {Key = key, Number = "1", Assignment = keyAssignment};
@@ -115,7 +117,7 @@ namespace Keas.Mvc.Helpers
             var key2 = new Key { Number = "A2", Team = caes, Name = "North Hall Keycard" };
             var key2Space = new KeyXSpace { Key = key, Space = space3 };
             var key2Serial = new Serial { Key = key, Number = "SN1" };
-            var key2Serial2 = new Serial {Key = key2, Number = "2"};
+            var key2Serial2 = new Serial {Key = key2, Number = "2", Assignment = keyAssignment2};
             var workstationAssignment = new WorkstationAssignment{ Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(3)};
             var workstation = new Workstation{Name = "Corner desk", Team = caes, Type = "Desk", Space = space2, Assignment = workstationAssignment, Tags = "CRU"};
             context.Workstations.Add(workstation);
@@ -142,6 +144,7 @@ namespace Keas.Mvc.Helpers
             context.KeyXSpaces.Add(key2Space);
             context.Serials.Add(key2Serial);
             context.Serials.Add(key2Serial2);
+            context.KeyAssignments.Add(keyAssignment2);
             context.EquipmentAssignments.Add(equipmentAssignment);
             context.Equipment.Add(equipment);
 
