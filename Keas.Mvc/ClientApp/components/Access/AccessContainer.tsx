@@ -156,7 +156,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
             access: [...this.state.access, access]
         });
     }
-    if(!!this.props.accessAssigned)
+    if(this.props.accessAssigned)
     {
         this.props.accessAssigned("access", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
     }
@@ -185,7 +185,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
           }
           this.setState({ access: shallowCopy });
 
-          if(!!this.props.accessRevoked)
+          if(this.props.accessRevoked)
           {
             this.props.accessRevoked("access", this.props.spaceId, this.props.person ? this.props.person.id : null);
           }
@@ -215,7 +215,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       access: updateAccess
     }); 
 
-    if(!!this.props.accessEdited)
+    if(this.props.accessEdited)
     {
         this.props.accessEdited("access", this.props.spaceId, !!this.props.person ? this.props.person.id : null);
     }

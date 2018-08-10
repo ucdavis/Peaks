@@ -211,7 +211,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       });
     }
 
-    if(!!this.props.equipmentAssigned)
+    if(this.props.equipmentAssigned)
     {
         this.props.equipmentAssigned("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
     }
@@ -236,7 +236,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         shallowCopy.splice(index, 1);
       }
       this.setState({ equipment: shallowCopy });
-      if(!!this.props.equipmentRevoked)
+      if(this.props.equipmentRevoked)
       {
           this.props.equipmentRevoked("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null);
       }
@@ -268,7 +268,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       equipment: updateEquipment
     }); 
 
-    if(!!this.props.equipmentEdited)
+    if(this.props.equipmentEdited)
     {
         this.props.equipmentEdited("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null);
     }

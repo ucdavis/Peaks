@@ -150,7 +150,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         keys: [...this.state.keys, key]
       });
     }
-    if(!!this.props.keyAssigned)
+    if(this.props.keyAssigned)
     {
         this.props.keyAssigned("key", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
     }
@@ -176,10 +176,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       }
       this.setState({ keys: shallowCopy });
 
-      if(!!this.props.keyRevoked)
+      if(this.props.keyRevoked)
       {
         this.props.keyRevoked("key", this.props.spaceId, this.props.person ? this.props.person.id : null);
-      }    }
+      }    
+    }
   };
 
   private _editKey = async (key: IKey) =>
@@ -205,7 +206,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       keys: updateKey
     }); 
 
-    if(!!this.props.keyEdited)
+    if(this.props.keyEdited)
     {
       this.props.keyEdited("key", this.props.spaceId, this.props.person ? this.props.person.id : null);
     }
