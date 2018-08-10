@@ -30,12 +30,13 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.InvariantCultureIgnoreCase;
-            var keys = await _context.Keys
-                .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
-                (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
-                .Include(x => x.Space)
+            var keys = await _context.Serials
+                .Where(x => x.Key.Team.Name == Team && x.Key.Active && x.Active && x.Assignment == null
+                            && (x.Key.Name.StartsWith(q, comparison) || x.Number.StartsWith(q, comparison)))
+                .Include(x => x.Key)
+                .ThenInclude(x => x.KeyXSpaces)
+                .ThenInclude(x => x.Space)
                 .AsNoTracking().ToListAsync();
-
             return Json(keys);
         }
 
