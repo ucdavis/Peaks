@@ -20,7 +20,7 @@ namespace Keas.Mvc.Services
         Task WorkstationCreatedUpdatedInactive(Workstation workstation, History history);
         Task WorkstationAssigned(Workstation workstation, History history);
         Task WorkstationUnAssigned(Workstation workstation, History history);
-        Task KeyAccepted(Key key, History history);
+        Task KeyAccepted(Serial serial, History history);
         Task EquipmentAccepted(Equipment equipment, History history);
         Task WorkstationAccepted(Workstation workstation, History history);
     }
@@ -261,11 +261,11 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task KeyAccepted(Key key, History history)
+        public async Task KeyAccepted(Serial serial, History history)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
+            var users = await _securityService.GetUsersInRoles(roles, serial.Key.TeamId);
             foreach (var user in users)
             {
                 var notification = new Notification
