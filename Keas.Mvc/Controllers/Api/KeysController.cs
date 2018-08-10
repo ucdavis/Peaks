@@ -84,6 +84,8 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Create([FromBody]Key key)
         {
             // TODO Make sure user has permissions
+            // Does the space come with this request? Or handle in separate action?
+            // Does the serials come with this request? Or handle in separate action?
             if (ModelState.IsValid)
             {
                 _context.Keys.Add(key);
@@ -93,20 +95,24 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
-        public async Task<IActionResult> Assign(int keyId, int personId, string date)
+
+        // Now returns serial. Need to pass in serialID
+        public async Task<IActionResult> Assign(int serialId, int personId, string date)
         {
-            // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
+            // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var key = await _context.Keys.Where(x => x.Team.Name == Team).SingleAsync(x => x.Id == keyId);
-                key.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
-                key.Assignment.Person = await _context.People.Include(p=> p.User).SingleAsync(p=> p.Id==personId);
+                var serial = await _context.Serials.Where(x => x.Key.Team.Name == Team)
+                    .SingleAsync(x => x.Id == serialId);
 
-                _context.KeyAssignments.Add(key.Assignment);
+                serial.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
+                serial.Assignment.Person = await _context.People.Include(p=> p.User).SingleAsync(p=> p.Id==personId);
+
+                _context.KeyAssignments.Add(serial.Assignment);
 
                 await _context.SaveChangesAsync();
-                await _eventService.TrackAssignKey(key);
-                return Json(key);
+                await _eventService.TrackAssignKey(serial);
+                return Json(serial);
             }
             return BadRequest(ModelState);
         }

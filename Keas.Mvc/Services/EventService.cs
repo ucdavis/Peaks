@@ -6,7 +6,7 @@ namespace Keas.Mvc.Services
     public interface IEventService
     {
         Task TrackCreateKey(Key key);
-        Task TrackAssignKey(Key key);
+        Task TrackAssignKey(Serial serial);
         Task TrackUnAssignKey(Key key);
         Task TrackUpdateKey(Key key);
         Task TrackCreateEquipment(Equipment equipment);
@@ -45,10 +45,10 @@ namespace Keas.Mvc.Services
             await _notificationService.KeyCreatedUpdatedInactive(key, history);
         }
 
-        public async Task TrackAssignKey(Key key)
+        public async Task TrackAssignKey(Serial serial)
         {
-            var history = await _historyService.KeyAssigned(key);
-            await _notificationService.KeyAssigned(key, history);
+            var history = await _historyService.KeyAssigned(serial);
+            await _notificationService.KeyAssigned(serial, history);
 
         }
 

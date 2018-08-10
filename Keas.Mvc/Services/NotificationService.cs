@@ -11,7 +11,7 @@ namespace Keas.Mvc.Services
         Task KeyCreatedUpdatedInactive(Key key, History history);
         Task EquipmentCreatedUpdatedInactive(Equipment equipment, History history);
         Task AccessCreatedUpdatedInactive(Access access, History history);
-        Task KeyAssigned(Key key, History history);
+        Task KeyAssigned(Serial serial, History history);
         Task KeyUnAssigned(Key key, History history);
         Task EquipmentAssigned(Equipment equipment, History history);
         Task EquipmentUnAssigned(Equipment equipment, History history);
@@ -90,12 +90,12 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task KeyAssigned(Key key, History history)
+        public async Task KeyAssigned(Serial serial, History history)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
-            var assignedTo = await _dbContext.Users.SingleAsync(u => u == key.Assignment.Person.User);
+            var users = await _securityService.GetUsersInRoles(roles, serial.Key.TeamId);
+            var assignedTo = await _dbContext.Users.SingleAsync(u => u == serial.Assignment.Person.User);
             users.Add(assignedTo);
             foreach (var user in users)
             {
