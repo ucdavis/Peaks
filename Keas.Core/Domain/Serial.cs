@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Keas.Core.Domain
 {
-    public class Serials
+    public class Serial
     {
         [Key]
         public int Id { get; set; }
@@ -13,7 +13,7 @@ namespace Keas.Core.Domain
         public Key Key { get; set; }
         public int KeyId { get; set; }
 
-        public string Serial { get; set; }
+        public string Number { get; set; }
 
         public KeyAssignment Assignment { get; set; }
         public int? KeyAssignmentId { get; set; }
