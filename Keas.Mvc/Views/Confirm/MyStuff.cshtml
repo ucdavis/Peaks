@@ -23,13 +23,13 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach (var key in Model.Keys)
+                @foreach (var serial in Model.Serials)
                 {
                     <tr>
-                        <td>@key.SerialNumber</td>
-                        <td>@key.Name</td>
-                        <td>@key.Assignment.ExpiresAt.ToShortDateString()</td>
-                        <td>@Html.CheckBoxFor(k=> key.Assignment.IsConfirmed)</td>
+                        <td>@serial.Number</td>
+                        <td>@serial.Key.Name</td>
+                        <td>@serial.Assignment.ExpiresAt.ToShortDateString()</td>
+                        <td>@Html.CheckBoxFor(k=> serial.Assignment.IsConfirmed)</td>
                     </tr>
                 }
                 </tbody>
