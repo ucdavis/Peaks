@@ -29,7 +29,7 @@
                         <td>@serial.Number</td>
                         <td>@serial.Key.Name</td>
                         <td>@serial.Assignment.ExpiresAt.ToShortDateString()</td>
-                        <td>@Html.CheckBoxFor(k=> serial.Assignment.IsConfirmed)</td>
+                        <td>@Html.CheckBoxFor(k=> serial.Assignment.IsConfirmed, new { @disabled = "disabled" })</td>
                     </tr>
                 }
                 </tbody>
@@ -55,7 +55,7 @@
                         <td>@equipment.SerialNumber</td>
                         <td>@equipment.Name</td>
                         <td>@equipment.Assignment.ExpiresAt.ToShortDateString()</td>
-                        <td>@Html.CheckBoxFor(e=> equipment.Assignment.IsConfirmed)</td>
+                        <td>@Html.CheckBoxFor(e=> equipment.Assignment.IsConfirmed, new { @disabled = "disabled" })</td>
                     </tr>
                 }
                 </tbody>
@@ -103,7 +103,7 @@
                         <td>@workstation.Type</td>
                         <td>@workstation.Space.RoomNumber @workstation.Space.BldgName</td>
                         <td>@workstation.Assignment.ExpiresAt.ToShortDateString()</td>
-                        <td>@Html.CheckBoxFor(w=> workstation.Assignment.IsConfirmed)</td>
+                        <td>@Html.CheckBoxFor(w=> workstation.Assignment.IsConfirmed, new {@disabled = "disabled"})</td>
                     </tr>
                 }
                 </tbody>
