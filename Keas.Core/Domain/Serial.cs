@@ -7,6 +7,12 @@ namespace Keas.Core.Domain
 {
     public class Serial
     {
+
+        public Serial()
+        {
+            Active = true;
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -17,5 +23,7 @@ namespace Keas.Core.Domain
 
         public KeyAssignment Assignment { get; set; }
         public int? KeyAssignmentId { get; set; }
+
+        public bool Active { get; set; }
     }
 }
