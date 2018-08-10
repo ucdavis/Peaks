@@ -1,0 +1,385 @@
+button {
+  cursor:pointer;
+}
+img.img-fluid {
+  width: 100%;
+}
+.alert {
+  padding:$card-padding;
+  p {
+    margin-bottom:0px;
+    color:$secondary-font;
+  }
+  @include fader;
+  box-shadow:$box-shadow;
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+.alert-red {
+  background-color:transparentize($unitrans-red,0.35);
+  &:hover {
+    background-color:transparentize($unitrans-red,0.15);
+}
+}
+.alert-yellow {
+  background-color: transparentize($golden-lupine,0.35);
+  &:hover {
+    background-color:transparentize($golden-lupine,.15);
+}
+}
+.alert-green {
+  background-color: transparentize($sunny-grass,0.35);
+  &:hover {
+    background-color:transparentize($sunny-grass,.15);
+}
+}
+.alert-blue {
+  background-color: transparentize($sky-blue,0.35);
+  &:hover {
+    background-color:transparentize($sky-blue,.15);
+}
+}
+
+.action-btn {
+  display: block;
+  font-size: 2rem;
+  color: #fff;
+  background-color: $gold;
+  font-family: $sans-bold;
+  padding: 15px 20px;
+  width: 265px;
+  height: 85px;
+
+  &:hover {
+    color: #fff;
+    opacity: 0.85;
+  }
+}
+
+p a.action-btn {
+  text-decoration: none !important;
+}
+.btn-plain {
+  font-size:1.66rem;
+  font-family: $sans-bold;
+  color:$secondary-font;
+  background-color:rgba(255,255,255,.0001);
+  border:none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+.btn {
+  @include main-btn;
+}
+.btn-gold {
+  @include main-btn;
+  background-color: $gold;
+  &:active,
+  &:focus {
+    background-color: darken($gold, 5);
+  }
+  &:hover {
+    background-color: lighten($gold, 5);
+  }
+}
+.btn-md {
+  padding:0px 40px;
+  font-size:1.8rem;
+}
+.btn-invoice-delete {
+  border:none;
+  color:$unitrans-red;
+}
+.btn-inverse {
+  @include inverse-btn;
+}
+.btn-inverse-gold {
+  @include inverse-btn;
+  color:$gold;
+}
+.btn-border {
+  border: 2px solid $borders;
+  font-size: 1.6rem;
+  padding: 8px 16px;
+  font-family: $sans-bold;
+  background-color: rgba(255,255,255,.66);
+  @include fader;
+
+  &:hover {
+    background-color: rgba(255,255,255,.90);
+  }
+}
+.btn-discreet {
+  color: $tertiary-font;
+  font-size: 1.8rem;
+  font-family: $sans-bold;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    color: $primary-color;
+  }
+}
+.btn-register {
+  width: 100%;
+}
+
+.btn-card {
+  padding: 9px 16px;
+
+  img {
+    margin-right: 1rem;
+  }
+}
+
+.media {
+  margin-bottom: 16px;
+
+  img {
+    margin-right: 20px;
+  }
+
+  .media-body {}
+}
+
+ol.breadcrumb {
+  display: inline-block;
+  list-style: none;
+  border: 0;
+  padding-left: 0;
+  background-color: #fff;
+  margin-bottom: 0;
+  margin-top: 16px;
+
+  li {
+    font-size: 1.4rem;
+  }
+
+  a {
+    color: $tertiary-font;
+    // &:hover {
+    //     color: darken($primary-color, 20%);
+    // }
+  }
+
+  > li {
+    display: inline-block;
+
+    & + li:before {
+      padding: 0 5px;
+    }
+  }
+
+  > .active a {
+    color: $secondary-font;
+  }
+
+  > li+li:before {
+    color: $tertiary-font;
+    content: "/";
+  }
+}
+
+.marketing-highlight {
+  .mh-title {
+    background-color: $primary-color;
+
+    h2 {
+      color: #fff;
+      font-size: 2.6rem;
+      margin: 0;
+      padding: 16px 24px;
+    }
+  }
+
+  .mh-content {
+    background-color: $bg-color;
+    padding: 20px 24px;
+  }
+}
+
+.separator {
+  margin: 20px 0 10px;
+}
+
+.m-r {
+  margin-right:8px;
+}
+.m-l {
+  margin-left:8px
+}
+.m-b {
+  margin-bottom: 16px;
+}
+.align-items-center {
+  align-items: center;
+}
+
+.align-items-top {
+  align-items: top;
+}
+
+.align-center {
+  align-self: center;
+}
+
+.flex-between {
+  justify-content: space-between;
+}
+
+.flexer {
+  display: flex;
+}
+
+.t-right {
+  text-align: right;
+}
+
+.t-center {
+  text-align: center;
+}
+
+.display-inline-block {
+  display: inline-block;
+}
+
+.spacer {
+  padding: 12% 0 9%;
+}
+
+.card-nobrdr {
+  border: 0 solid #fff;
+}
+
+.bot-border {
+  border-bottom: 1px solid $bg-color;
+}
+//database
+
+.border-top {
+  border-top: 2px solid rgba(255,255,255,0.95);
+}
+
+.border-blue-top {
+  border-top: 1px solid $primary-color;
+}
+
+.border-blue-bottom {
+  border-bottom: 1px solid $primary-color;
+}
+
+.border-blue-right {
+  border-right: 1px solid $primary-color;
+}
+
+.bg-unitrans {
+  background-color: $unitrans-red;
+}
+
+.bg-sunny-grass {
+  background-color: $sunny-grass;
+}
+
+.bg-golden-lupine {
+  background-color: $golden-lupine;
+}
+
+.bg-recpool {
+  background-color: $recpool-blue;
+}
+
+.bg-skyblue {
+  background-color: $sky-blue;
+}
+
+.bg-winegrape {
+  background-color: $wine-grape;
+}
+
+.border-unitrans {
+  border-color: $unitrans-red;
+}
+
+.border-skyblue {
+  border-color: $sky-blue;
+}
+
+.border-sunny-grass {
+  border-color: $sunny-grass;
+}
+
+.border-golden-lupine {
+  border-color: $golden-lupine;
+}
+
+.color-unitrans {
+  color: $unitrans-red !important;
+}
+
+.color-sunny-grass {
+  color: $sunny-grass;
+}
+
+.color-golden-lupine {
+  color: $golden-lupine;
+}
+
+.color-winegrape {
+  color: $wine-grape;
+}
+
+.color-western-redbud {
+  color: $western-redbud;
+}
+
+.color-poppy {
+  color: $california-poppy;
+}
+
+.color-skyblue {
+  color: $sky-blue;
+}
+
+.primary-color {
+  color: $primary-color;
+}
+
+.secondary-color {
+  color: $secondary-color;
+}
+
+.a-color {
+  color: $a-link;
+}
+.primary-color {
+  color:$primary-color;
+}
+.sans-bold {
+  font-family: $sans-bold;
+}
+.primary-font {
+  color: $primary-font;
+}
+
+.secondary-font {
+  color: $secondary-font;
+}
+
+.tertiary-font {
+  color: $tertiary-font;
+}
+
+.flex-center {
+  align-items: center;
+}
+.twopointoh {
+  font-size:2rem;
+}
+.onepointeight {
+  font-size:1.8rem;
+}
+.card-bot-border {
+  border-bottom:1px solid $borders;
+}

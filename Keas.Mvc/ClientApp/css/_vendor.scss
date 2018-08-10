@@ -1,0 +1,51 @@
+.container-fluid {
+  padding: 0;
+}
+
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:before {
+  bottom: 1px;
+}
+
+.page-item.active .page-link {
+  background-color: $primary-color;
+  border-color: $primary-color;
+}
+
+.input-group-sm > .input-group-append > select.btn:not([size]):not([multiple]),
+.input-group-sm > .input-group-append > select.input-group-text:not([size]):not([multiple]),
+.input-group-sm > .input-group-prepend > select.btn:not([size]):not([multiple]),
+.input-group-sm > .input-group-prepend > select.input-group-text:not([size]):not([multiple]),
+.input-group-sm > select.form-control:not([size]):not([multiple]),
+select.form-control-sm:not([size]):not([multiple]) {
+  height: calc(1.8125rem + 10px);
+}
+@-moz-document url-prefix() {
+  .input-group-sm > .input-group-append > select.btn:not([size]):not([multiple]),
+  .input-group-sm > .input-group-append > select.input-group-text:not([size]):not([multiple]),
+  .input-group-sm > .input-group-prepend > select.btn:not([size]):not([multiple]),
+  .input-group-sm > .input-group-prepend > select.input-group-text:not([size]):not([multiple]),
+  .input-group-sm > select.form-control:not([size]):not([multiple]),
+  select.form-control-sm:not([size]):not([multiple]) {
+    height: calc(2.5rem + 10px);
+  }
+}
+// hide input type number arrows
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

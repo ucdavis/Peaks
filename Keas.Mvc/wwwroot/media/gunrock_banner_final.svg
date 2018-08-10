@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1610px" height="40px" viewBox="0 0 1610 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 42 (36781) - http://www.bohemiancoding.com/sketch -->
+    <title>gunrock_banner</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="35 0 1609.4248 0 1592 40 0.575683594 40"></polygon>
+        <linearGradient x1="0%" y1="49.9954739%" x2="100%" y2="49.9954739%" id="linearGradient-3">
+            <stop stop-color="#A4B354" offset="0%"></stop>
+            <stop stop-color="#B7B44C" offset="17%"></stop>
+            <stop stop-color="#D7B33C" offset="53%"></stop>
+            <stop stop-color="#D8B542" offset="59%"></stop>
+            <stop stop-color="#DBBD5D" offset="85%"></stop>
+            <stop stop-color="#DCC167" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="50%" x2="99.9921229%" y2="50%" id="linearGradient-4">
+            <stop stop-color="#408596" offset="0%"></stop>
+            <stop stop-color="#418798" offset="30%"></stop>
+            <stop stop-color="#438E9D" offset="56%"></stop>
+            <stop stop-color="#489AA6" offset="81%"></stop>
+            <stop stop-color="#4DA9B1" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="16.8737432%" y1="-33.5630252%" x2="81.4827369%" y2="129.210084%" id="linearGradient-5">
+            <stop stop-color="#172C52" offset="0%"></stop>
+            <stop stop-color="#182F54" offset="18%"></stop>
+            <stop stop-color="#1C385A" offset="39%"></stop>
+            <stop stop-color="#244765" offset="60%"></stop>
+            <stop stop-color="#2F5B76" offset="83%"></stop>
+            <stop stop-color="#3B7086" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="2.21516772e-14%" y1="50%" x2="100.003897%" y2="50%" id="linearGradient-6">
+            <stop stop-color="#32627B" offset="0%"></stop>
+            <stop stop-color="#498F9E" offset="65%"></stop>
+            <stop stop-color="#55A9B2" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="50%" x2="100%" y2="50%" id="linearGradient-7">
+            <stop stop-color="#32607A" offset="0%"></stop>
+            <stop stop-color="#377288" offset="20%"></stop>
+            <stop stop-color="#43A2B0" offset="60%"></stop>
+            <stop stop-color="#60A79C" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="1.49878688%" y1="36.5973752%" x2="95.80731%" y2="58.6760623%" id="linearGradient-8">
+            <stop stop-color="#6FB09A" offset="0%"></stop>
+            <stop stop-color="#A0B562" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Current" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="gunrock_banner">
+            <g id="Header">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="headerrectangle"></g>
+                <g id="graphic" mask="url(#mask-2)">
+                    <g transform="translate(-308.678087, -75.000000)" id="Layer_1">
+                        <g>
+                            <path d="M2014.71668,138.180916 L1849.04391,0.330152672 L1337.53976,0.330152672 C1378.0438,80.3896947 1468.08403,157.241221 1661.2908,173.203053 L2014.71668,138.180916 L2014.71668,138.180916 Z" id="Shape" fill="url(#linearGradient-3)"></path>
+                            <path d="M1037.75986,149.714122 C1036.33784,166.082824 1035.6659,178.414122 1032.75936,193.030153 L1097.70334,193.030153 L1103.28202,83.0030534 C1066.15332,103.972519 982.895013,147.304198 904.902859,193.045802 L946.782036,193.045802 C1003.95961,163.031298 1037.75986,149.714122 1037.75986,149.714122 L1037.75986,149.714122 Z" id="Shape" fill="url(#linearGradient-4)"></path>
+                            <path d="M717.915458,193.045802 C788.047453,128.00916 864.383192,63.6610687 944.047388,6.82442748 L336.346148,6.82442748 C276.840213,52.7694656 219.146958,104.692366 164.454003,163.438168 C164.454003,163.438168 164.063339,174.188931 165.032186,193.045802 L717.915458,193.045802 L717.915458,193.045802 Z" id="Shape" fill="url(#linearGradient-5)"></path>
+                            <path d="M1105.0322,51.2671756 L1106.18856,33.5057252 C1107.87623,24.4450382 1111.18906,15.5408397 1115.78327,6.82442748 L940.922076,6.82442748 C861.25788,63.6610687 784.922141,128.00916 714.790146,193.045802 L861.914196,193.045802 C938.843744,140.183969 1023.52407,88.339313 1105.0322,51.2671756 Z" id="Shape" fill="url(#linearGradient-6)"></path>
+                            <path d="M915.857076,193.045802 C993.849231,147.304198 1064.59066,107.10229 1101.70374,86.1484733 L1096.12506,193.045802 L1273.34586,193.045802 C1248.85904,156.552672 1230.45096,110.638931 1222.73144,53.051145 C1222.73144,53.051145 1218.49664,36.5729008 1225.62235,6.82442748 L1114.22061,6.82442748 C1109.61078,15.5564885 1106.31357,24.460687 1104.6259,33.5057252 L1103.46954,51.2671756 C1021.97704,88.339313 937.296715,140.183969 860.35154,193.045802 L915.857076,193.045802 L915.857076,193.045802 Z" id="Shape" fill="url(#linearGradient-7)"></path>
+                            <path d="M1465.42027,119.140625 C1465.42027,119.140625 1400.43666,80.8748092 1362.96417,6.82442748 L1215.86949,67.4238281 C1215.86949,67.4238281 1247.29639,156.537023 1271.7832,193.045802 L1465.42027,119.140625 Z" id="Shape" fill="url(#linearGradient-8)"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
