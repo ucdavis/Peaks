@@ -17,6 +17,8 @@ namespace Keas.Core.Data
         public virtual DbSet<AccessAssignment> AccessAssignments { get; set; }
         
         public virtual DbSet<Key> Keys { get; set; }
+        public virtual DbSet<KeyXSpace> KeyXSpaces { get; set; }
+        public virtual DbSet<Serial> Serials { get; set; }
         public virtual DbSet<KeyAssignment> KeyAssignments { get; set; }
         public virtual DbSet<Equipment> Equipment { get; set; }
         public virtual DbSet<EquipmentAssignment> EquipmentAssignments { get; set; }
