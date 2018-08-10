@@ -33,7 +33,7 @@ namespace Keas.Mvc.Controllers
         {
             var person = await _securityService.GetPerson(Team);
             var viewModel = await ConfirmListModel.Create(_context,person);
-            if (viewModel.Equipment.Count == 0 && viewModel.Keys.Count==0 && viewModel.Workstations.Count==0)
+            if (viewModel.Equipment.Count == 0 && viewModel.Serials.Count==0 && viewModel.Workstations.Count==0)
             {
                 Message = "You have no pending items to accept";
                 RedirectToAction(nameof(MyStuff));
