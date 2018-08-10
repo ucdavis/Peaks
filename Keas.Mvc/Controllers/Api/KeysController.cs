@@ -84,8 +84,8 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Create([FromBody]Key key)
         {
             // TODO Make sure user has permissions
-            // Does the space come with this request? Or handle in separate action?
-            // Does the serials come with this request? Or handle in separate action?
+            // TODO Does the space come with this request? Or handle in separate action?
+            // TODO Does the serials come with this request? Or handle in separate action?
             if (ModelState.IsValid)
             {
                 _context.Keys.Add(key);
@@ -123,10 +123,13 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var k = await _context.Keys.Where(x => x.Team.Name == Team)
-                    .Include(x=> x.Assignment).ThenInclude(x => x.Person.User)
+                    .Include(x=> x.Serials)
+                    .ThenInclude(serials=> serials.Assignment)
+                    .ThenInclude(x => x.Person.User)
                     .Include(x=> x.Team)
                     .SingleAsync(x => x.Id == key.Id);
                 k.Name = key.Name;
+                // TODO: Should this also be updating serials? KeyXSpaces?
                 await _context.SaveChangesAsync();
                 await _eventService.TrackUpdateKey(key);
                 return Json(k);
@@ -134,21 +137,22 @@ namespace Keas.Mvc.Controllers.Api
             return BadRequest(ModelState);
         }
 
-        public async Task<IActionResult> Revoke([FromBody]Key key)
+        // Need to pass in serial, not key. Returns Serial now.
+        public async Task<IActionResult> Revoke([FromBody]Serial serial)
         {
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var k = await _context.Keys.Where(x => x.Team.Name == Team).Include(x => x.Assignment)
+                var s = await _context.Serials.Where(x => x.Key.Team.Name == Team).Include(x => x.Assignment)
                     .ThenInclude(x => x.Person.User)
-                    .SingleAsync(x => x.Id == key.Id);
-
-                _context.KeyAssignments.Remove(k.Assignment);
-                k.Assignment = null;
-                k.KeyAssignmentId = null;
+                    .SingleAsync(x => x.Id == serial.Id);
+                
+                _context.KeyAssignments.Remove(s.Assignment);
+                s.Assignment = null;
+                s.KeyAssignmentId = null;
                 await _context.SaveChangesAsync();
-                await _eventService.TrackUnAssignKey(key);
-                return Json(k);
+                await _eventService.TrackUnAssignKey(serial);
+                return Json(s);
             }
             return BadRequest(ModelState);
         }
