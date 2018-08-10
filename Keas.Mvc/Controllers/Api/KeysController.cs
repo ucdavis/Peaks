@@ -27,6 +27,8 @@ namespace Keas.Mvc.Controllers.Api
             return Team;
         }
 
+
+        //Return Serials instead????
         public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.InvariantCultureIgnoreCase;
@@ -34,44 +36,51 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Key.Team.Name == Team && x.Key.Active && x.Active && x.Assignment == null
                             && (x.Key.Name.StartsWith(q, comparison) || x.Number.StartsWith(q, comparison)))
                 .Include(x => x.Key)
-                .ThenInclude(x => x.KeyXSpaces)
-                .ThenInclude(x => x.Space)
+                .ThenInclude(key => key.KeyXSpaces)
+                .ThenInclude(keyXSpaces => keyXSpaces.Space)
+                .Select(x=> x.Key)
                 .AsNoTracking().ToListAsync();
             return Json(keys);
         }
 
         public async Task<IActionResult> GetKeysInSpace(int spaceId)
         {
-            var keys = await _context.Keys
-                .Where(x => x.Space.Id == spaceId && x.Team.Name == Team && x.Active)
-                .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person.User)
+            var keys = await _context.KeyXSpaces
+                .Where(x => x.Space.Id == spaceId && x.Key.Team.Name == Team && x.Key.Active)
+                .Include(x => x.Key)
+                .ThenInclude(key => key.Serials)
+                .ThenInclude(serials => serials.Assignment)
+                .ThenInclude(assignment => assignment.Person.User)
                 .AsNoTracking()
                 .ToListAsync();
             return Json(keys);
         }
 
-        public async Task<IActionResult> ListAssigned(int personId) {
-            var keyAssignments = await _context.Keys
-                .Where(x=> x.Assignment.PersonId == personId && x.Team.Name == Team)
-                .Include(x=> x.Assignment)
-                .ThenInclude(x => x.Person.User)
-                .Include(x => x.Team)
-                .AsNoTracking().ToArrayAsync();
-
+        public async Task<IActionResult> ListAssigned(int personId)
+        {
+            var keyAssignments = await _context.Serials
+                .Where(x => x.Assignment.PersonId == personId && x.Key.Team.Name == Team)
+                .Include(x => x.Assignment)
+                .ThenInclude(assingment => assingment.Person.User)
+                .Include(x => x.Key.Team)
+                .AsNoTracking()
+                .ToArrayAsync();
             return Json(keyAssignments);
         }
 
         // List all keys for a team
-        public async Task<IActionResult> List() {
-            var keys = await _context.Keys.Where(x=> x.Team.Name == Team)
-                .Include(x=> x.Assignment)
-                .ThenInclude(x => x.Person.User)
-                .Include(x => x.Team)
-                .AsNoTracking().ToArrayAsync();
-
+        public async Task<IActionResult> List()
+        {
+            var keys = await _context.Serials
+                .Where(x => x.Key.Team.Name == Team)
+                .Include(x => x.Assignment)
+                .ThenInclude(assignment => assignment.Person.User)
+                .Include(x => x.Key.Team)
+                .AsNoTracking()
+                .ToArrayAsync();
             return Json(keys);
         }
+
         public async Task<IActionResult> Create([FromBody]Key key)
         {
             // TODO Make sure user has permissions
