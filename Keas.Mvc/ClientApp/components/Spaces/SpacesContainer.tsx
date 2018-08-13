@@ -13,8 +13,8 @@ import Denied from "../Shared/Denied";
 import { PermissionsUtil } from "../../util/permissions"; 
 
 interface IState {
-    allSpaces: ISpaceInfo[];
-    filteredSpaces: ISpaceInfo[];
+    spaces: ISpaceInfo[];
+    filters: string[];
     loading: boolean;
     tags: string[];
 }
@@ -30,9 +30,9 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         super(props);
 
         this.state = {
-            allSpaces: [],
-            filteredSpaces: [],
+            filters: [],
             loading: true,
+            spaces: [],
             tags: []
         };
     }
@@ -40,7 +40,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
     public async componentDidMount() {
         const spaces = await this.context.fetch(`/api/${this.context.team.name}/spaces/list?orgId=ADNO`);
         const tags = await this.context.fetch(`/api/${this.context.team.name}/tags/listTags`);
-        this.setState({ loading: false, allSpaces: spaces, filteredSpaces: spaces, tags });
+        this.setState({ loading: false, spaces, tags });
     }
     public render() {
         const permissionArray = ['SpaceMaster', 'DepartmentalAdmin', 'Admin'];
@@ -57,13 +57,24 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         const activeSpaceAsset = assetType === "spaces";
         const activeWorkstationAsset = assetType === "workstations";
         const selectedId = parseInt(id, 10);
-        const selectedSpaceInfo = this.state.allSpaces.find(k => k.id === selectedId);
+        const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
+        let filteredSpaces = [];
+        if(!!this.state.filters && this.state.filters.length > 0)
+        {
+            filteredSpaces = this.state.spaces.filter(x => this._checkFilters(x, this.state.filters));
+        }
+        else 
+        {
+            filteredSpaces = this.state.spaces;
+        }
 
         return (
-            <div>
-                <SearchTags tags={this.state.tags} onSelect={this._filterSpaces} disabled={false}/>
+        <div className="card">
+            <div className="card-body">
+                <h4 className="card-title">Spaces</h4>
+                <SearchTags tags={this.state.tags} selected={this.state.filters} onSelect={this._filterTags} disabled={false}/>
                 <SpacesList
-                    spaces={this.state.filteredSpaces}
+                    spaces={filteredSpaces}
                     showDetails={this._openDetailsModal} />
                 <SpacesDetails
                     closeModal={this._closeModals}
@@ -99,6 +110,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                     returnToSpaceDetails={this._returnToSpaceDetails}
                     modal={activeWorkstationAsset && action === "revoke"}
                     workstationId={activeWorkstationAsset && Number.isInteger(selectedId) ? selectedId : null} />
+                </div>
             </div>
         );
     }
@@ -118,40 +130,40 @@ export default class SpacesContainer extends React.Component<{}, IState> {
     }
 
     private _workstationAssigned = (spaceId: number, created: boolean, assigned: boolean) => {
-        const index = this.state.allSpaces.findIndex(x => x.id === spaceId);
+        const index = this.state.spaces.findIndex(x => x.id === spaceId);
         if(index > -1)
         {
-            const allSpaces = [...this.state.allSpaces];
+            const spaces = [...this.state.spaces];
             if(created)
             {
-                allSpaces[index].workstationsTotal++;
+                spaces[index].workstationsTotal++;
             }
             if(assigned)
             {
-                allSpaces[index].workstationsInUse++;
+                spaces[index].workstationsInUse++;
             }
-            this.setState({allSpaces});
+            this.setState({spaces});
         } 
     }
 
     private _workstationRevoked = (spaceId: number) => {
-        const index = this.state.allSpaces.findIndex(x => x.id === spaceId);
+        const index = this.state.spaces.findIndex(x => x.id === spaceId);
         if(index > -1)
         {
-            const allSpaces = [...this.state.allSpaces];
-            allSpaces[index].workstationsInUse--;
-            this.setState({allSpaces});
+            const spaces = [...this.state.spaces];
+            spaces[index].workstationsInUse--;
+            this.setState({spaces});
         }     
     }
 
     private _workstationEdited = async (spaceId: number) => {
-        const index = this.state.allSpaces.findIndex(x => x.id === spaceId);
+        const index = this.state.spaces.findIndex(x => x.id === spaceId);
         if(index > -1 )
         {
             const tags = await this.context.fetch(`/api/${this.context.team.name}/spaces/getTagsInSpace?spaceId=${spaceId}`);
-            const allSpaces = [...this.state.allSpaces];
-            allSpaces[index].tags = tags;
-            this.setState({allSpaces});        
+            const spaces = [...this.state.spaces];
+            spaces[index].tags = tags;
+            this.setState({spaces});  
         }
     }
 
@@ -159,26 +171,11 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         return `/${this.context.team.name}`;
     };
 
-    private _filterSpaces = (filters: string[]) => {
-        let filteredSpaces = [];
-        if(!!filters && filters.length > 0)
-        {
-            filteredSpaces = this.state.allSpaces.filter(x => this._checkFilters(x, filters));
-        }
-        else 
-        {
-            filteredSpaces = this.state.allSpaces;
-        }
-        this.setState({filteredSpaces});
+    private _filterTags = (filters: string[]) => {
+        this.setState({filters});
     }
 
     private _checkFilters = (space: ISpaceInfo, filters: string[]) => {
-        for (const filter of filters) {
-            if(space.tags.indexOf(filter) === -1)
-            {
-                return false;
-            }
-        }
-        return true;
+        return filters.every(f => space.tags.includes(f));
     }
 }

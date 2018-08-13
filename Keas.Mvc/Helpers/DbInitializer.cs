@@ -18,7 +18,7 @@ namespace Keas.Mvc.Helpers
             // add in some default factilities
             var space1 = new Space { BldgKey = "01", FloorKey = "01", RoomKey = "01", BldgName = "Foo", RoomName = "Bar", RoomNumber = "12", ChartNum = "3", OrgId = "ADNO" };
             context.Spaces.Add(space1);
-            
+
             var space2 = new Space { BldgKey = "02", FloorKey = "03", RoomKey = "02", BldgName = "North Hall", RoomName = "Group/Meeting Room", RoomNumber = "308", ChartNum = "3", OrgId = "ADNO" };
             context.Spaces.Add(space2);
 
@@ -37,6 +37,8 @@ namespace Keas.Mvc.Helpers
             var scott = new User { Id = "postit", FirstName = "Scott", Name = "Scott Kirkland", Email = "srkirkland@ucdavis.edu" };
             var james = new User { Id = "jscub", FirstName = "James", Name = "James Cubbage", Email = "jscubbage@ucdavis.edu" };
             var laura = new User { Id = "holstege", Name = "Laura Holstege", Email = "laholstege@ucdavis.edu" };
+            var cal = new User { Id = "cydoval", Name = "Cal Doval", Email = "cydoval@ucdavis.edu" };
+
             var caes = new Team {  Name = "CAESDO" };
 
             context.Users.Add(scott);
@@ -144,7 +146,7 @@ namespace Keas.Mvc.Helpers
 
             context.EquipmentAssignments.Add(equip2Assignment);
             context.Equipment.Add(equip2);
-            
+
             var history = new History {
                 Target = lauraCaes,
                 Actor = scott,
@@ -168,10 +170,10 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var workstation1 = new Workstation { 
-                Name = "Laura's Workstation", 
-                Team = caes, 
-                Assignment = workstationAssignment1, 
+            var workstation1 = new Workstation {
+                Name = "Laura's Workstation",
+                Team = caes,
+                Assignment = workstationAssignment1,
                 Tags = "Student,Standing Desk",
                 Space = space3 };
 
@@ -185,19 +187,19 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var workstation2 = new Workstation { 
-                Name = "Scott's Workstation", 
-                Team = caes, 
-                Assignment = workstationAssignment2, 
+            var workstation2 = new Workstation {
+                Name = "Scott's Workstation",
+                Team = caes,
+                Assignment = workstationAssignment2,
                 Tags = "Standing Desk",
                 Space = space4 };
 
             context.WorkstationAssignments.Add(workstationAssignment2);
             context.Workstations.Add(workstation2);
 
-            var workstation3 = new Workstation { 
-                Name = "Empty Workstation", 
-                Team = caes, 
+            var workstation3 = new Workstation {
+                Name = "Empty Workstation",
+                Team = caes,
                 Space = space3 };
             context.Workstations.Add(workstation3);
 
@@ -214,15 +216,17 @@ namespace Keas.Mvc.Helpers
             context.Tags.Add(tag1);
             context.Add(tag2);
 
-            
+
             var scottKey = new TeamPermission    {Team = caes, Role = keyMaster, User = scott};
             var scottEquip = new TeamPermission  {Team = caes, Role = equipMaster, User = scott};
-            var scottAccess = new TeamPermission {Team = caes, Role = accessMaster, User = scott};
+            var scottDa = new TeamPermission {Team = caes, Role = departmentAdmin, User = scott};
             var lauraKey = new TeamPermission    {Team = caes, Role = keyMaster, User = laura};
             var lauraEquip = new TeamPermission  {Team = caes, Role = equipMaster, User = laura};
             var lauraAccess = new TeamPermission {Team = caes, Role = accessMaster, User = laura};
             var lauraSpace = new TeamPermission  {Team = caes, Role = spaceMaster, User = laura};
             var jamesDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = james};
+            var calDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = cal};
+
             context.TeamPermissions.Add(scottKey);
             context.TeamPermissions.Add(scottEquip);
 
@@ -232,7 +236,8 @@ namespace Keas.Mvc.Helpers
             context.TeamPermissions.Add(lauraSpace);
 
             context.TeamPermissions.Add(jamesDa);
-            context.TeamPermissions.Add(scottAccess);
+            context.TeamPermissions.Add(scottDa);
+            context.TeamPermissions.Add(calDa);
 
             var jamesAdmin = new SystemPermission { Role = admin, User = james};
             context.SystemPermissions.Add(jamesAdmin);

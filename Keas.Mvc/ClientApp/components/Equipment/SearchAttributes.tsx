@@ -7,16 +7,15 @@ interface IProps {
     onSelect: (tag: string[]) => void;
     disabled: boolean;
     selected: string[];
-    tags: string[];
 }
 
-export default class SearchTags extends React.Component<IProps, {}> {
+export default class SearchAttributes extends React.Component<IProps, {}> {
 
     public render() {
         return (
             <div>
                 <Typeahead
-                    options={this.props.disabled ? [] : this.props.tags}
+                    options={[]}
                     disabled={this.props.disabled}
                     multiple={true}
                     clearButton={true}
@@ -24,9 +23,11 @@ export default class SearchTags extends React.Component<IProps, {}> {
                         this.props.onSelect(selected);
                     }}
                     selected={this.props.selected}
-                    highlightOnlyResult={true}
                     selectHintOnEnter={true}
-                    placeholder="Search for tags"
+                    placeholder="Search for attributes"
+                    allowNew={true}
+                    emptyLabel={''}
+                    newSelectionPrefix="Select attribute key: "
                 />
             </div>
         );

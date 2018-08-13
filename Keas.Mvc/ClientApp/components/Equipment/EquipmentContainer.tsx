@@ -2,18 +2,23 @@ import PropTypes from "prop-types";
 import * as React from "react";
 
 import { AppContext, IEquipment, IPerson } from "../../Types";
-
+import SearchTags from "../Tags/SearchTags";
 import AssignEquipment from "./AssignEquipment";
 import EditEquipment from "./EditEquipment";
 import EquipmentDetails from "./EquipmentDetails";
 import EquipmentList from "./EquipmentList";
+import EquipmentTable from "./EquipmentTable";
+import SearchAttributes from "./SearchAttributes";
 import Denied from "../Shared/Denied";
 import { PermissionsUtil } from "../../util/permissions"; 
 
 interface IState {
+  attributeFilters: string[];
   commonAttributeKeys: string[];
-  loading: boolean;
   equipment: IEquipment[]; // either equipment assigned to this person, or all team equipment
+  loading: boolean;
+  tagFilters: string[];
+  tags: string[];
 }
 
 interface IProps {
@@ -32,9 +37,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     super(props);
 
     this.state = {
+      attributeFilters: [],
       commonAttributeKeys: [],
       equipment: [],
-      loading: true
+      loading: true,
+      tagFilters: [],
+      tags: []
     };
   }
   public async componentDidMount() {
@@ -47,7 +55,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
     const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
     const equipment = await this.context.fetch(equipmentFetchUrl);
-    this.setState({ commonAttributeKeys, equipment, loading: false });
+
+    const tags = await this.context.fetch(`/api/${this.context.team.name}/tags/listTags`);
+
+    this.setState({ commonAttributeKeys, equipment, loading: false, tags });
   }
   public render() {
     if (!PermissionsUtil.canViewEquipment(this.context.permissions)) {
@@ -68,13 +79,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       <div className="card">
         <div className="card-body">
           <h4 className="card-title">Equipment</h4>
-          <EquipmentList
-            equipment={this.state.equipment}
-            onRevoke={this._revokeEquipment}
-            onAdd={this._openAssignModal}
-            showDetails={this._openDetailsModal}
-            onEdit={this._openEditModal}
-          />
+          {this._renderTableOrList()}
           <AssignEquipment
             onCreate={this._createAndMaybeAssignEquipment}
             modal={activeAsset && (action === "create" || action === "assign")}
@@ -82,6 +87,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             closeModal={this._closeModals}
             selectedEquipment={detailEquipment}
             person={this.props.person}
+            tags={this.state.tags}
             commonAttributeKeys={this.state.commonAttributeKeys}
           />
           <EquipmentDetails
@@ -94,11 +100,54 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             onEdit={this._editEquipment}
             closeModal={this._closeModals}
             modal={activeAsset && (action === "edit")}
+            tags={this.state.tags}
             commonAttributeKeys={this.state.commonAttributeKeys}
             />
         </div>
       </div>
     );
+  }
+
+  private _renderTableOrList = () => {
+    if(!!this.props.person)
+    {
+      return(
+      <div>
+        <EquipmentList
+          equipment={this.state.equipment}
+          onRevoke={this._revokeEquipment}
+          onAdd={this._openAssignModal}
+          showDetails={this._openDetailsModal}
+          onEdit={this._openEditModal}
+        />
+    </div>);
+    }
+    else
+    {
+      let filteredEquipment = this.state.equipment;
+      if(this.state.tagFilters.length > 0)
+      {
+        filteredEquipment = filteredEquipment.filter(x => this._checkTagFilters(x, this.state.tagFilters));
+      }
+      if(this.state.attributeFilters.length > 0)
+      {
+        filteredEquipment = filteredEquipment.filter(x => this._checkAttributeFilters(x, this.state.attributeFilters));
+      }
+      return(
+        <div>
+          <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
+          <SearchAttributes selected={this.state.attributeFilters} onSelect={this._filterAttributes} disabled={false} />
+          <EquipmentTable
+            equipment={filteredEquipment}
+            onRevoke={this._revokeEquipment}
+            onAdd={this._openAssignModal}
+            showDetails={this._openDetailsModal}
+            onEdit={this._openEditModal}
+          />
+        </div>
+      );
+
+    }
   }
 
   private _createAndMaybeAssignEquipment = async (
@@ -195,6 +244,31 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       equipment: updateEquipment
     }); 
   }
+
+  private _filterTags = (filters: string[]) => {
+    this.setState({tagFilters: filters});
+}
+
+  private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
+    return filters.every(f => equipment.tags.includes(f));
+  }
+
+  private _filterAttributes = (filters: string[]) => {
+    this.setState({attributeFilters: filters});
+  }
+
+  private _checkAttributeFilters = (equipment: IEquipment, filters) => {
+    for (const filter of filters) {
+        if(equipment.attributes.findIndex(x => x.key.toLowerCase() === filter.label.toLowerCase() || 
+          x.value.toLowerCase() === filter.label.toLowerCase()) === -1)
+        {
+          // if we cannot find an index where some of our filter matches the key
+            return false;
+        }
+    }
+    return true;
+  }
+
   private _openAssignModal = (equipment: IEquipment) => {
     this.context.router.history.push(
       `${this._getBaseUrl()}/equipment/assign/${equipment.id}`
