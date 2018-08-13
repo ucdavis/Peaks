@@ -24,7 +24,7 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
+            var comparison = StringComparison.OrdinalIgnoreCase;
             var workstation = await _context.Workstations
                 .Where(w => w.Team.Name == Team && w.Active && w.Assignment == null && w.Name.StartsWith(q, comparison))
                 .AsNoTracking().ToListAsync();

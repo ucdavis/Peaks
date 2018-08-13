@@ -29,7 +29,7 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
+            var comparison = StringComparison.OrdinalIgnoreCase;
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person.User)
                 .Where(x => x.Team.Name == Team && x.Active &&
                 (x.Name.StartsWith(q, comparison))) //|| x.SerialNumber.StartsWith(q, comparison)))
