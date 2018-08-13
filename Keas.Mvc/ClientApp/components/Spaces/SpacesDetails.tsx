@@ -11,15 +11,18 @@ import {
     ModalHeader,
 } from "reactstrap";
 import { AppContext, ISpace } from "../../Types";
-import SpacesDetailsEquipment from "./SpacesDetailsEquipment";
-import SpacesDetailsKeys from "./SpacesDetailsKeys";
-import SpacesDetailsWorkstations from "./SpacesDetailsWorkstations";
-
+import EquipmentContainer from "../Equipment/EquipmentContainer";
+import KeyContainer from "../Keys/KeyContainer";
+import WorkstationContainer from "../Workstations/WorkstationContainer";
+import SpaceDetailContainer from "./SpaceDetailContainer";
 
 interface IProps {
     closeModal: () => void;
-    modal: boolean;
     selectedSpace: ISpace;
+    assignedOrCreated: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
+    revokedOrDeleted: (type: string, spaceId: number, personId: number) => void;
+    edited: (type: string, spaceId: number, personId: number) => void;
+    tags: string[];
 }
 
 export default class SpacesDetails extends React.Component<IProps, {}> {
@@ -30,24 +33,39 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
         }
         return (
             <div>
-                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg">
-                    <ModalHeader>Details for {this.props.selectedSpace.roomNumber} {this.props.selectedSpace.bldgName}</ModalHeader>
-                    <ModalBody>
-                        {this.props.selectedSpace.roomName &&
-                            <div className="form-group">
-                            <h5>Room Name</h5>
-                            {this.props.selectedSpace.roomName}
-                            </div>}
-                        <SpacesDetailsKeys spaceId={this.props.selectedSpace.id} />
-                        <SpacesDetailsEquipment spaceId={this.props.selectedSpace.id} />
-                        <SpacesDetailsWorkstations spaceId={this.props.selectedSpace.id} />
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button color="secondary" onClick={this.props.closeModal}>
-                            Close
-                        </Button>
-                    </ModalFooter>
-                </Modal>
+                <br />
+
+                <div>
+                    <Button color="secondary" onClick={this.props.closeModal}>
+                        <i className="fas fa-arrow-left fa-xs"/> Return to Table
+                    </Button>
+                </div>
+                <hr />
+                <div>
+                    {this.props.selectedSpace.roomName &&
+                    <SpaceDetailContainer space={this.props.selectedSpace}/>}
+                    <KeyContainer spaceId={this.props.selectedSpace.id}
+                        keyAssigned={this.props.assignedOrCreated}
+                        keyEdited={this.props.edited}
+                        keyRevoked={this.props.revokedOrDeleted} />
+                    <EquipmentContainer spaceId={this.props.selectedSpace.id} 
+                        equipmentAssigned={this.props.assignedOrCreated}
+                        equipmentEdited={this.props.edited}
+                        equipmentRevoked={this.props.revokedOrDeleted}/>
+                    <WorkstationContainer 
+                        spaceId={this.props.selectedSpace.id} 
+                        tags={this.props.tags}
+                        workstationAssigned={this.props.assignedOrCreated}
+                        workstationEdited={this.props.edited}
+                        workstationRevoked={this.props.revokedOrDeleted}
+                    />
+                </div>
+                <hr/>
+                <div>
+                    <Button color="secondary" onClick={this.props.closeModal}>
+                        <i className="fas fa-arrow-left fa-xs"/> Return to Table
+                    </Button>
+                </div>
             </div>
         );
     }

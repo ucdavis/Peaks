@@ -22,7 +22,11 @@ interface IState {
 }
 
 interface IProps {
+  equipmentAssigned?: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
+  equipmentRevoked?: (type: string, spaceId: number, personId: number) => void;
+  equipmentEdited?: (type: string, spaceId: number, personId: number) => void; 
   person?: IPerson;
+  spaceId?: number;
 }
 
 export default class EquipmentContainer extends React.Component<IProps, IState> {
@@ -47,9 +51,15 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   }
   public async componentDidMount() {
     // are we getting the person's equipment or the team's?
-    const equipmentFetchUrl = this.props.person
-      ? `/api/${this.context.team.name}/equipment/listassigned?personid=${this.props.person.id}`
-      : `/api/${this.context.team.name}/equipment/list/`;
+    let equipmentFetchUrl =  "";
+    if(!!this.props.person)
+    {
+      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/listassigned?personid=${this.props.person.id}`;
+    } else if(!!this.props.spaceId) {
+      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/getEquipmentInSpace?spaceId=${this.props.spaceId}`;
+    } else {
+      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/list/`;
+    }
 
     const attrFetchUrl = `/api/${this.context.team.name}/equipment/commonAttributeKeys/`;
 
@@ -78,7 +88,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     return (
       <div className="card">
         <div className="card-body">
-          <h4 className="card-title">Equipment</h4>
+        <h4 className="card-title"><i className="fas fa-laptop fa-xs"/> Equipment</h4>
           {this._renderTableOrList()}
           <AssignEquipment
             onCreate={this._createAndMaybeAssignEquipment}
@@ -109,7 +119,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   }
 
   private _renderTableOrList = () => {
-    if(!!this.props.person)
+    if(!!this.props.person || !!this.props.spaceId)
     {
       return(
       <div>
@@ -155,6 +165,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     equipment: IEquipment,
     date: any
   ) => {
+    let created = false;
+    let assigned = false;
+
     const attributes = equipment.attributes;
     // call API to create a equipment, then assign it if there is a person to assign to
     // if we are creating a new equipment
@@ -165,6 +178,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         method: "POST"
       });
       equipment.attributes = attributes;
+      created = true;
     }
 
     // if we know who to assign it to, do it now
@@ -178,6 +192,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       });
       equipment.attributes = attributes;
       equipment.assignment.person = person;
+      assigned = true;
     }
 
     const index = this.state.equipment.findIndex(x => x.id === equipment.id);
@@ -194,6 +209,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       this.setState({
         equipment: [...this.state.equipment, equipment]
       });
+    }
+
+    if(this.props.equipmentAssigned)
+    {
+        this.props.equipmentAssigned("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
     }
   };
 
@@ -216,6 +236,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         shallowCopy.splice(index, 1);
       }
       this.setState({ equipment: shallowCopy });
+      if(this.props.equipmentRevoked)
+      {
+          this.props.equipmentRevoked("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null);
+      }
     }
   };
 
@@ -243,6 +267,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       ...this.state,
       equipment: updateEquipment
     }); 
+
+    if(this.props.equipmentEdited)
+    {
+        this.props.equipmentEdited("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null);
+    }
   }
 
   private _filterTags = (filters: string[]) => {
@@ -295,8 +324,15 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   };
 
   private _getBaseUrl = () => {
-    return this.props.person
-      ? `/${this.context.team.name}/person/details/${this.props.person.id}`
-      : `/${this.context.team.name}`;
+    if(!!this.props.person)
+    {
+      return `/${this.context.team.name}/people/details/${this.props.person.id}`;
+    } else if(!!this.props.spaceId)
+    {
+      return `/${this.context.team.name}/spaces/details/${this.props.spaceId}`;
+    } else {
+      return `/${this.context.team.name}`;
+    }
+    
   };
 }

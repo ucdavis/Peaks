@@ -1,173 +1,133 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 import {
-    Button,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
+  Button,
+  ListGroup,
+  ListGroupItem,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader
 } from "reactstrap";
+
+import * as moment from "moment";
+import DatePicker from "react-datepicker";
 import { AppContext, IWorkstation } from "../../Types";
-import HistoryContainer from "../History/HistoryContainer";
 import WorkstationEditValues from "./WorkstationEditValues";
 
+import "react-datepicker/dist/react-datepicker.css";
 
 interface IProps {
-    modal: boolean;
-    closeModal: () => void;
-    returnToSpaceDetails: (spaceId: number) => void;
-    tags: string[];
-    workstationId: number;
-    editWorkstation: (spaceId: number) => void;
+  onEdit: (workstation: IWorkstation) => void;
+  modal: boolean;
+  closeModal: () => void;
+  selectedWorkstation: IWorkstation;
+  tags: string[];
 }
 
-interface IState{
-    error: string;
-    loading: boolean;
-    validState: boolean;
-    workstation: IWorkstation;
+interface IState {
+  error: string;
+  workstation: IWorkstation;
+  validState: boolean;
 }
 
 export default class EditWorkstation extends React.Component<IProps, IState> {
-    public static contextTypes = {
-        fetch: PropTypes.func,
-        router: PropTypes.object,
-        team: PropTypes.object
+  public static contextTypes = {
+    fetch: PropTypes.func,
+    team: PropTypes.object
+  };
+  public context: AppContext;
+  constructor(props) {
+    super(props);
+    this.state = {
+      workstation: this.props.selectedWorkstation,
+      error: "",
+      validState: false
     };
+  }
 
-    public context: AppContext;
+  // make sure we change the key we are updating if the parent changes selected key
+  public componentWillReceiveProps(nextProps) {
+    if (nextProps.selectedWorkstation !== this.props.selectedWorkstation) {
+      this.setState({ workstation: nextProps.selectedWorkstation });
+    }
+  }
 
-    constructor(props) {
-        super(props);
+  public render() {
+    if(!this.state.workstation)
+    {
+      return null;
+    }
+    return (
+      <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
+        <ModalHeader>Edit Workstation</ModalHeader>
+        <ModalBody>
+          <div className="container-fluid">
+            <form>
+                  <WorkstationEditValues
+                    selectedWorkstation={this.state.workstation}
+                    changeProperty={this._changeProperty}
+                    disableEditing={false}
+                    tags={this.props.tags}
+                  />
+            </form>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color="primary"
+            onClick={this._editSelected}
+            disabled={!this.state.validState}
+          >
+            Update Workstation
+          </Button>{" "}
+          <Button color="secondary" onClick={this._closeModal}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
+    );
+  }
 
-        this.state = {
-            error: "",
-            loading: false,
-            validState: false,
-            workstation: null,
-        };
+  private _changeProperty = (property: string, value: string) => {
+    this.setState({
+      workstation: {
+        ...this.state.workstation,
+        [property]: value
+      }
+    }, this._validateState);
+  };
+
+  // clear everything out on close
+  private _closeModal = () => {
+    this.setState({
+      workstation: null,
+      error: "",
+      validState: false
+    });
+    this.props.closeModal();
+  };
+
+  // assign the selected key even if we have to create it
+  private _editSelected = async () => {
+    if (!this.state.validState) {
+      return;
     }
 
-    public componentDidMount() {
-        if(this.props.modal && this.props.workstationId !== null) {
-            this._loadData(this.props.workstationId);
-        }
+    await this.props.onEdit(this.state.workstation);
+
+    this._closeModal();
+  };
+
+
+  private _validateState = () => {
+    let valid = true;
+    if (!this.state.workstation) {
+      valid = false;
+    } else if (this.state.error !== "") {
+      valid = false;
     }
+    this.setState({ validState: valid });
+  };
 
-    public componentDidUpdate(prevProps) {
-        if(!this.props.modal && prevProps.modal && this.props.workstationId === null) {
-            // if we've closed this modal, reset state
-            this.setState({
-                error: "",
-                loading: false,
-                validState: false,
-                workstation: null
-            });
-        }
-        else if(this.props.modal && this.props.workstationId !== prevProps.workstationId)
-        {
-            this._loadData(this.props.workstationId);
-        }
-    }
-
-    public render() {
-        if (this.props.workstationId === null) 
-        {
-            return null;
-        }
-        if(this.state.loading) 
-        {
-            return <h2>Loading...</h2>;
-        }
-        return (
-            <div>
-                {!!this.state.workstation && this._renderFound()}
-                {!this.state.workstation && this._renderNotFound()}
-            </div>
-        );
-    }
-
-    private _renderNotFound = () => {
-        return (
-            <Modal isOpen={this.props.modal}
-                toggle={this.props.closeModal} 
-                size="lg">
-                <ModalHeader>Workstation not found, please try again</ModalHeader>
-                <ModalFooter>
-                    <Button color="secondary" onClick={this.props.closeModal}>
-                        Close
-                    </Button>
-                </ModalFooter>
-            </Modal>
-        );
-    }
-
-    private _renderFound = () => {
-        return (
-            <Modal isOpen={this.props.modal} 
-                toggle={this.props.closeModal} 
-                size="lg">
-                <ModalHeader>Edit Workstation</ModalHeader>
-                <ModalBody>
-                    <WorkstationEditValues selectedWorkstation={this.state.workstation} 
-                        tags={this.props.tags}
-                        disableEditing={false} 
-                        changeProperty={this._changeProperty}/>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="secondary" onClick={() => this.props.returnToSpaceDetails(this.state.workstation.space.id)}>
-                        Return To Space
-                    </Button>
-                    <Button color="primary" onClick={this._editSelected}>
-                        Save
-                    </Button>
-                    <Button color="secondary" onClick={this.props.closeModal}>
-                        Close
-                    </Button>
-                </ModalFooter>
-            </Modal>
-        );
-    }
-
-    private _loadData = async (id: number) => {
-        this.setState({ loading: true });
-        const workstation =
-            await this.context.fetch(`/api/${this.context.team.name}/workstations/details?id=${id}`);
-        this.setState({ workstation, loading: false });
-    }
-
-    private _changeProperty = (property: string, value: string) => {
-      this.setState({
-        workstation: {
-          ...this.state.workstation,
-          [property]: value
-        }
-      }, this._validateState);
-    };
-
-    private _validateState = () => {
-        let valid = true;
-        if (!this.state.workstation) {
-          valid = false;
-        } else if (this.state.error !== "") {
-          valid = false;
-        }
-        this.setState({ validState: valid });
-      };
-
-    private _editSelected = async () => {
-        if (!this.state.validState) {
-          return;
-        }
-            
-        const updated: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/update`, {
-            body: JSON.stringify(this.state.workstation),
-            method: "POST"
-          });
-    
-        this.props.editWorkstation(this.state.workstation.space.id);
-        this.props.returnToSpaceDetails(this.state.workstation.space.id);
-      };
-    
-    
 }

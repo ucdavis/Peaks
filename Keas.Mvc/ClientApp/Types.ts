@@ -22,6 +22,8 @@ export interface IRouteProps {
   assetType: string;
   personId: string;
   personAction: string;
+  spaceId: string;
+  spaceAction: string;
 }
 
 export interface IUser {
@@ -34,6 +36,16 @@ export interface IPerson {
   userid: number;
   teamId: number;
   user: IUser;
+  tags: string;
+}
+
+export interface IPersonInfo {
+  person: IPerson;
+  id: number;
+  accessCount: number;
+  equipmentCount: number;
+  keyCount: number;
+  workstationCount: number;
 }
 
 export interface ITeam {

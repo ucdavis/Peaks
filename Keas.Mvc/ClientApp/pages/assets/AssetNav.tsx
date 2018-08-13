@@ -53,15 +53,6 @@ export default class AssetNav extends React.Component<{}, {}> {
               People
             </NavLink>
           </li>
-          <li className="nav-item">
-            <NavLink
-              to="/CAESDO/person"
-              className="nav-link disabled"
-              onClick={e => e.preventDefault()}
-            >
-              Person
-            </NavLink>
-          </li>
         </ul>
         <div>{this.props.children}</div>
       </div>
