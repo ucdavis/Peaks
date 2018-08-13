@@ -17,8 +17,8 @@ interface IState {
 }
 
 interface IProps {
-    accessAssigned?: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
-    accessRevoked?: (type: string, spaceId: number, personId: number) => void;
+    accessInUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
+    accessTotalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
     accessEdited?: (type: string, spaceId: number, personId: number) => void; 
     person?: IPerson;
     spaceId?: number;
@@ -156,9 +156,13 @@ export default class AccessContainer extends React.Component<IProps, IState> {
             access: [...this.state.access, access]
         });
     }
-    if(this.props.accessAssigned)
+    if(created)
     {
-        this.props.accessAssigned("access", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
+        this.props.accessTotalUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
+    }
+    if(assigned)
+    {
+        this.props.accessInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
     }
   };
 
@@ -183,12 +187,9 @@ export default class AccessContainer extends React.Component<IProps, IState> {
               // if we are looking at a person, remove access entirely
               shallowCopy.splice(accessIndex, 1);
           }
-          this.setState({ access: shallowCopy });
+        this.setState({ access: shallowCopy });
 
-          if(this.props.accessRevoked)
-          {
-            this.props.accessRevoked("access", this.props.spaceId, this.props.person ? this.props.person.id : null);
-          }
+        this.props.accessInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, -1);
       }
   }
 

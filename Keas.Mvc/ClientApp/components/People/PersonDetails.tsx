@@ -19,8 +19,8 @@ interface IProps {
     goBack: () => void;
     selectedPerson: IPerson;
     tags: string[];
-    assignedOrCreated: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
-    revokedOrDeleted: (type: string, spaceId: number, personId: number) => void;
+    inUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
+    totalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
     edited?: (type: string, spaceId: number, personId: number) => void;
 }
 
@@ -44,23 +44,23 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                 <div>
                         <BioContainer person={this.props.selectedPerson} />
                         <KeyContainer person={this.props.selectedPerson}
-                            keyAssigned={this.props.assignedOrCreated}
-                            keyRevoked={this.props.revokedOrDeleted}
+                            keyInUseUpdated={this.props.inUseUpdated}
+                            keyTotalUpdated={this.props.totalUpdated}
                             keyEdited={this.props.edited}
                         />
                         <EquipmentContainer person={this.props.selectedPerson}
-                            equipmentAssigned={this.props.assignedOrCreated}
-                            equipmentRevoked={this.props.revokedOrDeleted}
+                            equipmentInUseUpdated={this.props.inUseUpdated}
+                            equipmentTotalUpdated={this.props.totalUpdated}
                             equipmentEdited={this.props.edited}/>
                         <AccessContainer person={this.props.selectedPerson} 
-                            accessAssigned={this.props.assignedOrCreated}
-                            accessRevoked={this.props.revokedOrDeleted}
+                            accessInUseUpdated={this.props.inUseUpdated}
+                            accessTotalUpdated={this.props.totalUpdated}
                             accessEdited={this.props.edited}/>
                         <WorkstationContainer 
                             person={this.props.selectedPerson} 
                             tags={this.props.tags}
-                            workstationAssigned={this.props.assignedOrCreated}
-                            workstationRevoked={this.props.revokedOrDeleted}
+                            workstationInUseUpdated={this.props.inUseUpdated}
+                            workstationTotalUpdated={this.props.totalUpdated}
                             workstationEdited={this.props.edited}/>
                         <HistoryContainer controller="people" id={this.props.selectedPerson.id} />
                 </div>

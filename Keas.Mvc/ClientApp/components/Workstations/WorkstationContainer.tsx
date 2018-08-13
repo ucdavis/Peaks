@@ -13,8 +13,8 @@ interface IProps {
     spaceId?: number;
     person?: IPerson;
     tags: string[];
-    workstationAssigned: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
-    workstationRevoked: (type: string, spaceId: number, personId: number) => void;
+    workstationInUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
+    workstationTotalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
     workstationEdited?: (type: string, spaceId: number, personId: number) => void; 
 }
 
@@ -164,9 +164,13 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             workstations: [...this.state.workstations, workstation]
           });
         }
-        if(!!this.props.workstationAssigned)
+        if(created)
         {
-            this.props.workstationAssigned("workstation", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
+            this.props.workstationTotalUpdated("workstation", this.props.spaceId, this.props.person? this.props.person.id : null, 1);
+        }
+        if(assigned)
+        {
+            this.props.workstationInUseUpdated("workstation", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
         }
 
       };
@@ -191,9 +195,9 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           }
           this.setState({ workstations: shallowCopy });
 
-          if(!!this.props.workstationRevoked)
+          if(this.props.workstationInUseUpdated)
           {
-            this.props.workstationRevoked("workstation", this.props.spaceId, this.props.person ? this.props.person.id : null);
+            this.props.workstationInUseUpdated("workstation", this.props.spaceId, this.props.person ? this.props.person.id : null, -1);
           }
         }
       };
@@ -201,17 +205,38 @@ export default class WorkstationContainer extends React.Component<IProps, IState
       private _editWorkstation = async (workstation: IWorkstation) =>
       {
         const index = this.state.workstations.findIndex(x => x.id === workstation.id);
-    
+        debugger;
         if(index === -1 ) // should always already exist
         {
           return;
         }
-    
         const updated: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/update`, {
           body: JSON.stringify(workstation),
           method: "POST"
         });
-    
+        debugger;
+        // if the space has been edited
+        if(workstation.space.id !== this.state.workstations[index].space.id)
+        {
+            debugger;
+            console.log(workstation.space.id);
+            console.log(this.state.workstations[index].space.id);
+            // remove one from total of old space
+            this.props.workstationTotalUpdated("workstation", this.state.workstations[index].space.id,
+                this.props.person ? this.props.person.id : null, -1);
+            // and add one to total of new space
+            this.props.workstationTotalUpdated("workstation", workstation.space.id,
+                this.props.person ? this.props.person.id : null, 1);
+            if(!!workstation.assignment)
+            {
+                // remove one from in use of old space
+                this.props.workstationInUseUpdated("workstation", this.state.workstations[index].space.id,
+                    this.props.person ? this.props.person.id : null, -1);
+                // and add one to in use of new space
+                this.props.workstationInUseUpdated("workstation", workstation.space.id,
+                    this.props.person ? this.props.person.id : null, 1);
+            }
+        }
         updated.assignment = workstation.assignment;
     
         // update already existing entry in key

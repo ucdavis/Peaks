@@ -16,8 +16,8 @@ interface IState {
 }
 
 interface IProps {
-  keyAssigned?: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
-  keyRevoked?: (type: string, spaceId: number, personId: number) => void;
+  keyInUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
+  keyTotalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
   keyEdited?: (type: string, spaceId: number, personId: number) => void; 
   person?: IPerson;
   spaceId?: number;
@@ -150,9 +150,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         keys: [...this.state.keys, key]
       });
     }
-    if(this.props.keyAssigned)
+    if(created)
     {
-        this.props.keyAssigned("key", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
+        this.props.keyTotalUpdated("key", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
+    }
+    if(assigned)
+    {
+        this.props.keyInUseUpdated("key", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
     }
   };
 
@@ -175,11 +179,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         shallowCopy.splice(index, 1);
       }
       this.setState({ keys: shallowCopy });
-
-      if(this.props.keyRevoked)
-      {
-        this.props.keyRevoked("key", this.props.spaceId, this.props.person ? this.props.person.id : null);
-      }    
+      this.props.keyInUseUpdated("key", this.props.spaceId, this.props.person ? this.props.person.id : null, -1);   
     }
   };
 

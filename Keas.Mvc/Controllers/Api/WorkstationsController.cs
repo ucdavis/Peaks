@@ -177,9 +177,10 @@ namespace Keas.Mvc.Controllers.Api
                     
                 w.Name = workstation.Name;
                 w.Tags = workstation.Tags;
-
-                //eq.Attributes.Clear();
-                //equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
+                if(w.SpaceId != workstation.Space.Id)
+                {
+                    w.Space = await _context.Spaces.SingleAsync(x => x.Id == workstation.Space.Id);
+                }
 
                 await _context.SaveChangesAsync();
                 return Json(w);

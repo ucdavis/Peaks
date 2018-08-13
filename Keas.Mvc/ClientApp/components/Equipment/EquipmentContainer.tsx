@@ -22,8 +22,8 @@ interface IState {
 }
 
 interface IProps {
-  equipmentAssigned?: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
-  equipmentRevoked?: (type: string, spaceId: number, personId: number) => void;
+  equipmentInUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
+  equipmentTotalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
   equipmentEdited?: (type: string, spaceId: number, personId: number) => void; 
   person?: IPerson;
   spaceId?: number;
@@ -211,9 +211,13 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       });
     }
 
-    if(this.props.equipmentAssigned)
+    if(created)
     {
-        this.props.equipmentAssigned("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
+        this.props.equipmentTotalUpdated("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
+    }
+    if(assigned)
+    {
+      this.props.equipmentInUseUpdated("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
     }
   };
 
@@ -236,10 +240,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         shallowCopy.splice(index, 1);
       }
       this.setState({ equipment: shallowCopy });
-      if(this.props.equipmentRevoked)
-      {
-          this.props.equipmentRevoked("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null);
-      }
+      this.props.equipmentInUseUpdated("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null, -1);
     }
   };
 
