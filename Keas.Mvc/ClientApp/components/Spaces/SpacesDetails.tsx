@@ -54,7 +54,7 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                         equipmentTotalUpdated={this.props.totalUpdated}
                         equipmentEdited={this.props.edited}/>
                     <WorkstationContainer 
-                        spaceId={this.props.selectedSpace.id} 
+                        space={this.props.selectedSpace} 
                         tags={this.props.tags}
                         workstationInUseUpdated={this.props.inUseUpdated}
                         workstationTotalUpdated={this.props.totalUpdated}

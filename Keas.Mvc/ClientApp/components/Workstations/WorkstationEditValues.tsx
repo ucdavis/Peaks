@@ -9,6 +9,7 @@ interface IProps {
     tags?: string[];
     disableEditing: boolean;
     selectedWorkstation: IWorkstation;
+    space?: ISpace;
     creating?: boolean;
 }
 
@@ -67,7 +68,8 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                     <div className="form-group">
                         <label>Room</label>
 
-                    <AssignSpace onSelect={(space) => this.props.changeProperty("space", space)} defaultSpace={this.props.selectedWorkstation.space} />
+                    <AssignSpace onSelect={(space) => this.props.changeProperty("space", space)} 
+                        defaultSpace={this.props.space ? this.props.space : this.props.selectedWorkstation.space} />
                     </div>}
               
                 <div className="form-group">

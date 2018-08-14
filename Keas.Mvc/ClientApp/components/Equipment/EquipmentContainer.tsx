@@ -207,7 +207,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         equipment: updateEquipment
       });
     } else if (!!this.props.space && this.props.space.id !== equipment.space.id) {
-        // if we are on the space tab and we have assigned/created a space that is not in this space, do nothing to our state here
+        // if we are on the space tab and we have assigned/created an equipment that is not in this space, do nothing to our state here
     } else {
       this.setState({
         equipment: [...this.state.equipment, equipment]

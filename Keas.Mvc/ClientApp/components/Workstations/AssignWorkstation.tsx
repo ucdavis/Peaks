@@ -9,7 +9,7 @@ import {
     ModalFooter,
     ModalHeader,
 } from "reactstrap";
-import { AppContext, IPerson, IWorkstation } from "../../Types";
+import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
 import HistoryContainer from "../History/HistoryContainer";
 import WorkstationEditValues from "./WorkstationEditValues";
@@ -23,6 +23,7 @@ interface IProps {
   closeModal: () => void;
   selectedWorkstation: IWorkstation;
   person?: IPerson;
+  space?: ISpace;
   tags: string[];
 }
 
@@ -52,7 +53,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
             assignment: null,
             id: 0,
             name: "",
-            space: null,
+            space: this.props.space,
             tags:"",
             teamId: 0
         }    
