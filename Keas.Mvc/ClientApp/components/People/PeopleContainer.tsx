@@ -132,6 +132,8 @@ export default class PeopleContainer extends React.Component<{}, IState> {
 }
 
 private _assetTotalUpdated = (type: string, spaceId: number, personId: number, count: number) => {
+  // this will be used when we have different key counts
+
   // const index = this.state.people.findIndex(x => x.id === personId);
   // if(index > -1)
   // {
