@@ -250,4 +250,5 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     } else {
       return `/${this.context.team.name}`;
     }
+  }
 }
