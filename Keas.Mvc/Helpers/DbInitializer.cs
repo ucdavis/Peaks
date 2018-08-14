@@ -242,6 +242,9 @@ namespace Keas.Mvc.Helpers
             var jamesAdmin = new SystemPermission { Role = admin, User = james};
             context.SystemPermissions.Add(jamesAdmin);
 
+            var calAdmin = new SystemPermission { Role = admin, User = cal};
+            context.SystemPermissions.Add(calAdmin);
+
             var CruTag = new Tag { Name = "CRU", Team = caes };
             var ASITag = new Tag { Name = "ASI", Team = caes };
             var CABATag = new Tag { Name = "CABA", Team = caes };
