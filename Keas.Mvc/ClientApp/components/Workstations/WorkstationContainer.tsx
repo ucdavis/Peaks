@@ -59,7 +59,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     }
 
     public render() {
-        if (!this.props.space)
+        if (!this.props.space && !this.props.person)
         {
             return null;
         }
