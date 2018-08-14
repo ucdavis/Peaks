@@ -1,80 +1,21 @@
-// card-dashboard-button
+// React Tabs
 
-.card-dashboard-button {
-  padding:$card-padding;
-}
-
-
-// Payments layout and card
-
-.pay-memo {
-  box-shadow: $box-shadow;
-  padding: 16px;
-
-  p {
-    margin-bottom: 0;
-    font-style:italic;
+ul.react-tabs {
+  list-style-type: none;
+  padding-left:0px;
+  display:flex;
+  justify-content: space-around;
+  vertical-align: middle;
+  .tab-item {
+    flex:1;
+    background-color: white;
+    text-align: center;
+    padding:16px 0px;
+    &:hover {
+      transform: translateY(-1px);
+    }
   }
-  margin-bottom: 40px;
-}
 
-.pay-card-style {
-  margin: 0 auto;
-  max-width: 761px;
-}
-
-.pay-top {
-  text-align: center;
-  padding: $card-thick-padding;
-  p {
-    font-size: 2rem;
-    margin-bottom: 0;
-  }
-}
-
-.pay-action {
-  background-color: transparentize($gold,.96);
-  padding: $card-thick-padding;
-  text-align: center;
-  border-top:1px solid $borders;
-  border-bottom:1px solid $borders;
-  p {
-    font-size: 2rem;
-    margin: 18px 0;
-  }
-}
-
-.pay-description {
-  padding: $card-thick-padding;
-}
-
-.pay-download {
-  background-color: $bg-color;
-  padding: $card-thick-padding;
-  text-align: center;
-
-  h3 {
-    margin:12px 0px 24px 0;
-  }
-}
-
-.pay-footer {
-  padding: 16px;
-  text-align: center;
-}
-
-// Preview warning card
-
-.preview-warning-card-style {
-  padding: 16px 48px 8px;
-  margin: 0 auto;
-  margin-bottom: 48px;
-  max-width: 761px;
-  border-left: solid $unitrans-red 6px;
-
-  .preview-warning-icon {
-    color: $unitrans-red;
-  }
 }
 
 // Payments table
@@ -320,7 +261,7 @@ table#Invoices {
 
   .modal-header{
     background-color: $bg-color;
-    
+
     .modal-title {
       font-size: 2rem;
       font-weight: 600;

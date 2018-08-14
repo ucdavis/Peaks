@@ -84,44 +84,10 @@ header {
     background-color: rgba(255,255,255,.001);
   }
 }
-.card-style {
-  background-color: #ffffff;
-  box-shadow: $box-shadow;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom:16px;
+.main-content-wrapper {
+  margin-top:40px
 }
 
-.card-content {
-  padding:$card-padding;
-  padding-top:2.6rem;
-  padding-bottom:2.6rem;
-}
-.card-head {
-  padding:$card-padding;
-  padding-top:1.8rem;
-}
-.card-gradient-header {
-  background: url("/media/gradient-header.svg") center top/cover no-repeat;
-  height: 6px;
-}
-.card-gradient-header-bleed {
-  background: #1e3a5b;
-  background: -moz-linear-gradient(left,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
-  background: -webkit-linear-gradient(left,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
-  background: linear-gradient(to right,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr= '$gradient-one',endColorstr='$gradient-two',GradientType=1);
-}
-.card-header-primary {
-  border-top:4px solid $primary-color;
-}
-.card-header-yellow {
-  border-top:4px solid $golden-lupine;
-}
-.card-foot {
-  padding:$card-padding;
-  border-top:1px solid $borders;
-}
 footer {
   position: absolute;
   bottom: 0;
