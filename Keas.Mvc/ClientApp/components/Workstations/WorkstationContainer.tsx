@@ -213,12 +213,21 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           body: JSON.stringify(workstation),
           method: "POST"
         });
-        // if the space has been edited
+
+        updated.assignment = workstation.assignment;
+
+        // update already existing entry in key
+        const updateWorkstation = [...this.state.workstations];
+        updateWorkstation[index] = updated;
+
+        // if on spaces tab and the space has been edited
         if(!!this.props.spaceId && workstation.space.id !== this.state.workstations[index].space.id)
         {
             // remove one from total of old space
             this.props.workstationTotalUpdated("workstation", this.state.workstations[index].space.id,
                 this.props.person ? this.props.person.id : null, -1);
+            // remove from this state
+            updateWorkstation.splice(index, 1);
             // and add one to total of new space
             this.props.workstationTotalUpdated("workstation", workstation.space.id,
                 this.props.person ? this.props.person.id : null, 1);
@@ -231,13 +240,8 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                 this.props.workstationInUseUpdated("workstation", workstation.space.id,
                     this.props.person ? this.props.person.id : null, 1);
             }
-        }
-        updated.assignment = workstation.assignment;
-    
-        // update already existing entry in key
-        const updateWorkstation = [...this.state.workstations];
-        updateWorkstation[index] = updated;
-    
+        }    
+
         this.setState({
           ...this.state,
           workstations: updateWorkstation
