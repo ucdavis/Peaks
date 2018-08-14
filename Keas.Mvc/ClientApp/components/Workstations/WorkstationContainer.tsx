@@ -48,7 +48,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         if(!this.props.space && !!this.props.person)
         {
             workstations = 
-                await this.context.fetch(`/api/${this.context.team.name}/workstations/getWorkstationsAssigned?personId=${this.props.person.id}`);
+                await this.context.fetch(`/api/${this.context.team.name}/workstations/listAssigned?personId=${this.props.person.id}`);
         }
         if(!!this.props.space && !this.props.person)
         {

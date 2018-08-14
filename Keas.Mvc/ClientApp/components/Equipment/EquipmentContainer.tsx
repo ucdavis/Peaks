@@ -220,11 +220,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         this.props.equipmentTotalUpdated("equipment", equipment.space ? equipment.space.id : null, 
           this.props.person ? this.props.person.id : null, 1);
     }
-    if(assigned)
-    {
-      this.props.equipmentInUseUpdated("equipment", equipment.space ? equipment.space.id : null, 
-      this.props.person ? this.props.person.id : null, 1);
-    }
   };
 
   private _revokeEquipment = async (equipment: IEquipment) => {
