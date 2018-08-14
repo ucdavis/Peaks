@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
-import { AsyncTypeahead } from "react-bootstrap-typeahead";
+import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 import { AppContext, IKey, IPerson } from "../../Types";
 
 interface IProps {
@@ -50,10 +50,23 @@ export default class AssignPerson extends React.Component<IProps, IState> {
         <AsyncTypeahead
           isLoading={this.state.isSearchLoading}
           minLength={3}
-          placeholder="Search for person by email"
+          placeholder="Search for person by name or email"
           labelKey={(option: IPerson) =>
             `${option.user.name} (${option.user.email})`
           }
+          filterBy={() => true} // don't filter on top of our search
+          renderMenuItemChildren={(option, props, index) => (
+              <div>
+                  <div>
+                      <Highlighter key="name" search={props.text}>
+                          {option.user.name}
+                      </Highlighter>
+                  </div>
+                  <div>
+                        <Highlighter key="email" search={props.text}>{option.user.email}</Highlighter>
+                  </div>
+              </div>
+          )}
           onSearch={async query => {
             this.setState({ isSearchLoading: true });
             const people = await this.context.fetch(

@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
@@ -18,16 +19,30 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> List()
         {
-            var people = await _context.People
-                .Where(x => x.Team.Name == Team && x.Active)
-                .Include(x => x.User).AsNoTracking().ToListAsync();
-            return Json(people);
+            var people = 
+            from person in _context.People.Where(x => x.Team.Name == Team && x.Active).Include(x => x.User) // TODO: have some way to show inactive?
+            select new
+            {
+                person = person,
+                id = person.Id,
+                accessCount = 
+                    (from a in _context.AccessAssignments where a.PersonId == person.Id select a).Count(),
+                equipmentCount = 
+                    (from eq in _context.EquipmentAssignments where eq.PersonId == person.Id select eq ).Count(),
+                keyCount = 
+                    (from k in _context.KeyAssignments where k.PersonId == person.Id select k ).Count(),
+                workstationCount = 
+                    (from w in _context.WorkstationAssignments where w.PersonId == person.Id select w).Count()
+                };
+            return Json(await people.ToListAsync());
         }
 
         public async Task<IActionResult> Search(string q)
         {
+            var comparison = StringComparison.OrdinalIgnoreCase;
             var people = await _context.People
-                .Where(x => x.Team.Name == Team && x.Active && x.User.Email.StartsWith(q))
+                .Where(x => x.Team.Name == Team && x.Active && 
+                (x.User.Email.IndexOf(q, comparison) >= 0 || x.User.Name.IndexOf(q, comparison) >= 0)) // case-insensitive version of .Contains
                 .Include(x => x.User).AsNoTracking().ToListAsync();
 
             return Json(people);

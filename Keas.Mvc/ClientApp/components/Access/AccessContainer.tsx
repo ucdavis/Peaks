@@ -17,7 +17,11 @@ interface IState {
 }
 
 interface IProps {
+    accessAssigned?: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
+    accessRevoked?: (type: string, spaceId: number, personId: number) => void;
+    accessEdited?: (type: string, spaceId: number, personId: number) => void; 
     person?: IPerson;
+    spaceId?: number;
 }
 
 export default class AccessContainer extends React.Component<IProps, IState> {
@@ -63,7 +67,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     return (
       <div className="card">
         <div className="card-body">
-                <h4 className="card-title">Access</h4>
+                <h4 className="card-title"><i className="fas fa-id-card fa-xs"/> Access</h4>
                 <AccessList
                     access={this.state.access}
                     personView={this.props.person ? true : false}
@@ -104,6 +108,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       date: any,
       person: IPerson
   ) => {
+      let created = false;
+      let assigned = false;
       // call API to create a access, then assign it if there is a person to assign to
       // if we are creating a new access
       if (access.id === 0) {
@@ -112,6 +118,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
               body: JSON.stringify(access),
               method: "POST"
           });
+          created = true;
       }
 
     // if we know who to assign it to, do it now
@@ -130,6 +137,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       }
       // then push it
       access.assignments.push(accessAssignment);
+      assigned = true;
     }
 
     const index = this.state.access.findIndex(x => x.id === access.id);
@@ -147,6 +155,10 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         this.setState({
             access: [...this.state.access, access]
         });
+    }
+    if(this.props.accessAssigned)
+    {
+        this.props.accessAssigned("access", this.props.spaceId, this.props.person ? this.props.person.id : null, created, assigned);
     }
   };
 
@@ -172,6 +184,11 @@ export default class AccessContainer extends React.Component<IProps, IState> {
               shallowCopy.splice(accessIndex, 1);
           }
           this.setState({ access: shallowCopy });
+
+          if(this.props.accessRevoked)
+          {
+            this.props.accessRevoked("access", this.props.spaceId, this.props.person ? this.props.person.id : null);
+          }
       }
   }
 
@@ -197,6 +214,11 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       ...this.state,
       access: updateAccess
     }); 
+
+    if(this.props.accessEdited)
+    {
+        this.props.accessEdited("access", this.props.spaceId, !!this.props.person ? this.props.person.id : null);
+    }
   }
 
   private _openAssignModal = (access: IAccess) => {
@@ -240,7 +262,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
 
   private _getBaseUrl = () => {
       return this.props.person
-          ? `/${this.context.team.name}/person/details/${this.props.person.id}`
+          ? `/${this.context.team.name}/people/details/${this.props.person.id}`
           : `/${this.context.team.name}`;
   };
 

@@ -7,7 +7,7 @@ import {
     ModalFooter,
     ModalHeader,
 } from "reactstrap";
-import { AppContext, IWorkstation } from "../../Types";
+import { IWorkstation } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
 import WorkstationEditValues from "./WorkstationEditValues";
 
@@ -15,110 +15,33 @@ import WorkstationEditValues from "./WorkstationEditValues";
 interface IProps {
     modal: boolean;
     closeModal: () => void;
-    returnToSpaceDetails: (spaceId: number) => void;
-    workstationId: number;
+    selectedWorkstation: IWorkstation;
 }
 
-interface IState{
-    loading: boolean;
-    workstation: IWorkstation;
-}
 
-export default class WorkstationDetails extends React.Component<IProps, IState> {
-    public static contextTypes = {
-        fetch: PropTypes.func,
-        router: PropTypes.object,
-        team: PropTypes.object
-    };
-
-    public context: AppContext;
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            loading: false,
-            workstation: null,
-        };
-    }
-
-    public componentDidMount() {
-        if(this.props.modal && this.props.workstationId !== null) {
-            this._loadData(this.props.workstationId);
-        }
-    }
-
-    public componentDidUpdate(prevProps) {
-        if(!this.props.modal && prevProps.modal && this.props.workstationId === null) {
-            // if we've closed this modal, reset state
-            this.setState({
-                loading: false,
-                workstation: null
-            });
-        }
-        else if(this.props.modal && this.props.workstationId !== prevProps.workstationId)
-        {
-            this._loadData(this.props.workstationId);
-        }
-    }
+export default class WorkstationDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.workstationId === null) 
+        if (this.props.selectedWorkstation == null) 
         {
             return null;
         }
-        if(this.state.loading) 
-        {
-            return <h2>Loading...</h2>;
-        }
+        const workstation = this.props.selectedWorkstation;
         return (
             <div>
-                {!!this.state.workstation && this._renderFound()}
-                {!this.state.workstation && this._renderNotFound()}
+                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg">
+                    <ModalHeader>Details for {workstation.name}</ModalHeader>
+                    <ModalBody>
+                        <WorkstationEditValues selectedWorkstation={workstation} disableEditing={true} />
+                        <HistoryContainer controller="workstations" id={workstation.id}/>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="secondary" onClick={this.props.closeModal}>
+                            Close
+                        </Button>
+                    </ModalFooter>
+                </Modal>
             </div>
         );
-    }
-
-    private _renderNotFound = () => {
-        return (
-            <Modal isOpen={this.props.modal}
-                toggle={this.props.closeModal} 
-                size="lg">
-                <ModalHeader>Workstation not found, please try again</ModalHeader>
-                <ModalFooter>
-                    <Button color="secondary" onClick={this.props.closeModal}>
-                        Close
-                    </Button>
-                </ModalFooter>
-            </Modal>
-        );
-    }
-
-    private _renderFound = () => {
-        return (
-            <Modal isOpen={this.props.modal} 
-                toggle={() => this.props.returnToSpaceDetails(this.state.workstation.space.id)} 
-                size="lg">
-                <ModalHeader>Details for {this.state.workstation.name}</ModalHeader>
-                <ModalBody>
-                    <WorkstationEditValues selectedWorkstation={this.state.workstation} disableEditing={true}/>
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="primary" onClick={() => this.props.returnToSpaceDetails(this.state.workstation.space.id)}>
-                        Return To Space
-                    </Button>
-                    <Button color="secondary" onClick={this.props.closeModal}>
-                        Close
-                    </Button>
-                </ModalFooter>
-            </Modal>
-        );
-    }
-
-    private _loadData = async (id: number) => {
-        this.setState({ loading: true });
-        const workstation =
-            await this.context.fetch(`/api/${this.context.team.name}/workstations/details?id=${id}`);
-        this.setState({ workstation, loading: false });
     }
 }
