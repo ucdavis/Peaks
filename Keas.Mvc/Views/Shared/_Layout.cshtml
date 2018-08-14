@@ -21,11 +21,17 @@
 <body>
   <header>
     <div class="container">
-      <div class="row">
-        <img src="/media/keas-symbol.svg" alt="KEAS logo of key lock house and computer">
+      <div class="row justify-content-between">
+        <div class="row">
+          <img src="/media/keas-symbol.svg" alt="KEAS logo of key lock house and computer">
         <div>
           <h1>KEAS</h1>
           <p>Keys, Equipment, Access and Space</p>
+        </div>
+      </div>
+        <div class="team">
+          <h3>Team</h3>
+          <p>College of Agricultural <br> and Environmental Sciences</p>
         </div>
       </div>
     </div>
@@ -36,33 +42,30 @@
   </div>
 
 </div>
-    <nav class="navbar navbar-expand-md navbar-default">
+    <nav class="navbar navbar-expand-md">
       <div class="container">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="navbar-row">
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item active">
-                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home <span class="sr-only">(current)</span></a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">Link</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link disabled" href="#">Disabled</a>
-              </li>
-            </ul>
-            <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
-              <span>Welcome @User.GetNameClaim()</span>
-            </div>
+        <div class="collapse navbar-collapse" id="navbarText">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Pricing</a>
+            </li>
+          </ul>
+          <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
+            <span>Welcome @User.GetNameClaim()</span>
           </div>
         </div>
       </div>
 
     </nav>
-
 @if (!string.IsNullOrWhiteSpace(TempData["Message"] as string))
 {
     <div class="alert alert-info">

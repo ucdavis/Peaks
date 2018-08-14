@@ -1,7 +1,10 @@
 .container-fluid {
   padding: 0;
 }
-
+.row {
+  margin-left:0px;
+  margin-right:0px;
+}
 table.dataTable thead .sorting:after,
 table.dataTable thead .sorting:before,
 table.dataTable thead .sorting_asc:after,
