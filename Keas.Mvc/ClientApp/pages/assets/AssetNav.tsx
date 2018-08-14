@@ -6,9 +6,10 @@ import { Link, NavLink } from "react-router-dom";
 export default class AssetNav extends React.Component<{}, {}> {
   public render() {
     return (
+
       <div>
-        <ul className="react-tabs">
-          <li className="tab-item">
+
+        <div className="react-tabs">
             <NavLink
               to="/CAESDO/keys"
               className="tab-link"
@@ -16,8 +17,8 @@ export default class AssetNav extends React.Component<{}, {}> {
             >
               Keys
             </NavLink>
-          </li>
-          <li className="tab-item">
+
+
             <NavLink
               to="/CAESDO/equipment"
               className="tab-link"
@@ -25,8 +26,8 @@ export default class AssetNav extends React.Component<{}, {}> {
             >
               Equipment
             </NavLink>
-          </li>
-          <li className="tab-item">
+
+
               <NavLink
                   to="/CAESDO/access"
                   className="tab-link"
@@ -34,8 +35,8 @@ export default class AssetNav extends React.Component<{}, {}> {
               >
                   Access
             </NavLink>
-          </li>
-          <li className="tab-item">
+
+
               <NavLink
                   to="/CAESDO/spaces"
                   className="tab-link"
@@ -43,8 +44,8 @@ export default class AssetNav extends React.Component<{}, {}> {
               >
                   Spaces
             </NavLink>
-          </li>
-          <li className="tab-item">
+
+
             <NavLink
               to="/CAESDO/people"
               className="tab-link"
@@ -52,8 +53,8 @@ export default class AssetNav extends React.Component<{}, {}> {
             >
               People
             </NavLink>
-          </li>
-          <li className="tab-item">
+
+
             <NavLink
               to="/CAESDO/person"
               className="tab-link disabled"
@@ -61,8 +62,8 @@ export default class AssetNav extends React.Component<{}, {}> {
             >
               Person
             </NavLink>
-          </li>
-        </ul>
+          </div>
+
         <div>{this.props.children}</div>
       </div>
     );
