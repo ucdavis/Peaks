@@ -25,11 +25,14 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
-            var workstation = await _context.Workstations
-                .Where(w => w.Team.Name == Team && w.Active && w.Assignment == null && w.Name.StartsWith(q, comparison))
+            var equipment = await _context.Workstations
+                .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
+                (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
+                    || x.Space.RoomNumber.StartsWith(q, comparison)))
+                .Include(x => x.Space)
                 .AsNoTracking().ToListAsync();
 
-            return Json(workstation);
+            return Json(equipment);
         }
 
         public async Task<IActionResult> GetWorkstationsInSpace(int spaceId)

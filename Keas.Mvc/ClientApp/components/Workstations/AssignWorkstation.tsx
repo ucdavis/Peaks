@@ -12,6 +12,7 @@ import {
 import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
 import HistoryContainer from "../History/HistoryContainer";
+import SearchWorkstations from "./SearchWorkstations";
 import WorkstationEditValues from "./WorkstationEditValues";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -49,14 +50,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         error: "",
         person: null,
         validState: false,
-        workstation: {
-            assignment: null,
-            id: 0,
-            name: "",
-            space: this.props.space,
-            tags:"",
-            teamId: 0
-        }    
+        workstation: this.props.selectedWorkstation
     };
 }
 
@@ -88,6 +82,15 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     onSelect={this._onSelectPerson}
                   />
                 </div>
+                <div className="form-group">
+                  <label>Pick a workstation to assign</label>
+                  <SearchWorkstations
+                    selectedWorkstation={this.state.workstation}
+                    onSelect={this._onSelected}
+                    onDeselect={this._onDeselected}
+                    space={this.props.space}
+                  />
+                  </div>
                 {(!this.state.workstation || !this.state.workstation.teamId) && // if we are creating a new workstation, edit properties
                     <WorkstationEditValues
                       tags={this.props.tags}
