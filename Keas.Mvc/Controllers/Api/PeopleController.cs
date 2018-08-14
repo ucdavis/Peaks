@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
@@ -38,8 +39,10 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Search(string q)
         {
+            var comparison = StringComparison.OrdinalIgnoreCase;
             var people = await _context.People
-                .Where(x => x.Team.Name == Team && x.Active && x.User.Email.StartsWith(q))
+                .Where(x => x.Team.Name == Team && x.Active && 
+                (x.User.Email.IndexOf(q, comparison) >= 0 || x.User.Name.IndexOf(q, comparison) >= 0)) // case-insensitive version of .Contains
                 .Include(x => x.User).AsNoTracking().ToListAsync();
 
             return Json(people);
