@@ -69,7 +69,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
     return (
       <div>
          <Modal isOpen={this.props.modal} 
-                toggle={this.props.closeModal} 
+                toggle={this._closeModal} 
                 size="lg">
                 <ModalHeader>Assign Workstation</ModalHeader>
           <ModalBody>
@@ -125,7 +125,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     <Button color="primary" onClick={this._assignSelected}>
                         Save
                     </Button>
-                    <Button color="secondary" onClick={this.props.closeModal}>
+                    <Button color="secondary" onClick={this._closeModal}>
                         Close
                     </Button>
                 </ModalFooter>

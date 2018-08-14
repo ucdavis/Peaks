@@ -42,7 +42,8 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
     }
 
     private _renderSelectWorkstation = () => {
-
+        const searchUrl = this.props.space ? `/api/${this.context.team.name}/workstations/searchInSpace?spaceId=${this.props.space.id}&q=` :
+            `/api/${this.context.team.name}/workstations/search?q=`;
         return (
             <div>
                 <AsyncTypeahead
@@ -72,7 +73,7 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
                     onSearch={async query => {
                         this.setState({ isSearchLoading: true });
                         const workstations = await this.context.fetch(
-                            `/api/${this.context.team.name}/workstations/search?q=${query}&spaceId=${this.props.space ? this.props.space.id : null}`
+                            searchUrl + query
                         );
                         this.setState({
                             isSearchLoading: false,

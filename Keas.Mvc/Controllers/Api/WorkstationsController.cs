@@ -35,6 +35,20 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipment);
         }
 
+        
+        public async Task<IActionResult> SearchInSpace(int spaceId, string q)
+        {
+            var comparison = StringComparison.OrdinalIgnoreCase;
+            var equipment = await _context.Workstations
+                .Where(x => x.Team.Name == Team && x.SpaceId == spaceId && x.Active && x.Assignment == null &&
+                (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
+                    || x.Space.RoomNumber.StartsWith(q, comparison)))
+                .Include(x => x.Space)
+                .AsNoTracking().ToListAsync();
+
+            return Json(equipment);
+        }
+
         public async Task<IActionResult> GetWorkstationsInSpace(int spaceId)
         {
             var workstations = await _context.Workstations
