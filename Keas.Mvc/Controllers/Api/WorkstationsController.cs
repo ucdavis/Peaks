@@ -44,17 +44,6 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstations);
         }
 
-        public async Task<IActionResult> GetWorkstationsAssigned(int personId)
-        {
-            var workstations = await _context.Workstations
-                .Where(x => x.Assignment.PersonId == personId && x.Team.Name == Team && x.Active)
-                .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person.User)
-                .AsNoTracking()
-                .ToListAsync();
-            return Json(workstations);
-        }
-
         public async Task<IActionResult> CommonAttributeKeys()
         {
             var keys = await _context.WorkstationAttributes
