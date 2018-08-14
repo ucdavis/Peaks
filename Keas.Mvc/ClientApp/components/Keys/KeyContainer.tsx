@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 
-import { AppContext, IKey, IPerson } from "../../Types";
+import { AppContext, IKey, IPerson, ISpace } from "../../Types";
 
 import AssignKey from "./AssignKey";
 import EditKey from "./EditKey";
@@ -20,7 +20,7 @@ interface IProps {
   keyTotalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
   keyEdited?: (type: string, spaceId: number, personId: number) => void; 
   person?: IPerson;
-  spaceId?: number;
+  space?: ISpace;
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
@@ -45,8 +45,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     if(!!this.props.person)
     {
       keyFetchUrl = `/api/${this.context.team.name}/keys/listassigned?personid=${this.props.person.id}`;
-    } else if(!!this.props.spaceId) {
-      keyFetchUrl = `/api/${this.context.team.name}/keys/getKeysInSpace?spaceId=${this.props.spaceId}`;
+    } else if(!!this.props.space) {
+      keyFetchUrl = `/api/${this.context.team.name}/keys/getKeysInSpace?spaceId=${this.props.space.id}`;
     } else {
       keyFetchUrl = `/api/${this.context.team.name}/keys/list/`;
     }
@@ -152,11 +152,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     }
     if(created)
     {
-        this.props.keyTotalUpdated("key", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
+        this.props.keyTotalUpdated("key", this.props.space.id, this.props.person ? this.props.person.id : null, 1);
     }
     if(assigned)
     {
-        this.props.keyInUseUpdated("key", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
+        this.props.keyInUseUpdated("key", this.props.space.id, this.props.person ? this.props.person.id : null, 1);
     }
   };
 
@@ -179,7 +179,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         shallowCopy.splice(index, 1);
       }
       this.setState({ keys: shallowCopy });
-      this.props.keyInUseUpdated("key", this.props.spaceId, this.props.person ? this.props.person.id : null, -1);   
+      this.props.keyInUseUpdated("key", this.props.space.id, this.props.person ? this.props.person.id : null, -1);   
     }
   };
 
@@ -208,7 +208,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
     if(this.props.keyEdited)
     {
-      this.props.keyEdited("key", this.props.spaceId, this.props.person ? this.props.person.id : null);
+      this.props.keyEdited("key", this.props.space.id, this.props.person ? this.props.person.id : null);
     }
     
     // TODO: handle count changes once keys are related to spaces
@@ -244,9 +244,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     if(!!this.props.person)
     {
       return `/${this.context.team.name}/people/details/${this.props.person.id}`;
-    } else if(!!this.props.spaceId)
+    } else if(!!this.props.space.id)
     {
-      return `/${this.context.team.name}/spaces/details/${this.props.spaceId}`;
+      return `/${this.context.team.name}/spaces/details/${this.props.space.id}`;
     } else {
       return `/${this.context.team.name}`;
     }

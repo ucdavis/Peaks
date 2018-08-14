@@ -127,6 +127,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
 
     // managing counts for assigned or revoked
     private _assetInUseUpdated = (type: string, spaceId: number, personId: number, count: number) => {
+        // this is called when we are assigning or revoking an asset
         const index = this.state.spaces.findIndex(x => x.id === spaceId);
         if(index > -1)
         {
