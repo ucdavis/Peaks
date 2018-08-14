@@ -210,6 +210,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     {
       this.props.keyEdited("key", this.props.spaceId, this.props.person ? this.props.person.id : null);
     }
+    
+    // TODO: handle count changes once keys are related to spaces
   }
 
   private _openAssignModal = (key: IKey) => {

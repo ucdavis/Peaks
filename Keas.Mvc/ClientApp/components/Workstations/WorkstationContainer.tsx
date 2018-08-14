@@ -214,7 +214,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           method: "POST"
         });
         // if the space has been edited
-        if(workstation.space.id !== this.state.workstations[index].space.id)
+        if(!!this.props.spaceId && workstation.space.id !== this.state.workstations[index].space.id)
         {
             // remove one from total of old space
             this.props.workstationTotalUpdated("workstation", this.state.workstations[index].space.id,

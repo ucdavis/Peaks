@@ -42,6 +42,9 @@ namespace Keas.Mvc.Controllers.Api
         {
             var equipment = await _context.Equipment
                 .Where(x => x.Space.Id == spaceId && x.Team.Name == Team && x.Active)
+                .Include(x => x.Space)
+                .Include(x => x.Attributes)
+                .Include(x => x.Team)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person.User)
                 .AsNoTracking()

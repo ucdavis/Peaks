@@ -258,6 +258,17 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       method: "POST"
     });
 
+    // if the space has been edited
+    if(!!this.props.spaceId && equipment.space.id !== this.state.equipment[index].space.id)
+    {
+        // remove one from total of old space
+        this.props.equipmentTotalUpdated("equipment", this.state.equipment[index].space.id,
+            this.props.person ? this.props.person.id : null, -1);
+        // and add one to total of new space
+        this.props.equipmentTotalUpdated("equipment", equipment.space.id,
+            this.props.person ? this.props.person.id : null, 1);
+  }
+
     updated.assignment = equipment.assignment;
 
     // update already existing entry in key
@@ -273,7 +284,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     {
         this.props.equipmentEdited("equipment", this.props.spaceId, this.props.person ? this.props.person.id : null);
     }
-  }
+}
 
   private _filterTags = (filters: string[]) => {
     this.setState({tagFilters: filters});
