@@ -43,6 +43,8 @@ namespace Keas.Mvc.Helpers
 
             context.Users.Add(scott);
             context.Users.Add(james);
+            context.Users.Add(laura);
+            context.Users.Add(cal);
             context.Teams.Add(caes);
 
 
@@ -67,8 +69,12 @@ namespace Keas.Mvc.Helpers
             var lauraCaes = new Person { User = laura, Team = caes, Group = "CRU", Tags = "CRU"};
             var scottCaes = new Person { User = scott, Team = caes, Group = "CRU", Tags = "CRU" };
             var jamesCaes = new Person {User = james,  Team = caes, Group = "CRU", Tags = "CRU" };
+            var calCaes = new Person {User = cal,  Team = caes, Group = "CRU", Tags = "CRU" };
 
             context.People.Add(jamesCaes);
+            context.People.Add(lauraCaes);
+            context.People.Add(scottCaes);
+            context.People.Add(calCaes);
 
             var access = new Access
             {
