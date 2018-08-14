@@ -205,7 +205,6 @@ export default class WorkstationContainer extends React.Component<IProps, IState
       private _editWorkstation = async (workstation: IWorkstation) =>
       {
         const index = this.state.workstations.findIndex(x => x.id === workstation.id);
-        debugger;
         if(index === -1 ) // should always already exist
         {
           return;
@@ -214,13 +213,9 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           body: JSON.stringify(workstation),
           method: "POST"
         });
-        debugger;
         // if the space has been edited
         if(workstation.space.id !== this.state.workstations[index].space.id)
         {
-            debugger;
-            console.log(workstation.space.id);
-            console.log(this.state.workstations[index].space.id);
             // remove one from total of old space
             this.props.workstationTotalUpdated("workstation", this.state.workstations[index].space.id,
                 this.props.person ? this.props.person.id : null, -1);
