@@ -53,7 +53,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                 </div>
                 }
                 
-                {this.props.disableEditing &&
+                {(this.props.disableEditing || !this.props.creating) &&
                     <div className="form-group">
                         <label>Room</label>
                         <input type="text"
@@ -64,7 +64,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                         />
                     </div>
                 }
-                {!this.props.disableEditing &&
+                {!this.props.disableEditing && this.props.creating &&
                     <div className="form-group">
                         <label>Room</label>
 

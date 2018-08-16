@@ -226,28 +226,6 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         const updateWorkstation = [...this.state.workstations];
         updateWorkstation[index] = updated;
 
-        // if on spaces tab and the space has been edited
-        if(!!this.props.space && workstation.space.id !== this.state.workstations[index].space.id)
-        {
-            // remove one from total of old space
-            this.props.workstationTotalUpdated("workstation", this.state.workstations[index].space.id,
-                this.props.person ? this.props.person.id : null, -1);
-            // remove from this state
-            updateWorkstation.splice(index, 1);
-            // and add one to total of new space
-            this.props.workstationTotalUpdated("workstation", workstation.space.id,
-                this.props.person ? this.props.person.id : null, 1);
-            if(!!workstation.assignment)
-            {
-                // remove one from in use of old space
-                this.props.workstationInUseUpdated("workstation", this.state.workstations[index].space.id,
-                    this.props.person ? this.props.person.id : null, -1);
-                // and add one to in use of new space
-                this.props.workstationInUseUpdated("workstation", workstation.space.id,
-                    this.props.person ? this.props.person.id : null, 1);
-            }
-        }    
-
         this.setState({
           ...this.state,
           workstations: updateWorkstation

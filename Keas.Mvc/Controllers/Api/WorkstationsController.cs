@@ -43,8 +43,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Team.Name == Team && x.SpaceId == spaceId && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
                     || x.Space.RoomNumber.StartsWith(q, comparison)))
-                .Include(x => x.Space)
-                .AsNoTracking().ToListAsync();
+                .Include(x => x.Space).AsNoTracking().ToListAsync();
 
             return Json(equipment);
         }
@@ -183,10 +182,6 @@ namespace Keas.Mvc.Controllers.Api
                     
                 w.Name = workstation.Name;
                 w.Tags = workstation.Tags;
-                if(w.SpaceId != workstation.Space.Id)
-                {
-                    w.Space = await _context.Spaces.SingleAsync(x => x.Id == workstation.Space.Id);
-                }
 
                 await _context.SaveChangesAsync();
                 return Json(w);
