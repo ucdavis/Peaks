@@ -30,8 +30,20 @@
 .card-header-primary {
   border-top:4px solid $primary-color;
 }
-.card-header-yellow {
-  border-top:4px solid $golden-lupine;
+.card-header-spaces {
+  border-bottom:4px solid $spaces;
+}
+.card-header-keys {
+  border-bottom:4px solid $keys;
+}
+.card-header-access {
+  border-bottom:4px solid $access;
+}
+.card-header-equipment {
+  border-bottom:4px solid $equipment;
+}
+.card-header-people {
+  border-bottom:4px solid $people;
 }
 .card-foot {
   padding:$card-padding;

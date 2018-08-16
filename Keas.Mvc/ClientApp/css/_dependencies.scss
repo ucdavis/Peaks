@@ -1,3 +1,22 @@
+// fonts
+@font-face {
+    font-family: 'proxima-nova-r';
+    src: url('/media/fonts/proximanova-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'proxima-nova-i';
+    src: url('/media/fonts/proximanova-regularit-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'proxima-nova-b';
+    src: url('/media/fonts/proximanova-bold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 
 $sans-italic:   "proxima-nova-i",sans-serif;
 $sans-bold:     "proxima-nova-b",sans-serif;
@@ -6,6 +25,12 @@ $sans-reg:      "proxima-nova-r",sans-serif;
 $primary-color:     #1D3B5C;
 $secondary-color:   #009493;
 $tertiary-color:    #F4BD00;
+
+$keys:  #1C395B;
+$equipment: #407C90;
+$access: #57A6A2;
+$spaces: #9EB564;
+$people: #DABA52;
 
 $gold:              #DAAA00;
 $blue:              #004987;

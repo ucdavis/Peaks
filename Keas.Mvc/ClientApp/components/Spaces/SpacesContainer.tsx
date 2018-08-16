@@ -6,7 +6,7 @@ import SearchTags from "../Tags/SearchTags";
 import SpacesDetails from "./SpacesDetails";
 import SpacesTable from "./SpacesTable";
 import Denied from "../Shared/Denied";
-import { PermissionsUtil } from "../../util/permissions"; 
+import { PermissionsUtil } from "../../util/permissions";
 
 interface IState {
     spaces: ISpaceInfo[];
@@ -59,17 +59,23 @@ export default class SpacesContainer extends React.Component<{}, IState> {
 
         return (
         <div className="card">
-            <div className="card-body">
-                <h4 className="card-title"><i className="fas fa-building fa-xs"/> Spaces</h4>
-                {!spaceAction && !activeWorkstationAsset &&
-                    this._renderTableView()
-                }
-                { spaceAction === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space) &&
-                    this._renderDetailsView(selectedSpaceInfo.space)
-                }
+          <div className="card-header-spaces">
+            <div className="card-head">  <h2><i className="fas fa-building fa-xs"/> Spaces</h2></div>
 
-                </div>
-            </div>
+
+          </div>
+
+          <div className="card-content">
+
+              {!spaceAction && !activeWorkstationAsset &&
+                  this._renderTableView()
+              }
+              { spaceAction === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space) &&
+                  this._renderDetailsView(selectedSpaceInfo.space)
+              }
+
+              </div>
+          </div>
         );
     }
 
@@ -80,7 +86,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         {
             filteredSpaces = this.state.spaces.filter(x => this._checkFilters(x, this.state.tagFilters));
         }
-        else 
+        else
         {
             filteredSpaces = this.state.spaces;
         }
@@ -89,7 +95,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
             <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
             <SpacesTable
                 spaces={filteredSpaces}
-                showDetails={this._openDetailsModal} 
+                showDetails={this._openDetailsModal}
                 filtered={this.state.tableFilters}
                 updateFilters={this._updateTableFilters}
                 />
@@ -132,7 +138,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         {
             const spaces = [...this.state.spaces];
             switch(type) {
-            case "equipment": 
+            case "equipment":
                 spaces[index].equipmentCount++;
                 break;
             case "key":
@@ -148,7 +154,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                 }
             }
             this.setState({spaces});
-        } 
+        }
     }
 
     private _assetRevokedOrDeleted = (type: string, spaceId: number, personId: number) => {
@@ -158,7 +164,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         // TODO: add flag for deleting and also edit workstationsTotal
         const spaces = [...this.state.spaces];
         switch(type) {
-            case "equipment": 
+            case "equipment":
             spaces[index].equipmentCount--;
             break;
             case "key":
@@ -168,7 +174,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
             spaces[index].workstationsInUse--;
         }
         this.setState({spaces});
-    } 
+    }
     }
 
     private _assetEdited = async (type: string, spaceId: number, personId: number) => {
@@ -178,7 +184,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
             const tags = await this.context.fetch(`/api/${this.context.team.name}/spaces/getTagsInSpace?spaceId=${spaceId}`);
             const spaces = [...this.state.spaces];
             spaces[index].tags = tags;
-            this.setState({spaces});  
+            this.setState({spaces});
         }
     }
 
