@@ -6,54 +6,55 @@ import { Link, NavLink } from "react-router-dom";
 export default class AssetNav extends React.Component<{}, {}> {
   public render() {
     return (
+
       <div>
-        <ul className="nav nav-tabs">
-          <li className="nav-item">
+
+        <div className="react-tabs">
             <NavLink
               to="/CAESDO/keys"
-              className="nav-link"
+              className="tab-link"
               activeClassName="active"
             >
               Keys
             </NavLink>
-          </li>
-          <li className="nav-item">
+
+
             <NavLink
               to="/CAESDO/equipment"
-              className="nav-link"
+              className="tab-link"
               activeClassName="active"
             >
               Equipment
             </NavLink>
-          </li>
-          <li className="nav-item">
+
+
               <NavLink
                   to="/CAESDO/access"
-                  className="nav-link"
+                  className="tab-link"
                   activeClassName="active"
               >
                   Access
             </NavLink>
-          </li>
-          <li className="nav-item">
+
+
               <NavLink
                   to="/CAESDO/spaces"
-                  className="nav-link"
+                  className="tab-link"
                   activeClassName="active"
               >
                   Spaces
             </NavLink>
-          </li>
-          <li className="nav-item">
+
+
             <NavLink
               to="/CAESDO/people"
-              className="nav-link"
+              className="tab-link"
               activeClassName="active"
             >
               People
             </NavLink>
-          </li>
-        </ul>
+          </div>
+
         <div>{this.props.children}</div>
       </div>
     );
