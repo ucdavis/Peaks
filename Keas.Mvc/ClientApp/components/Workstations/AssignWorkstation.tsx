@@ -96,6 +96,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                       tags={this.props.tags}
                       selectedWorkstation={this.state.workstation}
                       changeProperty={this._changeProperty}
+                      creating={true}
                       disableEditing={false}
                     />
                   }
