@@ -41,32 +41,8 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> ListAssigned(int personId) {
             var assignedAccess = await _context.Access 
                 .Where(x => x.Active && x.Team.Name == Team && x.Assignments.Any(y => y.PersonId == personId))
-                .Select(a => new Access()
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                    TeamId = a.TeamId,
-                    Team = a.Team,
-                    Assignments = a.Assignments.Where(b => b.PersonId == personId).Select(
-                            c => new AccessAssignment()
-                            {
-                                AccessId = c.AccessId,
-                                ExpiresAt = c.ExpiresAt,
-                                Id = c.Id,
-                                PersonId = c.PersonId,
-                                Person = new Person()
-                                {
-                                    Id = c.PersonId,
-                                    TeamId = a.TeamId,
-                                    User = new User()
-                                    {
-                                        Name = c.Person.User.Name,
-                                        Email = c.Person.User.Email,
-                                    }
-                                },
-                            }
-                        ).ToList()
-                })
+                .Include(x => x.Assignments).ThenInclude(x => x.Person.User)
+                .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
 
             return Json(assignedAccess);

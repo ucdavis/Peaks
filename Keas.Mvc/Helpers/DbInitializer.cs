@@ -78,6 +78,7 @@ namespace Keas.Mvc.Helpers
             {
                 //Access = access,
                 Person = lauraCaes,
+                PersonId = lauraCaes.Id,
                 RequestedBy = scott,
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
@@ -94,6 +95,7 @@ namespace Keas.Mvc.Helpers
             {
                 //Access = access2,
                 Person = scottCaes,
+                PersonId = scottCaes.Id,
                 RequestedBy = scott,
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
