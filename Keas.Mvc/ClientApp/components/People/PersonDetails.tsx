@@ -20,7 +20,6 @@ interface IProps {
     selectedPerson: IPerson;
     tags: string[];
     inUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
-    totalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
     edited?: (type: string, spaceId: number, personId: number) => void;
 }
 
@@ -45,22 +44,18 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                         <BioContainer person={this.props.selectedPerson} />
                         <KeyContainer person={this.props.selectedPerson}
                             assetInUseUpdated={this.props.inUseUpdated}
-                            assetTotalUpdated={this.props.totalUpdated}
                             assetEdited={this.props.edited}
                         />
                         <EquipmentContainer person={this.props.selectedPerson}
                             assetInUseUpdated={this.props.inUseUpdated}
-                            assetTotalUpdated={this.props.totalUpdated}
                             assetEdited={this.props.edited}/>
                         <AccessContainer person={this.props.selectedPerson} 
                             assetInUseUpdated={this.props.inUseUpdated}
-                            assetTotalUpdated={this.props.totalUpdated}
                             assetEdited={this.props.edited}/>
                         <WorkstationContainer 
                             person={this.props.selectedPerson} 
                             tags={this.props.tags}
                             assetInUseUpdated={this.props.inUseUpdated}
-                            assetTotalUpdated={this.props.totalUpdated}
                             assetEdited={this.props.edited}/>
                         <HistoryContainer controller="people" id={this.props.selectedPerson.id} />
                 </div>

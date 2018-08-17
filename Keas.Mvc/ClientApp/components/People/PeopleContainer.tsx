@@ -99,7 +99,6 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         tags={this.state.tags}
         goBack={this._goBack}
         inUseUpdated={this._assetInUseUpdated}
-        totalUpdated={this._assetTotalUpdated}
       />
     );
   }
