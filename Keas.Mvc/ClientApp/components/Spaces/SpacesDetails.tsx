@@ -45,20 +45,20 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                     {this.props.selectedSpace &&
                     <SpaceDetailContainer space={this.props.selectedSpace}/>}
                     <KeyContainer space={this.props.selectedSpace}
-                            keyInUseUpdated={this.props.inUseUpdated}
-                            keyTotalUpdated={this.props.totalUpdated}
-                            keyEdited={this.props.edited}
+                        assetInUseUpdated={this.props.inUseUpdated}
+                        assetTotalUpdated={this.props.totalUpdated}
+                        assetEdited={this.props.edited}
                         />
                     <EquipmentContainer space={this.props.selectedSpace}
-                        equipmentInUseUpdated={this.props.inUseUpdated}
-                        equipmentTotalUpdated={this.props.totalUpdated}
-                        equipmentEdited={this.props.edited}/>
+                        assetInUseUpdated={this.props.inUseUpdated}
+                        assetTotalUpdated={this.props.totalUpdated}
+                        assetEdited={this.props.edited}/>
                     <WorkstationContainer 
                         space={this.props.selectedSpace} 
                         tags={this.props.tags}
-                        workstationInUseUpdated={this.props.inUseUpdated}
-                        workstationTotalUpdated={this.props.totalUpdated}
-                        workstationEdited={this.props.edited}/>
+                        assetInUseUpdated={this.props.inUseUpdated}
+                        assetTotalUpdated={this.props.totalUpdated}
+                        assetEdited={this.props.edited}/>
                 </div>
                 <hr/>
                 <div>

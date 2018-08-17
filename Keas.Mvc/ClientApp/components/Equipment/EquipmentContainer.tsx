@@ -22,9 +22,9 @@ interface IState {
 }
 
 interface IProps {
-  equipmentInUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
-  equipmentTotalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
-  equipmentEdited?: (type: string, spaceId: number, personId: number) => void; 
+  assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+  assetTotalUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+  assetEdited?: (type: string, spaceId: number, personId: number) => void; 
   person?: IPerson;
   space?: ISpace;
 }
@@ -214,10 +214,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       });
     }
 
-    if(created)
+    if(created && this.props.assetTotalUpdated)
     {
         // pass in equipment's space in case it differs from the space we have passed in
-        this.props.equipmentTotalUpdated("equipment", equipment.space ? equipment.space.id : null, 
+        this.props.assetTotalUpdated("equipment", equipment.space ? equipment.space.id : null, 
           this.props.person ? this.props.person.id : null, 1);
     }
   };
@@ -241,7 +241,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         shallowCopy.splice(index, 1);
       }
       this.setState({ equipment: shallowCopy });
-      this.props.equipmentInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
+      if(this.props.assetInUseUpdated)
+      {
+
+      }
+      this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
         this.props.person ? this.props.person.id : null, -1);
     }
   };
@@ -269,12 +273,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     if(!!this.props.space && equipment.space.id !== this.state.equipment[index].space.id)
     {
         // remove one from total of old space
-        this.props.equipmentTotalUpdated("equipment", this.state.equipment[index].space.id,
+        this.props.assetTotalUpdated("equipment", this.state.equipment[index].space.id,
             this.props.person ? this.props.person.id : null, -1);
         // remove from this state
         updateEquipment.splice(index, 1);
         // and add one to total of new space
-        this.props.equipmentTotalUpdated("equipment", equipment.space.id,
+        this.props.assetTotalUpdated("equipment", equipment.space.id,
             this.props.person ? this.props.person.id : null, 1);
   }
 
@@ -283,9 +287,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       equipment: updateEquipment
     }); 
 
-    if(this.props.equipmentEdited)
+    if(this.props.assetEdited)
     {
-      this.props.equipmentEdited("equipment", this.props.space ? this.props.space.id : null,
+      this.props.assetEdited("equipment", this.props.space ? this.props.space.id : null,
         this.props.person ? this.props.person.id : null);
     }
 }

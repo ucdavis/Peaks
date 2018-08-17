@@ -17,9 +17,9 @@ interface IState {
 }
 
 interface IProps {
-    accessInUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
-    accessTotalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
-    accessEdited?: (type: string, spaceId: number, personId: number) => void; 
+    assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+    assetTotalUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+    assetEdited?: (type: string, spaceId: number, personId: number) => void; 
     person?: IPerson;
     spaceId?: number;
 }
@@ -43,7 +43,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   public async componentDidMount() {
       // are we getting the person's access or the team's?
       const accessFetchUrl = this.props.person
-          ? `/api/${this.context.team.name}/access/listassigned?personId=${this.props.person.id}`
+          ? `/api/${this.context.team.name}/access/listAssigned?personId=${this.props.person.id}`
       : `/api/${this.context.team.name}/access/list/`;
 
     const access = await this.context.fetch(accessFetchUrl);
@@ -156,13 +156,13 @@ export default class AccessContainer extends React.Component<IProps, IState> {
             access: [...this.state.access, access]
         });
     }
-    if(created)
+    if(created && this.props.assetTotalUpdated)
     {
-        this.props.accessTotalUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
+        this.props.assetTotalUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
     }
-    if(assigned)
+    if(assigned && this.props.assetInUseUpdated)
     {
-        this.props.accessInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
+        this.props.assetInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
     }
   };
 
@@ -189,7 +189,10 @@ export default class AccessContainer extends React.Component<IProps, IState> {
           }
         this.setState({ access: shallowCopy });
 
-        this.props.accessInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, -1);
+        if(this.props.assetInUseUpdated)
+        {
+            this.props.assetInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, -1);
+        }
       }
   }
 
@@ -216,9 +219,9 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       access: updateAccess
     }); 
 
-    if(this.props.accessEdited)
+    if(this.props.assetEdited)
     {
-        this.props.accessEdited("access", this.props.spaceId, !!this.props.person ? this.props.person.id : null);
+        this.props.assetEdited("access", this.props.spaceId, !!this.props.person ? this.props.person.id : null);
     }
   }
 

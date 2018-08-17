@@ -16,9 +16,9 @@ interface IState {
 }
 
 interface IProps {
-  keyInUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
-  keyTotalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
-  keyEdited?: (type: string, spaceId: number, personId: number) => void; 
+  assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+  assetTotalUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+  assetEdited?: (type: string, spaceId: number, personId: number) => void; 
   person?: IPerson;
   space?: ISpace;
 }
@@ -150,14 +150,14 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         keys: [...this.state.keys, key]
       });
     }
-    if(created)
+    if(created && this.props.assetTotalUpdated)
     {
-        this.props.keyTotalUpdated("key", this.props.space ? this.props.space.id : null,
+        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
            this.props.person ? this.props.person.id : null, 1);
     }
-    if(assigned)
+    if(assigned && this.props.assetInUseUpdated)
     {
-        this.props.keyInUseUpdated("key", this.props.space ? this.props.space.id : null,
+        this.props.assetInUseUpdated("key", this.props.space ? this.props.space.id : null,
           this.props.person ? this.props.person.id : null, 1);
     }
   };
@@ -181,8 +181,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         shallowCopy.splice(index, 1);
       }
       this.setState({ keys: shallowCopy });
-      this.props.keyInUseUpdated("key", this.props.space ? this.props.space.id: null,
-        this.props.person ? this.props.person.id : null, -1);   
+      if(this.props.assetInUseUpdated)
+      {
+        this.props.assetInUseUpdated("key", this.props.space ? this.props.space.id: null,
+        this.props.person ? this.props.person.id : null, -1); 
+      }
+  
     }
   };
 
@@ -209,9 +213,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       keys: updateKey
     }); 
 
-    if(this.props.keyEdited)
+    if(this.props.assetEdited)
     {
-      this.props.keyEdited("key", this.props.space ? this.props.space.id : null,
+      this.props.assetEdited("key", this.props.space ? this.props.space.id : null,
         this.props.person ? this.props.person.id : null);
     }
     

@@ -44,24 +44,24 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                 <div>
                         <BioContainer person={this.props.selectedPerson} />
                         <KeyContainer person={this.props.selectedPerson}
-                            keyInUseUpdated={this.props.inUseUpdated}
-                            keyTotalUpdated={this.props.totalUpdated}
-                            keyEdited={this.props.edited}
+                            assetInUseUpdated={this.props.inUseUpdated}
+                            assetTotalUpdated={this.props.totalUpdated}
+                            assetEdited={this.props.edited}
                         />
                         <EquipmentContainer person={this.props.selectedPerson}
-                            equipmentInUseUpdated={this.props.inUseUpdated}
-                            equipmentTotalUpdated={this.props.totalUpdated}
-                            equipmentEdited={this.props.edited}/>
+                            assetInUseUpdated={this.props.inUseUpdated}
+                            assetTotalUpdated={this.props.totalUpdated}
+                            assetEdited={this.props.edited}/>
                         <AccessContainer person={this.props.selectedPerson} 
-                            accessInUseUpdated={this.props.inUseUpdated}
-                            accessTotalUpdated={this.props.totalUpdated}
-                            accessEdited={this.props.edited}/>
+                            assetInUseUpdated={this.props.inUseUpdated}
+                            assetTotalUpdated={this.props.totalUpdated}
+                            assetEdited={this.props.edited}/>
                         <WorkstationContainer 
                             person={this.props.selectedPerson} 
                             tags={this.props.tags}
-                            workstationInUseUpdated={this.props.inUseUpdated}
-                            workstationTotalUpdated={this.props.totalUpdated}
-                            workstationEdited={this.props.edited}/>
+                            assetInUseUpdated={this.props.inUseUpdated}
+                            assetTotalUpdated={this.props.totalUpdated}
+                            assetEdited={this.props.edited}/>
                         <HistoryContainer controller="people" id={this.props.selectedPerson.id} />
                 </div>
                 <hr/>

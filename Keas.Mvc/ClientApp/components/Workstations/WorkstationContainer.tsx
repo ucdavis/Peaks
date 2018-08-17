@@ -10,12 +10,12 @@ import WorkstationDetails from "../Workstations/WorkstationDetails";
 import WorkstationList from "./../Workstations/WorkstationList";
 
 interface IProps {
+    assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+    assetTotalUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+    assetEdited?: (type: string, spaceId: number, personId: number) => void; 
     space?: ISpace;
     person?: IPerson;
     tags: string[];
-    workstationInUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
-    workstationTotalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
-    workstationEdited?: (type: string, spaceId: number, personId: number) => void; 
 }
 
 interface IState {
@@ -167,14 +167,14 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             workstations: [...this.state.workstations, workstation]
           });
         }
-        if(created)
+        if(created && this.props.assetTotalUpdated)
         {
-            this.props.workstationTotalUpdated("workstation", workstation.space ? workstation.space.id : null, 
+            this.props.assetTotalUpdated("workstation", workstation.space ? workstation.space.id : null, 
                 this.props.person? this.props.person.id : null, 1);
         }
-        if(assigned)
+        if(assigned && this.props.assetInUseUpdated)
         {
-            this.props.workstationInUseUpdated("workstation", workstation.space? workstation.space.id : null, 
+            this.props.assetInUseUpdated("workstation", workstation.space? workstation.space.id : null, 
             this.props.person? this.props.person.id : null, 1);
         }
 
@@ -200,9 +200,9 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           }
           this.setState({ workstations: shallowCopy });
 
-          if(this.props.workstationInUseUpdated)
+          if(this.props.assetInUseUpdated)
           {
-            this.props.workstationInUseUpdated("workstation",  this.props.space? this.props.space.id : null, 
+            this.props.assetInUseUpdated("workstation",  this.props.space? this.props.space.id : null, 
             this.props.person? this.props.person.id : null, -1);
           }
         }
@@ -231,9 +231,9 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           workstations: updateWorkstation
         }); 
 
-        if(!!this.props.workstationEdited)
+        if(this.props.assetEdited)
         {
-            this.props.workstationEdited("workstation", this.props.space ? this.props.space.id : null, 
+            this.props.assetEdited("workstation", this.props.space ? this.props.space.id : null, 
                 this.props.person ? this.props.person.id : null);
         }
       }
