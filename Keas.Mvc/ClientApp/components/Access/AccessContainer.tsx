@@ -156,7 +156,11 @@ export default class AccessContainer extends React.Component<IProps, IState> {
             access: [...this.state.access, access]
         });
     }
-    if(this.props.assetInUseUpdated)
+    if(created && this.props.assetTotalUpdated)
+    {
+        this.props.assetTotalUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
+    }
+    if(assigned && this.props.assetInUseUpdated)
     {
         this.props.assetInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
     }

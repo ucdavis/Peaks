@@ -133,12 +133,6 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         {
             const spaces = [...this.state.spaces];
             switch(type) {
-            case "equipment": 
-                spaces[index].equipmentCount += count;
-                break;
-            case "key":
-                spaces[index].keyCount += count;
-                break;
             case "workstation":
                 spaces[index].workstationsInUse += count;
             }

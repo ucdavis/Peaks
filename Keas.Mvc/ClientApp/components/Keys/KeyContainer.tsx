@@ -150,8 +150,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         keys: [...this.state.keys, key]
       });
     }
-
-    if(this.props.assetInUseUpdated)
+    if(created && this.props.assetTotalUpdated)
+    {
+        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
+           this.props.person ? this.props.person.id : null, 1);
+    }
+    if(assigned && this.props.assetInUseUpdated)
     {
         this.props.assetInUseUpdated("key", this.props.space ? this.props.space.id : null,
           this.props.person ? this.props.person.id : null, 1);

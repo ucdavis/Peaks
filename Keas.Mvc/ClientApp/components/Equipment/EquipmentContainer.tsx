@@ -112,6 +112,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             closeModal={this._closeModals}
             modal={activeAsset && (action === "edit")}
             tags={this.state.tags}
+            space={this.props.space}
             commonAttributeKeys={this.state.commonAttributeKeys}
             />
         </div>
@@ -214,10 +215,14 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       });
     }
 
-    if(this.props.assetInUseUpdated)
+    if(created && this.props.assetTotalUpdated)
     {
-        // pass in equipment's space in case it differs from the space we have passed in
-        this.props.assetInUseUpdated("equipment", equipment.space ? equipment.space.id : null, 
+        this.props.assetTotalUpdated("equipment", this.props.space ? this.props.space.id : null,
+           this.props.person ? this.props.person.id : null, 1);
+    }
+    if(assigned && this.props.assetInUseUpdated)
+    {
+        this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
           this.props.person ? this.props.person.id : null, 1);
     }
   };
