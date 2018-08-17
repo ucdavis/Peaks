@@ -214,10 +214,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       });
     }
 
-    if(created && this.props.assetTotalUpdated)
+    if(this.props.assetInUseUpdated)
     {
         // pass in equipment's space in case it differs from the space we have passed in
-        this.props.assetTotalUpdated("equipment", equipment.space ? equipment.space.id : null, 
+        this.props.assetInUseUpdated("equipment", equipment.space ? equipment.space.id : null, 
           this.props.person ? this.props.person.id : null, 1);
     }
   };
@@ -243,10 +243,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       this.setState({ equipment: shallowCopy });
       if(this.props.assetInUseUpdated)
       {
-
+        this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
+          this.props.person ? this.props.person.id : null, -1);
       }
-      this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null, -1);
     }
   };
 
