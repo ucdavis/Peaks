@@ -104,8 +104,8 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                     closeModal={this._closeModals}
                     selectedSpace={selectedSpace}
                     tags={this.state.tags}
-                    assignedOrCreated={this._assetAssignedOrCreated}
-                    revokedOrDeleted={this._assetRevokedOrDeleted}
+                    inUseUpdated={this._assetInUseUpdated}
+                    totalUpdated={this._assetTotalUpdated}
                     edited={this._assetEdited}
                     />
         );
@@ -125,50 +125,39 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         this.context.router.history.push(`${this._getBaseUrl()}/spaces`);
     };
 
-      // managing counts
-    private _assetAssignedOrCreated = (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => {
+    // managing counts for assigned or revoked
+    private _assetInUseUpdated = (type: string, spaceId: number, personId: number, count: number) => {
+        // this is called when we are assigning or revoking an asset
         const index = this.state.spaces.findIndex(x => x.id === spaceId);
         if(index > -1)
         {
             const spaces = [...this.state.spaces];
             switch(type) {
-            case "equipment": 
-                spaces[index].equipmentCount++;
-                break;
-            case "key":
-                spaces[index].keyCount++;
-                break;
             case "workstation":
-                if(created) {
-                    spaces[index].workstationsTotal++;
-                }
-                if(assigned)
-                {
-                    spaces[index].workstationsInUse++;
-                }
+                spaces[index].workstationsInUse += count;
             }
             this.setState({spaces});
         } 
     }
 
-    private _assetRevokedOrDeleted = (type: string, spaceId: number, personId: number) => {
-    const index = this.state.spaces.findIndex(x => x.id === spaceId);
-    if(index > -1)
-    {
-        // TODO: add flag for deleting and also edit workstationsTotal
-        const spaces = [...this.state.spaces];
-        switch(type) {
-            case "equipment": 
-            spaces[index].equipmentCount--;
-            break;
-            case "key":
-            spaces[index].keyCount--;
-            break;
-            case "workstation":
-            spaces[index].workstationsInUse--;
-        }
-        this.setState({spaces});
-    } 
+    private _assetTotalUpdated = (type: string, spaceId: number, personId: number, count: number) => {
+        // this is called when we are either changing the room on an asset, or creating a workstation
+        const index = this.state.spaces.findIndex(x => x.id === spaceId);
+        if(index > -1)
+        {
+            const spaces = [...this.state.spaces];
+            switch(type) {
+                case "equipment": 
+                spaces[index].equipmentCount += count;
+                break;
+                case "key":
+                spaces[index].keyCount += count;
+                break;
+                case "workstation":
+                spaces[index].workstationsTotal += count;
+            }
+            this.setState({spaces});
+        } 
     }
 
     private _assetEdited = async (type: string, spaceId: number, personId: number) => {

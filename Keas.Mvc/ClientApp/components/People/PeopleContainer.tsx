@@ -98,8 +98,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         selectedPerson={detailPerson}
         tags={this.state.tags}
         goBack={this._goBack}
-        assignedOrCreated={this._assetAssigned}
-        revokedOrDeleted={this._assetRevoked}
+        inUseUpdated={this._assetInUseUpdated}
       />
     );
   }
@@ -108,49 +107,27 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     this.setState({tableFilters: filters});
   }
 
-  // managing counts
-  private _assetAssigned = (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => {
+  // managing counts for assigned or revoked
+  private _assetInUseUpdated = (type: string, spaceId: number, personId: number, count: number) => {
     const index = this.state.people.findIndex(x => x.id === personId);
     if(index > -1)
     {
         const people = [...this.state.people];
         switch(type) {
           case "equipment": 
-            people[index].equipmentCount++;
+            people[index].equipmentCount += count;
             break;
           case "key":
-            people[index].keyCount++;
+            people[index].keyCount += count;
             break;
           case "access":
-            people[index].accessCount++;
+            people[index].accessCount += count;
             break;
           case "workstation":
-            people[index].workstationCount++
+            people[index].workstationCount += count;
         }
         this.setState({people});
     } 
-}
-
-private _assetRevoked = (type: string, spaceId: number, personId: number) => {
-  const index = this.state.people.findIndex(x => x.id === personId);
-  if(index > -1)
-  {
-      const people = [...this.state.people];
-      switch(type) {
-        case "equipment": 
-          people[index].equipmentCount--;
-          break;
-        case "key":
-          people[index].keyCount--;
-          break;
-        case "access":
-          people[index].accessCount--;
-          break;
-        case "workstation":
-          people[index].workstationCount--;
-      }
-      this.setState({people});
-  } 
 }
 
   // tags 

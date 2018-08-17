@@ -9,9 +9,10 @@ import {
     ModalFooter,
     ModalHeader,
 } from "reactstrap";
-import { AppContext, IPerson, IWorkstation } from "../../Types";
+import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
 import HistoryContainer from "../History/HistoryContainer";
+import SearchWorkstations from "./SearchWorkstations";
 import WorkstationEditValues from "./WorkstationEditValues";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -23,6 +24,7 @@ interface IProps {
   closeModal: () => void;
   selectedWorkstation: IWorkstation;
   person?: IPerson;
+  space?: ISpace;
   tags: string[];
 }
 
@@ -48,14 +50,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         error: "",
         person: null,
         validState: false,
-        workstation: {
-            assignment: null,
-            id: 0,
-            name: "",
-            space: null,
-            tags:"",
-            teamId: 0
-        }    
+        workstation: this.props.selectedWorkstation
     };
 }
 
@@ -74,7 +69,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
     return (
       <div>
          <Modal isOpen={this.props.modal} 
-                toggle={this.props.closeModal} 
+                toggle={this._closeModal} 
                 size="lg">
                 <ModalHeader>Assign Workstation</ModalHeader>
           <ModalBody>
@@ -87,11 +82,21 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     onSelect={this._onSelectPerson}
                   />
                 </div>
+                <div className="form-group">
+                  <label>Pick a workstation to assign</label>
+                  <SearchWorkstations
+                    selectedWorkstation={this.state.workstation}
+                    onSelect={this._onSelected}
+                    onDeselect={this._onDeselected}
+                    space={this.props.space}
+                  />
+                  </div>
                 {(!this.state.workstation || !this.state.workstation.teamId) && // if we are creating a new workstation, edit properties
                     <WorkstationEditValues
                       tags={this.props.tags}
                       selectedWorkstation={this.state.workstation}
                       changeProperty={this._changeProperty}
+                      creating={true}
                       disableEditing={false}
                     />
                   }
@@ -121,7 +126,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     <Button color="primary" onClick={this._assignSelected}>
                         Save
                     </Button>
-                    <Button color="secondary" onClick={this.props.closeModal}>
+                    <Button color="secondary" onClick={this._closeModal}>
                         Close
                     </Button>
                 </ModalFooter>
