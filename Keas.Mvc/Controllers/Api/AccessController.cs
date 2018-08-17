@@ -40,7 +40,7 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> ListAssigned(int personId) {
             var assignedAccess = await _context.Access 
-                .Where(x => x.Active && x.Team.Name == Team && x.Assignments.Any(y => y.PersonId == personId))
+                .Where(x => x.Active && x.Team.Name == Team && x.Assignments.Any(y => y.Person.Id == personId))
                 .Include(x => x.Assignments).ThenInclude(x => x.Person.User)
                 .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();

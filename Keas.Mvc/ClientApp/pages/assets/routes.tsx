@@ -5,7 +5,6 @@ import AccessContainer from "../../components/Access/AccessContainer";
 import EquipmentContainer from "../../components/Equipment/EquipmentContainer";
 import KeyContainer from "../../components/Keys/KeyContainer";
 import PeopleContainer from "../../components/People/PeopleContainer";
-import PersonContainer from "../../components/PersonContainer";
 import SpacesContainer from "../../components/Spaces/SpacesContainer";
 import AssetNav from "../assets/AssetNav";
 
