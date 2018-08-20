@@ -15,13 +15,13 @@ namespace Keas.Mvc.Services
         Task<History> KeyInactivated(Key key);
         Task<History> AccessInactivated(Access access);
         Task<History> EquipmentInactivated(Equipment equipment);
-        Task<History> KeyAssigned(Key key);
+        Task<History> KeyAssigned(Serial serial);
         Task<History> AccessAssigned(AccessAssignment accessAssignment);
         Task<History> EquipmentAssigned(Equipment equipment);
-        Task<History> KeyUnassigned(Key key);
+        Task<History> KeyUnassigned(Serial serial);
         Task<History> AccessUnassigned(AccessAssignment accessAssignment);
         Task<History> EquipmentUnassigned(Equipment equipment);
-        Task<History> KeyAccepted(Key key);
+        Task<History> KeyAccepted(Serial serial);
         Task<History> AccessAccepted(Access access);
         Task<History> EquipmentAccepted(Equipment equipment);
         Task<History> WorkstationCreated(Workstation workstation);
@@ -188,17 +188,17 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History> KeyAssigned(Key key)
+        public async Task<History> KeyAssigned(Serial serial)
         {
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Key Assigned to " + key.Assignment.Person.User.Name + " by " + user.Name,
+                Description = "Key Assigned to " + serial.Assignment.Person.User.Name + " by " + user.Name,
                 Actor = user,
                 AssetType = "Key",
                 ActionType = "Assigned",
-                Key = key,
-                TargetId = key.Assignment.PersonId
+                Serial = serial,
+                TargetId = serial.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -238,7 +238,7 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History> KeyUnassigned(Key key)
+        public async Task<History> KeyUnassigned(Serial serial)
         {
             var user = await _securityService.GetUser();
             var historyEntry = new History
@@ -247,8 +247,9 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Key",
                 ActionType = "Unassigned",
-                Key = key,
-                TargetId = key.Assignment.PersonId
+                Key = serial.Key,
+                Serial = serial,
+                TargetId = serial.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -289,7 +290,7 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History> KeyAccepted(Key key)
+        public async Task<History> KeyAccepted(Serial serial)
         {
             var user = await _securityService.GetUser();
             var historyEntry = new History
@@ -298,8 +299,9 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Key",
                 ActionType = "Accepted",
-                Key = key,
-                TargetId = key.Assignment.PersonId
+                Key = serial.Key,
+                Serial = serial,
+                TargetId = serial.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();

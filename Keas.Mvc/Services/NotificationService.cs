@@ -11,8 +11,8 @@ namespace Keas.Mvc.Services
         Task KeyCreatedUpdatedInactive(Key key, History history);
         Task EquipmentCreatedUpdatedInactive(Equipment equipment, History history);
         Task AccessCreatedUpdatedInactive(Access access, History history);
-        Task KeyAssigned(Key key, History history);
-        Task KeyUnAssigned(Key key, History history);
+        Task KeyAssigned(Serial serial, History history);
+        Task KeyUnAssigned(Serial serial, History history);
         Task EquipmentAssigned(Equipment equipment, History history);
         Task EquipmentUnAssigned(Equipment equipment, History history);
         Task AccessAssigned(AccessAssignment accessAssignment, History history, string teamName);
@@ -20,7 +20,7 @@ namespace Keas.Mvc.Services
         Task WorkstationCreatedUpdatedInactive(Workstation workstation, History history);
         Task WorkstationAssigned(Workstation workstation, History history);
         Task WorkstationUnAssigned(Workstation workstation, History history);
-        Task KeyAccepted(Key key, History history);
+        Task KeyAccepted(Serial serial, History history);
         Task EquipmentAccepted(Equipment equipment, History history);
         Task WorkstationAccepted(Workstation workstation, History history);
     }
@@ -90,12 +90,12 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task KeyAssigned(Key key, History history)
+        public async Task KeyAssigned(Serial serial, History history)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
-            var assignedTo = await _dbContext.Users.SingleAsync(u => u == key.Assignment.Person.User);
+            var users = await _securityService.GetUsersInRoles(roles, serial.Key.TeamId);
+            var assignedTo = await _dbContext.Users.SingleAsync(u => u == serial.Assignment.Person.User);
             users.Add(assignedTo);
             foreach (var user in users)
             {
@@ -110,11 +110,11 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task KeyUnAssigned(Key key, History history)
+        public async Task KeyUnAssigned(Serial serial, History history)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
+            var users = await _securityService.GetUsersInRoles(roles, serial.Key.TeamId);
             foreach (var user in users)
             {
                 var notification = new Notification
@@ -261,11 +261,11 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task KeyAccepted(Key key, History history)
+        public async Task KeyAccepted(Serial serial, History history)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
+            var users = await _securityService.GetUsersInRoles(roles, serial.Key.TeamId);
             foreach (var user in users)
             {
                 var notification = new Notification

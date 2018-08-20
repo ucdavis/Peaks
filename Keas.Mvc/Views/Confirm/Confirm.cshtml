@@ -11,29 +11,30 @@
 <h2>Keys</h2>
 <table class="table">
     <thead>
-    <tr>
-        <th>Name</th>
-        <th>Serial #</th>
-        <th>Room</th>
-        <th></th>
-    </tr>
+        <tr>
+            <th>Name</th>
+            <th>Serial #</th>
+            <th>Room</th>
+            <th></th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model.Keys) {
-        <tr>
-            <td>@item.Name</td>
-            <td>@item.SerialNumber</td>
-            @if (@item.Space != null)
-            {
-                <td>>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
-            }
-            else
-            {
-                <td>&nbsp;</td>
-            }
-            <td><a href="@Url.Action("AcceptKey", new {keyId = item.Id})" class="btn btn-primary">Confirm</a></td>
-        </tr>
-    }
+        @foreach (var item in Model.Serials)
+        {
+            <tr>
+                <td>@item.Key.Name</td>
+                <td>@item.Number</td>
+                <td>
+                    <ul>
+                        @foreach (var kxp in item.Key.KeyXSpaces)
+                        {
+                            <li>@kxp.Space.RoomName (@kxp.Space.RoomNumber @kxp.Space.BldgName)</li>
+                        }
+                    </ul>
+                </td>
+                <td><a href="@Url.Action("AcceptKey", new {serialId = item.Id})" class="btn btn-primary">Confirm</a></td>
+            </tr>
+        }
     </tbody>
 </table>
 

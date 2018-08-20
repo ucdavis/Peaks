@@ -43,7 +43,7 @@ namespace Keas.Mvc.Controllers.Api
                     equipmentCount = 
                         (from eq in _context.Equipment where eq.SpaceId == space.Id && eq.Active select eq ).Count(),
                     keyCount = 
-                        (from k in _context.Keys where k.SpaceId == space.Id && k.Active select k ).Count(),
+                        (from k in _context.KeyXSpaces where k.SpaceId == space.Id && k.Key.Active select k.Key ).Count(),
                     workstationsTotal = 
                         (from w in _context.Workstations where w.SpaceId == space.Id && w.Active select w).Count(),
                     workstationsInUse = 
