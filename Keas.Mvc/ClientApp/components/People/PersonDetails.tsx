@@ -9,7 +9,7 @@ import {
 } from "reactstrap";
 import { IPerson } from "../../Types";
 import AccessContainer from "../Access/AccessContainer";
-import BioContainer from "../Biographical/BioContainer";
+import BioContainer from "./BioContainer";
 import EquipmentContainer from "../Equipment/EquipmentContainer";
 import HistoryContainer from "../History/HistoryContainer";
 import KeyContainer from "../Keys/KeyContainer";
