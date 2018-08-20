@@ -10,9 +10,11 @@ namespace Keas.Core.Domain
         [Key]
         public int Id { get; set; }
 
+        [Required]
         public Key Key { get; set; }
         public int KeyId { get; set; }
 
+        [Required]
         public Space Space { get; set; }
         public int? SpaceId { get; set; }
     }

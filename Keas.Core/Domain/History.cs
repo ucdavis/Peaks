@@ -27,8 +27,7 @@ namespace Keas.Core.Domain {
 
         // Created, granted, accepted, declined, revoked, deleted 
         public string ActionType { get; set; }
-
-        // TODO: Add serial? Or just replace key with serial????
+       
         public Key Key {get;set;}
         public int? KeyId { get; set; }
 
