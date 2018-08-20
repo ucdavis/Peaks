@@ -48,7 +48,7 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
     return (
       <div className="card">
         <div className="card-body">
-          <h4 className="card-title">History</h4>
+          <h4 className="card-title"><i className="fas fa-history fa-xs"/> History</h4>
           {this.state.histories.length > 0 && 
             <HistoryList histories={this.state.histories} />}
           {this.state.histories.length < 1 &&

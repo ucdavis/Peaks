@@ -5,7 +5,6 @@ import AccessContainer from "../../components/Access/AccessContainer";
 import EquipmentContainer from "../../components/Equipment/EquipmentContainer";
 import KeyContainer from "../../components/Keys/KeyContainer";
 import PeopleContainer from "../../components/People/PeopleContainer";
-import PersonContainer from "../../components/PersonContainer";
 import SpacesContainer from "../../components/Spaces/SpacesContainer";
 import AssetNav from "../assets/AssetNav";
 
@@ -22,14 +21,11 @@ export const routes = (
     />
     <Route path="/:team/access/:action?/:id?" component={AccessContainer} />
     <Route
-        path="/:team/:assetType(spaces|workstations)/:action?/:id?" component={SpacesContainer}
+        path="/:team/spaces/:spaceAction?/:spaceId?/:assetType?/:action?/:id?" component={SpacesContainer}
     />
-
-    <Route path="/:team/people/:action?/:id?" component={PeopleContainer} />
     <Route
-      path="/:team/person/:personAction/:personId/:assetType?/:action?/:id?"
-      component={PersonContainer}
-    />
+      path="/:team/people/:personAction?/:personId?/:assetType?/:action?/:id?"
+      component={PeopleContainer} />
 
   </AssetNav>
 );

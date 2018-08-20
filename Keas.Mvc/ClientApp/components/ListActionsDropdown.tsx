@@ -22,7 +22,7 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
 
     public render() {
         return (
-            <Dropdown direction="up" isOpen={this.state.isOpen} toggle={this.toggle}>
+            <Dropdown direction="left" isOpen={this.state.isOpen} toggle={this.toggle}>
                 <DropdownToggle size="sm" color="info">
                     <i className="fas fa-ellipsis-h fa-lg" aria-hidden="true" />
                 </DropdownToggle>

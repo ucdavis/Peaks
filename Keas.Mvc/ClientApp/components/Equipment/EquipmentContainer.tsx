@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 
-import { AppContext, IEquipment, IPerson } from "../../Types";
+import { AppContext, IEquipment, IPerson, ISpace } from "../../Types";
 import SearchTags from "../Tags/SearchTags";
 import AssignEquipment from "./AssignEquipment";
 import EditEquipment from "./EditEquipment";
@@ -22,7 +22,11 @@ interface IState {
 }
 
 interface IProps {
+  assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+  assetTotalUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+  assetEdited?: (type: string, spaceId: number, personId: number) => void; 
   person?: IPerson;
+  space?: ISpace;
 }
 
 export default class EquipmentContainer extends React.Component<IProps, IState> {
@@ -47,9 +51,15 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   }
   public async componentDidMount() {
     // are we getting the person's equipment or the team's?
-    const equipmentFetchUrl = this.props.person
-      ? `/api/${this.context.team.name}/equipment/listassigned?personid=${this.props.person.id}`
-      : `/api/${this.context.team.name}/equipment/list/`;
+    let equipmentFetchUrl =  "";
+    if(!!this.props.person)
+    {
+      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/listassigned?personid=${this.props.person.id}`;
+    } else if(!!this.props.space) {
+      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/getEquipmentInSpace?spaceId=${this.props.space.id}`;
+    } else {
+      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/list/`;
+    }
 
     const attrFetchUrl = `/api/${this.context.team.name}/equipment/commonAttributeKeys/`;
 
@@ -78,7 +88,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     return (
       <div className="card">
         <div className="card-body">
-          <h4 className="card-title">Equipment</h4>
+        <h4 className="card-title"><i className="fas fa-laptop fa-xs"/> Equipment</h4>
           {this._renderTableOrList()}
           <AssignEquipment
             onCreate={this._createAndMaybeAssignEquipment}
@@ -87,6 +97,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             closeModal={this._closeModals}
             selectedEquipment={detailEquipment}
             person={this.props.person}
+            space={this.props.space}
             tags={this.state.tags}
             commonAttributeKeys={this.state.commonAttributeKeys}
           />
@@ -101,6 +112,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             closeModal={this._closeModals}
             modal={activeAsset && (action === "edit")}
             tags={this.state.tags}
+            space={this.props.space}
             commonAttributeKeys={this.state.commonAttributeKeys}
             />
         </div>
@@ -109,7 +121,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   }
 
   private _renderTableOrList = () => {
-    if(!!this.props.person)
+    if(!!this.props.person || !!this.props.space)
     {
       return(
       <div>
@@ -155,6 +167,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     equipment: IEquipment,
     date: any
   ) => {
+    let created = false;
+    let assigned = false;
+
     const attributes = equipment.attributes;
     // call API to create a equipment, then assign it if there is a person to assign to
     // if we are creating a new equipment
@@ -165,6 +180,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         method: "POST"
       });
       equipment.attributes = attributes;
+      created = true;
     }
 
     // if we know who to assign it to, do it now
@@ -178,6 +194,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       });
       equipment.attributes = attributes;
       equipment.assignment.person = person;
+      assigned = true;
     }
 
     const index = this.state.equipment.findIndex(x => x.id === equipment.id);
@@ -190,10 +207,23 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         ...this.state,
         equipment: updateEquipment
       });
+    } else if (!!this.props.space && this.props.space.id !== equipment.space.id) {
+        // if we are on the space tab and we have assigned/created an equipment that is not in this space, do nothing to our state here
     } else {
       this.setState({
         equipment: [...this.state.equipment, equipment]
       });
+    }
+
+    if(created && this.props.assetTotalUpdated)
+    {
+        this.props.assetTotalUpdated("equipment", this.props.space ? this.props.space.id : null,
+           this.props.person ? this.props.person.id : null, 1);
+    }
+    if(assigned && this.props.assetInUseUpdated)
+    {
+        this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
+          this.props.person ? this.props.person.id : null, 1);
     }
   };
 
@@ -216,6 +246,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         shallowCopy.splice(index, 1);
       }
       this.setState({ equipment: shallowCopy });
+      if(this.props.assetInUseUpdated)
+      {
+        this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
+          this.props.person ? this.props.person.id : null, -1);
+      }
     }
   };
 
@@ -232,18 +267,36 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       body: JSON.stringify(equipment),
       method: "POST"
     });
-
     updated.assignment = equipment.assignment;
 
     // update already existing entry in key
     const updateEquipment = [...this.state.equipment];
     updateEquipment[index] = updated;
 
+    // if on space tab and the space has been edited
+    if(!!this.props.space && equipment.space.id !== this.state.equipment[index].space.id)
+    {
+        // remove one from total of old space
+        this.props.assetTotalUpdated("equipment", this.state.equipment[index].space.id,
+            this.props.person ? this.props.person.id : null, -1);
+        // remove from this state
+        updateEquipment.splice(index, 1);
+        // and add one to total of new space
+        this.props.assetTotalUpdated("equipment", equipment.space.id,
+            this.props.person ? this.props.person.id : null, 1);
+  }
+
     this.setState({
       ...this.state,
       equipment: updateEquipment
     }); 
-  }
+
+    if(this.props.assetEdited)
+    {
+      this.props.assetEdited("equipment", this.props.space ? this.props.space.id : null,
+        this.props.person ? this.props.person.id : null);
+    }
+}
 
   private _filterTags = (filters: string[]) => {
     this.setState({tagFilters: filters});
@@ -295,8 +348,15 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   };
 
   private _getBaseUrl = () => {
-    return this.props.person
-      ? `/${this.context.team.name}/person/details/${this.props.person.id}`
-      : `/${this.context.team.name}`;
+    if(!!this.props.person)
+    {
+      return `/${this.context.team.name}/people/details/${this.props.person.id}`;
+    } else if(!!this.props.space)
+    {
+      return `/${this.context.team.name}/spaces/details/${this.props.space.id}`;
+    } else {
+      return `/${this.context.team.name}`;
+    }
+    
   };
 }

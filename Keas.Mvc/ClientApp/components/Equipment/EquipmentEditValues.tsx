@@ -11,6 +11,7 @@ interface IProps {
     creating?: boolean;
     disableEditing: boolean;
     selectedEquipment: IEquipment;
+    space?: ISpace;
     tags?: string[];
     updateAttributes?: (attribute: IEquipmentAttribute[]) => void;
 }
@@ -95,6 +96,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                 </div>
 
                 {this.props.disableEditing &&
+                    // if we are looking at details, or if we are assigning
                     <div className="form-group">
                         <label>Room</label>
                         <input type="text"
@@ -106,13 +108,13 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     </div>
                 }
                 {!this.props.disableEditing &&
+                    // if we are editing or creating 
                     <div className="form-group">
                         <label>Room</label>
-
-                    <AssignSpace onSelect={this._selectSpace} defaultSpace={this.props.selectedEquipment.space} />
+                    <AssignSpace
+                        onSelect={this._selectSpace} 
+                        defaultSpace={this.props.space ? this.props.space : this.props.selectedEquipment.space} />
                     </div>}
-              
-
             </div>
         );
     }

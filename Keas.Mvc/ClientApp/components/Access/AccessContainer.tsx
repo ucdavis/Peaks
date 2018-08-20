@@ -17,7 +17,11 @@ interface IState {
 }
 
 interface IProps {
+    assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+    assetTotalUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+    assetEdited?: (type: string, spaceId: number, personId: number) => void; 
     person?: IPerson;
+    spaceId?: number;
 }
 
 export default class AccessContainer extends React.Component<IProps, IState> {
@@ -39,7 +43,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   public async componentDidMount() {
       // are we getting the person's access or the team's?
       const accessFetchUrl = this.props.person
-          ? `/api/${this.context.team.name}/access/listassigned?personId=${this.props.person.id}`
+          ? `/api/${this.context.team.name}/access/listAssigned?personId=${this.props.person.id}`
       : `/api/${this.context.team.name}/access/list/`;
 
     const access = await this.context.fetch(accessFetchUrl);
@@ -63,7 +67,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     return (
       <div className="card">
         <div className="card-body">
-                <h4 className="card-title">Access</h4>
+                <h4 className="card-title"><i className="fas fa-id-card fa-xs"/> Access</h4>
                 <AccessList
                     access={this.state.access}
                     personView={this.props.person ? true : false}
@@ -104,6 +108,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       date: any,
       person: IPerson
   ) => {
+      let created = false;
+      let assigned = false;
       // call API to create a access, then assign it if there is a person to assign to
       // if we are creating a new access
       if (access.id === 0) {
@@ -112,6 +118,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
               body: JSON.stringify(access),
               method: "POST"
           });
+          created = true;
       }
 
     // if we know who to assign it to, do it now
@@ -130,6 +137,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       }
       // then push it
       access.assignments.push(accessAssignment);
+      assigned = true;
     }
 
     const index = this.state.access.findIndex(x => x.id === access.id);
@@ -147,6 +155,14 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         this.setState({
             access: [...this.state.access, access]
         });
+    }
+    if(created && this.props.assetTotalUpdated)
+    {
+        this.props.assetTotalUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
+    }
+    if(assigned && this.props.assetInUseUpdated)
+    {
+        this.props.assetInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
     }
   };
 
@@ -171,7 +187,12 @@ export default class AccessContainer extends React.Component<IProps, IState> {
               // if we are looking at a person, remove access entirely
               shallowCopy.splice(accessIndex, 1);
           }
-          this.setState({ access: shallowCopy });
+        this.setState({ access: shallowCopy });
+
+        if(this.props.assetInUseUpdated)
+        {
+            this.props.assetInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, -1);
+        }
       }
   }
 
@@ -197,6 +218,11 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       ...this.state,
       access: updateAccess
     }); 
+
+    if(this.props.assetEdited)
+    {
+        this.props.assetEdited("access", this.props.spaceId, !!this.props.person ? this.props.person.id : null);
+    }
   }
 
   private _openAssignModal = (access: IAccess) => {
@@ -240,7 +266,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
 
   private _getBaseUrl = () => {
       return this.props.person
-          ? `/${this.context.team.name}/person/details/${this.props.person.id}`
+          ? `/${this.context.team.name}/people/details/${this.props.person.id}`
           : `/${this.context.team.name}`;
   };
 

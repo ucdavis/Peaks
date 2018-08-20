@@ -34,7 +34,7 @@ interface IState {
     validState: boolean;
 }
 
-export default class AssignAccess extends React.Component<IProps, IState> {
+export default class RevokeAccess extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
         team: PropTypes.object

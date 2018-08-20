@@ -1,0 +1,134 @@
+
+$sans-italic:   "proxima-nova-i",sans-serif;
+$sans-bold:     "proxima-nova-b",sans-serif;
+$sans-reg:      "proxima-nova-r",sans-serif;
+
+$primary-color:     #1D3B5C;
+$secondary-color:   #009493;
+$tertiary-color:    #F4BD00;
+
+$gold:              #DAAA00;
+$blue:              #004987;
+
+$a-link:            transparentize($primary-color, .2);
+
+$primary-font: rgba(31,31,31,.99); //
+$secondary-font: rgba(31,31,31,.75); //
+$tertiary-font: rgba(31,31,31,.40); //
+
+$box-shadow: 0 0 0 1px rgba(49,49,93,.03), 0 2px 5px 0 rgba(49,49,93,.1), 0 1px 2px 0 rgba(0,0,0,.08);
+
+$bg-color: #F8F9FB; // background
+$borders: #E8E9ED; // border color
+
+$nav-active: #fff;
+$nav-secondary: $secondary-font;
+
+
+// UC Davis Colors
+// Supplemental bright color palette for UC Davis
+
+$unitrans-red: #ba0c2f;
+$western-redbud: #c6007e;
+$california-poppy: #ed8800;
+$golden-lupine: #ffcd00;
+$sunny-grass: #78be20;
+$sky-blue: #00b5e2;
+$recpool-blue: #008eaa;
+$wine-grape: #642667;
+// Supplemental neutral color palette for UC Davis
+$mu-brick: #c26e60;
+$harthall-stucco: #e6a65d;
+$sage-green: #9caf88;
+$evergreen: #00573f;
+$wintersky-gray: #5b7f95;
+$cenwalk-gray: #b1b3b3;
+$cork-oak: #aca39a;
+$shingle-brown: #4f2c1d;
+
+// Layouts
+
+$card-padding: 0.75rem 1.25rem;
+$card-thick-padding: 3rem;
+
+@mixin breakpoint($point) {
+    @if $point==sm {
+        @media (min-width: 576px) {
+            @content ;
+        }
+    }
+    @if $point==md {
+        @media (min-width: 768px) {
+            @content ;
+        }
+    }
+    @if $point==lg {
+        @media (min-width: 992px) {
+            @content ;
+        }
+    }
+    @if $point==xl {
+        @media (min-width: 1200px) {
+            @content ;
+        }
+    }
+}
+
+
+
+@mixin fader {
+  -o-transition:.25s;
+  -ms-transition:.25s;
+  -moz-transition:.25s;
+  -webkit-transition:.25s;
+  /* ...and now for the proper property */
+  transition:.25s;
+}
+@mixin main-btn {
+  white-space: nowrap;
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 20px;
+  box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 1px 3px rgba(0,0,0,.08);
+  background: $primary-color;
+  border-radius: 2px;
+  font-size: 1.6rem;
+  letter-spacing: 0.025em;
+  color: #fff !important;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  border: none;
+  font-family: $sans-bold;
+  &:active,
+  &:focus {
+    background-color: darken($primary-color, 5);
+  }
+  &:hover {
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 3px 6px rgba(0,0,0,.08);
+    background-color: lighten($primary-color, 5);
+  }
+}
+
+@mixin inverse-btn {
+  white-space: nowrap;
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 20px;
+  background: #fff;
+  font-size: 1.6rem;
+  letter-spacing: 0.025em;
+  color: $primary-color;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  border: none;
+  font-family: $sans-bold;
+  box-shadow: $box-shadow;
+  &:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+  }
+}

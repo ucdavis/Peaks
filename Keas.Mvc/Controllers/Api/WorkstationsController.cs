@@ -24,30 +24,35 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
-            var workstation = await _context.Workstations
-                .Where(w => w.Team.Name == Team && w.Active && w.Assignment == null && w.Name.StartsWith(q, comparison))
+            var comparison = StringComparison.OrdinalIgnoreCase;
+            var equipment = await _context.Workstations
+                .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
+                (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
+                    || x.Space.RoomNumber.StartsWith(q, comparison)))
+                .Include(x => x.Space)
                 .AsNoTracking().ToListAsync();
 
-            return Json(workstation);
+            return Json(equipment);
         }
 
-        public async Task<IActionResult> Details(int id)
+        
+        public async Task<IActionResult> SearchInSpace(int spaceId, string q)
         {
-            var workstation = await _context.Workstations
-                .Where(w => w.Team.Name == Team && w.Active && w.Id == id)
-                .Include(x => x.Space)
-                .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person.User)
-                .AsNoTracking()
-                .SingleOrDefaultAsync();
-            return Json(workstation);
+            var comparison = StringComparison.OrdinalIgnoreCase;
+            var equipment = await _context.Workstations
+                .Where(x => x.Team.Name == Team && x.SpaceId == spaceId && x.Active && x.Assignment == null &&
+                (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
+                    || x.Space.RoomNumber.StartsWith(q, comparison)))
+                .Include(x => x.Space).AsNoTracking().ToListAsync();
+
+            return Json(equipment);
         }
 
         public async Task<IActionResult> GetWorkstationsInSpace(int spaceId)
         {
             var workstations = await _context.Workstations
                 .Where(x => x.Space.Id == spaceId && x.Team.Name == Team && x.Active)
+                .Include(x => x.Space)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person.User)
                 .AsNoTracking()
@@ -177,9 +182,6 @@ namespace Keas.Mvc.Controllers.Api
                     
                 w.Name = workstation.Name;
                 w.Tags = workstation.Tags;
-
-                //eq.Attributes.Clear();
-                //equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
 
                 await _context.SaveChangesAsync();
                 return Json(w);
