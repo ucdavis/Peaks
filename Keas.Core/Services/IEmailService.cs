@@ -47,7 +47,7 @@ namespace Keas.Core.Services
 
             var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };
             //message.To.Add(user.Email);
-            message.To.Add("jsylvestre@ucdavis.edu");
+            message.To.Add("jscubbage@ucdavis.edu");
 
             //Bcc anyone?
 
