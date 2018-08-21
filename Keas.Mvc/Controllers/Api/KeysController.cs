@@ -27,53 +27,65 @@ namespace Keas.Mvc.Controllers.Api
             return Team;
         }
 
+
+        //Return Serials instead????
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.OrdinalIgnoreCase;
-            var keys = await _context.Keys
-                .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
-                (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
-                .Include(x => x.Space)
+            var comparison = StringComparison.InvariantCultureIgnoreCase;
+            var keys = await _context.Serials
+                .Where(x => x.Key.Team.Name == Team && x.Key.Active && x.Active && x.Assignment == null
+                            && (x.Key.Name.StartsWith(q, comparison) || x.Number.StartsWith(q, comparison)))
+                .Include(x => x.Key)
+                .ThenInclude(key => key.KeyXSpaces)
+                .ThenInclude(keyXSpaces => keyXSpaces.Space)
+                .Select(x=> x.Key)
                 .AsNoTracking().ToListAsync();
-
             return Json(keys);
         }
 
         public async Task<IActionResult> GetKeysInSpace(int spaceId)
         {
-            var keys = await _context.Keys
-                .Where(x => x.Space.Id == spaceId && x.Team.Name == Team && x.Active)
-                .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person.User)
+            var keys = await _context.KeyXSpaces
+                .Where(x => x.Space.Id == spaceId && x.Key.Team.Name == Team && x.Key.Active)
+                .Include(x => x.Key)
+                .ThenInclude(key => key.Serials)
+                .ThenInclude(serials => serials.Assignment)
+                .ThenInclude(assignment => assignment.Person.User)
                 .AsNoTracking()
                 .ToListAsync();
             return Json(keys);
         }
 
-        public async Task<IActionResult> ListAssigned(int personId) {
-            var keyAssignments = await _context.Keys
-                .Where(x=> x.Assignment.PersonId == personId && x.Team.Name == Team)
-                .Include(x=> x.Assignment)
-                .ThenInclude(x => x.Person.User)
-                .Include(x => x.Team)
-                .AsNoTracking().ToArrayAsync();
-
+        public async Task<IActionResult> ListAssigned(int personId)
+        {
+            var keyAssignments = await _context.Serials
+                .Where(x => x.Assignment.PersonId == personId && x.Key.Team.Name == Team)
+                .Include(x => x.Assignment)
+                .ThenInclude(assingment => assingment.Person.User)
+                .Include(x => x.Key.Team)
+                .AsNoTracking()
+                .ToArrayAsync();
             return Json(keyAssignments);
         }
 
         // List all keys for a team
-        public async Task<IActionResult> List() {
-            var keys = await _context.Keys.Where(x=> x.Team.Name == Team)
-                .Include(x=> x.Assignment)
-                .ThenInclude(x => x.Person.User)
-                .Include(x => x.Team)
-                .AsNoTracking().ToArrayAsync();
-
+        public async Task<IActionResult> List()
+        {
+            var keys = await _context.Serials
+                .Where(x => x.Key.Team.Name == Team)
+                .Include(x => x.Assignment)
+                .ThenInclude(assignment => assignment.Person.User)
+                .Include(x => x.Key.Team)
+                .AsNoTracking()
+                .ToArrayAsync();
             return Json(keys);
         }
+
         public async Task<IActionResult> Create([FromBody]Key key)
         {
             // TODO Make sure user has permissions
+            // TODO Does the space come with this request? Or handle in separate action?
+            // TODO Does the serials come with this request? Or handle in separate action?
             if (ModelState.IsValid)
             {
                 _context.Keys.Add(key);
@@ -83,20 +95,24 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
-        public async Task<IActionResult> Assign(int keyId, int personId, string date)
+
+        // Now returns serial. Need to pass in serialID
+        public async Task<IActionResult> Assign(int serialId, int personId, string date)
         {
-            // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
+            // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var key = await _context.Keys.Where(x => x.Team.Name == Team).SingleAsync(x => x.Id == keyId);
-                key.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
-                key.Assignment.Person = await _context.People.Include(p=> p.User).SingleAsync(p=> p.Id==personId);
+                var serial = await _context.Serials.Where(x => x.Key.Team.Name == Team)
+                    .SingleAsync(x => x.Id == serialId);
 
-                _context.KeyAssignments.Add(key.Assignment);
+                serial.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
+                serial.Assignment.Person = await _context.People.Include(p=> p.User).SingleAsync(p=> p.Id==personId);
+
+                _context.KeyAssignments.Add(serial.Assignment);
 
                 await _context.SaveChangesAsync();
-                await _eventService.TrackAssignKey(key);
-                return Json(key);
+                await _eventService.TrackAssignKey(serial);
+                return Json(serial);
             }
             return BadRequest(ModelState);
         }
@@ -107,10 +123,13 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var k = await _context.Keys.Where(x => x.Team.Name == Team)
-                    .Include(x=> x.Assignment).ThenInclude(x => x.Person.User)
+                    .Include(x=> x.Serials)
+                    .ThenInclude(serials=> serials.Assignment)
+                    .ThenInclude(x => x.Person.User)
                     .Include(x=> x.Team)
                     .SingleAsync(x => x.Id == key.Id);
                 k.Name = key.Name;
+                // TODO: Should this also be updating serials? KeyXSpaces?
                 await _context.SaveChangesAsync();
                 await _eventService.TrackUpdateKey(key);
                 return Json(k);
@@ -118,21 +137,22 @@ namespace Keas.Mvc.Controllers.Api
             return BadRequest(ModelState);
         }
 
-        public async Task<IActionResult> Revoke([FromBody]Key key)
+        // Need to pass in serial, not key. Returns Serial now.
+        public async Task<IActionResult> Revoke([FromBody]Serial serial)
         {
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var k = await _context.Keys.Where(x => x.Team.Name == Team).Include(x => x.Assignment)
+                var s = await _context.Serials.Where(x => x.Key.Team.Name == Team).Include(x => x.Assignment)
                     .ThenInclude(x => x.Person.User)
-                    .SingleAsync(x => x.Id == key.Id);
-
-                _context.KeyAssignments.Remove(k.Assignment);
-                k.Assignment = null;
-                k.KeyAssignmentId = null;
+                    .SingleAsync(x => x.Id == serial.Id);
+                
+                _context.KeyAssignments.Remove(s.Assignment);
+                s.Assignment = null;
+                s.KeyAssignmentId = null;
                 await _context.SaveChangesAsync();
-                await _eventService.TrackUnAssignKey(key);
-                return Json(k);
+                await _eventService.TrackUnAssignKey(serial);
+                return Json(s);
             }
             return BadRequest(ModelState);
         }

@@ -6,8 +6,8 @@ namespace Keas.Mvc.Services
     public interface IEventService
     {
         Task TrackCreateKey(Key key);
-        Task TrackAssignKey(Key key);
-        Task TrackUnAssignKey(Key key);
+        Task TrackAssignKey(Serial serial);
+        Task TrackUnAssignKey(Serial serial);
         Task TrackUpdateKey(Key key);
         Task TrackCreateEquipment(Equipment equipment);
         Task TrackAssignEquipment(Equipment equipment);
@@ -20,7 +20,7 @@ namespace Keas.Mvc.Services
         Task TrackCreateWorkstation(Workstation workstation);
         Task TrackAssignWorkstation(Workstation workstation);
         Task TrackUnAssignWorkstation(Workstation workstation);
-        Task TrackAcceptKey(Key key);
+        Task TrackAcceptKey(Serial serial);
         Task TrackAcceptEquipment(Equipment equipment);
         Task TrackAcceptWorkstation(Workstation workstation);
 
@@ -45,17 +45,17 @@ namespace Keas.Mvc.Services
             await _notificationService.KeyCreatedUpdatedInactive(key, history);
         }
 
-        public async Task TrackAssignKey(Key key)
+        public async Task TrackAssignKey(Serial serial)
         {
-            var history = await _historyService.KeyAssigned(key);
-            await _notificationService.KeyAssigned(key, history);
+            var history = await _historyService.KeyAssigned(serial);
+            await _notificationService.KeyAssigned(serial, history);
 
         }
 
-        public async Task TrackUnAssignKey(Key key)
+        public async Task TrackUnAssignKey(Serial serial)
         {
-            var history = await _historyService.KeyUnassigned(key);
-            await _notificationService.KeyUnAssigned(key, history);
+            var history = await _historyService.KeyUnassigned(serial);
+            await _notificationService.KeyUnAssigned(serial, history);
         }
 
         public async Task TrackUpdateKey(Key key) 
@@ -130,10 +130,10 @@ namespace Keas.Mvc.Services
             await _notificationService.WorkstationUnAssigned(workstation, history);
         }
 
-        public async Task TrackAcceptKey(Key key)
+        public async Task TrackAcceptKey(Serial serial)
         {
-            var history = await _historyService.KeyAccepted(key);
-            await _notificationService.KeyAccepted(key, history);
+            var history = await _historyService.KeyAccepted(serial);
+            await _notificationService.KeyAccepted(serial, history);
         }
 
         public async Task TrackAcceptEquipment(Equipment equipment)
