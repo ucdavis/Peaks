@@ -232,20 +232,14 @@ namespace Keas.Mvc.Helpers
             var scottKey = new TeamPermission    {Team = caes, Role = keyMaster, User = scott};
             var scottEquip = new TeamPermission  {Team = caes, Role = equipMaster, User = scott};
             var scottDa = new TeamPermission {Team = caes, Role = departmentAdmin, User = scott};
-            var lauraKey = new TeamPermission    {Team = caes, Role = keyMaster, User = laura};
-            var lauraEquip = new TeamPermission  {Team = caes, Role = equipMaster, User = laura};
-            var lauraAccess = new TeamPermission {Team = caes, Role = accessMaster, User = laura};
-            var lauraSpace = new TeamPermission  {Team = caes, Role = spaceMaster, User = laura};
+            var lauraDa = new TeamPermission    {Team = caes, Role = departmentAdmin, User = laura};
             var jamesDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = james};
             var calDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = cal};
 
             context.TeamPermissions.Add(scottKey);
             context.TeamPermissions.Add(scottEquip);
 
-            context.TeamPermissions.Add(lauraEquip);
-            context.TeamPermissions.Add(lauraKey);
-            context.TeamPermissions.Add(lauraAccess);
-            context.TeamPermissions.Add(lauraSpace);
+            context.TeamPermissions.Add(lauraDa);
 
             context.TeamPermissions.Add(jamesDa);
             context.TeamPermissions.Add(scottDa);
@@ -253,6 +247,12 @@ namespace Keas.Mvc.Helpers
 
             var jamesAdmin = new SystemPermission { Role = admin, User = james};
             context.SystemPermissions.Add(jamesAdmin);
+
+            var lauraAdmin = new SystemPermission { Role = admin, User = laura};
+            context.SystemPermissions.Add(lauraAdmin);
+
+            var scottAdmin = new SystemPermission { Role = admin, User = scott};
+            context.SystemPermissions.Add(scottAdmin);
 
             var calAdmin = new SystemPermission { Role = admin, User = cal};
             context.SystemPermissions.Add(calAdmin);
