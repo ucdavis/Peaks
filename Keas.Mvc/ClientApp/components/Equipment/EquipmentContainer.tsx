@@ -147,8 +147,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       }
       return(
         <div>
-          <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
-          <SearchAttributes selected={this.state.attributeFilters} onSelect={this._filterAttributes} disabled={false} />
+          <div className="row m-b">
+
+            <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
+            <SearchAttributes selected={this.state.attributeFilters} onSelect={this._filterAttributes} disabled={false} />
+
+          </div>
           <EquipmentTable
             equipment={filteredEquipment}
             onRevoke={this._revokeEquipment}
