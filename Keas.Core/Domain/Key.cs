@@ -8,5 +8,7 @@ namespace Keas.Core.Domain
         public string Number { get; set; }
 
         public List<KeyXSpace> KeyXSpaces { get; set; }
+
+        public List<Serial> Serials { get; set; }
     }
 }
