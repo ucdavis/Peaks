@@ -33,7 +33,7 @@ before_build:
     $csproj.Save($path)
 
 build_script:
-- cmd: msbuild .\Keas.Mvc\Keas.Mvc.csproj /t:RunWebpack /p:Configuration=%configuration%
+- cmd: msbuild .\Keas.Mvc\Keas.Mvc.csproj /t:PublishRunWebpack /p:Configuration=%configuration%
 - cmd: msbuild /t:Build /p:Configuration=%configuration%;PackageVersion=%APPVEYOR_BUILD_VERSION%
 
 test_script:
