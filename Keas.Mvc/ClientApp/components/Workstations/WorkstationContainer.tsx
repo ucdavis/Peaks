@@ -73,9 +73,11 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         const selectedWorkstation = this.state.workstations.find(k => k.id === selectedId);
 
         return (
-            <div className="card">
-                <div className="card-body">
-                    <h2><i className="fas fa-user fa-xs"/> Workstations</h4>
+          <div className="card spaces-color">
+            <div className="card-header-spaces">
+              <div className="card-head"><h2><i className="fas fa-desktop fa-xs"/> Workstations</h2></div>
+            </div>
+            <div className="card-content">
                         {this.state.workstations.length > 0 ?
                             <WorkstationList
                                     workstations={this.state.workstations}

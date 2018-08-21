@@ -4,7 +4,7 @@ import * as React from "react";
 import { AppContext, IPersonInfo, IPerson } from "../../Types";
 import PeopleTable from "./PeopleTable";
 import Denied from "../Shared/Denied";
-import { PermissionsUtil } from "../../util/permissions"; 
+import { PermissionsUtil } from "../../util/permissions";
 import SearchTags from "../Tags/SearchTags";
 import PersonDetails from "./PersonDetails";
 
@@ -12,7 +12,7 @@ interface IState {
   loading: boolean;
   people: IPersonInfo[];
   tableFilters: any[]; // object containing filters on table
-  tagFilters: string[]; // string of tag filters 
+  tagFilters: string[]; // string of tag filters
   tags: string[]; // existing tags that are options for SearchTags
 }
 export default class PeopleContainer extends React.Component<{}, IState> {
@@ -56,12 +56,14 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     const { personAction, assetType, personId } = this.context.router.route.match.params;
     const selectedId = parseInt(personId, 10);
     const detailPerson = this.state.people.find(e => e.id === selectedId);
-    
+
     return(
-      <div className="card">
-        <div className="card-body">
-          <h4 className="card-title"><i className="fas fa-users fa-xs"/> People</h4>
-          {!personAction && 
+      <div className="card people-color">
+        <div className="card-header-people">
+          <div className="card-head"><h2><i className="fas fa-users fa-xs"/> People</h2></div>
+        </div>
+        <div className="card-content">
+          {!personAction &&
             this._renderTableView()
           }
           {personAction === "details" && !!detailPerson && !!detailPerson.person &&
@@ -89,7 +91,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         updateFilters={this._updateTableFilters}
       />
       </div>
-    ); 
+    );
   }
 
   private _renderDetailsView = (detailPerson: IPerson) => {
@@ -115,7 +117,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     {
         const people = [...this.state.people];
         switch(type) {
-          case "equipment": 
+          case "equipment":
             people[index].equipmentCount++;
             break;
           case "key":
@@ -128,7 +130,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
             people[index].workstationCount++
         }
         this.setState({people});
-    } 
+    }
 }
 
 private _assetRevoked = (type: string, spaceId: number, personId: number) => {
@@ -137,7 +139,7 @@ private _assetRevoked = (type: string, spaceId: number, personId: number) => {
   {
       const people = [...this.state.people];
       switch(type) {
-        case "equipment": 
+        case "equipment":
           people[index].equipmentCount--;
           break;
         case "key":
@@ -150,10 +152,10 @@ private _assetRevoked = (type: string, spaceId: number, personId: number) => {
           people[index].workstationCount--;
       }
       this.setState({people});
-  } 
+  }
 }
 
-  // tags 
+  // tags
   private _filterTags = (filters: string[]) => {
     this.setState({tagFilters: filters});
 }

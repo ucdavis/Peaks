@@ -87,8 +87,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     const detailEquipment = this.state.equipment.find(e => e.id === selectedId);
     return (
       <div className="card equipment-color">
-        <div className="card-body">
-        <h2><i className="fas fa-hdd fa-xs"/> Equipment</h2>
+        <div className="card-header-equipment">
+          <div className="card-head"><h2><i className="fas fa-hdd fa-xs"/> Equipment</h2></div>
+        </div>
+        <div className="card-content">
           {this._renderTableOrList()}
           <AssignEquipment
             onCreate={this._createAndMaybeAssignEquipment}

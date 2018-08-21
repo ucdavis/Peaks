@@ -71,8 +71,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const detailKey = this.state.keys.find(k => k.id === selectedId);
     return (
       <div className="card keys-color">
+        <div className="card-header-keys">
+          <div className="card-head"><h2><i className="fas fa-key fa-xs"/> Keys</h2></div>
+        </div>
         <div className="card-content">
-        <h2><i className="fas fa-key fa-xs"/> Keys</h2>
           <KeyList
             keys={this.state.keys}
             onRevoke={this._revokeKey}
