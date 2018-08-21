@@ -75,7 +75,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         return (
           <div className="card spaces-color">
             <div className="card-header-spaces">
-              <div className="card-head"><h2><i className="fas fa-desktop fa-xs"/> Workstations</h2></div>
+              <div className="card-head"><h2><i className="fas fa-briefcase fa-xs"/> Workstations</h2></div>
             </div>
             <div className="card-content">
                         {this.state.workstations.length > 0 ?
