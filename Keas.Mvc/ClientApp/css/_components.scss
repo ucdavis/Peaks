@@ -105,6 +105,14 @@ img.img-fluid {
     color: lighten($primary-color,5);
     text-decoration: none;
   }
+  .people-color & {
+    color:$people;
+    border-color:$people;
+    &:hover {
+      color:(darken($people,10));
+      text-decoration:none;
+    }
+  }
   .spaces-color & {
     color:$spaces;
     border-color:$spaces;
@@ -129,19 +137,20 @@ img.img-fluid {
       text-decoration:none;
     }
   }
-  .people-color & {
-    color:$people;
-    border-color:$people;
-    &:hover {
-      color:(darken($people,10));
-      text-decoration:none;
-    }
-  }
+
   .equipment-color & {
     color:$equipment;
     border-color:$equipment;
     &:hover {
       color:(darken($equipment,10));
+      text-decoration:none;
+    }
+  }
+  .history-color & {
+    color:$history;
+    border-color:$history;
+    &:hover {
+      color:(darken($history,10));
       text-decoration:none;
     }
   }

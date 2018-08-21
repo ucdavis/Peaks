@@ -14,14 +14,16 @@ export default class BioContainer extends React.Component<IProps, {}> {
   public context: AppContext;
   public render() {
     return (
-      <div className="card">
-        <div className="card-body">
-          <h4 className="card-title">{this.props.person.user.name}</h4>
-          <p className="card-text">
+      <div>
+
+          <h2>{this.props.person.user.name}</h2>
+          <p>
             <i className="far fa-envelope" aria-hidden="true" />{" "}
             {this.props.person.user.email}
           </p>
-        </div>
+          <hr/>
+<br/>
+
       </div>
     );
   }

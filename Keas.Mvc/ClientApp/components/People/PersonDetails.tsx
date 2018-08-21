@@ -28,19 +28,19 @@ interface IProps {
 export default class PersonDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedPerson == null) 
+        if (this.props.selectedPerson == null)
         {
             return null;
         }
         return (
             <div>
-                <br />
+
                 <div>
-                    <Button color="secondary" onClick={this.props.goBack}>
+                    <Button color="link" onClick={this.props.goBack}>
                         <i className="fas fa-arrow-left fa-xs"/> Return to Table
                     </Button>
                 </div>
-                <hr />
+              <br/>
                 <div>
                         <BioContainer person={this.props.selectedPerson} />
                         <KeyContainer person={this.props.selectedPerson}
@@ -52,12 +52,12 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                             equipmentAssigned={this.props.assignedOrCreated}
                             equipmentRevoked={this.props.revokedOrDeleted}
                             equipmentEdited={this.props.edited}/>
-                        <AccessContainer person={this.props.selectedPerson} 
+                        <AccessContainer person={this.props.selectedPerson}
                             accessAssigned={this.props.assignedOrCreated}
                             accessRevoked={this.props.revokedOrDeleted}
                             accessEdited={this.props.edited}/>
-                        <WorkstationContainer 
-                            person={this.props.selectedPerson} 
+                        <WorkstationContainer
+                            person={this.props.selectedPerson}
                             tags={this.props.tags}
                             workstationAssigned={this.props.assignedOrCreated}
                             workstationRevoked={this.props.revokedOrDeleted}
@@ -71,6 +71,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                     </Button>
                 </div>
             </div>
+
         );
     }
 }
