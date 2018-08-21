@@ -14,6 +14,7 @@ import EquipmentContainer from "../Equipment/EquipmentContainer";
 import HistoryContainer from "../History/HistoryContainer";
 import KeyContainer from "../Keys/KeyContainer";
 import WorkstationContainer from "../Workstations/WorkstationContainer";
+import EditPerson from "./EditPerson";
 
 interface IProps {
     goBack: () => void;
@@ -21,6 +22,7 @@ interface IProps {
     tags: string[];
     inUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
     edited?: (type: string, spaceId: number, personId: number) => void;
+    onEdit: (person: IPerson) => void;
 }
 
 
@@ -38,10 +40,11 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                     <Button color="secondary" onClick={this.props.goBack}>
                         <i className="fas fa-arrow-left fa-xs"/> Return to Table
                     </Button>
+                    <EditPerson onEdit={this.props.onEdit} selectedPerson={this.props.selectedPerson} tags={this.props.tags}/>
                 </div>
                 <hr />
                 <div>
-                        <BioContainer person={this.props.selectedPerson} />
+                        <BioContainer person={this.props.selectedPerson}/>
                         <KeyContainer person={this.props.selectedPerson}
                             assetInUseUpdated={this.props.inUseUpdated}
                             assetEdited={this.props.edited}

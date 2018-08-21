@@ -84,7 +84,6 @@ export default class PeopleContainer extends React.Component<{}, IState> {
       <PeopleTable
         people={filteredPeople}
         showDetails={this._openDetailsModal}
-        onEdit={this._openEditModal}
         filtered={this.state.tableFilters}
         updateFilters={this._updateTableFilters}
       />
@@ -99,6 +98,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         tags={this.state.tags}
         goBack={this._goBack}
         inUseUpdated={this._assetInUseUpdated}
+        onEdit={this._editPerson}
       />
     );
   }
@@ -139,6 +139,30 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     return filters.every(f => person.tags.includes(f));
   }
 
+  private _editPerson = async (person: IPerson) =>
+  {
+    const index = this.state.people.findIndex(x => x.id === person.id);
+
+    if(index === -1 ) // should always already exist
+    {
+      return;
+    }
+
+    const updated: IPerson = await this.context.fetch(`/api/${this.context.team.name}/people/update`, {
+      body: JSON.stringify(person),
+      method: "POST"
+    });
+
+    // update already existing entry in key
+    const updatePeople = [...this.state.people];
+    updatePeople[index].person = updated;
+
+    this.setState({
+      ...this.state,
+      people: updatePeople
+    }); 
+}
+
   // controls for modal opening to manage people
   private _openAssignModal = (person: IPerson) => {
     this.context.router.history.push(
@@ -147,18 +171,18 @@ export default class PeopleContainer extends React.Component<{}, IState> {
   };
 
   private _openCreateModal = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/equipment/create`);
+    this.context.router.history.push(`${this._getBaseUrl()}/people/create`);
   };
 
-  private _openDetailsModal = (equipment: IPerson) => {
+  private _openDetailsModal = (person: IPerson) => {
     this.context.router.history.push(
-      `${this._getBaseUrl()}/people/details/${equipment.id}`
+      `${this._getBaseUrl()}/people/details/${person.id}`
     );
   };
 
-  private _openEditModal = (equipment: IPerson) => {
+  private _openEditModal = (person: IPerson) => {
     this.context.router.history.push(
-      `${this._getBaseUrl()}/people/edit/${equipment.id}`
+      `${this._getBaseUrl()}/people/edit/${person.id}`
     );
   }
   private _goBack = () => {

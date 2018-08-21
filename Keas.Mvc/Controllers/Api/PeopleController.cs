@@ -64,6 +64,28 @@ namespace Keas.Mvc.Controllers.Api
             return View(person);
         }
 
+        public async Task<IActionResult> Update([FromBody]Person person)
+        {
+            //TODO: check permissions
+            if (ModelState.IsValid)
+            {
+                var p = await _context.People.Where(x => x.Team.Name == Team)
+                    .SingleAsync(x => x.Id == person.Id);
+                    
+                p.FirstName = person.FirstName;
+                p.LastName = person.LastName;
+                p.Email = person.Email;
+                p.Tags = person.Tags;
+                p.TeamPhone = person.TeamPhone;
+                p.HomePhone = person.HomePhone;
+                p.Title = person.Title;
+                
+                await _context.SaveChangesAsync();
+                return Json(p);
+            }
+            return BadRequest(ModelState);
+        }
+
         public async Task<IActionResult> GetPerson(int personId)
         {
             var person = await _context.People
