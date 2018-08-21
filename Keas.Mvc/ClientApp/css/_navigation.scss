@@ -6,7 +6,7 @@ box-shadow: $box-shadow;
 a.nav-link {
   font-size:2rem;
   font-family: $sans-bold;
-  color:$secondary-font;
+  color:$primary-font;
   &:hover {
     color:darken($secondary-color,9);
   }
@@ -41,7 +41,7 @@ a.nav-link {
     &.tab-spaces {
       &.active {
         color:$spaces;
-        border-bottom:2px solid $spaces;
+        border-bottom:4px solid $spaces;
       }
       &:hover {
         color:darken($spaces,10);
@@ -50,7 +50,7 @@ a.nav-link {
     &.tab-keys {
       &.active {
         color:$keys;
-        border-bottom:2px solid $keys;
+        border-bottom:4px solid $keys;
       }
       &:hover {
         color:darken($keys,10);
@@ -59,7 +59,7 @@ a.nav-link {
     &.tab-equipment {
       &.active {
         color:$equipment;
-        border-bottom:2px solid $equipment;
+        border-bottom:4px solid $equipment;
       }
       &:hover {
         color:darken($equipment,10);
@@ -68,7 +68,7 @@ a.nav-link {
     &.tab-people {
       &.active {
         color:$people;
-        border-bottom:2px solid $people;
+        border-bottom:4px solid $people;
       }
       &:hover {
         color:darken($people,10);
@@ -77,7 +77,7 @@ a.nav-link {
     &.tab-access {
       &.active {
         color:$access;
-        border-bottom:2px solid $access;
+        border-bottom:4px solid $access;
       }
       &:hover {
         color:darken($access,10);
