@@ -3,7 +3,7 @@ version: 1.0.0.{build}
 environment:
   configuration: Release
   matrix:
-    - node_version: "7"
+    - node_version: "10"
 
 branches:
   except:
