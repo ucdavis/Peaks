@@ -15,7 +15,7 @@ export default class PeopleListItem extends React.Component<IProps, {}> {
         const personUrl = `/${this.props.teamName}/person/details/${this.props.person.id}`
         return (
             <div>
-                <NavLink to={personUrl}>{this.props.person.user.name}</NavLink>
+                <NavLink to={personUrl}>{this.props.person.name}</NavLink>
             </div>
         );
     }

@@ -18,7 +18,7 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
         return (
           <tr>
             <td>{this.props.workstationEntity.name}</td>
-            <td>{hasAssignment ? this.props.workstationEntity.assignment.person.user.name : ""}</td>
+            <td>{hasAssignment ? this.props.workstationEntity.assignment.person.name : ""}</td>
             <td>
               {hasAssignment ? this.props.workstationEntity.assignment.expiresAt : ""}
             </td>

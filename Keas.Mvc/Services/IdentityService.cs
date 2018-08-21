@@ -49,7 +49,6 @@ namespace Keas.Mvc.Services
                 {
                     FirstName = result.ResponseData.Results[0].OFirstName,
                     LastName = result.ResponseData.Results[0].OLastName,
-                    Name = result.ResponseData.Results[0].DFullName,
                     Id = id,
                     Email = email
                 };
@@ -79,7 +78,6 @@ namespace Keas.Mvc.Services
             {
                 FirstName = ucdKerbPerson.DFirstName,
                 LastName = ucdKerbPerson.DLastName,
-                Name = ucdKerbPerson.DFullName,
                 Id = ucdKerbPerson.UserId,
                 Email = ucdContact.Email
             };

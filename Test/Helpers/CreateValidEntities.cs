@@ -13,7 +13,6 @@ namespace Test.Helpers
             var rtValue = new User();
             rtValue.FirstName = string.Format("FirstName{0}", counter);
             rtValue.LastName = string.Format("LastName{0}", counter);
-            rtValue.Name = string.Format("{0} {1}", rtValue.FirstName, rtValue.LastName);
 
             if (populateAllFields)
             {

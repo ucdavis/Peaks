@@ -37,7 +37,7 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
             },
             {
                 Header: "Assigned To",
-                accessor: "assignment.person.user.name",
+                accessor: "assignment.person.name",
                 filterMethod: (filter, row) => 
                 !!row[filter.id] &&
                 row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),

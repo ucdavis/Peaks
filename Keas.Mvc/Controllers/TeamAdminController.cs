@@ -256,7 +256,6 @@ namespace Keas.Mvc.Controllers
                         Id = user.Id,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
-                        Name = user.Name,
                         Email = user.Email
                     };
                     _context.Users.Add(newUser);

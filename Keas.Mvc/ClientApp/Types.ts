@@ -37,6 +37,10 @@ export interface IPerson {
   teamId: number;
   user: IUser;
   tags: string;
+  firstName: string;
+  lastName: string;
+  name: string;
+  email: string;
 }
 
 export interface IPersonInfo {

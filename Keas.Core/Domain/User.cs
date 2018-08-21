@@ -18,10 +18,13 @@ namespace Keas.Core.Domain
         [Display(Name = "Last Name")]        
         public string LastName { get; set; }
 
-        [Required]
         [StringLength(256)]
         [Display(Name = "Name")]        
-        public string Name { get; set; }
+        public string Name { 
+            get {
+                return FirstName + " " + LastName;
+            }
+        }
 
         [Required]
         [StringLength(256)]

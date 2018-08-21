@@ -34,10 +34,10 @@ namespace Keas.Mvc.Helpers
             var space6 = new Space { BldgKey = "03", FloorKey = "01", RoomKey = "06", BldgName = "South Hall", RoomName = "Storage", RoomNumber = "0121A", ChartNum = "3", OrgId = "ADNO" };
             context.Spaces.Add(space6);
 
-            var scott = new User { Id = "postit", FirstName = "Scott", Name = "Scott Kirkland", Email = "srkirkland@ucdavis.edu" };
-            var james = new User { Id = "jscub", FirstName = "James", Name = "James Cubbage", Email = "jscubbage@ucdavis.edu" };
-            var laura = new User { Id = "holstege", Name = "Laura Holstege", Email = "laholstege@ucdavis.edu" };
-            var cal = new User { Id = "cydoval", Name = "Cal Doval", Email = "cydoval@ucdavis.edu" };
+            var scott = new User { Id = "postit", FirstName = "Scott", LastName = "Kirkland", Email = "srkirkland@ucdavis.edu" };
+            var james = new User { Id = "jscub", FirstName = "James", LastName = "Cubbage", Email = "jscubbage@ucdavis.edu" };
+            var laura = new User { Id = "holstege", FirstName = "Laura", LastName = "Holstege", Email = "laholstege@ucdavis.edu" };
+            var cal = new User { Id = "cydoval", FirstName = "Cal", LastName = "Doval", Email = "cydoval@ucdavis.edu" };
 
             var caes = new Team {  Name = "CAESDO" };
 
@@ -66,10 +66,14 @@ namespace Keas.Mvc.Helpers
             //context.Roles.Add(emulate);
 
             // add assets
-            var lauraCaes = new Person { User = laura, Team = caes, Group = "CRU", Tags = "CRU"};
-            var scottCaes = new Person { User = scott, Team = caes, Group = "CRU", Tags = "CRU" };
-            var jamesCaes = new Person {User = james,  Team = caes, Group = "CRU", Tags = "CRU" };
-            var calCaes = new Person {User = cal,  Team = caes, Group = "CRU", Tags = "CRU" };
+            var lauraCaes = new Person { User = laura, Team = caes, Group = "CRU", Tags = "CRU,Student", 
+                FirstName = laura.FirstName, LastName = laura.LastName, Email = laura.Email};
+            var scottCaes = new Person { User = scott, Team = caes, Group = "CRU", Tags = "CRU",
+                FirstName = scott.FirstName, LastName = scott.LastName, Email = scott.Email};
+            var jamesCaes = new Person {User = james,  Team = caes, Group = "CRU", Tags = "CRU",
+                FirstName = james.FirstName, LastName = james.LastName, Email = james.Email};
+            var calCaes = new Person {User = cal,  Team = caes, Group = "CRU", Tags = "CRU", 
+                FirstName = cal.FirstName, LastName = cal.LastName, Email = cal.Email};
 
             context.People.Add(jamesCaes);
             context.People.Add(lauraCaes);
