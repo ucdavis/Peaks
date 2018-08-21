@@ -15,7 +15,7 @@ interface IProps {
     tags: string[];
     workstationAssigned: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
     workstationRevoked: (type: string, spaceId: number, personId: number) => void;
-    workstationEdited?: (type: string, spaceId: number, personId: number) => void; 
+    workstationEdited?: (type: string, spaceId: number, personId: number) => void;
 }
 
 interface IState {
@@ -47,12 +47,12 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         let workstations = [];
         if(!this.props.spaceId && !!this.props.person)
         {
-            workstations = 
+            workstations =
                 await this.context.fetch(`/api/${this.context.team.name}/workstations/getWorkstationsAssigned?personId=${this.props.person.id}`);
         }
         if(!!this.props.spaceId && !this.props.person)
         {
-            workstations = 
+            workstations =
                 await this.context.fetch(`/api/${this.context.team.name}/workstations/getWorkstationsInSpace?spaceId=${this.props.spaceId}`);
         }
         this.setState({ workstations, loading: false });
@@ -75,17 +75,17 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         return (
             <div className="card">
                 <div className="card-body">
-                    <h4 className="card-title"><i className="fas fa-user fa-xs"/> Workstations</h4>
-                        {this.state.workstations.length > 0 ? 
-                            <WorkstationList 
-                                    workstations={this.state.workstations} 
+                    <h2><i className="fas fa-user fa-xs"/> Workstations</h4>
+                        {this.state.workstations.length > 0 ?
+                            <WorkstationList
+                                    workstations={this.state.workstations}
                                     showDetails={this._openDetailsModal}
                                     onEdit={this._openEditModal}
-                                    onAdd={this._openAssignModal} 
+                                    onAdd={this._openAssignModal}
                                     onCreate={this._openCreateModal}
                                     onRevoke={this._openRevokeModal}/> : <div>No Workstations</div>}
-                            <Button color="danger" onClick={() => this._openCreateModal()}>
-                                Add Workstation
+                            <Button color="link" onClick={() => this._openCreateModal()}>
+                              <i className="fas fa-plus fa-sm" aria-hidden="true" />  Add Workstation
                             </Button>
                             <WorkstationDetails
                                 closeModal={this._closeModals}
@@ -124,7 +124,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
       ) => {
         let created = false;
         let assigned = false;
-        
+
         // call API to create a workstation, then assign it if there is a person to assign to
         // if we are creating a new workstation
         if (workstation.id === 0) {
@@ -135,26 +135,26 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           });
           created = true;
         }
-    
+
         // if we know who to assign it to, do it now
         if (person) {
           const assignUrl = `/api/${this.context.team.name}/workstations/assign?workstationId=${workstation.id}&personId=${
             person.id
           }&date=${date}`;
-    
+
           workstation = await this.context.fetch(assignUrl, {
             method: "POST"
           });
           workstation.assignment.person = person;
           assigned = true;
         }
-    
+
         const index = this.state.workstations.findIndex(x => x.id === workstation.id);
         if (index !== -1) {
           // update already existing entry in workstation
           const updateWorkstation = [...this.state.workstations];
           updateWorkstation[index] = workstation;
-    
+
           this.setState({
             ...this.state,
             workstations: updateWorkstation
@@ -170,14 +170,14 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         }
 
       };
-    
+
       private _revokeWorkstation = async (workstation: IWorkstation) => {
         // call API to actually revoke
         const removed: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/revoke`, {
           body: JSON.stringify(workstation),
           method: "POST"
         });
-     
+
         // remove from state
         const index = this.state.workstations.indexOf(workstation);
         if (index > -1) {
@@ -197,31 +197,31 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           }
         }
       };
-    
+
       private _editWorkstation = async (workstation: IWorkstation) =>
       {
         const index = this.state.workstations.findIndex(x => x.id === workstation.id);
-    
+
         if(index === -1 ) // should always already exist
         {
           return;
         }
-    
+
         const updated: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/update`, {
           body: JSON.stringify(workstation),
           method: "POST"
         });
-    
+
         updated.assignment = workstation.assignment;
-    
+
         // update already existing entry in key
         const updateWorkstation = [...this.state.workstations];
         updateWorkstation[index] = updated;
-    
+
         this.setState({
           ...this.state,
           workstations: updateWorkstation
-        }); 
+        });
 
         if(!!this.props.workstationEdited)
         {
@@ -234,7 +234,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             `${this._getBaseUrl()}/workstations/details/${workstation.id}`
         );
     };
-    
+
     private _openEditModal = (workstation: IWorkstation) => {
         this.context.router.history.push(
             `${this._getBaseUrl()}/workstations/edit/${workstation.id}`
@@ -256,7 +256,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     private _openRevokeModal = (workstation: IWorkstation) => {
         this.context.router.history.push(
             `${this._getBaseUrl()}/workstations/revoke/${workstation.id}`
-        );    
+        );
     }
 
     private _closeModals = () => {
@@ -269,7 +269,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             this.context.router.history.push(`${this._getBaseUrl()}`);
         }
     };
-    
+
     private _getBaseUrl = () => {
         return this.props.person
           ? `/${this.context.team.name}/people/details/${this.props.person.id}`

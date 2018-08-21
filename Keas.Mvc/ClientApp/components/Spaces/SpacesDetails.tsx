@@ -33,14 +33,12 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
         }
         return (
             <div>
-                <br />
-
                 <div>
-                    <Button color="secondary" onClick={this.props.closeModal}>
+                    <Button color="link" onClick={this.props.closeModal}>
                         <i className="fas fa-arrow-left fa-xs"/> Return to Table
                     </Button>
                 </div>
-                <hr />
+                <br />
                 <div>
                     {this.props.selectedSpace.roomName &&
                     <SpaceDetailContainer space={this.props.selectedSpace}/>}
@@ -48,27 +46,21 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                         keyAssigned={this.props.assignedOrCreated}
                         keyEdited={this.props.edited}
                         keyRevoked={this.props.revokedOrDeleted} />
-                    <EquipmentContainer spaceId={this.props.selectedSpace.id} 
+                    <EquipmentContainer spaceId={this.props.selectedSpace.id}
                         equipmentAssigned={this.props.assignedOrCreated}
                         equipmentEdited={this.props.edited}
                         equipmentRevoked={this.props.revokedOrDeleted}/>
-                    <WorkstationContainer 
-                        spaceId={this.props.selectedSpace.id} 
+                    <WorkstationContainer
+                        spaceId={this.props.selectedSpace.id}
                         tags={this.props.tags}
                         workstationAssigned={this.props.assignedOrCreated}
                         workstationEdited={this.props.edited}
                         workstationRevoked={this.props.revokedOrDeleted}
                     />
                 </div>
-                <hr/>
-                <div>
-                    <Button color="secondary" onClick={this.props.closeModal}>
-                        <i className="fas fa-arrow-left fa-xs"/> Return to Table
-                    </Button>
-                </div>
             </div>
         );
     }
 
-    
+
 }

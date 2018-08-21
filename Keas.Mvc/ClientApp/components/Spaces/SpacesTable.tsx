@@ -37,8 +37,8 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                         resizable: false,
                         className: "spaces-details",
                         Cell: row => (
-                            <Button color="secondary" onClick={() => this.props.showDetails(row.original.space)}>
-                            View Details
+                            <Button color="link" onClick={() => this.props.showDetails(row.original.space)}>
+                            Details
                             </Button>
                         ),
                         maxWidth: 150,
@@ -47,7 +47,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                         Header: "Room",
                         accessor: (row) => row.space.roomNumber + " " + row.space.bldgName,
                         id: "room",
-                        filterMethod: (filter, row) => 
+                        filterMethod: (filter, row) =>
                             !!row[filter.id] && row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
                         ,
                         Cell: row => (
@@ -57,7 +57,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                     {
                         Header: "Room Name",
                         accessor: "space.roomName",
-                        filterMethod: (filter, row) => 
+                        filterMethod: (filter, row) =>
                             !!row[filter.id] &&
                             row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
                         Cell: row => (
@@ -82,8 +82,8 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                         className: "table-10p",
                         filterable: false,
                         Cell: row => (
-                            <span><i className="fas fa-laptop"></i> {row.original.equipmentCount}</span>
-                        ),                    
+                            <span><i className="fas fa-hdd"></i> {row.original.equipmentCount}</span>
+                        ),
                     },
                     {
                         Header: "Workstations",
@@ -98,7 +98,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                                 return (row._original.workstationsTotal - row._original.workstationsInUse) > 0;
                             }
                         },
-                        Filter: ({filter, onChange}) => 
+                        Filter: ({filter, onChange}) =>
                             <select onChange={e => onChange(e.target.value)}
                             style={{width: "100%"}}
                             value={filter ? filter.value : "all"}
@@ -111,7 +111,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                         ),
                     },
 
-                    
+
                 ]}
             />
         );

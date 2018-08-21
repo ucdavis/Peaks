@@ -58,9 +58,9 @@ export default class SpacesContainer extends React.Component<{}, IState> {
 
 
         return (
-        <div className="card">
+        <div className="card spaces-color">
           <div className="card-header-spaces">
-            <div className="card-head">  <h2><i className="fas fa-building fa-xs"/> Spaces</h2></div>
+            <div className="card-head"><h2><i className="fas fa-building fa-xs"/> Spaces</h2></div>
 
 
           </div>

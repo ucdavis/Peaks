@@ -10,7 +10,7 @@ import EquipmentList from "./EquipmentList";
 import EquipmentTable from "./EquipmentTable";
 import SearchAttributes from "./SearchAttributes";
 import Denied from "../Shared/Denied";
-import { PermissionsUtil } from "../../util/permissions"; 
+import { PermissionsUtil } from "../../util/permissions";
 
 interface IState {
   attributeFilters: string[];
@@ -24,7 +24,7 @@ interface IState {
 interface IProps {
   equipmentAssigned?: (type: string, spaceId: number, personId: number, created: boolean, assigned: boolean) => void;
   equipmentRevoked?: (type: string, spaceId: number, personId: number) => void;
-  equipmentEdited?: (type: string, spaceId: number, personId: number) => void; 
+  equipmentEdited?: (type: string, spaceId: number, personId: number) => void;
   person?: IPerson;
   spaceId?: number;
 }
@@ -86,9 +86,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     const selectedId = parseInt(id, 10);
     const detailEquipment = this.state.equipment.find(e => e.id === selectedId);
     return (
-      <div className="card">
+      <div className="card equipment-color">
         <div className="card-body">
-        <h4 className="card-title"><i className="fas fa-laptop fa-xs"/> Equipment</h4>
+        <h2><i className="fas fa-hdd fa-xs"/> Equipment</h2>
           {this._renderTableOrList()}
           <AssignEquipment
             onCreate={this._createAndMaybeAssignEquipment}
@@ -105,7 +105,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             modal={activeAsset && action === "details" && !!detailEquipment}
             closeModal={this._closeModals}
           />
-          <EditEquipment 
+          <EditEquipment
             selectedEquipment={detailEquipment}
             onEdit={this._editEquipment}
             closeModal={this._closeModals}
@@ -266,7 +266,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     this.setState({
       ...this.state,
       equipment: updateEquipment
-    }); 
+    });
 
     if(this.props.equipmentEdited)
     {
@@ -288,7 +288,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
   private _checkAttributeFilters = (equipment: IEquipment, filters) => {
     for (const filter of filters) {
-        if(equipment.attributes.findIndex(x => x.key.toLowerCase() === filter.label.toLowerCase() || 
+        if(equipment.attributes.findIndex(x => x.key.toLowerCase() === filter.label.toLowerCase() ||
           x.value.toLowerCase() === filter.label.toLowerCase()) === -1)
         {
           // if we cannot find an index where some of our filter matches the key
@@ -333,6 +333,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     } else {
       return `/${this.context.team.name}`;
     }
-    
+
   };
 }

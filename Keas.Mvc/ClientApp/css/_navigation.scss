@@ -37,6 +37,7 @@ a.nav-link {
     font-family: $sans-bold;
     font-size:1.8rem;
     color:$primary-font;
+    border-bottom:4px solid #fff;
     @include fader;
     &.tab-spaces {
       &.active {
