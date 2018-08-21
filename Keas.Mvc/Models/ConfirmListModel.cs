@@ -10,7 +10,7 @@ namespace Keas.Mvc.Models
 {
     public class ConfirmListModel
     {
-        public List<Key> Keys { get; set; }
+        public List<Serial> Serials { get; set; }
         public List<Equipment> Equipment { get; set; }
         public List<Workstation> Workstations { get; set; }
 
@@ -19,7 +19,7 @@ namespace Keas.Mvc.Models
         {
             var viewModel = new ConfirmListModel
             {
-                Keys = await context.Keys.Include(k=> k.Space).Where(k => !k.Assignment.IsConfirmed && k.Assignment.Person == person).AsNoTracking().ToListAsync(),
+                Serials = await context.Serials.Include(s=> s.Key).ThenInclude(k=> k.KeyXSpaces).ThenInclude(kxs=> kxs.Space).Where(s=> !s.Assignment.IsConfirmed && s.Assignment.Person== person).AsNoTracking().ToListAsync(),
                 Equipment = await context.Equipment.Include(e=> e.Space).Where(e => !e.Assignment.IsConfirmed && e.Assignment.Person==person).AsNoTracking().ToListAsync(),
                 Workstations = await context.Workstations.Include(w=> w.Space).Where(w=> !w.Assignment.IsConfirmed && w.Assignment.Person==person).AsNoTracking().ToListAsync()
             };

@@ -12,7 +12,7 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson } from "../../Types";
+import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson, ISpace } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
 import EquipmentEditValues from "./EquipmentEditValues";
 import SearchEquipment from "./SearchEquipment";
@@ -26,6 +26,7 @@ interface IProps {
   closeModal: () => void;
   selectedEquipment: IEquipment;
   person?: IPerson;
+  space: ISpace;
   tags: string[];
   commonAttributeKeys: string[];
 }
@@ -91,6 +92,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     selectedEquipment={this.state.equipment}
                     onSelect={this._onSelected}
                     onDeselect={this._onDeselected}
+                    space={this.props.space}
                   />
                 </div>
                 {!this.state.equipment ||
@@ -102,6 +104,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                       disableEditing={false}
                       updateAttributes={this._updateAttributes}
                       creating={true}
+                      space={this.props.space}
                       tags={this.props.tags}
                     />
                   ))}

@@ -26,7 +26,7 @@ namespace Keas.Mvc.Controllers.Api
                 person = person,
                 id = person.Id,
                 accessCount = 
-                    (from a in _context.AccessAssignments where a.PersonId == person.Id select a).Count(),
+                    (from a in _context.AccessAssignments where a.Person.Id == person.Id select a).Count(),
                 equipmentCount = 
                     (from eq in _context.EquipmentAssignments where eq.PersonId == person.Id select eq ).Count(),
                 keyCount = 

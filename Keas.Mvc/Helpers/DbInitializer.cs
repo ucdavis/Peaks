@@ -84,6 +84,7 @@ namespace Keas.Mvc.Helpers
             {
                 //Access = access,
                 Person = lauraCaes,
+                PersonId = lauraCaes.Id,
                 RequestedBy = scott,
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
@@ -100,6 +101,7 @@ namespace Keas.Mvc.Helpers
             {
                 //Access = access2,
                 Person = scottCaes,
+                PersonId = scottCaes.Id,
                 RequestedBy = scott,
                 ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
@@ -114,9 +116,16 @@ namespace Keas.Mvc.Helpers
                 ExpiresAt = DateTime.UtcNow.AddYears(5)
             };
 
-            var key = new Key { SerialNumber = "SN", Team = caes, Name = "38 Mrak Keycard", Assignment = keyAssignment, Space = space2 };
+            var keyAssignment2 = new KeyAssignment { Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(5)};
 
-            var key2 = new Key { SerialNumber = "SN2", Team = caes, Name = "North Hall Keycard", Space = space3 };
+            var key = new Key { Number = "A1", Team = caes, Name = "38 Mrak Keycard"};
+            var key1Space = new KeyXSpace {Key = key, Space = space2};
+            var key1Serial = new Serial {Key = key, Number = "1", Assignment = keyAssignment};
+
+            var key2 = new Key { Number = "A2", Team = caes, Name = "North Hall Keycard" };
+            var key2Space = new KeyXSpace { Key = key, Space = space3 };
+            var key2Serial = new Serial { Key = key, Number = "SN1" };
+            var key2Serial2 = new Serial {Key = key2, Number = "2", Assignment = keyAssignment2};
             var workstationAssignment = new WorkstationAssignment{ Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(3)};
             var workstation = new Workstation{Name = "Corner desk", Team = caes, Type = "Desk", Space = space2, Assignment = workstationAssignment, Tags = "CRU"};
             context.Workstations.Add(workstation);
@@ -136,8 +145,14 @@ namespace Keas.Mvc.Helpers
             context.AccessAssignments.Add(accessAssignment2);
 
             context.Keys.Add(key);
+            context.KeyXSpaces.Add(key1Space);
+            context.Serials.Add(key1Serial);
             context.KeyAssignments.Add(keyAssignment);
             context.Keys.Add(key2);
+            context.KeyXSpaces.Add(key2Space);
+            context.Serials.Add(key2Serial);
+            context.Serials.Add(key2Serial2);
+            context.KeyAssignments.Add(keyAssignment2);
             context.EquipmentAssignments.Add(equipmentAssignment);
             context.Equipment.Add(equipment);
 

@@ -12,9 +12,8 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IAccess, IAccessAssignment, IPerson, IRoom } from "../../Types";
+import { AppContext, IAccess, IAccessAssignment, IPerson } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
-import AssignRoom from "../Spaces/AssignRoom";
 import AccessEditValues from "./AccessEditValues";
 import SearchAccess from "./SearchAccess";
 
