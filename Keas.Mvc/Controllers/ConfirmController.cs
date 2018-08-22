@@ -27,7 +27,7 @@ namespace Keas.Mvc.Controllers
             var person = await _securityService.GetPerson(Team);
             if(person==null){
                  Message = "You are not yet added to the system.";
-                return RedirectToAction(nameof(HomeController.Index));
+                return RedirectToAction("Index","Home");
             }
             var viewmodel = await MyStuffListModel.Create(_context, person);
             return View(viewmodel);
@@ -38,7 +38,7 @@ namespace Keas.Mvc.Controllers
             var person = await _securityService.GetPerson(Team);
             if(person==null){
                  Message = "You are not yet added to the system.";
-                return RedirectToAction(nameof(HomeController.Index));
+                return RedirectToAction("Index","Home");
             }
             var viewModel = await ConfirmListModel.Create(_context,person);
             if (viewModel.Equipment.Count == 0 && viewModel.Serials.Count==0 && viewModel.Workstations.Count==0)
