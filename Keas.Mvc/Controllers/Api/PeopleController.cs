@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,10 +12,12 @@ namespace Keas.Mvc.Controllers.Api
     public class PeopleController : SuperController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IIdentityService _identityService;
 
-        public PeopleController(ApplicationDbContext context)
+        public PeopleController(ApplicationDbContext context, IIdentityService identityService)
         {
             this._context = context;
+            this._identityService = identityService;
         }
 
         public async Task<IActionResult> List()
@@ -46,6 +49,28 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.User).AsNoTracking().ToListAsync();
 
             return Json(people);
+        }
+
+      public async Task<IActionResult> SearchUser(string searchTerm)
+        {
+            var comparison = StringComparison.OrdinalIgnoreCase;
+            var users = await _context.Users.Where(x => x.Email.IndexOf(searchTerm, comparison) >= 0
+                || x.Id.IndexOf(searchTerm, comparison) >= 0) //case-insensitive version of .Contains
+                .AsNoTracking().FirstOrDefaultAsync();
+            if (users==null)
+            {
+                if(searchTerm.Contains("@"))
+                {
+                    var user = await _identityService.GetByEmail(searchTerm);
+                    return Json(user);
+                }
+                else
+                {
+                    var user = await _identityService.GetByKerberos(searchTerm);
+                    return Json(user);
+                }
+            }
+            return Json(users);
         }
 
         public async Task<IActionResult> Details(int? id)

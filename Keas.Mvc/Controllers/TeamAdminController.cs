@@ -216,16 +216,22 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> SearchUser(string searchTerm)
         {
-            var users = await _context.Users.Where(x => x.Email.StartsWith(searchTerm) || x.Name.StartsWith(searchTerm)).AsNoTracking().FirstOrDefaultAsync();
+            var comparison = StringComparison.OrdinalIgnoreCase;
+            var users = await _context.Users.Where(x => x.Email.IndexOf(searchTerm, comparison) >= 0
+                || x.Id.IndexOf(searchTerm, comparison) >= 0) //case-insensitive version of .Contains
+                .AsNoTracking().FirstOrDefaultAsync();
             if (users==null)
             {
-                var iamId = await _identityService.GetUserId(searchTerm);
-                if (iamId != null && iamId.Length > 5)
+                if(searchTerm.Contains("@"))
                 {
-                    var user = _identityService.GetUser(iamId, searchTerm);
+                    var user = await _identityService.GetByEmail(searchTerm);
                     return Json(user);
                 }
-                //getIAM ID, then get user data.
+                else
+                {
+                    var user = await _identityService.GetByKerberos(searchTerm);
+                    return Json(user);
+                }
             }
             return Json(users);
         }
@@ -264,6 +270,9 @@ namespace Keas.Mvc.Controllers
                 var newPerson = new Person
                 {
                     Team = team,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
                     UserId = user.Id,
                     Group = person.Group,
                     Title = person.Title,
