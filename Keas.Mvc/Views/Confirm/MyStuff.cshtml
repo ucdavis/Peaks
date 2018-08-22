@@ -8,12 +8,11 @@
     <div class="row justify-content-between">
       <div class="card-head">
         <h2>MyStuff</h2></div>
-      <div>
+      <div class="card-head">
         <p>
           <a href="@Url.Action(" Confirm ")">Go to Accept page</a>
         </p>
       </div>
-
     </div>
   </div>
   <div class="card-content">
@@ -47,84 +46,94 @@
       </div>
     </div>
     <div class="card equipment-color">
-      <div class="card-header-equipment"><div class="card-head"><h2><i class="fas fa-hdd fa-xs"></i> Equipment</h2></div></div>
+      <div class="card-header-equipment">
+        <div class="card-head">
+          <h2><i class="fas fa-hdd fa-xs"></i> Equipment</h2></div>
+      </div>
       <div class="card-content">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Serial</th>
-                <th>Name</th>
-                <th>Expiration</th>
-                <th>Accepted?</th>
-              </tr>
-            </thead>
-            <tbody>
-              @foreach (var equipment in Model.Equipment) {
-              <tr>
-                <td>@equipment.SerialNumber</td>
-                <td>@equipment.Name</td>
-                <td>@equipment.Assignment.ExpiresAt.ToShortDateString()</td>
-                <td>@Html.CheckBoxFor(e=> equipment.Assignment.IsConfirmed)</td>
-              </tr>
-              }
-            </tbody>
-          </table>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Serial</th>
+              <th>Name</th>
+              <th>Expiration</th>
+              <th>Accepted?</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var equipment in Model.Equipment) {
+            <tr>
+              <td>@equipment.SerialNumber</td>
+              <td>@equipment.Name</td>
+              <td>@equipment.Assignment.ExpiresAt.ToShortDateString()</td>
+              <td>@Html.CheckBoxFor(e=> equipment.Assignment.IsConfirmed)</td>
+            </tr>
+            }
+          </tbody>
+        </table>
       </div>
     </div>
 
-<div class="card access-color">
-    <div class="card-header-access"><div class="card-head"><h2><i class="fas fa-address-card fa-xs"></i> Access</h2></div></div>
-    <div class="card-content">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Expiration</th>
-          </tr>
-        </thead>
-        <tbody>
-          @foreach (var access in Model.Access) {
-          <tr>
-            <td>@access.Name</td>
-            <td>@access.Assignments.First().ExpiresAt.ToShortDateString()</td>
-          </tr>
-          }
-        </tbody>
-      </table>
+    <div class="card access-color">
+      <div class="card-header-access">
+        <div class="card-head">
+          <h2><i class="fas fa-address-card fa-xs"></i> Access</h2></div>
+      </div>
+      <div class="card-content">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Expiration</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var access in Model.Access) {
+            <tr>
+              <td>@access.Name</td>
+              <td>@access.Assignments.First().ExpiresAt.ToShortDateString()</td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>
-</div>
 
 
-<div class="card spaces-color">
-<div class="card-header-spaces"><div class="card-head"><h2><i class="fas fa-briefcase fa-xs"></i> Workstations</h2></div></div>
-  <div class="card-content">
+    <div class="card spaces-color">
+      <div class="card-header-spaces">
+        <div class="card-head">
+          <h2><i class="fas fa-briefcase fa-xs"></i> Workstations</h2></div>
+      </div>
+      <div class="card-content">
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Room</th>
-            <th>Expiration</th>
-            <th>Accepted?</th>
-          </tr>
-        </thead>
-        <tbody>
-          @foreach (var workstation in Model.Workstations) {
-          <tr>
-            <td>@workstation.Type</td>
-            <td>@workstation.Space.RoomNumber @workstation.Space.BldgName</td>
-            <td>@workstation.Assignment.ExpiresAt.ToShortDateString()</td>
-            <td>@Html.CheckBoxFor(w=> workstation.Assignment.IsConfirmed)</td>
-          </tr>
-          }
-        </tbody>
-      </table>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Room</th>
+              <th>Expiration</th>
+              <th>Accepted?</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var workstation in Model.Workstations) {
+            <tr>
+              <td>@workstation.Type</td>
+              <td>@workstation.Space.RoomNumber @workstation.Space.BldgName</td>
+              <td>@workstation.Assignment.ExpiresAt.ToShortDateString()</td>
+              <td>@Html.CheckBoxFor(w=> workstation.Assignment.IsConfirmed)</td>
+            </tr>
+            }
+          </tbody>
+        </table>
 
-  </div>
-</div>
-<div class="card history-color">
-  <div class="card-head"><h2><i class="fas fa-history fa-xs"></i> History</h2></div>
-  <div class="card-content">
+      </div>
+    </div>
+    <div class="card history-color">
+      <div class="card-head">
+        <h2><i class="fas fa-history fa-xs"></i> History</h2></div>
+      <div class="card-content">
 
 
         <table class="table">
@@ -141,8 +150,8 @@
             }
           </tbody>
         </table>
-  </div>
-</div>
+      </div>
+    </div>
 
   </div>
 </div>
