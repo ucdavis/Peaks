@@ -160,6 +160,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     // call API to create a workstation, then assign it if there is a person to assign to
     // if we are creating a new workstation
       person.teamId = this.context.team.id;
+      person.team = this.context.team;
       person = await this.context.fetch(`/api/${this.context.team.name}/people/create`, {
         body: JSON.stringify(person),
         method: "POST"
