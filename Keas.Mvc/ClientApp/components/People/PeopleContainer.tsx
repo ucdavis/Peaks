@@ -7,6 +7,7 @@ import Denied from "../Shared/Denied";
 import { PermissionsUtil } from "../../util/permissions"; 
 import SearchTags from "../Tags/SearchTags";
 import PersonDetails from "./PersonDetails";
+import CreatePerson from "./CreatePerson";
 
 interface IState {
   loading: boolean;
@@ -61,8 +62,8 @@ export default class PeopleContainer extends React.Component<{}, IState> {
       <div className="card">
         <div className="card-body">
           <h4 className="card-title"><i className="fas fa-users fa-xs"/> People</h4>
-          {!personAction && 
-            this._renderTableView()
+          {(!personAction || personAction === "create") && 
+            this._renderTableView(personAction === "create")
           }
           {personAction === "details" && !!detailPerson && !!detailPerson.person &&
             this._renderDetailsView(detailPerson.person)
@@ -72,7 +73,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     );
   }
 
-  private _renderTableView = () => {
+  private _renderTableView = (createModal: boolean) => {
     let filteredPeople = this.state.people;
     if(this.state.tagFilters.length > 0)
     {
@@ -87,6 +88,14 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         filtered={this.state.tableFilters}
         updateFilters={this._updateTableFilters}
       />
+      <CreatePerson  
+        onCreate={this._createPerson}
+        modal={createModal}
+        onAddNew={this._openCreateModal}
+        closeModal={this._goBack}
+        tags={this.state.tags}
+        users={this.state.people.map(x => x.person.user)}
+        />
       </div>
     ); 
   }
@@ -138,6 +147,66 @@ export default class PeopleContainer extends React.Component<{}, IState> {
   private _checkTagFilters = (person: IPerson, filters: string[]) => {
     return filters.every(f => person.tags.includes(f));
   }
+
+  private _createPerson = async (
+    person: IPerson,
+  ) => {
+    let created = false;
+    let assigned = false;
+    
+    // call API to create a workstation, then assign it if there is a person to assign to
+    // if we are creating a new workstation
+    // if (person.id === 0) {
+    //   workstation.teamId = this.context.team.id;
+    //   workstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/create`, {
+    //     body: JSON.stringify(workstation),
+    //     method: "POST"
+    //   });
+    //   created = true;
+    // }
+
+    // // if we know who to assign it to, do it now
+    // if (person) {
+    //   const assignUrl = `/api/${this.context.team.name}/workstations/assign?workstationId=${workstation.id}&personId=${
+    //     person.id
+    //   }&date=${date}`;
+
+    //   workstation = await this.context.fetch(assignUrl, {
+    //     method: "POST"
+    //   });
+    //   workstation.assignment.person = person;
+    //   assigned = true;
+    // }
+
+    // const index = this.state.workstations.findIndex(x => x.id === workstation.id);
+    // if (index !== -1) {
+    //   // update already existing entry in workstation
+    //   const updateWorkstation = [...this.state.workstations];
+    //   updateWorkstation[index] = workstation;
+
+    //   this.setState({
+    //     ...this.state,
+    //     workstations: updateWorkstation
+    //   });
+    // } else if (!!this.props.space && this.props.space.id !== workstation.space.id) {
+    //     // if we are on the space tab and we have created a workstation that is not in this space, do nothing to our state here
+    // } else {
+    //   this.setState({
+    //     workstations: [...this.state.workstations, workstation]
+    //   });
+    // }
+    // if(created && this.props.assetTotalUpdated)
+    // {
+    //     this.props.assetTotalUpdated("workstation", workstation.space ? workstation.space.id : null, 
+    //         this.props.person? this.props.person.id : null, 1);
+    // }
+    // if(assigned && this.props.assetInUseUpdated)
+    // {
+    //     this.props.assetInUseUpdated("workstation", workstation.space? workstation.space.id : null, 
+    //     this.props.person? this.props.person.id : null, 1);
+    // }
+
+  };
 
   private _editPerson = async (person: IPerson) =>
   {
