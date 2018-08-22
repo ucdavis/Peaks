@@ -2,15 +2,12 @@ import PropTypes from "prop-types";
 import * as React from "react";
 import {
   Button,
-  ListGroup,
-  ListGroupItem,
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader
 } from "reactstrap";
 
-import * as moment from "moment";
 import { AppContext, IPerson, IUser } from "../../Types";
 import SearchUsers from "./SearchUsers";
 import PersonEditValues from "./PersonEditValues";
@@ -25,7 +22,6 @@ interface IProps {
 }
 
 interface IState {
-  date: any;
   error: string;
   person: IPerson;
   validState: boolean;
@@ -40,7 +36,6 @@ export default class CreatePerson extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      date: moment().add(3, "y"),
       error: "",
       person: null,
       validState: false
@@ -94,7 +89,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
         ...this.state.person,
         [property]: value
       }
-    });
+    }, this._validateState);
   };
 
   // clear everything out on close
@@ -137,10 +132,6 @@ export default class CreatePerson extends React.Component<IProps, IState> {
         person: null,
       });
     } else {
-      // else if (this.props.assignedKeyList.findIndex(x => x == key.name) != -1)
-      // {
-      //    this.setState({ selectedKey: null, error: "The key you have chosen is already assigned to this user", validKey: false }, this._validateState);
-      // }
       var person: IPerson = {
         id: 0,
         name: user.name,
@@ -163,11 +154,9 @@ export default class CreatePerson extends React.Component<IProps, IState> {
       valid = false;
     } else if (this.state.error !== "") {
       valid = false;
-    } else if (!this.state.date) {
+    } else if (!this.state.person.firstName || !this.state.person.lastName || !this.state.person.email) {
       valid = false;
-    } else if (moment().isSameOrAfter(this.state.date)) {
-      valid = false;
-    }
+    } 
     this.setState({ validState: valid });
   };
 
