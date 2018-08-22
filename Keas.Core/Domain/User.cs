@@ -6,9 +6,12 @@ namespace Keas.Core.Domain
 {
     public class User
     {
-        // IAM (campus identity) ID
+        // kerb ID
         [Key]
         public string Id { get; set; }
+
+        // TODO: make a key?
+        public string Iam {get; set;}
 
         [StringLength(50)]
         [Display(Name = "First Name")]        
