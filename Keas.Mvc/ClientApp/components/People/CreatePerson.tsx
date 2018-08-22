@@ -117,7 +117,6 @@ export default class CreatePerson extends React.Component<IProps, IState> {
   private _onSelectUser = (user: IUser) => {
     // if this key is not already assigned
 
-    // TODO: more validation of name
     if (!user) {
       this.setState(
         {

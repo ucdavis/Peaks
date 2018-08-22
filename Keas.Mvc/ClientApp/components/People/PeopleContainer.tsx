@@ -151,60 +151,31 @@ export default class PeopleContainer extends React.Component<{}, IState> {
   private _createPerson = async (
     person: IPerson,
   ) => {
-    let created = false;
-    let assigned = false;
-    
+    const index = this.state.people.findIndex(x => x.id === person.id);
+    if (index !== -1)
+    {
+      // if we somehow already have this person, return
+      return;
+    }
     // call API to create a workstation, then assign it if there is a person to assign to
     // if we are creating a new workstation
-    // if (person.id === 0) {
-    //   workstation.teamId = this.context.team.id;
-    //   workstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/create`, {
-    //     body: JSON.stringify(workstation),
-    //     method: "POST"
-    //   });
-    //   created = true;
-    // }
-
-    // // if we know who to assign it to, do it now
-    // if (person) {
-    //   const assignUrl = `/api/${this.context.team.name}/workstations/assign?workstationId=${workstation.id}&personId=${
-    //     person.id
-    //   }&date=${date}`;
-
-    //   workstation = await this.context.fetch(assignUrl, {
-    //     method: "POST"
-    //   });
-    //   workstation.assignment.person = person;
-    //   assigned = true;
-    // }
-
-    // const index = this.state.workstations.findIndex(x => x.id === workstation.id);
-    // if (index !== -1) {
-    //   // update already existing entry in workstation
-    //   const updateWorkstation = [...this.state.workstations];
-    //   updateWorkstation[index] = workstation;
-
-    //   this.setState({
-    //     ...this.state,
-    //     workstations: updateWorkstation
-    //   });
-    // } else if (!!this.props.space && this.props.space.id !== workstation.space.id) {
-    //     // if we are on the space tab and we have created a workstation that is not in this space, do nothing to our state here
-    // } else {
-    //   this.setState({
-    //     workstations: [...this.state.workstations, workstation]
-    //   });
-    // }
-    // if(created && this.props.assetTotalUpdated)
-    // {
-    //     this.props.assetTotalUpdated("workstation", workstation.space ? workstation.space.id : null, 
-    //         this.props.person? this.props.person.id : null, 1);
-    // }
-    // if(assigned && this.props.assetInUseUpdated)
-    // {
-    //     this.props.assetInUseUpdated("workstation", workstation.space? workstation.space.id : null, 
-    //     this.props.person? this.props.person.id : null, 1);
-    // }
+      person.teamId = this.context.team.id;
+      person = await this.context.fetch(`/api/${this.context.team.name}/people/create`, {
+        body: JSON.stringify(person),
+        method: "POST"
+      });
+      // since this is a new person, they will not have anything assigned
+      const personInfo: IPersonInfo = {
+        id: person.id,
+        person,
+        accessCount: 0,
+        equipmentCount: 0,
+        keyCount: 0,
+        workstationCount: 0
+      };
+      this.setState({
+        people: [...this.state.people, personInfo]
+      });
 
   };
 

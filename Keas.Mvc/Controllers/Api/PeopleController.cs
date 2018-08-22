@@ -89,6 +89,19 @@ namespace Keas.Mvc.Controllers.Api
             return View(person);
         }
 
+         public async Task<IActionResult> Create([FromBody] Person person)
+        {
+            // TODO Make sure user has permission; Protect from overpost
+            if (ModelState.IsValid)
+            {
+//                var user = await _context.Users.SingleAsync(u => u.Id == person.UserId);
+                _context.People.Add(person);
+                await _context.SaveChangesAsync();
+            }
+
+            return Json(person);
+        }
+
         public async Task<IActionResult> Update([FromBody]Person person)
         {
             //TODO: check permissions
