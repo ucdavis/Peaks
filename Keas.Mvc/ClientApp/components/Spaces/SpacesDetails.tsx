@@ -33,14 +33,12 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
         }
         return (
             <div>
-                <br />
-
                 <div>
-                    <Button color="secondary" onClick={this.props.closeModal}>
+                    <Button color="link" onClick={this.props.closeModal}>
                         <i className="fas fa-arrow-left fa-xs"/> Return to Table
                     </Button>
                 </div>
-                <hr />
+                <br />
                 <div>
                     {this.props.selectedSpace &&
                     <SpaceDetailContainer space={this.props.selectedSpace}/>}
@@ -60,15 +58,9 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                         assetTotalUpdated={this.props.totalUpdated}
                         assetEdited={this.props.edited}/>
                 </div>
-                <hr/>
-                <div>
-                    <Button color="secondary" onClick={this.props.closeModal}>
-                        <i className="fas fa-arrow-left fa-xs"/> Return to Table
-                    </Button>
-                </div>
             </div>
         );
     }
 
-    
+
 }

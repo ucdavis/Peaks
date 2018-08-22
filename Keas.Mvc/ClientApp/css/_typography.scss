@@ -37,6 +37,7 @@ p a {
   &:hover {
     text-decoration: underline;
   }
+
 }
 a.no-underline {
   text-decoration: none;
@@ -91,6 +92,11 @@ p, span, div {
     text-align: center;
     margin: 5px 10px;
   }
+  &.subtitle {
+    font-size:2rem;
+    font-family: $sans-bold;
+    color:$secondary-font;
+  }
 
 }
 h1,
@@ -105,6 +111,9 @@ h6 {
 }
 h1 {
   font-size:3.6rem;
+  header & {
+    margin-bottom:0px;
+  }
 }
 h2 {
   font-size: 2.6rem;

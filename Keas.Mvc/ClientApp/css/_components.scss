@@ -6,11 +6,13 @@
   margin-bottom:16px;
   border:none;
 }
-
+.alert {
+  margin-top:1.6rem;
+}
 .card-content {
   padding:$card-padding;
-  padding-top:2.6rem;
   padding-bottom:2.6rem;
+  padding-top:2.6rem;
 }
 .card-head {
   padding:$card-padding;
@@ -30,8 +32,20 @@
 .card-header-primary {
   border-top:4px solid $primary-color;
 }
-.card-header-yellow {
-  border-top:4px solid $golden-lupine;
+.card-header-spaces {
+  border-bottom:4px solid $spaces;
+}
+.card-header-keys {
+  border-bottom:4px solid $keys;
+}
+.card-header-access {
+  border-bottom:4px solid $access;
+}
+.card-header-equipment {
+  border-bottom:4px solid $equipment;
+}
+.card-header-people {
+  border-bottom:4px solid $people;
 }
 .card-foot {
   padding:$card-padding;
@@ -80,98 +94,70 @@ img.img-fluid {
 }
 }
 
-.action-btn {
-  display: block;
-  font-size: 2rem;
-  color: #fff;
-  background-color: $gold;
-  font-family: $sans-bold;
-  padding: 15px 20px;
-  width: 265px;
-  height: 85px;
-
-  &:hover {
-    color: #fff;
-    opacity: 0.85;
-  }
-}
-
-p a.action-btn {
-  text-decoration: none !important;
-}
-.btn-plain {
-  font-size:1.66rem;
-  font-family: $sans-bold;
-  color:$secondary-font;
-  background-color:rgba(255,255,255,.0001);
-  border:none;
-  &:hover {
-    text-decoration: underline;
-  }
-}
 .btn {
-  @include main-btn;
-}
-.btn-gold {
-  @include main-btn;
-  background-color: $gold;
-  &:active,
-  &:focus {
-    background-color: darken($gold, 5);
-  }
-  &:hover {
-    background-color: lighten($gold, 5);
-  }
-}
-.btn-md {
-  padding:0px 40px;
-  font-size:1.8rem;
-}
-.btn-invoice-delete {
-  border:none;
-  color:$unitrans-red;
-}
-.btn-inverse {
-  @include inverse-btn;
-}
-.btn-inverse-gold {
-  @include inverse-btn;
-  color:$gold;
-}
-.btn-border {
-  border: 2px solid $borders;
+&.btn-link {
+  color: $primary-color;
   font-size: 1.6rem;
-  padding: 8px 16px;
   font-family: $sans-bold;
-  background-color: rgba(255,255,255,.66);
-  @include fader;
-
-  &:hover {
-    background-color: rgba(255,255,255,.90);
-  }
-}
-.btn-discreet {
-  color: $tertiary-font;
-  font-size: 1.8rem;
-  font-family: $sans-bold;
-  border: none;
+  border:none;
   cursor: pointer;
-
   &:hover {
-    color: $primary-color;
+    color: lighten($primary-color,5);
+    text-decoration: none;
+  }
+  .people-color & {
+    color:$people;
+    border-color:$people;
+    &:hover {
+      color:(darken($people,10));
+      text-decoration:none;
+    }
+  }
+  .spaces-color & {
+    color:$spaces;
+    border-color:$spaces;
+    &:hover {
+      color:(darken($spaces,10));
+      text-decoration:none;
+    }
+  }
+  .keys-color & {
+    color:$keys;
+    border-color:$keys;
+    &:hover {
+      color:(darken($keys,10));
+      text-decoration:none;
+    }
+  }
+  .access-color & {
+    color:$access;
+    border-color:$access;
+    &:hover {
+      color:(darken($access,10));
+      text-decoration:none;
+    }
+  }
+
+  .equipment-color & {
+    color:$equipment;
+    border-color:$equipment;
+    &:hover {
+      color:(darken($equipment,10));
+      text-decoration:none;
+    }
+  }
+  .history-color & {
+    color:$history;
+    border-color:$history;
+    &:hover {
+      color:(darken($history,10));
+      text-decoration:none;
+    }
   }
 }
-.btn-register {
-  width: 100%;
 }
 
-.btn-card {
-  padding: 9px 16px;
 
-  img {
-    margin-right: 1rem;
-  }
-}
 
 .media {
   margin-bottom: 16px;

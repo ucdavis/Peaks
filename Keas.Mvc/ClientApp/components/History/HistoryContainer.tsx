@@ -38,7 +38,7 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
   public async componentDidMount() {
     this.setState({loading: true});
     const histories = await this._getHistories();
-    this.setState({ histories, loading: false });  
+    this.setState({ histories, loading: false });
   }
   public render() {
     if (this.state.loading) {
@@ -46,17 +46,19 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
     }
 
     return (
-      <div className="card">
-        <div className="card-body">
-          <h4 className="card-title"><i className="fas fa-history fa-xs"/> History</h4>
-          {this.state.histories.length > 0 && 
+      <div className="card history-color">
+        <div>
+          <div className="card-head"><h2><i className="fas fa-history fa-xs"/> History</h2></div>
+        </div>
+        <div className="card-content">
+          {this.state.histories.length > 0 &&
             <HistoryList histories={this.state.histories} />}
           {this.state.histories.length < 1 &&
             <p>No histories were found</p>
           }
           {this.props.controller === "people" &&
-            <Button onClick={this._reloadHistories} disabled={this.state.reloading}>
-              Reload History {" "}
+            <Button color="link" onClick={this._reloadHistories} disabled={this.state.reloading}>
+              Refresh {" "}
               {this.state.reloaded ? <i className="fas fa-check" /> : null}
               {this.state.reloading ? <i className="fas fa-spin fa-spinner" /> : null}
             </Button> }
@@ -73,7 +75,7 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
 
   private _getHistories = async () => {
     const historyFetchUrl = `/api/${this.context.team.name}/${this.props.controller}/getHistory/${this.props.id}`;
-  
+
     const histories = await this.context.fetch(historyFetchUrl);
     return histories;
   }

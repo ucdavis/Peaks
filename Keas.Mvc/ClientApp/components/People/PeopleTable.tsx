@@ -34,8 +34,8 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 resizable: false,
                 className: "spaces-details",
                 Cell: row => (
-                    <Button color="secondary" onClick={() => this.props.showDetails(row.original)}>
-                    View Details
+                    <Button color="link" onClick={() => this.props.showDetails(row.original)}>
+                    Details
                     </Button>
                 ),
                 maxWidth: 150,
@@ -43,14 +43,14 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             {
                 Header: "Name",
                 accessor: "person.user.name",
-                filterMethod: (filter, row) => 
+                filterMethod: (filter, row) =>
                     !!row[filter.id] &&
                     row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
             },
             {
                 Header: "Email",
                 accessor: "person.user.email",
-                filterMethod: (filter, row) => 
+                filterMethod: (filter, row) =>
                     !!row[filter.id] &&
                     row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
             },
@@ -71,8 +71,8 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 headerClassName: "table-10p",
                 className: "table-10p",
                 Cell: row => (
-                    <span><i className="fas fa-laptop"></i> {row.original.equipmentCount}</span>
-                ),                    
+                    <span><i className="fas fa-hdd"></i> {row.original.equipmentCount}</span>
+                ),
             },
             {
                 Header: "Accesses",
@@ -81,7 +81,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 headerClassName: "table-10p",
                 className: "table-10p",
                 Cell: row => (
-                    <span><i className="fas fa-id-card"></i> {row.original.accessCount}</span>
+                    <span><i className="fas fa-address-card"></i> {row.original.accessCount}</span>
                 ),
             },
             {
@@ -91,13 +91,13 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 headerClassName: "table-10p",
                 className: "table-10p",
                 Cell: row => (
-                    <span><i className="fas fa-user"></i> {row.original.workstationCount}</span>
+                    <span><i className="fas fa-briefcase"></i> {row.original.workstationCount}</span>
                 ),
             },
             // {
             //     Header: "Assigned To",
             //     accessor: "assignment.person.user.name",
-            //     filterMethod: (filter, row) => 
+            //     filterMethod: (filter, row) =>
             //     !!row[filter.id] &&
             //     row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
             // },
@@ -120,15 +120,15 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             //             return !!row._original.assignment && moment(row._original.assignment.expiresAt).isAfter()
             //         }
             //         if( filter.value === "3weeks") {
-            //             return !!row._original.assignment && moment(row._original.assignment.expiresAt).isAfter() 
+            //             return !!row._original.assignment && moment(row._original.assignment.expiresAt).isAfter()
             //                 && moment(row._original.assignment.expiresAt).isBefore(moment().add(3,'w'))
             //         }
             //         if( filter.value === "6weeks") {
-            //             return !!row._original.assignment && moment(row._original.assignment.expiresAt).isAfter() 
+            //             return !!row._original.assignment && moment(row._original.assignment.expiresAt).isAfter()
             //                 && moment(row._original.assignment.expiresAt).isBefore(moment().add(6,'w'))
             //         }
             //     },
-            //     Filter: ({filter, onChange}) => 
+            //     Filter: ({filter, onChange}) =>
             //         <select onChange={e => onChange(e.target.value)}
             //         style={{width: "100%"}}
             //         value={filter ? filter.value : "all"}
@@ -141,7 +141,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             //             <option value="6weeks">Expiring within 6 weeks</option>
             //         </select>,
             // },
-            
+
         ]}
     />
     );

@@ -1,3 +1,6 @@
+.rbt-input-main, .rbt-input-hint {
+  height:36px;
+}
 .container-fluid {
   padding: 0;
 }
@@ -77,4 +80,8 @@ input[type=number]::-webkit-outer-spin-button {
 
 th.list-actions {
     width: 10%;
+}
+.ReactTable .rt-thead.-header {
+  box-shadow:none !important;
+  border-bottom:1px solid $borders;
 }
