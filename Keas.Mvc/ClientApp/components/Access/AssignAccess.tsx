@@ -67,8 +67,8 @@ export default class AssignAccess extends React.Component<IProps, IState> {
   public render() {
       return (
           <div>
-              <Button color="danger" onClick={this.props.onAddNew}>
-                  Add Access
+              <Button color="link" onClick={this.props.onAddNew}>
+                  <i className="fas fa-plus fa-sm" aria-hidden="true" />  Add Access
               </Button>
               <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
                   <ModalHeader>Assign Access</ModalHeader>
@@ -94,13 +94,13 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                   <AccessEditValues
                                   selectedAccess={this.props.selectedAccess}
                                   changeProperty={this._changeProperty}
-                                  disableEditing={false} 
+                                  disableEditing={false}
                                   creating={true}/>
                               }
                               {!!this.props.selectedAccess && !!this.props.selectedAccess.teamId &&
                                   <AccessEditValues
                                   selectedAccess={this.props.selectedAccess}
-                                  disableEditing={true} 
+                                  disableEditing={true}
                                   creating={true}/>
                               }
 
@@ -209,7 +209,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
       let valid = true;
       if (!this.state.access) {
           valid = false;
-      } else if ((!!this.state.person || !!this.props.person) && 
+      } else if ((!!this.state.person || !!this.props.person) &&
           !this._checkValidAssignmentToPerson()) {
           valid = false;
       } else if (this.state.error !== "") {
@@ -226,7 +226,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
       let valid = true;
       const person = this.props.person ? this.props.person : this.state.person;
       const assignments = this.state.access.assignments;
-      for (const a of assignments) 
+      for (const a of assignments)
       {
           if (a.personId === person.id)
           {

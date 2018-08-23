@@ -24,14 +24,14 @@
       <div class="row justify-content-between">
         <div class="row">
           <img src="/media/keas-symbol.svg" alt="KEAS logo of key lock house and computer">
-        <div>
+        <div style="margin-top: 8px;margin-left: 10px;">
           <h1>KEAS</h1>
-          <p>Keys, Equipment, Access and Space</p>
+          <p class="subtitle">Keys, Equipment, Access and Space</p>
         </div>
       </div>
         <div class="team">
           <h3>Team</h3>
-          <p>College of Agricultural <br> and Environmental Sciences</p>
+          <p>College of Agricultural and<br> Environmental Sciences</p>
         </div>
       </div>
     </div>
@@ -50,13 +50,13 @@
         <div class="collapse navbar-collapse" id="navbarText">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="/CAESDO/keys">Assets</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Features</a>
+              <a class="nav-link" href="/CAESDO/Confirm/Mystuff">My Stuff</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Pricing</a>
+              <a class="nav-link" href="#">Admin</a>
             </li>
           </ul>
           <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
@@ -68,10 +68,13 @@
     </nav>
 @if (!string.IsNullOrWhiteSpace(TempData["Message"] as string))
 {
-    <div class="alert alert-info">
-        <button type="button" class="close" data-dismiss="alert">×</button>
-        @TempData["Message"]
-    </div>
+<div class="container">
+  <div class="alert alert-info">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      @TempData["Message"]
+  </div>
+</div>
+
 }
 
 <main role="main" class="main-content-wrapper container">

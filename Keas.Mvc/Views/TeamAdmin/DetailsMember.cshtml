@@ -3,7 +3,8 @@
 @{
     ViewData["Title"] = "Team Member Details";
 }
-
+<div class="card">
+  <div class="card-content">
 <h2>Team Member Details</h2>
 
 <div>    
@@ -54,4 +55,6 @@
 <div>
     @Html.ActionLink("Edit", "EditMember", new { id = Model.Id }) |
     <a asp-action="Members">Back to List</a>
+</div>
+</div>
 </div>

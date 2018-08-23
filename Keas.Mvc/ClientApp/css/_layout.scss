@@ -51,6 +51,10 @@ header {
   padding:8px 0px;
   .team {
     text-align: right;
+    margin-top:8px;
+    h3 {
+      margin-bottom:0px;
+    }
   }
 }
 .head_bleed {
@@ -88,7 +92,7 @@ header {
   }
 }
 .main-content-wrapper {
-  margin-top:40px
+  margin-top:3.2rem;
 }
 
 footer {

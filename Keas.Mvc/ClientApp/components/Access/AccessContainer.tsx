@@ -9,7 +9,7 @@ import AssignAccess from "./AssignAccess";
 import EditAccess from "./EditAccess";
 import RevokeAccess from "./RevokeAccess";
 import Denied from "../Shared/Denied";
-import { PermissionsUtil } from "../../util/permissions"; 
+import { PermissionsUtil } from "../../util/permissions";
 
 interface IState {
     access: IAccess[]; // either access assigned to this person, or all team access
@@ -65,9 +65,11 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     const detailAccess = this.state.access.find(a => a.id === selectedId);
 
     return (
-      <div className="card">
-        <div className="card-body">
-                <h4 className="card-title"><i className="fas fa-id-card fa-xs"/> Access</h4>
+      <div className="card access-color">
+        <div className="card-header-access">
+          <div className="card-head"><h2><i className="fas fa-address-card fa-xs"/> Access</h2></div>
+        </div>
+        <div className="card-content">
                 <AccessList
                     access={this.state.access}
                     personView={this.props.person ? true : false}
@@ -93,7 +95,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                 <AccessDetails selectedAccess={detailAccess}
                     modal={activeAsset && action === "details" && !!detailAccess}
                     closeModal={this._closeModals} />
-                <EditAccess 
+                <EditAccess
                     onEdit={this._editAccess}
                     closeModal={this._closeModals}
                     modal={activeAsset && (action === "edit")}
@@ -132,7 +134,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       accessAssignment.person = person;
       if (!!this.props.person)
       {
-          // if we are on a person page, replace any fetched assignments with this one 
+          // if we are on a person page, replace any fetched assignments with this one
           access.assignments = [];
       }
       // then push it
@@ -217,7 +219,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     this.setState({
       ...this.state,
       access: updateAccess
-    }); 
+    });
 
     if(this.props.assetEdited)
     {

@@ -3,7 +3,8 @@
 @{
     ViewData["Title"] = "Create Team Member";
 }
-
+<div class="card">
+  <div class="card-content">
 <h2>Create Team Member</h2>
 
 
@@ -68,7 +69,8 @@ Enter email address: <input type="text" id="searchText"/> <input type="button" o
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
+</div>
+</div>
 @section Scripts
 {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
@@ -107,4 +109,3 @@ Enter email address: <input type="text" id="searchText"/> <input type="button" o
         }
     </script>
 }
-

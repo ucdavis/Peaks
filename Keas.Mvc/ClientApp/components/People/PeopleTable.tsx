@@ -34,8 +34,8 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 resizable: false,
                 className: "spaces-details",
                 Cell: row => (
-                    <Button color="secondary" onClick={() => this.props.showDetails(row.original)}>
-                    View Details
+                    <Button color="link" onClick={() => this.props.showDetails(row.original)}>
+                    Details
                     </Button>
                 ),
                 maxWidth: 150,
@@ -71,8 +71,8 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 headerClassName: "table-10p",
                 className: "table-10p",
                 Cell: row => (
-                    <span><i className="fas fa-laptop"></i> {row.original.equipmentCount}</span>
-                ),                    
+                    <span><i className="fas fa-hdd"></i> {row.original.equipmentCount}</span>
+                ),
             },
             {
                 Header: "Accesses",
@@ -81,7 +81,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 headerClassName: "table-10p",
                 className: "table-10p",
                 Cell: row => (
-                    <span><i className="fas fa-id-card"></i> {row.original.accessCount}</span>
+                    <span><i className="fas fa-address-card"></i> {row.original.accessCount}</span>
                 ),
             },
             {
@@ -91,7 +91,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 headerClassName: "table-10p",
                 className: "table-10p",
                 Cell: row => (
-                    <span><i className="fas fa-user"></i> {row.original.workstationCount}</span>
+                    <span><i className="fas fa-briefcase"></i> {row.original.workstationCount}</span>
                 ),
             }
         ]}

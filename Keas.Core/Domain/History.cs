@@ -27,9 +27,13 @@ namespace Keas.Core.Domain {
 
         // Created, granted, accepted, declined, revoked, deleted 
         public string ActionType { get; set; }
-
+       
         public Key Key {get;set;}
         public int? KeyId { get; set; }
+
+        public Serial Serial { get; set; }
+        public int? SerialId { get; set; }
+
         public Equipment Equipment { get; set; }
         public int? EquipmentId { get; set; }
 

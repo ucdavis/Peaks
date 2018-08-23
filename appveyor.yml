@@ -1,0 +1,47 @@
+version: 1.0.0.{build}
+
+environment:
+  configuration: Release
+  matrix:
+    - node_version: "10"
+
+branches:
+  except:
+  - design
+
+image: Visual Studio 2017
+
+install:
+- ps: Install-Product node $env:node_version
+- cmd: |
+    cd Keas.Mvc
+    appveyor-retry npm install
+    cd ..
+
+- cmd: appveyor-retry dotnet restore
+- cmd: echo %APPVEYOR_REPO_COMMIT_MESSAGE% > commit.txt 
+
+cache:
+- '%USERPROFILE%\.nuget\packages -> **\*.csproj'
+- Keas.Mvc\node_modules -> **\package.json
+
+before_build:
+- ps: |
+    $path = (Get-Item .\Keas.Mvc\Keas.Mvc.csproj).FullName
+    $csproj = [xml](Get-Content $path)
+    $csproj.Project.PropertyGroup.Version = $Env:APPVEYOR_BUILD_VERSION
+    $csproj.Save($path)
+
+build_script:
+- cmd: msbuild .\Keas.Mvc\Keas.Mvc.csproj /t:PublishRunWebpack /p:Configuration=%configuration%
+- cmd: msbuild /t:Build /p:Configuration=%configuration%;PackageVersion=%APPVEYOR_BUILD_VERSION%
+
+test_script:
+- cmd: |
+    cd Test
+    dotnet test
+    cd ..
+- cmd: |
+    cd Keas.Mvc
+    npm test
+    cd ..

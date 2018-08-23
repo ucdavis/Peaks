@@ -3,10 +3,11 @@
 @{
     ViewData["Title"] = "Role Assigned Members ";
 }
-
+<div class="card">
+  <div class="card-content">
 <h2>Remove all roles for user in @Model.Team.Name</h2>
 
-@foreach(var item in Model.UserRoles) { 
+@foreach(var item in Model.UserRoles) {
 <div class="row">
     <div class="col-md-4">
         <form asp-action="RemoveRoles">
@@ -39,4 +40,5 @@
     </div>
 </div>
 }
-
+</div>
+</div>

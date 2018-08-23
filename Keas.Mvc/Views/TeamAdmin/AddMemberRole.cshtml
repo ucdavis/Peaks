@@ -3,7 +3,8 @@
 @{
     ViewData["Title"] = "Add Member to Role";
 }
-
+<div class="card">
+  <div class="card-content">
 <h2>Add Member to Role</h2>
 
 <hr />
@@ -31,7 +32,7 @@
 <div>
     <a asp-action="RoledMembers">Back to Members with Roles</a>
 </div>
-
+</div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

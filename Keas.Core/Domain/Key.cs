@@ -1,18 +1,14 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Keas.Core.Domain
 {
     public class Key : AssetBase {
+        
+        public string Number { get; set; }
 
-        [Required]
-        [StringLength(64)]
-        public string SerialNumber { get; set; }
+        public List<KeyXSpace> KeyXSpaces { get; set; }
 
-        public string LockId { get; set; }
-        public Space Space { get; set; }
-        public int? SpaceId { get; set; }
-
-        public KeyAssignment Assignment { get; set; }
-        public int? KeyAssignmentId { get; set; }
+        public List<Serial> Serials { get; set; }
     }
 }

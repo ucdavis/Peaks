@@ -12,7 +12,7 @@ export default class AssetNav extends React.Component<{}, {}> {
         <div className="react-tabs">
             <NavLink
               to="/CAESDO/keys"
-              className="tab-link"
+              className="tab-link tab-keys"
               activeClassName="active"
             >
               Keys
@@ -21,7 +21,7 @@ export default class AssetNav extends React.Component<{}, {}> {
 
             <NavLink
               to="/CAESDO/equipment"
-              className="tab-link"
+              className="tab-link tab-equipment"
               activeClassName="active"
             >
               Equipment
@@ -30,7 +30,7 @@ export default class AssetNav extends React.Component<{}, {}> {
 
               <NavLink
                   to="/CAESDO/access"
-                  className="tab-link"
+                  className="tab-link tab-access"
                   activeClassName="active"
               >
                   Access
@@ -39,7 +39,7 @@ export default class AssetNav extends React.Component<{}, {}> {
 
               <NavLink
                   to="/CAESDO/spaces"
-                  className="tab-link"
+                  className="tab-link tab-spaces"
                   activeClassName="active"
               >
                   Spaces
@@ -48,7 +48,7 @@ export default class AssetNav extends React.Component<{}, {}> {
 
             <NavLink
               to="/CAESDO/people"
-              className="tab-link"
+              className="tab-link tab-people"
               activeClassName="active"
             >
               People
