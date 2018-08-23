@@ -85,3 +85,16 @@ th.list-actions {
   box-shadow:none !important;
   border-bottom:1px solid $borders;
 }
+.modal-body {
+  padding:1.5rem;
+}
+.modal-header {
+  padding:1.5rem;
+  padding-bottom:0.6rem;
+}
+.modal-footer {
+  padding:1.5rem;
+}
+.modal-title{
+  font-size:2rem;
+}

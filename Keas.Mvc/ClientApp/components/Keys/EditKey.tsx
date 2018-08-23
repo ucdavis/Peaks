@@ -60,8 +60,13 @@ export default class EditKey extends React.Component<IProps, IState> {
       return null;
     }
     return (
-      <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
-        <ModalHeader>Edit Key</ModalHeader>
+      <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg" className="keys-color">
+        <div className="modal-header row justify-content-between">
+          <h2>Edit Key</h2>
+          <Button color="link" onClick={this._closeModal}>
+          <i className="fas fa-times fa-lg"/>
+          </Button>
+        </div>
         <ModalBody>
           <div className="container-fluid">
             <form>
@@ -81,9 +86,6 @@ export default class EditKey extends React.Component<IProps, IState> {
           >
             Update Key
           </Button>{" "}
-          <Button color="secondary" onClick={this._closeModal}>
-            Close
-          </Button>
         </ModalFooter>
       </Modal>
     );
