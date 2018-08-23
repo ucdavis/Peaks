@@ -1,5 +1,5 @@
 import { History, Location } from "history";
-import { match } from "react-router";
+import { match } from "react-router-dom";
 
 // Main Type of the context
 // tslint:disable-next-line:interface-name
