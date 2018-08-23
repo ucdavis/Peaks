@@ -25,9 +25,9 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> MyStuff()
         {   
             var person = await _securityService.GetPerson(Team);
-            if(person==null){
+            if(person == null){
                  Message = "You are not yet added to the system.";
-                return RedirectToAction("Index","Home");
+                return RedirectToAction("NoAccess","Home");
             }
             var viewmodel = await MyStuffListModel.Create(_context, person);
             return View(viewmodel);
@@ -36,9 +36,9 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> Confirm()
         {           
             var person = await _securityService.GetPerson(Team);
-            if(person==null){
+            if(person == null){
                  Message = "You are not yet added to the system.";
-                return RedirectToAction("Index","Home");
+                return RedirectToAction("NoAccess","Home");
             }
             var viewModel = await ConfirmListModel.Create(_context,person);
             if (viewModel.Equipment.Count == 0 && viewModel.Serials.Count==0 && viewModel.Workstations.Count==0)
