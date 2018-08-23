@@ -36,6 +36,7 @@ export interface IUser {
 }
 
 export interface IPerson {
+  active?: boolean;
   id: number;
   userId: string;
   teamId: number;

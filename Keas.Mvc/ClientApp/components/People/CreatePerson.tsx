@@ -22,7 +22,7 @@ interface IProps {
 }
 
 interface IState {
-  error: string;
+  moreInfoString: string; // for errors and for explaining results, e.g. if person is new or inactive
   person: IPerson;
   validState: boolean;
 }
@@ -36,7 +36,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      error: "",
+      moreInfoString: "",
       person: null,
       validState: false
     };
@@ -55,7 +55,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
 
                 <div className="form-group">
                   <SearchUsers
-                    updateUser={this._onSelectUser}
+                    updatePerson={this._onSelectPerson}
                   />
                 </div>
 
@@ -63,7 +63,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
                   <PersonEditValues selectedPerson={this.state.person} changeProperty={this._changeProperty} disableEditing={false} tags={this.props.tags}/>
                 </div>
                 
-                {this.state.error}
+                {this.state.moreInfoString}
             </div>
           </ModalBody>
           <ModalFooter>
@@ -95,7 +95,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
-      error: "",
+      moreInfoString: "",
       person: null,
       validState: false
     });
@@ -112,34 +112,32 @@ export default class CreatePerson extends React.Component<IProps, IState> {
     this._closeModal();
   };
 
-  // once we have selected a user
-  private _onSelectUser = (user: IUser) => {
-    if (!user) {
+  // once we have selected a person
+  // SearchUsers will either return an existing person
+  private _onSelectPerson = (person: IPerson) => {
+    debugger;
+    if (!person) {
       this.setState(
         {
-          error: "The user could not be found",
+          moreInfoString: "The user could not be found",
           person: null
         },
         this._validateState
       );
-    } else if (this.props.users.findIndex(x => x.id === user.id) !== -1) {
+    } else if (this.props.users.findIndex(x => x.id === person.userId) !== -1 || (person.active && person.teamId !== 0)) {
+      debugger;
       this.setState({
-        error: "The user you have chosen is already active in this team",
+        moreInfoString: "The user you have chosen is already active in this team",
         person: null,
-      });
+      }, this._validateState);
+    } else if (person.active && person.teamId === 0) {
+      this.setState({
+        moreInfoString: "You are creating a new person",
+        person: person,
+      },
+      this._validateState);
     } else {
-      var person: IPerson = {
-        id: 0,
-        name: user.name,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        user: user,
-        userId: user.id,
-        tags: "",
-        teamId: 0,
-      };
-      this.setState({ person, error: "" }, this._validateState);
+      this.setState({ person, moreInfoString: "This person was set to inactive. Continuing will set them to active" }, this._validateState);
     }
   };
 
@@ -147,8 +145,6 @@ export default class CreatePerson extends React.Component<IProps, IState> {
   private _validateState = () => {
     let valid = true;
     if (!this.state.person) {
-      valid = false;
-    } else if (this.state.error !== "") {
       valid = false;
     } else if (!this.state.person.firstName || !this.state.person.lastName || !this.state.person.email) {
       valid = false;

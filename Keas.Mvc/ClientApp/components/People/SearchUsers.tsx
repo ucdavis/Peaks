@@ -11,7 +11,7 @@ interface IState {
 }
 
 interface IProps {
-  updateUser: (user: IUser) => void;
+  updatePerson: (person: IPerson) => void;
 }
 
 export default class SearchUsers extends React.Component<IProps, IState> {
@@ -34,14 +34,14 @@ export default class SearchUsers extends React.Component<IProps, IState> {
   public render() {
     return (
           <div className="form-group">
-                    <label>Search For User</label>
+                    <label>Search For User Using Kerberos or Email</label>
                     <input type="text"
                         className="form-control"
                         value={this.state.search}
                         onChange={(e) => this.setState({search: e.target.value})}
                     />
             <Button onClick={this._loadUser} disabled={this.state.reloading}>
-              Search For User {" "}
+              Search {" "}
               {this.state.reloaded ? <i className="fas fa-check" /> : null}
               {this.state.reloading ? <i className="fas fa-spin fa-spinner" /> : null}
             </Button> 
@@ -53,8 +53,8 @@ export default class SearchUsers extends React.Component<IProps, IState> {
     this.setState({reloading: true, reloaded: false});
     const userFetchUrl = `/api/${this.context.team.name}/people/searchUser?searchTerm=${this.state.search}`;
   
-    const user = await this.context.fetch(userFetchUrl);
-    this.props.updateUser(user);
+    const person = await this.context.fetch(userFetchUrl);
+    this.props.updatePerson(person);
     this.setState({ reloading: false, reloaded: true });
   }
 

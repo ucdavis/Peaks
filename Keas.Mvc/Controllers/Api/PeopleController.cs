@@ -51,26 +51,49 @@ namespace Keas.Mvc.Controllers.Api
             return Json(people);
         }
 
-      public async Task<IActionResult> SearchUser(string searchTerm)
+        public async Task<IActionResult> SearchUser(string searchTerm)
         {
+            // this will return either an existing person (regardless of if they are active or not)
+            // or it will return a new person based on the user info
+
             var comparison = StringComparison.OrdinalIgnoreCase;
-            var users = await _context.Users.Where(x => x.Email.IndexOf(searchTerm, comparison) >= 0
-                || x.Id.IndexOf(searchTerm, comparison) >= 0) //case-insensitive version of .Contains
+            // first try and find an existing person
+            var existingPerson = await _context.People
+                .Where(x => x.Team.Name == Team && (String.Equals(x.Email,searchTerm,comparison) || String.Equals(x.UserId,searchTerm,comparison)))
+                .FirstOrDefaultAsync();
+            if(existingPerson != null)
+            {
+                return Json(existingPerson);
+            }
+            // then try and find an existing user
+            var user = await _context.Users.Where(x => String.Equals(x.Email,searchTerm,comparison)
+                || String.Equals(x.Email,searchTerm,comparison)) //case-insensitive version of .Contains
                 .AsNoTracking().FirstOrDefaultAsync();
-            if (users==null)
+            // then try and find a user in the system
+            if (user==null)
             {
                 if(searchTerm.Contains("@"))
                 {
-                    var user = await _identityService.GetByEmail(searchTerm);
-                    return Json(user);
+                    user = await _identityService.GetByEmail(searchTerm);
                 }
                 else
                 {
-                    var user = await _identityService.GetByKerberos(searchTerm);
-                    return Json(user);
+                    user = await _identityService.GetByKerberos(searchTerm);
                 }
             }
-            return Json(users);
+            if(user == null)
+            {
+                return NotFound();
+            }
+            // person.Id being 0 is used in the js to validate
+            var person = new Person {
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                UserId = user.Id,
+                User = user
+            };
+            return Json(person);
         }
 
         public async Task<IActionResult> Details(int? id)
@@ -94,32 +117,48 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permission; Protect from overpost
             if (ModelState.IsValid)
             {
+                // if we are not being sent in an already existing, active person
+                if(person.Active && person.Id != 0)
+                {
+                    return BadRequest();
+                }
                 var team = await _context.Teams.SingleAsync(t => t.Name == Team && t.Id == person.TeamId);
-                var existingPerson = await _context.People.Include(x => x.User)
-                    .FirstOrDefaultAsync( p => p.TeamId == team.Id && p.UserId == person.UserId);
-                // if this user already exists as a person
-                if(existingPerson != null)
+                // new person
+                if(person.Id == 0)
                 {
-                    if(existingPerson.Active == true)
+                    // have to get user so it doesn't try to add it
+                    var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == person.UserId);
+                    if(user != null)
                     {
-                        return null;
+                        // if this user already exists, but isn't a person
+                        person.User = user;
                     }
-                    existingPerson.Active = true;
+                    person.Team = team;
+                    _context.People.Add(person);
                     await _context.SaveChangesAsync();
-                    return Json(existingPerson);
+                    return Json(person);
                 }
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == person.UserId);
-                // if this user already exists, but isn't a person
-                if(user != null)
+                // existing person
+                if(!person.Active)
                 {
-                    person.User = user;
+                    // have to get this, so it doesn't think we are trying to add a new one
+                    var existingPerson = await _context.People.Include(x => x.User)
+                        .FirstOrDefaultAsync( p => p.TeamId == team.Id && p.UserId == person.UserId);
+                    if(existingPerson != null)
+                    {
+                        // in case these were updated
+                        existingPerson.FirstName = person.FirstName;
+                        existingPerson.LastName = person.LastName;
+                        existingPerson.Email = person.Email;
+                        existingPerson.Tags = person.Tags;
+                        existingPerson.Active = true;
+                        await _context.SaveChangesAsync();
+                        return Json(existingPerson);
+                    }
                 }
-                person.Team = team;
-                _context.People.Add(person);
-                await _context.SaveChangesAsync();
             }
 
-            return Json(person);
+            return BadRequest(ModelState);
         }
 
         public async Task<IActionResult> Update([FromBody]Person person)
