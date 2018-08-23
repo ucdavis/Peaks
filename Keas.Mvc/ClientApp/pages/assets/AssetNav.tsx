@@ -1,8 +1,8 @@
 import PropTypes from "prop-types";
 import * as React from "react";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink, RouteProps } from "react-router-dom";
 
-export default class AssetNav extends React.Component<{}, {}> {
+export default class AssetNav extends React.Component<RouteProps, {}> {
   public render() {
     return (
 
