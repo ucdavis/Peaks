@@ -94,20 +94,27 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permission; Protect from overpost
             if (ModelState.IsValid)
             {
-                var existingPerson = await _context.People.SingleAsync( p => person.Team.Name == Team && p.UserId == person.UserId && !p.Active);
-                // if this user already exists as a person, but isn't active
+                var team = await _context.Teams.SingleAsync(t => t.Name == Team && t.Id == person.TeamId);
+                var existingPerson = await _context.People.Include(x => x.User)
+                    .FirstOrDefaultAsync( p => p.TeamId == team.Id && p.UserId == person.UserId);
+                // if this user already exists as a person
                 if(existingPerson != null)
                 {
+                    if(existingPerson.Active == true)
+                    {
+                        return null;
+                    }
                     existingPerson.Active = true;
                     await _context.SaveChangesAsync();
                     return Json(existingPerson);
                 }
-                var user = await _context.Users.SingleAsync(u => u.Id == person.UserId);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == person.UserId);
                 // if this user already exists, but isn't a person
                 if(user != null)
                 {
                     person.User = user;
                 }
+                person.Team = team;
                 _context.People.Add(person);
                 await _context.SaveChangesAsync();
             }

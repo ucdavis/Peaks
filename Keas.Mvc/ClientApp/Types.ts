@@ -38,7 +38,6 @@ export interface IUser {
 export interface IPerson {
   id: number;
   userId: string;
-  team?: ITeam;
   teamId: number;
   user?: IUser;
   tags: string;

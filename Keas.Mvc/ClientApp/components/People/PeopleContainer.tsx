@@ -151,32 +151,33 @@ export default class PeopleContainer extends React.Component<{}, IState> {
   private _createPerson = async (
     person: IPerson,
   ) => {
-    const index = this.state.people.findIndex(x => x.id === person.id);
+    const index = this.state.people.findIndex(x => x.person.userId === person.userId);
     if (index !== -1)
     {
       // if we somehow already have this person, return
       return;
     }
-    // call API to create a workstation, then assign it if there is a person to assign to
-    // if we are creating a new workstation
-      person.teamId = this.context.team.id;
-      person.team = this.context.team;
-      person = await this.context.fetch(`/api/${this.context.team.name}/people/create`, {
-        body: JSON.stringify(person),
-        method: "POST"
-      });
-      // since this is a new person, they will not have anything assigned
-      const personInfo: IPersonInfo = {
-        id: person.id,
-        person,
-        accessCount: 0,
-        equipmentCount: 0,
-        keyCount: 0,
-        workstationCount: 0
-      };
-      this.setState({
-        people: [...this.state.people, personInfo]
-      });
+    person.teamId = this.context.team.id;
+    person = await this.context.fetch(`/api/${this.context.team.name}/people/create`, {
+      body: JSON.stringify(person),
+      method: "POST"
+    });
+    if(!person)
+    {
+      return;
+    }
+    // since this is a new person, they will not have anything assigned
+    const personInfo: IPersonInfo = {
+      id: person.id,
+      person,
+      accessCount: 0,
+      equipmentCount: 0,
+      keyCount: 0,
+      workstationCount: 0
+    };
+    this.setState({
+      people: [...this.state.people, personInfo]
+    });
 
   };
 
