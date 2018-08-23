@@ -115,7 +115,6 @@ export default class CreatePerson extends React.Component<IProps, IState> {
   // once we have selected a person
   // SearchUsers will either return an existing person
   private _onSelectPerson = (person: IPerson) => {
-    debugger;
     if (!person) {
       this.setState(
         {
@@ -125,7 +124,6 @@ export default class CreatePerson extends React.Component<IProps, IState> {
         this._validateState
       );
     } else if (this.props.users.findIndex(x => x.id === person.userId) !== -1 || (person.active && person.teamId !== 0)) {
-      debugger;
       this.setState({
         moreInfoString: "The user you have chosen is already active in this team",
         person: null,
