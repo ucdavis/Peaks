@@ -203,14 +203,14 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Members()
         {
-            var model = await _context.People.Include(p=> p.User).Where(p=> p.Team.Name==Team).ToListAsync();
+            var model = await _context.People.Where(p=> p.Team.Name==Team).ToListAsync();
 
             return View(model);
         }
 
         public async Task<IActionResult> DetailsMember(int id)
         {
-            var model = await _context.People.Include(p => p.User).SingleAsync(x => x.Id == id);
+            var model = await _context.People.SingleAsync(x => x.Id == id);
             return View(model);
         }
 
@@ -305,7 +305,7 @@ namespace Keas.Mvc.Controllers
             var personToEdit = await _context.People.SingleAsync(x => x.Id == id);
 
            
-            if (await TryUpdateModelAsync<Person>(personToEdit, "", t => t.Active, t=> t.Group, t=> t.Title, t=> t.HomePhone, t=> t.TeamPhone))
+            if (await TryUpdateModelAsync<Person>(personToEdit, "", t => t.FirstName, t => t.LastName, t => t.Active, t=> t.Group, t=> t.Title, t=> t.HomePhone, t=> t.TeamPhone))
             {
                 try
                 {
