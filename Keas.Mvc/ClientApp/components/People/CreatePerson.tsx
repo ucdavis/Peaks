@@ -69,7 +69,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
           <ModalFooter>
             <Button
               color="primary"
-              onClick={this._assignSelected}
+              onClick={this._createSelected}
               disabled={!this.state.validState}
             >
               Go!
@@ -102,8 +102,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
     this.props.closeModal();
   };
 
-  // assign the selected key even if we have to create it
-  private _assignSelected = async () => {
+  private _createSelected = async () => {
     if (!this.state.validState) {
       return;
     }
@@ -115,9 +114,6 @@ export default class CreatePerson extends React.Component<IProps, IState> {
 
   // once we have selected a user
   private _onSelectUser = (user: IUser) => {
-    // if this key is not already assigned
-
-    // TODO: more validation of name
     if (!user) {
       this.setState(
         {
