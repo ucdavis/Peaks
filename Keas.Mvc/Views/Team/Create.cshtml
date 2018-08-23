@@ -4,8 +4,14 @@
     ViewData["Title"] = "Create";
 }
 <div class="card">
+  <div class="card-head">
+    <div class="row justify-content-between">
+      <h2>Create</h2>
+        <a class="btn btn-link" asp-action="Index"><i class="fas fa-arrow-left fa-xs"/></i> Back to List</a>
+    </div>
+  </div>
   <div class="card-content">
-<h2>Create</h2>
+
 
 <h4>Team</h4>
 <hr />
@@ -25,9 +31,7 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
 </div>
 </div>
 @section Scripts {
