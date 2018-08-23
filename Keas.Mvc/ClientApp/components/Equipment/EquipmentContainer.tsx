@@ -24,7 +24,7 @@ interface IState {
 interface IProps {
   assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
   assetTotalUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
-  assetEdited?: (type: string, spaceId: number, personId: number) => void; 
+  assetEdited?: (type: string, spaceId: number, personId: number) => void;
   person?: IPerson;
   space?: ISpace;
 }
@@ -149,7 +149,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       }
       return(
         <div>
-          <div className="row m-b">
+          <div className="row">
 
             <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
             <SearchAttributes selected={this.state.attributeFilters} onSelect={this._filterAttributes} disabled={false} />

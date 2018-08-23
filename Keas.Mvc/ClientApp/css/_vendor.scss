@@ -1,5 +1,15 @@
 .rbt-input-main, .rbt-input-hint {
-  height:36px;
+  height:42px;
+}
+.ReactTable .-pagination {
+  box-shadow:none !important;
+  border-top:1px solid $borders !important;
+}
+.rbt {
+  margin-right:1.6rem;
+  min-width:300px;
+  max-width:500px;
+  margin-bottom:1.6rem;
 }
 .container-fluid {
   padding: 0;
