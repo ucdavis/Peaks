@@ -57,6 +57,12 @@ header {
     }
   }
 }
+h1 {
+  .fas {
+    -webkit-text-fill-color:$tertiary-font;
+    fill:$tertiary-font;
+  }
+}
 .head_bleed {
   background: #1e3a5b;
     background: -moz-linear-gradient(left,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
