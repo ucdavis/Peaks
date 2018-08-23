@@ -53,7 +53,10 @@ export default class SearchUsers extends React.Component<IProps, IState> {
     this.setState({reloading: true, reloaded: false});
     const userFetchUrl = `/api/${this.context.team.name}/people/searchUser?searchTerm=${this.state.search}`;
   
-    const person = await this.context.fetch(userFetchUrl);
+    var person = await this.context.fetch(userFetchUrl)
+      .catch(err => {
+        person = null;
+      });
     this.props.updatePerson(person);
     this.setState({ reloading: false, reloaded: true });
   }

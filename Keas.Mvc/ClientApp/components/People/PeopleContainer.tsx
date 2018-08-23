@@ -161,7 +161,10 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     person = await this.context.fetch(`/api/${this.context.team.name}/people/create`, {
       body: JSON.stringify(person),
       method: "POST"
-    });
+      })
+      .catch(err => {
+        person = null;
+      });
     if(!person)
     {
       return;
