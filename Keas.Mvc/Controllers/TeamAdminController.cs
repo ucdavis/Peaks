@@ -295,14 +295,14 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> EditMember(int id, Person person)
+        [HttpPost, ActionName("EditMember")]
+        public async Task<IActionResult> EditMemberPost(int id)
         {
-            if (id != person.Id)
+            if (id == null)
             {
                 return NotFound();
             }
-            var personToEdit = await _context.People.SingleAsync(x => x.Id == person.Id);
+            var personToEdit = await _context.People.SingleAsync(x => x.Id == id);
 
            
             if (await TryUpdateModelAsync<Person>(personToEdit, "", t => t.Active, t=> t.Group, t=> t.Title, t=> t.HomePhone, t=> t.TeamPhone))
@@ -317,7 +317,10 @@ namespace Keas.Mvc.Controllers
                     ModelState.AddModelError("", "Unable to save changes.");
                 }
             }
-            return View(person);
+            Message = "Something failed in the update.";
+             var model = await _context.People.Include(p => p.User).SingleAsync(x => x.Id == id);
+            return View(model);
+            
         }
 
         public  IActionResult BulkImportMembers()
