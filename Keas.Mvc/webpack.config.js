@@ -26,7 +26,11 @@ module.exports = env => {
           "isomorphic-fetch",
           "react",
           "react-dom",
-          "reactstrap"
+          "reactstrap",
+          "react-router-dom",
+          "react-table",
+          "react-bootstrap-typeahead",
+          "react-datepicker"
         ]
       },
       resolve: { extensions: [".js", ".jsx", ".ts", ".tsx"] },
