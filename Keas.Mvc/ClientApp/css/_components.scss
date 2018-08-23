@@ -93,8 +93,11 @@ img.img-fluid {
     background-color:transparentize($sky-blue,.15);
 }
 }
-
 .btn {
+  &.btn-primary {
+    @include main-btn;
+
+  }
 &.btn-link {
   color: $primary-color;
   font-size: 1.6rem;
@@ -156,9 +159,56 @@ img.img-fluid {
   }
 }
 }
-
-
-
+.keys-color .btn-primary {
+  background-color:$keys;
+  &:active,
+  &:focus {
+    background-color: darken($keys, 5);
+  }
+  &:hover {
+    background-color: lighten($keys, 5);
+  }
+}
+.equipment-color .btn-primary {
+  background-color:$equipment;
+  &:active,
+  &:focus {
+    background-color: darken($equipment, 5);
+  }
+  &:hover {
+    background-color: lighten($equipment, 5);
+  }
+}
+.access-color .btn-primary {
+  background-color:$access;
+  &:active,
+  &:focus {
+    background-color: darken($access, 5);
+  }
+  &:hover {
+    background-color: lighten($access, 5);
+  }
+}
+.spaces-color .btn-primary {
+  background-color:$spaces;
+  &:active,
+  &:focus {
+    background-color: darken($spaces, 5);
+  }
+  &:hover {
+    background-color: lighten($spaces, 5);
+  }
+}
+.people-color .btn-primary {
+  background-color:$people;
+  &:active,
+  &:focus {
+    background-color: darken($people, 5);
+  }
+  &:hover {
+    background-color: lighten($people, 5);
+  }
+}
 .media {
   margin-bottom: 16px;
 
