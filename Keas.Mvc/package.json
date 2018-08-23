@@ -20,7 +20,7 @@
     "@types/react-dom": "^16.0.7",
     "@types/react-hot-loader": "3.0.5",
     "@types/react-router": "^4.0.30",
-    "@types/reactstrap": "^6.4.0",
+    "@types/reactstrap": "^6.0.2",
     "@types/webpack-env": "1.13.3",
     "aspnet-webpack": "^2.0.1",
     "aspnet-webpack-react": "^3.0.0",
