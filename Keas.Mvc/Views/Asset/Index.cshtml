@@ -7,6 +7,12 @@
 
 @Html.AntiForgeryToken()
 
+@section  styles {
+    <environment names="Staging,Production">
+      <link rel="stylesheet" href="~/dist/asset.css" asp-append-version="true" />
+    </environment>
+}
+
 @section scripts {
     <script>
         window.App = {};
