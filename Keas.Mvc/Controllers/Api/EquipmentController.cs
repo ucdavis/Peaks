@@ -29,7 +29,7 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
+            var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Equipment
                 .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
@@ -42,6 +42,9 @@ namespace Keas.Mvc.Controllers.Api
         {
             var equipment = await _context.Equipment
                 .Where(x => x.Space.Id == spaceId && x.Team.Name == Team && x.Active)
+                .Include(x => x.Space)
+                .Include(x => x.Attributes)
+                .Include(x => x.Team)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person.User)
                 .AsNoTracking()

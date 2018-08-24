@@ -2,7 +2,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>93abda06-2870-4006-81e8-1eecba3d977c</UserSecretsId>
-   <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
+    <Version>1.0.0.0</Version>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>  
   </PropertyGroup>
   <ItemGroup>

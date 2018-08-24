@@ -8,35 +8,55 @@
     <environment names="Development">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css" />
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
-        <link rel="stylesheet" href="https://ucdcdn.azureedge.net/public/ucdavis.1.0.7.css" />
+
 
     </environment>
     <environment names="Staging,Production">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://ucdcdn.azureedge.net/public/ucdavis.1.0.7.min.css" />
+
         <link rel="stylesheet" href="~/dist/root.css" asp-append-version="true" />
     </environment>
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-default mb-4">
-      <div class="navbar-banner">
-        <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Keas</a>
+  <header>
+    <div class="container">
+      <div class="row justify-content-between">
+        <div class="row">
+          <img src="/media/keas-symbol.svg" alt="KEAS logo of key lock house and computer">
+        <div style="margin-top: 8px;margin-left: 10px;">
+          <h1>KEAS</h1>
+          <p class="subtitle">Keys, Equipment, Access and Space</p>
+        </div>
       </div>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="navbar-row">
-        <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="team">
+          <h3>Team</h3>
+          <p>College of Agricultural and<br> Environmental Sciences</p>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="head_bleed">
+  <div class="head_divider">
+
+  </div>
+
+</div>
+    <nav class="navbar navbar-expand-md">
+      <div class="container">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarText">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item active">
-              <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link" href="/CAESDO/keys">Assets</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Link</a>
+              <a class="nav-link" href="/CAESDO/Confirm/Mystuff">My Stuff</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link disabled" href="#">Disabled</a>
+              <a class="nav-link" href="#">Admin</a>
             </li>
           </ul>
           <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
@@ -44,19 +64,22 @@
           </div>
         </div>
       </div>
+
     </nav>
-    
 @if (!string.IsNullOrWhiteSpace(TempData["Message"] as string))
 {
-    <div class="alert alert-info">
-        <button type="button" class="close" data-dismiss="alert">×</button>
-        @TempData["Message"]
-    </div>
+<div class="container">
+  <div class="alert alert-info">
+      <button type="button" class="close" data-dismiss="alert">×</button>
+      @TempData["Message"]
+  </div>
+</div>
+
 }
 
-<main role="main" class="container">
+<main role="main" class="main-content-wrapper container">
         @RenderBody()
-        <hr />
+
         <footer>
             <p>&copy; 2017 - Keas.Mvc</p>
         </footer>
@@ -82,7 +105,7 @@
     </environment>
 
     <script src="~/dist/root.js" asp-append-version="true"></script>
-    
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>

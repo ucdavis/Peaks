@@ -1,0 +1,410 @@
+.card {
+  background-color: #ffffff;
+  box-shadow: $box-shadow;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom:16px;
+  border:none;
+}
+.alert {
+  margin-top:1.6rem;
+}
+.card-content {
+  padding:$card-padding;
+  padding-bottom:2.6rem;
+  padding-top:2.6rem;
+}
+.card-head {
+  padding:$card-padding;
+  padding-top:1.8rem;
+}
+.card-gradient-header {
+  background: url("/media/gradient-header.svg") center top/cover no-repeat;
+  height: 6px;
+}
+.card-gradient-header-bleed {
+  background: #1e3a5b;
+  background: -moz-linear-gradient(left,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
+  background: -webkit-linear-gradient(left,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
+  background: linear-gradient(to right,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr= '$gradient-one',endColorstr='$gradient-two',GradientType=1);
+}
+.card-header-primary {
+  border-top:4px solid $primary-color;
+}
+.card-header-spaces {
+  border-bottom:4px solid $spaces;
+}
+.card-header-keys {
+  border-bottom:4px solid $keys;
+}
+.card-header-access {
+  border-bottom:4px solid $access;
+}
+.card-header-equipment {
+  border-bottom:4px solid $equipment;
+}
+.card-header-people {
+  border-bottom:4px solid $people;
+}
+.card-foot {
+  padding:$card-padding;
+  border-top:1px solid $borders;
+}
+button {
+  cursor:pointer;
+}
+img.img-fluid {
+  width: 100%;
+}
+.alert {
+  padding:$card-padding;
+  p {
+    margin-bottom:0px;
+    color:$secondary-font;
+  }
+  @include fader;
+  box-shadow:$box-shadow;
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+.alert-red {
+  background-color:transparentize($unitrans-red,0.35);
+  &:hover {
+    background-color:transparentize($unitrans-red,0.15);
+}
+}
+.alert-yellow {
+  background-color: transparentize($golden-lupine,0.35);
+  &:hover {
+    background-color:transparentize($golden-lupine,.15);
+}
+}
+.alert-green {
+  background-color: transparentize($sunny-grass,0.35);
+  &:hover {
+    background-color:transparentize($sunny-grass,.15);
+}
+}
+.alert-blue {
+  background-color: transparentize($sky-blue,0.35);
+  &:hover {
+    background-color:transparentize($sky-blue,.15);
+}
+}
+
+.btn {
+&.btn-link {
+  color: $primary-color;
+  font-size: 1.6rem;
+  font-family: $sans-bold;
+  border:none;
+  cursor: pointer;
+  &:hover {
+    color: lighten($primary-color,5);
+    text-decoration: none;
+  }
+  .people-color & {
+    color:$people;
+    border-color:$people;
+    &:hover {
+      color:(darken($people,10));
+      text-decoration:none;
+    }
+  }
+  .spaces-color & {
+    color:$spaces;
+    border-color:$spaces;
+    &:hover {
+      color:(darken($spaces,10));
+      text-decoration:none;
+    }
+  }
+  .keys-color & {
+    color:$keys;
+    border-color:$keys;
+    &:hover {
+      color:(darken($keys,10));
+      text-decoration:none;
+    }
+  }
+  .access-color & {
+    color:$access;
+    border-color:$access;
+    &:hover {
+      color:(darken($access,10));
+      text-decoration:none;
+    }
+  }
+
+  .equipment-color & {
+    color:$equipment;
+    border-color:$equipment;
+    &:hover {
+      color:(darken($equipment,10));
+      text-decoration:none;
+    }
+  }
+  .history-color & {
+    color:$history;
+    border-color:$history;
+    &:hover {
+      color:(darken($history,10));
+      text-decoration:none;
+    }
+  }
+}
+}
+
+
+
+.media {
+  margin-bottom: 16px;
+
+  img {
+    margin-right: 20px;
+  }
+
+  .media-body {}
+}
+
+ol.breadcrumb {
+  display: inline-block;
+  list-style: none;
+  border: 0;
+  padding-left: 0;
+  background-color: #fff;
+  margin-bottom: 0;
+  margin-top: 16px;
+
+  li {
+    font-size: 1.4rem;
+  }
+
+  a {
+    color: $tertiary-font;
+    // &:hover {
+    //     color: darken($primary-color, 20%);
+    // }
+  }
+
+  > li {
+    display: inline-block;
+
+    & + li:before {
+      padding: 0 5px;
+    }
+  }
+
+  > .active a {
+    color: $secondary-font;
+  }
+
+  > li+li:before {
+    color: $tertiary-font;
+    content: "/";
+  }
+}
+
+.marketing-highlight {
+  .mh-title {
+    background-color: $primary-color;
+
+    h2 {
+      color: #fff;
+      font-size: 2.6rem;
+      margin: 0;
+      padding: 16px 24px;
+    }
+  }
+
+  .mh-content {
+    background-color: $bg-color;
+    padding: 20px 24px;
+  }
+}
+
+.separator {
+  margin: 20px 0 10px;
+}
+
+.m-r {
+  margin-right:8px;
+}
+.m-l {
+  margin-left:8px
+}
+.m-b {
+  margin-bottom: 16px;
+}
+.align-items-center {
+  align-items: center;
+}
+
+.align-items-top {
+  align-items: top;
+}
+
+.align-center {
+  align-self: center;
+}
+
+.flex-between {
+  justify-content: space-between;
+}
+
+.flexer {
+  display: flex;
+}
+
+.t-right {
+  text-align: right;
+}
+
+.t-center {
+  text-align: center;
+}
+
+.display-inline-block {
+  display: inline-block;
+}
+
+.spacer {
+  padding: 12% 0 9%;
+}
+
+.card-nobrdr {
+  border: 0 solid #fff;
+}
+
+.bot-border {
+  border-bottom: 1px solid $bg-color;
+}
+//database
+
+.border-top {
+  border-top: 2px solid rgba(255,255,255,0.95);
+}
+
+.border-blue-top {
+  border-top: 1px solid $primary-color;
+}
+
+.border-blue-bottom {
+  border-bottom: 1px solid $primary-color;
+}
+
+.border-blue-right {
+  border-right: 1px solid $primary-color;
+}
+
+.bg-unitrans {
+  background-color: $unitrans-red;
+}
+
+.bg-sunny-grass {
+  background-color: $sunny-grass;
+}
+
+.bg-golden-lupine {
+  background-color: $golden-lupine;
+}
+
+.bg-recpool {
+  background-color: $recpool-blue;
+}
+
+.bg-skyblue {
+  background-color: $sky-blue;
+}
+
+.bg-winegrape {
+  background-color: $wine-grape;
+}
+
+.border-unitrans {
+  border-color: $unitrans-red;
+}
+
+.border-skyblue {
+  border-color: $sky-blue;
+}
+
+.border-sunny-grass {
+  border-color: $sunny-grass;
+}
+
+.border-golden-lupine {
+  border-color: $golden-lupine;
+}
+
+.color-unitrans {
+  color: $unitrans-red !important;
+}
+
+.color-sunny-grass {
+  color: $sunny-grass;
+}
+
+.color-golden-lupine {
+  color: $golden-lupine;
+}
+
+.color-winegrape {
+  color: $wine-grape;
+}
+
+.color-western-redbud {
+  color: $western-redbud;
+}
+
+.color-poppy {
+  color: $california-poppy;
+}
+
+.color-skyblue {
+  color: $sky-blue;
+}
+
+.primary-color {
+  color: $primary-color;
+}
+
+.secondary-color {
+  color: $secondary-color;
+}
+
+.a-color {
+  color: $a-link;
+}
+.primary-color {
+  color:$primary-color;
+}
+.sans-bold {
+  font-family: $sans-bold;
+}
+.primary-font {
+  color: $primary-font;
+}
+
+.secondary-font {
+  color: $secondary-font;
+}
+
+.tertiary-font {
+  color: $tertiary-font;
+}
+
+.flex-center {
+  align-items: center;
+}
+.twopointoh {
+  font-size:2rem;
+}
+.onepointeight {
+  font-size:1.8rem;
+}
+.card-bot-border {
+  border-bottom:1px solid $borders;
+}

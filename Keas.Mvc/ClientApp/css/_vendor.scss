@@ -1,0 +1,87 @@
+.rbt-input-main, .rbt-input-hint {
+  height:36px;
+}
+.container-fluid {
+  padding: 0;
+}
+.row {
+  margin-left:0px;
+  margin-right:0px;
+}
+.dropdown-menu {
+  font-size:1.6rem;
+}
+table.dataTable thead .sorting:after,
+table.dataTable thead .sorting:before,
+table.dataTable thead .sorting_asc:after,
+table.dataTable thead .sorting_asc:before,
+table.dataTable thead .sorting_asc_disabled:after,
+table.dataTable thead .sorting_asc_disabled:before,
+table.dataTable thead .sorting_desc:after,
+table.dataTable thead .sorting_desc:before,
+table.dataTable thead .sorting_desc_disabled:after,
+table.dataTable thead .sorting_desc_disabled:before {
+  bottom: 1px;
+}
+
+.page-item.active .page-link {
+  background-color: $primary-color;
+  border-color: $primary-color;
+}
+
+.input-group-sm > .input-group-append > select.btn:not([size]):not([multiple]),
+.input-group-sm > .input-group-append > select.input-group-text:not([size]):not([multiple]),
+.input-group-sm > .input-group-prepend > select.btn:not([size]):not([multiple]),
+.input-group-sm > .input-group-prepend > select.input-group-text:not([size]):not([multiple]),
+.input-group-sm > select.form-control:not([size]):not([multiple]),
+select.form-control-sm:not([size]):not([multiple]) {
+  height: calc(1.8125rem + 10px);
+}
+@-moz-document url-prefix() {
+  .input-group-sm > .input-group-append > select.btn:not([size]):not([multiple]),
+  .input-group-sm > .input-group-append > select.input-group-text:not([size]):not([multiple]),
+  .input-group-sm > .input-group-prepend > select.btn:not([size]):not([multiple]),
+  .input-group-sm > .input-group-prepend > select.input-group-text:not([size]):not([multiple]),
+  .input-group-sm > select.form-control:not([size]):not([multiple]),
+  select.form-control-sm:not([size]):not([multiple]) {
+    height: calc(2.5rem + 10px);
+  }
+}
+// hide input type number arrows
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.word-wrap {
+ white-space: pre-line !important;
+ word-wrap: break-word;
+}
+
+.ReactTable .rt-tbody, .ReactTable .rt-table {
+    overflow: visible !important;
+} /* for the actions dropdown menu */
+
+.table-actions {
+    overflow: visible !important;
+    display: flex;
+    flex: 1 1 7% !important;
+} /* this makes only the actions cell able to overflow */
+
+.table-10p {
+    display: flex;
+    flex: 1 1 10% !important;
+}
+
+th.list-actions {
+    width: 10%;
+}
+.ReactTable .rt-thead.-header {
+  box-shadow:none !important;
+  border-bottom:1px solid $borders;
+}

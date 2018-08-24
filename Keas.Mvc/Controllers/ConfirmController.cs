@@ -23,35 +23,44 @@ namespace Keas.Mvc.Controllers
         }
 
         public async Task<IActionResult> MyStuff()
-        {
+        {   
             var person = await _securityService.GetPerson(Team);
+            if(person == null){
+                 Message = "You are not yet added to the system.";
+                return RedirectToAction("NoAccess","Home");
+            }
             var viewmodel = await MyStuffListModel.Create(_context, person);
             return View(viewmodel);
         }
 
         public async Task<IActionResult> Confirm()
-        {
+        {           
             var person = await _securityService.GetPerson(Team);
+            if(person == null){
+                 Message = "You are not yet added to the system.";
+                return RedirectToAction("NoAccess","Home");
+            }
             var viewModel = await ConfirmListModel.Create(_context,person);
-            if (viewModel.Equipment.Count == 0 && viewModel.Keys.Count==0 && viewModel.Workstations.Count==0)
+            if (viewModel.Equipment.Count == 0 && viewModel.Serials.Count==0 && viewModel.Workstations.Count==0)
             {
                 Message = "You have no pending items to accept";
-                RedirectToAction(nameof(MyStuff));
+                return RedirectToAction(nameof(MyStuff));
             }
 
             return View(viewModel);
         }
 
         
-        public async Task<IActionResult> AcceptKey(int keyId)
+        public async Task<IActionResult> AcceptKey(int serialId)
         {
-            var keyAssignment = await _context.Keys.Where(k => k.Id == keyId).Select(ka => ka.Assignment).FirstAsync();
+            var keyAssignment =
+                await _context.Serials.Where(s => s.Id == serialId).Select(sa => sa.Assignment).FirstAsync();
             keyAssignment.IsConfirmed = true;
             keyAssignment.ConfirmedAt = DateTime.UtcNow;
             _context.Update(keyAssignment);
             await _context.SaveChangesAsync();
-            var key = await _context.Keys.Where(k => k.KeyAssignmentId == keyAssignment.Id).FirstAsync();
-            await _eventService.TrackAcceptKey(key);
+            var serial = await _context.Serials.Where(s => s.KeyAssignmentId == keyAssignment.Id).Include(s=> s.Key).FirstAsync();
+            await _eventService.TrackAcceptKey(serial);
             Message = "Key confirmed.";
 
             return RedirectToAction(nameof(Confirm));
@@ -96,18 +105,18 @@ namespace Keas.Mvc.Controllers
         {
             var person = await _securityService.GetPerson(Team);
             var viewModel = await ConfirmUpdateModel.Create(_context, person);
-            if (viewModel.Equipment.Count == 0 && viewModel.Keys.Count == 0)
+            if (viewModel.Equipment.Count == 0 && viewModel.Serials.Count == 0)
             {
                 Message = "You have no pending items to accept";
-                RedirectToAction(nameof(MyStuff));
+                return RedirectToAction(nameof(MyStuff));
             }
 
-            foreach (var key in viewModel.Keys)
+            foreach (var serial in viewModel.Serials)
             {
-                key.Assignment.IsConfirmed = true;
-                key.Assignment.ConfirmedAt = DateTime.UtcNow;
-                _context.Update(key);
-                await _eventService.TrackAcceptKey(key);
+                serial.Assignment.IsConfirmed = true;
+                serial.Assignment.ConfirmedAt = DateTime.UtcNow;
+                _context.Update(serial);
+                await _eventService.TrackAcceptKey(serial);
             }
             foreach (var equipment in viewModel.Equipment)
             {

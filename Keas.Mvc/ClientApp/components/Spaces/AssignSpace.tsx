@@ -43,7 +43,8 @@ export default class AssignSpace extends React.Component<IProps, IState> {
                         this.props.defaultSpace.roomNumber + " " + this.props.defaultSpace.bldgName : ""}
                     labelKey={(option: ISpace) =>
                         `${option.roomNumber} ${option.bldgName}`
-                    }                    filterBy={() => true} 
+                    }
+                    filterBy={() => true} 
                     renderMenuItemChildren={(option, props, index) => (
                         <div>
                             <div>

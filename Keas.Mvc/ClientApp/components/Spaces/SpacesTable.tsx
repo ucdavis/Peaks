@@ -6,23 +6,48 @@ import { Button } from "reactstrap";
 import { ISpace, ISpaceInfo } from "../../Types";
 
 interface IProps {
+    filtered: any[];
     spaces: ISpaceInfo[];
     showDetails: (space: ISpace) => void;
+    updateFilters: (filters: any[]) => void;
 }
 
-export default class SpacesList extends React.Component<IProps, {}> {
+export default class SpacesTable extends React.Component<IProps, {}> {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            filtered: []
+        };
+    }
     public render() {
         return (
             <ReactTable
                 data={this.props.spaces}
                 filterable={true}
                 minRows={1}
+                filtered={this.props.filtered}
+                onFilteredChange={filtered => this.props.updateFilters(filtered)}
                 columns = {[
+                    {
+                        Header: "Actions",
+                        headerClassName: "spaces-details",
+                        filterable: false,
+                        sortable: false,
+                        resizable: false,
+                        className: "spaces-details",
+                        Cell: row => (
+                            <Button color="link" onClick={() => this.props.showDetails(row.original.space)}>
+                            Details
+                            </Button>
+                        ),
+                        maxWidth: 150,
+                    },
                     {
                         Header: "Room",
                         accessor: (row) => row.space.roomNumber + " " + row.space.bldgName,
                         id: "room",
-                        filterMethod: (filter, row) => 
+                        filterMethod: (filter, row) =>
                             !!row[filter.id] && row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
                         ,
                         Cell: row => (
@@ -32,7 +57,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
                     {
                         Header: "Room Name",
                         accessor: "space.roomName",
-                        filterMethod: (filter, row) => 
+                        filterMethod: (filter, row) =>
                             !!row[filter.id] &&
                             row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
                         Cell: row => (
@@ -45,6 +70,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         accessor: "keyCount",
                         headerClassName: "table-10p",
                         className: "table-10p",
+                        filterable: false,
                         Cell: row => (
                             <span><i className="fas fa-key"></i> {row.original.keyCount}</span>
                         ),
@@ -54,13 +80,16 @@ export default class SpacesList extends React.Component<IProps, {}> {
                         accessor: "equipmentCount",
                         headerClassName: "table-10p",
                         className: "table-10p",
+                        filterable: false,
                         Cell: row => (
-                            <span><i className="fas fa-laptop"></i> {row.original.equipmentCount}</span>
-                        ),                    },
+                            <span><i className="fas fa-hdd"></i> {row.original.equipmentCount}</span>
+                        ),
+                    },
                     {
                         Header: "Workstations",
                         headerClassName: "table-10p",
                         className: "table-10p",
+                        accessor: "workstationsCount",
                         filterMethod: (filter, row) => {
                             if( filter.value === "all") {
                                 return true;
@@ -69,7 +98,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
                                 return (row._original.workstationsTotal - row._original.workstationsInUse) > 0;
                             }
                         },
-                        Filter: ({filter, onChange}) => 
+                        Filter: ({filter, onChange}) =>
                             <select onChange={e => onChange(e.target.value)}
                             style={{width: "100%"}}
                             value={filter ? filter.value : "all"}
@@ -81,21 +110,8 @@ export default class SpacesList extends React.Component<IProps, {}> {
                             <span><i className="fas fa-user"></i> {row.original.workstationsInUse} / {row.original.workstationsTotal}</span>
                         ),
                     },
-                    {
-                        Header: "Actions",
-                        headerClassName: "spaces-details",
-                        filterable: false,
-                        sortable: false,
-                        resizable: false,
-                        className: "spaces-details",
-                        Cell: row => (
-                            <Button color="secondary" onClick={() => this.props.showDetails(row.original.space)}>
-                            View Details
-                            </Button>
-                        ),
-                        maxWidth: 150,
-                    },
-                    
+
+
                 ]}
             />
         );

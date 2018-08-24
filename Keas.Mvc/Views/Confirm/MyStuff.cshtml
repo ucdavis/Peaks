@@ -3,132 +3,120 @@
 @{
     ViewData["Title"] = "MyStuff";
 }
-
-<h2>MyStuff</h2>
-
-<p>
-    <a href="@Url.Action("Confirm")">Go to Accept page</a>
-</p>
-<div>
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title">Keys</h4>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Serial</th>
-                    <th>Name</th>
-                    <th>Expiration</th>
-                    <th>Accepted?</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var key in Model.Keys)
-                {
-                    <tr>
-                        <td>@key.SerialNumber</td>
-                        <td>@key.Name</td>
-                        <td>@key.Assignment.ExpiresAt.ToShortDateString()</td>
-                        <td>@Html.CheckBoxFor(k=> key.Assignment.IsConfirmed)</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
+<div class="card">
+  <div class="card-head">
+    <div class="row justify-content-between">
+      <h2>MyStuff</h2>
+      <p>
+        <a href="@Url.Action("Confirm")">Go to Accept page</a>
+      </p>
     </div>
-    <div class="card">
-        <div class="card-body">
-            <h4>Equipment</h4>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Serial</th>
-                    <th>Name</th>
-                    <th>Expiration</th>
-                    <th>Accepted?</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var equipment in Model.Equipment)
-                {
-                    <tr>
-                        <td>@equipment.SerialNumber</td>
-                        <td>@equipment.Name</td>
-                        <td>@equipment.Assignment.ExpiresAt.ToShortDateString()</td>
-                        <td>@Html.CheckBoxFor(e=> equipment.Assignment.IsConfirmed)</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <h4>Access</h4>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Expiration</th>
-                </tr>
-                </thead>
-                <tbody>
-                    @foreach (var access in Model.Access)
-                    {
-                        <tr>
-                            <td>@access.Name</td>
-                            <td>@access.Assignments.First().ExpiresAt.ToShortDateString()</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <h4>Workstations</h4>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Room</th>
-                    <th>Expiration</th>
-                    <th>Accepted?</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var workstation in Model.Workstations)
-                {
-                    <tr>
-                        <td>@workstation.Type</td>
-                        <td>@workstation.Space.RoomNumber @workstation.Space.BldgName</td>
-                        <td>@workstation.Assignment.ExpiresAt.ToShortDateString()</td>
-                        <td>@Html.CheckBoxFor(w=> workstation.Assignment.IsConfirmed)</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="card">
-        <div class="card-body">
-            <h4>History</h4>
-            <table class="table">
-                <thead>
-                <tr>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var history in Model.Histories)
-                {
-                    <tr>
-                        <td>@history.ActedDate.ToShortDateString()</td>
-                        <td>@history.Description</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
-        </div>
-    </div>
+  </div>
 </div>
 
+<div class="card">
+  <div class="card-content">
+
+    <h2>Keys</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Serial</th>
+          <th>Name</th>
+          <th>Expiration</th>
+          <th>Accepted?</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var serial in Model.Serials) {
+            <tr>
+                <td>@serial.Number</td>
+                <td>@serial.Key.Name</td>
+                <td>@serial.Assignment.ExpiresAt.ToShortDateString()</td>
+                <td>@Html.CheckBoxFor(k=> serial.Assignment.IsConfirmed, new { @disabled = "disabled" })</td>
+            </tr>
+        }
+      </tbody>
+    </table>
+
+
+    <h2>Equipment</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Serial</th>
+          <th>Name</th>
+          <th>Expiration</th>
+          <th>Accepted?</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var equipment in Model.Equipment) {
+        <tr>
+          <td>@equipment.SerialNumber</td>
+          <td>@equipment.Name</td>
+          <td>@equipment.Assignment.ExpiresAt.ToShortDateString()</td>
+          <td>@Html.CheckBoxFor(e=> equipment.Assignment.IsConfirmed)</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    <h2>Access</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Expiration</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var access in Model.Access) {
+        <tr>
+          <td>@access.Name</td>
+          <td>@access.Assignments.First().ExpiresAt.ToShortDateString()</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+
+    <h2>Workstations</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Room</th>
+          <th>Expiration</th>
+          <th>Accepted?</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var workstation in Model.Workstations) {
+        <tr>
+          <td>@workstation.Type</td>
+          <td>@workstation.Space.RoomNumber @workstation.Space.BldgName</td>
+          <td>@workstation.Assignment.ExpiresAt.ToShortDateString()</td>
+          <td>@Html.CheckBoxFor(w=> workstation.Assignment.IsConfirmed)</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    <h2>History</h2>
+    <table class="table">
+      <thead>
+        <tr>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var history in Model.Histories) {
+        <tr>
+          <td>@history.ActedDate.ToShortDateString()</td>
+          <td>@history.Description</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -12,7 +12,7 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson } from "../../Types";
+import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson, ISpace } from "../../Types";
 import AssignPerson from "../Biographical/AssignPerson";
 import EquipmentEditValues from "./EquipmentEditValues";
 import SearchEquipment from "./SearchEquipment";
@@ -26,6 +26,7 @@ interface IProps {
   closeModal: () => void;
   selectedEquipment: IEquipment;
   person?: IPerson;
+  space: ISpace;
   tags: string[];
   commonAttributeKeys: string[];
 }
@@ -69,8 +70,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
-        <Button color="danger" onClick={this.props.onAddNew}>
-          Add Equipment
+        <Button color="link" onClick={this.props.onAddNew}>
+        <i className="fas fa-plus fa-sm" aria-hidden="true" />  Add Equipment
         </Button>
         <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
           <ModalHeader>Assign Equipment</ModalHeader>
@@ -91,6 +92,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     selectedEquipment={this.state.equipment}
                     onSelect={this._onSelected}
                     onDeselect={this._onDeselected}
+                    space={this.props.space}
                   />
                 </div>
                 {!this.state.equipment ||
@@ -102,6 +104,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                       disableEditing={false}
                       updateAttributes={this._updateAttributes}
                       creating={true}
+                      space={this.props.space}
                       tags={this.props.tags}
                     />
                   ))}
@@ -232,7 +235,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       valid = false;
     } else if (moment().isSameOrAfter(this.state.date)) {
         valid = false;
-    } 
+    }
     this.setState({ validState: valid });
   };
 

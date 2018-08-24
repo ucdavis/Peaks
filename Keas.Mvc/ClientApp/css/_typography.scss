@@ -1,0 +1,124 @@
+// baseline typography
+html {
+    font-size: 10px;
+    -webkit-font-smoothing: antialiased;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+    line-height: 1.5;
+    @include breakpoint(md) {
+      font-size:10px;
+    }
+}
+body {
+    font-family: $sans-reg;
+}
+a {
+  color:$a-link;
+  &:hover {
+    color:$primary-color;
+  }
+  &.post-link {
+    display:block;
+    margin-bottom:16px;
+    &:hover {
+      background-color:$bg-color;
+    }
+  }
+  footer p & {
+    color:rgba(255,255,255,0.95);
+    text-decoration: none;
+    &:hover {
+      color:#fff;
+    }
+  }
+}
+p a {
+  font-weight: 700;
+  text-decoration: underline;
+  &:hover {
+    text-decoration: underline;
+  }
+
+}
+a.no-underline {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: none;
+}
+ul, ol {
+  &.no-list-style {
+    list-style-type: none;
+    padding-left:0px;
+    li {
+      margin:4px 0px;
+      font-family: $sans-reg;
+      color:$primary-font;
+    }
+  }
+  &.funding-list {
+    font-family: $sans-bold;
+  }
+  font-family: $sans-reg;
+  li {
+    font-size:1.6rem;
+  }
+}
+
+p, span, div {
+  font-size:1.6rem;
+  font-family: $sans-reg;
+  color:$primary-font;
+  // margin:1.2rem 0rem;
+  &.lead {
+    font-size:1.8rem;
+    margin-top:0px;
+  }
+  footer & {
+    color:rgba(255,255,255,.95);
+    font-size:1.4rem;
+    font-family: $sans-bold;
+  }
+  &.topic-title  {
+    font-size: 1.8rem;
+    font-family: $sans-bold;
+    margin-top:24px;
+    color:$primary-font;
+  }
+  &.discreet {
+    font-size:1.4rem;
+    color:$secondary-font;
+  }
+  &.caption {
+    text-align: center;
+    margin: 5px 10px;
+  }
+  &.subtitle {
+    font-size:2rem;
+    font-family: $sans-bold;
+    color:$secondary-font;
+  }
+
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: $primary-font;
+    font-family:$sans-bold;
+    // margin: 1.6rem 0rem 1rem 0rem;
+}
+h1 {
+  font-size:3.6rem;
+  header & {
+    margin-bottom:0px;
+  }
+}
+h2 {
+  font-size: 2.6rem;
+}
+h3 {
+  font-size:2.0rem;
+  color:$secondary-font;
+}

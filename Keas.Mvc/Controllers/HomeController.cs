@@ -17,6 +17,12 @@ namespace Keas.Mvc.Controllers
             return View();
         }
 
+        public IActionResult NoAccess() 
+        {
+            // TODO Fix the instructions
+            return View();
+        }
+
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";

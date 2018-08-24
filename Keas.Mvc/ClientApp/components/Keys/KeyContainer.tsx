@@ -1,14 +1,14 @@
 import PropTypes from "prop-types";
 import * as React from "react";
 
-import { AppContext, IKey, IPerson } from "../../Types";
+import { AppContext, IKey, IPerson, ISpace } from "../../Types";
 
 import AssignKey from "./AssignKey";
 import EditKey from "./EditKey";
 import KeyDetails from "./KeyDetails";
 import KeyList from "./KeyList";
 import Denied from "../Shared/Denied";
-import {PermissionsUtil} from "../../util/permissions"; 
+import {PermissionsUtil} from "../../util/permissions";
 
 interface IState {
   loading: boolean;
@@ -16,7 +16,11 @@ interface IState {
 }
 
 interface IProps {
+  assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+  assetTotalUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
+  assetEdited?: (type: string, spaceId: number, personId: number) => void; 
   person?: IPerson;
+  space?: ISpace;
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
@@ -37,9 +41,15 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   }
   public async componentDidMount() {
     // are we getting the person's key or the team's?
-    const keyFetchUrl = this.props.person
-      ? `/api/${this.context.team.name}/keys/listassigned?personid=${this.props.person.id}`
-      : `/api/${this.context.team.name}/keys/list/`;
+    let keyFetchUrl =  "";
+    if(!!this.props.person)
+    {
+      keyFetchUrl = `/api/${this.context.team.name}/keys/listassigned?personid=${this.props.person.id}`;
+    } else if(!!this.props.space) {
+      keyFetchUrl = `/api/${this.context.team.name}/keys/getKeysInSpace?spaceId=${this.props.space.id}`;
+    } else {
+      keyFetchUrl = `/api/${this.context.team.name}/keys/list/`;
+    }
 
     const keys = await this.context.fetch(keyFetchUrl);
     this.setState({ keys, loading: false });
@@ -60,9 +70,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const selectedId = parseInt(id, 10);
     const detailKey = this.state.keys.find(k => k.id === selectedId);
     return (
-      <div className="card">
-        <div className="card-body">
-          <h4 className="card-title">Key</h4>
+      <div className="card keys-color">
+        <div className="card-header-keys">
+          <div className="card-head"><h2><i className="fas fa-key fa-xs"/> Keys</h2></div>
+        </div>
+        <div className="card-content">
           <KeyList
             keys={this.state.keys}
             onRevoke={this._revokeKey}
@@ -83,8 +95,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             modal={activeAsset && action === "details" && !!detailKey}
             closeModal={this._closeModals}
           />
-          <EditKey 
-            onEdit={this._editKey} 
+          <EditKey
+            onEdit={this._editKey}
             closeModal={this._closeModals}
             modal={activeAsset && (action === "edit")}
             selectedKey={detailKey}
@@ -99,6 +111,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     key: IKey,
     date: any
   ) => {
+    let created = false;
+    let assigned = false;
     // call API to create a key, then assign it if there is a person to assign to
     // if we are creating a new key
     if (key.id === 0) {
@@ -107,6 +121,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         body: JSON.stringify(key),
         method: "POST"
       });
+      created = true;
     }
 
     // if we know who to assign it to, do it now
@@ -119,6 +134,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         method: "POST"
       });
       key.assignment.person = person;
+      assigned = true;
     }
 
     const index = this.state.keys.findIndex(x => x.id === key.id);
@@ -135,6 +151,16 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       this.setState({
         keys: [...this.state.keys, key]
       });
+    }
+    if(created && this.props.assetTotalUpdated)
+    {
+        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
+           this.props.person ? this.props.person.id : null, 1);
+    }
+    if(assigned && this.props.assetInUseUpdated)
+    {
+        this.props.assetInUseUpdated("key", this.props.space ? this.props.space.id : null,
+          this.props.person ? this.props.person.id : null, 1);
     }
   };
 
@@ -157,6 +183,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         shallowCopy.splice(index, 1);
       }
       this.setState({ keys: shallowCopy });
+      if(this.props.assetInUseUpdated)
+      {
+        this.props.assetInUseUpdated("key", this.props.space ? this.props.space.id: null,
+        this.props.person ? this.props.person.id : null, -1); 
+      }
+  
     }
   };
 
@@ -181,7 +213,15 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     this.setState({
       ...this.state,
       keys: updateKey
-    }); 
+    });
+
+    if(this.props.assetEdited)
+    {
+      this.props.assetEdited("key", this.props.space ? this.props.space.id : null,
+        this.props.person ? this.props.person.id : null);
+    }
+    
+    // TODO: handle count changes once keys are related to spaces
   }
 
   private _openAssignModal = (key: IKey) => {
@@ -211,9 +251,14 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   };
 
   private _getBaseUrl = () => {
-    return this.props.person
-      ? `/${this.context.team.name}/person/details/${this.props.person.id}`
-      : `/${this.context.team.name}`;
-  };
-  
+    if(!!this.props.person)
+    {
+      return `/${this.context.team.name}/people/details/${this.props.person.id}`;
+    } else if(!!this.props.space)
+    {
+      return `/${this.context.team.name}/spaces/details/${this.props.space.id}`;
+    } else {
+      return `/${this.context.team.name}`;
+    }
+  }
 }

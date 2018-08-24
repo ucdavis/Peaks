@@ -67,8 +67,8 @@ export default class AssignKey extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
-        <Button color="danger" onClick={this.props.onAddNew}>
-          Add Key
+        <Button color="link" onClick={this.props.onAddNew}>
+          <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add Key
         </Button>
         <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
           <ModalHeader>Assign Key</ModalHeader>

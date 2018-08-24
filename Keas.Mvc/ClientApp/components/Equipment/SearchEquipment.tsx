@@ -2,12 +2,13 @@
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
-import { AppContext, IEquipment } from "../../Types";
+import { AppContext, IEquipment, ISpace } from "../../Types";
 
 interface IProps {
     selectedEquipment?: IEquipment;
     onSelect: (equipment: IEquipment) => void;
     onDeselect: () => void;
+    space: ISpace // used to set default space if we are on spaces tab
 }
 
 interface IState {
@@ -108,7 +109,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                 model: equipment.model ? equipment.model : "",
                 name: equipment.name,
                 serialNumber: equipment.serialNumber ? equipment.serialNumber : "",
-                space: equipment.space ? equipment.space : null,
+                space: this.props.space ? this.props.space : equipment.space, // if we are on spaces tab, auto to the right space
                 tags: "",
                 teamId: equipment.teamId ? equipment.teamId : 0,
                 type: "Phone"

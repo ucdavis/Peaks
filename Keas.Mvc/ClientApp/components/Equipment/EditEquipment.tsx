@@ -12,7 +12,7 @@ import {
 
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
-import { AppContext, IEquipment, IEquipmentAttribute } from "../../Types";
+import { AppContext, IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
 import EquipmentEditValues from "./EquipmentEditValues";
 import SearchEquipment from "./SearchEquipment";
 
@@ -24,6 +24,7 @@ interface IProps {
   closeModal: () => void;
   commonAttributeKeys: string[];
   selectedEquipment: IEquipment;
+  space: ISpace;
   tags: string[];
 }
 
@@ -73,6 +74,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
                     updateAttributes={this._updateAttributes}
                     commonAttributeKeys={this.props.commonAttributeKeys}
                     tags={this.props.tags}
+                    space={this.props.space}
                   />
             </form>
           </div>
