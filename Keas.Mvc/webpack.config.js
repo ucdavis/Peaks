@@ -25,8 +25,13 @@ module.exports = env => {
         vendor: [
           "event-source-polyfill",
           "isomorphic-fetch",
+          "moment",
           "react",
+          "react-bootstrap-typeahead",
+          "react-datepicker",
           "react-dom",
+          "react-router-dom",
+          "react-table",
           "reactstrap"
         ]
       },
