@@ -41,9 +41,16 @@ namespace Keas.Mvc
             services.AddSingleton<IIdentityService, IdentityService>();
             services.AddScoped<ISecurityService, SecurityService>();
 
-            
+
             // setup entity framework
-            services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));
+            if (Configuration.GetSection("Dev:UseSql").Value == "Yes")
+            {
+                services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            }
+            else
+            {
+                services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));
+            }
 
             // add openID connect auth backed by a cookie signin scheme
             services.AddAuthentication(options =>
