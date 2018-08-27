@@ -203,29 +203,35 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Members()
         {
-            var model = await _context.People.Include(p=> p.User).Where(p=> p.Team.Name==Team).ToListAsync();
+            var model = await _context.People.Where(p=> p.Team.Name==Team).ToListAsync();
 
             return View(model);
         }
 
         public async Task<IActionResult> DetailsMember(int id)
         {
-            var model = await _context.People.Include(p => p.User).SingleAsync(x => x.Id == id);
+            var model = await _context.People.SingleAsync(x => x.Id == id);
             return View(model);
         }
 
         public async Task<IActionResult> SearchUser(string searchTerm)
         {
-            var users = await _context.Users.Where(x => x.Email.StartsWith(searchTerm) || x.Name.StartsWith(searchTerm)).AsNoTracking().FirstOrDefaultAsync();
+            var comparison = StringComparison.OrdinalIgnoreCase;
+            var users = await _context.Users.Where(x => x.Email.IndexOf(searchTerm, comparison) >= 0
+                || x.Id.IndexOf(searchTerm, comparison) >= 0) //case-insensitive version of .Contains
+                .AsNoTracking().FirstOrDefaultAsync();
             if (users==null)
             {
-                var iamId = await _identityService.GetUserId(searchTerm);
-                if (iamId != null && iamId.Length > 5)
+                if(searchTerm.Contains("@"))
                 {
-                    var user = _identityService.GetUser(iamId, searchTerm);
+                    var user = await _identityService.GetByEmail(searchTerm);
                     return Json(user);
                 }
-                //getIAM ID, then get user data.
+                else
+                {
+                    var user = await _identityService.GetByKerberos(searchTerm);
+                    return Json(user);
+                }
             }
             return Json(users);
         }
@@ -256,7 +262,6 @@ namespace Keas.Mvc.Controllers
                         Id = user.Id,
                         FirstName = user.FirstName,
                         LastName = user.LastName,
-                        Name = user.Name,
                         Email = user.Email
                     };
                     _context.Users.Add(newUser);
@@ -265,6 +270,9 @@ namespace Keas.Mvc.Controllers
                 var newPerson = new Person
                 {
                     Team = team,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
                     UserId = user.Id,
                     Group = person.Group,
                     Title = person.Title,
@@ -287,17 +295,17 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> EditMember(int id, Person person)
+        [HttpPost, ActionName("EditMember")]
+        public async Task<IActionResult> EditMemberPost(int id)
         {
-            if (id != person.Id)
+            if (id == null)
             {
                 return NotFound();
             }
-            var personToEdit = await _context.People.SingleAsync(x => x.Id == person.Id);
+            var personToEdit = await _context.People.SingleAsync(x => x.Id == id);
 
            
-            if (await TryUpdateModelAsync<Person>(personToEdit, "", t => t.Active, t=> t.Group, t=> t.Title, t=> t.HomePhone, t=> t.TeamPhone))
+            if (await TryUpdateModelAsync<Person>(personToEdit, "", t => t.FirstName, t => t.LastName, t => t.Active, t=> t.Group, t=> t.Title, t=> t.HomePhone, t=> t.TeamPhone))
             {
                 try
                 {
@@ -309,7 +317,10 @@ namespace Keas.Mvc.Controllers
                     ModelState.AddModelError("", "Unable to save changes.");
                 }
             }
-            return View(person);
+            Message = "Something failed in the update.";
+             var model = await _context.People.Include(p => p.User).SingleAsync(x => x.Id == id);
+            return View(model);
+            
         }
 
         public  IActionResult BulkImportMembers()

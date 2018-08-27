@@ -19,7 +19,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                     <input type="text"
                         className="form-control"
                         disabled={true}
-                        value={x.person.user.name}
+                        value={x.person.name}
                     />
                 </div>
                 <div className="form-group">
