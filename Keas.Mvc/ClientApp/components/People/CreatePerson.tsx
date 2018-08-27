@@ -13,7 +13,7 @@ import SearchUsers from "./SearchUsers";
 import PersonEditValues from "./PersonEditValues";
 
 interface IProps {
-  onCreate: (person: IPerson) => any;
+  onCreate: (person: IPerson) => void;
   modal: boolean;
   tags: string[];
   users: IUser[];
@@ -107,18 +107,17 @@ export default class CreatePerson extends React.Component<IProps, IState> {
       return;
     }
 
-    await this.props.onCreate(this.state.person)
-      .catch((err) => {
-        this.setState({
-          moreInfoString: "There was an error adding this person to your team: " + err.message,
-          person: null,
-          validState: false,
-        });
-      });
-    if(this.state.validState)
-    {
+    try {
+      await this.props.onCreate(this.state.person);
       this._closeModal();
     }
+    catch(err) {
+      this.setState({
+        moreInfoString: "There was an error adding this person to your team: " + err.message,
+        person: null,
+        validState: false,
+      });
+    };
   };
 
   // once we have selected a user from SearchUser
