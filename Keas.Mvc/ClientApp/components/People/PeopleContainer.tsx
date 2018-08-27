@@ -160,16 +160,14 @@ export default class PeopleContainer extends React.Component<{}, IState> {
       return;
     }
     person.teamId = this.context.team.id;
+    // any errors here are caught in CreatePerson
     person = await this.context.fetch(`/api/${this.context.team.name}/people/create`, {
       body: JSON.stringify(person),
       method: "POST"
-      })
-      .catch(err => {
-        person = null;
-      });
+    });
     if(!person)
     {
-      return;
+      return;   
     }
     // since this is a new person, they will not have anything assigned
     const personInfo: IPersonInfo = {

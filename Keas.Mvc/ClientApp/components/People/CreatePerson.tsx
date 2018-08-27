@@ -13,7 +13,7 @@ import SearchUsers from "./SearchUsers";
 import PersonEditValues from "./PersonEditValues";
 
 interface IProps {
-  onCreate: (person: IPerson) => void;
+  onCreate: (person: IPerson) => any;
   modal: boolean;
   tags: string[];
   users: IUser[];
@@ -107,21 +107,37 @@ export default class CreatePerson extends React.Component<IProps, IState> {
       return;
     }
 
-    await this.props.onCreate(this.state.person);
-
-    this._closeModal();
+    await this.props.onCreate(this.state.person)
+      .catch((err) => {
+        this.setState({
+          moreInfoString: "There was an error adding this person to your team: " + err.message,
+          person: null,
+          validState: false,
+        });
+      });
+    if(this.state.validState)
+    {
+      this._closeModal();
+    }
   };
 
-  // once we have selected a person
-  // SearchUsers will either return an existing person
+  // once we have selected a user from SearchUser
   private _onSelectPerson = (person: IPerson) => {
-    if (!person) {
+    if (person === null) {
+      // if there was a 404, person will be null
       this.setState(
         {
           moreInfoString: "The user could not be found",
           person: null
         },
         this._validateState
+      );
+    } else if(person === undefined) {
+      // if there was an error that is not a 404, person will be undef
+      this.setState({
+          moreInfoString: "There was an error processing your search",
+          person: null
+        }, this._validateState
       );
     } else if (this.props.users.findIndex(x => x.id === person.userId) !== -1 || (person.active && person.teamId !== 0)) {
       this.setState({
@@ -131,7 +147,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
     } else if (person.active && person.teamId === 0) {
       this.setState({
         moreInfoString: "You are creating a new person",
-        person: person,
+        person,
       },
       this._validateState);
     } else {

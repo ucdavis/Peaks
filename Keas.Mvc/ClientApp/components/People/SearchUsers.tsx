@@ -53,10 +53,21 @@ export default class SearchUsers extends React.Component<IProps, IState> {
     this.setState({reloading: true, reloaded: false});
     const userFetchUrl = `/api/${this.context.team.name}/people/searchUser?searchTerm=${this.state.search}`;
   
-    var person = await this.context.fetch(userFetchUrl)
-      .catch(err => {
+    let person = null;
+    try {
+      person = await this.context.fetch(userFetchUrl);
+    } catch (err) {
+      if(err.message === "Not Found")
+      {
+        // on 404
         person = null;
-      });
+      }
+      else
+      {
+        // on some other error
+        person = undefined;
+      }
+    };
     this.props.updatePerson(person);
     this.setState({ reloading: false, reloaded: true });
   }
