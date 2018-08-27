@@ -10,10 +10,12 @@ namespace Keas.Mvc.Helpers
     {
         public static void Initialize(ApplicationDbContext context)
         {
+            if (context.Users.Any()) return; // already initialized
+
             context.Database.EnsureDeleted(); // TODO: remove
             context.Database.EnsureCreated();
 
-            if (context.Users.Any()) return; // already initialized
+            
 
             // add in some default factilities
             var space1 = new Space { BldgKey = "01", FloorKey = "01", RoomKey = "01", BldgName = "Foo", RoomName = "Bar", RoomNumber = "12", ChartNum = "3", OrgId = "ADNO" };
