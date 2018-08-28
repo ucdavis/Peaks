@@ -4,12 +4,19 @@
     ViewData["Title"] = "Team Member Details";
 }
 <div class="card">
+  <div class="card-head">
+    <div class="row justify-content-between">
+      <h2>Team Member Details</h2>
+      <div>
+          @Html.ActionLink("Edit", "EditMember", new { id = Model.Id }) |
+          <a class="btn btn-link" asp-action="Members"><i class="fas fa-arrow-left fa-xs"/></i> Back to List</a>
+      </div>
+    </div>
+  </div>
   <div class="card-content">
-<h2>Team Member Details</h2>
+
 
 <div>
-    <h4>Person</h4>
-    <hr />
     <dl class="dl-horizontal">
         <dt>@Html.DisplayNameFor(model=> model.User.Name)</dt>
         <dd>
@@ -53,9 +60,6 @@
         </dd>
     </dl>
 </div>
-<div>
-    @Html.ActionLink("Edit", "EditMember", new { id = Model.Id }) |
-    <a asp-action="Members">Back to List</a>
-</div>
+
 </div>
 </div>

@@ -4,11 +4,16 @@
     ViewData["Title"] = "Edit Team Member";
 }
 <div class="card">
+  <div class="card-head">
+    <div class="row justify-content-between">
+      <h2>Edit Team Member</h2>
+      <a class="btn btn-link" asp-action="Members"><i class="fas fa-arrow-left fa-xs"/></i> Back to List</a>
+    </div>
+  </div>
   <div class="card-content">
-<h2>Edit Team Member</h2>
 
-<h4>@Model.User.Name</h4>
-<hr />
+
+<h3>@Model.User.Name</h3>
 <div class="row">
     <div class="col-md-4">
         <form asp-action="EditMember">
@@ -42,14 +47,11 @@
                 <span asp-validation-for="TeamPhone" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Members">Back to List</a>
-</div>
 </div>
 </div>
