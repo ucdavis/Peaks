@@ -143,7 +143,9 @@ namespace Keas.Mvc
             }
             else
             {
-                app.UseExceptionHandler("/Error/Index");
+                // TODO: don't use dev exception
+                app.UseDeveloperExceptionPage();
+                // app.UseExceptionHandler("/Error/Index");
                 
             }
             app.UseStatusCodePages("text/plain", "Status code page, status code: {0}");

@@ -6,36 +6,46 @@
     <title>@ViewData["Title"] - Keas.Mvc</title>
 
     <environment names="Development">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css" />
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
 
 
     </environment>
     <environment names="Staging,Production">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
-
-        <link rel="stylesheet" href="~/dist/root.css" asp-append-version="true" />
+      <link 
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+      <link 
+        rel="stylesheet"
+        href="https://use.fontawesome.com/releases/v5.0.13/css/all.css"
+        integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" 
+        crossorigin="anonymous">
+      <link rel="stylesheet" href="~/dist/root.css" asp-append-version="true" />
     </environment>
+    @RenderSection("Styles", required: false)
+
 </head>
 <body>
-  <header>
-    <div class="container">
-      <div class="row justify-content-between">
-        <div class="row">
-          <img src="/media/keas-symbol.svg" alt="KEAS logo of key lock house and computer">
-        <div style="margin-top: 8px;margin-left: 10px;">
-          <h1>KEAS</h1>
-          <p class="subtitle">Keys, Equipment, Access and Space</p>
+    <header>
+        <h1 style="background-color: red; text-align: center; color: white">----------- This Site Is Currently For Testing Only -----------</h1>
+        <div class="container">
+            <div class="row justify-content-between">
+                <div class="row">
+                    <img src="/media/keas-symbol.svg" alt="KEAS logo of key lock house and computer">
+                    <div style="margin-top: 8px; margin-left: 10px;">
+                        <h1>KEAS</h1>
+                        <p class="subtitle">Keys, Equipment, Access and Space</p>
+                    </div>
+                </div>
+                <div class="team">
+                    <h3>Team</h3>
+                    <p>College of Agricultural and<br> Environmental Sciences</p>
+                </div>
+            </div>
         </div>
-      </div>
-        <div class="team">
-          <h3>Team</h3>
-          <p>College of Agricultural and<br> Environmental Sciences</p>
-        </div>
-      </div>
-    </div>
-  </header>
+    </header>
   <div class="head_bleed">
   <div class="head_divider">
 
@@ -90,17 +100,17 @@
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     </environment>
     <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+      <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
+        asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+        asp-fallback-test="window.jQuery"
+        crossorigin="anonymous"
+        integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+      </script>
+      <script 
+        src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous">
+      </script>
         </script>
     </environment>
 

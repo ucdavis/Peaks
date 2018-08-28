@@ -13,8 +13,7 @@ namespace Keas.Mvc.Services
 {
     public interface IIdentityService
     {
-        Task<string> GetUserId(string email);
-        Task<User> GetUser(string id, string email);
+        Task<User> GetByEmail(string email);
         Task<User> GetByKerberos(string kerb);
     }
 
@@ -26,32 +25,29 @@ namespace Keas.Mvc.Services
         {
             _authSettings = authSettings.Value;
         }
-        public async Task<string> GetUserId(string email)
+
+        public async Task<User> GetByEmail(string email)
         {
-            // return info for the user identified by this email address in IAM
             var clientws = new IetClient(_authSettings.IamKey);
-            var result = await clientws.Contacts.Search(ContactSearchField.email, email);
-
-            if (result.ResponseData.Results == null) return string.Empty;
-
-            return result.ResponseData.Results.Length > 0 ? result.ResponseData.Results[0].IamId : String.Empty;
-        }
-
-        public async Task<User> GetUser(string id, string email)
-        {
-            // return info for the user identified by this email address in IAM
-            var clientws = new IetClient(_authSettings.IamKey);
-            var result = await clientws.People.Search(PeopleSearchField.iamId, id);
+            // get IAM from email
+            var iamResult = await clientws.Contacts.Search(ContactSearchField.email, email);
+            var iamId = iamResult.ResponseData.Results.Length > 0 ? iamResult.ResponseData.Results[0].IamId : String.Empty;
+            if(String.IsNullOrWhiteSpace(iamId))
+            {
+                return null;
+            } 
+            // return info for the user identified by this IAM 
+            var result = await clientws.Kerberos.Search(KerberosSearchField.iamId, iamId);
 
             if (result.ResponseData.Results.Length > 0)
             {
                 var user = new User()
                 {
-                    FirstName = result.ResponseData.Results[0].OFirstName,
-                    LastName = result.ResponseData.Results[0].OLastName,
-                    Name = result.ResponseData.Results[0].DFullName,
-                    Id = id,
-                    Email = email
+                    FirstName = result.ResponseData.Results[0].DFirstName,
+                    LastName = result.ResponseData.Results[0].DLastName,
+                    Id = result.ResponseData.Results[0].UserId,
+                    Email = email,
+                    Iam = iamId
                 };
                 return user;
             }
@@ -79,9 +75,9 @@ namespace Keas.Mvc.Services
             {
                 FirstName = ucdKerbPerson.DFirstName,
                 LastName = ucdKerbPerson.DLastName,
-                Name = ucdKerbPerson.DFullName,
                 Id = ucdKerbPerson.UserId,
-                Email = ucdContact.Email
+                Email = ucdContact.Email,
+                Iam = ucdKerbPerson.IamId
             };
         }
     }    

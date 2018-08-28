@@ -48,7 +48,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <input type="text"
                         className="form-control"
                         disabled={true}
-                        value={this.props.selectedEquipment.assignment.person.user.name}
+                        value={this.props.selectedEquipment.assignment.person.name}
                         />
                 </div>
                 <div className="form-group">

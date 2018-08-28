@@ -41,7 +41,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         <input type="text"
                             className="form-control"
                             disabled={true}
-                            value={this.props.selectedKey.assignment.person ? this.props.selectedKey.assignment.person.user.name : ""}
+                            value={this.props.selectedKey.assignment.person ? this.props.selectedKey.assignment.person.name : ""}
                             />
                     </div>
                     <div className="form-group">

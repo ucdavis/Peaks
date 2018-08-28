@@ -52,18 +52,18 @@ export default class AssignPerson extends React.Component<IProps, IState> {
           minLength={3}
           placeholder="Search for person by name or email"
           labelKey={(option: IPerson) =>
-            `${option.user.name} (${option.user.email})`
+            `${option.name} (${option.email})`
           }
           filterBy={() => true} // don't filter on top of our search
           renderMenuItemChildren={(option, props, index) => (
               <div>
                   <div>
                       <Highlighter key="name" search={props.text}>
-                          {option.user.name}
+                          {option.name}
                       </Highlighter>
                   </div>
                   <div>
-                        <Highlighter key="email" search={props.text}>{option.user.email}</Highlighter>
+                        <Highlighter key="email" search={props.text}>{option.email}</Highlighter>
                   </div>
               </div>
           )}
@@ -96,7 +96,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
         type="text"
         id="assignto"
         className="form-control"
-        value={person.user.name}
+        value={person.name}
         disabled={true}
       />
     );

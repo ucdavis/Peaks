@@ -34,10 +34,10 @@ namespace Keas.Mvc.Helpers
             var space6 = new Space { BldgKey = "03", FloorKey = "01", RoomKey = "06", BldgName = "South Hall", RoomName = "Storage", RoomNumber = "0121A", ChartNum = "3", OrgId = "ADNO" };
             context.Spaces.Add(space6);
 
-            var scott = new User { Id = "postit", FirstName = "Scott", Name = "Scott Kirkland", Email = "srkirkland@ucdavis.edu" };
-            var james = new User { Id = "jscub", FirstName = "James", Name = "James Cubbage", Email = "jscubbage@ucdavis.edu" };
-            var laura = new User { Id = "holstege", Name = "Laura Holstege", Email = "laholstege@ucdavis.edu" };
-            var cal = new User { Id = "cydoval", Name = "Cal Doval", Email = "cydoval@ucdavis.edu" };
+            var scott = new User { Id = "postit", FirstName = "Scott", LastName = "Kirkland", Email = "srkirkland@ucdavis.edu" };
+            var james = new User { Id = "jscub", FirstName = "James", LastName = "Cubbage", Email = "jscubbage@ucdavis.edu" };
+            var laura = new User { Id = "holstege", FirstName = "Laura", LastName = "Holstege", Email = "laholstege@ucdavis.edu" };
+            var cal = new User { Id = "cydoval", FirstName = "Cal", LastName = "Doval", Email = "cydoval@ucdavis.edu" };
 
             var caes = new Team {  Name = "CAESDO" };
 
@@ -66,10 +66,14 @@ namespace Keas.Mvc.Helpers
             //context.Roles.Add(emulate);
 
             // add assets
-            var lauraCaes = new Person { User = laura, Team = caes, Group = "CRU", Tags = "CRU"};
-            var scottCaes = new Person { User = scott, Team = caes, Group = "CRU", Tags = "CRU" };
-            var jamesCaes = new Person {User = james,  Team = caes, Group = "CRU", Tags = "CRU" };
-            var calCaes = new Person {User = cal,  Team = caes, Group = "CRU", Tags = "CRU" };
+            var lauraCaes = new Person { User = laura, Team = caes, Group = "CRU", Tags = "CRU,Student", 
+                FirstName = laura.FirstName, LastName = laura.LastName, Email = laura.Email};
+            var scottCaes = new Person { User = scott, Team = caes, Group = "CRU", Tags = "CRU",
+                FirstName = scott.FirstName, LastName = scott.LastName, Email = scott.Email};
+            var jamesCaes = new Person {User = james,  Team = caes, Group = "CRU", Tags = "CRU",
+                FirstName = james.FirstName, LastName = james.LastName, Email = james.Email};
+            var calCaes = new Person {User = cal,  Team = caes, Group = "CRU", Tags = "CRU", 
+                FirstName = cal.FirstName, LastName = cal.LastName, Email = cal.Email};
 
             context.People.Add(jamesCaes);
             context.People.Add(lauraCaes);
@@ -241,20 +245,14 @@ namespace Keas.Mvc.Helpers
             var scottKey = new TeamPermission    {Team = caes, Role = keyMaster, User = scott};
             var scottEquip = new TeamPermission  {Team = caes, Role = equipMaster, User = scott};
             var scottDa = new TeamPermission {Team = caes, Role = departmentAdmin, User = scott};
-            var lauraKey = new TeamPermission    {Team = caes, Role = keyMaster, User = laura};
-            var lauraEquip = new TeamPermission  {Team = caes, Role = equipMaster, User = laura};
-            var lauraAccess = new TeamPermission {Team = caes, Role = accessMaster, User = laura};
-            var lauraSpace = new TeamPermission  {Team = caes, Role = spaceMaster, User = laura};
+            var lauraDa = new TeamPermission    {Team = caes, Role = departmentAdmin, User = laura};
             var jamesDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = james};
             var calDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = cal};
 
             context.TeamPermissions.Add(scottKey);
             context.TeamPermissions.Add(scottEquip);
 
-            context.TeamPermissions.Add(lauraEquip);
-            context.TeamPermissions.Add(lauraKey);
-            context.TeamPermissions.Add(lauraAccess);
-            context.TeamPermissions.Add(lauraSpace);
+            context.TeamPermissions.Add(lauraDa);
 
             context.TeamPermissions.Add(jamesDa);
             context.TeamPermissions.Add(scottDa);
@@ -262,6 +260,12 @@ namespace Keas.Mvc.Helpers
 
             var jamesAdmin = new SystemPermission { Role = admin, User = james};
             context.SystemPermissions.Add(jamesAdmin);
+
+            var lauraAdmin = new SystemPermission { Role = admin, User = laura};
+            context.SystemPermissions.Add(lauraAdmin);
+
+            var scottAdmin = new SystemPermission { Role = admin, User = scott};
+            context.SystemPermissions.Add(scottAdmin);
 
             var calAdmin = new SystemPermission { Role = admin, User = cal};
             context.SystemPermissions.Add(calAdmin);

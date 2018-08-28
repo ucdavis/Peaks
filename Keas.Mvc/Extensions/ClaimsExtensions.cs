@@ -26,7 +26,6 @@ namespace Keas.Mvc.Extensions
             {
                 FirstName = claimsPrincipal.FindFirstValue(ClaimTypes.GivenName),
                 LastName = claimsPrincipal.FindFirstValue(ClaimTypes.Surname),
-                Name = claimsPrincipal.GetNameClaim(),
                 Email = claimsPrincipal.FindFirstValue(ClaimTypes.Email),
                 Id = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier)
             };

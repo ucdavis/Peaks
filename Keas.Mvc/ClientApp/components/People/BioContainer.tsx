@@ -21,8 +21,12 @@ export default class BioContainer extends React.Component<IProps, {}> {
             <i className="far fa-envelope" aria-hidden="true" />{" "}
             {this.props.person.user.email}
           </p>
+          <p className="card-text">
+            <i className="fas fa-tags" aria-hidden="true" />{" "}
+            {this.props.person.tags}
+          </p>
           <hr/>
-<br/>
+        <br/>
 
       </div>
     );
