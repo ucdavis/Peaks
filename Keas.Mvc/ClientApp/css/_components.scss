@@ -69,6 +69,31 @@ img.img-fluid {
     transform: translateY(-1px);
   }
 }
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show > .btn-primary.dropdown-toggle {
+  border-color: rgba(255,255,255,.9999) !important;
+
+  .keys-color & {
+    background-color: $keys;
+  }
+
+  .access-color & {
+    background-color: $access;
+  }
+
+  .equipment-color & {
+    background-color: $equipment;
+  }
+
+  .spaces-color & {
+    background-color: $spaces;
+  }
+
+  .people-color & {
+    background-color: $people;
+  }
+}
 .alert-red {
   background-color:transparentize($unitrans-red,0.35);
   &:hover {
