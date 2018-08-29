@@ -10,7 +10,7 @@ namespace Test.TestsDatabase
     [Trait("Category","DatabaseTests")]
     public class EquipmentTests
     {
-         #region Reflection of Database
+        #region Reflection of Database
 
         [Fact]
         public void TestDatabaseFieldAttributes()
