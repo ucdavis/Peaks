@@ -5,6 +5,7 @@ using System.Text;
 using Keas.Core.Domain;
 using Shouldly;
 using Test.Helpers;
+using TestHelpers.Helpers;
 using Xunit;
 
 namespace Test.TestsDatabase
@@ -54,25 +55,29 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("FirstName", "System.String", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"First Name\")]",
-                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)50)]"
+                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)50)]",
+                
             }));
+            expectedFields.Add(new NameAndType("Iam", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Id", "System.String", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.KeyAttribute()]",
-                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]"
             }));
+
             expectedFields.Add(new NameAndType("LastName", "System.String", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"Last Name\")]",
+                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)50)]"
             }));
             expectedFields.Add(new NameAndType("Name", "System.String", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"Name\")]",
-                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)256)]"
             }));
-            expectedFields.Add(new NameAndType("TeamMembers", "System.Collections.Generic.List`1[Keas.Core.Domain.TeamMember]", new List<string>()));
+            expectedFields.Add(new NameAndType("People", "System.Collections.Generic.List`1[Keas.Core.Domain.Person]", new List<string>()));
+            expectedFields.Add(new NameAndType("TeamPermissions", "System.Collections.Generic.List`1[Keas.Core.Domain.TeamPermission]", new List<string>()));
 
 
             #endregion Arrange
