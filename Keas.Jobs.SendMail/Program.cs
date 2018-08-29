@@ -42,9 +42,8 @@ namespace Keas.Jobs.SendMail
 
             IServiceCollection services = new ServiceCollection();
             services.AddOptions();
-            //TODO: DbConnection
-            //services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-             services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));
+            services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            
 
 
 
