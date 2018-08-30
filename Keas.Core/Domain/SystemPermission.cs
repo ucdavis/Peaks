@@ -9,7 +9,7 @@ namespace Keas.Core.Domain
     {
         public int Id { get; set; }
 
-       [Required]
+        [Required]
         public User User { get; set; }
         public string UserId { get; set; }
 
