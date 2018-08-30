@@ -1,4 +1,5 @@
-﻿@using Keas.Core.Domain
+﻿@using System.Collections
+@using Keas.Core.Domain
 @using Keas.Core.Extensions
 @model IList<Keas.Core.Domain.Notification>
 @{
@@ -10,7 +11,7 @@
     {
         notificationPluralize = "notifications";
     }
-    var acceptStatement = false;
+    var acceptStatement = Model.Any(n=> n.NeedsAccept);
 
 }
 
