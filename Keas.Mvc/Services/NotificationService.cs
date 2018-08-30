@@ -103,7 +103,8 @@ namespace Keas.Mvc.Services
                 {
                     User = user,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    NeedsAccept = true
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -142,7 +143,8 @@ namespace Keas.Mvc.Services
                 {
                     User = user,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    NeedsAccept = true
                 };
                 _dbContext.Notifications.Add(notification);
             }
