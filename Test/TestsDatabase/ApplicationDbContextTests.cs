@@ -8,10 +8,14 @@ using Xunit;
 
 namespace Test.TestsDatabase
 {
+    [Trait("Category","DatabaseTableTests")]
     public class ApplicationDbContextTests
     {
         #region Reflection of Database
 
+        /// <summary>
+        /// If this fails, don't forget to add tests for the new table
+        /// </summary>
         [Fact]
         public void TestDatabaseFieldAttributes()
         {
