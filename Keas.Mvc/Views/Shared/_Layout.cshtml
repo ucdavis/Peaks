@@ -1,114 +1,120 @@
-﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Keas.Mvc</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>@ViewData["Title"] - Keas.Mvc</title>
 
-    <environment names="Development">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css" />
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
+  <environment names="Development">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
 
 
-    </environment>
-    <environment names="Staging,Production">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+  </environment>
+  <environment names="Staging,Production">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
 
-        <link rel="stylesheet" href="~/dist/root.css" asp-append-version="true" />
-    </environment>
+    <link rel="stylesheet" href="~/dist/root.css" asp-append-version="true" />
+  </environment>
 </head>
+
 <body>
   <header>
     <div class="container">
-      <div class="row justify-content-between">
+      <div class="row justify-content-between align-items-center">
         <div class="row">
           <!-- <img src="/media/keas-symbol.svg" alt="KEAS logo of key lock house and computer"> -->
-        <div style="margin-top: 8px;margin-left: 10px;">
-          <a asp-area="" asp-controller="Home" asp-action="Index">
-            <h1>PEAKS <i class="fas fa-users fa-xs"></i> <i class="fas fa-hdd fa-xs"></i> <i class="fas fa-address-card fa-xs"></i> <i class="fas fa-key fa-xs"></i> <i class="fas fa-building fa-xs"></i></h1>
-            <p class="subtitle">People, Equipment, Access, Keys and Space</p>
-          </a>
+          <div style="margin-top: 8px;margin-left: 10px;">
+            <a asp-area="" asp-controller="Home" asp-action="Index">
+              <h1>PEAKS <i class="fas fa-users fa-xs"></i> <i class="fas fa-hdd fa-xs"></i> <i class="fas fa-address-card fa-xs"></i> <i class="fas fa-key fa-xs"></i> <i class="fas fa-building fa-xs"></i></h1>
+              <p class="subtitle">People, Equipment, Access, Keys and Space</p>
+            </a>
+          </div>
         </div>
-      </div>
-        <div class="team">
+        <div style="text-align:right;">
           <h3>Team</h3>
-          <p>College of Agricultural and<br> Environmental Sciences</p>
+          <div class="row teamwrapper align-items-center">
+
+              <div class="team">
+                <p>College of Agricultural and<br> Environmental Sciences</p>
+              </div>
+              <div class="teamchanger">
+                <i class="fas fa-caret-down fa-lg"></i>
+              </div>
+
+
+          </div>
         </div>
+
+
       </div>
     </div>
   </header>
   <div class="head_bleed">
-  <div class="head_divider">
+    <div class="head_divider">
+
+    </div>
 
   </div>
-
-</div>
-    <nav class="navbar navbar-expand-md navbar-light">
-      <div class="container">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+  <nav class="navbar navbar-expand-md">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
           <i class="fas fa-bars"></i>
           <span>Menu</span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarText">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="/CAESDO/keys">Assets</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/CAESDO/Confirm/Mystuff">My Stuff</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="CAESDO/TeamAdmin">Admin</a>
-            </li>
-          </ul>
-          <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
-            <span>Welcome @User.GetNameClaim()</span>
-          </div>
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/CAESDO/keys">Assets</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/CAESDO/Confirm/Mystuff">My Stuff</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="CAESDO/TeamAdmin">Admin</a>
+          </li>
+        </ul>
+        <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
+          <span>Welcome @User.GetNameClaim()</span>
         </div>
       </div>
+    </div>
 
-    </nav>
-@if (!string.IsNullOrWhiteSpace(TempData["Message"] as string))
-{
-<div class="container">
-  <div class="alert alert-info">
-      <button type="button" class="close" data-dismiss="alert">×</button>
-      @TempData["Message"]
+  </nav>
+  @if (!string.IsNullOrWhiteSpace(TempData["Message"] as string)) {
+  <div class="container">
+    <div class="alert alert-info">
+      <button type="button" class="close" data-dismiss="alert">×</button> @TempData["Message"]
+    </div>
   </div>
-</div>
 
-}
+  }
 
-<main role="main" class="main-content-wrapper container">
-        @RenderBody()
+  <main role="main" class="main-content-wrapper container">
+    @RenderBody()
 
-        <footer>
-            <p>&copy; 2017 - Keas.Mvc</p>
-        </footer>
-    </main>
+    <footer>
+      <p>&copy; 2017 - Keas.Mvc</p>
+    </footer>
+  </main>
 
-    <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
-    </environment>
-    <environment exclude="Development">
-        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
-                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                asp-fallback-test="window.jQuery"
-                crossorigin="anonymous"
-                integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
-        </script>
-        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
-                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
-                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                crossorigin="anonymous"
-                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
-        </script>
-    </environment>
+  <environment include="Development">
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+  </environment>
+  <environment exclude="Development">
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js" asp-fallback-src="~/lib/jquery/dist/jquery.min.js" asp-fallback-test="window.jQuery" crossorigin="anonymous" integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
+    </script>
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js" asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js" asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal" crossorigin="anonymous" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+    </script>
+  </environment>
 
-    <script src="~/dist/root.js" asp-append-version="true"></script>
+  <script src="~/dist/root.js" asp-append-version="true"></script>
 
-    @RenderSection("Scripts", required: false)
+  @RenderSection("Scripts", required: false)
 </body>
+
 </html>
