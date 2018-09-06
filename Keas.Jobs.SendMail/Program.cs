@@ -67,6 +67,32 @@ namespace Keas.Jobs.SendMail
             }
             Console.WriteLine($"Done! Sent {counter}");
 
+            counter = 0;
+            var usersWithExpiringAccess = dbContext.AccessAssignments.Where(a=> a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Select(s=> s.Person.User).Distinct().ToArray();
+            var usersWithExpiringKey = dbContext.KeyAssignments
+                .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
+                            (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
+                .Select(s => s.Person.User).Distinct().ToArray();
+            var usersWithExpiringEquipment = dbContext.EquipmentAssignments
+                .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
+                            (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
+                .Select(s => s.Person.User).Distinct().ToArray();
+            var usersWithExpiringWorkstations = dbContext.WorkstationAssignments
+                .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
+                            (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
+                .Select(s => s.Person.User).Distinct().ToArray();
+            var usersWithExpiringItems = usersWithExpiringAccess.Union(usersWithExpiringKey).Union(usersWithExpiringEquipment).Union(usersWithExpiringWorkstations);
+            
+            if (usersWithExpiringItems.Any())
+            {
+                foreach (var user in usersWithExpiringItems)
+                {
+                    EmailService.SendMessage(user).GetAwaiter().GetResult(); //TODO: Pass param?
+                    counter++;
+                }
+            }
+            Console.WriteLine($"Done! Sent {counter}");
+
         }
     }
 }
