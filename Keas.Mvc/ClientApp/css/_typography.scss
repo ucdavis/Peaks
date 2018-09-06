@@ -76,7 +76,6 @@ p, span, div {
   footer & {
     color:$secondary-font;
     font-size:1.4rem;
-    font-family: $sans-bold;
   }
   &.topic-title  {
     font-size: 1.8rem;
@@ -95,6 +94,7 @@ p, span, div {
   &.subtitle {
     font-size:2rem;
     font-family: $sans-bold;
+    margin-bottom:0px;
   }
 
 }

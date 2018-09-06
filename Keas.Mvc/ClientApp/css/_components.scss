@@ -118,6 +118,23 @@ img.img-fluid {
     background-color:transparentize($sky-blue,.15);
 }
 }
+.btn-team {
+  background-color: #fff;
+  border:1px solid #c7c8cc;
+  padding:.6rem 1.2rem;
+  border-radius: 3px;
+  .teamname {
+    text-align:right;
+    max-width:200px;
+    margin-right:16px;
+  }
+  i {
+    color:#c7c8cc;
+  }
+}
+.dropdown-toggle::after {
+  content:none;
+}
 .btn {
   &.btn-primary {
     @include main-btn;

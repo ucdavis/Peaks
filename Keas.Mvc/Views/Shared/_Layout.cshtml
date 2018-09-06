@@ -24,7 +24,7 @@
 <body>
   <header>
     <div class="container">
-      <div class="row justify-content-between align-items-center">
+      <div class="row justify-content-between align-items-end">
         <div class="row">
           <!-- <img src="/media/keas-symbol.svg" alt="KEAS logo of key lock house and computer"> -->
           <div style="margin-top: 8px;margin-left: 10px;">
@@ -34,8 +34,23 @@
             </a>
           </div>
         </div>
-        <div style="text-align:right;">
-          <h3>Team</h3>
+        <div class="dropdown">
+          <h3 style="text-align:right">Team</h3>
+          <button class="btn-team dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <div class="row justify-content-between align-items-center">
+              <div class="teamname">CA&ES</div>
+              <i class="fas fa-caret-down fa-lg"></i>
+            </div>
+
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+        </div>
+        <!-- <div style="text-align:right;">
+
           <div class="row teamwrapper align-items-center">
 
               <div class="team">
@@ -47,7 +62,7 @@
 
 
           </div>
-        </div>
+        </div> -->
 
 
       </div>
