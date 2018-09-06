@@ -67,6 +67,8 @@ namespace Keas.Jobs.SendMail
             }
             Console.WriteLine($"Done! Sent {counter}");
 
+
+            // Email users with expiring items
             counter = 0;
             var usersWithExpiringAccess = dbContext.AccessAssignments.Where(a=> a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Select(s=> s.Person.User).Distinct().ToArray();
             var usersWithExpiringKey = dbContext.KeyAssignments
@@ -87,12 +89,15 @@ namespace Keas.Jobs.SendMail
             {
                 foreach (var user in usersWithExpiringItems)
                 {
-                    EmailService.SendMessage(user).GetAwaiter().GetResult(); //TODO: Pass param?
+                    // TODO: build new service method to handle these emails
+                    //EmailService.SendMessage(user).GetAwaiter().GetResult(); //TODO: Pass param?
                     counter++;
                 }
             }
             Console.WriteLine($"Done! Sent {counter}");
 
+
+            // Email teams with expiring items.
         }
     }
 }
