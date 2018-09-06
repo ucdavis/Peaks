@@ -1,5 +1,6 @@
 
 nav {
+
 background-color: white;
 box-shadow: $box-shadow;
 }
@@ -15,7 +16,17 @@ a.nav-link {
   }
 }
 .navbar {
-  padding:0px;
+  padding:.8rem 0rem;
+}
+.navbar-toggler {
+  color:$primary-font !important;
+  font-size: 1.8rem;
+  border:none !important;
+  span {
+font-size:2rem;
+    font-weight: bold;
+    margin-left:2px;
+  }
 }
 // React Tabs
 
