@@ -68,35 +68,34 @@ namespace Keas.Jobs.SendMail
             Console.WriteLine($"Done! Sent {counter}");
 
 
-            //// Email persons with expiring items, cc teammembers as needed
-            //counter = 0;
-            //var usersWithExpiringAccess = dbContext.AccessAssignments.Where(a=> a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Select(s=> s.Person).Distinct().ToArray();
-            //var usersWithExpiringKey = dbContext.KeyAssignments
-            //    .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
-            //                (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-            //    .Select(s => s.Person).Distinct().ToArray();
-            //var usersWithExpiringEquipment = dbContext.EquipmentAssignments
-            //    .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
-            //                (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-            //    .Select(s => s.Person).Distinct().ToArray();
-            //var usersWithExpiringWorkstations = dbContext.WorkstationAssignments
-            //    .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
-            //                (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-            //    .Select(s => s.Person).Distinct().ToArray();
-            //var usersWithExpiringItems = usersWithExpiringAccess.Union(usersWithExpiringKey).Union(usersWithExpiringEquipment).Union(usersWithExpiringWorkstations);
-            
-            //if (usersWithExpiringItems.Any())
-            //{
-            //    foreach (var person in usersWithExpiringItems)
-            //    {
-            //        // TODO: build new service method to handle these emails
-            //        //EmailService.SendMessage(person).GetAwaiter().GetResult(); //TODO: Pass param?
-            //        counter++;
-            //    }
-            //}
-            //Console.WriteLine($"Done! Sent {counter}");
+            // Email persons with expiring items, cc teammembers as needed
+            counter = 0;
+            var personsWithExpiringAccess = dbContext.AccessAssignments
+                .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
+                .Select(s => s.Person).Distinct().AsNoTracking().ToArray();
+            var personsWithExpiringKey = dbContext.KeyAssignments
+                .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
+                .Select(s => s.Person).Distinct().AsNoTracking().ToArray();
+            var personsWithExpiringEquipment = dbContext.EquipmentAssignments
+                .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
+                .Select(s => s.Person).Distinct().AsNoTracking().ToArray();
+            var personsWithExpiringWorkstations = dbContext.WorkstationAssignments
+                .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
+                .Select(s => s.Person).Distinct().AsNoTracking().ToArray();
+            var personsWithExpiringItems = personsWithExpiringAccess.Union(personsWithExpiringKey).Union(personsWithExpiringEquipment).Union(personsWithExpiringWorkstations);
 
-            
+            if (personsWithExpiringItems.Any())
+            {
+                foreach (var person in personsWithExpiringItems)
+                {
+                    // TODO: build new service method to handle these emails
+                    EmailService.SendExpiringMessage(person).GetAwaiter().GetResult(); //TODO: Pass param?
+                    counter++;
+                }
+            }
+            Console.WriteLine($"Done! Sent {counter}");
+
+
         }
     }
 }
