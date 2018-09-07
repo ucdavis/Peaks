@@ -16,7 +16,7 @@ namespace Keas.Core.Services
 {
     public interface IEmailService
     {
-        Task SendMessage(User user);
+        Task SendNotificationMessage(User user);
     }
 
     public class EmailService : IEmailService
@@ -30,7 +30,21 @@ namespace Keas.Core.Services
             _dbContext = dbContext;
             _emailSettings = emailSettings.Value;
         }
-        public async Task SendMessage(User user)
+
+        private async Task SendMessage(MailMessage message)
+        {
+            using (var client = new SmtpClient(_emailSettings.Host))
+            {
+                client.UseDefaultCredentials = false;
+                client.Credentials = new NetworkCredential(_emailSettings.UserName, _emailSettings.Password);
+                client.Port = _emailSettings.Port;
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.EnableSsl = true;
+
+                await client.SendMailAsync(message);
+            }
+        }
+        public async Task SendNotificationMessage(User user)
         {
             var path = Path.GetFullPath(".");
 
@@ -78,16 +92,7 @@ namespace Keas.Core.Services
             var alternate = AlternateView.CreateAlternateViewFromString(message.Body, mimeType);
             message.AlternateViews.Add(alternate);
 
-            using (var client = new SmtpClient(_emailSettings.Host))
-            {
-                client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential(_emailSettings.UserName, _emailSettings.Password);
-                client.Port = _emailSettings.Port;
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.EnableSsl = true;
-
-                client.Send(message);
-            }
+            await SendMessage(message);
         }
     }
 }

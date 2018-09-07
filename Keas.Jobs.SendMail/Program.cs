@@ -61,43 +61,42 @@ namespace Keas.Jobs.SendMail
             {
                 foreach (var user in usersWithPendingNotifications)
                 {
-                    EmailService.SendMessage(user).GetAwaiter().GetResult(); //TODO: Pass param?
+                    EmailService.SendNotificationMessage(user).GetAwaiter().GetResult(); //TODO: Pass param?
                     counter++;
                 }
             }
             Console.WriteLine($"Done! Sent {counter}");
 
 
-            // Email users with expiring items
-            counter = 0;
-            var usersWithExpiringAccess = dbContext.AccessAssignments.Where(a=> a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Select(s=> s.Person).Distinct().ToArray();
-            var usersWithExpiringKey = dbContext.KeyAssignments
-                .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
-                            (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-                .Select(s => s.Person).Distinct().ToArray();
-            var usersWithExpiringEquipment = dbContext.EquipmentAssignments
-                .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
-                            (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-                .Select(s => s.Person).Distinct().ToArray();
-            var usersWithExpiringWorkstations = dbContext.WorkstationAssignments
-                .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
-                            (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-                .Select(s => s.Person).Distinct().ToArray();
-            var usersWithExpiringItems = usersWithExpiringAccess.Union(usersWithExpiringKey).Union(usersWithExpiringEquipment).Union(usersWithExpiringWorkstations);
+            //// Email persons with expiring items, cc teammembers as needed
+            //counter = 0;
+            //var usersWithExpiringAccess = dbContext.AccessAssignments.Where(a=> a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Select(s=> s.Person).Distinct().ToArray();
+            //var usersWithExpiringKey = dbContext.KeyAssignments
+            //    .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
+            //                (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
+            //    .Select(s => s.Person).Distinct().ToArray();
+            //var usersWithExpiringEquipment = dbContext.EquipmentAssignments
+            //    .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
+            //                (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
+            //    .Select(s => s.Person).Distinct().ToArray();
+            //var usersWithExpiringWorkstations = dbContext.WorkstationAssignments
+            //    .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
+            //                (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
+            //    .Select(s => s.Person).Distinct().ToArray();
+            //var usersWithExpiringItems = usersWithExpiringAccess.Union(usersWithExpiringKey).Union(usersWithExpiringEquipment).Union(usersWithExpiringWorkstations);
             
-            if (usersWithExpiringItems.Any())
-            {
-                foreach (var user in usersWithExpiringItems)
-                {
-                    // TODO: build new service method to handle these emails
-                    //EmailService.SendMessage(user).GetAwaiter().GetResult(); //TODO: Pass param?
-                    counter++;
-                }
-            }
-            Console.WriteLine($"Done! Sent {counter}");
+            //if (usersWithExpiringItems.Any())
+            //{
+            //    foreach (var person in usersWithExpiringItems)
+            //    {
+            //        // TODO: build new service method to handle these emails
+            //        //EmailService.SendMessage(person).GetAwaiter().GetResult(); //TODO: Pass param?
+            //        counter++;
+            //    }
+            //}
+            //Console.WriteLine($"Done! Sent {counter}");
 
-
-            // Email teams with expiring items.
+            
         }
     }
 }
