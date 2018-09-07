@@ -70,19 +70,19 @@ namespace Keas.Jobs.SendMail
 
             // Email users with expiring items
             counter = 0;
-            var usersWithExpiringAccess = dbContext.AccessAssignments.Where(a=> a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Select(s=> s.Person.User).Distinct().ToArray();
+            var usersWithExpiringAccess = dbContext.AccessAssignments.Where(a=> a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Select(s=> s.Person).Distinct().ToArray();
             var usersWithExpiringKey = dbContext.KeyAssignments
                 .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
                             (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-                .Select(s => s.Person.User).Distinct().ToArray();
+                .Select(s => s.Person).Distinct().ToArray();
             var usersWithExpiringEquipment = dbContext.EquipmentAssignments
                 .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
                             (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-                .Select(s => s.Person.User).Distinct().ToArray();
+                .Select(s => s.Person).Distinct().ToArray();
             var usersWithExpiringWorkstations = dbContext.WorkstationAssignments
                 .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
                             (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-                .Select(s => s.Person.User).Distinct().ToArray();
+                .Select(s => s.Person).Distinct().ToArray();
             var usersWithExpiringItems = usersWithExpiringAccess.Union(usersWithExpiringKey).Union(usersWithExpiringEquipment).Union(usersWithExpiringWorkstations);
             
             if (usersWithExpiringItems.Any())
