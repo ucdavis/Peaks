@@ -10,7 +10,6 @@
     [UserId]    NVARCHAR (450) NULL,
     [FirstName] NVARCHAR (50)  NOT NULL,
     [LastName]  NVARCHAR (50)  NOT NULL,
-    [Name]      NVARCHAR (256) NULL,
     [Email]     NVARCHAR (256) NOT NULL,
     CONSTRAINT [PK_People] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_People_Teams_TeamId] FOREIGN KEY ([TeamId]) REFERENCES [dbo].[Teams] ([Id]) ON DELETE CASCADE,
