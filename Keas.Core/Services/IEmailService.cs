@@ -17,6 +17,7 @@ namespace Keas.Core.Services
     public interface IEmailService
     {
         Task SendNotificationMessage(User user);
+        Task SendExpiringMessage(Person person);
     }
 
     public class EmailService : IEmailService
@@ -44,6 +45,38 @@ namespace Keas.Core.Services
                 await client.SendMailAsync(message);
             }
         }
+
+        public async Task SendExpiringMessage(Person person)
+        {
+            var path = Path.GetFullPath(".");
+
+            var engine = new RazorLightEngineBuilder()
+                .UseFilesystemProject(path)
+                .UseMemoryCachingProvider()
+                .Build();
+            var expiringAccess = _dbContext.AccessAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).ToList();
+            var expiringKey = _dbContext.KeyAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).ToList();
+            var expiringEquipment = _dbContext.EquipmentAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).ToList();
+            var expiringWorkstations = _dbContext.WorkstationAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).ToList();
+            var expiringItems = ExpiringItemsEmailModel.Create(expiringAccess, expiringKey, expiringEquipment, expiringWorkstations);
+
+            if (expiringItems.KeyAssignments.Count == 0 && expiringItems.AccessAssignments.Count == 0 &&
+                expiringItems.EquipmentAssignments.Count == 0 && expiringItems.WorkstationAssignments.Count == 0)
+            {
+                return;                
+            }
+
+            var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };
+            //message.To.Add(person.Email);
+            message.To.Add("jscubbage@ucdavis.edu");
+
+            //CC team members
+
+            message.Subject = "Keas Notification";
+            message.IsBodyHtml = false;
+
+        }
+
         public async Task SendNotificationMessage(User user)
         {
             var path = Path.GetFullPath(".");
