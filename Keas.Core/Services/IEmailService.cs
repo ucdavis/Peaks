@@ -81,7 +81,7 @@ namespace Keas.Core.Services
             //message.To.Add(person.Email);
             message.To.Add("jscubbage@ucdavis.edu");
 
-            //CC team members
+            //TODO CC team members
             message.Subject = "Keas Notification";
             message.IsBodyHtml = false;
             try
@@ -94,6 +94,7 @@ namespace Keas.Core.Services
                 throw;
             }
 
+            //TODO Update each item's NextNotificationDate.
             //foreach (var notification in notifications)
             //{
             //    notification.Pending = false;
