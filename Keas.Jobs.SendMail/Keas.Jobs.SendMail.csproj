@@ -10,6 +10,11 @@
     <None Remove="EmailTemplates\_Test.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="EmailTemplates\_Expiring.cshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Include="EmailTemplates\_Notification.cshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
