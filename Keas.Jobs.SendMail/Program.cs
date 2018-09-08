@@ -3,6 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Keas.Core.Data;
+using Keas.Core.Helper;
 using Keas.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -72,17 +73,17 @@ namespace Keas.Jobs.SendMail
             counter = 0;
             var personsWithExpiringAccess = dbContext.AccessAssignments
                 .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-                .Select(s => s.Person).Distinct().AsNoTracking().ToArray();
+                .Select(s => s.Person).Include(p=> p.Team).Distinct().AsNoTracking().ToList();
             var personsWithExpiringKey = dbContext.KeyAssignments
                 .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-                .Select(s => s.Person).Distinct().AsNoTracking().ToArray();
+                .Select(s => s.Person).Include(p => p.Team).Distinct().AsNoTracking().ToList();
             var personsWithExpiringEquipment = dbContext.EquipmentAssignments
                 .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-                .Select(s => s.Person).Distinct().AsNoTracking().ToArray();
+                .Select(s => s.Person).Include(p => p.Team).Distinct().AsNoTracking().ToList();
             var personsWithExpiringWorkstations = dbContext.WorkstationAssignments
                 .Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow))
-                .Select(s => s.Person).Distinct().AsNoTracking().ToArray();
-            var personsWithExpiringItems = personsWithExpiringAccess.Union(personsWithExpiringKey).Union(personsWithExpiringEquipment).Union(personsWithExpiringWorkstations);
+                .Select(s => s.Person).Include(p => p.Team).Distinct().AsNoTracking().ToList();
+            var personsWithExpiringItems = personsWithExpiringAccess.Union(personsWithExpiringKey, new PersonComparer()).Union(personsWithExpiringEquipment, new PersonComparer()).Union(personsWithExpiringWorkstations, new PersonComparer());
 
             if (personsWithExpiringItems.Any())
             {
