@@ -9,6 +9,7 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RazorLight;
 
@@ -54,14 +55,24 @@ namespace Keas.Core.Services
                 .UseFilesystemProject(path)
                 .UseMemoryCachingProvider()
                 .Build();
-            var expiringAccess = _dbContext.AccessAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).ToList();
-            var expiringKey = _dbContext.KeyAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).ToList();
-            var expiringEquipment = _dbContext.EquipmentAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).ToList();
-            var expiringWorkstations = _dbContext.WorkstationAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).ToList();
-            var expiringItems = ExpiringItemsEmailModel.Create(expiringAccess, expiringKey, expiringEquipment, expiringWorkstations);
+            //TODO Figure out Access!
+            //var expiringAccess = _dbContext.AccessAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).ToList();
 
-            if (expiringItems.KeyAssignments.Count == 0 && expiringItems.AccessAssignments.Count == 0 &&
-                expiringItems.EquipmentAssignments.Count == 0 && expiringItems.WorkstationAssignments.Count == 0)
+            var expiringKey = _dbContext.Serials.Where(a =>
+                    a.Assignment.Person == person && a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
+                    (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow)).Include(k=> k.Assignment).Include(k=> k.Key).AsNoTracking();
+            var expiringEquipment = _dbContext.Equipment.Where(a =>
+                    a.Assignment.Person == person && a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
+                    (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow))
+                .Include(e => e.Assignment).AsNoTracking();
+            var expiringWorkstations = _dbContext.Workstations.Where(a =>
+                    a.Assignment.Person == person && a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
+                    (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow))
+                .Include(w => w.Assignment).AsNoTracking();
+
+            var expiringItems = ExpiringItemsEmailModel.Create(expiringKey, expiringEquipment, expiringWorkstations, person);
+            
+            if (!expiringItems.Keys.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
             {
                 return;                
             }
@@ -71,9 +82,32 @@ namespace Keas.Core.Services
             message.To.Add("jscubbage@ucdavis.edu");
 
             //CC team members
-
             message.Subject = "Keas Notification";
             message.IsBodyHtml = false;
+            try
+            {
+                message.Body = await engine.CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                throw;
+            }
+
+            //foreach (var notification in notifications)
+            //{
+            //    notification.Pending = false;
+            //    notification.DateTimeSent = DateTime.UtcNow;
+            //    _dbContext.Notifications.Update(notification);
+            //}
+            //await _dbContext.SaveChangesAsync();
+
+            var mimeType = new System.Net.Mime.ContentType("text/html");
+
+            var alternate = AlternateView.CreateAlternateViewFromString(message.Body, mimeType);
+            message.AlternateViews.Add(alternate);
+
+            await SendMessage(message);
 
         }
 
