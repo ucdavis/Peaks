@@ -84,17 +84,47 @@ namespace Keas.Core.Services
             //TODO CC team members
             if (expiringItems.Keys.Any())
             {
-                //CC keymaster & dA
+                var roles = await _dbContext.Roles
+                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
+                var users = await GetUsersInRoles(roles, person.TeamId);
+                foreach (var user in users)
+                {
+#if DEBUG
+                    Console.WriteLine(user.Email);
+#else
+                    message.CC.Add(user.Email);
+#endif
+                }
             }
 
             if (expiringItems.Equipment.Any())
             {
-                //CC EquipmentMaster & DA
+                var roles = await _dbContext.Roles
+                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
+                var users = await GetUsersInRoles(roles, person.TeamId);
+                foreach (var user in users)
+                {
+#if DEBUG
+                    Console.WriteLine(user.Email);
+#else
+                    message.CC.Add(user.Email);
+#endif
+                }
             }
 
             if (expiringItems.Workstations.Any())
             {
-                //CC SpaceMaster & DA
+                var roles = await _dbContext.Roles
+                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
+                var users = await GetUsersInRoles(roles, person.TeamId);
+                foreach (var user in users)
+                {
+#if DEBUG
+                    Console.WriteLine(user.Email);
+#else
+                    message.CC.Add(user.Email);
+#endif
+                }
             }
 
             message.Subject = "Keas Notification";
@@ -176,6 +206,13 @@ namespace Keas.Core.Services
             message.AlternateViews.Add(alternate);
 
             await SendMessage(message);
+        }
+
+        public async Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId)
+        {
+            var users = await _dbContext.TeamPermissions.Where(x => x.TeamId == teamId && roles.Any(r => r.Id == x.RoleId)).Select(tp => tp.User).Distinct().ToListAsync();
+
+            return users;
         }
     }
 }
