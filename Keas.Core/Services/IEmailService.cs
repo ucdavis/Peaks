@@ -55,9 +55,8 @@ namespace Keas.Core.Services
                 .UseFilesystemProject(path)
                 .UseMemoryCachingProvider()
                 .Build();
-            //TODO Figure out Access!
-            //var expiringAccess = _dbContext.AccessAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).ToList();
-
+            
+            var expiringAccess = _dbContext.AccessAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Include(a=> a.Access).AsNoTracking();
             var expiringKey = _dbContext.Serials.Where(a =>
                     a.Assignment.Person == person && a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
                     (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow)).Include(k=> k.Assignment).Include(k=> k.Key).AsNoTracking();
@@ -70,9 +69,9 @@ namespace Keas.Core.Services
                     (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow))
                 .Include(w => w.Assignment).AsNoTracking();
 
-            var expiringItems = ExpiringItemsEmailModel.Create(expiringKey, expiringEquipment, expiringWorkstations, person);
+            var expiringItems = ExpiringItemsEmailModel.Create(expiringAccess, expiringKey, expiringEquipment, expiringWorkstations, person);
             
-            if (!expiringItems.Keys.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
+            if (!expiringItems.AccessAssignments.Any() && !expiringItems.Keys.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
             {
                 return;                
             }
@@ -81,7 +80,21 @@ namespace Keas.Core.Services
             //message.To.Add(person.Email);
             message.To.Add("jscubbage@ucdavis.edu");
 
-            //TODO CC team members
+            if (expiringItems.AccessAssignments.Any())
+            {
+                var roles = await _dbContext.Roles
+                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
+                var users = await GetUsersInRoles(roles, person.TeamId);
+                foreach (var user in users)
+                {
+#if DEBUG
+                    Console.WriteLine(user.Email);
+#else
+                    message.CC.Add(user.Email);
+#endif
+                }
+            }
+
             if (expiringItems.Keys.Any())
             {
                 var roles = await _dbContext.Roles
