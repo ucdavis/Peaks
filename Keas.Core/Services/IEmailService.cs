@@ -75,7 +75,7 @@ namespace Keas.Core.Services
             {
                 return;                
             }
-
+           
             var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };
             //message.To.Add(person.Email);
             message.To.Add("jscubbage@ucdavis.edu");
