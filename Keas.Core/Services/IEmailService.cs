@@ -82,6 +82,21 @@ namespace Keas.Core.Services
             message.To.Add("jscubbage@ucdavis.edu");
 
             //TODO CC team members
+            if (expiringItems.Keys.Any())
+            {
+                //CC keymaster & dA
+            }
+
+            if (expiringItems.Equipment.Any())
+            {
+                //CC EquipmentMaster & DA
+            }
+
+            if (expiringItems.Workstations.Any())
+            {
+                //CC SpaceMaster & DA
+            }
+
             message.Subject = "Keas Notification";
             message.IsBodyHtml = false;
             try
