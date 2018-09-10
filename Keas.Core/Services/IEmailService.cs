@@ -139,14 +139,58 @@ namespace Keas.Core.Services
                 throw;
             }
 
-            //TODO Update each item's NextNotificationDate.
-            //foreach (var notification in notifications)
-            //{
-            //    notification.Pending = false;
-            //    notification.DateTimeSent = DateTime.UtcNow;
-            //    _dbContext.Notifications.Update(notification);
-            //}
-            //await _dbContext.SaveChangesAsync();
+            foreach (var key in expiringItems.Keys)
+            {
+                if (key.Assignment.NextNotificationDate == null || key.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
+                {
+                    key.Assignment.NextNotificationDate = key.Assignment.ExpiresAt.AddDays(-7);
+                }
+                else if (key.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
+                {
+                    key.Assignment.NextNotificationDate = key.Assignment.ExpiresAt.AddDays(-1);
+                }
+                else
+                {
+                    key.Assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
+                }
+                _dbContext.KeyAssignments.Update(key.Assignment);
+            }
+
+            foreach (var equipment in expiringItems.Equipment)
+            {
+                if (equipment.Assignment.NextNotificationDate == null || equipment.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
+                {
+                    equipment.Assignment.NextNotificationDate = equipment.Assignment.ExpiresAt.AddDays(-7);
+                }
+                else if (equipment.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
+                {
+                    equipment.Assignment.NextNotificationDate = equipment.Assignment.ExpiresAt.AddDays(-1);
+                }
+                else
+                {
+                    equipment.Assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
+                }
+                _dbContext.EquipmentAssignments.Update(equipment.Assignment);
+            }
+
+            foreach (var workstation in expiringItems.Workstations)
+            {
+                if (workstation.Assignment.NextNotificationDate == null || workstation.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
+                {
+                    workstation.Assignment.NextNotificationDate = workstation.Assignment.ExpiresAt.AddDays(-7);
+                }
+                else if (workstation.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
+                {
+                    workstation.Assignment.NextNotificationDate = workstation.Assignment.ExpiresAt.AddDays(-1);
+                }
+                else
+                {
+                    workstation.Assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
+                }
+                _dbContext.WorkstationAssignments.Update(workstation.Assignment);
+            }
+
+            await _dbContext.SaveChangesAsync();
 
             var mimeType = new System.Net.Mime.ContentType("text/html");
 
