@@ -49,10 +49,19 @@ body {
 header {
   background-color:white;
   padding:8px 0px;
+  .logowrapper {
+    margin-left: 10px;
+    @include breakpoint(xsm) {
+      text-align:center;
+      margin-left:0px;
+      margin-bottom:8px;
+    }
+  }
   .teamwrapper {
     text-align:right;
-    @include breakpoint(sm) {
-
+    @include breakpoint(xsm) {
+      text-align:center;
+      margin-top:.8rem;
     }
   }
   // .teamwrapper {
