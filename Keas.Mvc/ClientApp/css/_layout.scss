@@ -49,7 +49,12 @@ body {
 header {
   background-color:white;
   padding:8px 0px;
-  
+  .teamwrapper {
+    text-align:right;
+    @include breakpoint(sm) {
+
+    }
+  }
   // .teamwrapper {
   //   border:1px solid #c7c8cc;
   //   padding:.6rem 1.2rem;
