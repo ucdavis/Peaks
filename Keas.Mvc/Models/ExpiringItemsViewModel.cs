@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Data;
 using Keas.Core.Domain;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Keas.Mvc.Models
 {
@@ -12,16 +15,28 @@ namespace Keas.Mvc.Models
         public IQueryable<Serial> Keys { get; set; }
         public IQueryable<Equipment> Equipment { get; set; }
         public IQueryable<Workstation> Workstations { get; set; }
+        public DateTime ExpiresBefore { get; set; }
        
 
-        public static ExpiringItemsViewModel Create(IQueryable<AccessAssignment> access, IQueryable<Serial> keys, IQueryable<Equipment> equipment, IQueryable<Workstation> workstations)
+        public static ExpiringItemsViewModel Create(ApplicationDbContext context, DateTime expiresBefore, string teamName)
         {
+            // AccessAssignement needs db update to link back to Access.
+            //var expiringAccess = context.AccessAssignments.Where(a => a.ExpiresAt <= expiresBefore).Include(a => a.Access).AsNoTracking();
+            var expiringKey = context.Serials.Where(a =>
+                a.Key.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore)
+                .Include(k => k.Assignment).Include(k => k.Key).AsNoTracking();
+            var expiringEquipment = context.Equipment.Where(a =>
+                  a.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore)
+                .Include(e => e.Assignment).AsNoTracking();
+            var expiringWorkstations = context.Workstations.Where(a =>
+                    a.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore)
+                .Include(w => w.Assignment).AsNoTracking();
             var viewModel = new ExpiringItemsViewModel
             {
-                AccessAssignments = access,
-                Keys = keys,
-                Equipment = equipment,
-                Workstations = workstations
+                Keys = expiringKey,
+                Equipment = expiringEquipment,
+                Workstations = expiringWorkstations,
+                ExpiresBefore = expiresBefore
             };
             return viewModel;
         }

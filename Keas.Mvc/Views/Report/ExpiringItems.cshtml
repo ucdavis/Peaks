@@ -1,0 +1,60 @@
+﻿@model Keas.Mvc.Models.ExpiringItemsViewModel
+
+@{
+    ViewData["Title"] = "ExpiringItems";
+}
+
+<h2>ExpiringItems</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Item Name
+            </th>
+            <th>
+                Expiration
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Keys) {
+        <tr>
+            <td>
+                @Html.DisplayFor(a => item.Number)
+            </td>
+            <td>
+                @Html.DisplayFor(a => item.Assignment.ExpiresAt)
+            </td>
+            
+        </tr>
+}
+@foreach (var item in Model.Equipment) {
+        <tr>
+            <td>
+                @Html.DisplayFor(a => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(a => item.Assignment.ExpiresAt)
+            </td>
+            
+        </tr>
+}
+@foreach (var item in Model.Workstations) {
+        <tr>
+            <td>
+                @Html.DisplayFor(a => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(a => item.Assignment.ExpiresAt)
+            </td>
+            
+        </tr>
+}
+
+    </tbody>
+</table>
