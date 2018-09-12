@@ -1,15 +1,22 @@
 ﻿@model Keas.Mvc.Models.ExpiringItemsViewModel
 
 @{
-    ViewData["Title"] = "ExpiringItems";
+    ViewData["Title"] = "Expiring Items";
 }
+
+@section Scripts {
+    <script type="text/javascript">
+        $('.datepicker').datepicker();
+    </script>
+}
+
 
 <h2>Expiring Items</h2>
 <form asp-action="ExpiringItems">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="ExpiresBefore" class="control-label"></label>
-        <input asp-for="ExpiresBefore" class="form-control" />
+        <input asp-for="ExpiresBefore" class="form-control datepiceker" />
         <span asp-validation-for="ExpiresBefore" class="text-danger"></span>
     </div>
     <div class="form-group">

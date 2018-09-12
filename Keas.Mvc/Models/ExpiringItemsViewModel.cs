@@ -17,6 +17,7 @@ namespace Keas.Mvc.Models
         public IQueryable<Equipment> Equipment { get; set; }
         public IQueryable<Workstation> Workstations { get; set; }
 
+        [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         public DateTime ExpiresBefore { get; set; }
        
