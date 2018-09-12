@@ -26,6 +26,9 @@
                 Item Name
             </th>
             <th>
+                Assigned To
+            </th>
+            <th>
                 Expiration
             </th>
             <th></th>
@@ -38,6 +41,9 @@
                     <td>Key</td>
                     <td>
                         @Html.DisplayFor(a => item.Number)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a=> item.Assignment.Person.Name)
                     </td>
                     <td>
                         @Html.DisplayFor(a => item.Assignment.ExpiresAt)
@@ -53,6 +59,9 @@
                         @Html.DisplayFor(a => item.Name)
                     </td>
                     <td>
+                        @Html.DisplayFor(a=> item.Assignment.Person.Name)
+                    </td>
+                    <td>
                         @Html.DisplayFor(a => item.Assignment.ExpiresAt)
                     </td>
 
@@ -64,6 +73,9 @@
                     <td>Workstation</td>
                     <td>
                         @Html.DisplayFor(a => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a=> item.Assignment.Person.Name)
                     </td>
                     <td>
                         @Html.DisplayFor(a => item.Assignment.ExpiresAt)

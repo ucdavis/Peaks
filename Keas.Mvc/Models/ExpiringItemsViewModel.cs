@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
@@ -15,6 +16,8 @@ namespace Keas.Mvc.Models
         public IQueryable<Serial> Keys { get; set; }
         public IQueryable<Equipment> Equipment { get; set; }
         public IQueryable<Workstation> Workstations { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         public DateTime ExpiresBefore { get; set; }
        
 
@@ -24,13 +27,13 @@ namespace Keas.Mvc.Models
             //var expiringAccess = context.AccessAssignments.Where(a => a.ExpiresAt <= expiresBefore).Include(a => a.Access).AsNoTracking();
             var expiringKey = context.Serials.Where(a =>
                 a.Key.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore)
-                .Include(k => k.Assignment).Include(k => k.Key).AsNoTracking();
+                .Include(k => k.Assignment).ThenInclude(a=> a.Person).Include(k => k.Key).AsNoTracking();
             var expiringEquipment = context.Equipment.Where(a =>
                   a.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore)
-                .Include(e => e.Assignment).AsNoTracking();
+                .Include(e => e.Assignment).ThenInclude(a=> a.Person).AsNoTracking();
             var expiringWorkstations = context.Workstations.Where(a =>
                     a.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore)
-                .Include(w => w.Assignment).AsNoTracking();
+                .Include(w => w.Assignment).ThenInclude(a=> a.Person).AsNoTracking();
             var viewModel = new ExpiringItemsViewModel
             {
                 Keys = expiringKey,

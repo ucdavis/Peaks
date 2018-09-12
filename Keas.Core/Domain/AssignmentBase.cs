@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Keas.Core.Domain
 {
@@ -22,6 +23,7 @@ namespace Keas.Core.Domain
         
         public DateTime? ApprovedAt { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
         public DateTime ExpiresAt { get; set; }
 
         public bool IsConfirmed { get; set; }
