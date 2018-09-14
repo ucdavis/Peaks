@@ -20,6 +20,10 @@
         <span asp-validation-for="ExpiresBefore" class="text-danger"></span>
     </div>
     <div class="form-group">
+        <label asp-for="ShowInactive" class="control-label"></label>
+        <input asp-for="ShowInactive" class="form-control"/>
+    </div>
+    <div class="form-group">
         <input type="submit" value="Refresh Report" class="btn btn-default" />
     </div>
 </form>
@@ -46,8 +50,7 @@
             {
                 <tr>
                     <td>Key</td>
-                    <td>
-                        @Html.DisplayFor(a => item.Number)
+                    <td>@Html.DisplayFor(a=> item.Key.Name) @Html.DisplayFor(a=> item.Key.Number)-@Html.DisplayFor(a => item.Number) 
                     </td>
                     <td>
                         @Html.DisplayFor(a=> item.Assignment.Person.Name)
