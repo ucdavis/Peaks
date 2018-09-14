@@ -5,8 +5,16 @@
 }
 
 @section Scripts {
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.10.5/jquery.dataTables.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.js"></script>
+    <link rel="Stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.10.5/css/jquery.dataTables.css" />
+    
+    <link rel="Stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/redmond/jquery-ui.css" />
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.js"></script>
+    
     <script type="text/javascript">
         $('.datepicker').datepicker();
+        $('.dataTable').DataTable();
     </script>
 }
 
@@ -27,7 +35,7 @@
         <input type="submit" value="Refresh Report" class="btn btn-default" />
     </div>
 </form>
-    <table class="table">
+    <table id="dtExpiringItems" class="table dataTable">
         <thead>
         <tr>
             <th>
@@ -42,7 +50,6 @@
             <th>
                 Expiration
             </th>
-            <th></th>
         </tr>
         </thead>
         <tbody>
