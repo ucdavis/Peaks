@@ -19,13 +19,13 @@ namespace Keas.Mvc.Controllers
             this._context = context;
         }
 
-        public async Task<ActionResult> ExpiringItems (bool showInactive = false, DateTime? expiresBefore = null)
+        public async Task<ActionResult> ExpiringItems (bool showInactive = false, DateTime? expiresBefore = null, string showType = "All")
         {
             if (expiresBefore == null)
             {
                 expiresBefore = DateTime.Now.AddDays(30);
             }
-            var model = ExpiringItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive);
+            var model = ExpiringItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
             return View(model);
         }
     }

@@ -28,6 +28,11 @@
         <span asp-validation-for="ExpiresBefore" class="text-danger"></span>
     </div>
     <div class="form-group">
+        <label asp-for="ShowType" class="control-label"></label>
+        <select asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))">
+        </select>
+    </div>
+    <div class="form-group">
         <label asp-for="ShowInactive" class="control-label"></label>
         <input asp-for="ShowInactive" class="form-control"/>
     </div>
@@ -50,6 +55,9 @@
             <th>
                 Expiration
             </th>
+            <th>
+                Current?
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -65,7 +73,9 @@
                     <td>
                         @Html.DisplayFor(a => item.Assignment.ExpiresAt)
                     </td>
-
+                    <td>
+                        @Html.DisplayFor(a=> item.Key.Active)
+                    </td>
                 </tr>
             }
             @foreach (var item in Model.Equipment)
@@ -81,7 +91,9 @@
                     <td>
                         @Html.DisplayFor(a => item.Assignment.ExpiresAt)
                     </td>
-
+                    <td>
+                        @Html.DisplayFor(a=> item.Active)
+                    </td>
                 </tr>
             }
             @foreach (var item in Model.Workstations)
@@ -97,7 +109,9 @@
                     <td>
                         @Html.DisplayFor(a => item.Assignment.ExpiresAt)
                     </td>
-
+                    <td>
+                        @Html.DisplayFor(a => item.Active)
+                    </td>
                 </tr>
             }
         </tbody>
