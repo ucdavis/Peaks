@@ -12,10 +12,10 @@ namespace Keas.Mvc.Models
 {
     public class ExpiringItemsViewModel
     {
-        public IQueryable<AccessAssignment> AccessAssignments { get; set; }
-        public IQueryable<Serial> Keys { get; set; }
-        public IQueryable<Equipment> Equipment { get; set; }
-        public IQueryable<Workstation> Workstations { get; set; }
+        public AccessAssignment[] AccessAssignments { get; set; }
+        public Serial[] Keys { get; set; }
+        public Equipment[] Equipment { get; set; }
+        public Workstation[] Workstations { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
@@ -29,22 +29,22 @@ namespace Keas.Mvc.Models
         public String ShowType { get; set; }
        
 
-        public static ExpiringItemsViewModel Create(ApplicationDbContext context, DateTime expiresBefore, string teamName, bool showInactive, string showType)
+        public static async Task<ExpiringItemsViewModel> Create(ApplicationDbContext context, DateTime expiresBefore, string teamName, bool showInactive, string showType)
         {
             // AccessAssignement needs db update to link back to Access.
             //var expiringAccess = context.AccessAssignments.Where(a => a.ExpiresAt <= expiresBefore).Include(a => a.Access).AsNoTracking();
             //var expiringAccess = context.Access.Where(a => (showType == "All" || showType == "Access") &&
             //                                             a.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Access.Active || a.Access.Active == !showInactive))
             //    .Include(a => a.Assignment).ThenInclude(a => a.Person).AsNoTracking();
-            var expiringKey = context.Serials.Where(a => (showType == "All" || showType == "Key") &&
+            var expiringKey = await context.Serials.Where(a => (showType == "All" || showType == "Key") &&
                 a.Key.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Key.Active || a.Key.Active == !showInactive))
-                .Include(k => k.Assignment).ThenInclude(a=> a.Person).Include(k => k.Key).AsNoTracking();
-            var expiringEquipment = context.Equipment.Where(a => (showType == "All" || showType == "Equipment") &&
+                .Include(k => k.Assignment).ThenInclude(a=> a.Person).Include(k => k.Key).AsNoTracking().ToArrayAsync();
+            var expiringEquipment = await context.Equipment.Where(a => (showType == "All" || showType == "Equipment") &&
                   a.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Active || a.Active == !showInactive))
-                .Include(e => e.Assignment).ThenInclude(a=> a.Person).AsNoTracking();
-            var expiringWorkstations = context.Workstations.Where(a => (showType == "All" || showType == "Workstation") &&
+                .Include(e => e.Assignment).ThenInclude(a=> a.Person).AsNoTracking().ToArrayAsync();
+            var expiringWorkstations = await context.Workstations.Where(a => (showType == "All" || showType == "Workstation") &&
                     a.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Active || a.Active == !showInactive))
-                .Include(w => w.Assignment).ThenInclude(a=> a.Person).AsNoTracking();
+                .Include(w => w.Assignment).ThenInclude(a=> a.Person).AsNoTracking().ToArrayAsync();
 
             var itemList = new List<string>(new string[] {"All", "Access", "Equipment", "Key", "Workstation"});
             var viewModel = new ExpiringItemsViewModel
