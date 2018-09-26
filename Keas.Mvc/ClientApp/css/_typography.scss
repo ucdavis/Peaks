@@ -1,10 +1,10 @@
 // baseline typography
 html {
-    font-size: 10px;
+    font-size: 8px;
     -webkit-font-smoothing: antialiased;
     text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
     line-height: 1.5;
-    @include breakpoint(md) {
+    @include breakpoint(sm) {
       font-size:10px;
     }
 }
@@ -24,10 +24,10 @@ a {
     }
   }
   footer p & {
-    color:rgba(255,255,255,0.95);
+    color:$primary-color;
     text-decoration: none;
     &:hover {
-      color:#fff;
+      color:lighten($primary-color,5);
     }
   }
 }
@@ -74,9 +74,8 @@ p, span, div {
     margin-top:0px;
   }
   footer & {
-    color:rgba(255,255,255,.95);
+    color:$secondary-font;
     font-size:1.4rem;
-    font-family: $sans-bold;
   }
   &.topic-title  {
     font-size: 1.8rem;
@@ -95,7 +94,7 @@ p, span, div {
   &.subtitle {
     font-size:2rem;
     font-family: $sans-bold;
-    color:$secondary-font;
+    margin-bottom:0px;
   }
 
 }

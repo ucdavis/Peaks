@@ -29,17 +29,18 @@ export default class KeyDetails extends React.Component<IProps, {}> {
         const key = this.props.selectedKey;
         return (
             <div>
-                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg">
-                    <ModalHeader>Details for {key.name}</ModalHeader>
+                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg" className="keys-color">
+
+                  <div className="modal-header row justify-content-between">
+                    <h2>Details for {key.name}</h2>
+                    <Button color="link" onClick={this.props.closeModal}>
+                    <i className="fas fa-times fa-lg"/>
+                    </Button>
+                  </div>
                     <ModalBody>
                         <KeyEditValues selectedKey={key} disableEditing={true} />
                         <HistoryContainer controller="keys" id={key.id} />
                     </ModalBody>
-                    <ModalFooter>
-                        <Button color="secondary" onClick={this.props.closeModal}>
-                            Close
-                        </Button>
-                    </ModalFooter>
                 </Modal>
             </div>
         );

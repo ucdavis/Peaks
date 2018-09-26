@@ -4,10 +4,15 @@
     ViewData["Title"] = "Add Member to Role";
 }
 <div class="card">
+  <div class="card-head">
+    <div class="row justify-content-between">
+      <h2>Add Member to Role</h2>
+      <a class="btn btn-link" asp-action="RoledMembers"><i class="fas fa-arrow-left fa-xs"/></i> Back to Members with Roles</a>
+    </div>
+  </div>
   <div class="card-content">
-<h2>Add Member to Role</h2>
 
-<hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="AddMemberRole">
@@ -29,9 +34,6 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="RoledMembers">Back to Members with Roles</a>
-</div>
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

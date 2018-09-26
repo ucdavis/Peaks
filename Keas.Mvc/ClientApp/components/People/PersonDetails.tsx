@@ -52,21 +52,15 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                         <EquipmentContainer person={this.props.selectedPerson}
                             assetInUseUpdated={this.props.inUseUpdated}
                             assetEdited={this.props.edited}/>
-                        <AccessContainer person={this.props.selectedPerson} 
+                        <AccessContainer person={this.props.selectedPerson}
                             assetInUseUpdated={this.props.inUseUpdated}
                             assetEdited={this.props.edited}/>
-                        <WorkstationContainer 
-                            person={this.props.selectedPerson} 
+                        <WorkstationContainer
+                            person={this.props.selectedPerson}
                             tags={this.props.tags}
                             assetInUseUpdated={this.props.inUseUpdated}
                             assetEdited={this.props.edited}/>
                         <HistoryContainer controller="people" id={this.props.selectedPerson.id} />
-                </div>
-                <hr/>
-                <div>
-                    <Button color="secondary" onClick={this.props.goBack}>
-                        <i className="fas fa-arrow-left fa-xs"/> Return to Table
-                    </Button>
                 </div>
             </div>
 

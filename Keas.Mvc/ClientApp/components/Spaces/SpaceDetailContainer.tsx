@@ -10,14 +10,17 @@ interface IProps {
 export default class SpacesDetailContainer extends React.Component<IProps, {}> {
   public render() {
     return (
-      <div className="card">
-        <div className="card-body">
-          <h4 className="card-title">{this.props.space.roomNumber} {this.props.space.bldgName}</h4>
+      <div>
+        <div>
+          <h2 className="card-title">{this.props.space.roomNumber} {this.props.space.bldgName}</h2>
           <div className="card-text">
             {this.props.space.roomName && <div>{this.props.space.roomName}</div>}
           </div>
         </div>
+        <hr/>
+        <br/>
       </div>
+
     );
   }
 }

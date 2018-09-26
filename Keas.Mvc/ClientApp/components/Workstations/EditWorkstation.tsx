@@ -59,8 +59,13 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
       return null;
     }
     return (
-      <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
-        <ModalHeader>Edit Workstation</ModalHeader>
+      <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg" className="spaces-color">
+        <div className="modal-header row justify-content-between">
+          <h2>Edit Workstation</h2>
+          <Button color="link" onClick={this._closeModal}>
+          <i className="fas fa-times fa-lg"/>
+          </Button>
+        </div>
         <ModalBody>
           <div className="container-fluid">
             <form>
@@ -81,9 +86,7 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
           >
             Update Workstation
           </Button>{" "}
-          <Button color="secondary" onClick={this._closeModal}>
-            Close
-          </Button>
+        
         </ModalFooter>
       </Modal>
     );
