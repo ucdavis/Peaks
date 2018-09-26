@@ -8,7 +8,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AspNetCore.Security.CAS" Version="2.0.1" />
-    <PackageReference Include="Bootstrap.Datepicker" Version="1.8.0" />
     <PackageReference Include="ietws" Version="0.1.7" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.5" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" />
