@@ -41,9 +41,16 @@ namespace Keas.Mvc
             services.AddSingleton<IIdentityService, IdentityService>();
             services.AddScoped<ISecurityService, SecurityService>();
 
-            
+
             // setup entity framework
-            services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));
+            if (Configuration.GetSection("Dev:UseSql").Value == "Yes")
+            {
+                services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            }
+            else
+            {
+                services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));
+            }
 
             // add openID connect auth backed by a cookie signin scheme
             services.AddAuthentication(options =>
@@ -125,7 +132,9 @@ namespace Keas.Mvc
             }
             else
             {
-                app.UseExceptionHandler("/Error/Index");
+                // TODO: don't use dev exception
+                app.UseDeveloperExceptionPage();
+                // app.UseExceptionHandler("/Error/Index");
                 
             }
             app.UseStatusCodePages("text/plain", "Status code page, status code: {0}");

@@ -10,7 +10,7 @@ import {
     ModalHeader,
 } from "reactstrap";
 import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
-import AssignPerson from "../Biographical/AssignPerson";
+import AssignPerson from "../People/AssignPerson";
 import HistoryContainer from "../History/HistoryContainer";
 import SearchWorkstations from "./SearchWorkstations";
 import WorkstationEditValues from "./WorkstationEditValues";

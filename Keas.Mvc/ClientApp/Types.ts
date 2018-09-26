@@ -27,16 +27,25 @@ export interface IRouteProps {
 }
 
 export interface IUser {
+  firstName: string;
+  lastName: string;
   name: string;
   email: string;
+  id: string;
+  iam: string;
 }
 
 export interface IPerson {
+  active?: boolean;
   id: number;
-  userid: number;
+  userId: string;
   teamId: number;
-  user: IUser;
+  user?: IUser;
   tags: string;
+  firstName: string;
+  lastName: string;
+  name: string;
+  email: string;
 }
 
 export interface IPersonInfo {

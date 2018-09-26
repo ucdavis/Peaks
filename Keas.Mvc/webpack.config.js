@@ -1,5 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const CheckerPlugin = require("awesome-typescript-loader").CheckerPlugin;
 const bundleOutputDir = "./wwwroot/dist";
@@ -24,8 +25,13 @@ module.exports = env => {
         vendor: [
           "event-source-polyfill",
           "isomorphic-fetch",
+          "moment",
           "react",
+          "react-bootstrap-typeahead",
+          "react-datepicker",
           "react-dom",
+          "react-router-dom",
+          "react-table",
           "reactstrap"
         ]
       },
@@ -75,7 +81,7 @@ module.exports = env => {
             ]
           : [
               // Plugins that apply in production builds only
-              new webpack.optimize.UglifyJsPlugin(),
+              new UglifyJsPlugin(),
               new ExtractTextPlugin({ filename: '[name].css', allChunks: true })
             ]
       )

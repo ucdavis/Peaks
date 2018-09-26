@@ -19,7 +19,7 @@ export default class KeyListItem extends React.Component<IProps, {}> {
           <tr>
             <td>{this.props.keyEntity.serialNumber}</td>
             <td>{this.props.keyEntity.name}</td>
-            <td>{hasAssignment ? this.props.keyEntity.assignment.person.user.name : ""}</td>
+            <td>{hasAssignment ? this.props.keyEntity.assignment.person.name : ""}</td>
             <td>
               {hasAssignment ? this.props.keyEntity.assignment.expiresAt : ""}
             </td>

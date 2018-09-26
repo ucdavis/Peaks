@@ -13,7 +13,7 @@ import {
 import * as moment from "moment";
 import DatePicker from "react-datepicker";
 import { AppContext, IAccess, IAccessAssignment, IPerson } from "../../Types";
-import AssignPerson from "../Biographical/AssignPerson";
+import AssignPerson from "../People/AssignPerson";
 import AccessEditValues from "./AccessEditValues";
 import SearchAccess from "./SearchAccess";
 

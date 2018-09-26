@@ -23,20 +23,28 @@ namespace Keas.Mvc.Controllers
         }
 
         public async Task<IActionResult> MyStuff()
-        {
+        {   
             var person = await _securityService.GetPerson(Team);
+            if(person == null){
+                 Message = "You are not yet added to the system.";
+                return RedirectToAction("NoAccess","Home");
+            }
             var viewmodel = await MyStuffListModel.Create(_context, person);
             return View(viewmodel);
         }
 
         public async Task<IActionResult> Confirm()
-        {
+        {           
             var person = await _securityService.GetPerson(Team);
+            if(person == null){
+                 Message = "You are not yet added to the system.";
+                return RedirectToAction("NoAccess","Home");
+            }
             var viewModel = await ConfirmListModel.Create(_context,person);
             if (viewModel.Equipment.Count == 0 && viewModel.Serials.Count==0 && viewModel.Workstations.Count==0)
             {
                 Message = "You have no pending items to accept";
-                RedirectToAction(nameof(MyStuff));
+                return RedirectToAction(nameof(MyStuff));
             }
 
             return View(viewModel);
@@ -100,7 +108,7 @@ namespace Keas.Mvc.Controllers
             if (viewModel.Equipment.Count == 0 && viewModel.Serials.Count == 0)
             {
                 Message = "You have no pending items to accept";
-                RedirectToAction(nameof(MyStuff));
+                return RedirectToAction(nameof(MyStuff));
             }
 
             foreach (var serial in viewModel.Serials)

@@ -1,3 +1,7 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/aaq4h64crg106u5m/branch/master?svg=true)](https://ci.appveyor.com/project/UCNETAdmin/keas/branch/master)
+
+[![forthebadge](http://forthebadge.com/images/badges/uses-html.svg)](http://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/contains-technical-debt.svg)](https://forthebadge.com)
 # Keas
 
 **K**eys

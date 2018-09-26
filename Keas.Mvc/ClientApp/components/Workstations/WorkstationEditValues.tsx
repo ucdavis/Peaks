@@ -39,7 +39,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                     <input type="text"
                         className="form-control"
                         disabled={true}
-                        value={this.props.selectedWorkstation.assignment.person.user.name}
+                        value={this.props.selectedWorkstation.assignment.person.name}
                         />
                 </div>
                 <div className="form-group">

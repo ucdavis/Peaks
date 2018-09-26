@@ -7,7 +7,13 @@
 
 @Html.AntiForgeryToken()
 
-@section scripts {
+@section  Styles {
+    <environment names="Staging,Production">
+        <link rel="stylesheet" href="~/dist/asset.css" asp-append-version="true" />
+    </environment>
+}
+
+@section Scripts {
     <script>
         window.App = {};
         window.App.teamData = @Json.Serialize(Model.Team);
@@ -17,4 +23,5 @@
 
     <script src="~/dist/vendor.js" asp-append-version="true"></script>
     <script src="~/dist/asset.js" asp-append-version="true"></script>
+    
 }
