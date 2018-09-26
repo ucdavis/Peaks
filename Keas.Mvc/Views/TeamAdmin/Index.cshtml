@@ -4,30 +4,30 @@
     ViewData["Title"] = "Index";
 }
 <div class="card">
+  <div class="card-head">
+    <div class="row justify-content-between">
+      <h2>@Model.Name</h2>
+      <div>
+          <a class="btn btn-link" asp-action="Members">Team members</a> |
+          <a class="btn btn-link" asp-action="AddFISOrg">Add New Org Code</a> |
+          <a class="btn btn-link" asp-action="RoledMembers">View members with roles</a>
+      </div>
+    </div>
+  </div>
   <div class="card-content">
-<h2>@Model.Name</h2>
+
 
 <div>
-    <h4>Team</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt>FIS Orgs</dt>
+    <p><b>@Html.DisplayNameFor(model => model.Name)</b></p>
+
+          <p>@Html.DisplayFor(model => model.Name)</p>
+
+        <p>FIS Orgs</p>
         @foreach (var org in Model.FISOrgs)
         {
-            <dd>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><i class="fas fa-trash"></i></a></dd>
+            <p>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><i class="fas fa-trash"></i></a></p>
         }
-    </dl>
-</div>
-<div>
-    <a asp-action="Members">Team members</a> |
-    <a asp-action="AddFISOrg">Add New Org Code</a> |
-    <a asp-action="RoledMembers">View members with roles</a>
+  
 </div>
 </div>
 </div>

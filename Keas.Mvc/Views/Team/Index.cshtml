@@ -4,12 +4,14 @@
     ViewData["Title"] = "Index";
 }
 <div class="card">
+  <div class="card-head">
+    <div class="row justify-content-between">
+        <h2>Index</h2>
+        <a class="btn btn-link" asp-action="Create"><i class="fas fa-plus fa-xs"/></i> Create New</a>
+    </div>
+  </div>
   <div class="card-content">
-    <h2>Index</h2>
 
-    <p>
-        <a asp-action="Create">Create New</a>
-    </p>
     <table class="table">
         <thead>
             <tr>

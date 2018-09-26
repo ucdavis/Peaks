@@ -22,24 +22,25 @@ interface IProps {
 export default class WorkstationDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedWorkstation == null) 
+        if (this.props.selectedWorkstation == null)
         {
             return null;
         }
         const workstation = this.props.selectedWorkstation;
         return (
             <div>
-                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg">
-                    <ModalHeader>Details for {workstation.name}</ModalHeader>
+                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg" className="spaces-color">
+                  <div className="modal-header row justify-content-between">
+                    <h2>Details for {workstation.name}</h2>
+                    <Button color="link" onClick={this.props.closeModal}>
+                    <i className="fas fa-times fa-lg"/>
+                    </Button>
+                  </div>
                     <ModalBody>
                         <WorkstationEditValues selectedWorkstation={workstation} disableEditing={true} />
                         <HistoryContainer controller="workstations" id={workstation.id}/>
                     </ModalBody>
-                    <ModalFooter>
-                        <Button color="secondary" onClick={this.props.closeModal}>
-                            Close
-                        </Button>
-                    </ModalFooter>
+
                 </Modal>
             </div>
         );

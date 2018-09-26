@@ -29,11 +29,11 @@
   background: linear-gradient(to right,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr= '$gradient-one',endColorstr='$gradient-two',GradientType=1);
 }
-.card-header-primary {
-  border-top:4px solid $primary-color;
-}
 .card-header-spaces {
   border-bottom:4px solid $spaces;
+}
+.card-header-primary {
+  border-bottom:4px solid $primary-font;
 }
 .card-header-keys {
   border-bottom:4px solid $keys;
@@ -69,6 +69,31 @@ img.img-fluid {
     transform: translateY(-1px);
   }
 }
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show > .btn-primary.dropdown-toggle {
+  border-color: rgba(255,255,255,.9999) !important;
+
+  .keys-color & {
+    background-color: $keys;
+  }
+
+  .access-color & {
+    background-color: $access;
+  }
+
+  .equipment-color & {
+    background-color: $equipment;
+  }
+
+  .spaces-color & {
+    background-color: $spaces;
+  }
+
+  .people-color & {
+    background-color: $people;
+  }
+}
 .alert-red {
   background-color:transparentize($unitrans-red,0.35);
   &:hover {
@@ -93,8 +118,28 @@ img.img-fluid {
     background-color:transparentize($sky-blue,.15);
 }
 }
-
+.btn-team {
+  background-color: #fff;
+  border:1px solid #c7c8cc;
+  padding:.6rem 1.2rem;
+  border-radius: 3px;
+  .teamname {
+    text-align:right;
+    max-width:200px;
+    margin-right:16px;
+  }
+  i {
+    color:#c7c8cc;
+  }
+}
+.dropdown-toggle::after {
+  content:none;
+}
 .btn {
+  &.btn-primary {
+    @include main-btn;
+
+  }
 &.btn-link {
   color: $primary-color;
   font-size: 1.6rem;
@@ -156,9 +201,56 @@ img.img-fluid {
   }
 }
 }
-
-
-
+.keys-color .btn-primary {
+  background-color:$keys;
+  &:active,
+  &:focus {
+    background-color: darken($keys, 5);
+  }
+  &:hover {
+    background-color: lighten($keys, 5);
+  }
+}
+.equipment-color .btn-primary {
+  background-color:$equipment;
+  &:active,
+  &:focus {
+    background-color: darken($equipment, 5);
+  }
+  &:hover {
+    background-color: lighten($equipment, 5);
+  }
+}
+.access-color .btn-primary {
+  background-color:$access;
+  &:active,
+  &:focus {
+    background-color: darken($access, 5);
+  }
+  &:hover {
+    background-color: lighten($access, 5);
+  }
+}
+.spaces-color .btn-primary {
+  background-color:$spaces;
+  &:active,
+  &:focus {
+    background-color: darken($spaces, 5);
+  }
+  &:hover {
+    background-color: lighten($spaces, 5);
+  }
+}
+.people-color .btn-primary {
+  background-color:$people;
+  &:active,
+  &:focus {
+    background-color: darken($people, 5);
+  }
+  &:hover {
+    background-color: lighten($people, 5);
+  }
+}
 .media {
   margin-bottom: 16px;
 

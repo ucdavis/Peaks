@@ -3,40 +3,40 @@
 @{
     ViewData["Title"] = "Remove Admin Roles";
 }
+<div class="card">
+  <div class="card-head">
+    <h2>Remove Admin Role</h2>
 
-<h2>Remove Admin Role</h2>
+  </div>
+  <div class="card-body">
 
-@foreach(var item in Model.UserRoles) { 
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="RemoveRoles">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" name="userId" value="@item.User.Id"/>
-                <ul>
-                    <li>
-                        <div class="form-group">
-                            <div class="control-label">Name</div>
-                            <div class="form-control">@item.User.Name</div>
-                        </div>
-                    </li>
+    @foreach(var item in Model.UserRoles) {
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="RemoveRoles">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" name="userId" value="@item.User.Id"/>
 
-                    <li>
-                        <div class="editor-label">Check Roles to delete</div>
-                        @foreach (var role in item.Roles)
-                        {
-                            <input type="checkbox" value="@role.Id" name="roles"/>
-                            @role.Name
-                            <br/>
-                            <br/>
-                        }
-                    </li>
-                    <li>
-                        <input class="btn btn-default" type="submit" value="Remove role(s)"/> | @Html.ActionLink("Cancel", "RoledMembers")
-                    </li>
-                </ul>
+                            <div class="form-group">
+                                <div class="control-label">Name</div>
+                                <div class="form-control">@item.User.Name</div>
+                            </div>
 
-            </form>
+                            <div class="editor-label">Check Roles to delete</div>
+                            @foreach (var role in item.Roles)
+                            {
+                                <input type="checkbox" value="@role.Id" name="roles"/>
+                                @role.Name
+
+                            }
+<br/>
+                            <input class="btn btn-primary" type="submit" value="Remove role(s)"/> | @Html.ActionLink("Cancel", "RoledMembers")
+
+
+                </form>
+            </div>
         </div>
-    </div>
-}
+    }
 
+  </div>
+</div>
