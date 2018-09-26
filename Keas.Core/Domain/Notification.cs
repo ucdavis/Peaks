@@ -4,7 +4,7 @@ namespace Keas.Core.Domain
 {
     public class Notification
     {
-        public int Id { get; set; }
+       public int Id { get; set; }
 
         public User User { get; set; }
         public History History { get; set; }
@@ -15,11 +15,13 @@ namespace Keas.Core.Domain
         public DateTime? DateTimeSent { get; set; }
         public string Status { get; set; }
         public DateTime DateTimeCreated { get; set; }
+        public bool NeedsAccept { get; set; }
 
         public Notification()
         {
             Pending = true;
             DateTimeCreated = DateTime.UtcNow;
+            NeedsAccept = false;
         }
 
     }

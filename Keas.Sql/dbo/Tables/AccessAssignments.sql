@@ -11,6 +11,7 @@
     [RequestedAt]     DATETIME2 (7)  NOT NULL,
     [RequestedById]   NVARCHAR (450) NULL,
     [RequestedByName] NVARCHAR (MAX) NULL,
+    [NextNotificationDate] DATETIME2 NULL, 
     CONSTRAINT [PK_AccessAssignments] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_AccessAssignments_Access_AccessId1] FOREIGN KEY ([AccessId1]) REFERENCES [dbo].[Access] ([Id]),
     CONSTRAINT [FK_AccessAssignments_People_AccessId] FOREIGN KEY ([AccessId]) REFERENCES [dbo].[People] ([Id]) ON DELETE CASCADE,

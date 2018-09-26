@@ -28,6 +28,7 @@ namespace Keas.Core.Domain
 
         public bool IsConfirmed { get; set; }
         public DateTime? ConfirmedAt { get; set; }
+        public DateTime? NextNotificationDate { get; set; }
 
     }
 }

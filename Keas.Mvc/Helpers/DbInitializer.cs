@@ -284,6 +284,18 @@ namespace Keas.Mvc.Helpers
             context.Histories.Add(history);
             context.Histories.Add(history2);
 
+
+            var notification1 = new Notification {DateTimeCreated = DateTime.UtcNow, Details = history.Description, History = history, HistoryId = history.Id, Pending = true, User = scott };
+            var notification2 = new Notification { DateTimeCreated = DateTime.UtcNow, Details = history2.Description, History = history2, HistoryId = history2.Id, Pending = true, User = scott };
+
+            var notification3 = new Notification { DateTimeCreated = DateTime.UtcNow, Details = history.Description, History = history, HistoryId = history.Id, Pending = true, User = james };
+            var notification4 = new Notification { DateTimeCreated = DateTime.UtcNow, Details = history2.Description, History = history2, HistoryId = history2.Id, Pending = true, User = james };
+
+            context.Notifications.Add(notification1);
+            context.Notifications.Add(notification2);
+            context.Notifications.Add(notification3);
+            context.Notifications.Add(notification4);
+
             context.SaveChanges();
         }
     }

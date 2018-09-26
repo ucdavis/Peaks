@@ -1,0 +1,61 @@
+<style type="text/css">
+  body,
+  html, 
+  .body {
+    background: #f3f3f3 !important;
+  }
+</style>
+
+<container>
+
+  <spacer size="16"></spacer>
+
+  <row>
+    <columns>
+      <h1>@userName, you have @count new @notificationPluralize from KEAS.</h1>
+      <p>Thanks for KEAping it real.</p>
+
+      <spacer size="16"></spacer>
+
+      <h4>Notification Details</h4>
+
+        <table>
+            <thead>
+            <tr>
+                <th><b>Details</b></th>
+                <th><b>Status</b></th>
+                <th><b>DateTimeCreated</b></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var notification in Model){
+                <tr>
+                    <td>@notification.Details</td>
+                    <td>@notification.Status</td>
+                    <td>@notification.DateTimeCreated.ToPacificTime().ToString("g")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+
+      <hr/>
+    </columns>
+  </row>
+  <row class="footer text-center">
+    <columns large="3">
+      <img src="http://placehold.it/170x30" alt="">
+    </columns>
+    <columns large="3">
+      <p>
+        Call us at 800.555.1923<br/>
+        Email us at support@discount.boat
+      </p>
+    </columns>
+    <columns large="3">
+      <p>
+        123 Maple Rd<br/>
+        Campbell, CA 95112
+      </p>
+    </columns>
+  </row>
+</container>
