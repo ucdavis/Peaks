@@ -122,7 +122,7 @@ namespace Keas.Mvc.Helpers
 
             var keyAssignment2 = new KeyAssignment { Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(5)};
 
-            var key = new Key { Number = "A1", Team = caes, Name = "38 Mrak Keycard"};
+            var key = new Key { Number = "A1", Team = caes, Name = "38 Mrak Keycard", Active = false};
             var key1Space = new KeyXSpace {Key = key, Space = space2};
             var key1Serial = new Serial {Key = key, Number = "1", Assignment = keyAssignment};
 

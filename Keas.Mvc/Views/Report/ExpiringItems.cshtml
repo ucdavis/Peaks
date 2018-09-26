@@ -1,0 +1,135 @@
+﻿@model Keas.Mvc.Models.ExpiringItemsViewModel
+
+@{
+    ViewData["Title"] = "Expiring Items";
+}
+
+@section Scripts {
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.10.5/jquery.dataTables.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.js"></script>
+    <link rel="Stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.10.5/css/jquery.dataTables.css" />
+    
+    <link rel="Stylesheet" href="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/themes/redmond/jquery-ui.css" />
+    <script src="https://ajax.aspnetcdn.com/ajax/jquery.ui/1.12.1/jquery-ui.js"></script>
+    
+    <script type="text/javascript">
+        $('.datepicker').datepicker();
+        $('.dataTable').DataTable();
+    </script>
+}
+
+
+<h2>Expiring Items</h2>
+<form asp-action="ExpiringItems">
+    <div class="card">
+        <h5 class="card-head">Filters</h5>
+        <div class="card-content">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <label asp-for="ExpiresBefore" class="control-label"></label>
+                            <input asp-for="ExpiresBefore" class="form-control datepiceker" />
+                            <span asp-validation-for="ExpiresBefore" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <label asp-for="ShowType" class="control-label"></label>
+                            <select asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <label asp-for="ShowInactive" class="control-label"></label>
+                            <input asp-for="ShowInactive" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <input type="submit" value="Refresh Report" class="btn btn-default" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+    <table id="dtExpiringItems" class="table dataTable">
+        <thead>
+        <tr>
+            <th>
+                Type
+            </th>
+            <th>
+                Item Name
+            </th>
+            <th>
+                Assigned To
+            </th>
+            <th>
+                Expiration
+            </th>
+            <th>
+                Current?
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Keys)
+            {
+                <tr>
+                    <td>Key</td>
+                    <td>@Html.DisplayFor(a=> item.Key.Name) @Html.DisplayFor(a=> item.Key.Number)-@Html.DisplayFor(a => item.Number) 
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a=> item.Assignment.Person.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.Assignment.ExpiresAt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a=> item.Key.Active)
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model.Equipment)
+            {
+                <tr>
+                    <td>Equipment</td>
+                    <td>
+                        @Html.DisplayFor(a => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a=> item.Assignment.Person.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.Assignment.ExpiresAt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a=> item.Active)
+                    </td>
+                </tr>
+            }
+            @foreach (var item in Model.Workstations)
+            {
+                <tr>
+                    <td>Workstation</td>
+                    <td>
+                        @Html.DisplayFor(a => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a=> item.Assignment.Person.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.Assignment.ExpiresAt)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(a => item.Active)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
