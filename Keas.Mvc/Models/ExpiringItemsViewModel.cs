@@ -12,7 +12,7 @@ namespace Keas.Mvc.Models
 {
     public class ExpiringItemsViewModel
     {
-        public AccessAssignment[] AccessAssignments { get; set; }
+        public AccessAssignment[] Access { get; set; }
         public Serial[] Keys { get; set; }
         public Equipment[] Equipment { get; set; }
         public Workstation[] Workstations { get; set; }
@@ -31,11 +31,10 @@ namespace Keas.Mvc.Models
 
         public static async Task<ExpiringItemsViewModel> Create(ApplicationDbContext context, DateTime expiresBefore, string teamName, bool showInactive, string showType)
         {
-            // AccessAssignement needs db update to link back to Access.
-            //var expiringAccess = context.AccessAssignments.Where(a => a.ExpiresAt <= expiresBefore).Include(a => a.Access).AsNoTracking();
-            //var expiringAccess = context.Access.Where(a => (showType == "All" || showType == "Access") &&
-            //                                             a.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Access.Active || a.Access.Active == !showInactive))
-            //    .Include(a => a.Assignment).ThenInclude(a => a.Person).AsNoTracking();
+            
+            var expiringAccess = await context.AccessAssignments.Where(a => (showType == "All" || showType == "Access") &&
+                a.Access.Team.Name == teamName && a.ExpiresAt <= expiresBefore && (a.Access.Active || a.Access.Active == !showInactive))
+                .Include(a => a.Access).Include(a=> a.Person).AsNoTracking().ToArrayAsync();
             var expiringKey = await context.Serials.Where(a => (showType == "All" || showType == "Key") &&
                 a.Key.Team.Name == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Key.Active || a.Key.Active == !showInactive))
                 .Include(k => k.Assignment).ThenInclude(a=> a.Person).Include(k => k.Key).AsNoTracking().ToArrayAsync();
@@ -49,6 +48,7 @@ namespace Keas.Mvc.Models
             var itemList = new List<string>(new string[] {"All", "Access", "Equipment", "Key", "Workstation"});
             var viewModel = new ExpiringItemsViewModel
             {
+                Access = expiringAccess,
                 Keys = expiringKey,
                 Equipment = expiringEquipment,
                 Workstations = expiringWorkstations,
