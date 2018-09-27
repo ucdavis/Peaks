@@ -102,7 +102,7 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var serial = await _context.Serials.Where(x => x.Key.Team.Name == Team)
+                var serial = await _context.Serials.Include(i => i.Key).Where(x => x.Key.Team.Name == Team)
                     .SingleAsync(x => x.Id == serialId);
 
                 serial.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };

@@ -38,6 +38,7 @@ namespace Keas.Mvc.Helpers
             var james = new User { Id = "jscub", FirstName = "James", LastName = "Cubbage", Email = "jscubbage@ucdavis.edu" };
             var laura = new User { Id = "holstege", FirstName = "Laura", LastName = "Holstege", Email = "laholstege@ucdavis.edu" };
             var cal = new User { Id = "cydoval", FirstName = "Cal", LastName = "Doval", Email = "cydoval@ucdavis.edu" };
+            var jason = new User { Id = "jsylvest", FirstName = "Jason", LastName = "Sylvestre", Email = "jsylvestre@ucdavis.edu" };
 
             var caes = new Team {  Name = "CAESDO" };
 
@@ -45,6 +46,7 @@ namespace Keas.Mvc.Helpers
             context.Users.Add(james);
             context.Users.Add(laura);
             context.Users.Add(cal);
+            context.Users.Add(jason);
             context.Teams.Add(caes);
 
 
@@ -74,11 +76,14 @@ namespace Keas.Mvc.Helpers
                 FirstName = james.FirstName, LastName = james.LastName, Email = james.Email};
             var calCaes = new Person {User = cal,  Team = caes, Group = "CRU", Tags = "CRU", 
                 FirstName = cal.FirstName, LastName = cal.LastName, Email = cal.Email};
+            var jasonCaes = new Person {User = jason,  Team = caes, Group = "CRU", Tags = "CRU", 
+                FirstName = jason.FirstName, LastName = jason.LastName, Email = jason.Email};
 
             context.People.Add(jamesCaes);
             context.People.Add(lauraCaes);
             context.People.Add(scottCaes);
             context.People.Add(calCaes);
+            context.People.Add(jasonCaes);
 
             var access = new Access
             {
@@ -243,23 +248,30 @@ namespace Keas.Mvc.Helpers
 
 
             var scottKey = new TeamPermission    {Team = caes, Role = keyMaster, User = scott};
+            var jasonKey = new TeamPermission    {Team = caes, Role = keyMaster, User = jason};
             var scottEquip = new TeamPermission  {Team = caes, Role = equipMaster, User = scott};
             var scottDa = new TeamPermission {Team = caes, Role = departmentAdmin, User = scott};
             var lauraDa = new TeamPermission    {Team = caes, Role = departmentAdmin, User = laura};
             var jamesDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = james};
+            var jasonDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = jason};
             var calDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = cal};
 
             context.TeamPermissions.Add(scottKey);
+             context.TeamPermissions.Add(jasonKey);
             context.TeamPermissions.Add(scottEquip);
 
             context.TeamPermissions.Add(lauraDa);
 
             context.TeamPermissions.Add(jamesDa);
+            context.TeamPermissions.Add(jasonDa);
             context.TeamPermissions.Add(scottDa);
             context.TeamPermissions.Add(calDa);
 
             var jamesAdmin = new SystemPermission { Role = admin, User = james};
             context.SystemPermissions.Add(jamesAdmin);
+
+            var jasonAdmin = new SystemPermission { Role = admin, User = jason};
+            context.SystemPermissions.Add(jasonAdmin);
 
             var lauraAdmin = new SystemPermission { Role = admin, User = laura};
             context.SystemPermissions.Add(lauraAdmin);
