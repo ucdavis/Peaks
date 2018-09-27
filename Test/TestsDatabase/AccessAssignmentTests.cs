@@ -21,7 +21,10 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("AccessId", "System.Int32", new List<string>()));
             expectedFields.Add(new NameAndType("ApprovedAt", "System.Nullable`1[System.DateTime]", new List<string>()));
             expectedFields.Add(new NameAndType("ConfirmedAt", "System.Nullable`1[System.DateTime]", new List<string>()));
-            expectedFields.Add(new NameAndType("ExpiresAt", "System.DateTime", new List<string>()));
+            expectedFields.Add(new NameAndType("ExpiresAt", "System.DateTime", new List<string> 
+            {
+                "[System.ComponentModel.DataAnnotations.DisplayFormatAttribute(DataFormatString = \"{0:d}\", ApplyFormatInEditMode = True)]",
+            }));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>())); //TODO: This should probably have the Key attribute
             expectedFields.Add(new NameAndType("IsConfirmed", "System.Boolean", new List<string>()));
             expectedFields.Add(new NameAndType("NextNotificationDate", "System.Nullable`1[System.DateTime]", new List<string>()));
