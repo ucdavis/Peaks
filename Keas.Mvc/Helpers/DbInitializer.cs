@@ -40,7 +40,7 @@ namespace Keas.Mvc.Helpers
             var cal = new User { Id = "cydoval", FirstName = "Cal", LastName = "Doval", Email = "cydoval@ucdavis.edu" };
             var jason = new User { Id = "jsylvest", FirstName = "Jason", LastName = "Sylvestre", Email = "jsylvestre@ucdavis.edu" };
 
-            var caes = new Team {  Name = "CAESDO" };
+            var caes = new Team {  Name = "CAESDO", Slug = "CAESDO" };
 
             context.Users.Add(scott);
             context.Users.Add(james);
