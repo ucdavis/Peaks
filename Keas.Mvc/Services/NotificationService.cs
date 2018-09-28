@@ -104,7 +104,7 @@ namespace Keas.Mvc.Services
                     User = user,
                     History = history,
                     Details = history.Description,
-                    NeedsAccept = true
+                    NeedsAccept = user == assignedTo,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -144,7 +144,7 @@ namespace Keas.Mvc.Services
                     User = user,
                     History = history,
                     Details = history.Description,
-                    NeedsAccept = true
+                    NeedsAccept = user == assignedTo,
                 };
                 _dbContext.Notifications.Add(notification);
             }
