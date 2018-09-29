@@ -136,5 +136,22 @@ namespace Keas.Mvc.Controllers
             Message = "All keys and equipment confirmed!";
             return RedirectToAction(nameof(MyStuff));
         }
+
+        public async Task<IActionResult> SelectTeam(string urlRedirect) {
+            var user = await _securityService.GetUser();
+            var teams = await _context.TeamPermissions.Where(tp => tp.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
+            if(teams.Count() == 0){
+                return Redirect("/Home/NoAccess/");
+            }
+            if (teams.Count() == 1) {
+                if(!string.IsNullOrWhiteSpace(urlRedirect)){
+                    return Redirect("/" + teams.First().Slug + urlRedirect);
+                } else {
+                    return Redirect("/" + teams.First().Slug + "/Confirm/MyStuff");
+                }
+            }
+
+            return View(teams);
+        }
     }
 }
