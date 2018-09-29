@@ -145,7 +145,7 @@ namespace Keas.Mvc.Controllers
             }
             if (teams.Count() == 1) {
                 if(!string.IsNullOrWhiteSpace(urlRedirect)){
-                    return Redirect("/" + teams.First().Slug + urlRedirect);
+                    return Redirect("/" + teams.First().Slug + "/" + urlRedirect);
                 } else {
                     return Redirect("/" + teams.First().Slug + "/Confirm/MyStuff");
                 }
