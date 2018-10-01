@@ -69,7 +69,7 @@ export default class AssignSpace extends React.Component<IProps, IState> {
                     onSearch={async query => {
                         this.setState({ isSearchLoading: true });
                         const spaces = await this.context.fetch(
-                            `/api/${this.context.team.name}/spaces/searchSpaces?q=${query}`
+                            `/api/${this.context.team.slug}/spaces/searchSpaces?q=${query}`
                         );
                         this.setState({
                             isSearchLoading: false,

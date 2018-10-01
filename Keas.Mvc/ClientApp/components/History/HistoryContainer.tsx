@@ -74,7 +74,7 @@ export default class HistoryContainer extends React.Component<IProps, IState> {
   }
 
   private _getHistories = async () => {
-    const historyFetchUrl = `/api/${this.context.team.name}/${this.props.controller}/getHistory/${this.props.id}`;
+    const historyFetchUrl = `/api/${this.context.team.slug}/${this.props.controller}/getHistory/${this.props.id}`;
 
     const histories = await this.context.fetch(historyFetchUrl);
     return histories;
