@@ -25,7 +25,7 @@ namespace Keas.Mvc.Controllers
 
         // List out all assets for team
         public async Task<IActionResult> Index() {
-            var team = await _context.Teams.SingleOrDefaultAsync(x=>x.Name == Team);
+            var team = await _context.Teams.SingleOrDefaultAsync(x=>x.Slug == Team);
 
             if (team == null) {
                 return NotFound();
