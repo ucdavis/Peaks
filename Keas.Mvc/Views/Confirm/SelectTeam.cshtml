@@ -1,0 +1,15 @@
+@model IEnumerable<Keas.Core.Domain.Team>
+
+
+@{
+    ViewData["Title"] = "Select Team";
+}
+
+@foreach (var item in Model) {
+    <div class="card" >
+  <div class="card-body">
+    <h5 class="card-title">@item.Name</h5>    
+    <a href='@string.Format("/{0}/Confirm/MyStuff/", item.Slug)' class="card-link">Go to team</a>
+  </div>
+</div>
+}
