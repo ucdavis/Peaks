@@ -40,7 +40,7 @@ namespace Keas.Mvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var team = await _context.Teams.FirstAsync(t => t.Name == Team);
+                var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
                 newTag.Team = team;
                 _context.Tags.Add(newTag);
                 await _context.SaveChangesAsync();
