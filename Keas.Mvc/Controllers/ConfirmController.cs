@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Keas.Core.Helper;
 
 namespace Keas.Mvc.Controllers
 {
@@ -139,7 +140,9 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> SelectTeam(string urlRedirect) {
             var user = await _securityService.GetUser();
-            var teams = await _context.TeamPermissions.Where(tp => tp.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
+            var people = await _context.People.Where(p => p.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
+            var teamAdmins = await _context.TeamPermissions.Where(tp => tp.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
+            var teams = people.Union(teamAdmins, new TeamComparer());
             if(teams.Count() == 0){
                 return Redirect("/Home/NoAccess/");
             }
@@ -150,7 +153,7 @@ namespace Keas.Mvc.Controllers
                     return Redirect("/" + teams.First().Slug + "/Confirm/MyStuff");
                 }
             }
-
+            
             return View(teams);
         }
     }
