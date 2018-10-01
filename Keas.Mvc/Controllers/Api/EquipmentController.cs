@@ -31,7 +31,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Equipment
-                .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
+                .Where(x => x.Team.Slug == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
                 .Include(x => x.Space)
                 .AsNoTracking().ToListAsync();
@@ -41,7 +41,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> GetEquipmentInSpace(int spaceId)
         {
             var equipment = await _context.Equipment
-                .Where(x => x.Space.Id == spaceId && x.Team.Name == Team && x.Active)
+                .Where(x => x.Space.Id == spaceId && x.Team.Slug == Team && x.Active)
                 .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
@@ -55,7 +55,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> CommonAttributeKeys() 
         {
             var keys = await _context.EquipmentAttributes
-            .Where(x => x.Equipment.Team.Name == Team)
+            .Where(x => x.Equipment.Team.Slug == Team)
             .GroupBy(x => x.Key)
             .Take(5)
             .OrderByDescending(x => x.Count())
@@ -67,7 +67,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var equipmentAssignments = await _context.Equipment
-                .Where(x => x.Assignment.PersonId == personId && x.Team.Name == Team)
+                .Where(x => x.Assignment.PersonId == personId && x.Team.Slug == Team)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person.User)
                 .Include(x => x.Space)
@@ -82,7 +82,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List()
         {
             var equipments = await _context.Equipment
-                .Where(x => x.Team.Name == Team)
+                .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignment)
                 .ThenInclude(x=>x.Person.User)
                 .Include(x => x.Space)
@@ -115,7 +115,7 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var equipment = await _context.Equipment.Where(x => x.Team.Name == Team).Include(x => x.Space).SingleAsync(x => x.Id == equipmentId);
+                var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team).Include(x => x.Space).SingleAsync(x => x.Id == equipmentId);
                 equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
                 equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
 
@@ -133,7 +133,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var eq = await _context.Equipment.Where(x => x.Team.Name == Team)
+                var eq = await _context.Equipment.Where(x => x.Team.Slug == Team)
                     .Include(x => x.Space).Include(x => x.Attributes)
                     .SingleAsync(x => x.Id == equipment.Id);
                     
@@ -163,7 +163,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var eq = await _context.Equipment.Where(x => x.Team.Name == Team)
+                var eq = await _context.Equipment.Where(x => x.Team.Slug == Team)
                     .Include(x => x.Assignment).ThenInclude(x => x.Person.User)
                     .SingleAsync(x => x.Id == equipment.Id);
 
@@ -179,7 +179,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
-                .Where(x => x.AssetType == "Equipment" && x.Equipment.Team.Name == Team && x.EquipmentId == id)
+                .Where(x => x.AssetType == "Equipment" && x.Equipment.Team.Slug == Team && x.EquipmentId == id)
                 .OrderByDescending(x => x.ActedDate)
                 .Take(5)
                 .AsNoTracking().ToListAsync();

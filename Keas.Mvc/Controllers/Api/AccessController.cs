@@ -31,7 +31,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person.User)
-                .Where(x => x.Team.Name == Team && x.Active &&
+                .Where(x => x.Team.Slug == Team && x.Active &&
                 (x.Name.StartsWith(q, comparison))) //|| x.SerialNumber.StartsWith(q, comparison)))
                 .AsNoTracking().ToListAsync();
 
@@ -40,7 +40,7 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> ListAssigned(int personId) {
             var assignedAccess = await _context.Access 
-                .Where(x => x.Active && x.Team.Name == Team && x.Assignments.Any(y => y.Person.Id == personId))
+                .Where(x => x.Active && x.Team.Slug == Team && x.Assignments.Any(y => y.Person.Id == personId))
                 .Include(x => x.Assignments).ThenInclude(x => x.Person.User)
                 .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
@@ -51,7 +51,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List()
         {
             var accessList = await _context.Access
-                .Where(x => x.Team.Name == Team)
+                .Where(x => x.Team.Slug == Team)
                 .Include(x=> x.Assignments)
                 .ThenInclude(x => x.Person)
                 .ThenInclude(x => x.User)
@@ -97,7 +97,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions, make sure SN isn't edited 
             if (ModelState.IsValid)
             {
-                var a = await _context.Access.Where(x => x.Team.Name == Team)
+                var a = await _context.Access.Where(x => x.Team.Slug == Team)
                     .SingleAsync(x => x.Id == access.Id);
                 a.Name = access.Name;
                 await _context.SaveChangesAsync();

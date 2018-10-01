@@ -26,7 +26,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
-                .Where(x => x.Team.Name == Team && x.Active && x.Assignment == null &&
+                .Where(x => x.Team.Slug == Team && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
                     || x.Space.RoomNumber.StartsWith(q, comparison)))
                 .Include(x => x.Space)
@@ -40,7 +40,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
-                .Where(x => x.Team.Name == Team && x.SpaceId == spaceId && x.Active && x.Assignment == null &&
+                .Where(x => x.Team.Slug == Team && x.SpaceId == spaceId && x.Active && x.Assignment == null &&
                 (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
                     || x.Space.RoomNumber.StartsWith(q, comparison)))
                 .Include(x => x.Space).AsNoTracking().ToListAsync();
@@ -51,7 +51,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> GetWorkstationsInSpace(int spaceId)
         {
             var workstations = await _context.Workstations
-                .Where(x => x.Space.Id == spaceId && x.Team.Name == Team && x.Active)
+                .Where(x => x.Space.Id == spaceId && x.Team.Slug == Team && x.Active)
                 .Include(x => x.Space)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person.User)
@@ -63,7 +63,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> CommonAttributeKeys()
         {
             var keys = await _context.WorkstationAttributes
-                .Where(w => w.Workstation.Team.Name == Team)
+                .Where(w => w.Workstation.Team.Slug == Team)
                 .GroupBy(w => w.Key)
                 .Take(5)
                 .OrderByDescending(w => w.Count())
@@ -75,7 +75,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var workstationAssignments = await _context.Workstations
-                .Where(w => w.Assignment.PersonId == personId && w.Team.Name==Team)
+                .Where(w => w.Assignment.PersonId == personId && w.Team.Slug==Team)
                 .Include(w => w.Assignment)
                 .ThenInclude(w => w.Person.User)
                 .Include(w => w.Space)
@@ -89,7 +89,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List()
         {
             var workstations = await _context.Workstations
-                .Where(w => w.Team.Name == Team)
+                .Where(w => w.Team.Slug == Team)
                 .Include(w => w.Assignment)
                 .ThenInclude(w => w.Person.User)
                 .Include(w => w.Space)
@@ -123,18 +123,18 @@ namespace Keas.Mvc.Controllers.Api
             // TODO make sure user has permission
             if (ModelState.IsValid)
             {
-                var workstation = await _context.Workstations.Where(w => w.Team.Name == Team).Include(w => w.Space)
+                var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team).Include(w => w.Space)
                     .SingleAsync(w => w.Id == workstationId);
                 workstation.Assignment = new WorkstationAssignment{PersonId = personId, ExpiresAt = DateTime.Parse(date)};
                 workstation.Assignment.Person =
                     await _context.People.Include(p => p.User).Include(p=> p.Team).SingleAsync(p => p.Id == personId);
 
-                if (workstation.Team.Name != Team)
+                if (workstation.Team.Slug != Team)
                 {
                     Message = "Workstation is not part of this team!";
                     return BadRequest(workstation);
                 }
-                if (workstation.Assignment.Person.Team.Name != Team)
+                if (workstation.Assignment.Person.Team.Slug != Team)
                 {
                     Message = "User is not part of this team!";
                     return BadRequest(workstation);
@@ -159,7 +159,7 @@ namespace Keas.Mvc.Controllers.Api
             // TODO permission
             if (ModelState.IsValid)
             {
-                var workstationToUpdate = await _context.Workstations.Where(x => x.Team.Name == Team)
+                var workstationToUpdate = await _context.Workstations.Where(x => x.Team.Slug == Team)
                     .Include(w => w.Assignment).ThenInclude(w => w.Person.User)
                     .SingleAsync(w => w.Id == workstation.Id);
 
@@ -177,7 +177,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var w = await _context.Workstations.Where(x => x.Team.Name == Team)
+                var w = await _context.Workstations.Where(x => x.Team.Slug == Team)
                     .SingleAsync(x => x.Id == workstation.Id);
                     
                 w.Name = workstation.Name;
@@ -192,7 +192,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
-                .Where(h => h.AssetType == "Workstation" && h.Workstation.Team.Name == Team && h.WorkstationId == id)
+                .Where(h => h.AssetType == "Workstation" && h.Workstation.Team.Slug == Team && h.WorkstationId == id)
                 .OrderByDescending(x => x.ActedDate)
                 .Take(5)
                 .AsNoTracking().ToListAsync();
