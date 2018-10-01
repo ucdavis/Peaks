@@ -23,7 +23,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List()
         {
             var people = 
-            from person in _context.People.Where(x => x.Team.Name == Team && x.Active).Include(x => x.User) // TODO: have some way to show inactive?
+            from person in _context.People.Where(x => x.Team.Slug == Team && x.Active).Include(x => x.User) // TODO: have some way to show inactive?
             select new
             {
                 person = person,
@@ -44,7 +44,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
             var people = await _context.People
-                .Where(x => x.Team.Name == Team && x.Active && 
+                .Where(x => x.Team.Slug == Team && x.Active && 
                 (x.Email.IndexOf(q, comparison) >= 0 || x.Name.IndexOf(q, comparison) >= 0)) // case-insensitive version of .Contains
                 .Include(x => x.User).AsNoTracking().ToListAsync();
 
@@ -59,7 +59,7 @@ namespace Keas.Mvc.Controllers.Api
             var comparison = StringComparison.OrdinalIgnoreCase;
             // first try and find an existing person
             var existingPerson = await _context.People
-                .Where(x => x.Team.Name == Team && (String.Equals(x.Email,searchTerm,comparison) || String.Equals(x.UserId,searchTerm,comparison)))
+                .Where(x => x.Team.Slug == Team && (String.Equals(x.Email,searchTerm,comparison) || String.Equals(x.UserId,searchTerm,comparison)))
                 .FirstOrDefaultAsync();
             if(existingPerson != null)
             {
@@ -102,7 +102,7 @@ namespace Keas.Mvc.Controllers.Api
 
             if (id.HasValue)
             {
-                person = await _context.People.Where(x => x.Team.Name == Team && x.Id == id.Value).Include(x => x.User).AsNoTracking().SingleAsync();
+                person = await _context.People.Where(x => x.Team.Slug == Team && x.Id == id.Value).Include(x => x.User).AsNoTracking().SingleAsync();
             }
             else
             {
@@ -122,7 +122,7 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     return BadRequest();
                 }
-                var team = await _context.Teams.SingleAsync(t => t.Name == Team && t.Id == person.TeamId);
+                var team = await _context.Teams.SingleAsync(t => t.Slug == Team && t.Id == person.TeamId);
                 // new person
                 if(person.Id == 0)
                 {
@@ -166,7 +166,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var p = await _context.People.Where(x => x.Team.Name == Team)
+                var p = await _context.People.Where(x => x.Team.Slug == Team)
                     .SingleAsync(x => x.Id == person.Id);
                     
                 p.FirstName = person.FirstName;
@@ -186,7 +186,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> GetPerson(int personId)
         {
             var person = await _context.People
-                .Where(x => x.Team.Name == Team && x.Id == personId).Include(x => x.User).AsNoTracking().SingleAsync();
+                .Where(x => x.Team.Slug == Team && x.Id == personId).Include(x => x.User).AsNoTracking().SingleAsync();
             return Json(person);
         }
 
