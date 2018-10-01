@@ -9,7 +9,7 @@
     <div class="card" >
   <div class="card-body">
     <h5 class="card-title">@item.Name</h5>    
-    <a href='@string.Format("/{0}/Confirm/MyStuff/", item.Slug)' class="card-link">Go to team</a>
+    <a href='@string.Format("/{0}/Confirm/MyStuff/{1}", item.Slug, ViewBag.urlRedirect)' class="card-link">Go to team</a>
   </div>
 </div>
 }
