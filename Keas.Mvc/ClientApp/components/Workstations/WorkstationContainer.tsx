@@ -48,12 +48,12 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         if(!this.props.space && !!this.props.person)
         {
             workstations = 
-                await this.context.fetch(`/api/${this.context.team.name}/workstations/listAssigned?personId=${this.props.person.id}`);
+                await this.context.fetch(`/api/${this.context.team.slug}/workstations/listAssigned?personId=${this.props.person.id}`);
         }
         if(!!this.props.space && !this.props.person)
         {
             workstations = 
-                await this.context.fetch(`/api/${this.context.team.name}/workstations/getWorkstationsInSpace?spaceId=${this.props.space.id}`);
+                await this.context.fetch(`/api/${this.context.team.slug}/workstations/getWorkstationsInSpace?spaceId=${this.props.space.id}`);
         }
         this.setState({ workstations, loading: false });
     }
@@ -132,7 +132,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         // if we are creating a new workstation
         if (workstation.id === 0) {
           workstation.teamId = this.context.team.id;
-          workstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/create`, {
+          workstation = await this.context.fetch(`/api/${this.context.team.slug}/workstations/create`, {
             body: JSON.stringify(workstation),
             method: "POST"
           });
@@ -141,7 +141,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
 
         // if we know who to assign it to, do it now
         if (person) {
-          const assignUrl = `/api/${this.context.team.name}/workstations/assign?workstationId=${workstation.id}&personId=${
+          const assignUrl = `/api/${this.context.team.slug}/workstations/assign?workstationId=${workstation.id}&personId=${
             person.id
           }&date=${date}`;
 
@@ -184,7 +184,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
 
       private _revokeWorkstation = async (workstation: IWorkstation) => {
         // call API to actually revoke
-        const removed: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/revoke`, {
+        const removed: IWorkstation = await this.context.fetch(`/api/${this.context.team.slug}/workstations/revoke`, {
           body: JSON.stringify(workstation),
           method: "POST"
         });
@@ -217,7 +217,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         {
           return;
         }
-        const updated: IWorkstation = await this.context.fetch(`/api/${this.context.team.name}/workstations/update`, {
+        const updated: IWorkstation = await this.context.fetch(`/api/${this.context.team.slug}/workstations/update`, {
           body: JSON.stringify(workstation),
           method: "POST"
         });
@@ -283,7 +283,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
 
     private _getBaseUrl = () => {
         return this.props.person
-          ? `/${this.context.team.name}/people/details/${this.props.person.id}`
-          : `/${this.context.team.name}/spaces/details/${this.props.space.id}`;
+          ? `/${this.context.team.slug}/people/details/${this.props.person.id}`
+          : `/${this.context.team.slug}/spaces/details/${this.props.space.id}`;
       };
 }

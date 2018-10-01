@@ -42,8 +42,8 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
     }
 
     private _renderSelectWorkstation = () => {
-        const searchUrl = this.props.space ? `/api/${this.context.team.name}/workstations/searchInSpace?spaceId=${this.props.space.id}&q=` :
-            `/api/${this.context.team.name}/workstations/search?q=`;
+        const searchUrl = this.props.space ? `/api/${this.context.team.slug}/workstations/searchInSpace?spaceId=${this.props.space.id}&q=` :
+            `/api/${this.context.team.slug}/workstations/search?q=`;
         return (
             <div>
                 <AsyncTypeahead
