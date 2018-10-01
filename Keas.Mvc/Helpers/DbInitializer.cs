@@ -38,6 +38,7 @@ namespace Keas.Mvc.Helpers
             var james = new User { Id = "jscub", FirstName = "James", LastName = "Cubbage", Email = "jscubbage@ucdavis.edu" };
             var laura = new User { Id = "holstege", FirstName = "Laura", LastName = "Holstege", Email = "laholstege@ucdavis.edu" };
             var cal = new User { Id = "cydoval", FirstName = "Cal", LastName = "Doval", Email = "cydoval@ucdavis.edu" };
+            var jason = new User { Id = "jsylvest", FirstName = "Jason", LastName = "Sylvestre", Email = "jsylvestre@ucdavis.edu" };
 
             var caes = new Team {  Name = "CAESDO", Slug = "CAESDO" };
             var ps = new Team { Name = "Plant Sciences", Slug = "PlantSciences"};
@@ -46,6 +47,7 @@ namespace Keas.Mvc.Helpers
             context.Users.Add(james);
             context.Users.Add(laura);
             context.Users.Add(cal);
+            context.Users.Add(jason);
             context.Teams.Add(caes);
             context.Teams.Add(ps);
 
@@ -76,6 +78,8 @@ namespace Keas.Mvc.Helpers
                 FirstName = james.FirstName, LastName = james.LastName, Email = james.Email};
             var calCaes = new Person {User = cal,  Team = caes, Group = "CRU", Tags = "CRU", 
                 FirstName = cal.FirstName, LastName = cal.LastName, Email = cal.Email};
+            var jasonCaes = new Person {User = jason,  Team = caes, Group = "CRU", Tags = "CRU", 
+                FirstName = jason.FirstName, LastName = jason.LastName, Email = jason.Email};
 
             var jamesPs = new Person {User = james,  Team = ps, Group = "IT",
                 FirstName = james.FirstName, LastName = james.LastName, Email = james.Email};
@@ -85,6 +89,7 @@ namespace Keas.Mvc.Helpers
             context.People.Add(scottCaes);
             context.People.Add(calCaes);
             context.People.Add(jamesPs);
+            context.People.Add(jasonCaes);
 
             var access = new Access
             {
@@ -254,12 +259,15 @@ namespace Keas.Mvc.Helpers
             var lauraDa = new TeamPermission    {Team = caes, Role = departmentAdmin, User = laura};
             var jamesDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = james};
             var calDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = cal};
+            var jasonKey = new TeamPermission    {Team = caes, Role = keyMaster, User = jason};
+            var jasonDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = jason};
 
             context.TeamPermissions.Add(scottKey);
             context.TeamPermissions.Add(scottEquip);
+            context.TeamPermissions.Add(jasonKey);
 
             context.TeamPermissions.Add(lauraDa);
-
+            context.TeamPermissions.Add(jasonDa);
             context.TeamPermissions.Add(jamesDa);
             context.TeamPermissions.Add(scottDa);
             context.TeamPermissions.Add(calDa);
@@ -275,6 +283,9 @@ namespace Keas.Mvc.Helpers
 
             var calAdmin = new SystemPermission { Role = admin, User = cal};
             context.SystemPermissions.Add(calAdmin);
+
+            var jasonAdmin = new SystemPermission { Role = admin, User = jason};
+            context.SystemPermissions.Add(jasonAdmin);
 
             var CruTag = new Tag { Name = "CRU", Team = caes };
             var ASITag = new Tag { Name = "ASI", Team = caes };
