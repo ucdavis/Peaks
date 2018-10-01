@@ -153,7 +153,8 @@ namespace Keas.Mvc.Controllers
                     return Redirect("/" + teams.First().Slug + "/Confirm/MyStuff");
                 }
             }
-            ViewBag.urlRedirect = urlRedirect;
+            
+            ViewBag.urlRedirect = urlRedirect == null ? "Confirm/Mystuff/" : urlRedirect;
             return View(teams);
         }
     }
