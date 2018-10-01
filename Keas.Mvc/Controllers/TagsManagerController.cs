@@ -24,7 +24,7 @@ namespace Keas.Mvc.Controllers
         // GET: Tags
         public async Task<ActionResult> Index()
         {
-            var model = await _context.Tags.Where(t => t.Team.Name == Team).OrderBy(t=> t.Name).ToListAsync();
+            var model = await _context.Tags.Where(t => t.Team.Slug == Team).OrderBy(t=> t.Name).ToListAsync();
             return View(model);
         }
 
@@ -54,7 +54,7 @@ namespace Keas.Mvc.Controllers
         // GET: Tags/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            var tag = await _context.Tags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
+            var tag = await _context.Tags.SingleAsync(t => t.Team.Slug == Team && t.Id == id);
             if (tag == null)
             {
                 return NotFound();
@@ -70,7 +70,7 @@ namespace Keas.Mvc.Controllers
             {
                 return NotFound();
             }
-            var tagToUpdate = await _context.Tags.SingleAsync(t => t.Id == id && t.Team.Name==Team);
+            var tagToUpdate = await _context.Tags.SingleAsync(t => t.Id == id && t.Team.Slug==Team);
             if (await TryUpdateModelAsync<Tag>(tagToUpdate, "", t => t.Name))
             {
                 try
@@ -90,7 +90,7 @@ namespace Keas.Mvc.Controllers
         // GET: Tags/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            var tag = await _context.Tags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
+            var tag = await _context.Tags.SingleAsync(t => t.Team.Slug == Team && t.Id == id);
             if (tag == null)
             {
                 return NotFound();
@@ -102,7 +102,7 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<ActionResult> Delete(int id, Tag deleteTag)
         {
-            var tagToDelete = await _context.Tags.SingleAsync(t => t.Team.Name == Team && t.Id == id);
+            var tagToDelete = await _context.Tags.SingleAsync(t => t.Team.Slug == Team && t.Id == id);
             _context.Remove(tagToDelete);
             await _context.SaveChangesAsync();
             Message = "Tag deleted.";
