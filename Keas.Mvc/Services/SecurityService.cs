@@ -16,19 +16,19 @@ namespace Keas.Mvc.Services
     
     public interface ISecurityService
     {
-        Task<bool> IsInRole(string roleCode, string teamName);
+        Task<bool> IsInRole(string roleCode, string teamSlug);
 
-        Task<bool> IsInRoles(List<Role> roles, string teamName);
+        Task<bool> IsInRoles(List<Role> roles, string teamSlug);
 
         Task<bool> IsInAdminRoles(List<Role> roles, User user);
 
-        Task<bool> IsInRoles(List<Role> roles, string teamName, User user);
+        Task<bool> IsInRoles(List<Role> roles, string teamSlug, User user);
 
         Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId);
         Task<User> GetUser();
 
-        Task<Person> GetPerson(string teamName);
-        Task<List<User>> GetUsersInRoles(List<Role> roles, string teamName);
+        Task<Person> GetPerson(string teamSlug);
+        Task<List<User>> GetUsersInRoles(List<Role> roles, string teamSlug);
 
         Task<List<TeamPermission>> GetUserRolesInTeam(Team team);
 
@@ -46,10 +46,10 @@ namespace Keas.Mvc.Services
             _dbContext = dbContext;
         }
 
-        public async Task<bool> IsInRoles(List<Role> roles, string teamName)
+        public async Task<bool> IsInRoles(List<Role> roles, string teamSlug)
         {
             var user = await GetUser();
-            var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamName);
+            var team = await _dbContext.Teams.SingleAsync(t => t.Slug == teamSlug);
 
             _dbContext.Entry(team)
                 .Collection(t=> t.TeamPermissions)
@@ -70,9 +70,9 @@ namespace Keas.Mvc.Services
             return false;
         }
 
-        public async Task<bool> IsInRoles(List<Role> roles, string teamName, User user)
+        public async Task<bool> IsInRoles(List<Role> roles, string teamSlug, User user)
         {
-            var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamName);
+            var team = await _dbContext.Teams.SingleAsync(t => t.Slug == teamSlug);
 
             _dbContext.Entry(team)
                 .Collection(t => t.TeamPermissions)
@@ -103,7 +103,7 @@ namespace Keas.Mvc.Services
             return false;
         }
 
-        public async Task<bool> IsInRole(string roleCode, string teamName)
+        public async Task<bool> IsInRole(string roleCode, string teamSlug)
         {
             var role = await _dbContext.Roles.SingleOrDefaultAsync(x => x.Name == roleCode);
             if (role == null)
@@ -115,7 +115,7 @@ namespace Keas.Mvc.Services
                     .ThenInclude(tp=> tp.User)
                 .Include(t=> t.TeamPermissions)
                     .ThenInclude(tp=> tp.Role)
-                .SingleOrDefaultAsync(x => x.Name == teamName);
+                .SingleOrDefaultAsync(x => x.Slug == teamSlug);
             if (team == null)
             {
                 throw new ArgumentException("Team not found");
@@ -136,11 +136,11 @@ namespace Keas.Mvc.Services
             return user;
         }
 
-        public async Task<Person> GetPerson(string teamName)
+        public async Task<Person> GetPerson(string teamSlug)
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
             var person =
-                await _dbContext.People.SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Name == teamName);
+                await _dbContext.People.SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Slug == teamSlug);
             return person;
         }
 
@@ -151,9 +151,9 @@ namespace Keas.Mvc.Services
             return users;
         }
 
-        public async Task<List<User>> GetUsersInRoles(List<Role> roles, string teamName)
+        public async Task<List<User>> GetUsersInRoles(List<Role> roles, string teamSlug)
         {
-            var users = await _dbContext.TeamPermissions.Where(x => x.Team.Name== teamName && roles.Any(r => r.Id == x.RoleId)).Select(tp => tp.User).Distinct().ToListAsync();
+            var users = await _dbContext.TeamPermissions.Where(x => x.Team.Slug== teamSlug && roles.Any(r => r.Id == x.RoleId)).Select(tp => tp.User).Distinct().ToListAsync();
 
             return users;
         }
