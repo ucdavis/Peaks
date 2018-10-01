@@ -41,6 +41,7 @@ namespace Keas.Mvc.Helpers
             var jason = new User { Id = "jsylvest", FirstName = "Jason", LastName = "Sylvestre", Email = "jsylvestre@ucdavis.edu" };
 
             var caes = new Team {  Name = "CAESDO", Slug = "CAESDO" };
+            var ps = new Team { Name = "Plant Sciences", Slug = "PlantSciences"};
 
             context.Users.Add(scott);
             context.Users.Add(james);
@@ -48,6 +49,7 @@ namespace Keas.Mvc.Helpers
             context.Users.Add(cal);
             context.Users.Add(jason);
             context.Teams.Add(caes);
+            context.Teams.Add(ps);
 
 
             // Roles
@@ -79,11 +81,15 @@ namespace Keas.Mvc.Helpers
             var jasonCaes = new Person {User = jason,  Team = caes, Group = "CRU", Tags = "CRU", 
                 FirstName = jason.FirstName, LastName = jason.LastName, Email = jason.Email};
 
+            var jamesPs = new Person {User = james,  Team = ps, Group = "IT",
+                FirstName = james.FirstName, LastName = james.LastName, Email = james.Email};
+
             context.People.Add(jamesCaes);
             context.People.Add(lauraCaes);
             context.People.Add(scottCaes);
             context.People.Add(calCaes);
             context.People.Add(jasonCaes);
+            context.People.Add(jamesPs);
 
             var access = new Access
             {
