@@ -53,8 +53,13 @@ namespace Keas.Mvc.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Team team)
+        public async Task<IActionResult> Create([Bind("Id,Name,Slug")] Team team)
         {
+            if (await _context.Teams.AnyAsync(a => a.Slug == team.Slug))
+            {
+                ModelState.AddModelError("Slug", "Team Slug already used.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(team);
@@ -91,8 +96,18 @@ namespace Keas.Mvc.Controllers
             {
                 return NotFound();
             }
+
+            if (await _context.Teams.AnyAsync(a => a.Id != team.Id && a.Slug == team.Slug))
+            {
+                ModelState.AddModelError("Slug", "Team Slug already used.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(team);
+            }
             var teamToUpdate = await _context.Teams.SingleOrDefaultAsync(x => x.Id == id);
-            if (await TryUpdateModelAsync<Team>(teamToUpdate, "", t => t.Name))
+            if (await TryUpdateModelAsync<Team>(teamToUpdate, "", t => t.Name, t=> t.Slug))
             {
                 try
                 {
