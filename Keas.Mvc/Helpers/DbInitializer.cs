@@ -40,12 +40,14 @@ namespace Keas.Mvc.Helpers
             var cal = new User { Id = "cydoval", FirstName = "Cal", LastName = "Doval", Email = "cydoval@ucdavis.edu" };
 
             var caes = new Team {  Name = "CAESDO", Slug = "CAESDO" };
+            var ps = new Team { Name = "Plant Sciences", Slug = "PlantSciences"};
 
             context.Users.Add(scott);
             context.Users.Add(james);
             context.Users.Add(laura);
             context.Users.Add(cal);
             context.Teams.Add(caes);
+            context.Teams.Add(ps);
 
 
             // Roles
@@ -75,10 +77,14 @@ namespace Keas.Mvc.Helpers
             var calCaes = new Person {User = cal,  Team = caes, Group = "CRU", Tags = "CRU", 
                 FirstName = cal.FirstName, LastName = cal.LastName, Email = cal.Email};
 
+            var jamesPs = new Person {User = james,  Team = ps, Group = "IT",
+                FirstName = james.FirstName, LastName = james.LastName, Email = james.Email};
+
             context.People.Add(jamesCaes);
             context.People.Add(lauraCaes);
             context.People.Add(scottCaes);
             context.People.Add(calCaes);
+            context.People.Add(jamesPs);
 
             var access = new Access
             {
