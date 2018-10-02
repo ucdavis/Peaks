@@ -23,7 +23,6 @@
             <thead>
             <tr>
                 <th><b>Details</b></th>
-                <th><b>Status</b></th>
                 <th><b>DateTimeCreated</b></th>
             </tr>
             </thead>
@@ -31,7 +30,6 @@
             @foreach (var notification in Model){
                 <tr>
                     <td>@notification.Details</td>
-                    <td>@notification.Status</td>
                     <td>@notification.DateTimeCreated.ToPacificTime().ToString("g")</td>
                 </tr>
             }
