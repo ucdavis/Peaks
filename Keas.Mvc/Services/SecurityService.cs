@@ -109,7 +109,7 @@ namespace Keas.Mvc.Services
 
         public async Task<bool> IsInRole(string roleCode, string teamName)
         {
-            var role = await _dbContext.Roles.SingleOrDefaultAsync(x => x.Name == roleCode).AsNoTracking();
+            var role = await _dbContext.Roles.AsNoTracking().SingleOrDefaultAsync(x => x.Name == roleCode);
             if (role == null)
             {
                 throw  new ArgumentException("Role not found");
@@ -119,7 +119,8 @@ namespace Keas.Mvc.Services
                     .ThenInclude(tp=> tp.User)
                 .Include(t=> t.TeamPermissions)
                     .ThenInclude(tp=> tp.Role)
-                .SingleOrDefaultAsync(x => x.Name == teamName).AsNoTracking();
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.Name == teamName);
             if (team == null)
             {
                 throw new ArgumentException("Team not found");
@@ -136,7 +137,7 @@ namespace Keas.Mvc.Services
         public async Task<User> GetUser()
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var user = await _dbContext.Users.SingleOrDefaultAsync(x => x.Id == userId).AsNoTracking();
+            var user = await _dbContext.Users.AsNoTracking().SingleOrDefaultAsync(x => x.Id == userId);
             return user;
         }
 
