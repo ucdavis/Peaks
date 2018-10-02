@@ -32,8 +32,7 @@ namespace Keas.Mvc.Services
 
         Task<List<TeamPermission>> GetUserRolesInTeam(Team team);
 
-        Task<List<Role>> GetUserRolesInTeamSlug(string teamSlug);
-
+        
         Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team);
     }
     public class SecurityService : ISecurityService
@@ -169,12 +168,7 @@ namespace Keas.Mvc.Services
             return userPermissions;
         }
 
-        public async Task<List<Role>> GetUserRolesInTeamSlug(string teamSlug){
-            var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var userPermissions = await _dbContext.TeamPermissions.Where(x => x.Team.Slug == teamSlug && x.User.Id == userId).Select(tp=> tp.Role).AsNoTracking().ToListAsync();
-            return userPermissions;
-        }
-
+        
         public async Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team)
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
