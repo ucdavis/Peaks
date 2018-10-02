@@ -19,6 +19,10 @@ namespace Keas.Mvc.Controllers
             this._context = context;
         }
 
+        public ActionResult Index () {
+            return View();
+        }
+
         public async Task<ActionResult> ExpiringItems (bool showInactive = false, DateTime? expiresBefore = null, string showType = "All")
         {
             if (expiresBefore == null)
