@@ -18,16 +18,6 @@ namespace Keas.Mvc
         public static void Main(string[] args)
         {
             var host = BuildWebHost(args);
-
-#if DEBUG
-            // automatically create and seed database
-            using (var scope = host.Services.CreateScope())
-            {
-                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                
-                DbInitializer.Initialize(context);
-            }            
-#endif
             
             host.Run();
         }
