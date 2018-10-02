@@ -18,7 +18,7 @@ namespace Keas.Mvc.Models
         public Workstation[] Workstations { get; set; }
 
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:d}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "Expires before")]
         public DateTime ExpiresBefore { get; set; }
 
@@ -55,7 +55,7 @@ namespace Keas.Mvc.Models
                 ExpiresBefore = expiresBefore,
                 ShowInactive = showInactive,
                 ItemList =  itemList,
-                ShowType = showType
+                ShowType = showType,                
             };
             return viewModel;
         }
