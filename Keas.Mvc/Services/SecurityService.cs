@@ -88,6 +88,7 @@ namespace Keas.Mvc.Services
                     .ThenInclude(tp=> tp.User)
                 .Include(t=> t.TeamPermissions)
                     .ThenInclude(tp=> tp.Role)
+                .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Slug == teamSlug);
             if (team == null)
             {
