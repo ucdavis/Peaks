@@ -25,7 +25,6 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>()));
             expectedFields.Add(new NameAndType("NeedsAccept", "System.Boolean", new List<string>()));
             expectedFields.Add(new NameAndType("Pending", "System.Boolean", new List<string>()));
-            expectedFields.Add(new NameAndType("Status", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("User", "Keas.Core.Domain.User", new List<string>()));
             #endregion Arrange
 

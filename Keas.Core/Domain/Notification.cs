@@ -13,7 +13,6 @@ namespace Keas.Core.Domain
 
         public bool Pending { get; set; }
         public DateTime? DateTimeSent { get; set; }
-        public string Status { get; set; }
         public DateTime DateTimeCreated { get; set; }
         public bool NeedsAccept { get; set; }
 
