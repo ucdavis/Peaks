@@ -5,18 +5,7 @@
 }
 
 @section Scripts {
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.10.5/jquery.dataTables.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/js/gijgo.min.js" type="text/javascript"></script>
-    <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/css/gijgo.min.css" rel="stylesheet" type="text/css" />
-    
-    <script type="text/javascript">
-        $('.datepicker').datepicker({
-            uiLibrary: 'bootstrap4',
-            format: 'yyyy-mm-dd'
-        });
-        $('.dataTable').DataTable();
-       
-    </script>
+   @await Html.PartialAsync("_ScriptsPartial.cshtml", Model)                             
 }
 
 
