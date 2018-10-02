@@ -18,30 +18,7 @@ namespace Keas.Mvc.Controllers
             _context = context;
         }
 
-        // GET: Team
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Teams.ToListAsync());
-        }
-
-        // Don't need details? Only one property.
-        //// GET: Team/Details/5
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    if (id == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var team = await _context.Teams
-        //        .SingleOrDefaultAsync(m => m.Id == id);
-        //    if (team == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(team);
-        //}
+       
 
         // GET: Team/Create
         public IActionResult Create()
