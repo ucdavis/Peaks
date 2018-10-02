@@ -5,12 +5,7 @@
 }
 
 @section Scripts {
-    <script src="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.10.5/jquery.dataTables.js"></script>
-    
-    
-    <script type="text/javascript">
-        $('.dataTable').DataTable();
-    </script>
+   @await Html.PartialAsync("_ScriptsPartial.cshtml", Model)                             
 }
 
 
