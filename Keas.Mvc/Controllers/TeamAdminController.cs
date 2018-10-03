@@ -18,11 +18,13 @@ namespace Keas.Mvc.Controllers
 
         private readonly ApplicationDbContext _context;
         private readonly IIdentityService _identityService;
+        private readonly IUserService _userService;
 
-        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService)
+        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService)
         {
             _context = context;
-            _identityService = identityService;
+            _identityService = identityService;            
+            _userService = userService;
         }
 
         public async Task<IActionResult> Index()
@@ -123,8 +125,12 @@ namespace Keas.Mvc.Controllers
             
             if (user == null)
             {
-                ModelState.AddModelError("UserEmail", "User not found!");
-                return View(viewModel);
+                if(model.UserEmail.Contains("@")){
+                   user = await _userService.CreateUserFromEmail(model.UserEmail);
+                } else
+                {
+                   user = await _userService.CreateUserFromKerberos(model.UserEmail);
+                }
             }
 
             if (role == null)
