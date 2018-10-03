@@ -36,7 +36,8 @@ namespace Keas.Mvc.Services
                     Id = userSearch.Id,
                     FirstName = userSearch.FirstName,
                     LastName = userSearch.LastName,
-                    Email = userSearch.Email
+                    Email = userSearch.Email,
+                    Iam = userSearch.Iam
                 };
             _context.Users.Add(newUser); 
             await _context.SaveChangesAsync(); 
