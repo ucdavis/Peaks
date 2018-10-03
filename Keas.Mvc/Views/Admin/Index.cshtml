@@ -36,7 +36,8 @@
                   @Html.DisplayFor(modelItem => item.Name)
               </td>
               <td>
-                  @Html.ActionLink("Edit", "Edit", "Team", new { id=item.Id })
+                  @Html.ActionLink("Edit", "Edit", "Team", new { id=item.Id }) | 
+                   <a href='@string.Format("/{0}/TeamAdmin", item.Slug)' class="card-link">Go to team</a>
               </td>
           </tr>
   }
