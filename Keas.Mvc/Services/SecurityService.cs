@@ -18,7 +18,7 @@ namespace Keas.Mvc.Services
     {
         Task<bool> IsInRole(string roleCode, string teamName);
 
-        Task<bool> IsInRoles(List<Role> roles, string teamName);
+        Task<bool> IsInRoles(List<Role> roles, string teamSlug);
 
         Task<bool> IsInAdminRoles(List<Role> roles, User user);
 
@@ -47,23 +47,15 @@ namespace Keas.Mvc.Services
             _dbContext = dbContext;
         }
 
-        public async Task<bool> IsInRoles(List<Role> roles, string teamName)
+        public async Task<bool> IsInRoles(List<Role> roles, string teamSlug)
         {
             var user = await GetUser();
-            var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamName);
+            var team = await _dbContext.Teams.SingleAsync(t => t.Slug == teamSlug);
             var roleIds = roles.Select(a => a.Id).ToArray();
 
-            _dbContext.Entry(team)
-                .Collection(t=> t.TeamPermissions)
-                .Query()
-                .Where(tp=> tp.User==user)
-                .AsNoTracking()
-                .Load();
-                
-            if (team.TeamPermissions.Any(a=> roleIds.Contains(a.RoleId)))
-            {
+            if (await _dbContext.TeamPermissions.AnyAsync(a => a.Team == team && a.User == user && roleIds.Contains(a.RoleId))){
                 return true;
-            }
+            }            
             return await _dbContext.SystemPermissions.AsNoTracking().AnyAsync(a => a.User == user && roleIds.Contains(a.RoleId));
         }
 
