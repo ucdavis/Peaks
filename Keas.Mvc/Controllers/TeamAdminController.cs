@@ -29,7 +29,7 @@ namespace Keas.Mvc.Controllers
         {
             var team = await _context.Teams
                 .Include(o=> o.FISOrgs)
-                .SingleOrDefaultAsync(x => x.Name == Team);
+                .SingleOrDefaultAsync(x => x.Slug == Team);
 
             return View(team);
         }
@@ -42,7 +42,7 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AddFISOrg(FISOrgAddModel model)
         {
-            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Name == Team);
+            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
             if (team == null)
             {
                 return NotFound();
@@ -61,7 +61,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> RemoveFISOrg(int fisorgId)
         {
-            var fisOrg = await _context.FISOrgs.Include(t=> t.Team).SingleAsync(f => f.Id == fisorgId && f.Team.Name == Team);
+            var fisOrg = await _context.FISOrgs.Include(t=> t.Team).SingleAsync(f => f.Id == fisorgId && f.Team.Slug == Team);
             if (fisOrg == null)
             {
                 Message = "FIS Org not found or not attached to this team";
@@ -89,7 +89,7 @@ namespace Keas.Mvc.Controllers
                     .ThenInclude(tp=> tp.User)
                 .Include(t=> t.TeamPermissions)
                     .ThenInclude(tp=>tp.Role)
-                .SingleAsync(x => x.Name == Team);
+                .SingleAsync(x => x.Slug == Team);
             
             var viewModel = TeamAdminMembersListModel.Create(team,null);
             return View(viewModel);
@@ -97,7 +97,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> AddMemberRole()
         {
-            var team = await _context.Teams.SingleAsync(x => x.Name == Team);
+            var team = await _context.Teams.SingleAsync(x => x.Slug == Team);
             
             var viewModel = await TeamAdminMembersAddModel.Create(team, _context);
             return View(viewModel);
@@ -106,7 +106,7 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AddMemberRole(TeamAdminMembersAddModel model)
         {
-            var team = await _context.Teams.SingleAsync(x => x.Name == Team);
+            var team = await _context.Teams.SingleAsync(x => x.Slug == Team);
             var viewModel = await TeamAdminMembersAddModel.Create(team, _context);
             if (team == null)
             {
@@ -167,7 +167,7 @@ namespace Keas.Mvc.Controllers
                 .ThenInclude(tp => tp.User)
                 .Include(t => t.TeamPermissions)
                 .ThenInclude(tp => tp.Role)
-                .SingleAsync(x => x.Name == Team);
+                .SingleAsync(x => x.Slug == Team);
             var viewModel = TeamAdminMembersListModel.Create(team, userId);
 
             return View(viewModel);
@@ -191,7 +191,7 @@ namespace Keas.Mvc.Controllers
             
             foreach (var role in roles)
             {
-                var teamPermssionToDelete = _context.TeamPermissions.Single(tptd => tptd.RoleId == role && tptd.UserId == userId && tptd.Team.Name==Team);
+                var teamPermssionToDelete = _context.TeamPermissions.Single(tptd => tptd.RoleId == role && tptd.UserId == userId && tptd.Team.Slug==Team);
                 _context.TeamPermissions.Remove(teamPermssionToDelete);
             }
             await _context.SaveChangesAsync();
@@ -203,7 +203,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Members()
         {
-            var model = await _context.People.Where(p=> p.Team.Name==Team).ToListAsync();
+            var model = await _context.People.Where(p=> p.Team.Slug==Team).ToListAsync();
 
             return View(model);
         }
@@ -247,7 +247,7 @@ namespace Keas.Mvc.Controllers
             if (ModelState.IsValid)
             {
                 var exisitngPerson =
-                    await _context.People.SingleOrDefaultAsync(p => p.Team.Name == Team && p.UserId == person.User.Id);
+                    await _context.People.SingleOrDefaultAsync(p => p.Team.Slug == Team && p.UserId == person.User.Id);
                 if (exisitngPerson != null)
                 {
                     Message = "User is already a member of this team!";
@@ -266,7 +266,7 @@ namespace Keas.Mvc.Controllers
                     };
                     _context.Users.Add(newUser);
                 }
-                var team = await _context.Teams.SingleAsync(t => t.Name == Team);
+                var team = await _context.Teams.SingleAsync(t => t.Slug == Team);
                 var newPerson = new Person
                 {
                     Team = team,

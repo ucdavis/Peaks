@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Keas.Core.Helper;
 
 namespace Keas.Mvc.Controllers
 {
@@ -135,6 +136,26 @@ namespace Keas.Mvc.Controllers
             await _context.SaveChangesAsync();
             Message = "All keys and equipment confirmed!";
             return RedirectToAction(nameof(MyStuff));
+        }
+
+        public async Task<IActionResult> SelectTeam(string urlRedirect) {
+            var user = await _securityService.GetUser();
+            var people = await _context.People.Where(p => p.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
+            var teamAdmins = await _context.TeamPermissions.Where(tp => tp.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
+            var teams = people.Union(teamAdmins, new TeamComparer());
+            if(teams.Count() == 0){
+                return Redirect("/Home/NoAccess/");
+            }
+            if (teams.Count() == 1) {
+                if(!string.IsNullOrWhiteSpace(urlRedirect)){
+                    return Redirect("/" + teams.First().Slug + "/" + urlRedirect);
+                } else {
+                    return Redirect("/" + teams.First().Slug + "/Confirm/MyStuff");
+                }
+            }
+            
+            ViewBag.urlRedirect = urlRedirect == null ? "Confirm/Mystuff/" : urlRedirect;
+            return View(teams);
         }
     }
 }

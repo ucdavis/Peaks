@@ -54,19 +54,19 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     let equipmentFetchUrl =  "";
     if(!!this.props.person)
     {
-      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/listassigned?personid=${this.props.person.id}`;
+      equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/listassigned?personid=${this.props.person.id}`;
     } else if(!!this.props.space) {
-      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/getEquipmentInSpace?spaceId=${this.props.space.id}`;
+      equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/getEquipmentInSpace?spaceId=${this.props.space.id}`;
     } else {
-      equipmentFetchUrl = `/api/${this.context.team.name}/equipment/list/`;
+      equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/list/`;
     }
 
-    const attrFetchUrl = `/api/${this.context.team.name}/equipment/commonAttributeKeys/`;
+    const attrFetchUrl = `/api/${this.context.team.slug}/equipment/commonAttributeKeys/`;
 
     const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
     const equipment = await this.context.fetch(equipmentFetchUrl);
 
-    const tags = await this.context.fetch(`/api/${this.context.team.name}/tags/listTags`);
+    const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);
 
     this.setState({ commonAttributeKeys, equipment, loading: false, tags });
   }
@@ -181,7 +181,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     // if we are creating a new equipment
     if (equipment.id === 0) {
       equipment.teamId = this.context.team.id;
-      equipment = await this.context.fetch(`/api/${this.context.team.name}/equipment/create`, {
+      equipment = await this.context.fetch(`/api/${this.context.team.slug}/equipment/create`, {
         body: JSON.stringify(equipment),
         method: "POST"
       });
@@ -191,7 +191,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/api/${this.context.team.name}/equipment/assign?equipmentId=${equipment.id}&personId=${
+      const assignUrl = `/api/${this.context.team.slug}/equipment/assign?equipmentId=${equipment.id}&personId=${
         person.id
       }&date=${date}`;
 
@@ -235,7 +235,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
   private _revokeEquipment = async (equipment: IEquipment) => {
     // call API to actually revoke
-    const removed: IEquipment = await this.context.fetch(`/api/${this.context.team.name}/equipment/revoke`, {
+    const removed: IEquipment = await this.context.fetch(`/api/${this.context.team.slug}/equipment/revoke`, {
       body: JSON.stringify(equipment),
       method: "POST"
     });
@@ -269,7 +269,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       return;
     }
 
-    const updated: IEquipment = await this.context.fetch(`/api/${this.context.team.name}/equipment/update`, {
+    const updated: IEquipment = await this.context.fetch(`/api/${this.context.team.slug}/equipment/update`, {
       body: JSON.stringify(equipment),
       method: "POST"
     });
@@ -356,12 +356,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   private _getBaseUrl = () => {
     if(!!this.props.person)
     {
-      return `/${this.context.team.name}/people/details/${this.props.person.id}`;
+      return `/${this.context.team.slug}/people/details/${this.props.person.id}`;
     } else if(!!this.props.space)
     {
-      return `/${this.context.team.name}/spaces/details/${this.props.space.id}`;
+      return `/${this.context.team.slug}/spaces/details/${this.props.space.id}`;
     } else {
-      return `/${this.context.team.name}`;
+      return `/${this.context.team.slug}`;
     }
 
   };

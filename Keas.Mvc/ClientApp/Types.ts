@@ -60,6 +60,7 @@ export interface IPersonInfo {
 export interface ITeam {
   id: number;
   name: string;
+  slug: string;
 }
 
 export interface IKey {

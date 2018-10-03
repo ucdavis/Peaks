@@ -43,8 +43,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   public async componentDidMount() {
       // are we getting the person's access or the team's?
       const accessFetchUrl = this.props.person
-          ? `/api/${this.context.team.name}/access/listAssigned?personId=${this.props.person.id}`
-      : `/api/${this.context.team.name}/access/list/`;
+          ? `/api/${this.context.team.slug}/access/listAssigned?personId=${this.props.person.id}`
+      : `/api/${this.context.team.slug}/access/list/`;
 
     const access = await this.context.fetch(accessFetchUrl);
     this.setState({ access , loading: false });
@@ -116,7 +116,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       // if we are creating a new access
       if (access.id === 0) {
           access.teamId = this.context.team.id;
-          access = await this.context.fetch(`/api/${this.context.team.name}/access/create`, {
+          access = await this.context.fetch(`/api/${this.context.team.slug}/access/create`, {
               body: JSON.stringify(access),
               method: "POST"
           });
@@ -125,7 +125,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/api/${this.context.team.name}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
+      const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
 
       const accessAssignment = await this.context.fetch(assignUrl, {
         method: "POST"
@@ -171,7 +171,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   private _revokeAccess = async (accessAssignment: IAccessAssignment) => {
 
       // call API to actually revoke
-      const removed: IAccess = await this.context.fetch(`/api/${this.context.team.name}/access/revoke`, {
+      const removed: IAccess = await this.context.fetch(`/api/${this.context.team.slug}/access/revoke`, {
           body: JSON.stringify(accessAssignment),
           method: "POST"
       });
@@ -207,7 +207,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       return;
     }
 
-    const updated: IAccess = await this.context.fetch(`/api/${this.context.team.name}/access/update`, {
+    const updated: IAccess = await this.context.fetch(`/api/${this.context.team.slug}/access/update`, {
       body: JSON.stringify(access),
       method: "POST"
     });
@@ -268,8 +268,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
 
   private _getBaseUrl = () => {
       return this.props.person
-          ? `/${this.context.team.name}/people/details/${this.props.person.id}`
-          : `/${this.context.team.name}`;
+          ? `/${this.context.team.slug}/people/details/${this.props.person.id}`
+          : `/${this.context.team.slug}`;
   };
 
 }

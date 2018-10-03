@@ -29,6 +29,13 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)128)]",
             }));
             expectedFields.Add(new NameAndType("People", "System.Collections.Generic.List`1[Keas.Core.Domain.Person]", new List<string>()));
+            expectedFields.Add(new NameAndType("Slug", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"Team Slug\")]",
+                "[System.ComponentModel.DataAnnotations.RegularExpressionAttribute(\"^([a-z0-9]+[a-z0-9\\-]?)+[a-z0-9]$\", ErrorMessage = \"Slug may only contain lowercase alphanumeric characters or single hyphens, and cannot begin or end with a hyphen\")]",
+                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)40, MinimumLength = 3, ErrorMessage = \"Slug must be between 3 and 40 characters\")]",
+            }));
             expectedFields.Add(new NameAndType("TeamPermissions", "System.Collections.Generic.ICollection`1[Keas.Core.Domain.TeamPermission]", new List<string>
             {
                 "[Newtonsoft.Json.JsonIgnoreAttribute()]",

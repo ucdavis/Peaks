@@ -27,8 +27,8 @@ namespace Keas.Mvc.Services
         Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId);
         Task<User> GetUser();
 
-        Task<Person> GetPerson(string teamName);
-        Task<List<User>> GetUsersInRoles(List<Role> roles, string teamName);
+        Task<Person> GetPerson(string teamSlug);
+        Task<List<User>> GetUsersInRoles(List<Role> roles, string teamSlug);
 
         Task<List<TeamPermission>> GetUserRolesInTeam(Team team);
 
@@ -50,7 +50,7 @@ namespace Keas.Mvc.Services
         public async Task<bool> IsInRoles(List<Role> roles, string teamSlug)
         {
             var user = await GetUser();
-            var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamSlug);
+            var team = await _dbContext.Teams.SingleAsync(t => t.Slug == teamSlug);
             var roleIds = roles.Select(a => a.Id).ToArray();
 
             if (await _dbContext.TeamPermissions.AnyAsync(a => a.Team == team && a.User == user && roleIds.Contains(a.RoleId))){
@@ -61,7 +61,7 @@ namespace Keas.Mvc.Services
 
         public async Task<bool> IsInRoles(List<Role> roles, string teamSlug, User user)
         {
-             var team = await _dbContext.Teams.SingleAsync(t => t.Name == teamSlug);
+             var team = await _dbContext.Teams.SingleAsync(t => t.Slug == teamSlug);
             var roleIds = roles.Select(a => a.Id).ToArray();
             if (await _dbContext.TeamPermissions.AnyAsync(a => a.Team == team && a.User == user && roleIds.Contains(a.RoleId)))
             {
@@ -90,7 +90,7 @@ namespace Keas.Mvc.Services
                 .Include(t=> t.TeamPermissions)
                     .ThenInclude(tp=> tp.Role)
                 .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Name == teamSlug);
+                .SingleOrDefaultAsync(x => x.Slug == teamSlug);
             if (team == null)
             {
                 throw new ArgumentException("Team not found");
@@ -111,11 +111,11 @@ namespace Keas.Mvc.Services
             return user;
         }
 
-        public async Task<Person> GetPerson(string teamName)
+        public async Task<Person> GetPerson(string teamSlug)
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
             var person =
-                await _dbContext.People.AsNoTracking().SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Name == teamName);
+                await _dbContext.People.SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Slug == teamSlug);
             return person;
         }
 
@@ -126,10 +126,9 @@ namespace Keas.Mvc.Services
             return users;
         }
 
-        public async Task<List<User>> GetUsersInRoles(List<Role> roles, string teamName)
+        public async Task<List<User>> GetUsersInRoles(List<Role> roles, string teamSlug)
         {
-            var users = await _dbContext.TeamPermissions.Where(x => x.Team.Name== teamName && roles.Any(r => r.Id == x.RoleId)).Select(tp => tp.User).Distinct().AsNoTracking().ToListAsync();
-
+            var users = await _dbContext.TeamPermissions.Where(x => x.Team.Slug== teamSlug && roles.Any(r => r.Id == x.RoleId)).Select(tp => tp.User).Distinct().ToListAsync();
             return users;
         }
 
@@ -144,7 +143,7 @@ namespace Keas.Mvc.Services
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
             var userPermissions = await _dbContext.TeamPermissions.Where(x => x.TeamId == team.Id && x.User.Id == userId).Select(tp=> tp.Role).AsNoTracking().ToListAsync();
-            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User.Id == userId).Select(sp=> sp.Role).AsNoTracking().ToListAsync();
+            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User.Id == userId).Select(sp=> sp.Role).ToListAsync();
             userPermissions.AddRange(admin);
             return userPermissions;
         }

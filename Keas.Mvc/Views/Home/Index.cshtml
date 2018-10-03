@@ -8,28 +8,25 @@
   <div class="card-content">
     <div class="row">
       <div class=""><h3>Team CAES</h3>
-              <ul>
+              <ul>                 
                   <li>
-                      <a asp-action="Index" asp-controller="People" asp-route-teamName="CAESDO">Team People View</a>
+                      <a href="/Confirm/SelectTeam?urlRedirect=people">Person Details</a>
                   </li>
                   <li>
-                      <a href="/CAESDO/people/1">Person Details</a>
+                      <a href="/Confirm/SelectTeam?urlRedirect=keys">Team Assets</a>
                   </li>
                   <li>
-                      <a href="/CAESDO/keys">Team Assets</a>
+                      <a href="/Confirm/SelectTeam">MyStuff</a>
                   </li>
                   <li>
-                      <a href="/CAESDO/Confirm/Mystuff">MyStuff</a>
-                  </li>
-                  <li>
-                      <a href="/CAESDO/Report/ExpiringItems">Expiring Items Report</a>
+                      <a href="/Confirm/SelectTeam?urlRedirect=Report/ExpiringItems">Expiring Items Report</a>
                   </li>
 
                   <li>
-                      <a href="/CAESDO/TeamAdmin">Administer Team</a>
+                      <a href="/Confirm/SelectTeam?urlRedirect=TeamAdmin">Administer Team</a>
                   </li>
                   <li>
-                      <a href="/CAESDO/TagsManager">Tags for Team CAES</a>
+                      <a href="/Confirm/SelectTeam?urlRedirect=TagsManager">Tags for Team CAES</a>
                   </li>
 
               </ul>
@@ -37,10 +34,7 @@
             <div class="">
                     <h3>System Admin</h3>
 
-                        <ul>
-                            <li>
-                                <a href="/Team/Index">Teams in system</a>
-                            </li>
+                        <ul>                           
                             <li>
                                 <a href="/Admin/Index">System Administration</a>
                             </li>

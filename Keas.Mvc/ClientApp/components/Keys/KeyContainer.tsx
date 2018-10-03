@@ -44,11 +44,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     let keyFetchUrl =  "";
     if(!!this.props.person)
     {
-      keyFetchUrl = `/api/${this.context.team.name}/keys/listassigned?personid=${this.props.person.id}`;
+      keyFetchUrl = `/api/${this.context.team.slug}/keys/listassigned?personid=${this.props.person.id}`;
     } else if(!!this.props.space) {
-      keyFetchUrl = `/api/${this.context.team.name}/keys/getKeysInSpace?spaceId=${this.props.space.id}`;
+      keyFetchUrl = `/api/${this.context.team.slug}/keys/getKeysInSpace?spaceId=${this.props.space.id}`;
     } else {
-      keyFetchUrl = `/api/${this.context.team.name}/keys/list/`;
+      keyFetchUrl = `/api/${this.context.team.slug}/keys/list/`;
     }
 
     const keys = await this.context.fetch(keyFetchUrl);
@@ -117,7 +117,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     // if we are creating a new key
     if (key.id === 0) {
       key.teamId = this.context.team.id;
-      key = await this.context.fetch(`/api/${this.context.team.name}/keys/create`, {
+      key = await this.context.fetch(`/api/${this.context.team.slug}/keys/create`, {
         body: JSON.stringify(key),
         method: "POST"
       });
@@ -126,7 +126,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/api/${this.context.team.name}/keys/assign?keyId=${key.id}&personId=${
+      const assignUrl = `/api/${this.context.team.slug}/keys/assign?keyId=${key.id}&personId=${
         person.id
       }&date=${date}`;
 
@@ -166,7 +166,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
   private _revokeKey = async (key: IKey) => {
     // call API to actually revoke
-    const removed: IKey = await this.context.fetch(`/api/${this.context.team.name}/keys/revoke`, {
+    const removed: IKey = await this.context.fetch(`/api/${this.context.team.slug}/keys/revoke`, {
       body: JSON.stringify(key),
       method: "POST"
     });
@@ -201,7 +201,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       return;
     }
 
-    const updated: IKey = await this.context.fetch(`/api/${this.context.team.name}/keys/update`, {
+    const updated: IKey = await this.context.fetch(`/api/${this.context.team.slug}/keys/update`, {
       body: JSON.stringify(key),
       method: "POST"
     });
@@ -253,12 +253,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   private _getBaseUrl = () => {
     if(!!this.props.person)
     {
-      return `/${this.context.team.name}/people/details/${this.props.person.id}`;
+      return `/${this.context.team.slug}/people/details/${this.props.person.id}`;
     } else if(!!this.props.space)
     {
-      return `/${this.context.team.name}/spaces/details/${this.props.space.id}`;
+      return `/${this.context.team.slug}/spaces/details/${this.props.space.id}`;
     } else {
-      return `/${this.context.team.name}`;
+      return `/${this.context.team.slug}`;
     }
   }
 }

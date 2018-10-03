@@ -36,8 +36,8 @@ export default class SpacesContainer extends React.Component<{}, IState> {
     }
 
     public async componentDidMount() {
-        const spaces = await this.context.fetch(`/api/${this.context.team.name}/spaces/list?orgId=ADNO`);
-        const tags = await this.context.fetch(`/api/${this.context.team.name}/tags/listTags`);
+        const spaces = await this.context.fetch(`/api/${this.context.team.slug}/spaces/list?orgId=ADNO`);
+        const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);
         this.setState({ loading: false, spaces, tags });
     }
     public render() {
@@ -170,7 +170,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
         const index = this.state.spaces.findIndex(x => x.id === spaceId);
         if(index > -1 )
         {
-            const tags = await this.context.fetch(`/api/${this.context.team.name}/spaces/getTagsInSpace?spaceId=${spaceId}`);
+            const tags = await this.context.fetch(`/api/${this.context.team.slug}/spaces/getTagsInSpace?spaceId=${spaceId}`);
             const spaces = [...this.state.spaces];
             spaces[index].tags = tags;
             this.setState({spaces});
@@ -178,7 +178,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
     }
 
     private _getBaseUrl = () => {
-        return `/${this.context.team.name}`;
+        return `/${this.context.team.slug}`;
     };
 
     private _filterTags = (filters: string[]) => {

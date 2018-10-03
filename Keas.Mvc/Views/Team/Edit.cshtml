@@ -23,6 +23,12 @@
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="form-group">
+                    <label asp-for="Slug" class="control-label"></label>
+                    <input asp-for="Slug" class="form-control" />
+                    <span asp-validation-for="Slug" class="text-danger"></span>
+                    <span id="slugUrl"></span>
+                </div>
+                <div class="form-group">
                     <input type="submit" value="Save" class="btn btn-primary" />
                 </div>
             </form>
@@ -35,4 +41,32 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(function () {
+            var dirtySlug = false;
+            $('#Name').keyup(function () {
+                if (dirtySlug) {
+                    return;
+                }
+                var slug = $(this).val();
+                slug = slug.replace(/[\W_]/g, '-');
+                slug = slug.replace(/--*/g, '-');
+                slug = slug.trim('-');
+                slug = slug.toLowerCase();
+
+                $('#Slug').val(slug);
+                updateSlugUrl();
+            });
+
+            $('#Slug').change(function () {
+                dirtySlug = true;
+                updateSlugUrl();
+            });
+
+            function updateSlugUrl() {
+                var slug = $('#Slug').val();
+                $('#slugUrl').text("https://keas.ucdavis.edu/" + slug);
+            }
+        });
+    </script>
 }
