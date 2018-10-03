@@ -120,7 +120,7 @@ namespace Keas.Mvc.Controllers
                 return View(viewModel);
             }
 
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.UserEmail);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.UserEmail || u.Id == model.UserEmail);
             var role = await _context.Roles.SingleOrDefaultAsync(r => r.Id == model.RoleId);
             
             if (user == null)
