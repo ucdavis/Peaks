@@ -263,14 +263,7 @@ namespace Keas.Mvc.Controllers
                 var existingUser = await _context.Users.Where(x => x.Id == user.Id).AnyAsync();
                 if (!existingUser)
                 {
-                    var newUser = new User
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email
-                    };
-                    _context.Users.Add(newUser);
+                   var createdUser = await _userService.CreateUserFromEmail(person.User.Email);
                 }
                 var team = await _context.Teams.SingleAsync(t => t.Slug == Team);
                 var newPerson = new Person
