@@ -88,6 +88,7 @@ namespace Keas.Mvc.Helpers
             context.People.Add(lauraCaes);
             context.People.Add(scottCaes);
             context.People.Add(calCaes);
+            context.People.Add(jamesPs);
             context.People.Add(jasonCaes);
             context.People.Add(jamesPs);
 
