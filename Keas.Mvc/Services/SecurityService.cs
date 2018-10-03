@@ -98,7 +98,7 @@ namespace Keas.Mvc.Services
 
         public async Task<bool> IsInAdminRoles(List<Role> roles, User user)
         {
-            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User == user).AsNoTracking().ToListAsync();
+            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User == user).ToListAsync();
             if (admin.Any(b => roles.Contains(b.Role)))
             {
                 return true;
