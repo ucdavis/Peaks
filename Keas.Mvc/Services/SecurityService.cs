@@ -16,7 +16,7 @@ namespace Keas.Mvc.Services
     
     public interface ISecurityService
     {
-        Task<bool> IsInRole(string roleCode, string teamName);
+        Task<bool> IsInRole(string roleCode, string teamSlug);
 
         Task<bool> IsInRoles(List<Role> roles, string teamSlug);
 
@@ -77,7 +77,7 @@ namespace Keas.Mvc.Services
             return await _dbContext.SystemPermissions.AsNoTracking().AnyAsync(a => a.User == user && roleIds.Contains(a.RoleId));
         }
 
-        public async Task<bool> IsInRole(string roleCode, string teamName)
+        public async Task<bool> IsInRole(string roleCode, string teamSlug)
         {
             var role = await _dbContext.Roles.AsNoTracking().SingleOrDefaultAsync(x => x.Name == roleCode);
             if (role == null)
@@ -90,7 +90,7 @@ namespace Keas.Mvc.Services
                 .Include(t=> t.TeamPermissions)
                     .ThenInclude(tp=> tp.Role)
                 .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Name == teamName);
+                .SingleOrDefaultAsync(x => x.Slug == teamSlug);
             if (team == null)
             {
                 throw new ArgumentException("Team not found");
