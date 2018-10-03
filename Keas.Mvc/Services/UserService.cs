@@ -6,8 +6,8 @@ namespace Keas.Mvc.Services
 {
     public interface IUserService
     {
-        Task CreateUserFromEmail(string email);
-        Task CreateUserFromKerberos(string kerb);
+        Task<User> CreateUserFromEmail(string email);
+        Task<User> CreateUserFromKerberos(string kerb);
     }
 
     public class UserService : IUserService
@@ -20,17 +20,17 @@ namespace Keas.Mvc.Services
             _identityService = identityService;
         }
 
-       public async Task CreateUserFromEmail(string email){
+       public async Task<User> CreateUserFromEmail(string email){
             var userSearch = await _identityService.GetByEmail(email); 
-             await CreateUser(userSearch); 
+            return await CreateUser(userSearch); 
        }
 
-       public async Task CreateUserFromKerberos(string kerb){
+       public async Task<User> CreateUserFromKerberos(string kerb){
            var userSearch = await _identityService.GetByKerberos(kerb); 
-           await CreateUser(userSearch);                 
+           return await CreateUser(userSearch);                 
        }
 
-       public async Task CreateUser(User userSearch){
+       public async Task<User> CreateUser(User userSearch){
             var newUser = new User
                 {
                     Id = userSearch.Id,
@@ -40,6 +40,7 @@ namespace Keas.Mvc.Services
                 };
             _context.Users.Add(newUser); 
             await _context.SaveChangesAsync(); 
+            return newUser;
        }
     }    
 }
