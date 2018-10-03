@@ -51,6 +51,7 @@ namespace Keas.Mvc.Services
         {
             var user = await GetUser();
             var team = await _dbContext.Teams.SingleAsync(t => t.Slug == teamSlug);
+            var roleIds = roles.Select(a => a.Id).ToArray();
 
             if (await _dbContext.TeamPermissions.AnyAsync(a => a.Team == team && a.User == user && roleIds.Contains(a.RoleId))){
                 return true;
