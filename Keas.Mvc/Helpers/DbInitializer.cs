@@ -15,9 +15,7 @@ namespace Keas.Mvc.Helpers
 
             if (context.Users.Any()) return; // already initialized
 
-            // add in some default factilities
-            var space1 = new Space { BldgKey = "01", FloorKey = "01", RoomKey = "01", BldgName = "Foo", RoomName = "Bar", RoomNumber = "12", ChartNum = "3", OrgId = "ADNO" };
-            context.Spaces.Add(space1);
+            // add in some default factilities           
 
             var space2 = new Space { BldgKey = "02", FloorKey = "03", RoomKey = "02", BldgName = "North Hall", RoomName = "Group/Meeting Room", RoomNumber = "308", ChartNum = "3", OrgId = "ADNO" };
             context.Spaces.Add(space2);
