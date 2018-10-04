@@ -18,11 +18,13 @@ namespace Keas.Mvc.Controllers
 
         private readonly ApplicationDbContext _context;
         private readonly IIdentityService _identityService;
+        private readonly IUserService _userService;
 
-        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService)
+        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService)
         {
             _context = context;
-            _identityService = identityService;
+            _identityService = identityService;            
+            _userService = userService;
         }
 
         public async Task<IActionResult> Index()
@@ -118,13 +120,17 @@ namespace Keas.Mvc.Controllers
                 return View(viewModel);
             }
 
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.UserEmail);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.UserEmail || u.Id == model.UserEmail);
             var role = await _context.Roles.SingleOrDefaultAsync(r => r.Id == model.RoleId);
             
             if (user == null)
             {
-                ModelState.AddModelError("UserEmail", "User not found!");
-                return View(viewModel);
+                if(model.UserEmail.Contains("@")){
+                   user = await _userService.CreateUserFromEmail(model.UserEmail);
+                } else
+                {
+                   user = await _userService.CreateUserFromKerberos(model.UserEmail);
+                }
             }
 
             if (role == null)
@@ -257,14 +263,7 @@ namespace Keas.Mvc.Controllers
                 var existingUser = await _context.Users.Where(x => x.Id == user.Id).AnyAsync();
                 if (!existingUser)
                 {
-                    var newUser = new User
-                    {
-                        Id = user.Id,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Email = user.Email
-                    };
-                    _context.Users.Add(newUser);
+                   var createdUser = await _userService.CreateUserFromEmail(person.User.Email);
                 }
                 var team = await _context.Teams.SingleAsync(t => t.Slug == Team);
                 var newPerson = new Person

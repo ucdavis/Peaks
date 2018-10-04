@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Keas.Core.Domain;
 using Microsoft.AspNetCore.Authorization;
+using Keas.Mvc.Services;
 
 namespace Keas.Mvc.Controllers
 {
@@ -13,10 +14,15 @@ namespace Keas.Mvc.Controllers
     public class AdminController : SuperController
     {
         private readonly ApplicationDbContext _context;
+        private readonly IIdentityService _identityService;
 
-        public AdminController(ApplicationDbContext context)
+        private readonly IUserService _userService;
+
+        public AdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService)
         {
             _context = context;
+            _identityService = identityService;
+            _userService = userService;
         }
 
         public async Task<IActionResult> Index()
@@ -51,13 +57,17 @@ namespace Keas.Mvc.Controllers
                 return View(viewModel);
             }
 
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.UserEmail);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.UserEmail || u.Id == model.UserEmail);
             var role = await _context.Roles.SingleOrDefaultAsync(r => r.Id == model.RoleId);
 
             if (user == null)
             {
-                ModelState.AddModelError("UserEmail", "User not found!");
-                return View(viewModel);
+                if(model.UserEmail.Contains("@")){
+                   user = await _userService.CreateUserFromEmail(model.UserEmail);
+                } else
+                {
+                   user = await _userService.CreateUserFromKerberos(model.UserEmail);
+                }
             }
 
             if (role == null)
