@@ -1,0 +1,95 @@
+  @model Keas.Mvc.Models.ExpiringItemsViewModel
+  
+  <table id="dtExpiringItems" class="table dataTable">
+        <thead>
+        <tr>
+            <th>
+                Type
+            </th>
+            <th>
+                Item Name
+            </th>
+            <th>
+                Assigned To
+            </th>
+            <th>
+                Expiration
+            </th>
+            <th>
+                Current?
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Access)
+        {
+            <tr>
+                <td>Access</td>
+                <td>@Html.DisplayFor(a=> item.Access.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a=> item.Person.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.ExpiresAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(a=> item.Access.Active)
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model.Keys)
+        {
+            <tr>
+                <td>Key</td>
+                <td>@Html.DisplayFor(a => item.Key.Name) @Html.DisplayFor(a => item.Key.Number)-@Html.DisplayFor(a => item.Number)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.Person.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.ExpiresAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Key.Active)
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model.Equipment)
+        {
+            <tr>
+                <td>Equipment</td>
+                <td>
+                    @Html.DisplayFor(a => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.Person.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.ExpiresAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Active)
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model.Workstations)
+        {
+            <tr>
+                <td>Workstation</td>
+                <td>
+                    @Html.DisplayFor(a => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.Person.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.ExpiresAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Active)
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>

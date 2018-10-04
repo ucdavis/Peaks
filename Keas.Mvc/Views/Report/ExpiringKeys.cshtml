@@ -10,7 +10,7 @@
 
 
 <h2>Expiring Items</h2>
-<form asp-action="ExpiringItems">
+<form asp-action="ExpiringKeys">
     <div class="card">
         <h5 class="card-head">Filters</h5>
         <div class="card-content">
@@ -20,16 +20,10 @@
                     <div class="col-sm">
                         <div class="form-group">
                             <label asp-for="ExpiresBefore" class="control-label"></label>
-                            <input asp-for="ExpiresBefore" class="form-control datepicker" width="276" />
+                            <input asp-for="ExpiresBefore" class="form-control datepicker" />
                             <span asp-validation-for="ExpiresBefore" class="text-danger"></span>
                         </div>
-                    </div>
-                    <div class="col-sm">
-                        <div class="form-group">
-                            <label asp-for="ShowType" class="control-label"></label>
-                            <select asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
-                        </div>
-                    </div>
+                    </div>                    
                     <div class="col-sm">
                         <div class="form-group">
                             <label asp-for="ShowInactive" class="control-label"></label>
@@ -47,4 +41,4 @@
     </div>
 </form>
 
-@await Html.PartialAsync("_ItemsTablePartial.cshtml", Model)
+ @await Html.PartialAsync("_ItemsTablePartial.cshtml", Model)
