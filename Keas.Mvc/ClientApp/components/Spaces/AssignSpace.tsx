@@ -36,11 +36,11 @@ export default class AssignSpace extends React.Component<IProps, IState> {
         return (
             <div>
                 <AsyncTypeahead
+                    clearButton={true}
                     isLoading={this.state.isSearchLoading}
                     minLength={2}
                     placeholder="Search for space"
-                    defaultInputValue={this.props.defaultSpace ?  
-                        this.props.defaultSpace.roomNumber + " " + this.props.defaultSpace.bldgName : ""}
+                    defaultSelected={this.props.defaultSpace ? [this.props.defaultSpace] : []}
                     labelKey={(option: ISpace) =>
                         `${option.roomNumber} ${option.bldgName}`
                     }
@@ -80,6 +80,11 @@ export default class AssignSpace extends React.Component<IProps, IState> {
                         if (selected && selected.length === 1) {
                             this.setState({ selectedSpace: selected[0] });
                             this.props.onSelect(selected[0]);
+                        }
+                        else
+                        {
+                            this.setState({selectedSpace: null});
+                            this.props.onSelect(null);
                         }
                     }}
                     options={this.state.spaces}
