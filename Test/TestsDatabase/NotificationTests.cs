@@ -26,6 +26,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("NeedsAccept", "System.Boolean", new List<string>()));
             expectedFields.Add(new NameAndType("Pending", "System.Boolean", new List<string>()));
             expectedFields.Add(new NameAndType("User", "Keas.Core.Domain.User", new List<string>()));
+            expectedFields.Add(new NameAndType("UserId", "System.String", new List<string>()));
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(Notification));

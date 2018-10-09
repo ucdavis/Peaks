@@ -7,6 +7,8 @@ namespace Keas.Core.Domain
        public int Id { get; set; }
 
         public User User { get; set; }
+
+        public string UserId { get; set; }
         public History History { get; set; }
         public int HistoryId { get; set; }
         public string Details { get; set; }
