@@ -146,7 +146,7 @@ namespace Keas.Mvc.Controllers.Api
                 eq.Attributes.Clear();
                 equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
 
-                if(eq.Space.RoomKey != equipment.Space.RoomKey)
+                if(eq.Space != null && equipment.Space != null  && eq.Space.RoomKey != equipment.Space.RoomKey)
                 {
                     eq.Space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
                 }
