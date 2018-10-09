@@ -45,7 +45,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -63,7 +63,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -81,7 +81,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -101,7 +101,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description,
                     NeedsAccept = user == assignedTo,
@@ -120,7 +120,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -141,7 +141,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description,
                     NeedsAccept = user == assignedTo,
@@ -160,7 +160,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -180,7 +180,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -198,7 +198,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -216,7 +216,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -236,7 +236,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -254,7 +254,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -272,7 +272,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -290,7 +290,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
@@ -308,7 +308,7 @@ namespace Keas.Mvc.Services
             {
                 var notification = new Notification
                 {
-                    User = user,
+                    UserId = user.Id,
                     History = history,
                     Details = history.Description
                 };
