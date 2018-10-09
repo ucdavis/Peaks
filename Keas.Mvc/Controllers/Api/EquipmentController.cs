@@ -128,29 +128,32 @@ namespace Keas.Mvc.Controllers.Api
             return BadRequest(ModelState);
         }
 
-        public async Task<IActionResult> Update([FromBody]Equipment equipment)
+        public async Task<IActionResult> Update([FromBody]Equipment updatedEquipment)
         {
             //TODO: check permissions
             if (ModelState.IsValid)
             {
                 var eq = await _context.Equipment.Where(x => x.Team.Slug == Team)
                     .Include(x => x.Space).Include(x => x.Attributes)
-                    .SingleAsync(x => x.Id == equipment.Id);
+                    .SingleAsync(x => x.Id == updatedEquipment.Id);
                     
-                eq.Make = equipment.Make;
-                eq.Model = equipment.Model;
-                eq.Name = equipment.Name;
-                eq.SerialNumber = equipment.SerialNumber;
-                eq.Tags = equipment.Tags;
+                eq.Make = updatedEquipment.Make;
+                eq.Model = updatedEquipment.Model;
+                eq.Name = updatedEquipment.Name;
+                eq.SerialNumber = updatedEquipment.SerialNumber;
+                eq.Tags = updatedEquipment.Tags;
                 
                 eq.Attributes.Clear();
-                equipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
+                updatedEquipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
 
-                if(eq.Space != null && equipment.Space != null  && eq.Space.RoomKey != equipment.Space.RoomKey)
+                if(updatedEquipment.Space == null)
                 {
-                    eq.Space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
+                    eq.Space = null;
                 }
-
+                else
+                {
+                    eq.Space = await _context.Spaces.SingleAsync(x => x.Id == updatedEquipment.Space.Id);
+                }
                 await _context.SaveChangesAsync();
                 await _eventService.TrackUpdateEquipment(eq);
                 return Json(eq);
