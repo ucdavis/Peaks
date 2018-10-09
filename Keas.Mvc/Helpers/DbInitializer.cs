@@ -38,8 +38,8 @@ namespace Keas.Mvc.Helpers
             var cal = new User { Id = "cydoval", FirstName = "Cal", LastName = "Doval", Email = "cydoval@ucdavis.edu" };
             var jason = new User { Id = "jsylvest", FirstName = "Jason", LastName = "Sylvestre", Email = "jsylvestre@ucdavis.edu" };
 
-            var caes = new Team {  Name = "CAESDO", Slug = "CAESDO" };
-            var ps = new Team { Name = "Plant Sciences", Slug = "PlantSciences"};
+            var caes = new Team {  Name = "CAESDO", Slug = "caesdo" };
+            var ps = new Team { Name = "Plant Sciences", Slug = "plantsciences"};
 
             context.Users.Add(scott);
             context.Users.Add(james);
