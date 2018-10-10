@@ -40,10 +40,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     };
   }
   public async componentDidMount() {
-    if(true)
-    {
-      // TODO: remove
-      return;
+    let dateNow = new Date().getDate();
+    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0).getDate();
+    // TODO: remove
+    if (dateNow <= dateThen) {
+        return;
     }
     // are we getting the person's key or the team's?
     let keyFetchUrl =  "";
@@ -65,9 +66,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             <Denied viewName="Keys" />
         );
     }
-    
+    let dateNow = new Date().getDate();
+    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0).getDate();
     // TODO: remove
-    if(true)
+    if(dateNow <= dateThen)
     {
       return(
         <div className="card keys-color">
