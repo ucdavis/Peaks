@@ -96,7 +96,8 @@ namespace Keas.Mvc.Services
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, serial.Key.TeamId);
             var assignedTo = await _dbContext.Users.SingleAsync(u => u == serial.Assignment.Person.User);
-            users.Add(assignedTo);
+            if(!users.Contains(assignedTo))
+            {users.Add(assignedTo);}  
             foreach (var user in users)
             {
                 var notification = new Notification
@@ -136,7 +137,8 @@ namespace Keas.Mvc.Services
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, equipment.TeamId);
             var assignedTo = await _dbContext.Users.SingleAsync(u => u == equipment.Assignment.Person.User);
-            users.Add(assignedTo);
+            if(!users.Contains(assignedTo))
+            {users.Add(assignedTo);}  
             foreach (var user in users)
             {
                 var notification = new Notification
@@ -175,7 +177,8 @@ namespace Keas.Mvc.Services
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.AccessMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, teamName);
             var assignedTo = await _dbContext.Users.SingleAsync(u => u == accessAssignment.Person.User);
-            users.Add(assignedTo);
+            if(!users.Contains(assignedTo))
+            {users.Add(assignedTo);}  
             foreach (var user in users)
             {
                 var notification = new Notification
@@ -231,7 +234,8 @@ namespace Keas.Mvc.Services
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, workstation.TeamId);
             var assignedTo = await _dbContext.Users.SingleAsync(u => u == workstation.Assignment.Person.User);
-            users.Add(assignedTo);
+            if(!users.Contains(assignedTo))
+            {users.Add(assignedTo);}  
             foreach (var user in users)
             {
                 var notification = new Notification
