@@ -43,11 +43,7 @@ namespace Keas.Core.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Person>()
-                .HasMany(e => e.AccessAssignments)
-                .WithOne()
-                .HasForeignKey(e => e.AccessId)
-                .OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

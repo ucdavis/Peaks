@@ -1,6 +1,7 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
 {
@@ -51,5 +52,14 @@ namespace Keas.Core.Domain
         public string HomePhone { get; set; }
         public string TeamPhone { get; set; }
         public List<AccessAssignment> AccessAssignments { get; set; }
+
+        protected internal static void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Person>()
+                .HasMany(e => e.AccessAssignments)
+                .WithOne()
+                .HasForeignKey(e => e.AccessId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }
