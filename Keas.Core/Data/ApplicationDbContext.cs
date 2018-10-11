@@ -43,7 +43,8 @@ namespace Keas.Core.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-
+            base.OnModelCreating(builder);
+            Person.OnModelCreating(builder);
         }
     }
 }
