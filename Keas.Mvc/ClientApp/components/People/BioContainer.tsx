@@ -16,10 +16,10 @@ export default class BioContainer extends React.Component<IProps, {}> {
     return (
       <div>
 
-          <h2>{this.props.person.user.name}</h2>
+          <h2>{this.props.person.name}</h2>
           <p>
             <i className="far fa-envelope" aria-hidden="true" />{" "}
-            {this.props.person.user.email}
+            {this.props.person.email}
           </p>
           <p className="card-text">
             <i className="fas fa-tags" aria-hidden="true" />{" "}
