@@ -84,9 +84,6 @@ export default class EditPerson extends React.Component<IProps, IState> {
             disabled={!this.state.validState}
           >
             Update Person
-          </Button>{" "}
-          <Button color="secondary" onClick={this._closeModal}>
-            Close
           </Button>
         </ModalFooter>
       </Modal>
