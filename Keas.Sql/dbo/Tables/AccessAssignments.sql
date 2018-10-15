@@ -22,16 +22,6 @@ CREATE NONCLUSTERED INDEX [IX_AccessAssignments_RequestedById]
 
 
 GO
-CREATE NONCLUSTERED INDEX [IX_AccessAssignments_PersonId1]
-    ON [dbo].[AccessAssignments]([PersonId1] ASC);
-
-
-GO
-CREATE NONCLUSTERED INDEX [IX_AccessAssignments_AccessId1]
-    ON [dbo].[AccessAssignments]([AccessId1] ASC);
-
-
-GO
 CREATE NONCLUSTERED INDEX [IX_AccessAssignments_AccessId]
     ON [dbo].[AccessAssignments]([AccessId] ASC);
 
