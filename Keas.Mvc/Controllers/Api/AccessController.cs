@@ -79,13 +79,15 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permssion, make sure access exists, makes sure access is in this team
             if (ModelState.IsValid)
             {
+                var access = await _context.Access.Where(x => x.Id == accessId && x.Team.Slug == Team)
+                    .Include(x => x.Assignments).SingleAsync();
                 var accessAssingment = new AccessAssignment{
                     AccessId = accessId,
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date),
                 };
                 accessAssingment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
-                _context.AccessAssignments.Add(accessAssingment);
+                access.Assignments.Add(accessAssingment);
                 await _context.SaveChangesAsync();
                 await _eventService.TrackAssignAccess(accessAssingment, Team);
                 return Json(accessAssingment);
