@@ -39,6 +39,7 @@ namespace Keas.Mvc
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
+            services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
 
             // setup services
             services.AddSingleton<IIdentityService, IdentityService>();
@@ -125,6 +126,7 @@ namespace Keas.Mvc
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IFinancialService, FinancialService>();
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });

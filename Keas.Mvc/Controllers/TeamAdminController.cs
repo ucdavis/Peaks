@@ -19,12 +19,14 @@ namespace Keas.Mvc.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IIdentityService _identityService;
         private readonly IUserService _userService;
+        private readonly IFinancialService _financialService;
 
-        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService)
+        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService)
         {
             _context = context;
             _identityService = identityService;            
             _userService = userService;
+            _financialService = financialService;
         }
 
         public async Task<IActionResult> Index()
@@ -49,6 +51,11 @@ namespace Keas.Mvc.Controllers
             {
                 return NotFound();
             }
+            if (!await _financialService.ValidateFISOrg(model.Chart, model.OrgCode))
+            {
+                    ModelState.AddModelError("OrgCode", "Chart and OrgCode are not valid");
+            }
+        
             var FISOrg = new FinancialOrganization { Chart = model.Chart, OrgCode = model.OrgCode, Team = team};
             
             if (ModelState.IsValid)
