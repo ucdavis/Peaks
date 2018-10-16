@@ -182,10 +182,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
           },
               this._validateState);
       }
-      // else if (this.props.assignedAccessList.findIndex(x => x == access.name) != -1)
-      // {
-      //    this.setState({ selectedAccess: null, error: "The access you have chosen is already assigned to this user", validAccess: false }, this._validateState);
-      // }
       else
       {
           this.setState({
