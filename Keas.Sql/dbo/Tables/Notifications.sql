@@ -4,14 +4,15 @@
     [DateTimeSent]    DATETIME2 (7)  NULL,
     [Details]         NVARCHAR (MAX) NULL,
     [HistoryId]       INT            NOT NULL,
-    [Pending]         BIT            NOT NULL,
-    [Status]          NVARCHAR (MAX) NULL,
-    [UserId]          NVARCHAR (450) NULL,
     [NeedsAccept]     BIT            CONSTRAINT [DF_Notifications_NeedsAccept] DEFAULT ((0)) NOT NULL,
+    [Pending]         BIT            NOT NULL,
+    [UserId]          NVARCHAR (450) NULL,
     CONSTRAINT [PK_Notifications] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_Notifications_Histories_HistoryId] FOREIGN KEY ([HistoryId]) REFERENCES [dbo].[Histories] ([Id]) ON DELETE CASCADE,
     CONSTRAINT [FK_Notifications_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [dbo].[Users] ([Id])
 );
+
+
 
 
 
