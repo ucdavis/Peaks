@@ -16,6 +16,10 @@
 
 
 
+
+
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_Notifications_UserId]
     ON [dbo].[Notifications]([UserId] ASC);
