@@ -122,15 +122,19 @@ export default class EditKey extends React.Component<IProps, IState> {
     this._closeModal();
   };
 
-
   private _validateState = () => {
     let valid = true;
+    let error = "";
     if (!this.state.key) {
       valid = false;
-    } else if (this.state.error !== "") {
+    } else if ( !this.state.key.name){
       valid = false;
+      error = "You must give this key a name.";
+    } else if(this.state.key.name.length > 64)
+    {
+      valid = false;
+      error = "The name you have chosen is too long";
     }
-    this.setState({ validState: valid });
+    this.setState({ validState: valid, error });
   };
-
 }

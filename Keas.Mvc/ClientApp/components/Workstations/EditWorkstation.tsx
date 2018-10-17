@@ -76,6 +76,7 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
                     tags={this.props.tags}
                   />
             </form>
+            {this.state.error}
           </div>
         </ModalBody>
         <ModalFooter>
@@ -125,12 +126,18 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
 
   private _validateState = () => {
     let valid = true;
+    let error = "";
     if (!this.state.workstation) {
       valid = false;
-    } else if (this.state.error !== "") {
+    } else if ( !this.state.workstation.name){
       valid = false;
+      error = "You must give this workstation a name.";
+    } else if(this.state.workstation.name.length > 64)
+    {
+      valid = false;
+      error = "The name you have chosen is too long";
     }
-    this.setState({ validState: valid });
+    this.setState({ validState: valid, error });
   };
 
 }

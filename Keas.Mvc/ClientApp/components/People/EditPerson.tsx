@@ -75,6 +75,7 @@ export default class EditPerson extends React.Component<IProps, IState> {
                     tags={this.props.tags}
                   />
             </form>
+            {this.state.error}
           </div>
         </ModalBody>
         <ModalFooter>
@@ -130,12 +131,22 @@ export default class EditPerson extends React.Component<IProps, IState> {
 
   private _validateState = () => {
     let valid = true;
+    let error = "";
     if (!this.state.person) {
       valid = false;
-    } else if (this.state.error !== "") {
+    } else if ( !this.state.person.firstName || !this.state.person.lastName){
       valid = false;
+      error = "You must give this person a name";
+    } else if(this.state.person.firstName.length > 50 || this.state.person.lastName.length > 50)
+    {
+      valid = false;
+      error = "The name you have chosen is too long";
     }
-    this.setState({ validState: valid });
+    else if(!this.state.person.email) {
+      valid = false;
+      error = "You must give this person an email address"
+    }
+    this.setState({ validState: valid, error });
   };
 
 }

@@ -76,6 +76,7 @@ export default class EditAccess extends React.Component<IProps, IState> {
                     disableEditing={false}
                   />
             </form>
+            {this.state.error}
           </div>
         </ModalBody>
         <ModalFooter>
@@ -125,12 +126,18 @@ export default class EditAccess extends React.Component<IProps, IState> {
 
   private _validateState = () => {
     let valid = true;
+    let error = "";
     if (!this.state.access) {
       valid = false;
-    } else if (this.state.error !== "") {
+    } else if ( !this.state.access.name){
       valid = false;
+      error = "You must give this access a name.";
+    } else if(this.state.access.name.length > 64)
+    {
+      valid = false;
+      error = "The name you have chosen is too long";
     }
-    this.setState({ validState: valid });
+    this.setState({ validState: valid, error });
   };
 
 }

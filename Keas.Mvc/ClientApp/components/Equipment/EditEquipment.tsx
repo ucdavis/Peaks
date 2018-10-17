@@ -142,12 +142,17 @@ export default class EditEquipment extends React.Component<IProps, IState> {
 
   private _validateState = () => {
     let valid = true;
+    let error = "";
     if (!this.state.equipment) {
       valid = false;
-    } else if (this.state.error !== "") {
+    } else if ( !this.state.equipment.name){
       valid = false;
+      error = "You must give this equipment a name.";
+    } else if(this.state.equipment.name.length > 64)
+    {
+      valid = false;
+      error = "The name you have chosen is too long";
     }
-    this.setState({ validState: valid });
+    this.setState({ validState: valid, error });
   };
-
 }
