@@ -214,7 +214,8 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Access",
                 ActionType = "Assigned",
-                AccessId = accessAssignment.AccessId
+                AccessId = accessAssignment.AccessId,
+                TargetId = accessAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
