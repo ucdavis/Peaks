@@ -14,6 +14,10 @@ namespace Keas.Mvc.Controllers
     {
         public IActionResult Index()
         {
+            string Team = ControllerContext.RouteData.Values["teamName"] as string;
+            if (Team == null){
+                return RedirectToAction("SelectTeam", "Confirm", new {urlRedirect = "home/index"} );
+            }
             return View();
         }
 
