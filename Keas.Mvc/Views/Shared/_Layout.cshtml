@@ -1,4 +1,5 @@
-
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 <!DOCTYPE html>
 <html>
 
@@ -61,22 +62,6 @@
           </div>
 
         </div>
-        <!-- <div style="text-align:right;">
-
-          <div class="row teamwrapper align-items-center">
-
-              <div class="team">
-                <p>College of Agricultural and<br> Environmental Sciences</p>
-              </div>
-              <div class="teamchanger">
-                <i class="fas fa-caret-down fa-lg"></i>
-              </div>
-
-
-          </div>
-        </div> -->
-
-
       </div>
     </div>
   </header>
@@ -94,15 +79,29 @@
         </button>
       <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
+           @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
+                {
+                   <li class="nav-item">
             <a class="nav-link" href="/Confirm/SelectTeam?urlRedirect=keys">Assets</a>
           </li>
+                }     
+          
           <li class="nav-item">
             <a class="nav-link" href="/Confirm/SelectTeam">My Stuff</a>
           </li>
-          <li class="nav-item">
+          @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
+                {
+                   <li class="nav-item">
+            <a class="nav-link" href="/Confirm/SelectTeam?urlRedirect=report/">Reports</a>
+          </li>
+                }
+           @if ((await AuthorizationService.AuthorizeAsync(User, "DepartmentAdminAccess")).Succeeded)
+                {
+                    <li class="nav-item">
             <a class="nav-link" href="/Confirm/SelectTeam?urlRedirect=TeamAdmin">Admin</a>
           </li>
+                }   
+          
         </ul>
         <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
           <span>Welcome @User.GetNameClaim()</span>
