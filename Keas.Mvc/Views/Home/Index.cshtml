@@ -15,16 +15,16 @@
                  @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
                 {
                     <li>
-                        <a href="/Confirm/SelectTeam?urlRedirect=keys">Team Assets</a>
+                        <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "Keys")'>Team Assets</a>
                     </li>
                 }                  
                   <li>
-                      <a href="/Confirm/SelectTeam">MyStuff</a>
+                      <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "Confirm/MyStuff")'>MyStuff</a>
                   </li>
                    @if ((await AuthorizationService.AuthorizeAsync(User, "DepartmentAdminAccess")).Succeeded)
                 {
                     <li> 
-                      <a href="/Confirm/SelectTeam?urlRedirect=TeamAdmin">Administer Team</a> 
+                      <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "TeamAdmin")'>Administer Team</a> 
                   </li> 
                 }   
                    

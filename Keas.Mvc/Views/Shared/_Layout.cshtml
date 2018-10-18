@@ -49,7 +49,11 @@
             <h3>Team</h3>
             <button class="btn-team dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <div class="row justify-content-between align-items-center">
-                <div class="teamname">CA&ES</div>
+                <div class="teamname">
+                   @if (!string.IsNullOrWhiteSpace(TempData["TeamName"] as string)) {
+   @TempData["TeamName"]  
+}
+                </div>
                 <i class="fas fa-caret-down fa-lg"></i>
               </div>
 
@@ -60,13 +64,17 @@
               <a class="dropdown-item" href="#">Something else here</a>
             </div>
           </div>
-
+<div>
+          <a href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
         </div>
+        </div>
+        
       </div>
     </div>
   </header>
   <div class="head_bleed">
     <div class="head_divider">
+
 
     </div>
 
@@ -82,23 +90,23 @@
            @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
                 {
                    <li class="nav-item">
-            <a class="nav-link" href="/Confirm/SelectTeam?urlRedirect=keys">Assets</a>
+            <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"] , "Keys")'>Assets</a>
           </li>
                 }     
           
           <li class="nav-item">
-            <a class="nav-link" href="/Confirm/SelectTeam">My Stuff</a>
+            <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"] , "Confirm/MyStuff")'>My Stuff</a>
           </li>
           @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
                 {
                    <li class="nav-item">
-            <a class="nav-link" href="/Confirm/SelectTeam?urlRedirect=report/">Reports</a>
+            <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"] , "Report")'>Reports</a>
           </li>
                 }
            @if ((await AuthorizationService.AuthorizeAsync(User, "DepartmentAdminAccess")).Succeeded)
                 {
                     <li class="nav-item">
-            <a class="nav-link" href="/Confirm/SelectTeam?urlRedirect=TeamAdmin">Admin</a>
+            <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"] , "TeamAdmin")'>Admin</a>
           </li>
                 }   
           
