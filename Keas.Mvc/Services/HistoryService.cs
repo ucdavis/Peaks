@@ -1,4 +1,5 @@
-﻿using Keas.Core.Data;
+﻿using System.Linq;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using System.Threading.Tasks;
 
@@ -318,7 +319,8 @@ namespace Keas.Mvc.Services
                 Actor = user,
                 AssetType = "Access",
                 ActionType = "Accepted",
-                Access = access
+                Access = access,
+                //TargetId = null //TODO: Get and set? Currently this method isn't being called.
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
