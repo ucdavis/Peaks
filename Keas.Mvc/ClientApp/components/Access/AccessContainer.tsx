@@ -7,7 +7,6 @@ import AccessDetails from "./AccessDetails";
 import AccessList from "./AccessList";
 import AssignAccess from "./AssignAccess";
 import EditAccess from "./EditAccess";
-import RevokeAccess from "./RevokeAccess";
 import Denied from "../Shared/Denied";
 import { PermissionsUtil } from "../../util/permissions";
 
