@@ -43,7 +43,7 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
             accessor: x=> moment(x.expiresAt).format("MM/DD/YYYY").toString()
         },{
             Header: "Revoke",
-            Cell: row => (<button type="button" className="btn btn-outline-danger" 
+            Cell: row => (<button type="button" className="btn btn-outline-danger" disabled={this.props.disableEditing  || !this.props.onRevoke}
                 onClick={() => this._revokeSelected(row.original.person.id)}><i className="fas fa-trash" /></button>),        
             sortable: false,
         }]     
