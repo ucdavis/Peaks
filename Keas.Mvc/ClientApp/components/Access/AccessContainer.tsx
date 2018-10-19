@@ -94,7 +94,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                 />
                 <AccessDetails selectedAccess={detailAccess}
                     modal={activeAsset && action === "details" && !!detailAccess}
-                    closeModal={this._closeModals} />
+                    closeModal={this._closeModals}
+                    onRevoke={this._revokeAccess} />
                 <EditAccess
                     onEdit={this._editAccess}
                     closeModal={this._closeModals}

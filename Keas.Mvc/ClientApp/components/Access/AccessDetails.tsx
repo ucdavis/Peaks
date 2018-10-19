@@ -17,14 +17,16 @@ interface IProps {
     modal: boolean;
     closeModal: () => void;
     selectedAccess: IAccess;
+    onRevoke: () => void;
 }
 
 
 export default class AccessDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedAccess == null)
+        if (this.props.selectedAccess == null){
             return null;
+        }            
         const access = this.props.selectedAccess;
         return (
             <div>
@@ -37,7 +39,7 @@ export default class AccessDetails extends React.Component<IProps, {}> {
                   </div>
 
                     <ModalBody>
-                        <AccessEditValues selectedAccess={access} disableEditing={true} />
+                        <AccessEditValues selectedAccess={access} disableEditing={true} onRevoke={this.props.onRevoke} />
                     </ModalBody>
                 </Modal>
             </div>
