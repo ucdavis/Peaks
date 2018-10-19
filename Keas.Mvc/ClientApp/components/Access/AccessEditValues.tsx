@@ -1,7 +1,7 @@
 ﻿import * as moment from "moment";
 import * as React from "react";
 
-import { IAccess, IAccessAssignment, IPerson } from "../../Types";
+import { IAccess, IAccessAssignment } from "../../Types";
 
 import ReactTable from 'react-table';
 
@@ -43,7 +43,8 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
             accessor: x=> moment(x.expiresAt).format("MM/DD/YYYY").toString()
         },{
             Header: "Revoke",
-            Cell: <button type="button" className="btn btn-outline-danger" onClick={() => this._revokeSelected(x=> x.person)}><i className="fas fa-trash" /></button>,
+            Cell: row => (<button type="button" className="btn btn-outline-danger" 
+                onClick={() => this._revokeSelected(row.original.person.id)}><i className="fas fa-trash" /></button>),        
             sortable: false,
         }]     
 
@@ -65,8 +66,10 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
         );
     }
 
-    private _revokeSelected = async (personToRevoke: IPerson) => {                    
-        const accessAssignment = this.state.access.assignments.filter(x => x.personId === personToRevoke.id);
+    private _revokeSelected = async (personId: number) => {     
+        console.log(personId);               
+        const accessAssignment = this.state.access.assignments.filter(x => x.personId === personId);
+        debugger;
 
         await this.props.onRevoke(accessAssignment[0]);
     };
