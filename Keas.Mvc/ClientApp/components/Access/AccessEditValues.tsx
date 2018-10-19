@@ -32,7 +32,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
             accessor: x=> moment(x.expiresAt).format("MM/DD/YYYY").toString()
         },{
             Header: "Revoke",
-            Cell: <button type="button" className="btn btn-outline-danger" onClick={() => this._revokeAccess(x=> x.person)}><i className="fas fa-trash" /></button>,
+            Cell: <button type="button" className="btn btn-outline-danger" onClick={() => this._revokeSelected(x=> x.accessAssignment)}><i className="fas fa-trash" /></button>,
             sortable: false,
         }]     
 
@@ -53,4 +53,8 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
             </div>
         );
     }
+
+    private _revokeSelected = async (accessAssignment) => {      
+        await this.props.onRevoke(accessAssignment);
+    };
 }
