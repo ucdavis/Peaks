@@ -90,18 +90,18 @@
                 }     
           
           <li class="nav-item">
-            <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"] , "Confirm/MyStuff")'>My Stuff</a>
+            <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
           </li>
           @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
                 {
                    <li class="nav-item">
-            <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"] , "Report")'>Reports</a>
+            <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
           </li>
                 }
            @if ((await AuthorizationService.AuthorizeAsync(User, "DepartmentAdminAccess")).Succeeded)
                 {
                     <li class="nav-item">
-            <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"] , "TeamAdmin")'>Admin</a>
+            <a class="nav-link" asp-controller="TeamAdmin" asp-action="Index">Admin</a>
           </li>
                 }   
           
