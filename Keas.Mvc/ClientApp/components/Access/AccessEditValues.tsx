@@ -1,7 +1,7 @@
 ﻿import * as moment from "moment";
 import * as React from "react";
 
-import { IAccess, IAccessAssignment } from "../../Types";
+import { IAccess, IAccessAssignment, IPerson } from "../../Types";
 
 import ReactTable from 'react-table';
 
@@ -15,7 +15,18 @@ interface IProps {
     onRevoke: (accessAssignment: IAccessAssignment) => void;
 }
 
-export default class AccessEditValues extends React.Component<IProps, {}> {
+interface IState {
+    access: IAccess;
+}
+
+
+export default class AccessEditValues extends React.Component<IProps, IState> {
+    constructor(props) {
+        super(props);
+        this.state = {
+            access: this.props.selectedAccess
+        };
+    }
 
     public render() {
         const columns = [{
@@ -32,7 +43,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
             accessor: x=> moment(x.expiresAt).format("MM/DD/YYYY").toString()
         },{
             Header: "Revoke",
-            Cell: <button type="button" className="btn btn-outline-danger" onClick={() => this._revokeSelected(x=> x.accessAssignment)}><i className="fas fa-trash" /></button>,
+            Cell: <button type="button" className="btn btn-outline-danger" onClick={() => this._revokeSelected(x=> x.person)}><i className="fas fa-trash" /></button>,
             sortable: false,
         }]     
 
@@ -54,7 +65,9 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
         );
     }
 
-    private _revokeSelected = async (accessAssignment) => {      
-        await this.props.onRevoke(accessAssignment);
+    private _revokeSelected = async (personToRevoke: IPerson) => {                    
+        const accessAssignment = this.state.access.assignments.filter(x => x.personId === personToRevoke.id);
+
+        await this.props.onRevoke(accessAssignment[0]);
     };
 }
