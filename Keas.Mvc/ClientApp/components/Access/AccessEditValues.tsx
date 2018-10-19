@@ -38,7 +38,7 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
             Header: "Last Name",
             accessor: x=> x.person.lastName
         }, {
-            id: "expiresAt"
+            id: "expiresAt",
             Header: "Expires at",
             accessor: x=> moment(x.expiresAt).format("MM/DD/YYYY").toString()
         },{
