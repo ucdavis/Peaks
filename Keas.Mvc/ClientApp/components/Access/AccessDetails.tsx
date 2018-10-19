@@ -9,7 +9,7 @@ import {
     ListGroup,
     ListGroupItem
 } from "reactstrap";
-import { IAccess } from "ClientApp/Types";
+import { IAccess, IAccessAssignment } from "ClientApp/Types";
 import AccessEditValues from "./AccessEditValues";
 
 
@@ -17,7 +17,7 @@ interface IProps {
     modal: boolean;
     closeModal: () => void;
     selectedAccess: IAccess;
-    onRevoke: () => void;
+    onRevoke: (accessAssignment: IAccessAssignment) => void;
 }
 
 
