@@ -66,11 +66,8 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
         );
     }
 
-    private _revokeSelected = async (personId: number) => {     
-        console.log(personId);               
+    private _revokeSelected = async (personId: number) => { 
         const accessAssignment = this.state.access.assignments.filter(x => x.personId === personId);
-        debugger;
-
         await this.props.onRevoke(accessAssignment[0]);
     };
 }
