@@ -10,10 +10,14 @@ using Microsoft.AspNetCore.Authorization;
 namespace Keas.Mvc.Controllers
 {
     [Authorize]
-    public class HomeController : Controller
+    public class HomeController : SuperController
     {
+        
         public IActionResult Index()
-        {
+        {            
+            if (Team == null){
+                return RedirectToAction("SelectTeam", "Confirm", new {urlRedirect = "home/index"} );
+            }            
             return View();
         }
 

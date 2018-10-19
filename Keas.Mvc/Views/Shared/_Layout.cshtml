@@ -1,4 +1,5 @@
-
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 <!DOCTYPE html>
 <html>
 
@@ -48,40 +49,27 @@
             <h3>Team</h3>
             <button class="btn-team dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <div class="row justify-content-between align-items-center">
-                <div class="teamname">CA&ES</div>
+                <div class="teamname">
+                   @if (!string.IsNullOrWhiteSpace(TempData["TeamName"] as string)) {
+   @TempData["TeamName"]  
+}
+                </div>
                 <i class="fas fa-caret-down fa-lg"></i>
               </div>
 
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
+              <a href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
             </div>
           </div>
-
         </div>
-        <!-- <div style="text-align:right;">
-
-          <div class="row teamwrapper align-items-center">
-
-              <div class="team">
-                <p>College of Agricultural and<br> Environmental Sciences</p>
-              </div>
-              <div class="teamchanger">
-                <i class="fas fa-caret-down fa-lg"></i>
-              </div>
-
-
-          </div>
-        </div> -->
-
-
+        
       </div>
     </div>
   </header>
   <div class="head_bleed">
     <div class="head_divider">
+
 
     </div>
 
@@ -94,15 +82,29 @@
         </button>
       <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav mr-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="/Confirm/SelectTeam?urlRedirect=keys">Assets</a>
+           @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
+                {
+                   <li class="nav-item">
+            <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"] , "Keys")'>Assets</a>
           </li>
+                }     
+          
           <li class="nav-item">
-            <a class="nav-link" href="/Confirm/SelectTeam">My Stuff</a>
+            <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/Confirm/SelectTeam?urlRedirect=TeamAdmin">Admin</a>
+          @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
+                {
+                   <li class="nav-item">
+            <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
           </li>
+                }
+           @if ((await AuthorizationService.AuthorizeAsync(User, "DepartmentAdminAccess")).Succeeded)
+                {
+                    <li class="nav-item">
+            <a class="nav-link" asp-controller="TeamAdmin" asp-action="Index">Admin</a>
+          </li>
+                }   
+          
         </ul>
         <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
           <span>Welcome @User.GetNameClaim()</span>
@@ -128,8 +130,9 @@
     </main>
 
     <environment include="Development">
-        <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+      <script src="~/lib/jquery/dist/jquery.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+      <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     </environment>
     <environment exclude="Development">
       <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
@@ -138,12 +141,12 @@
         crossorigin="anonymous"
         integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
       </script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
       <script 
         src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
         crossorigin="anonymous">
-      </script>
-        </script>
+      </script>        
     </environment>
 
     <script src="~/dist/root.js" asp-append-version="true"></script>
