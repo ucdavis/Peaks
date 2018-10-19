@@ -24,7 +24,7 @@ interface IProps {
   modal: boolean;
   closeModal: () => void;
   selectedAccess: IAccess;
-  onRevoke: (accessAssignment: IAccessAssignment) => void;
+  onRevoke: () => void;
 }
 
 interface IState {
