@@ -15,8 +15,7 @@
                  @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
                 {
                     <li>
-                        <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "Keys")'>Team Assets (correct url)</a>
-                        <a asp-controller="Keys">Team Assets</a>
+                        <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "Keys")'>Team Assets</a>                       
                     </li>
                 }                  
                   <li>                      
