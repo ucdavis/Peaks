@@ -183,6 +183,9 @@ export default class WorkstationContainer extends React.Component<IProps, IState
       };
 
       private _revokeWorkstation = async (workstation: IWorkstation) => {
+        if(!confirm("Are you should you want to revoke workstation?")){
+            return false;
+          }
         // call API to actually revoke
         const removed: IWorkstation = await this.context.fetch(`/api/${this.context.team.slug}/workstations/revoke`, {
           body: JSON.stringify(workstation),

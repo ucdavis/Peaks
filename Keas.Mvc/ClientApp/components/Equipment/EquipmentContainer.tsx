@@ -234,6 +234,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   };
 
   private _revokeEquipment = async (equipment: IEquipment) => {
+    if(!confirm("Are you should you want to revoke item?")){
+      return false;
+    }
     // call API to actually revoke
     const removed: IEquipment = await this.context.fetch(`/api/${this.context.team.slug}/equipment/revoke`, {
       body: JSON.stringify(equipment),
