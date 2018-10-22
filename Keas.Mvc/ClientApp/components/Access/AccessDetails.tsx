@@ -24,7 +24,7 @@ interface IProps {
 export default class AccessDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedAccess == null){
+        if (this.props.selectedAccess === null){
             return null;
         }            
         const access = this.props.selectedAccess;
