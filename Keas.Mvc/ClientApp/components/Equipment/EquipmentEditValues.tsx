@@ -4,6 +4,7 @@ import { IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
 import AssignSpace from "../Spaces/AssignSpace";
 import SearchTags from "../Tags/SearchTags";
 import EquipmentAttributes from "./EquipmentAttributes";
+import * as moment from "moment";
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
@@ -56,7 +57,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <input type="text"
                         className="form-control"
                         disabled={true}
-                        value={this.props.selectedEquipment.assignment.expiresAt.toString()}
+                        value= {moment(this.props.selectedEquipment.assignment.expiresAt).format("MM/DD/YYYY").toString()}
                         />
                 </div>
                 </div>
