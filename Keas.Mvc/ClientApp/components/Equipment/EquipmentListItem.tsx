@@ -1,7 +1,9 @@
+import * as moment from "moment";
 import * as React from "react";
 
 import { IEquipment } from "../../Types";
 import ListActionsDropdown from "../ListActionsDropdown";
+
 
 interface IProps {
     equipmentEntity: IEquipment;
@@ -15,14 +17,14 @@ interface IProps {
 export default class EquipmentListItem extends React.Component<IProps, {}> {
     public render() {
         const hasAssignment = !!this.props.equipmentEntity.assignment;
+        const dates = this.props.equipmentEntity.assignment.map(x => moment(x.expiresAt));
+        const expirationDate = hasAssignment ? moment.min(dates).format("MM/DD/YYYY").toString() : "";
         return (
           <tr>
             <td>{this.props.equipmentEntity.serialNumber}</td>
-            <td>{this.props.equipmentEntity.name}</td>
+            <td>{this.props.equipmentEntity.name} kkkk</td>
             <td>{hasAssignment ? this.props.equipmentEntity.assignment.person.name : ""}</td>
-            <td>
-              {hasAssignment ? this.props.equipmentEntity.assignment.expiresAt : ""}
-            </td>
+            <td>{expirationDate}</td>
             <td>
               <ListActionsDropdown
                 onRevoke={!!this.props.onRevoke && hasAssignment ? 
