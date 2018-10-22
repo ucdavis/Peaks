@@ -41,6 +41,11 @@
               <td>@Html.CheckBoxFor(k=> serial.Assignment.IsConfirmed, new { @disabled = "disabled" })</td>
             </tr>
             }
+            @if(!Model.Serials.Any()){
+              <tr>
+                <td colspan="4">You have no Keys assigned.</td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
@@ -69,6 +74,11 @@
               <td>@Html.CheckBoxFor(e=> equipment.Assignment.IsConfirmed)</td>
             </tr>
             }
+            @if(!Model.Equipment.Any()){
+              <tr>
+                <td colspan="4">You have no equipment assigned.</td>
+              </tr>
+            }
           </tbody>
         </table>
       </div>
@@ -93,6 +103,11 @@
               <td>@access.Name</td>
               <td>@access.Assignments.First().ExpiresAt.ToShortDateString()</td>
             </tr>
+            }
+             @if(!Model.Access.Any()){
+              <tr>
+                <td colspan="2">You have no access assigned.</td>
+              </tr>
             }
           </tbody>
         </table>
@@ -125,6 +140,11 @@
               <td>@Html.CheckBoxFor(w=> workstation.Assignment.IsConfirmed)</td>
             </tr>
             }
+            @if(!Model.Workstations.Any()){
+              <tr>
+                <td colspan="4">You have no workstations assigned.</td>
+              </tr>
+            }
           </tbody>
         </table>
 
@@ -147,6 +167,11 @@
               <td>@history.ActedDate.ToShortDateString()</td>
               <td>@history.Description</td>
             </tr>
+            }
+            @if(!Model.Histories.Any()){
+              <tr>
+                <td colspan="2">No history to display</td>
+              </tr>
             }
           </tbody>
         </table>
