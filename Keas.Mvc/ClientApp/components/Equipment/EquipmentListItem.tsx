@@ -1,8 +1,9 @@
+import { DateUtil } from "../../util/dates";
 import * as React from "react";
 
 import { IEquipment } from "../../Types";
 import ListActionsDropdown from "../ListActionsDropdown";
-import * as moment from "moment";
+
 
 interface IProps {
     equipmentEntity: IEquipment;
@@ -22,7 +23,7 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
             <td>{this.props.equipmentEntity.name}</td>
             <td>{hasAssignment ? this.props.equipmentEntity.assignment.person.name : ""}</td>
             <td>
-              {hasAssignment ? moment(this.props.equipmentEntity.assignment.expiresAt).format("MM/DD/YYYY").toString() : ""}
+              {hasAssignment ? DateUtil.formatExpiration(this.props.equipmentEntity.assignment.expiresAt) : ""}
             </td>
             <td>
               <ListActionsDropdown
