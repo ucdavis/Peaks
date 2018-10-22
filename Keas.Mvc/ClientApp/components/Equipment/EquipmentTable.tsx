@@ -5,6 +5,9 @@ import "react-table/react-table.css";
 import { IEquipment } from "../../Types";
 import ListActionsDropdown from "../ListActionsDropdown";
 
+import * as moment from "moment";
+
+
 interface IProps {
     equipment: IEquipment[];
     onRevoke?: (equipment: IEquipment) => void;
