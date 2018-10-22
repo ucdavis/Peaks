@@ -52,7 +52,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Key Created by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Created",
                 Key = key
@@ -68,7 +68,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Access Created by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Access",
                 ActionType = "Created",
                 Access = access
@@ -84,7 +84,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Equipment Created by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Created",
                 Equipment = equipment,
@@ -100,7 +100,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Key Updated by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Updated",
                 Key = key
@@ -116,7 +116,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Access Updated by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Access",
                 ActionType = "Updated",
                 Access = access,
@@ -132,7 +132,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Equipment Updated by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Updated",
                 Equipment = equipment,
@@ -147,7 +147,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Key Inactivated by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Inactivated",
                 Key = key
@@ -163,7 +163,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Access Inactivated by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Access",
                 ActionType = "Inactivated",
                 Access = access
@@ -179,7 +179,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Equipment Inactivated by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Inactivated",
                 Equipment = equipment
@@ -195,7 +195,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Key Assigned to " + serial.Assignment.Person.User.Name + " by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Assigned",
                 Serial = serial,
@@ -212,7 +212,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Access Assigned to " + accessAssignment.Person.User.Name + " by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Access",
                 ActionType = "Assigned",
                 AccessId = accessAssignment.AccessId,
@@ -229,7 +229,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Equipment Assigned to " + equipment.Assignment.Person.User.Name + " by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Assigned",
                 Equipment = equipment,
@@ -246,7 +246,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Key Unassigned  by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Unassigned",
                 Key = serial.Key,
@@ -264,7 +264,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Access Unassigned to " + accessAssignment.Person.User.Name + " by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Access",
                 ActionType = "Unassigned",
                 AccessId = accessAssignment.AccessId,
@@ -281,7 +281,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Equipment Unassigned by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Unassigned",
                 Equipment = equipment,
@@ -298,7 +298,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Key Accepted by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Accepted",
                 Key = serial.Key,
@@ -316,7 +316,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Access Accepted by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Access",
                 ActionType = "Accepted",
                 Access = access,
@@ -332,8 +332,8 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Equipment Accepted by " + user.Name,
-                Actor = user,
+                Description = "Equipment Accepted by " + user.Name,                
+                ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Accepted",
                 Equipment = equipment,
@@ -350,7 +350,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Workstation Created by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Created",
                 Workstation = workstation,
@@ -366,7 +366,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Workstation Updated by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Updated",
                 Workstation = workstation,
@@ -382,7 +382,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Workstation Inactivated by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Inactivated",
                 Workstation = workstation
@@ -398,7 +398,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Workstation Assigned to " + workstation.Assignment.Person.User.Name + " by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Assigned",
                 Workstation = workstation,
@@ -415,7 +415,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Workstation Unassigned  by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Unassigned",
                 Workstation = workstation,
@@ -432,7 +432,7 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = "Workstation Accepted by " + user.Name,
-                Actor = user,
+                ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Accepted",
                 Workstation = workstation,
