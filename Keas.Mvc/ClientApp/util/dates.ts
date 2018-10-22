@@ -6,7 +6,7 @@ export class DateUtil {
         if(expiration === null) {
             return "";
         }
-        return moment(expiration).format("MM/DD/YYYY").toString;
+        return moment(expiration).format("MM/DD/YYYY").toString();
     }
 
     public static formatFirstExpiration(expirations: Date[]) {
