@@ -3,11 +3,7 @@ import * as React from "react";
 import {
     Button,
     Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    ListGroup,
-    ListGroupItem
+    ModalBody
 } from "reactstrap";
 import { IAccess, IAccessAssignment } from "ClientApp/Types";
 import AccessEditValues from "./AccessEditValues";
@@ -24,9 +20,9 @@ interface IProps {
 export default class AccessDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedAccess === null){
+        if (this.props.selectedAccess === null || this.props.selectedAccess === undefined){
             return null;
-        }            
+        }             
         const access = this.props.selectedAccess;
         return (
             <div>
