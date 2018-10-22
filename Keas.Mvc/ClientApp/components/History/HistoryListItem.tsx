@@ -1,5 +1,5 @@
-import * as moment from "moment";
 import * as React from "react";
+import { DateUtil } from "../../util/dates";
 
 import { IHistory } from "../../Types";
 
@@ -12,7 +12,7 @@ export default class HistoryListItem extends React.Component<IProps, {}> {
     public render() {
         return (
           <tr>
-            <td>{moment(this.props.history.actedDate).format("MM-DD-YYYY")}</td>
+            <td>{DateUtil.formatExpiration(this.props.history.actedDate)}</td>
             <td>{this.props.history.description}</td>
           </tr>
         );
