@@ -7,7 +7,6 @@ import AccessDetails from "./AccessDetails";
 import AccessList from "./AccessList";
 import AssignAccess from "./AssignAccess";
 import EditAccess from "./EditAccess";
-import RevokeAccess from "./RevokeAccess";
 import Denied from "../Shared/Denied";
 import { PermissionsUtil } from "../../util/permissions";
 
@@ -85,21 +84,17 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                     closeModal={this._closeModals}
                     selectedAccess={detailAccess}
                     person={this.props.person}
-                />
-                <RevokeAccess
-                    closeModal={this._closeModals}
-                    modal={activeAsset && action === "revoke"}
-                    selectedAccess={detailAccess}
-                    onRevoke={this._revokeAccess}
-                />
+                />                
                 <AccessDetails selectedAccess={detailAccess}
                     modal={activeAsset && action === "details" && !!detailAccess}
-                    closeModal={this._closeModals} />
+                    closeModal={this._closeModals}
+                    onRevoke={this._revokeAccess} />
                 <EditAccess
                     onEdit={this._editAccess}
                     closeModal={this._closeModals}
                     modal={activeAsset && (action === "edit")}
                     selectedAccess={detailAccess}
+                    onRevoke={this._revokeAccess}
                     />
         </div>
       </div>

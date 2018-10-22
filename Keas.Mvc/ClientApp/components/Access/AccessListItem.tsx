@@ -27,9 +27,7 @@ export default class AccessListItem extends React.Component<IProps, {}> {
                 <td>{this.props.accessEntity.assignments.length}</td>
                 <td>{expirationDate}</td>
                 <td>
-                    <ListActionsDropdown
-                        onRevoke={!!this.props.onRevoke && hasAssignment ? 
-                        () => this.props.onRevoke(this.props.accessEntity) : null}
+                    <ListActionsDropdown                        
                         onAdd={!!this.props.onAdd && canAdd ? 
                         () => this.props.onAdd(this.props.accessEntity) : null}
                         showDetails={!!this.props.showDetails ? 

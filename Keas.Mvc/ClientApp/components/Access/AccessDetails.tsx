@@ -3,13 +3,9 @@ import * as React from "react";
 import {
     Button,
     Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
-    ListGroup,
-    ListGroupItem
+    ModalBody
 } from "reactstrap";
-import { IAccess } from "ClientApp/Types";
+import { IAccess, IAccessAssignment } from "ClientApp/Types";
 import AccessEditValues from "./AccessEditValues";
 
 
@@ -17,14 +13,16 @@ interface IProps {
     modal: boolean;
     closeModal: () => void;
     selectedAccess: IAccess;
+    onRevoke: (accessAssignment: IAccessAssignment) => void;
 }
 
 
 export default class AccessDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedAccess == null)
+        if (!this.props.selectedAccess){
             return null;
+        }             
         const access = this.props.selectedAccess;
         return (
             <div>
@@ -37,7 +35,7 @@ export default class AccessDetails extends React.Component<IProps, {}> {
                   </div>
 
                     <ModalBody>
-                        <AccessEditValues selectedAccess={access} disableEditing={true} />
+                        <AccessEditValues selectedAccess={access} disableEditing={true} onRevoke={this.props.onRevoke} />
                     </ModalBody>
                 </Modal>
             </div>
