@@ -22,7 +22,7 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
         return (
           <tr>
             <td>{this.props.equipmentEntity.serialNumber}</td>
-            <td>{this.props.equipmentEntity.name} kkkk</td>
+            <td>{this.props.equipmentEntity.name}</td>
             <td>{hasAssignment ? this.props.equipmentEntity.assignment.person.name : ""}</td>
             <td>{expirationDate}</td>
             <td>
