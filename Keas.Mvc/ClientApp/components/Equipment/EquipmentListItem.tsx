@@ -17,8 +17,8 @@ interface IProps {
 export default class EquipmentListItem extends React.Component<IProps, {}> {
     public render() {
         const hasAssignment = !!this.props.equipmentEntity.assignment;
-        const dates = this.props.equipmentEntity.assignment.map(x => moment(x.expiresAt));
-        const expirationDate = hasAssignment ? moment.min(dates).format("MM/DD/YYYY").toString() : "";
+        const dates = this.props.equipmentEntity.assignment.expiresAt;
+        const expirationDate = hasAssignment ? moment(dates).format("MM/DD/YYYY").toString() : "";
         return (
           <tr>
             <td>{this.props.equipmentEntity.serialNumber}</td>
