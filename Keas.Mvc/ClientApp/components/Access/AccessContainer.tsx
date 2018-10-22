@@ -169,7 +169,9 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   };
 
   private _revokeAccess = async (accessAssignment: IAccessAssignment) => {
-
+    if(!confirm("Are you should you want to revoke access?")){
+        return false;
+      }
       // call API to actually revoke
       const removed: IAccess = await this.context.fetch(`/api/${this.context.team.slug}/access/revoke`, {
           body: JSON.stringify(accessAssignment),
