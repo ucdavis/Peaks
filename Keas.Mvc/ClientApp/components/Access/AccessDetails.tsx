@@ -20,7 +20,7 @@ interface IProps {
 export default class AccessDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedAccess === null || this.props.selectedAccess === undefined){
+        if (!this.props.selectedAccess){
             return null;
         }             
         const access = this.props.selectedAccess;
