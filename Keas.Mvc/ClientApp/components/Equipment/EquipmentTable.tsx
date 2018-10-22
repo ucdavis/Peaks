@@ -1,4 +1,4 @@
-import * as moment from "moment";
+import { DateUtil } from "../../util/dates";
 import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -45,7 +45,7 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
             {
                 Header: "Expiration",
                 id: "expiresAt",
-                accessor: x=> moment(x.expiresAt).format("MM/DD/YYYY").toString(),
+                accessor: x=> DateUtil.formatExpiration(x.expiresAt),
                 filterMethod: (filter, row) => {
                     if( filter.value === "all") {
                         return true;
