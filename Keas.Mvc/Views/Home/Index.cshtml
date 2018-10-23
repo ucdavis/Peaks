@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
+@model Keas.Mvc.Models.HomeViewModel
 
 @{
     ViewData["Title"] = "Home Page";
@@ -7,6 +8,10 @@
 <div class="card">
   <div class="card-head">
     <h1>Home</h1>
+    @if(Model.PendingItems){
+          <div class="alert alert-warning">You have pending items!
+          <a class="btn btn-link" asp-controller="Confirm" asp-action="Confirm">Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a></div>
+        }
   </div>
   <div class="card-content">
     <div class="row">
