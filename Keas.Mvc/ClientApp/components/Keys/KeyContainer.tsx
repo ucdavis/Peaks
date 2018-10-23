@@ -151,11 +151,15 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         person.id
       }&date=${date}`;
 
+      if(!key.assignment)
+      {
+        // don't count as assigning unless this is a new one
+        assigned = true;
+      }
       key = await this.context.fetch(assignUrl, {
         method: "POST"
       });
       key.assignment.person = person;
-      assigned = true;
     }
 
     const index = this.state.keys.findIndex(x => x.id === key.id);
