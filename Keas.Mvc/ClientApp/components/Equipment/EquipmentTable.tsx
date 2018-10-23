@@ -96,6 +96,8 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                         () => this.props.onRevoke(row.original) : null}
                         onAdd={!!this.props.onAdd && !row.original.assignment ? 
                         () => this.props.onAdd(row.original) : null}
+                        onUpdateAssignment={!!this.props.onAdd && !!row.original.assignment ? 
+                            () => this.props.onAdd(row.original) : null}
                         showDetails={!!this.props.showDetails ? 
                         () => this.props.showDetails(row.original) : null}
                         onEdit={!!this.props.onEdit ? 
