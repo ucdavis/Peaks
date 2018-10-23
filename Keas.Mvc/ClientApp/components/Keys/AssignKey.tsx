@@ -45,10 +45,11 @@ export default class AssignKey extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      date: moment().add(3, "y"),
-      error: "",
+      date: (!!this.props.selectedKey && !!this.props.selectedKey.assignment) 
+        ? moment(this.props.selectedKey.assignment.expiresAt) : moment().add(3, "y"),      error: "",
       key: this.props.selectedKey,
-      person: null,
+      person: (!!this.props.selectedKey && !!this.props.selectedKey.assignment)
+        ? this.props.selectedKey.assignment.person : this.props.person,
       validState: false
     };
   }
@@ -61,6 +62,13 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
     if (nextProps.person !== this.props.person) {
       this.setState({ person: nextProps.person });
+    }
+    if(!!nextProps.selectedKey && !!nextProps.selectedKey.assignment)
+    {
+      this.setState({ 
+        date: moment(nextProps.selectedKey.assignment.expiresAt),
+        person: nextProps.selectedKey.assignment.person
+      });
     }
   }
 
@@ -155,6 +163,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
+      date: moment().add(3, "y"),
       error: "",
       key: null,
       person: null,

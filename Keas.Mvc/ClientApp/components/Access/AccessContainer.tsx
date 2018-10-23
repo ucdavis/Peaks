@@ -105,8 +105,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       date: any,
       person: IPerson
   ) => {
-      let created = false;
-      let assigned = false;
+      let updateTotalAssetCount = false;
+      let updateInUseAssetCount = false;
       // call API to create a access, then assign it if there is a person to assign to
       // if we are creating a new access
       if (access.id === 0) {
@@ -115,7 +115,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
               body: JSON.stringify(access),
               method: "POST"
           });
-          created = true;
+          updateTotalAssetCount = true;
       }
 
     // if we know who to assign it to, do it now
@@ -134,7 +134,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       }
       // then push it
       access.assignments.push(accessAssignment);
-      assigned = true;
+      updateInUseAssetCount = true;
     }
 
     const index = this.state.access.findIndex(x => x.id === access.id);
@@ -153,11 +153,11 @@ export default class AccessContainer extends React.Component<IProps, IState> {
             access: [...this.state.access, access]
         });
     }
-    if(created && this.props.assetTotalUpdated)
+    if(updateTotalAssetCount && this.props.assetTotalUpdated)
     {
         this.props.assetTotalUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
     }
-    if(assigned && this.props.assetInUseUpdated)
+    if(updateInUseAssetCount && this.props.assetInUseUpdated)
     {
         this.props.assetInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
     }

@@ -31,6 +31,8 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
                   () => this.props.onRevoke(this.props.equipmentEntity) : null}
                 onAdd={!!this.props.onAdd && !hasAssignment ? 
                   () => this.props.onAdd(this.props.equipmentEntity) : null}
+                onUpdateAssignment={!!this.props.onAdd && !!hasAssignment ? 
+                  () => this.props.onAdd(this.props.equipmentEntity) : null}
                 showDetails={!!this.props.showDetails ? 
                   () => this.props.showDetails(this.props.equipmentEntity) : null}
                 onEdit={!!this.props.onEdit ? 
