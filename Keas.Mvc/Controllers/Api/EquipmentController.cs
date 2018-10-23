@@ -115,14 +115,24 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team && x.Active).Include(x => x.Space).SingleAsync(x => x.Id == equipmentId);
-                equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
-                equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
+                var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team && x.Active)
+                    .Include(x => x.Space).Include(x => x.Assignment).SingleAsync(x => x.Id == equipmentId);
+                
+                if(equipment.Assignment != null)
+                {
+                    _context.EquipmentAssignments.Update(equipment.Assignment);
+                    equipment.Assignment.ExpiresAt = DateTime.Parse(date);
+                    // TODO: track update assignment? 
+                }
+                else
+                {
+                    equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
+                    equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId && p.Active);
 
-                _context.EquipmentAssignments.Add(equipment.Assignment);
-
+                    _context.EquipmentAssignments.Add(equipment.Assignment);
+                    await _eventService.TrackAssignEquipment(equipment);
+                }                
                 await _context.SaveChangesAsync();
-                await _eventService.TrackAssignEquipment(equipment);
                 return Json(equipment);
             }
             return BadRequest(ModelState);

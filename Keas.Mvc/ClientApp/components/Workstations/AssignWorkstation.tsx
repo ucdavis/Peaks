@@ -46,11 +46,13 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-        date: moment().add(3, "y"),
-        error: "",
-        person: null,
-        validState: false,
-        workstation: this.props.selectedWorkstation
+      date: (!!this.props.selectedWorkstation && !!this.props.selectedWorkstation.assignment) 
+        ? moment(this.props.selectedWorkstation.assignment.expiresAt) : moment().add(3, "y"),
+      error: "",
+      person: (!!this.props.selectedWorkstation && !!this.props.selectedWorkstation.assignment)
+        ? this.props.selectedWorkstation.assignment.person : this.props.person,
+      validState: false,
+      workstation: this.props.selectedWorkstation
     };
 }
 
@@ -60,8 +62,15 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
       this.setState({ workstation: nextProps.selectedWorkstation });
     }
 
-    if (nextProps.person !== this.props.person) {
+    if (nextProps.person !== this.state.person) {
       this.setState({ person: nextProps.person });
+    }
+    else if(!!nextProps.selectedWorkstation && !!nextProps.selectedWorkstation.assignment)
+    {
+      this.setState({ 
+        date: moment(nextProps.selectedWorkstation.assignment.expiresAt),
+        person: nextProps.selectedWorkstation.assignment.person
+      });
     }
   }
 
@@ -150,10 +159,11 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
-      workstation: null,
+      date: moment().add(3, "y"),
       error: "",
       person: null,
-      validState: false
+      validState: false,
+      workstation: null,
     });
     this.props.closeModal();
   };

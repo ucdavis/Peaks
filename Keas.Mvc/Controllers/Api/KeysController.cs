@@ -103,15 +103,24 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var serial = await _context.Serials.Where(x => x.Key.Team.Slug == Team && x.Active)
-                    .SingleAsync(x => x.Id == serialId);
+                    .Include(x => x.Assignment).SingleAsync(x => x.Id == serialId);
 
-                serial.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
-                serial.Assignment.Person = await _context.People.Include(p=> p.User).SingleAsync(p=> p.Id==personId);
+                if(serial.Assignment != null)
+                {
+                    _context.KeyAssignments.Update(serial.Assignment);
+                    serial.Assignment.ExpiresAt = DateTime.Parse(date);
+                    // TODO: track update assignment?
+                }
+                else 
+                {
+                    serial.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
+                    serial.Assignment.Person = await _context.People.Include(p=> p.User).SingleAsync(p=> p.Id==personId && p.Active);
 
-                _context.KeyAssignments.Add(serial.Assignment);
+                    _context.KeyAssignments.Add(serial.Assignment);
+                    await _eventService.TrackAssignKey(serial);
+                }
 
                 await _context.SaveChangesAsync();
-                await _eventService.TrackAssignKey(serial);
                 return Json(serial);
             }
             return BadRequest(ModelState);

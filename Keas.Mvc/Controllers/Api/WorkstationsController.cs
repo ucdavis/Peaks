@@ -123,32 +123,43 @@ namespace Keas.Mvc.Controllers.Api
             // TODO make sure user has permission
             if (ModelState.IsValid)
             {
-                var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active).Include(w => w.Space)
-                    .SingleAsync(w => w.Id == workstationId);
-                workstation.Assignment = new WorkstationAssignment{PersonId = personId, ExpiresAt = DateTime.Parse(date)};
-                workstation.Assignment.Person =
-                    await _context.People.Include(p => p.User).Include(p=> p.Team).SingleAsync(p => p.Id == personId && p.Active);
-
+                var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
+                    .Include(w => w.Space).Include(w => w.Assignment).SingleAsync(w => w.Id == workstationId);
+                    
                 if (workstation.Team.Slug != Team)
                 {
                     Message = "Workstation is not part of this team!";
                     return BadRequest(workstation);
                 }
-                if (workstation.Assignment.Person.Team.Slug != Team)
+                if(workstation.Assignment != null)
                 {
-                    Message = "User is not part of this team!";
-                    return BadRequest(workstation);
+                    _context.WorkstationAssignments.Update(workstation.Assignment);
+                    workstation.Assignment.ExpiresAt = DateTime.Parse(date);
+                    // TODO: track update assignment? 
                 }
-                if (workstation.TeamId != workstation.Assignment.Person.TeamId)
+                else
                 {
-                    Message = "Workstation team did not match person's team!";
-                    return BadRequest(workstation);
-                }
+                    workstation.Assignment = new WorkstationAssignment{PersonId = personId, ExpiresAt = DateTime.Parse(date)};
+                    workstation.Assignment.Person =
+                    await _context.People.Include(p => p.User).Include(p=> p.Team).SingleAsync(p => p.Id == personId && p.Active);
 
-                _context.WorkstationAssignments.Add(workstation.Assignment);
+                    if (workstation.Assignment.Person.Team.Slug != Team)
+                    {
+                        Message = "User is not part of this team!";
+                        return BadRequest(workstation);
+                    }
+
+                    if (workstation.TeamId != workstation.Assignment.Person.TeamId)
+                    {
+                        Message = "Workstation team did not match person's team!";
+                        return BadRequest(workstation);
+                    }
+                    
+                    _context.WorkstationAssignments.Add(workstation.Assignment);
+                    await _eventService.TrackAssignWorkstation(workstation);
+                }                
 
                 await _context.SaveChangesAsync();
-                await _eventService.TrackAssignWorkstation(workstation);
                 return Json(workstation);
             }
             return BadRequest(ModelState);
