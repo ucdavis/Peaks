@@ -51,7 +51,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       date: moment().add(3, "y"),
       equipment: this.props.selectedEquipment,
       error: "",
-      person: null,
+      person: (!!this.props.selectedEquipment && !!this.props.selectedEquipment.assignment)
+        ? this.props.selectedEquipment.assignment.person : this.props.person,
       validState: false
     };
   }
@@ -64,6 +65,10 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
     if (nextProps.person !== this.props.person) {
       this.setState({ person: nextProps.person });
+    }
+    else if(!!nextProps.selectedEquipment && !!nextProps.selectedEquipment.assignment)
+    {
+      this.setState({ person: nextProps.selectedEquipment.assignment.person });
     }
   }
 
