@@ -48,7 +48,7 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
             {
                 Header: "Expiration",
                 id: "assignment.expiresAt",
-                accessor: x=> DateUtil.formatExpiration(x.assignment.expiresAt),
+                accessor: x=> x.assignment ? DateUtil.formatExpiration(x.assignment.expiresAt) : "",
                 filterMethod: (filter, row) => {
                     if( filter.value === "all") {
                         return true;
@@ -57,7 +57,6 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                     {
                         return (!row._original.assignment);
                     }
-                    const now = moment();
                     if( filter.value === "expired") {
                         return !!row._original.assignment && moment(row._original.assignment.expiresAt).isSameOrBefore(moment(), "day")
                     }
