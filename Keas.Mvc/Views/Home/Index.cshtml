@@ -10,7 +10,7 @@
     <h1>Home</h1>
     @if(Model.PendingItems){
           <div class="alert alert-warning">You have pending items!
-          <a class="btn btn-link" href='@Url.Action("Confirm")'>Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a></div>
+          <a class="btn btn-link" asp-controller="Confirm" asp-action="Confirm">Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a></div>
         }
   </div>
   <div class="card-content">
