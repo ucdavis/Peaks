@@ -145,11 +145,15 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             person.id
           }&date=${date}`;
 
+          if(!workstation.assignment)
+          {
+              // only count as assigned if this is a new one
+              assigned = true;
+          }
           workstation = await this.context.fetch(assignUrl, {
             method: "POST"
           });
           workstation.assignment.person = person;
-          assigned = true;
         }
 
         const index = this.state.workstations.findIndex(x => x.id === workstation.id);

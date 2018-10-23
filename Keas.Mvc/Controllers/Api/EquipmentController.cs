@@ -120,6 +120,7 @@ namespace Keas.Mvc.Controllers.Api
                 
                 if(equipment.Assignment != null)
                 {
+                    _context.EquipmentAssignments.Update(equipment.Assignment);
                     equipment.Assignment.ExpiresAt = DateTime.Parse(date);
                     // TODO: track update assignment? 
                 }
