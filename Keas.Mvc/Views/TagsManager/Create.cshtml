@@ -4,10 +4,17 @@
     ViewData["Title"] = "Create Tag";
 }
 
-<h2>Create Tag</h2>
+<div class="card">
+  <div class="card-head">
+    <div class="row justify-content-between">
+      <h2>Create Tag</h2>
+      <div>
+        <a class="btn btn-link" asp-action="Index"><i class="fas fa-arrow-left fa-xs"/></i> Back to List</a>
+      </div>
+    </div>
+  </div>
+  <div class="card-content">
 
-<h4>Team Tag</h4>
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
@@ -18,14 +25,14 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn btn-danger">Back to List</a>
 </div>
 
 @section Scripts {
