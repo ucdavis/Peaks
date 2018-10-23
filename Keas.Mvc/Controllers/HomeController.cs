@@ -16,31 +16,33 @@ namespace Keas.Mvc.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-         private readonly ISecurityService _securityService;
+        private readonly ISecurityService _securityService;
 
-       
+
         public HomeController(ApplicationDbContext context, ISecurityService securityService)
         {
             _context = context;
             _securityService = securityService;
         }
 
-        
+
         public async Task<ActionResult> Index()
-        {            
-            if (Team == null){
-                return RedirectToAction("SelectTeam", "Confirm", new {urlRedirect = "home/index"} );
-            }    
-            var person = await _securityService.GetPerson(Team);
-            if(person == null){
-                 Message = "You are not yet added to the system.";
-                return RedirectToAction("NoAccess","Home");
+        {
+            if (Team == null)
+            {
+                return RedirectToAction("SelectTeam", "Confirm", new { urlRedirect = "home/index" });
             }
-            var viewmodel = await HomeViewModel.Create(_context, person);    
+            var person = await _securityService.GetPerson(Team);
+            if (person == null)
+            {
+                Message = "You are not yet added to the system.";
+                return RedirectToAction("NoAccess", "Home");
+            }
+            var viewmodel = await HomeViewModel.Create(_context, person);
             return View(viewmodel);
         }
 
-        public IActionResult NoAccess() 
+        public IActionResult NoAccess()
         {
             // TODO Fix the instructions
             return View();
