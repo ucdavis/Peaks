@@ -132,8 +132,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     key: IKey,
     date: any
   ) => {
-    let created = false;
-    let assigned = false;
+    let updateTotalAssetCount = false;
+    let updateInUseAssetCount = false;
     // call API to create a key, then assign it if there is a person to assign to
     // if we are creating a new key
     if (key.id === 0) {
@@ -142,7 +142,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         body: JSON.stringify(key),
         method: "POST"
       });
-      created = true;
+      updateTotalAssetCount = true;
     }
 
     // if we know who to assign it to, do it now
@@ -154,7 +154,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       if(!key.assignment)
       {
         // don't count as assigning unless this is a new one
-        assigned = true;
+        updateInUseAssetCount = true;
       }
       key = await this.context.fetch(assignUrl, {
         method: "POST"
@@ -177,12 +177,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         keys: [...this.state.keys, key]
       });
     }
-    if(created && this.props.assetTotalUpdated)
+    if(updateTotalAssetCount && this.props.assetTotalUpdated)
     {
         this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
            this.props.person ? this.props.person.id : null, 1);
     }
-    if(assigned && this.props.assetInUseUpdated)
+    if(updateInUseAssetCount && this.props.assetInUseUpdated)
     {
         this.props.assetInUseUpdated("key", this.props.space ? this.props.space.id : null,
           this.props.person ? this.props.person.id : null, 1);

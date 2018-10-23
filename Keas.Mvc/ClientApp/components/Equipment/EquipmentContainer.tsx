@@ -173,8 +173,8 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     equipment: IEquipment,
     date: any
   ) => {
-    let created = false;
-    let assigned = false;
+    let updateTotalAssetCount = false;
+    let updateInUseAssetCount = false;
 
     const attributes = equipment.attributes;
     // call API to create a equipment, then assign it if there is a person to assign to
@@ -186,7 +186,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         method: "POST"
       });
       equipment.attributes = attributes;
-      created = true;
+      updateTotalAssetCount = true;
     }
 
     // if we know who to assign it to, do it now
@@ -198,7 +198,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       if(!equipment.assignment)
       {
         // don't count as assigning unless this is a new one
-        assigned = true;
+        updateInUseAssetCount = true;
       }
       equipment = await this.context.fetch(assignUrl, {
         method: "POST"
@@ -225,12 +225,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       });
     }
 
-    if(created && this.props.assetTotalUpdated)
+    if(updateTotalAssetCount && this.props.assetTotalUpdated)
     {
         this.props.assetTotalUpdated("equipment", this.props.space ? this.props.space.id : null,
            this.props.person ? this.props.person.id : null, 1);
     }
-    if(assigned && this.props.assetInUseUpdated)
+    if(updateInUseAssetCount && this.props.assetInUseUpdated)
     {
         this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
           this.props.person ? this.props.person.id : null, 1);
