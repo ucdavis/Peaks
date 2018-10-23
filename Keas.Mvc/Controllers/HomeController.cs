@@ -6,19 +6,38 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Authorization;
+using Keas.Core.Data;
+using Keas.Mvc.Services;
 
 namespace Keas.Mvc.Controllers
 {
     [Authorize]
     public class HomeController : SuperController
     {
+        private readonly ApplicationDbContext _context;
+
+         private readonly ISecurityService _securityService;
+
+       
+        public HomeController(ApplicationDbContext context, ISecurityService securityService)
+        {
+            _context = context;
+            _securityService = securityService;
+        }
+
         
-        public IActionResult Index()
+        public async Task<ActionResult> Index()
         {            
             if (Team == null){
                 return RedirectToAction("SelectTeam", "Confirm", new {urlRedirect = "home/index"} );
-            }            
-            return View();
+            }    
+            var person = await _securityService.GetPerson(Team);
+            if(person == null){
+                 Message = "You are not yet added to the system.";
+                return RedirectToAction("NoAccess","Home");
+            }
+            var viewmodel = await HomeViewModel.Create(_context, person);    
+            return View(viewmodel);
         }
 
         public IActionResult NoAccess() 
