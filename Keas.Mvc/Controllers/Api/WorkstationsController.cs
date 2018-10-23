@@ -75,7 +75,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var workstationAssignments = await _context.Workstations
-                .Where(w => w.Assignment.PersonId == personId && w.Team.Slug==Team)
+                .Where(w => w.Assignment.PersonId == personId && w.Team.Slug==Team && w.Active)
                 .Include(w => w.Assignment)
                 .ThenInclude(w => w.Person.User)
                 .Include(w => w.Space)
@@ -89,7 +89,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List()
         {
             var workstations = await _context.Workstations
-                .Where(w => w.Team.Slug == Team)
+                .Where(w => w.Team.Slug == Team && w.Active)
                 .Include(w => w.Assignment)
                 .ThenInclude(w => w.Person.User)
                 .Include(w => w.Space)
@@ -107,7 +107,7 @@ namespace Keas.Mvc.Controllers.Api
             {
                 if (workstation.Space != null)
                 {
-                    var space = await _context.Spaces.SingleAsync(s => s.RoomKey == workstation.Space.RoomKey);
+                    var space = await _context.Spaces.SingleAsync(s => s.RoomKey == workstation.Space.RoomKey && s.Active);
                     workstation.Space = space;
                 }
                 _context.Workstations.Add(workstation);
@@ -123,11 +123,11 @@ namespace Keas.Mvc.Controllers.Api
             // TODO make sure user has permission
             if (ModelState.IsValid)
             {
-                var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team).Include(w => w.Space)
+                var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active).Include(w => w.Space)
                     .SingleAsync(w => w.Id == workstationId);
                 workstation.Assignment = new WorkstationAssignment{PersonId = personId, ExpiresAt = DateTime.Parse(date)};
                 workstation.Assignment.Person =
-                    await _context.People.Include(p => p.User).Include(p=> p.Team).SingleAsync(p => p.Id == personId);
+                    await _context.People.Include(p => p.User).Include(p=> p.Team).SingleAsync(p => p.Id == personId && p.Active);
 
                 if (workstation.Team.Slug != Team)
                 {
@@ -159,7 +159,7 @@ namespace Keas.Mvc.Controllers.Api
             // TODO permission
             if (ModelState.IsValid)
             {
-                var workstationToUpdate = await _context.Workstations.Where(x => x.Team.Slug == Team)
+                var workstationToUpdate = await _context.Workstations.Where(x => x.Team.Slug == Team && x.Active)
                     .Include(w => w.Assignment).ThenInclude(w => w.Person.User)
                     .SingleAsync(w => w.Id == workstation.Id);
 
@@ -177,7 +177,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var w = await _context.Workstations.Where(x => x.Team.Slug == Team)
+                var w = await _context.Workstations.Where(x => x.Team.Slug == Team && x.Active)
                     .SingleAsync(x => x.Id == workstation.Id);
                     
                 w.Name = workstation.Name;

@@ -51,7 +51,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List()
         {
             var accessList = await _context.Access
-                .Where(x => x.Team.Slug == Team)
+                .Where(x => x.Team.Slug == Team && x.Active)
                 .Include(x=> x.Assignments)
                 .ThenInclude(x => x.Person)
                 .ThenInclude(x => x.User)
@@ -79,14 +79,14 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permssion, make sure access exists, makes sure access is in this team
             if (ModelState.IsValid)
             {
-                var access = await _context.Access.Where(x => x.Id == accessId && x.Team.Slug == Team)
+                var access = await _context.Access.Where(x => x.Id == accessId && x.Team.Slug == Team && x.Active)
                     .Include(x => x.Assignments).SingleAsync();
                 var accessAssingment = new AccessAssignment{
                     AccessId = accessId,
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date),
                 };
-                accessAssingment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
+                accessAssingment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId && p.Active);
                 access.Assignments.Add(accessAssingment);
                 await _context.SaveChangesAsync();
                 await _eventService.TrackAssignAccess(accessAssingment, Team);
@@ -99,7 +99,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions, make sure SN isn't edited 
             if (ModelState.IsValid)
             {
-                var a = await _context.Access.Where(x => x.Team.Slug == Team)
+                var a = await _context.Access.Where(x => x.Team.Slug == Team && x.Active)
                     .SingleAsync(x => x.Id == access.Id);
                 a.Name = access.Name;
                 await _context.SaveChangesAsync();

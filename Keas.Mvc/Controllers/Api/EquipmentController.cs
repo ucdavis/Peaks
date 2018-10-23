@@ -67,7 +67,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var equipmentAssignments = await _context.Equipment
-                .Where(x => x.Assignment.PersonId == personId && x.Team.Slug == Team)
+                .Where(x => x.Assignment.PersonId == personId && x.Team.Slug == Team && x.Active)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person.User)
                 .Include(x => x.Space)
@@ -82,7 +82,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List()
         {
             var equipments = await _context.Equipment
-                .Where(x => x.Team.Slug == Team)
+                .Where(x => x.Team.Slug == Team && x.Active)
                 .Include(x => x.Assignment)
                 .ThenInclude(x=>x.Person.User)
                 .Include(x => x.Space)
@@ -100,7 +100,7 @@ namespace Keas.Mvc.Controllers.Api
             {
                 if (equipment.Space != null)
                 {
-                   var space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
+                   var space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey && x.Active);
                     equipment.Space = space;
                 }
                 _context.Equipment.Add(equipment);
@@ -115,7 +115,7 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team).Include(x => x.Space).SingleAsync(x => x.Id == equipmentId);
+                var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team && x.Active).Include(x => x.Space).SingleAsync(x => x.Id == equipmentId);
                 equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
                 equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
 
@@ -133,7 +133,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var eq = await _context.Equipment.Where(x => x.Team.Slug == Team)
+                var eq = await _context.Equipment.Where(x => x.Team.Slug == Team && x.Active)
                     .Include(x => x.Space).Include(x => x.Attributes)
                     .SingleAsync(x => x.Id == updatedEquipment.Id);
                     
@@ -166,7 +166,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var eq = await _context.Equipment.Where(x => x.Team.Slug == Team)
+                var eq = await _context.Equipment.Where(x => x.Team.Slug == Team && x.Active)
                     .Include(x => x.Assignment).ThenInclude(x => x.Person.User)
                     .SingleAsync(x => x.Id == equipment.Id);
 

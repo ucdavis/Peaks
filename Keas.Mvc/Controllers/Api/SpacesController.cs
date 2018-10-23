@@ -24,7 +24,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var queryWords = q.ToLower().Split(" ").ToList();
             var space = await _context.Spaces
-                .Where(x => (!String.IsNullOrWhiteSpace(x.BldgName) && queryWords.Any(s => x.BldgName.ToLower().Contains(s)))
+                .Where(x => x.Active && (!String.IsNullOrWhiteSpace(x.BldgName) && queryWords.Any(s => x.BldgName.ToLower().Contains(s)))
                 || (!String.IsNullOrWhiteSpace(x.RoomName) && queryWords.Any(s => x.RoomName.ToLower().Contains(s)))
                 || (!String.IsNullOrWhiteSpace(x.RoomNumber) && queryWords.Any(s => x.RoomNumber.ToLower().Contains(s))))
                 .AsNoTracking().ToListAsync();
@@ -35,7 +35,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             //TODO clean up workstations query
             var spaces = 
-                from space in _context.Spaces.Where(x => x.OrgId == orgId)
+                from space in _context.Spaces.Where(x => x.OrgId == orgId && x.Active)
                 select new
                 {
                     space = space,

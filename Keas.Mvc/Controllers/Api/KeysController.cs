@@ -59,7 +59,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var keyAssignments = await _context.Serials
-                .Where(x => x.Assignment.PersonId == personId && x.Key.Team.Slug == Team)
+                .Where(x => x.Assignment.PersonId == personId && x.Key.Team.Slug == Team && x.Active)
                 .Include(x => x.Assignment)
                 .ThenInclude(assingment => assingment.Person.User)
                 .Include(x => x.Key.Team)
@@ -72,7 +72,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List()
         {
             var keys = await _context.Serials
-                .Where(x => x.Key.Team.Slug == Team)
+                .Where(x => x.Key.Team.Slug == Team && x.Active)
                 .Include(x => x.Assignment)
                 .ThenInclude(assignment => assignment.Person.User)
                 .Include(x => x.Key.Team)
@@ -102,7 +102,7 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
             if (ModelState.IsValid)
             {
-                var serial = await _context.Serials.Where(x => x.Key.Team.Slug == Team)
+                var serial = await _context.Serials.Where(x => x.Key.Team.Slug == Team && x.Active)
                     .SingleAsync(x => x.Id == serialId);
 
                 serial.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
@@ -122,7 +122,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions, make sure SN isn't edited 
             if (ModelState.IsValid)
             {
-                var k = await _context.Keys.Where(x => x.Team.Slug == Team)
+                var k = await _context.Keys.Where(x => x.Team.Slug == Team && x.Active)
                     .Include(x=> x.Serials)
                     .ThenInclude(serials=> serials.Assignment)
                     .ThenInclude(x => x.Person.User)
@@ -143,7 +143,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var s = await _context.Serials.Where(x => x.Key.Team.Slug == Team).Include(x => x.Assignment)
+                var s = await _context.Serials.Where(x => x.Key.Team.Slug == Team && x.Active).Include(x => x.Assignment)
                     .ThenInclude(x => x.Person.User)
                     .SingleAsync(x => x.Id == serial.Id);
                 

@@ -59,7 +59,7 @@ namespace Keas.Mvc.Controllers.Api
             var comparison = StringComparison.OrdinalIgnoreCase;
             // first try and find an existing person
             var existingPerson = await _context.People
-                .Where(x => x.Team.Slug == Team && (String.Equals(x.Email,searchTerm,comparison) || String.Equals(x.UserId,searchTerm,comparison)))
+                .Where(x => x.Team.Slug == Team && x.Active && (String.Equals(x.Email,searchTerm,comparison) || String.Equals(x.UserId,searchTerm,comparison)))
                 .FirstOrDefaultAsync();
             if(existingPerson != null)
             {
@@ -102,7 +102,7 @@ namespace Keas.Mvc.Controllers.Api
 
             if (id.HasValue)
             {
-                person = await _context.People.Where(x => x.Team.Slug == Team && x.Id == id.Value).Include(x => x.User).AsNoTracking().SingleAsync();
+                person = await _context.People.Where(x => x.Team.Slug == Team && x.Id == id.Value && x.Active).Include(x => x.User).AsNoTracking().SingleAsync();
             }
             else
             {
@@ -166,7 +166,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                var p = await _context.People.Where(x => x.Team.Slug == Team)
+                var p = await _context.People.Where(x => x.Team.Slug == Team && x.Active)
                     .SingleAsync(x => x.Id == person.Id);
                     
                 p.FirstName = person.FirstName;
@@ -186,7 +186,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> GetPerson(int personId)
         {
             var person = await _context.People
-                .Where(x => x.Team.Slug == Team && x.Id == personId).Include(x => x.User).AsNoTracking().SingleAsync();
+                .Where(x => x.Team.Slug == Team && x.Id == personId && x.Active).Include(x => x.User).AsNoTracking().SingleAsync();
             return Json(person);
         }
 
