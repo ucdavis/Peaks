@@ -1,4 +1,5 @@
 import * as moment from "moment";
+import { IEquipmentAssignment} from "../Types";
 
 export class DateUtil {
     
@@ -7,6 +8,13 @@ export class DateUtil {
             return "";
         }
         return moment(expiration).format("MM/DD/YYYY").toString();
+    }
+
+    public static formatEquipmentExpiration(assignment: IEquipmentAssignment) {
+        if(assignment === null) {
+            return "";
+        }
+        return moment(assignment.expiresAt).format("MM/DD/YYYY").toString();
     }
 
     public static formatFirstExpiration(expirations: Date[]) {
