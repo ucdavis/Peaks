@@ -44,8 +44,8 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
             },
             {
                 Header: "Expiration",
-                id: "expiresAt",
-                accessor: x=> moment(x.expiresAt).format("MM/DD/YYYY").toString(),
+                id: "assignment.expiresAt",
+                accessor: x=> moment(x.assignment.expiresAt).format("MM/DD/YYYY").toString(),
                 filterMethod: (filter, row) => {
                     if( filter.value === "all") {
                         return true;
