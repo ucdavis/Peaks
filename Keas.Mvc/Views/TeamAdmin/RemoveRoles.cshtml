@@ -5,9 +5,12 @@
 }
 <div class="card">
   <div class="card-head">
-
-      <h2>Remove all roles for user in @Model.Team.Name</h2>
-
+      <div class="row justify-content-between">
+          <h2>Remove roles for user in @Model.Team.Name</h2>
+          <div>            
+            <a class="btn btn-link" asp-action="RoledMembers" asp-controller="TeamAdmin"><i class="fas fa-arrow-left fa-xs"/></i> Back to Members with Roles</a>
+          </div>
+        </div>
   </div>
   <div class="card-content">
 
@@ -37,7 +40,8 @@
                     }
                 </li>
                 <li>
-                    <input class="btn btn-primary" type="submit" value="Remove role(s)"/> | @Html.ActionLink("Cancel", "RoledMembers")
+                    <input class="btn btn-primary" type="submit" value="Remove role(s)"/> |
+                    <a asp-action="RoledMembers" class="btn btn-danger">Cancel</a>
                 </li>
             </ul>
 

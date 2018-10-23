@@ -1,9 +1,12 @@
-import * as moment from "moment";
+import { DateUtil } from "../../util/dates";
 import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { IEquipment } from "../../Types";
 import ListActionsDropdown from "../ListActionsDropdown";
+
+import * as moment from "moment";
+
 
 interface IProps {
     equipment: IEquipment[];
@@ -45,7 +48,7 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
             {
                 Header: "Expiration",
                 id: "assignment.expiresAt",
-                accessor: x=> moment(x.assignment.expiresAt).format("MM/DD/YYYY").toString(),
+                accessor: x=> DateUtil.formatExpiration(x.assignment.expiresAt),
                 filterMethod: (filter, row) => {
                     if( filter.value === "all") {
                         return true;

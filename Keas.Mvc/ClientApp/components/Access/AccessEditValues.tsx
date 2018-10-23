@@ -1,9 +1,9 @@
-﻿import * as moment from "moment";
-import * as React from "react";
+﻿import * as React from "react";
 
 import { IAccess, IAccessAssignment } from "../../Types";
 
 import ReactTable from 'react-table';
+import { DateUtil } from "../../util/dates";
 
 
 
@@ -40,7 +40,7 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
         }, {
             id: "expiresAt",
             Header: "Expires at",
-            accessor: x=> moment(x.expiresAt).format("MM/DD/YYYY").toString()
+            accessor: x=> DateUtil.formatExpiration(x.expiresAt)
         },{
             Header: "Revoke",
             Cell: row => (<button type="button" className="btn btn-outline-danger" disabled={this.props.disableEditing  || !this.props.onRevoke}
