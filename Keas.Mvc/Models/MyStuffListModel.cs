@@ -15,13 +15,14 @@ namespace Keas.Mvc.Models
         public List<Access> Access { get; set; }
         public List<Workstation> Workstations { get; set; }
         public List<History> Histories { get; set; }
+        public bool PendingItems { get; set; }
 
 
 
         public static async Task<MyStuffListModel> Create(ApplicationDbContext context, Person person)
-        {
+        {   
             var viewModel = new MyStuffListModel
-            {
+            {                
                 Serials = await context.Serials.Include(s=> s.Key).ThenInclude(k=> k.KeyXSpaces).ThenInclude(kxp=> kxp.Space).Include(s=> s.Assignment)
                     .Where(s=> s.Assignment.Person==person).AsNoTracking().ToListAsync(),
                 Equipment = await context.Equipment.Include(e => e.Space).Include(e=> e.Assignment).Where(e => e.Assignment.Person == person).AsNoTracking().ToListAsync(),
@@ -46,7 +47,9 @@ namespace Keas.Mvc.Models
                     .OrderByDescending(x => x.ActedDate)
                     .Take(10).AsNoTracking().ToListAsync()
             };
-            
+            viewModel.PendingItems = viewModel.Serials.Where(s => !s.Assignment.IsConfirmed).Any() 
+                                    || viewModel.Equipment.Where(e => !e.Assignment.IsConfirmed).Any() 
+                                    || viewModel.Workstations.Where(w => !w.Assignment.IsConfirmed).Any() ;
             return viewModel;
         }
 
