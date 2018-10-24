@@ -6,6 +6,7 @@ import { IEquipment } from "../../Types";
 import ListActionsDropdown from "../ListActionsDropdown";
 
 import * as moment from "moment";
+import { Button } from "reactstrap";
 
 
 interface IProps {
@@ -24,6 +25,20 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
         filterable={true}
         minRows={1}
         columns = {[
+            {
+                Header: "",
+                headerClassName: "spaces-details",
+                filterable: false,
+                sortable: false,
+                resizable: false,
+                className: "spaces-details",
+                Cell: row => (
+                    <Button color="link" onClick={() => this.props.showDetails(row.original)}>
+                    Details
+                    </Button>
+                ),
+                maxWidth: 150,
+            },
             {
                 Header: "Serial Number",
                 accessor: "serialNumber",
