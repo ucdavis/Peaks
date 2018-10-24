@@ -34,6 +34,8 @@ namespace Keas.Mvc.Services
 
         
         Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team);
+
+        Task<bool> IsInTeamOrAdmin(string teamslug);
     }
     public class SecurityService : ISecurityService
     {
@@ -146,6 +148,17 @@ namespace Keas.Mvc.Services
             var admin = await _dbContext.SystemPermissions.Where(sp => sp.User.Id == userId).Select(sp=> sp.Role).ToListAsync();
             userPermissions.AddRange(admin);
             return userPermissions;
+        }
+
+        public async Task<bool> IsInTeamOrAdmin(string teamslug) 
+        {
+            var person = await GetPerson(teamslug);
+            if (person !=null)
+            {
+                return true;
+            }
+            var userId = _contextAccessor.HttpContext.User.Identity.Name;            
+            return await _dbContext.SystemPermissions.Where(sp => sp.User.Id == userId).AnyAsync();
         }
     }
 }
