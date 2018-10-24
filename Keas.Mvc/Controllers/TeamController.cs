@@ -41,7 +41,7 @@ namespace Keas.Mvc.Controllers
             {
                 _context.Add(team);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index","Admin", "Please");
+                return RedirectToAction("Index","Admin", "new {id=1}");
             }
             return View(team);
         }
