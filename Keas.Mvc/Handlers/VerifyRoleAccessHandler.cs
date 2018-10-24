@@ -43,12 +43,12 @@ namespace Keas.Mvc.Handlers
             if (string.IsNullOrWhiteSpace(team)) 
              {
                 var tempData = _tempDataDictionaryFactory.GetTempData(_httpContext.HttpContext);
-                team = tempData["TeamName"] != null ? tempData["TeamName"].ToString() : ""; 
+                team = Convert.ToString(tempData["TeamName"]); 
             }     
 
             var user = _dbContext.Users.SingleOrDefault(u => u.Id == context.User.Identity.Name);
             var roles = await _dbContext.Roles.Where(r => requirement.RoleStrings.Contains(r.Name)).ToListAsync();
-            if (user != null && team != "")
+            if (user != null && !string.IsNullOrEmpty(team))
             {
                 if (await _securityService.IsInRoles(roles, team, user))
                 {
