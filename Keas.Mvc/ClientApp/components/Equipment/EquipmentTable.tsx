@@ -1,8 +1,8 @@
-import { DateUtil } from "../../util/dates";
 import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { IEquipment } from "../../Types";
+import { DateUtil } from "../../util/dates";
 import ListActionsDropdown from "../ListActionsDropdown";
 
 import * as moment from "moment";
