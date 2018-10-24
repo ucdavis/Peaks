@@ -4,6 +4,8 @@ import { ISpace, IWorkstation } from "../../Types";
 import AssignSpace from "../Spaces/AssignSpace";
 import SearchTags from "../Tags/SearchTags";
 
+import { DateUtil } from "../../util/dates";
+
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
     tags?: string[];
@@ -47,7 +49,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                     <input type="text"
                         className="form-control"
                         disabled={true}
-                        value={this.props.selectedWorkstation.assignment.expiresAt.toString()}
+                        value={DateUtil.formatExpiration(this.props.selectedWorkstation.assignment.expiresAt)}
                         />
                 </div>
                 </div>

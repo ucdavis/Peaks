@@ -29,6 +29,8 @@ export default class KeyListItem extends React.Component<IProps, {}> {
                           () => this.props.onRevoke(this.props.keyEntity) : null}
                         onAdd={!!this.props.onAdd && !hasAssignment ? 
                           () => this.props.onAdd(this.props.keyEntity) : null}
+                        onUpdateAssignment={!!this.props.onAdd && hasAssignment ? 
+                          () => this.props.onAdd(this.props.keyEntity) : null}
                         showDetails={!!this.props.showDetails ? 
                           () => this.props.showDetails(this.props.keyEntity) : null}
                         onEdit={!!this.props.onEdit ? 

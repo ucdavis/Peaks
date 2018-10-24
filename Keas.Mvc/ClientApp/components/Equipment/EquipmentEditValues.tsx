@@ -1,9 +1,10 @@
-﻿import * as React from "react";
-
+﻿import { DateUtil } from "../../util/dates";
+import * as React from "react";
 import { IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
 import AssignSpace from "../Spaces/AssignSpace";
 import SearchTags from "../Tags/SearchTags";
 import EquipmentAttributes from "./EquipmentAttributes";
+
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
@@ -19,7 +20,7 @@ interface IProps {
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
 
     public render() {
-        return (
+        return (            
             <div>
                 {!this.props.creating &&
                 <div className="form-group">
@@ -56,7 +57,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <input type="text"
                         className="form-control"
                         disabled={true}
-                        value={this.props.selectedEquipment.assignment.expiresAt.toString()}
+                        value= {DateUtil.formatExpiration(this.props.selectedEquipment.assignment.expiresAt)}
                         />
                 </div>
                 </div>
