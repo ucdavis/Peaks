@@ -42,8 +42,12 @@ namespace Keas.Mvc.Handlers
             }  
             if (string.IsNullOrWhiteSpace(team)) 
             {
-                var tempData = _tempDataDictionaryFactory.GetTempData(_httpContext.HttpContext);                
-                team = tempData["TeamName"].ToString();
+                var tempData = _tempDataDictionaryFactory.GetTempData(_httpContext.HttpContext);   
+                var tempName =  tempData["TeamName"];         
+                if (tempName != null)
+                {
+                    team = tempData["TeamName"].ToString();
+                }                
             }         
 
             var user = _dbContext.Users.SingleOrDefault(u => u.Id == context.User.Identity.Name);
