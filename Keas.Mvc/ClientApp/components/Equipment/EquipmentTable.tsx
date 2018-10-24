@@ -1,12 +1,11 @@
+import * as moment from "moment";
 import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import { Button } from "reactstrap";
 import { IEquipment } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import ListActionsDropdown from "../ListActionsDropdown";
-
-import * as moment from "moment";
-import { Button } from "reactstrap";
 
 
 interface IProps {
