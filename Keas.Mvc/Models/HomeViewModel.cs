@@ -17,6 +17,11 @@ namespace Keas.Mvc.Models
         public static async Task<HomeViewModel> Create(ApplicationDbContext context, Person person)
         {   
             var viewModel = new HomeViewModel();
+            if(person == null) 
+            {
+                viewModel.PendingItems = false;
+                return viewModel;
+            }
             var keys = await context.KeyAssignments.Where(s => s.Person == person && !s.IsConfirmed).AnyAsync();
             var equipment = await context.EquipmentAssignments.Where(e => e.Person == person && !e.IsConfirmed).AnyAsync();
             var workstations = await context.WorkstationAssignments.Where(w => w.Person == person && !w.IsConfirmed).AnyAsync();
