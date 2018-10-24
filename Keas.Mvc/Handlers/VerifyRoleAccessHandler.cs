@@ -40,7 +40,7 @@ namespace Keas.Mvc.Handlers
                     team = mvcContext.RouteData.Values["teamName"].ToString();
                 }
             }  
-            if (team == "") 
+            if (string.IsNullOrWhiteSpace(team)) 
             {
                 var tempData = _tempDataDictionaryFactory.GetTempData(_httpContext.HttpContext);                
                 team = tempData["TeamName"].ToString();
