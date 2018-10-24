@@ -1,11 +1,11 @@
-import { DateUtil } from "../../util/dates";
+import * as moment from "moment";
 import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import { Button } from "reactstrap";
 import { IEquipment } from "../../Types";
+import { DateUtil } from "../../util/dates";
 import ListActionsDropdown from "../ListActionsDropdown";
-
-import * as moment from "moment";
 
 
 interface IProps {
@@ -24,6 +24,20 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
         filterable={true}
         minRows={1}
         columns = {[
+            {
+                Header: "",
+                headerClassName: "spaces-details",
+                filterable: false,
+                sortable: false,
+                resizable: false,
+                className: "spaces-details",
+                Cell: row => (
+                    <Button color="link" onClick={() => this.props.showDetails(row.original)}>
+                    Details
+                    </Button>
+                ),
+                maxWidth: 150,
+            },
             {
                 Header: "Serial Number",
                 accessor: "serialNumber",
