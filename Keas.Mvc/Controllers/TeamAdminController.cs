@@ -141,6 +141,16 @@ namespace Keas.Mvc.Controllers
                 }
             }
 
+            // Check if already Team Person. Add if not.
+            var person = await _context.People.SingleOrDefaultAsync(p => p.UserId == user.Id);
+            if (person == null) 
+            {
+                person.Team = team;
+                person.UserId = user.Id;
+                _context.People.Add(person);
+                await _context.SaveChangesAsync();
+            }
+
             if (role == null)
             {
                 ModelState.AddModelError("RoleId", "Role not found!");
