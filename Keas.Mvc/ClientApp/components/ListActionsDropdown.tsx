@@ -2,10 +2,11 @@
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
 
 interface IProps {
-    onRevoke?: () => void;
     onAdd?: () => void;
-    showDetails?: () => void;
     onEdit?: () => void;
+    onRevoke?: () => void;
+    onUpdateAssignment?: () => void;
+    showDetails?: () => void;
 }
 
 interface IState {
@@ -33,6 +34,8 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
                         <DropdownItem onClick={this.props.onRevoke} >Revoke</DropdownItem>}
                     {!!this.props.onEdit &&
                         <DropdownItem onClick={this.props.onEdit} >Edit</DropdownItem>}
+                    {!!this.props.onUpdateAssignment &&
+                        <DropdownItem onClick={this.props.onUpdateAssignment} >Update Assignment</DropdownItem>}
                     {!!this.props.showDetails &&
                         <DropdownItem onClick={this.props.showDetails} >Show Details</DropdownItem>}
                     </DropdownMenu>

@@ -125,8 +125,8 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         workstation: IWorkstation,
         date: any
       ) => {
-        let created = false;
-        let assigned = false;
+        let updateTotalAssetCount = false;
+        let updateInUseAssetCount = false;
 
         // call API to create a workstation, then assign it if there is a person to assign to
         // if we are creating a new workstation
@@ -136,7 +136,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             body: JSON.stringify(workstation),
             method: "POST"
           });
-          created = true;
+          updateTotalAssetCount = true;
         }
 
         // if we know who to assign it to, do it now
@@ -145,11 +145,15 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             person.id
           }&date=${date}`;
 
+          if(!workstation.assignment)
+          {
+              // only count as assigned if this is a new one
+              updateInUseAssetCount = true;
+          }
           workstation = await this.context.fetch(assignUrl, {
             method: "POST"
           });
           workstation.assignment.person = person;
-          assigned = true;
         }
 
         const index = this.state.workstations.findIndex(x => x.id === workstation.id);
@@ -169,12 +173,12 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             workstations: [...this.state.workstations, workstation]
           });
         }
-        if(created && this.props.assetTotalUpdated)
+        if(updateTotalAssetCount && this.props.assetTotalUpdated)
         {
             this.props.assetTotalUpdated("workstation", workstation.space ? workstation.space.id : null, 
                 this.props.person? this.props.person.id : null, 1);
         }
-        if(assigned && this.props.assetInUseUpdated)
+        if(updateInUseAssetCount && this.props.assetInUseUpdated)
         {
             this.props.assetInUseUpdated("workstation", workstation.space? workstation.space.id : null, 
             this.props.person? this.props.person.id : null, 1);

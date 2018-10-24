@@ -48,10 +48,12 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      date: moment().add(3, "y"),
+      date: (!!this.props.selectedEquipment && !!this.props.selectedEquipment.assignment) 
+        ? moment(this.props.selectedEquipment.assignment.expiresAt) : moment().add(3, "y"),
       equipment: this.props.selectedEquipment,
       error: "",
-      person: null,
+      person: (!!this.props.selectedEquipment && !!this.props.selectedEquipment.assignment)
+        ? this.props.selectedEquipment.assignment.person : this.props.person,
       validState: false
     };
   }
@@ -64,6 +66,13 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
     if (nextProps.person !== this.props.person) {
       this.setState({ person: nextProps.person });
+    }
+    if(!!nextProps.selectedEquipment && !!nextProps.selectedEquipment.assignment)
+    {
+      this.setState({ 
+        date: moment(nextProps.selectedEquipment.assignment.expiresAt),
+        person: nextProps.selectedEquipment.assignment.person
+      });
     }
   }
 
@@ -176,6 +185,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
+      date: moment().add(3, "y"),
       equipment: null,
       error: "",
       person: null,

@@ -1,4 +1,4 @@
-@using Microsoft.AspNetCore.Authorization
+﻿@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 <!DOCTYPE html>
 <html>
@@ -81,34 +81,36 @@
           <span>Menu</span>
         </button>
       <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav mr-auto">
-           @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
-                {
-                   <li class="nav-item">
-            <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"] , "Keys")'>Assets</a>
-          </li>
-                }     
-          
-          <li class="nav-item">
-            <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
-          </li>
-          @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
-                {
-                   <li class="nav-item">
-            <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
-          </li>
-                }
-           @if ((await AuthorizationService.AuthorizeAsync(User, "DepartmentAdminAccess")).Succeeded)
-                {
-                    <li class="nav-item">
-            <a class="nav-link" asp-controller="TeamAdmin" asp-action="Index">Admin</a>
-          </li>
-                }   
-          
-        </ul>
-        <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
-          <span>Welcome @User.GetNameClaim()</span>
-        </div>
+          <ul class="navbar-nav mr-auto">
+              @if (TempData["TeamName"] != null)
+              {
+                  @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
+                  {
+                      <li class="nav-item">
+                          <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"], "Keys")'>Assets</a>
+                      </li>
+                  }
+
+                  <li class="nav-item">
+                      <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
+                  </li>
+                  @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
+                  {
+                      <li class="nav-item">
+                          <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
+                      </li>
+                  }
+                  @if ((await AuthorizationService.AuthorizeAsync(User, "DepartmentAdminAccess")).Succeeded)
+                  {
+                      <li class="nav-item">
+                          <a class="nav-link" asp-controller="TeamAdmin" asp-action="Index">Admin</a>
+                      </li>
+                  }
+              }
+          </ul>
+          <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
+              <span>Welcome @User.GetNameClaim()</span>
+          </div>
       </div>
     </div>
 
