@@ -32,12 +32,13 @@ namespace Keas.Mvc.Controllers
             {
                 return RedirectToAction("SelectTeam", "Confirm", new { urlRedirect = "home/index" });
             }
-            var person = await _securityService.GetPerson(Team);
-            if (person == null)
+                      
+            if (!await _securityService.IsInTeamOrAdmin(Team))
             {
                 Message = "You are not yet added to the system.";
                 return RedirectToAction("NoAccess", "Home");
             }
+            var person = await _securityService.GetPerson(Team);  
             var viewmodel = await HomeViewModel.Create(_context, person);
             return View(viewmodel);
         }
