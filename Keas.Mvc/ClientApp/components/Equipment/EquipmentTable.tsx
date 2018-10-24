@@ -48,7 +48,7 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
             {
                 Header: "Expiration",
                 id: "assignment.expiresAt",
-                accessor: x=> x.assignment ? DateUtil.formatExpiration(x.assignment.expiresAt) : "",
+                accessor: x=> DateUtil.formatAssignmentExpiration(x.assignment),
                 filterMethod: (filter, row) => {
                     if( filter.value === "all") {
                         return true;
