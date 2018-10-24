@@ -11,12 +11,10 @@ export class DateUtil {
     }
 
     public static formatAssignmentExpiration(assignment: IHasExpiration) {
-        if(assignment === null) {
+        if(!assignment || !assignment.expiresAt)
+        {
             return "";
-        }
-        if(assignment.expiresAt === null){
-            return "";
-        }
+        }        
         return moment(assignment.expiresAt).format("MM/DD/YYYY").toString();
     }
 
