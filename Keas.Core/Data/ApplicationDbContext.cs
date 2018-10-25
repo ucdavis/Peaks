@@ -50,6 +50,7 @@ namespace Keas.Core.Data
             Domain.Equipment.OnModelCreating(builder);
             Key.OnModelCreating(builder);
             Person.OnModelCreating(builder);
+            Space.OnModelCreating(builder);
         }
     }
 }
