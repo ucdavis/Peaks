@@ -32,16 +32,16 @@ namespace Keas.Mvc.Models
         public static async Task<ExpiringItemsViewModel> Create(ApplicationDbContext context, DateTime expiresBefore, string teamName, bool showInactive, string showType)
         {
             
-            var expiringAccess = await context.AccessAssignments.Where(a => (showType == "All" || showType == "Access") &&
+            var expiringAccess = await context.AccessAssignments.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Access") &&
                 a.Access.Team.Slug == teamName && a.ExpiresAt <= expiresBefore && (a.Access.Active || a.Access.Active == !showInactive))
                 .Include(a => a.Access).Include(a=> a.Person).AsNoTracking().ToArrayAsync();
-            var expiringKey = await context.Serials.Where(a => (showType == "All" || showType == "Key") &&
+            var expiringKey = await context.Serials.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Key") &&
                 a.Key.Team.Slug == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Key.Active || a.Key.Active == !showInactive))
                 .Include(k => k.Assignment).ThenInclude(a=> a.Person).Include(k => k.Key).AsNoTracking().ToArrayAsync();
-            var expiringEquipment = await context.Equipment.Where(a => (showType == "All" || showType == "Equipment") &&
+            var expiringEquipment = await context.Equipment.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Equipment") &&
                   a.Team.Slug == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Active || a.Active == !showInactive))
                 .Include(e => e.Assignment).ThenInclude(a=> a.Person).AsNoTracking().ToArrayAsync();
-            var expiringWorkstations = await context.Workstations.Where(a => (showType == "All" || showType == "Workstation") &&
+            var expiringWorkstations = await context.Workstations.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Workstation") &&
                     a.Team.Slug == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Active || a.Active == !showInactive))
                 .Include(w => w.Assignment).ThenInclude(a=> a.Person).AsNoTracking().ToArrayAsync();
 
