@@ -30,10 +30,10 @@ namespace Keas.Mvc.Controllers.Api
             return Json(space);
         }
 
-        public async Task<IActionResult> List(string teamSlug)
+        public async Task<IActionResult> List()
         {
             //TODO clean up workstations query
-            var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == teamSlug).Select(x => x.OrgCode).Distinct().ToListAsync();
+            var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == Team).Select(x => x.OrgCode).Distinct().ToListAsync();
             var spaces =
                 from space in _context.Spaces.Where(x => orgIds.Contains(x.OrgId))
                 select new
