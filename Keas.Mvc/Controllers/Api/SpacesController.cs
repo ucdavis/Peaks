@@ -55,6 +55,7 @@ namespace Keas.Mvc.Controllers.Api
                          where w.SpaceId == space.Id && w.Active && !string.IsNullOrWhiteSpace(w.Tags)
                          select w.Tags).ToArray()),
                 };
+
             return Json(await spaces.ToListAsync());
         }
 
