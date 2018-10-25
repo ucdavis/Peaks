@@ -4,13 +4,32 @@ using System.Text;
 using Keas.Core.Domain;
 using TestHelpers.Helpers;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Test.TestsDatabase
 {
     [Trait("Category","DatabaseTests")]
     public class KeyAssignmentTests
     {
-                #region Reflection of Database
+        private readonly ITestOutputHelper _output;
+
+        public KeyAssignmentTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
+        #region Reflection of Database
+
+        [Fact]
+        public void TestClassAttributes()
+        {
+            // Arrange
+            var classReflection = new ControllerReflection(_output, typeof(KeyAssignment));
+            // Act
+            // Assert	
+            classReflection.ControllerInherits("AssignmentBase"); 
+            classReflection.ClassExpectedNoAttribute();
+        }
 
         [Fact]
         public void TestDatabaseFieldAttributes()
