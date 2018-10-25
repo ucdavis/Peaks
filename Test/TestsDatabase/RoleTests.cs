@@ -6,6 +6,7 @@ using Keas.Core.Domain;
 using Shouldly;
 using TestHelpers.Helpers;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Test.TestsDatabase
 {
@@ -13,7 +14,25 @@ namespace Test.TestsDatabase
     public class RoleTests
     {
 
-        #region Codes Tests
+        private readonly ITestOutputHelper _output;
+
+        public RoleTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
+        #region Reflection of Database
+
+        [Fact]
+        public void TestClassAttributes()
+        {
+            // Arrange
+            var classReflection = new ControllerReflection(_output, typeof(Role));
+            // Act
+            // Assert	
+            classReflection.ControllerInherits("Object"); 
+            classReflection.ClassExpectedNoAttribute();
+        }
 
         [Fact]
         public void TestCodesHaveExpectedValues()

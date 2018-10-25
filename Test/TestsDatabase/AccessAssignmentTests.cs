@@ -1,16 +1,34 @@
-﻿using System;
+﻿using Keas.Core.Domain;
 using System.Collections.Generic;
-using System.Text;
-using Keas.Core.Domain;
 using TestHelpers.Helpers;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Test.TestsDatabase
 {
     [Trait("Category","DatabaseTests")]
     public class AccessAssignmentTests
     {
+
+        private readonly ITestOutputHelper _output;
+
+        public AccessAssignmentTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         #region Reflection of Database
+
+        [Fact]
+        public void TestClassAttributes()
+        {
+            // Arrange
+            var classReflection = new ControllerReflection(_output, typeof(AccessAssignment));
+            // Act
+            // Assert	
+            classReflection.ControllerInherits("AssignmentBase"); //Doesn't inherit from another domain object
+            classReflection.ClassExpectedNoAttribute();
+        }
 
         [Fact]
         public void TestDatabaseFieldAttributes()

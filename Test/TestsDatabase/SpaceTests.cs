@@ -1,16 +1,38 @@
-﻿using System;
+﻿using Keas.Core.Domain;
+using Shouldly;
 using System.Collections.Generic;
-using System.Text;
-using Keas.Core.Domain;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using TestHelpers.Helpers;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Test.TestsDatabase
 {
-    [Trait("Category","DatabaseTests")]
+    [Trait("Category", "DatabaseTests")]
     public class SpaceTests
     {
+        private readonly ITestOutputHelper _output;
+
+        public SpaceTests(ITestOutputHelper output)
+        {
+            _output = output;
+        }
+
         #region Reflection of Database
+
+        [Fact]
+        public void TestClassAttributes()
+        {
+            // Arrange
+            var classReflection = new ControllerReflection(_output, typeof(Space));
+            // Act
+            // Assert	
+            classReflection.ControllerInherits("Object"); //Doesn't inherit from another domain object
+            var attributes = classReflection.ClassExpectedAttribute<TableAttribute>(1);
+            attributes.ElementAt(0).Name.ShouldBe("Space");
+        }
+
 
         [Fact]
         public void TestDatabaseFieldAttributes()
