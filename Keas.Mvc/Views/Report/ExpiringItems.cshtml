@@ -4,10 +4,13 @@
     ViewData["Title"] = "Expiring Items";
 }
 
-@section Scripts {
-   @await Html.PartialAsync("_ScriptsPartial.cshtml", Model)                             
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
 }
 
+@section Scripts {
+   @await Html.PartialAsync("_ReportScriptsPartial")                             
+}
 
 <h2>Expiring Items</h2>
 <form asp-action="ExpiringItems">
