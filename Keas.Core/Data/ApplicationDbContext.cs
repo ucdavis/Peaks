@@ -46,7 +46,7 @@ namespace Keas.Core.Data
             base.OnModelCreating(builder);
 
             AccessAssignment.OnModelCreating(builder);
-            Access.OnModelCreating(builder);
+            Domain.Access.OnModelCreating(builder);
         }
     }
 }
