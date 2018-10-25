@@ -33,7 +33,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List(string teamSlug)
         {
             //TODO clean up workstations query
-            var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == teamSlug).Select(x => x.OrgCode).ToListAsync();
+            var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == teamSlug).Select(x => x.OrgCode).Distinct().ToListAsync();
             var spaces =
                 from space in _context.Spaces.Where(x => orgIds.Contains(x.OrgId))
                 select new
