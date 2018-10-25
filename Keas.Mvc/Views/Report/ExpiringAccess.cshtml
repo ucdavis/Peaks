@@ -3,9 +3,11 @@
 @{
     ViewData["Title"] = "Expiring Items";
 }
-
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
 @section Scripts {
-   @await Html.PartialAsync("_ScriptsPartial.cshtml", Model)                             
+   @await Html.PartialAsync("_ReportScriptsPartial")                             
 }
 
 
