@@ -167,12 +167,20 @@ namespace Keas.Mvc
                     defaults: new { controller = "people", action = "Index" },
                     constraints: new { controller = "(keys|equipment|access|spaces|people|person|workstations|tags)" }
                 );
+
                 routes.MapRoute(
                     name: "Assets",
                     template: "{teamName}/{asset}/{*type}",
                     defaults: new { controller = "Asset", action = "Index" },
                     constraints: new { asset = "(keys|equipment|access|spaces|people|person|workstations)" }
                 );
+
+                routes.MapRoute(
+                    name: "AdminRoutes",
+                    template: "admin/{action=Index}/{id?}",
+                    defaults: new { controller = "Admin" }
+                );
+
                 routes.MapRoute(
                     name: "TeamRoutes",
                     template: "{teamName}/{controller=Home}/{action=Index}/{id?}");
