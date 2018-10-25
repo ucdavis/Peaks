@@ -47,6 +47,7 @@ namespace Keas.Core.Data
 
             AccessAssignment.OnModelCreating(builder);
             Domain.Access.OnModelCreating(builder);
+            Domain.Equipment.OnModelCreating(builder);
         }
     }
 }
