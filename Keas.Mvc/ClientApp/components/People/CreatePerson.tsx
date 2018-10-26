@@ -45,8 +45,8 @@ export default class CreatePerson extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
-        <Button color="danger" onClick={this.props.onAddNew}>
-          Add Person
+        <Button color="link" onClick={this.props.onAddNew}>
+        <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add Person
         </Button>
         <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
           <ModalHeader>Create Person</ModalHeader>
@@ -62,7 +62,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
                 <div className="form-group">
                   <PersonEditValues selectedPerson={this.state.person} changeProperty={this._changeProperty} disableEditing={false} tags={this.props.tags}/>
                 </div>
-                
+
                 {this.state.moreInfoString}
             </div>
           </ModalBody>
@@ -161,7 +161,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
       valid = false;
     } else if (!this.state.person.firstName || !this.state.person.lastName || !this.state.person.email) {
       valid = false;
-    } 
+    }
     this.setState({ validState: valid });
   };
 

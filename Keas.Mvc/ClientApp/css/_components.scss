@@ -260,7 +260,31 @@ img.img-fluid {
 
   .media-body {}
 }
-
+.keys-report {
+  i {
+    color:$keys;
+  }
+}
+.equipment-report {
+  i {
+    color:$equipment;
+  }
+}
+.access-report {
+  i {
+    color:$access;
+  }
+}
+.people-report {
+  i {
+    color:$people;
+  }
+}
+.spaces-report {
+  i {
+    color:$spaces;
+  }
+}
 ol.breadcrumb {
   display: inline-block;
   list-style: none;

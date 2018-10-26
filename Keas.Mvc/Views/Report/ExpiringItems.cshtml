@@ -12,42 +12,55 @@
    @await Html.PartialAsync("_ReportScriptsPartial")                             
 }
 
-<h2>Expiring Items</h2>
+
 <form asp-action="ExpiringItems">
     <div class="card">
-        <h5 class="card-head">Filters</h5>
+      <div class="card-header-primary">
+        <div class="card-head">
+          <h2>Expiring Items</h2>
+
+        </div>
+      </div>
         <div class="card-content">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm">
-                        <div class="form-group">
-                            <label asp-for="ExpiresBefore" class="control-label"></label>
-                            <input asp-for="ExpiresBefore" class="form-control datepicker" width="276" />
-                            <span asp-validation-for="ExpiresBefore" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-sm">
-                        <div class="form-group">
-                            <label asp-for="ShowType" class="control-label"></label>
-                            <select asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
-                        </div>
-                    </div>
-                    <div class="col-sm">
-                        <div class="form-group">
-                            <label asp-for="ShowInactive" class="control-label"></label>
-                            <input asp-for="ShowInactive" class="form-control" />
-                        </div>
-                    </div>
-                    <div class="col-sm">
-                        <div class="form-group">
-                            <input type="submit" value="Refresh Report" class="btn btn-default" />
-                        </div>
-                    </div>
-                </div>
-            </div>
+
+              <div class="shade">
+
+
+                  <div class="row align-items-end">
+                      <div class="col-sm">
+                        <h3>Filters</h3>
+                          <div class="form-group">
+                              <label asp-for="ExpiresBefore" class="control-label"></label>
+                              <input style="height:34px" asp-for="ExpiresBefore" class="form-control datepicker" height="34px" width="276" />
+                              <span asp-validation-for="ExpiresBefore" class="text-danger"></span>
+                          </div>
+                      </div>
+                      <div class="col-sm">
+                          <div class="form-group">
+                              <label asp-for="ShowType" class="control-label"></label>
+                              <br>
+                              <select asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
+                          </div>
+                      </div>
+                      <div class="col-sm">
+                          <div class="form-group">
+                              <label asp-for="ShowInactive" class="control-label"></label>
+                              <input asp-for="ShowInactive" class="form-control" />
+                          </div>
+                      </div>
+                      <div class="col-sm">
+                          <div class="form-group">
+                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                          </div>
+                      </div>
+                  </div>
+
+              </div>
+<br>
+<br>
+@await Html.PartialAsync("_ItemsTablePartial.cshtml", Model)
+
         </div>
     </div>
 </form>
-
-@await Html.PartialAsync("_ItemsTablePartial.cshtml", Model)
