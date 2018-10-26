@@ -18,3 +18,10 @@
     CONSTRAINT [PK_Space] PRIMARY KEY CLUSTERED ([DeptKey] ASC, [RoomKey] ASC)
 );
 
+
+
+
+GO
+CREATE NONCLUSTERED INDEX [Keas_space_OrgId_NCIDX]
+    ON [dbo].[Space]([OrgId] ASC);
+

@@ -72,7 +72,6 @@
     <Build Include="dbo\Tables\TeamPermissions.sql" />
     <Build Include="dbo\Tables\Tags.sql" />
     <Build Include="dbo\Tables\SystemPermissions.sql" />
-    <Build Include="dbo\Tables\Spaces.sql" />
     <Build Include="dbo\Tables\Serials.sql" />
     <Build Include="dbo\Tables\Roles.sql" />
     <Build Include="dbo\Tables\People.sql" />
