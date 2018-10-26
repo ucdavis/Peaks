@@ -140,6 +140,10 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> SelectTeam(string urlRedirect) {
             var user = await _securityService.GetUser();
+            if (user == null) 
+            {
+                return RedirectToAction("NoAccess","Home");
+            }
             var people = await _context.People.Where(p => p.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
             var teamAdmins = await _context.TeamPermissions.Where(tp => tp.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
             var teams = people.Union(teamAdmins, new TeamComparer());
