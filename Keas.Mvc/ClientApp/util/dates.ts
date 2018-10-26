@@ -1,4 +1,5 @@
 import * as moment from "moment";
+import { IHasExpiration} from "../Types";
 
 export class DateUtil {
     
@@ -7,6 +8,14 @@ export class DateUtil {
             return "";
         }
         return moment(expiration).format("MM/DD/YYYY").toString();
+    }
+
+    public static formatAssignmentExpiration(assignment: IHasExpiration) {
+        if(!assignment || !assignment.expiresAt)
+        {
+            return "";
+        }        
+        return moment(assignment.expiresAt).format("MM/DD/YYYY").toString();
     }
 
     public static formatFirstExpiration(expirations: Date[]) {

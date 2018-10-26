@@ -116,6 +116,10 @@ export interface IEquipmentAssignment {
   person: IPerson;
 }
 
+export interface IHasExpiration {
+  expiresAt: Date;
+}
+
 export interface IEquipmentAttribute {
   id?: number;
   equipmentId: number;
