@@ -8,7 +8,7 @@
   <div class="card-head">
     <div class="row justify-content-between">
         <h2>Edit Team</h2>
-        <a class="btn btn-link" asp-action="Index"><i class="fas fa-arrow-left fa-xs"/></i> Back to List</a>
+        <a class="btn btn-link" asp-action="Index" asp-controller="Admin"><i class="fas fa-arrow-left fa-xs"/></i> Back to List</a>
     </div>
   </div>
   <div class="card-content">
@@ -65,7 +65,7 @@
 
             function updateSlugUrl() {
                 var slug = $('#Slug').val();
-                $('#slugUrl').text("https://keas.ucdavis.edu/" + slug);
+                $('#slugUrl').text("https://peaks.ucdavis.edu/" + slug);
             }
         });
     </script>

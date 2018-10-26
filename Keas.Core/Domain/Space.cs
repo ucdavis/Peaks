@@ -5,6 +5,7 @@ namespace Keas.Core.Domain
 {
     // Facilities link deptSpace, flattened
     // ties together rooms and departments
+    [Table("Space")]
     public class Space {
 
         public Space ()
