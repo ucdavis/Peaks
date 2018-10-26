@@ -5,25 +5,31 @@
 }
 
 @section Scripts {
-   @await Html.PartialAsync("_ScriptsPartial.cshtml", Model)                             
+   @await Html.PartialAsync("_ScriptsPartial.cshtml", Model)
 }
 
 
-<h2>Expiring Items</h2>
+
 <form asp-action="ExpiringWorkstations">
     <div class="card">
-        <h5 class="card-head">Filters</h5>
+      <div class="card-header-spaces">
+        <div class="card-head">
+          <h2>Expiring Items</h2>
+        </div>
+      </div>
+
         <div class="card-content">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="container">
-                <div class="row">
+            <div class="shade spaces-color report-spaces">
+                <div class="row align-items-end">
                     <div class="col-sm">
+                        <h3>Filters</h3>
                         <div class="form-group">
                             <label asp-for="ExpiresBefore" class="control-label"></label>
-                            <input asp-for="ExpiresBefore" class="form-control datepicker" />
+                            <input style="height:34px" asp-for="ExpiresBefore" class="form-control datepicker" />
                             <span asp-validation-for="ExpiresBefore" class="text-danger"></span>
                         </div>
-                    </div>                    
+                    </div>
                     <div class="col-sm">
                         <div class="form-group">
                             <label asp-for="ShowInactive" class="control-label"></label>
@@ -32,13 +38,14 @@
                     </div>
                     <div class="col-sm">
                         <div class="form-group">
-                            <input type="submit" value="Refresh Report" class="btn btn-default" />
+                            <i class="fas fa-sync-alt fa-sm"/></i><input type="submit" value="Refresh Report" class="btn btn-link" />
                         </div>
                     </div>
                 </div>
             </div>
+            <br>
+            <br>
+            @await Html.PartialAsync("_ItemsTablePartial.cshtml", Model)
         </div>
     </div>
 </form>
-
- @await Html.PartialAsync("_ItemsTablePartial.cshtml", Model)
