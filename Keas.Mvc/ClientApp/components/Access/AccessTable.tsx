@@ -74,18 +74,18 @@ export default class AccessTable extends React.Component<IProps, {}> {
                         return true;
                     }
                     if( filter.value === "expired") {
-                        return row.numAssignments > 0 && moment(row.expiresAt).isSameOrBefore(moment(), "day")
+                        return row.numAssignments > 0 && moment(row.expiresAt,"MM-DD-YYYY").isSameOrBefore(moment(), "day")
                     }
                     if( filter.value === "unexpired") {
-                        return row.numAssignments > 0 && moment(row.expiresAt).isAfter()
+                        return row.numAssignments > 0 && moment(row.expiresAt,"MM-DD-YYYY").isAfter()
                     }
                     if( filter.value === "3weeks") {
-                        return row.numAssignments > 0 && moment(row.expiresAt).isAfter() 
-                            && moment(row.expiresAt).isBefore(moment().add(3,'w'))
+                        return row.numAssignments > 0 && moment(row.expiresAt,"MM-DD-YYYY").isAfter() 
+                            && moment(row.expiresAt,"MM-DD-YYYY").isBefore(moment().add(3,'w'))
                     }
                     if( filter.value === "6weeks") {
-                        return row.numAssignments > 0 && moment(row.expiresAt).isAfter() 
-                            && moment(row.expiresAt).isBefore(moment().add(6,'w'))
+                        return row.numAssignments > 0 && moment(row.expiresAt,"MM-DD-YYYY").isAfter() 
+                            && moment(row.expiresAt,"MM-DD-YYYY").isBefore(moment().add(6,'w'))
                     }
                 },
                 Filter: ({filter, onChange}) => 
