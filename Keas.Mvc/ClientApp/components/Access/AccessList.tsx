@@ -30,7 +30,7 @@ export default class AccessList extends React.Component<IProps, {}> {
       <table className="table">
         <thead>
           <tr>
-            <th>Serial</th>
+            <th>Name</th>
             <th>Assigned?</th>
             <th>Number of Assignments</th>
             <th>Expiration</th>

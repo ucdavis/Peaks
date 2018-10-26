@@ -316,7 +316,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 }
 
   private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
-    return filters.every(f => equipment.tags.includes(f));
+    return filters.every(f => !!equipment.tags && equipment.tags.includes(f));
   }
 
   private _filterAttributes = (filters: string[]) => {
@@ -325,7 +325,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
   private _checkAttributeFilters = (equipment: IEquipment, filters) => {
     for (const filter of filters) {
-        if(equipment.attributes.findIndex(x => x.key.toLowerCase() === filter.label.toLowerCase() ||
+        if(!equipment.attributes || equipment.attributes.findIndex(x => x.key.toLowerCase() === filter.label.toLowerCase() ||
           x.value.toLowerCase() === filter.label.toLowerCase()) === -1)
         {
           // if we cannot find an index where some of our filter matches the key

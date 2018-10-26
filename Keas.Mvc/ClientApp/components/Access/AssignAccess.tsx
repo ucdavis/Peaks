@@ -26,6 +26,7 @@ interface IProps {
     onAddNew: () => void;
     person?: IPerson;
     selectedAccess: IAccess;
+    tags: string[];
 }
 
 interface IState {
@@ -101,13 +102,16 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                   changeProperty={this._changeProperty}
                                   disableEditing={false}
                                   creating={true}
-                                  onRevoke={null} />
+                                  onRevoke={null}
+                                  tags={this.props.tags}
+                                  />
                               }
                               {!!this.props.selectedAccess && !!this.props.selectedAccess.teamId &&
                                   <AccessEditValues
                                   selectedAccess={this.props.selectedAccess}
                                   disableEditing={true}
                                   creating={true}
+                                  tags={this.props.tags}
                                   onRevoke={null}/>
                               }
 

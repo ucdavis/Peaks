@@ -3,24 +3,24 @@ import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Button } from "reactstrap";
-import { IEquipment } from "../../Types";
+import { IAccess } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import ListActionsDropdown from "../ListActionsDropdown";
 
 
 interface IProps {
-    equipment: IEquipment[];
-    onRevoke?: (equipment: IEquipment) => void;
-    onAdd?: (equipment: IEquipment) => void;
-    showDetails?: (equipment: IEquipment) => void;
-    onEdit?: (equipment: IEquipment) => void;
+    accesses: IAccess[];
+    onRevoke?: (access: IAccess) => void;
+    onAdd?: (access: IAccess) => void;
+    showDetails?: (access: IAccess) => void;
+    onEdit?: (access: IAccess) => void;
 }
 
-export default class EquipmentTable extends React.Component<IProps, {}> {
+export default class AccessTable extends React.Component<IProps, {}> {
   public render() {
       return (
         <ReactTable
-        data={this.props.equipment}
+        data={this.props.accesses}
         filterable={true}
         minRows={1}
         columns = {[
@@ -39,13 +39,6 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                 maxWidth: 150,
             },
             {
-                Header: "Serial Number",
-                accessor: "serialNumber",
-                filterMethod: (filter, row) => 
-                    !!row[filter.id] &&
-                    row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
-            },
-            {
                 Header: "Name",
                 accessor: "name",
                 filterMethod: (filter, row) => 
@@ -53,37 +46,46 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                     row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
             },
             {
+                Header: "Number of Assignments",
+                id: "numAssignments",
+                accessor: x => x.assignments.length,
+                filterable: false,
+                sortable: true,
+            },
+            {
                 Header: "Assigned To",
-                accessor: "assignment.person.name",
+                id: "assignedTo",
+                accessor: x => (x.assignments.map(a => a.person.name).join(",")),
                 filterMethod: (filter, row) => 
-                !!row[filter.id] &&
-                row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
+                {
+                    const namesAndEmail = row._original.assignments.map(x => x.person.name.toLowerCase() + x.person.email.toLowerCase());
+                    if(namesAndEmail.some(x => x.includes(filter.value.toLowerCase())))
+                    {
+                        return true;
+                    }
+                }
             },
             {
                 Header: "Expiration",
-                id: "assignment.expiresAt",
-                accessor: x=> DateUtil.formatAssignmentExpiration(x.assignment),
+                id: "expiresAt",
+                accessor: x=> DateUtil.formatFirstExpiration(x.assignments.map(y => y.expiresAt)),
                 filterMethod: (filter, row) => {
                     if( filter.value === "all") {
                         return true;
                     }
-                    if(filter.value === "unassigned")
-                    {
-                        return (!row._original.assignment);
-                    }
                     if( filter.value === "expired") {
-                        return !!row._original.assignment && moment(row._original.assignment.expiresAt).isSameOrBefore()
+                        return row.numAssignments > 0 && moment(row.expiresAt,"MM-DD-YYYY").isSameOrBefore()
                     }
                     if( filter.value === "unexpired") {
-                        return !!row._original.assignment && moment(row._original.assignment.expiresAt).isAfter()
+                        return row.numAssignments > 0 && moment(row.expiresAt,"MM-DD-YYYY").isAfter()
                     }
                     if( filter.value === "3weeks") {
-                        return !!row._original.assignment && moment(row._original.assignment.expiresAt).isAfter() 
-                            && moment(row._original.assignment.expiresAt).isBefore(moment().add(3,'w'))
+                        return row.numAssignments > 0 && moment(row.expiresAt,"MM-DD-YYYY").isAfter() 
+                            && moment(row.expiresAt,"MM-DD-YYYY").isBefore(moment().add(3,'w'))
                     }
                     if( filter.value === "6weeks") {
-                        return !!row._original.assignment && moment(row._original.assignment.expiresAt).isAfter() 
-                            && moment(row._original.assignment.expiresAt).isBefore(moment().add(6,'w'))
+                        return row.numAssignments > 0 && moment(row.expiresAt,"MM-DD-YYYY").isAfter() 
+                            && moment(row.expiresAt,"MM-DD-YYYY").isBefore(moment().add(6,'w'))
                     }
                 },
                 Filter: ({filter, onChange}) => 
@@ -92,12 +94,14 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                     value={filter ? filter.value : "all"}
                     >
                         <option value="all">Show All</option>
-                        <option value="unassigned">Unassigned</option>
                         <option value="expired">Expired</option>
                         <option value="unexpired">All Unexpired</option>
                         <option value="3weeks">Expiring within 3 weeks</option>
                         <option value="6weeks">Expiring within 6 weeks</option>
                     </select>,
+                sortMethod: (a, b) => {
+                    return moment(a,"MM-DD-YYYY").isSameOrAfter(moment(b,"MM-DD-YYYY")) ? 1 : -1;
+                }
             },
             {
                 Header: "Actions",
