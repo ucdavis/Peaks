@@ -74,7 +74,7 @@ export default class AccessTable extends React.Component<IProps, {}> {
                         return true;
                     }
                     if( filter.value === "expired") {
-                        return row.numAssignments > 0 && moment(row.expiresAt,"MM-DD-YYYY").isSameOrBefore(moment(), "day")
+                        return row.numAssignments > 0 && moment(row.expiresAt,"MM-DD-YYYY").isSameOrBefore()
                     }
                     if( filter.value === "unexpired") {
                         return row.numAssignments > 0 && moment(row.expiresAt,"MM-DD-YYYY").isAfter()

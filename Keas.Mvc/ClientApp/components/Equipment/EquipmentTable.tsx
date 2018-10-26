@@ -72,7 +72,7 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                         return (!row._original.assignment);
                     }
                     if( filter.value === "expired") {
-                        return !!row._original.assignment && moment(row._original.assignment.expiresAt).isSameOrBefore(moment(), "day")
+                        return !!row._original.assignment && moment(row._original.assignment.expiresAt).isSameOrBefore()
                     }
                     if( filter.value === "unexpired") {
                         return !!row._original.assignment && moment(row._original.assignment.expiresAt).isAfter()
