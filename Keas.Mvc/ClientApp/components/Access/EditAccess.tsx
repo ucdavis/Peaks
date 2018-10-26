@@ -25,6 +25,7 @@ interface IProps {
   closeModal: () => void;
   selectedAccess: IAccess;
   onRevoke: (accessAssignment: IAccessAssignment) => void;
+  tags: string[];
 }
 
 interface IState {
@@ -75,6 +76,7 @@ export default class EditAccess extends React.Component<IProps, IState> {
                     selectedAccess={this.state.access}
                     changeProperty={this._changeProperty}
                     disableEditing={false}
+                    tags={this.props.tags}
                     onRevoke={this.props.onRevoke}
                   />
             </form>

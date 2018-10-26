@@ -102,6 +102,7 @@ namespace Keas.Mvc.Controllers.Api
                 var a = await _context.Access.Where(x => x.Team.Slug == Team)
                     .SingleAsync(x => x.Id == access.Id);
                 a.Name = access.Name;
+                a.Tags = access.Tags;
                 await _context.SaveChangesAsync();
                 await _eventService.TrackUpdateAccess(a);
                 return Json(access);
