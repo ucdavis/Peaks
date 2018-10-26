@@ -98,7 +98,10 @@ export default class AccessTable extends React.Component<IProps, {}> {
                         <option value="unexpired">All Unexpired</option>
                         <option value="3weeks">Expiring within 3 weeks</option>
                         <option value="6weeks">Expiring within 6 weeks</option>
-                    </select>
+                    </select>,
+                sortMethod: (a, b) => {
+                    return moment(a,"MM-DD-YYYY").isSameOrAfter(moment(b,"MM-DD-YYYY")) ? 1 : -1;
+                }
             },
             {
                 Header: "Actions",
