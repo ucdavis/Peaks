@@ -46,7 +46,7 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                     row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
             },
             {
-                Header: "Name",
+                Header: "Item",
                 accessor: "name",
                 filterMethod: (filter, row) => 
                     !!row[filter.id] &&
