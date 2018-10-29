@@ -27,7 +27,7 @@ export default class SearchAttributes extends React.Component<IProps, {}> {
                     placeholder="Search attributes"
                     allowNew={true}
                     emptyLabel={''}
-                    newSelectionPrefix="Select attribute key: "
+                    newSelectionPrefix="Search for: "
                 />
             </div>
         );
