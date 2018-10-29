@@ -8,6 +8,8 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_KeyXSpaces_SpaceId]
     ON [dbo].[KeyXSpaces]([SpaceId] ASC);

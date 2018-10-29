@@ -1,19 +1,20 @@
 ﻿
+
 -- =============================================
 -- Author:      Ken Taylor
 -- Create Date: August 22, 2018
--- Description: Merge records from LoadingSpace into Space table.
+-- Description: Merge records from LoadingSpaces into Spaces table.
 -- Usage:
 /*
 	USE [KEAS]
 	GO
 
-	EXEC usp_MergeSpaceTable @IsDebug = 0 -- Set to 1 to print SQL only.
+	EXEC usp_MergeSpacesTable @IsDebug = 0 -- Set to 1 to print SQL only.
 */
 -- Modifications:
 --
 -- =============================================
-CREATE PROCEDURE [dbo].[usp_MergeSpaceTable]
+CREATE PROCEDURE [dbo].[usp_MergeSpacesTable]
 (
     -- Add the parameters for the stored procedure here
     @IsDebug bit = 0
@@ -27,7 +28,7 @@ BEGIN
     DECLARE @TSQL varchar(MAX) = ''
 
 	SELECT @TSQL = '
-MERGE [dbo].[Space] AS target
+MERGE [dbo].[Spaces] AS target
 USING (
 	SELECT 
 	   [DeptKey]
@@ -45,7 +46,7 @@ USING (
       ,[RoomCategoryCode]
 	  ,[Source]
 	  ,[Active]
-	FROM [dbo].[LoadingSpace]
+	FROM [dbo].[LoadingSpaces]
 ) AS source (
 	   [DeptKey]
       ,[BldgKey]
@@ -78,21 +79,21 @@ WHEN MATCHED THEN UPDATE SET
 	  ,target.[Source]			 =	source.[Source]
 	  ,target.[Active]			 =	source.[Active]
 WHEN NOT MATCHED BY TARGET THEN INSERT VALUES (
-	   [DeptKey]
+	   [Active]
       ,[BldgKey]
-      ,[FloorKey]
-      ,[RoomKey]
+	  ,[BldgName]
       ,[ChartNum]
+	  ,[DeptKey]
+	  ,[DeptName]
+	  ,[FloorKey]
+	  ,[FloorName]
       ,[OrgId]
-      ,[DeptName]
-      ,[BldgName]
-      ,[FloorName]
-      ,[RoomNumber]
-      ,[RoomName]
-      ,[RoomCategoryName]
-      ,[RoomCategoryCode]
-	  ,[Source]
-	  ,[Active]
+	  ,[RoomCategoryCode]
+	  ,[RoomCategoryName]
+	  ,[RoomKey]
+	  ,[RoomName]
+	  ,[RoomNumber]
+	  ,[Source]  
 )
 WHEN NOT MATCHED BY SOURCE THEN UPDATE
 	SET [Active] = 0

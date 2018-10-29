@@ -15,6 +15,8 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_Workstations_WorkstationAssignmentId]
     ON [dbo].[Workstations]([WorkstationAssignmentId] ASC);
@@ -28,4 +30,9 @@ CREATE NONCLUSTERED INDEX [IX_Workstations_TeamId]
 GO
 CREATE NONCLUSTERED INDEX [IX_Workstations_SpaceId]
     ON [dbo].[Workstations]([SpaceId] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Workstations_Active]
+    ON [dbo].[Workstations]([Active] DESC);
 

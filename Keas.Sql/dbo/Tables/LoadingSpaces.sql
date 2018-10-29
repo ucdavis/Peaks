@@ -1,5 +1,4 @@
-﻿CREATE TABLE [dbo].[Space] (
-    [Id]               INT           IDENTITY (101, 1) NOT NULL,
+﻿CREATE TABLE [dbo].[LoadingSpaces] (
     [DeptKey]          VARCHAR (11)  NOT NULL,
     [BldgKey]          VARCHAR (12)  NOT NULL,
     [FloorKey]         VARCHAR (13)  NOT NULL,
@@ -13,8 +12,8 @@
     [RoomName]         VARCHAR (150) NULL,
     [RoomCategoryName] VARCHAR (20)  NULL,
     [RoomCategoryCode] VARCHAR (5)   NULL,
-    [Source]           VARCHAR (150) NULL,
+    [Source]           VARCHAR (100) NULL,
     [Active]           BIT           NULL,
-    CONSTRAINT [PK_Space] PRIMARY KEY CLUSTERED ([DeptKey] ASC, [RoomKey] ASC)
+    CONSTRAINT [PK_LoadingSpace] PRIMARY KEY CLUSTERED ([DeptKey] ASC, [RoomKey] ASC)
 );
 

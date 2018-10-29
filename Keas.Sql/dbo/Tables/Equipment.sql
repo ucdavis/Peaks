@@ -18,6 +18,8 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_Equipment_TeamId]
     ON [dbo].[Equipment]([TeamId] ASC);
@@ -31,4 +33,9 @@ CREATE NONCLUSTERED INDEX [IX_Equipment_SpaceId]
 GO
 CREATE NONCLUSTERED INDEX [IX_Equipment_EquipmentAssignmentId]
     ON [dbo].[Equipment]([EquipmentAssignmentId] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Equipment_Active]
+    ON [dbo].[Equipment]([Active] DESC);
 

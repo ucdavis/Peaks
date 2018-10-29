@@ -11,7 +11,14 @@
 );
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_Keys_TeamId]
     ON [dbo].[Keys]([TeamId] ASC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Keys_Active]
+    ON [dbo].[Keys]([Active] DESC);
 

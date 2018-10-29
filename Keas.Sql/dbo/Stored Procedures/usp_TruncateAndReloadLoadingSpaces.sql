@@ -1,20 +1,21 @@
 ﻿
+
 -- =============================================
 -- Author:		Ken Taylor
 -- Create date: August 22, 2018
--- Description:	Truncate the LocalSpace table and reload
+-- Description:	Truncate the LoadingSpaces table and reload
 -- Usage:
 /*
 	USE [KEAS]
 	GO
 
-	EXEC usp_TruncateAndReloadLoadingSpace @IsDebug = 0
+	EXEC usp_TruncateAndReloadLoadingSpaces @IsDebug = 0
 
 */
 -- Modifications:
 --
 -- =============================================
-CREATE PROCEDURE [dbo].[usp_TruncateAndReloadLoadingSpace] 
+CREATE PROCEDURE [dbo].[usp_TruncateAndReloadLoadingSpaces] 
 	@IsDebug bit = 0 -- Change to 1 to print SQL only.
 AS
 BEGIN
@@ -23,9 +24,9 @@ BEGIN
 	DECLARE @TSQL varchar(MAX) = ''
 
 	SELECT @TSQL = '
-	TRUNCATE TABLE [dbo].[LoadingSpace]
+	TRUNCATE TABLE [dbo].[LoadingSpaces]
 
-	INSERT INTO [dbo].[LoadingSpace] (
+	INSERT INTO [dbo].[LoadingSpaces] (
 	   [DeptKey]
       ,[BldgKey]
       ,[FloorKey]
