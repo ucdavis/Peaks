@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Dapper;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Microsoft.AspNetCore.Http;
@@ -33,29 +34,41 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> List()
         {
-            //TODO clean up workstations query
-            var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == Team).Select(x => x.OrgCode).Distinct().ToListAsync();
-            var spaces =
-                from space in _context.Spaces.Where(x => orgIds.Contains(x.OrgId))
-                select new
-                {
-                    space = space,
-                    id = space.Id,
-                    equipmentCount =
-                        (from eq in _context.Equipment where eq.SpaceId == space.Id && eq.Active select eq).Count(),
-                    keyCount =
-                        (from k in _context.KeyXSpaces where k.SpaceId == space.Id && k.Key.Active select k.Key).Count(),
-                    workstationsTotal =
-                        (from w in _context.Workstations where w.SpaceId == space.Id && w.Active select w).Count(),
-                    workstationsInUse =
-                        (from w in _context.Workstations where w.SpaceId == space.Id && w.Active && w.Assignment != null select w).Count(),
-                    tags =
-                        string.Join(",",
-                        (from w in _context.Workstations
-                         where w.SpaceId == space.Id && w.Active && !string.IsNullOrWhiteSpace(w.Tags)
-                         select w.Tags).ToArray()),
-                };
-            return Json(await spaces.ToListAsync());
+            //TODO clean up workstations query or integrate with list query
+            var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == Team).Select(x => x.OrgCode).Distinct().ToArrayAsync();
+
+            var sql = SpaceQueries.List;            
+
+            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new { orgIds });
+
+            var spaces = result.Select(r => new {
+                space = new {
+                    id = r.Id,
+                    deptKey = r.DeptKey,
+                    deptName = r.DeptName,
+                    bldgKey = r.BldgKey,
+                    bldgName = r.BldgName,
+                    roomKey = r.RoomKey,
+                    roomNumber = r.RoomNumber,
+                    roomName = r.RoomName,
+                    floorKey = r.FloorKey,
+                    floorName = r.FloorName,
+                    roomCategoryName = r.RoomCategoryName,
+                    roomCategoryCode = r.RoomCategoryCode,
+                    chartNum = r.ChartNum,
+                    orgId = r.OrgId,
+                    source = r.Source,
+                    active = r.Active
+                },
+                id = r.Id,
+                equipmentCount = r.EquipmentCount,
+                keyCount = r.KeyCount,
+                workstationsTotal = r.WorkstationsTotalCount,
+                workstationsInUse = r.WorkstationsInUseCount,
+                tags = r.Tags
+            });
+
+            return Json(spaces);
         }
 
         public async Task<IActionResult> GetTagsInSpace(int spaceId)
