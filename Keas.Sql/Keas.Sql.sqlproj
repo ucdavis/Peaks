@@ -86,9 +86,7 @@
     <Build Include="dbo\Tables\Equipment.sql" />
     <Build Include="dbo\Tables\AccessAssignments.sql" />
     <Build Include="dbo\Tables\Access.sql" />
-    <Build Include="dbo\Tables\Space.sql" />
     <Build Include="dbo\Tables\Room.sql" />
-    <Build Include="dbo\Tables\LoadingSpace.sql" />
     <Build Include="dbo\Tables\Floor.sql" />
     <Build Include="dbo\Tables\DeptSpace.sql" />
     <Build Include="dbo\Tables\DeptName.sql" />
@@ -99,9 +97,10 @@
     <Build Include="dbo\Views\vSpaces.sql" />
     <Build Include="dbo\Views\vSpaceRooms.sql" />
     <Build Include="dbo\Views\vRooms.sql" />
-    <Build Include="dbo\Stored Procedures\usp_TruncateAndReloadLodingSpace.sql" />
-    <Build Include="dbo\Stored Procedures\usp_TruncateAndReloadLoadingSpace.sql" />
-    <Build Include="dbo\Stored Procedures\usp_MergeSpaceTable.sql" />
+    <Build Include="dbo\Tables\Spaces.sql" />
+    <Build Include="dbo\Tables\LoadingSpaces.sql" />
+    <Build Include="dbo\Stored Procedures\usp_TruncateAndReloadLoadingSpaces.sql" />
+    <Build Include="dbo\Stored Procedures\usp_MergeSpacesTable.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Compare\ProjectToSqlExpress.scmp" />
