@@ -35,7 +35,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List()
         {
             //TODO clean up workstations query
-            var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == Team).Select(x => x.OrgCode).Distinct().ToListAsync();
+            var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == Team).Select(x => x.OrgCode).Distinct().ToArrayAsync();
             
             // TODO: filter by ORGIDs
             var sql = @"select Space.*,
@@ -46,26 +46,27 @@ namespace Keas.Mvc.Controllers.Api
        WorkstationsInUseCount,
        COALESCE(WorkstationTags, '') as tags
 from (select Space.Id, count(Equipment.Id) as EquipmentCount
-      from Space Space
+      from Spaces Space
              left join Equipment on Space.Id = Equipment.SpaceId and Equipment.Active = 1
       group by Space.Id) t1
        left outer join (select Space.Id, count(KeyXSpaces.Id) as KeyCount
-                        from Space Space
+                        from Spaces Space
                                left join KeyXSpaces on Space.Id = KeyXSpaces.SpaceId
                                inner join Keys K on KeyXSpaces.KeyId = K.Id and K.Active = 1
                         group by Space.Id) t3 on t1.Id = t3.Id
        left outer join (select Space.Id, count(W.Id) as WorkstationsTotalCount, STRING_AGG(Tags, ',') as WorkstationTags
-                        from Space Space
+                        from Spaces Space
                                left join Workstations W on Space.Id = W.SpaceId and W.Active = 1
                         group by Space.Id) t2 on t1.Id = t2.Id
        left outer join (select Space.Id, count(W.Id) as WorkstationsInUseCount
-                        from Space Space
+                        from Spaces Space
                                left join Workstations W
                                  on Space.Id = W.SpaceId and W.Active = 1 and W.WorkstationAssignmentId is not null
                         group by Space.Id) t4 on t1.Id = t4.Id
-       inner join Space Space on Space.Id = t1.Id;";
+       inner join Spaces Space on Space.Id = t1.Id
+       where Space.OrgId in (@orgIds);";
 
-            var result = await _context.Database.GetDbConnection().QueryAsync(sql);
+            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new { orgIds });
 
             var spaces = result.Select(r => new {
                 space = new {
