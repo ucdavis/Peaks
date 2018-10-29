@@ -147,7 +147,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
 }
 
   private _checkTagFilters = (person: IPerson, filters: string[]) => {
-    return filters.every(f => person.tags.includes(f));
+    return filters.every(f => !!person && !!person.tags && person.tags.includes(f));
   }
 
   private _createPerson = async (
