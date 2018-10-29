@@ -1,18 +1,20 @@
 import PropTypes from "prop-types";
 import * as React from "react";
-
-import { AppContext, IAccess, IAccessAssignment, IPerson } from "../../Types";
-
+import { AppContext, IAccess, IAccessAssignment, IPerson, ISpace } from "../../Types";
+import { PermissionsUtil } from "../../util/permissions";
+import Denied from "../Shared/Denied";
+import SearchTags from "../Tags/SearchTags";
 import AccessDetails from "./AccessDetails";
 import AccessList from "./AccessList";
+import AccessTable from "./AccessTable";
 import AssignAccess from "./AssignAccess";
 import EditAccess from "./EditAccess";
-import Denied from "../Shared/Denied";
-import { PermissionsUtil } from "../../util/permissions";
 
 interface IState {
-    access: IAccess[]; // either access assigned to this person, or all team access
+    accesses: IAccess[]; // either access assigned to this person, or all team access
     loading: boolean;
+    tagFilters: string[];
+    tags: string[];
 }
 
 interface IProps {
@@ -20,7 +22,7 @@ interface IProps {
     assetTotalUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
     assetEdited?: (type: string, spaceId: number, personId: number) => void; 
     person?: IPerson;
-    spaceId?: number;
+    space?: ISpace;
 }
 
 export default class AccessContainer extends React.Component<IProps, IState> {
@@ -35,8 +37,10 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-        access: [],
+        accesses: [],
         loading: true,
+        tagFilters: [],
+        tags: []
     };
   }
   public async componentDidMount() {
@@ -45,8 +49,10 @@ export default class AccessContainer extends React.Component<IProps, IState> {
           ? `/api/${this.context.team.slug}/access/listAssigned?personId=${this.props.person.id}`
       : `/api/${this.context.team.slug}/access/list/`;
 
-    const access = await this.context.fetch(accessFetchUrl);
-    this.setState({ access , loading: false });
+    const accesses = await this.context.fetch(accessFetchUrl);
+    const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);
+
+    this.setState({ accesses , loading: false, tags });
   }
   public render() {
       if (!PermissionsUtil.canViewAccess(this.context.permissions)) {
@@ -61,7 +67,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     const { action, assetType, id } = this.context.router.route.match.params;
     const activeAsset = !assetType || assetType === "access";
     const selectedId = parseInt(id, 10);
-    const detailAccess = this.state.access.find(a => a.id === selectedId);
+    const detailAccess = this.state.accesses.find(a => a.id === selectedId);
 
     return (
       <div className="card access-color">
@@ -69,14 +75,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
           <div className="card-head"><h2><i className="fas fa-address-card fa-xs"/> Access</h2></div>
         </div>
         <div className="card-content">
-                <AccessList
-                    access={this.state.access}
-                    personView={this.props.person ? true : false}
-                    onRevoke={this._openRevokeModal}
-                    onAdd={this._openAssignModal}
-                    onEdit={this._openEditModal}
-                    showDetails={this._openDetailsModal}
-                     />
+            {this._renderTableOrList()}
                 <AssignAccess
                     onAddNew={this._openCreateModal}
                     onCreate={this._createAndMaybeAssignAccess}
@@ -84,6 +83,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                     closeModal={this._closeModals}
                     selectedAccess={detailAccess}
                     person={this.props.person}
+                    tags={this.state.tags}
                 />                
                 <AccessDetails selectedAccess={detailAccess}
                     modal={activeAsset && action === "details" && !!detailAccess}
@@ -95,11 +95,61 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                     modal={activeAsset && (action === "edit")}
                     selectedAccess={detailAccess}
                     onRevoke={this._revokeAccess}
+                    tags={this.state.tags}
                     />
         </div>
       </div>
     );
   }
+
+  private _renderTableOrList = () => {
+    if(!!this.props.person || !!this.props.space)
+    {
+      return(
+      <div>
+        <AccessList
+            access={this.state.accesses}
+            personView={this.props.person ? true : false}
+            onRevoke={this._openRevokeModal}
+            onAdd={this._openAssignModal}
+            onEdit={this._openEditModal}
+            showDetails={this._openDetailsModal}
+                />
+    </div>);
+    }
+    else
+    {
+      let filteredAccess = this.state.accesses;
+      if(this.state.tagFilters.length > 0)
+      {
+        filteredAccess = filteredAccess.filter(x => this._checkTagFilters(x, this.state.tagFilters));
+      }
+      return(
+        <div>
+          <div className="row">
+            <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
+          </div>
+          <AccessTable
+            accesses={filteredAccess}
+            onRevoke={this._openRevokeModal}
+            onAdd={this._openAssignModal}
+            onEdit={this._openEditModal}
+            showDetails={this._openDetailsModal}
+                />
+        </div>
+      );
+
+    }
+  }
+
+  private _filterTags = (filters: string[]) => {
+    this.setState({tagFilters: filters});
+}
+
+  private _checkTagFilters = (access: IAccess, filters: string[]) => {
+    return filters.every(f => !!access.tags && access.tags.includes(f));
+  }
+
   private _createAndMaybeAssignAccess = async (
       access: IAccess,
       date: any,
@@ -137,29 +187,31 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       updateInUseAssetCount = true;
     }
 
-    const index = this.state.access.findIndex(x => x.id === access.id);
+    const index = this.state.accesses.findIndex(x => x.id === access.id);
     if (index !== -1) {
         // update already existing entry in access
-        const updateAccess = [...this.state.access];
-        updateAccess[index] = access;
+        const updateAccesses = [...this.state.accesses];
+        updateAccesses[index] = access;
 
         this.setState({
             ...this.state,
-            access: updateAccess,
+            accesses: updateAccesses,
         });
     }
     else {
         this.setState({
-            access: [...this.state.access, access]
+            accesses: [...this.state.accesses, access]
         });
     }
     if(updateTotalAssetCount && this.props.assetTotalUpdated)
     {
-        this.props.assetTotalUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
+        this.props.assetTotalUpdated("access", this.props.space ? this.props.space.id : null, 
+            this.props.person ? this.props.person.id : null, 1);
     }
     if(updateInUseAssetCount && this.props.assetInUseUpdated)
     {
-        this.props.assetInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, 1);
+        this.props.assetInUseUpdated("access",this.props.space ? this.props.space.id : null, 
+        this.props.person ? this.props.person.id : null, 1);
     }
   };
 
@@ -174,9 +226,9 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       });
 
       // find index of access in state
-      const accessIndex = this.state.access.findIndex(x => x.id === accessAssignment.accessId);
+      const accessIndex = this.state.accesses.findIndex(x => x.id === accessAssignment.accessId);
       if (accessIndex > -1) {
-          const shallowCopy = [...this.state.access];
+          const shallowCopy = [...this.state.accesses];
           if (this.props.person == null) {
               // if we are looking at all access, remove from access.assignments
               const assignmentIndex = shallowCopy[accessIndex].assignments.indexOf(accessAssignment);
@@ -186,18 +238,19 @@ export default class AccessContainer extends React.Component<IProps, IState> {
               // if we are looking at a person, remove access entirely
               shallowCopy.splice(accessIndex, 1);
           }
-        this.setState({ access: shallowCopy });
+        this.setState({ accesses: shallowCopy });
 
         if(this.props.assetInUseUpdated)
         {
-            this.props.assetInUseUpdated("access", this.props.spaceId, this.props.person ? this.props.person.id : null, -1);
+            this.props.assetInUseUpdated("access", this.props.space ? this.props.space.id : null, 
+            this.props.person ? this.props.person.id : null, -1);
         }
       }
   }
 
   private _editAccess = async (access: IAccess) =>
   {
-    const index = this.state.access.findIndex(x => x.id === access.id);
+    const index = this.state.accesses.findIndex(x => x.id === access.id);
 
     if(index === -1 ) // should always already exist
     {
@@ -210,17 +263,18 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     });
 
     // update already existing entry in key
-    const updateAccess = [...this.state.access];
-    updateAccess[index] = updated;
+    const updateAccesses = [...this.state.accesses];
+    updateAccesses[index] = updated;
 
     this.setState({
       ...this.state,
-      access: updateAccess
+      accesses: updateAccesses
     });
 
     if(this.props.assetEdited)
     {
-        this.props.assetEdited("access", this.props.spaceId, !!this.props.person ? this.props.person.id : null);
+        this.props.assetEdited("access", this.props.space ? this.props.space.id : null,
+            this.props.person ? this.props.person.id : null);
     }
   }
 
@@ -233,8 +287,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   private _openRevokeModal = (access: IAccess) => {
       if (!!this.props.person) // if we already have the person, just revoke
       {
-          const accessIndex = this.state.access.indexOf(access);
-          const accessAssignment = this.state.access[accessIndex].assignments.filter(x => x.personId === this.props.person.id);
+          const accessIndex = this.state.accesses.indexOf(access);
+          const accessAssignment = this.state.accesses[accessIndex].assignments.filter(x => x.personId === this.props.person.id);
           this._revokeAccess(accessAssignment[0]);
       }
       else // otherwise, pull up the modal

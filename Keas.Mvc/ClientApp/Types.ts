@@ -83,6 +83,7 @@ export interface IAccess {
   id: number;
   teamId: number;
   name: string;
+  tags: string;
   assignments: IAccessAssignment[];
 }
 

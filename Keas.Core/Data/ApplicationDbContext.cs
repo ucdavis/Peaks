@@ -46,6 +46,12 @@ namespace Keas.Core.Data
             base.OnModelCreating(builder);
 
             AccessAssignment.OnModelCreating(builder);
+            Domain.Access.OnModelCreating(builder);
+            Domain.Equipment.OnModelCreating(builder);
+            Key.OnModelCreating(builder);
+            Person.OnModelCreating(builder);
+            Space.OnModelCreating(builder);
+            Workstation.OnModelCreating(builder);
         }
     }
 }

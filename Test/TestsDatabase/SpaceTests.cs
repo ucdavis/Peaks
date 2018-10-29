@@ -29,8 +29,7 @@ namespace Test.TestsDatabase
             // Act
             // Assert	
             classReflection.ControllerInherits("Object"); //Doesn't inherit from another domain object
-            var attributes = classReflection.ClassExpectedAttribute<TableAttribute>(1);
-            attributes.ElementAt(0).Name.ShouldBe("Space");
+            classReflection.ClassExpectedNoAttribute();
         }
 
 

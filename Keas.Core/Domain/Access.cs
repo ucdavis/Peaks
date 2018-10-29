@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
 {
@@ -8,5 +9,12 @@ namespace Keas.Core.Domain
             Assignments = new List<AccessAssignment>();
         }
         public List<AccessAssignment> Assignments { get; set; }
+
+
+         protected internal  static void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Access>().HasQueryFilter(a => a.Active);
+        }
+       
     }
 }

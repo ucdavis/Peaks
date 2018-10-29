@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
 {
@@ -26,6 +27,11 @@ namespace Keas.Core.Domain
         public void AddAttribute(string key, string value)
         {
             Attributes.Add(new EquipmentAttribute { Equipment = this, Key = key, Value = value });
+        }
+
+         protected internal  static void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Equipment>().HasQueryFilter(a => a.Active);
         }
     }
 }

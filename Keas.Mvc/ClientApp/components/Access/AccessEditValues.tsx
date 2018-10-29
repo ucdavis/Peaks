@@ -4,6 +4,7 @@ import { IAccess, IAccessAssignment } from "../../Types";
 
 import ReactTable from 'react-table';
 import { DateUtil } from "../../util/dates";
+import SearchTags from "../Tags/SearchTags";
 
 
 
@@ -13,6 +14,7 @@ interface IProps {
     changeProperty?: (property: string, value: string) => void;
     creating?: boolean;
     onRevoke: (accessAssignment: IAccessAssignment) => void;
+    tags?: string[];
 }
 
 interface IState {
@@ -60,6 +62,14 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
                         onChange={(e) => this.props.changeProperty("name", e.target.value)}
                     />
                 </div>}
+                <div className="form-group">
+                    <label>Tags</label>
+                    <SearchTags 
+                        tags={this.props.tags} 
+                        disabled={this.props.disableEditing}
+                        selected={!!this.props.selectedAccess.tags ? this.props.selectedAccess.tags.split(",") : []}
+                        onSelect={(e) => this.props.changeProperty("tags", e.join(","))} />
+                </div>
                 <h3>Assigned to:</h3>             
                 <ReactTable data={this.props.selectedAccess.assignments} columns={columns} minRows={1} />
             </div>
