@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Core.Extensions;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -87,8 +88,8 @@ namespace Keas.Mvc.Controllers.Api
             }
             // person.Id being 0 is used in the js to validate
             var person = new Person {
-                FirstName = user.FirstName,
-                LastName = user.LastName,
+                FirstName = user.FirstName.SafeHumanizeTitle(),
+                LastName = user.LastName.SafeHumanizeTitle(),
                 Email = user.Email,
                 UserId = user.Id,
                 User = user
