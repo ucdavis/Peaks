@@ -316,7 +316,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 }
 
   private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
-    return filters.every(f => !!equipment.tags && equipment.tags.includes(f));
+    return filters.every(f => !!equipment && !!equipment.tags && equipment.tags.includes(f));
   }
 
   private _filterAttributes = (filters: string[]) => {
