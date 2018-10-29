@@ -71,9 +71,21 @@ from (select Space.Id, count(Equipment.Id) as EquipmentCount
             var spaces = result.Select(r => new {
                 space = new {
                     id = r.Id,
+                    deptKey = r.DeptKey,
+                    deptName = r.DeptName,
+                    bldgKey = r.BldgKey,
                     bldgName = r.BldgName,
+                    roomKey = r.RoomKey,
                     roomNumber = r.RoomNumber,
-                    roomName = r.RoomName
+                    roomName = r.RoomName,
+                    floorKey = r.FloorKey,
+                    floorName = r.FloorName,
+                    roomCategoryName = r.RoomCategoryName,
+                    roomCategoryCode = r.RoomCategoryCode,
+                    chartNum = r.ChartNum,
+                    orgId = r.OrgId,
+                    source = r.Source,
+                    active = r.Active
                 },
                 id = r.Id,
                 equipmentCount = r.EquipmentCount,
