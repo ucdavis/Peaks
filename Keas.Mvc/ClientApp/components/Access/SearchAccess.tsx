@@ -52,6 +52,7 @@ export default class SearchAccess extends React.Component<IProps, IState> {
                 assignments: access.teamId ? access.assignments : [],
                 id: access.teamId ? access.id : 0,
                 name: access.name,
+                tags: "",
                 teamId: access.teamId ? access.teamId : 0,
             });
         }

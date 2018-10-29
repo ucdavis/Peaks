@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
 {
     // Facilities link deptSpace, flattened
     // ties together rooms and departments
-    [Table("Space")]
+    
     public class Space {
 
         public Space ()
@@ -36,5 +37,10 @@ namespace Keas.Core.Domain
         public string Source { get; set; }
 
         public bool Active { get; set; }
+
+         protected internal  static void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Space>().HasQueryFilter(a => a.Active);
+        }
     }
 }

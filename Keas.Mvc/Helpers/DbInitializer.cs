@@ -39,6 +39,7 @@ namespace Keas.Mvc.Helpers
             var jason = new User { Id = "jsylvest", FirstName = "Jason", LastName = "Sylvestre", Email = "jsylvestre@ucdavis.edu" };
 
             var caes = new Team {  Name = "CAESDO", Slug = "caesdo" };
+            var orgId = new FinancialOrganization{ Chart = "3", OrgCode = "ADNO", Team = caes };
             var ps = new Team { Name = "Plant Sciences", Slug = "plantsciences"};
 
             context.Users.Add(scott);
@@ -48,6 +49,7 @@ namespace Keas.Mvc.Helpers
             context.Users.Add(jason);
             context.Teams.Add(caes);
             context.Teams.Add(ps);
+            context.FISOrgs.Add(orgId);
 
 
             // Roles

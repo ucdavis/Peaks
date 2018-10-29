@@ -1,20 +1,17 @@
+import * as moment from "moment";
 import PropTypes from "prop-types";
 import * as React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   Button,
-  ListGroup,
-  ListGroupItem,
   Modal,
   ModalBody,
   ModalFooter,
   ModalHeader
 } from "reactstrap";
-
-import * as moment from "moment";
-import DatePicker from "react-datepicker";
 import { AppContext, IPerson } from "../../Types";
-
-import "react-datepicker/dist/react-datepicker.css";
+import { validateEmail } from "../../util/email";
 import PersonEditValues from "./PersonEditValues";
 
 interface IProps {
@@ -145,6 +142,10 @@ export default class EditPerson extends React.Component<IProps, IState> {
     else if(!this.state.person.email) {
       valid = false;
       error = "You must give this person an email address"
+    }
+    else if(!validateEmail(this.state.person.email)){
+      valid = false;
+      error = "You must use a valid email address"
     }
     this.setState({ validState: valid, error });
   };
