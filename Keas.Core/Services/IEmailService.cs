@@ -140,7 +140,7 @@ namespace Keas.Core.Services
                 }
             }
 
-            message.Subject = "Keas Notification";
+            message.Subject = "PEAKS Notification";
             message.IsBodyHtml = false;
             try
             {
@@ -235,7 +235,7 @@ namespace Keas.Core.Services
 
             //Bcc anyone?
 
-            message.Subject = "Keas Notification";
+            message.Subject = "PEAKS Notification";
             message.IsBodyHtml = false;
 
 
