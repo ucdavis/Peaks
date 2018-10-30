@@ -38,6 +38,8 @@ namespace Keas.Core.Domain
 
         public bool Active { get; set; }
 
+        public int? SqFt { get; set; }
+
          protected internal  static void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Space>().HasQueryFilter(a => a.Active);
