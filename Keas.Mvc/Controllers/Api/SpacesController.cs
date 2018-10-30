@@ -58,7 +58,8 @@ namespace Keas.Mvc.Controllers.Api
                     chartNum = r.ChartNum,
                     orgId = r.OrgId,
                     source = r.Source,
-                    active = r.Active
+                    active = r.Active,
+                    sqFt = r.SqFt
                 },
                 id = r.Id,
                 equipmentCount = r.EquipmentCount,
