@@ -12,7 +12,7 @@
 
   <row>
     <columns>
-      <h1>@userName, you have @count new @notificationPluralize from KEAS.</h1>
+      <h1>@userName, you have @count new @notificationPluralize from PEAKS.</h1>
       <p>Thanks for KEAping it real.</p>
 
       <spacer size="16"></spacer>
@@ -35,7 +35,10 @@
             }
             </tbody>
         </table>
-
+        @if (@acceptStatement)
+        {
+          <p>One or more items require you to accept them. Please visit our wonderful website to <a href="https://keas.ucdavis.edu/Confirm/confirm/">confirm receiving</a> these items.</p>
+        }
       <hr/>
     </columns>
   </row>
