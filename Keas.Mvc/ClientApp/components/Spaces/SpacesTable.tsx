@@ -72,7 +72,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                         className: "table-10p",
                         filterable: false,
                         Cell: row => (
-                            <span><i className="fas fa-key"></i> {row.original.keyCount}</span>
+                            <span><i className="fas fa-key"/> {row.original.keyCount}</span>
                         ),
                     },
                     {
@@ -82,20 +82,29 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                         className: "table-10p",
                         filterable: false,
                         Cell: row => (
-                            <span><i className="fas fa-hdd"></i> {row.original.equipmentCount}</span>
+                            <span><i className="fas fa-hdd"/> {row.original.equipmentCount}</span>
                         ),
                     },
                     {
                         Header: "Workstations",
                         headerClassName: "table-10p",
                         className: "table-10p",
-                        accessor: "workstationsCount",
+                        id: "workstationsCount",
+                        accessor: spaceInfo => {
+                            return [spaceInfo.workstationsInUse,spaceInfo.workstationsTotal];
+                        },
                         filterMethod: (filter, row) => {
                             if( filter.value === "all") {
                                 return true;
                             }
-                            if( filter.value === "available") {
-                                return (row._original.workstationsTotal - row._original.workstationsInUse) > 0;
+                            if( filter.value === "unassigned") {
+                                return (row.workstationsCount[1] - row.workstationsCount[0]) > 0;
+                            }
+                            if( filter.value === "assigned") {
+                                return row.workstationsCount[0] > 0;
+                            }
+                            if(filter.value === "any"){
+                                return row.workstationsCount[1] > 0;
                             }
                         },
                         Filter: ({filter, onChange}) =>
@@ -104,11 +113,31 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                             value={filter ? filter.value : "all"}
                             >
                                 <option value="all">Show All</option>
-                                <option value="available">Available</option>
+                                <option value="unassigned">Unassigned</option>
+                                <option value="assigned">Assigned</option>
+                                <option value="any">Any</option>
                             </select>,
                         Cell: row => (
-                            <span><i className="fas fa-user"></i> {row.original.workstationsInUse} / {row.original.workstationsTotal}</span>
+                            <span><i className="fas fa-user"/> {row.value[0]} / {row.value[1]}</span>
                         ),
+                        sortMethod: (a, b) => {
+                            if(a[1] === b[1])
+                            {
+                                if(a[0] === b[0])
+                                {
+                                    return 0;
+                                }
+                                else
+                                {
+                                    return a[0] < b[0] ? 1 : -1;
+                                }
+                            }
+                            else
+                            {
+                                return a[1] < b[1] ? 1 : -1;
+                            }
+
+                        }
                     },
 
 
