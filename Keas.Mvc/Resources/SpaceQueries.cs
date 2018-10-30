@@ -5,7 +5,7 @@ public static class SpaceQueries {
        COALESCE(KeyCount, 0) as KeyCount,
        WorkstationsTotalCount,
        WorkstationsInUseCount,
-       COALESCE(WorkstationTags, '') as tags
+       COALESCE(WorkstationTags, '') as Tags
 from (select Space.Id, count(Equipment.Id) as EquipmentCount
       from Spaces Space
              left join Equipment on Space.Id = Equipment.SpaceId and Equipment.Active = 1
