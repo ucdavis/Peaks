@@ -60,7 +60,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
       this.setState({ key: nextProps.selectedKey });
     }
 
-    if (nextProps.person !== this.props.person) {
+    if (nextProps.person !== this.state.person) {
       this.setState({ person: nextProps.person });
     }
     if(!!nextProps.selectedKey && !!nextProps.selectedKey.assignment)
@@ -91,7 +91,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                 <div className="form-group">
                   <label htmlFor="assignto">Assign To</label>
                   <AssignPerson
-                    person={this.props.person || this.state.person}
+                    person={this.state.person}
                     onSelect={this._onSelectPerson}
                   />
                 </div>
