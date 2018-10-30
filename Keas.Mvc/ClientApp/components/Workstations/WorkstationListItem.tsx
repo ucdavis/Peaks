@@ -20,6 +20,8 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
         return (
           <tr>
             <td>{this.props.workstationEntity.name}</td>
+            <td>{this.props.workstationEntity.space ? 
+              this.props.workstationEntity.space.roomNumber + " " + this.props.workstationEntity.space.bldgName : ""}</td>
             <td>{hasAssignment ? this.props.workstationEntity.assignment.person.name : ""}</td>
             <td>
               {hasAssignment ? DateUtil.formatExpiration(this.props.workstationEntity.assignment.expiresAt) : ""}

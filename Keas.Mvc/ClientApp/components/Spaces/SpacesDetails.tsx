@@ -10,7 +10,7 @@ import {
     ModalFooter,
     ModalHeader,
 } from "reactstrap";
-import { AppContext, ISpace } from "../../Types";
+import { AppContext, ISpaceInfo } from "../../Types";
 import EquipmentContainer from "../Equipment/EquipmentContainer";
 import KeyContainer from "../Keys/KeyContainer";
 import WorkstationContainer from "../Workstations/WorkstationContainer";
@@ -18,7 +18,7 @@ import SpaceDetailContainer from "./SpaceDetailContainer";
 
 interface IProps {
     closeModal: () => void;
-    selectedSpace: ISpace;
+    selectedSpaceInfo: ISpaceInfo;
     inUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
     totalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
     edited: (type: string, spaceId: number, personId: number) => void;
@@ -27,7 +27,7 @@ interface IProps {
 
 export default class SpacesDetails extends React.Component<IProps, {}> {
     public render() {
-        if (!this.props.selectedSpace)
+        if (!this.props.selectedSpaceInfo)
         {
             return null;
         }
@@ -40,19 +40,21 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
                 </div>
                 <br />
                 <div>
-                    {this.props.selectedSpace &&
-                    <SpaceDetailContainer space={this.props.selectedSpace}/>}
-                    <KeyContainer space={this.props.selectedSpace}
+                    {this.props.selectedSpaceInfo &&
+                    <SpaceDetailContainer space={this.props.selectedSpaceInfo.space}
+                        tags={this.props.selectedSpaceInfo.tags}
+                    />}
+                    <KeyContainer space={this.props.selectedSpaceInfo.space}
                         assetInUseUpdated={this.props.inUseUpdated}
                         assetTotalUpdated={this.props.totalUpdated}
                         assetEdited={this.props.edited}
                         />
-                    <EquipmentContainer space={this.props.selectedSpace}
+                    <EquipmentContainer space={this.props.selectedSpaceInfo.space}
                         assetInUseUpdated={this.props.inUseUpdated}
                         assetTotalUpdated={this.props.totalUpdated}
                         assetEdited={this.props.edited}/>
                     <WorkstationContainer 
-                        space={this.props.selectedSpace} 
+                        space={this.props.selectedSpaceInfo.space} 
                         tags={this.props.tags}
                         assetInUseUpdated={this.props.inUseUpdated}
                         assetTotalUpdated={this.props.totalUpdated}

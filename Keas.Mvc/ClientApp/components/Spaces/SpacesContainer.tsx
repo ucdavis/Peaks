@@ -71,7 +71,7 @@ export default class SpacesContainer extends React.Component<{}, IState> {
                   this._renderTableView()
               }
               { spaceAction === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space) &&
-                  this._renderDetailsView(selectedSpaceInfo.space)
+                  this._renderDetailsView(selectedSpaceInfo)
               }
 
               </div>
@@ -104,11 +104,11 @@ export default class SpacesContainer extends React.Component<{}, IState> {
     }
 
     // if we are at route teamName/spaces/details/spaceId
-    private _renderDetailsView = (selectedSpace: ISpace) => {
+    private _renderDetailsView = (selectedSpaceInfo: ISpaceInfo) => {
         return(
             <SpacesDetails
                     closeModal={this._closeModals}
-                    selectedSpace={selectedSpace}
+                    selectedSpaceInfo={selectedSpaceInfo}
                     tags={this.state.tags}
                     inUseUpdated={this._assetInUseUpdated}
                     totalUpdated={this._assetTotalUpdated}

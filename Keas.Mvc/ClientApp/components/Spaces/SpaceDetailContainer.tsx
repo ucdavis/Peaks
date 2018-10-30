@@ -5,6 +5,7 @@ import { AppContext, ISpace } from "../../Types";
 
 interface IProps {
     space: ISpace;
+    tags: string;
 }
 
 export default class SpacesDetailContainer extends React.Component<IProps, {}> {
@@ -15,6 +16,10 @@ export default class SpacesDetailContainer extends React.Component<IProps, {}> {
           <h2 className="card-title">{this.props.space.roomNumber} {this.props.space.bldgName}</h2>
           <div className="card-text">
             {this.props.space.roomName && <div>{this.props.space.roomName}</div>}
+            <p className="card-text">
+            <i className="fas fa-tags" aria-hidden="true" />{" "}
+            {this.props.tags}
+          </p>
           </div>
         </div>
         <hr/>

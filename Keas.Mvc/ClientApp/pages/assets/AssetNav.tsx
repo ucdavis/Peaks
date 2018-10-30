@@ -12,12 +12,12 @@ export default class AssetNav extends React.Component<{}, {}> {
 
       <div>
         <div className="react-tabs">
-          <NavLink
-            to={`/${this.context.team.slug}/keys`}
-            className="tab-link tab-keys"
+        <NavLink
+            to={`/${this.context.team.slug}/people`}
+            className="tab-link tab-people"
             activeClassName="active"
           >
-            Keys
+            People
           </NavLink>
           <NavLink
             to={`/${this.context.team.slug}/equipment`}
@@ -34,18 +34,18 @@ export default class AssetNav extends React.Component<{}, {}> {
             Access
           </NavLink>
           <NavLink
+            to={`/${this.context.team.slug}/keys`}
+            className="tab-link tab-keys"
+            activeClassName="active"
+          >
+            Keys
+          </NavLink>
+          <NavLink
             to={`/${this.context.team.slug}/spaces`}
             className="tab-link tab-spaces"
             activeClassName="active"
           >
             Spaces
-          </NavLink>
-          <NavLink
-            to={`/${this.context.team.slug}/people`}
-            className="tab-link tab-people"
-            activeClassName="active"
-          >
-            People
           </NavLink>
         </div>
 
