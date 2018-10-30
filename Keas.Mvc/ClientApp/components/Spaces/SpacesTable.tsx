@@ -91,20 +91,23 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                         className: "table-10p",
                         id: "workstationsCount",
                         accessor: spaceInfo => {
-                            return [spaceInfo.workstationsInUse,spaceInfo.workstationsTotal];
+                            return {
+                                "workstationsInUse": spaceInfo.workstationsInUse,
+                                "workstationsTotal": spaceInfo.workstationsTotal
+                            }
                         },
                         filterMethod: (filter, row) => {
                             if( filter.value === "all") {
                                 return true;
                             }
                             if( filter.value === "unassigned") {
-                                return (row.workstationsCount[1] - row.workstationsCount[0]) > 0;
+                                return (row.workstationsCount.workstationsTotal - row.workstationsCount.workstationsInUse) > 0;
                             }
                             if( filter.value === "assigned") {
-                                return row.workstationsCount[0] > 0;
+                                return row.workstationsCount.workstationsInUse> 0;
                             }
                             if(filter.value === "any"){
-                                return row.workstationsCount[1] > 0;
+                                return row.workstationsCount.workstationsTotal > 0;
                             }
                         },
                         Filter: ({filter, onChange}) =>
@@ -118,23 +121,23 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                                 <option value="any">Any</option>
                             </select>,
                         Cell: row => (
-                            <span><i className="fas fa-user"/> {row.value[0]} / {row.value[1]}</span>
+                            <span><i className="fas fa-user"/> {row.value.workstationsInUse} / {row.value.workstationsTotal}</span>
                         ),
                         sortMethod: (a, b) => {
-                            if(a[1] === b[1])
+                            if(a.workstationsTotal === b.workstationsTotal)
                             {
-                                if(a[0] === b[0])
+                                if(a.workstationsInUse === b.workstationsInUse)
                                 {
                                     return 0;
                                 }
                                 else
                                 {
-                                    return a[0] < b[0] ? 1 : -1;
+                                    return a.workstationsInUse < b.workstationsInUse? 1 : -1;
                                 }
                             }
                             else
                             {
-                                return a[1] < b[1] ? 1 : -1;
+                                return a.workstationsTotal < b.workstationsTotal ? 1 : -1;
                             }
 
                         }
