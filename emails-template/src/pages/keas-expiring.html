@@ -1,0 +1,85 @@
+<style type="text/css">
+    body,
+    html, 
+    .body {
+      background: #f3f3f3 !important;
+    }
+  </style>
+  
+  <container>
+  
+    <spacer size="16"></spacer>
+  
+    <row>
+      <columns>
+        <h1>@userName, you have @count expiring @itemPluralize in PEAKS.</h1>
+        <p>Thanks for KEAping it real.</p>
+  
+        <spacer size="16"></spacer>id
+  
+        <h4>Notification Details</h4>
+  
+          <table>
+              <thead>
+              <tr>
+                  <th><b>Item</b></th>
+                  <th><b>Date expiring</b></th>
+              </tr>
+              </thead>
+              <tbody>
+              @foreach (var item in Model.AccessAssignments)
+              {
+                  <tr>
+                      <td>@item.Access.Name</td>
+                      <td>@item.ExpiresAt.ToPacificTime().ToString("g")</td>
+                  </tr>
+              }
+
+              @foreach (var item in Model.Keys)
+              {
+                  <tr>
+                      <td>@item.Key.Name</td>
+                      <td>@item.Assingment.ExpiresAt.ToPacificTime().ToString("g")</td>
+                  </tr>
+              }
+
+              @foreach (var item in Model.Equipment)
+              {
+                  <tr>
+                      <td>@item.Name</td>
+                      <td>@item.Assingment.ExpiresAt.ToPacificTime().ToString("g")</td>
+                  </tr>
+              }
+
+              @foreach (var item in Model.Workstations)
+              {
+                  <tr>
+                      <td>@item.Name</td>
+                      <td>@item.Assingment.ExpiresAt.ToPacificTime().ToString("g")</td>
+                  </tr>
+              }
+              </tbody>
+          </table>
+          <p>Please contact your team's assigned individuals to either update the expiration date or return/check-in the above items.</p>  
+        <hr/>
+      </columns>
+    </row>
+    <row class="footer text-center">
+      <columns large="3">
+        <img src="http://placehold.it/170x30" alt="">
+      </columns>
+      <columns large="3">
+        <p>
+          Call us at 800.555.1923<br/>
+          Email us at support@discount.boat
+        </p>
+      </columns>
+      <columns large="3">
+        <p>
+          123 Maple Rd<br/>
+          Campbell, CA 95112
+        </p>
+      </columns>
+    </row>
+  </container>
+  
