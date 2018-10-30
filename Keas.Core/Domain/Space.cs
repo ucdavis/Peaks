@@ -33,6 +33,11 @@ namespace Keas.Core.Domain
         public string OrgId { get; set; }
         public string DeptName { get; set; }
 
+        /// <summary>
+        /// Sum of Room_Share_Square_Feet for Dept Room.
+        /// </summary>
+        public int SqFt { get; set; }
+
         // FL or team generated. Maybe lockshop?
         public string Source { get; set; }
 
