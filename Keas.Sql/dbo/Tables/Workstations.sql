@@ -4,7 +4,7 @@
     [Group]                   NVARCHAR (32)  NULL,
     [Name]                    NVARCHAR (64)  NOT NULL,
     [SpaceId]                 INT            NOT NULL,
-    [Tags]                    NVARCHAR (MAX) NULL,
+    [Tags]                    NVARCHAR (100) NULL,
     [TeamId]                  INT            NOT NULL,
     [Type]                    NVARCHAR (MAX) NULL,
     [WorkstationAssignmentId] INT            NULL,
@@ -13,6 +13,8 @@
     CONSTRAINT [FK_Workstations_Teams_TeamId] FOREIGN KEY ([TeamId]) REFERENCES [dbo].[Teams] ([Id]) ON DELETE CASCADE,
     CONSTRAINT [FK_Workstations_WorkstationAssignments_WorkstationAssignmentId] FOREIGN KEY ([WorkstationAssignmentId]) REFERENCES [dbo].[WorkstationAssignments] ([Id])
 );
+
+
 
 
 
@@ -35,4 +37,9 @@ CREATE NONCLUSTERED INDEX [IX_Workstations_SpaceId]
 GO
 CREATE NONCLUSTERED INDEX [IX_Workstations_Active]
     ON [dbo].[Workstations]([Active] DESC);
+
+
+GO
+CREATE NONCLUSTERED INDEX [IX_Workstations_Tags]
+    ON [dbo].[Workstations]([Tags] ASC);
 

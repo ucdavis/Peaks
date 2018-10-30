@@ -55,7 +55,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("RoomName", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("RoomNumber", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Source", "System.String", new List<string>()));
-         
+            expectedFields.Add(new NameAndType("SqFt", "System.Nullable`1[System.Int32]", new List<string>()));
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(Space));
