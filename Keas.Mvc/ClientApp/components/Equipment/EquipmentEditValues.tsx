@@ -24,7 +24,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
             <div>
                 {!this.props.creating &&
                 <div className="form-group">
-                    <label>Name</label>
+                    <label>Item</label>
                     <input type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}

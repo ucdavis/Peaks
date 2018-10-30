@@ -39,7 +39,7 @@ export default class AccessTable extends React.Component<IProps, {}> {
                 maxWidth: 150,
             },
             {
-                Header: "Name",
+                Header: "Item",
                 accessor: "name",
                 filterMethod: (filter, row) => 
                     !!row[filter.id] &&
