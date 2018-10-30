@@ -27,7 +27,8 @@
             </tr>
             </thead>
             <tbody>
-            @foreach (var notification in Model){
+            @foreach (var notification in Model)
+            {
                 <tr>
                     <td>@notification.Details</td>
                     <td>@notification.DateTimeCreated.ToPacificTime().ToString("g")</td>
