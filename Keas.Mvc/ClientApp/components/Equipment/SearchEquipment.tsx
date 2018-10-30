@@ -2,7 +2,7 @@
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
-import { AppContext, IEquipment, ISpace } from "../../Types";
+import { AppContext, IEquipment, IEquipmentSearch, ISpace } from "../../Types";
 
 interface IProps {
     selectedEquipment?: IEquipment;
@@ -12,8 +12,7 @@ interface IProps {
 }
 
 interface IState {
-    equipment: any; // the query returns an object with the equipment, 
-                    // the name of the equipment (for labelKey), and a disabled flag
+    equipment: IEquipmentSearch[];
     isSearchLoading: boolean;
 }
 
@@ -76,7 +75,6 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                         const equipment = await this.context.fetch(
                             `/api/${this.context.team.slug}/equipment/search?q=${query}`
                         );
-                        debugger;
                         this.setState({
                             equipment,
                             isSearchLoading: false,

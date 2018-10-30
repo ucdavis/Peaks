@@ -117,10 +117,6 @@ export interface IEquipmentAssignment {
   person: IPerson;
 }
 
-export interface IHasExpiration {
-  expiresAt: Date;
-}
-
 export interface IEquipmentAttribute {
   id?: number;
   equipmentId: number;
@@ -128,6 +124,15 @@ export interface IEquipmentAttribute {
   value: string;
 }
 
+export interface IEquipmentSearch {
+  equipment: IEquipment;
+  name: string; // for labelKey on searching
+  disabled: boolean; // disabled if equipment has assignment 
+}
+
+export interface IHasExpiration {
+  expiresAt: Date;
+}
 
 export interface ISpaceInfo {
   space: ISpace;
