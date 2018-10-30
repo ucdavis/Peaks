@@ -13,6 +13,7 @@
 
 */
 -- Modifications:
+--	20181030 by kjt: Added SqFt as per Scott K.
 --
 -- =============================================
 CREATE PROCEDURE [dbo].[usp_TruncateAndReloadLoadingSpaces] 
@@ -40,6 +41,7 @@ BEGIN
       ,[RoomName]
       ,[RoomCategoryName]
       ,[RoomCategoryCode]
+	  ,[SqFt]
       ,[Source]
       ,[Active])
 	
@@ -57,6 +59,7 @@ BEGIN
       ,[RoomName]
       ,[RoomCategoryName]
       ,[RoomCategoryCode]
+	  ,[SqFt]
 	  ,NULL AS [Source]
 	  ,1 AS [Active]
   FROM [KEAS].[dbo].[vSpaceRooms]

@@ -12,8 +12,11 @@
     [RoomName]         VARCHAR (150) NULL,
     [RoomCategoryName] VARCHAR (20)  NULL,
     [RoomCategoryCode] VARCHAR (5)   NULL,
+    [SqFt]             INT           NULL,
     [Source]           VARCHAR (100) NULL,
     [Active]           BIT           NULL,
     CONSTRAINT [PK_LoadingSpace] PRIMARY KEY CLUSTERED ([DeptKey] ASC, [RoomKey] ASC)
 );
+
+
 

@@ -12,6 +12,7 @@
 	EXEC usp_MergeSpacesTable @IsDebug = 0 -- Set to 1 to print SQL only.
 */
 -- Modifications:
+--	20181030 by kjt: Added SqFt as per Scott K.
 --
 -- =============================================
 CREATE PROCEDURE [dbo].[usp_MergeSpacesTable]
@@ -44,6 +45,7 @@ USING (
       ,[RoomName]
       ,[RoomCategoryName]
       ,[RoomCategoryCode]
+	  ,[SqFt]
 	  ,[Source]
 	  ,[Active]
 	FROM [dbo].[LoadingSpaces]
@@ -61,6 +63,7 @@ USING (
       ,[RoomName]
       ,[RoomCategoryName]
       ,[RoomCategoryCode]
+	  ,[SqFt]
 	  ,[Source]
 	  ,[Active])
 ON (target.[DeptKey] = source.[DeptKey] AND target.[RoomKey] = source.[RoomKey])
@@ -76,6 +79,7 @@ WHEN MATCHED THEN UPDATE SET
       ,target.[RoomName]		 =	source.[RoomName]
       ,target.[RoomCategoryName] =	source.[RoomCategoryName]
       ,target.[RoomCategoryCode] =	source.[RoomCategoryCode]
+	  ,target.[SqFt]			 =	source.[SqFt]
 	  ,target.[Source]			 =	source.[Source]
 	  ,target.[Active]			 =	source.[Active]
 WHEN NOT MATCHED BY TARGET THEN INSERT VALUES (
@@ -93,6 +97,7 @@ WHEN NOT MATCHED BY TARGET THEN INSERT VALUES (
 	  ,[RoomKey]
 	  ,[RoomName]
 	  ,[RoomNumber]
+	  ,[SqFt]
 	  ,[Source]  
 )
 WHEN NOT MATCHED BY SOURCE THEN UPDATE
