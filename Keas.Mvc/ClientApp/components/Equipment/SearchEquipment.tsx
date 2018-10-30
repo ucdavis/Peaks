@@ -12,7 +12,8 @@ interface IProps {
 }
 
 interface IState {
-    equipment: IEquipment[];
+    equipment: any; // the query returns an object with the equipment, 
+                    // the name of the equipment (for labelKey), and a disabled flag
     isSearchLoading: boolean;
 }
 
@@ -55,14 +56,17 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     renderMenuItemChildren={(option, props, index) => (
                         <div>
                             <div>
-                                <Highlighter key="name" search={props.text}>
-                                    {option.name}
+                                <Highlighter key="equipment.name" search={props.text}>
+                                    {option.equipment.name}
                                 </Highlighter>
+                            </div>
+                            <div>
+                                {option.disabled ? "Assigned" : "Unassigned"}
                             </div>
                             <div>
                                 <small>
                                     Serial Number:
-                                    <Highlighter key="serialNumber" search={props.text}>{option.serialNumber}</Highlighter>
+                                    <Highlighter key="equipment.serialNumber" search={props.text}>{option.equipment.serialNumber}</Highlighter>
                                 </small>
                             </div>
                         </div>
@@ -72,6 +76,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                         const equipment = await this.context.fetch(
                             `/api/${this.context.team.slug}/equipment/search?q=${query}`
                         );
+                        debugger;
                         this.setState({
                             equipment,
                             isSearchLoading: false,
@@ -79,7 +84,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     }}
                     onChange={selected => {
                         if (selected && selected.length === 1) {
-                            this._onSelected(selected[0]);
+                            this._onSelected(selected[0].equipment);
                         }
                     }}
                     options={this.state.equipment}
@@ -112,7 +117,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                 space: this.props.space ? this.props.space : equipment.space, // if we are on spaces tab, auto to the right space
                 tags: "",
                 teamId: equipment.teamId ? equipment.teamId : 0,
-                type: "Phone"
+                type: ""
             });
         }
     };
