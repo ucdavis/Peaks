@@ -24,6 +24,7 @@ interface IProps {
 interface IState {
   moreInfoString: string; // for errors and for explaining results, e.g. if person is new or inactive
   person: IPerson;
+  submitting: boolean;
   validState: boolean;
 }
 
@@ -38,6 +39,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
     this.state = {
       moreInfoString: "",
       person: null,
+      submitting: false,
       validState: false
     };
   }
@@ -70,9 +72,9 @@ export default class CreatePerson extends React.Component<IProps, IState> {
             <Button
               color="primary"
               onClick={this._createSelected}
-              disabled={!this.state.validState}
+              disabled={!this.state.validState || this.state.submitting}
             >
-              Go!
+              Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
             </Button>{" "}
             <Button color="secondary" onClick={this._closeModal}>
               Close
@@ -97,17 +99,19 @@ export default class CreatePerson extends React.Component<IProps, IState> {
     this.setState({
       moreInfoString: "",
       person: null,
+      submitting: false,
       validState: false
     });
     this.props.closeModal();
   };
 
   private _createSelected = async () => {
-    if (!this.state.validState) {
+    if (!this.state.validState || this.state.submitting) {
       return;
     }
 
     try {
+      this.setState({submitting: true});
       await this.props.onCreate(this.state.person);
       this._closeModal();
     }
@@ -115,6 +119,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
       this.setState({
         moreInfoString: "There was an error adding this person to your team: " + err.message,
         person: null,
+        submitting: false,
         validState: false,
       });
     };

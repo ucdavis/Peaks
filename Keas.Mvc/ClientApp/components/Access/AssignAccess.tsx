@@ -34,6 +34,7 @@ interface IState {
   date: any;
   error: string;
   person: IPerson;
+  submitting: boolean;
   validState: boolean;
 }
 
@@ -50,6 +51,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
       date: moment().add(3, 'y'),
       error: "",
       person: null,
+      submitting: false,
       validState: false,
     };
     }
@@ -130,8 +132,8 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                       </div>
                   </ModalBody>
                   <ModalFooter>
-                          <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState}>
-                              Go!
+                          <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState || this.state.submitting}>
+                          Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
                          </Button>
                       {" "}
                   </ModalFooter>
@@ -155,6 +157,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         access:null,
         error: "",
         person: null,
+        submitting: false,
         validState: false,
       });
       this.props.closeModal();
@@ -163,10 +166,11 @@ export default class AssignAccess extends React.Component<IProps, IState> {
   // assign the selected access even if we have to create it
   private _assignSelected = async () => {
 
-    if (!this.state.validState) {
+    if (!this.state.validState || this.state.submitting) {
         return;
     }
 
+    this.setState({submitting: true});
     const person = this.props.person ? this.props.person : this.state.person;
 
     await this.props.onCreate(this.state.access, this.state.date.format(), person);

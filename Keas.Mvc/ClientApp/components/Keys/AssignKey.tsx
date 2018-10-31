@@ -33,6 +33,7 @@ interface IState {
   error: string;
   key: IKey;
   person: IPerson;
+  submitting: boolean;
   validState: boolean;
 }
 
@@ -50,6 +51,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
       key: this.props.selectedKey,
       person: (!!this.props.selectedKey && !!this.props.selectedKey.assignment)
         ? this.props.selectedKey.assignment.person : this.props.person,
+      submitting: false,
       validState: false
     };
   }
@@ -141,9 +143,9 @@ export default class AssignKey extends React.Component<IProps, IState> {
             <Button
               color="primary"
               onClick={this._assignSelected}
-              disabled={!this.state.validState}
+              disabled={!this.state.validState || this.state.submitting}
             >
-              Go!
+              Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
             </Button>{" "}
           </ModalFooter>
         </Modal>
@@ -167,6 +169,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
       error: "",
       key: null,
       person: null,
+      submitting: false,
       validState: false
     });
     this.props.closeModal();
@@ -174,10 +177,11 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
   // assign the selected key even if we have to create it
   private _assignSelected = async () => {
-    if (!this.state.validState) {
+    if (!this.state.validState || this.state.submitting) {
       return;
     }
 
+    this.setState({submitting: true});
     const person = this.props.person ? this.props.person : this.state.person;
 
     await this.props.onCreate(person, this.state.key, this.state.date.format());

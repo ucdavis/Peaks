@@ -27,6 +27,7 @@ interface IProps {
 
 interface IState {
   error: string;
+  submitting: boolean;
   workstation: IWorkstation;
   validState: boolean;
 }
@@ -40,9 +41,10 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      workstation: this.props.selectedWorkstation,
       error: "",
-      validState: false
+      submitting: false,
+      validState: false,
+      workstation: this.props.selectedWorkstation,
     };
   }
 
@@ -83,9 +85,9 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
           <Button
             color="primary"
             onClick={this._editSelected}
-            disabled={!this.state.validState}
+            disabled={!this.state.validState || this.state.submitting}
           >
-            Update Workstation
+              Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
           </Button>{" "}
         
         </ModalFooter>
@@ -105,18 +107,21 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
-      workstation: null,
       error: "",
-      validState: false
+      submitting: false,
+      validState: false,
+      workstation: null
     });
     this.props.closeModal();
   };
 
   // assign the selected key even if we have to create it
   private _editSelected = async () => {
-    if (!this.state.validState) {
+    if (!this.state.validState || this.state.submitting) {
       return;
     }
+
+    this.setState({submitting: true});
 
     await this.props.onEdit(this.state.workstation);
 

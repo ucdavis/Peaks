@@ -23,6 +23,7 @@ interface IProps {
 interface IState {
   error: string;
   equipment: IEquipment;
+  submitting: boolean;
   validState: boolean;
 }
 
@@ -37,6 +38,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
     this.state = {
       equipment: this.props.selectedEquipment,
       error: "",
+      submitting: false,
       validState: false
     };
   }
@@ -80,9 +82,9 @@ export default class EditEquipment extends React.Component<IProps, IState> {
           <Button
             color="primary"
             onClick={this._editSelected}
-            disabled={!this.state.validState}
+            disabled={!this.state.validState || this.state.submitting}
           >
-            Update Equipment
+              Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
           </Button>{" "}
 
         </ModalFooter>
@@ -104,6 +106,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
     this.setState({
       equipment: null,
       error: "",
+      submitting: false,
       validState: false
     });
     this.props.closeModal();
@@ -120,10 +123,10 @@ export default class EditEquipment extends React.Component<IProps, IState> {
 
   // assign the selected key even if we have to create it
   private _editSelected = async () => {
-    if (!this.state.validState) {
+    if (!this.state.validState || this.state.submitting) {
       return;
     }
-
+    this.setState({ submitting: true});
     this.state.equipment.attributes = this.state.equipment.attributes.filter(x => !!x.key);
 
     await this.props.onEdit(this.state.equipment);

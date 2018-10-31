@@ -31,6 +31,7 @@ interface IProps {
 interface IState {
   error: string;
   access: IAccess;
+  submitting: boolean;
   validState: boolean;
 }
 
@@ -45,6 +46,7 @@ export default class EditAccess extends React.Component<IProps, IState> {
     this.state = {
       access: this.props.selectedAccess,
       error: "",
+      submitting: false,
       validState: false
     };
   }
@@ -87,9 +89,9 @@ export default class EditAccess extends React.Component<IProps, IState> {
           <Button
             color="primary"
             onClick={this._editSelected}
-            disabled={!this.state.validState}
+            disabled={!this.state.validState || this.state.submitting}
           >
-            Update Access
+              Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
           </Button>{" "}
         </ModalFooter>
       </Modal>
@@ -110,6 +112,7 @@ export default class EditAccess extends React.Component<IProps, IState> {
     this.setState({
       access: null,
       error: "",
+      submitting: false,
       validState: false
     });
     this.props.closeModal();
@@ -117,11 +120,11 @@ export default class EditAccess extends React.Component<IProps, IState> {
 
   // assign the selected access even if we have to create it
   private _editSelected = async () => {
-    if (!this.state.validState) {
+    if (!this.state.validState || this.state.submitting) {
       return;
     }
 
-
+    this.setState({submitting: true});
     await this.props.onEdit(this.state.access);
 
     this._closeModal();
