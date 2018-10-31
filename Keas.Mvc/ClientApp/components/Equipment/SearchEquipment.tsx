@@ -2,7 +2,7 @@
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
-import { AppContext, IEquipment, ISpace } from "../../Types";
+import { AppContext, IEquipment, IEquipmentLabel, ISpace } from "../../Types";
 
 interface IProps {
     selectedEquipment?: IEquipment;
@@ -13,7 +13,7 @@ interface IProps {
 }
 
 interface IState {
-    equipment: any[];
+    equipment: IEquipmentLabel[];
     isSearchLoading: boolean;
 }
 
@@ -89,7 +89,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                             }
                             else 
                             {
-                                this._onSelected(selected[0].equipment);
+                                this._onSelected(selected[0]);
                             }
                         }
                     }}
@@ -99,15 +99,15 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
         );
     }
 
-    private _onSelected = (equipment: IEquipment) => {
+    private _onSelected = (equipmentLabel: IEquipmentLabel) => {
         // onChange is called when deselected
-        if (equipment == null || equipment.name == null) {
+        if (equipmentLabel == null || equipmentLabel.label == null) {
             this.props.onDeselect();
         }
         else {
             // if teamId is not set, this is a new equipment
             this.props.onSelect({
-                attributes: !!equipment.attributes ? equipment.attributes : 
+                attributes: !!equipmentLabel.equipment ? equipmentLabel.equipment.attributes : 
                 [ 
                 {
                     equipmentId: 0,
@@ -115,15 +115,16 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     value: "",
                   }
                 ],
-                id: equipment.teamId ? equipment.id : 0,
-                make: equipment.make ? equipment.make : "",
-                model: equipment.model ? equipment.model : "",
-                name: equipment.name,
-                serialNumber: equipment.serialNumber ? equipment.serialNumber : "",
-                space: this.props.space ? this.props.space : equipment.space, // if we are on spaces tab, auto to the right space
+                id: equipmentLabel.equipment ? equipmentLabel.equipment.id : 0,
+                make: equipmentLabel.equipment ? equipmentLabel.equipment.make : "",
+                model: equipmentLabel.equipment ? equipmentLabel.equipment.model : "",
+                name: equipmentLabel.equipment ? equipmentLabel.equipment.name : equipmentLabel.label,
+                serialNumber: equipmentLabel.equipment ? equipmentLabel.equipment.serialNumber : "",
+                space: this.props.space ? this.props.space : 
+                    (equipmentLabel.equipment ? equipmentLabel.equipment.space : null), // if we are on spaces tab, auto to the right space
                 tags: "",
-                teamId: equipment.teamId ? equipment.teamId : 0,
-                type: "Phone"
+                teamId: equipmentLabel.equipment ? equipmentLabel.equipment.teamId : 0,
+                type: ""
             });
         }
     };

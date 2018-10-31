@@ -117,6 +117,11 @@ export interface IEquipmentAssignment {
   person: IPerson;
 }
 
+export interface IEquipmentLabel {
+  equipment: IEquipment;
+  label: string;
+}
+
 export interface IHasExpiration {
   expiresAt: Date;
 }
