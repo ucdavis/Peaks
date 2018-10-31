@@ -50,7 +50,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     isLoading={this.state.isSearchLoading}
                     minLength={3}
                     placeholder="Search for equipment by name or by serial number"
-                    labelKey="label" // TODO: clean up labelKey so that it allows duplicates 
+                    labelKey="label"
                     filterBy={() => true} // don't filter on top of our search
                     allowNew={true}
                     renderMenuItemChildren={(option, props, index) => (

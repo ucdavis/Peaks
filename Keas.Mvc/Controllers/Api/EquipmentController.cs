@@ -40,7 +40,7 @@ namespace Keas.Mvc.Controllers.Api
                 select new 
                 {
                     equipment = eq,
-                    label = eq.Name + " " + eq.SerialNumber + " " + eq.Id,
+                    label = eq.Id + ". " + eq.Name + " " + eq.SerialNumber,
                 };
 
             return Json(await equipment.ToListAsync());
