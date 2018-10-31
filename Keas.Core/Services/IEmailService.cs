@@ -203,6 +203,23 @@ namespace Keas.Core.Services
                 _dbContext.WorkstationAssignments.Update(workstation.Assignment);
             }
 
+            foreach (var access in expiringItems.AccessAssignments)
+            {
+                if (access.NextNotificationDate == null || access.ExpiresAt > DateTime.UtcNow.AddDays(7))
+                {
+                    access.NextNotificationDate = access.ExpiresAt.AddDays(-7);
+                }
+                else if (access.ExpiresAt > DateTime.UtcNow.AddDays(1))
+                {
+                    access.NextNotificationDate = access.ExpiresAt.AddDays(-1);
+                }
+                else
+                {
+                    access.NextNotificationDate = DateTime.UtcNow.AddDays(1);
+                }
+                _dbContext.AccessAssignments.Update(access);
+            }
+
             await _dbContext.SaveChangesAsync();
 
             var mimeType = new System.Net.Mime.ContentType("text/html");
