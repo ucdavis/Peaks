@@ -8,11 +8,12 @@ interface IProps {
     selectedEquipment?: IEquipment;
     onSelect: (equipment: IEquipment) => void;
     onDeselect: () => void;
+    openDetailsModal: (equipment:IEquipment) => void;
     space: ISpace // used to set default space if we are on spaces tab
 }
 
 interface IState {
-    equipment: IEquipment[];
+    equipment: any[];
     isSearchLoading: boolean;
 }
 
@@ -49,20 +50,23 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     isLoading={this.state.isSearchLoading}
                     minLength={3}
                     placeholder="Search for equipment by name or by serial number"
-                    labelKey="name"
+                    labelKey="label" // TODO: clean up labelKey so that it allows duplicates 
                     filterBy={() => true} // don't filter on top of our search
                     allowNew={true}
                     renderMenuItemChildren={(option, props, index) => (
-                        <div>
+                        <div className={!!option.equipment.assignment ? "disabled" : ""}>
                             <div>
-                                <Highlighter key="name" search={props.text}>
-                                    {option.name}
+                                <Highlighter key="equipment.name" search={props.text}>
+                                    {option.equipment.name}
                                 </Highlighter>
+                            </div>
+                            <div>
+                                {!!option.equipment.assignment ? "Assigned" : "Unassigned"}
                             </div>
                             <div>
                                 <small>
                                     Serial Number:
-                                    <Highlighter key="serialNumber" search={props.text}>{option.serialNumber}</Highlighter>
+                                    <Highlighter key="equipment.serialNumber" search={props.text}>{option.equipment.serialNumber}</Highlighter>
                                 </small>
                             </div>
                         </div>
@@ -79,7 +83,14 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     }}
                     onChange={selected => {
                         if (selected && selected.length === 1) {
-                            this._onSelected(selected[0]);
+                            if(!!selected[0].assignment)
+                            {
+                                this.props.openDetailsModal(selected[0].equipment);
+                            }
+                            else 
+                            {
+                                this._onSelected(selected[0].equipment);
+                            }
                         }
                     }}
                     options={this.state.equipment}

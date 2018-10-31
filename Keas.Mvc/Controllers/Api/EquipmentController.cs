@@ -30,13 +30,20 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
-            var equipment = await _context.Equipment
-                .Where(x => x.Team.Slug == Team && x.Active && x.Assignment == null &&
+            var equipment = 
+                from eq in _context.Equipment
+                .Where(x => x.Team.Slug == Team && x.Active &&
                 (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
-                .Include(x => x.Space)
-                .AsNoTracking().ToListAsync();
+                .Include(x => x.Space).Include(x => x.Assignment)
+                .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
+                .AsNoTracking()
+                select new 
+                {
+                    equipment = eq,
+                    label = eq.Name + " " + eq.SerialNumber + " " + eq.Id,
+                };
 
-            return Json(equipment);
+            return Json(await equipment.ToListAsync());
         }
         public async Task<IActionResult> GetEquipmentInSpace(int spaceId)
         {
