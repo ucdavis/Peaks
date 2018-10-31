@@ -12,8 +12,8 @@
 
   <row>
     <columns>
-      <h1>@userName, you have @count new @notificationPluralize from KEAS.</h1>
-      <p>Thanks for KEAping it real.</p>
+      <h1>@userName, you have @count new @notificationPluralize from PEAKS.</h1>
+      <p>Thanks for PEAKing at this email. It sPEAKS well of you.</p>
 
       <spacer size="16"></spacer>
 
@@ -27,7 +27,8 @@
             </tr>
             </thead>
             <tbody>
-            @foreach (var notification in Model){
+            @foreach (var notification in Model)
+            {
                 <tr>
                     <td>@notification.Details</td>
                     <td>@notification.DateTimeCreated.ToPacificTime().ToString("g")</td>
@@ -35,13 +36,16 @@
             }
             </tbody>
         </table>
-
+        @if (@acceptStatement)
+        {
+          <p>One or more items require you to accept them. Please visit our wonderful website to <a href="https://peaks.ucdavis.edu/">confirm receiving</a> these items.</p>
+        }
       <hr/>
     </columns>
   </row>
   <row class="footer text-center">
     <columns large="3">
-      <img src="http://placehold.it/170x30" alt="">
+      <img src="https://peaks.ucdavis.edu/Images/logo.svg" alt="">
     </columns>
     <columns large="3">
       <p>
