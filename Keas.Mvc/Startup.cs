@@ -58,14 +58,15 @@ namespace Keas.Mvc
 
             
 
-            // add openID connect auth backed by a cookie signin scheme
+            // add cas auth backed by a cookie signin scheme
             services.AddAuthentication(options =>
             {
-                options.DefaultChallengeScheme = CasDefaults.AuthenticationScheme;
-                options.DefaultSignInScheme = CasDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = CasDefaults.AuthenticationScheme;
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
-            .AddCookie()
+            .AddCookie(options =>
+                {
+                    options.LoginPath = new PathString("/login");
+                })
             .AddCAS(options => {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.CasServerUrlBase = Configuration["Authentication:CasBaseUrl"];
