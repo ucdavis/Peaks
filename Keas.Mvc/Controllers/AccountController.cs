@@ -14,6 +14,13 @@ namespace Keas.Mvc.Controllers
             return View();
         }
 
+        [Route("logout")]
+        public async Task<ActionResult> Login()
+        {
+            await HttpContext.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
         [AllowAnonymous]
         [Route("login")]
         public async Task Login(string returnUrl)
