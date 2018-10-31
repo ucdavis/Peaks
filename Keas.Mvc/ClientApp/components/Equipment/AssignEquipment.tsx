@@ -23,6 +23,7 @@ interface IProps {
   onCreate: (person: IPerson, equipment: IEquipment, date: any) => void;
   modal: boolean;
   onAddNew: () => void;
+  openDetailsModal: (equipment: IEquipment) => void;
   closeModal: () => void;
   selectedEquipment: IEquipment;
   person?: IPerson;
@@ -107,6 +108,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     onSelect={this._onSelected}
                     onDeselect={this._onDeselected}
                     space={this.props.space}
+                    openDetailsModal={this.props.openDetailsModal}
                   />
                 </div>
                 {!this.state.equipment ||
