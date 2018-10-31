@@ -15,13 +15,14 @@
         <h1>@userName, you have @count expiring @itemPluralize in PEAKS.</h1>
         <p>Thanks for PEAKing at this email. It sPEAKS well of you.</p>
   
-        <spacer size="16"></spacer>id
+        <spacer size="16"></spacer>
   
         <h4>Notification Details</h4>
   
           <table>
               <thead>
               <tr>
+                  <th><b>Type</b></th>
                   <th><b>Item</b></th>
                   <th><b>Date expiring</b></th>
               </tr>
@@ -30,6 +31,7 @@
               @foreach (var item in Model.AccessAssignments)
               {
                   <tr>
+                      <td>Access</td>
                       <td>@item.Access.Name</td>
                       <td>@item.ExpiresAt.ToPacificTime().ToString("g")</td>
                   </tr>
@@ -38,6 +40,7 @@
               @foreach (var item in Model.Keys)
               {
                   <tr>
+                      <td>Key</td>
                       <td>@item.Key.Name</td>
                       <td>@item.Assignment.ExpiresAt.ToPacificTime().ToString("g")</td>
                   </tr>
@@ -46,6 +49,7 @@
               @foreach (var item in Model.Equipment)
               {
                   <tr>
+                      <td>Equipment</td>
                       <td>@item.Name</td>
                       <td>@item.Assignment.ExpiresAt.ToPacificTime().ToString("g")</td>
                   </tr>
@@ -54,6 +58,7 @@
               @foreach (var item in Model.Workstations)
               {
                   <tr>
+                      <td>Workstation</td>
                       <td>@item.Name</td>
                       <td>@item.Assignment.ExpiresAt.ToPacificTime().ToString("g")</td>
                   </tr>
