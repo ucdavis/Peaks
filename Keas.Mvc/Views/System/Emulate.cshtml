@@ -1,0 +1,16 @@
+﻿@model EmulateUserViewModel
+
+@{
+    ViewBag.Title = "Emulate User";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label asp-for="UserEmail" class="control-label">Email</label>
+        <input asp-for="UserEmail" class="form-control"/>
+        <span asp-validation-for="UserEmail" class="text-danger"></span>
+    </div>
+    <input type="submit" value="Emulate User" class="btn btn-primary" />
+</form>
