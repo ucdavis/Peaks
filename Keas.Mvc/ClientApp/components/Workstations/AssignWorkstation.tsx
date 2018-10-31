@@ -33,6 +33,7 @@ interface IState {
   workstation: IWorkstation;
   error: string;
   person: IPerson;
+  submitting: boolean;
   validState: boolean;
 }
 
@@ -51,6 +52,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
       error: "",
       person: (!!this.props.selectedWorkstation && !!this.props.selectedWorkstation.assignment)
         ? this.props.selectedWorkstation.assignment.person : this.props.person,
+      submitting: false,
       validState: false,
       workstation: this.props.selectedWorkstation
     };
@@ -138,8 +140,8 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
             </div>
           </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={this._assignSelected}>
-                        Save
+                    <Button color="primary" onClick={this._assignSelected} disabled={!this.state.validState || this.state.submitting}>
+                    Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
                     </Button>
                 </ModalFooter>
             </Modal>
@@ -162,6 +164,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
       date: moment().add(3, "y"),
       error: "",
       person: null,
+      submitting: false,
       validState: false,
       workstation: null,
     });
@@ -170,10 +173,11 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
 
   // assign the selected workstation even if we have to create it
   private _assignSelected = async () => {
-    if (!this.state.validState) {
+    if (!this.state.validState || this.state.submitting) {
       return;
     }
 
+    this.setState({ submitting: true});
     const person = this.props.person ? this.props.person : this.state.person;
     const workstation = this.state.workstation;
 

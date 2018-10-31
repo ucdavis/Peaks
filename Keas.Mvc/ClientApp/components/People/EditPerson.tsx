@@ -24,6 +24,7 @@ interface IState {
   error: string;
   modal: boolean;
   person: IPerson;
+  submitting: boolean;
   validState: boolean;
 }
 
@@ -36,9 +37,10 @@ export default class EditPerson extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      person: this.props.selectedPerson,
-      modal: false,
       error: "",
+      modal: false,
+      person: this.props.selectedPerson,
+      submitting: false,
       validState: false
     };
   }
@@ -79,9 +81,9 @@ export default class EditPerson extends React.Component<IProps, IState> {
           <Button
             color="primary"
             onClick={this._editSelected}
-            disabled={!this.state.validState}
+            disabled={!this.state.validState || this.state.submitting}
           >
-            Update Person
+              Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
           </Button>
         </ModalFooter>
       </Modal>
@@ -102,8 +104,9 @@ export default class EditPerson extends React.Component<IProps, IState> {
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
-      modal: false,
       error: "",
+      modal: false,
+      submitting: false,
       validState: false
     });
   };
@@ -116,10 +119,11 @@ export default class EditPerson extends React.Component<IProps, IState> {
 
   // assign the selected key even if we have to create it
   private _editSelected = async () => {
-    if (!this.state.validState) {
+    if (!this.state.validState || this.state.submitting) {
       return;
     }
 
+    this.setState({submitting: true});
     await this.props.onEdit(this.state.person);
 
     this._closeModal();

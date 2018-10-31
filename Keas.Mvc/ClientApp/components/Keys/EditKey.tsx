@@ -29,6 +29,7 @@ interface IProps {
 interface IState {
   error: string;
   key: IKey;
+  submitting: boolean;
   validState: boolean;
 }
 
@@ -43,6 +44,7 @@ export default class EditKey extends React.Component<IProps, IState> {
     this.state = {
       error: "",
       key: this.props.selectedKey,
+      submitting: false,
       validState: false
     };
   }
@@ -82,9 +84,9 @@ export default class EditKey extends React.Component<IProps, IState> {
           <Button
             color="primary"
             onClick={this._editSelected}
-            disabled={!this.state.validState}
+            disabled={!this.state.validState || this.state.submitting}
           >
-            Update Key
+              Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
           </Button>{" "}
         </ModalFooter>
       </Modal>
@@ -105,6 +107,7 @@ export default class EditKey extends React.Component<IProps, IState> {
     this.setState({
       error: "",
       key: null,
+      submitting: false,
       validState: false
     });
     this.props.closeModal();
@@ -112,11 +115,11 @@ export default class EditKey extends React.Component<IProps, IState> {
 
   // assign the selected key even if we have to create it
   private _editSelected = async () => {
-    if (!this.state.validState) {
+    if (!this.state.validState || this.state.submitting) {
       return;
     }
 
-
+    this.setState({submitting: true})
     await this.props.onEdit(this.state.key);
 
     this._closeModal();

@@ -37,6 +37,7 @@ interface IState {
   equipment: IEquipment;
   error: string;
   person: IPerson;
+  submitting: boolean;
   validState: boolean;
 }
 
@@ -55,6 +56,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       error: "",
       person: (!!this.props.selectedEquipment && !!this.props.selectedEquipment.assignment)
         ? this.props.selectedEquipment.assignment.person : this.props.person,
+      submitting: false,
       validState: false
     };
   }
@@ -154,9 +156,9 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
             <Button
               color="primary"
               onClick={this._assignSelected}
-              disabled={!this.state.validState}
+              disabled={!this.state.validState || this.state.submitting}
             >
-              Go!
+              Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
             </Button>{" "}
 
 
@@ -191,6 +193,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       equipment: null,
       error: "",
       person: null,
+      submitting: false,
       validState: false
     });
     this.props.closeModal();
@@ -198,16 +201,16 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   // assign the selected equipment even if we have to create it
   private _assignSelected = async () => {
-    if (!this.state.validState) {
+    if (!this.state.validState || this.state.submitting) {
       return;
     }
 
+    this.setState({submitting: true});
     const person = this.props.person ? this.props.person : this.state.person;
     const equipment = this.state.equipment;
     equipment.attributes = equipment.attributes.filter(x => !!x.key);
-
     await this.props.onCreate(person, equipment, this.state.date.format());
-
+    
     this._closeModal();
   };
 
