@@ -65,7 +65,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       this.setState({ equipment: nextProps.selectedEquipment });
     }
 
-    if (nextProps.person !== this.props.person) {
+    if (nextProps.person !== this.state.person) {
       this.setState({ person: nextProps.person });
     }
     if(!!nextProps.selectedEquipment && !!nextProps.selectedEquipment.assignment)
@@ -96,7 +96,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                 <div className="form-group">
                   <label htmlFor="assignto">Assign To</label>
                   <AssignPerson
-                    person={this.props.person || this.state.person}
+                    person={this.state.person}
                     onSelect={this._onSelectPerson}
                   />
                 </div>

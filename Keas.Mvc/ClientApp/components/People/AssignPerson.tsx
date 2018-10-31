@@ -14,7 +14,6 @@ interface IState {
   modal: boolean;
   isSearchLoading: boolean;
   people: IPerson[];
-  selectedPerson: IPerson;
 }
 
 // TODO: need a way to clear out selected person
@@ -31,12 +30,11 @@ export default class AssignPerson extends React.Component<IProps, IState> {
       isSearchLoading: false,
       modal: false,
       people: [],
-      selectedPerson: null,
     };
   }
 
   public render() {
-    if (this.props.person || this.state.selectedPerson) {
+    if (this.props.person) {
       return this._renderExistingPerson();
     } else {
       return this._renderFindPerson();
@@ -79,7 +77,6 @@ export default class AssignPerson extends React.Component<IProps, IState> {
           }}
           onChange={selected => {
             if (selected && selected.length === 1) {
-              this.setState({ selectedPerson: selected[0] });
               this.props.onSelect(selected[0]);
             }
           }}
@@ -90,13 +87,12 @@ export default class AssignPerson extends React.Component<IProps, IState> {
   };
 
   private _renderExistingPerson = () => {
-    const person = this.props.person ? this.props.person : this.state.selectedPerson;
     return (
       <input
         type="text"
         id="assignto"
         className="form-control"
-        value={person.name}
+        value={this.props.person.name}
         disabled={true}
       />
     );
