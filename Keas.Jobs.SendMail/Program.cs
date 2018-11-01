@@ -72,21 +72,23 @@ namespace Keas.Jobs.SendMail
             // Email persons with expiring items, cc teammembers as needed
             counter = 0;
 
-            var betterModel = new ExpiringItemsEmailModel2();
+            var betterModel = new ExpiringItemsEmailModel();
             betterModel.AccessAssignments = dbContext.AccessAssignments.Where(a => a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Include(a => a.Access).Include(a => a.Person).AsNoTracking().ToListAsync().GetAwaiter().GetResult();
             betterModel.Keys = dbContext.Serials.Where(a => a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow)).Include(k => k.Key).Include(k => k.Assignment).ThenInclude(k => k.Person).AsNoTracking().ToListAsync().GetAwaiter().GetResult();
             betterModel.Equipment = dbContext.Equipment.Where(a => a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow)).Include(e => e.Assignment).ThenInclude(e => e.Person).AsNoTracking().ToListAsync().GetAwaiter().GetResult();
             betterModel.Workstations = dbContext.Workstations.Where(a => a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow)).Include(w => w.Assignment).ThenInclude(w => w.Person).AsNoTracking().ToListAsync().GetAwaiter().GetResult();
 
             var personIds = betterModel.GetPersonIdList();
+
+            betterModel.People = dbContext.People.Where(a => personIds.Contains(a.Id)).Include(a => a.Team).AsNoTracking().ToListAsync().GetAwaiter().GetResult();
             Console.WriteLine($"About to write {personIds.Count} Expiry Emails");
 
             if (betterModel.GetPersonIdList().Any())
             {
-                foreach (var person in personIds)
+                foreach (var personId in personIds)
                 {
                     // TODO: build new service method to handle these emails
-                    EmailService.SendExpiringMessage(person, betterModel).GetAwaiter().GetResult(); //TODO: Pass param?
+                    EmailService.SendExpiringMessage(personId, betterModel).GetAwaiter().GetResult(); //TODO: Pass param?
                     counter++;
                 }
             }

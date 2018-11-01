@@ -13,6 +13,8 @@ namespace Keas.Core.Models
         public IList<Serial> Keys { get; set; }
         public IList<Equipment> Equipment { get; set; }
         public IList<Workstation> Workstations { get; set; }
+
+        public IList<Person> People { get; set; }
         public Person Person { get; set; }
 
 
@@ -28,15 +30,6 @@ namespace Keas.Core.Models
             };
             return viewModel;
         }
-    }
-
-    public class ExpiringItemsEmailModel2
-    {
-        public IList<AccessAssignment> AccessAssignments { get; set; }
-        public IList<Serial> Keys { get; set; }
-        public IList<Equipment> Equipment { get; set; }
-        public IList<Workstation> Workstations { get; set; }
-
 
         public IList<int> GetPersonIdList()
         {

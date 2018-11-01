@@ -18,7 +18,7 @@ namespace Keas.Core.Services
     public interface IEmailService
     {
         Task SendNotificationMessage(User user);
-        Task SendExpiringMessage(int personId, ExpiringItemsEmailModel2 model);
+        Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model);
     }
 
     public class EmailService : IEmailService
@@ -47,7 +47,7 @@ namespace Keas.Core.Services
             }
         }
 
-        public async Task SendExpiringMessage(int personId, ExpiringItemsEmailModel2 model)
+        public async Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model)
         {
             var path = Path.GetFullPath(".");
 
@@ -55,7 +55,7 @@ namespace Keas.Core.Services
                 .UseFilesystemProject(path)
                 .UseMemoryCachingProvider()
                 .Build();
-            var person = _dbContext.People.Single(a => a.Id == personId);
+            var person = model.People.Single(a => a.Id == personId);
 
             var expiringItems = ExpiringItemsEmailModel.Create(
                 model.AccessAssignments.Where(a => a.PersonId == personId).ToList(), 
