@@ -25,7 +25,10 @@ namespace Keas.Mvc.Controllers
 #if DEBUG
         public IActionResult ResetDb()
         {
-            DbInitializer.Initialize(_context);
+            var dbInit = new DbInitializer(_context);
+            dbInit.RecreateDatabase();
+            dbInit.Initialize();
+            dbInit.CreateSampleData();
             return Content("Success");
         }
 #endif
