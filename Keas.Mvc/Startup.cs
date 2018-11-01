@@ -49,7 +49,13 @@ namespace Keas.Mvc
             // setup entity framework
             if (Configuration.GetSection("Dev:UseSql").Value == "Yes")
             {
-                services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                services.AddDbContextPool<ApplicationDbContext>(o =>
+                {
+                    o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+#if DEBUG
+                    o.EnableSensitiveDataLogging();
+#endif
+                });
             }
             else
             {
