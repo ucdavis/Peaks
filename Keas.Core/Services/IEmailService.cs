@@ -77,8 +77,13 @@ namespace Keas.Core.Services
             }
            
             var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };
-            //message.To.Add(person.Email);
-            message.To.Add("jscubbage@ucdavis.edu");
+#if DEBUG //Might as well do this here too. In prod real peeps are getting added
+            message.To.Add("jscubbage@ucdavis.edu"); 
+#else
+            message.To.Add(person.Email);
+#endif            
+            
+            
 
             if (expiringItems.AccessAssignments.Any())
             {
