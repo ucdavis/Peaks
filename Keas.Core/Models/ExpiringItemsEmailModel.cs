@@ -40,9 +40,6 @@ namespace Keas.Core.Models
 
         public IList<int> GetPersonIdList()
         {
-
-
-
             return AccessAssignments.Select(a => a.PersonId).Distinct()
                 .Union(Keys.Select(a => a.Assignment.PersonId).Distinct())
                 .Union(Equipment.Select(a => a.Assignment.PersonId).Distinct())
