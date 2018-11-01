@@ -21,7 +21,7 @@ namespace Keas.Jobs.SendMail
         public static IEmailService EmailService { get; set; }
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Beginning Email Job!");
 
             // Use this to get configuration info, environmental comes in from azure
             var builder = new ConfigurationBuilder()
@@ -66,7 +66,7 @@ namespace Keas.Jobs.SendMail
                     counter++;
                 }
             }
-            Console.WriteLine($"Done! Sent {counter}");
+            Console.WriteLine($"Notifications Sent {counter}");
 
 
             // Email persons with expiring items, cc teammembers as needed
@@ -94,9 +94,9 @@ namespace Keas.Jobs.SendMail
                     counter++;
                 }
             }
-            Console.WriteLine($"Done! Sent {counter}");
+            Console.WriteLine($"Expiring Sent {counter}");
 
-
+            Console.WriteLine("Done Email Job");
         }
     }
 }
