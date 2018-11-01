@@ -32,7 +32,8 @@ namespace Keas.Mvc.Handlers
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, VerifyRoleAccess requirement)
         {
-            string team = "";
+            // get team name from url
+            var team = "";
             if (context.Resource is AuthorizationFilterContext mvcContext)
             {
                 if (mvcContext.RouteData.Values["teamName"] != null)
@@ -46,8 +47,18 @@ namespace Keas.Mvc.Handlers
                 team = Convert.ToString(tempData["TeamName"]); 
             }     
 
-            var user = _dbContext.Users.SingleOrDefault(u => u.Id == context.User.Identity.Name);
-            var roles = await _dbContext.Roles.Where(r => requirement.RoleStrings.Contains(r.Name)).ToListAsync();
+            // fetch logged in user 
+            var user = _dbContext.Users
+                .AsNoTracking()
+                .SingleOrDefault(u => u.Id == context.User.Identity.Name);
+
+            // get policy roles
+            var roles = await _dbContext.Roles
+                .AsNoTracking()
+                .Where(r => requirement.RoleStrings.Contains(r.Name))
+                .ToListAsync();
+
+            // check for user in role
             if (user != null && !string.IsNullOrEmpty(team))
             {
                 if (await _securityService.IsInRoles(roles, team, user))
@@ -55,6 +66,8 @@ namespace Keas.Mvc.Handlers
                     context.Succeed(requirement);
                 }
             }
+
+            // checkfor user in admin role
             if (user != null)
             {
                 if (await _securityService.IsInAdminRoles(roles, user))
