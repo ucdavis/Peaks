@@ -83,7 +83,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     }}
                     onChange={selected => {
                         if (selected && selected.length === 1) {
-                            if(!!selected[0].assignment)
+                            if(!!selected[0].equipment && !!selected[0].equipment.assignment)
                             {
                                 this.props.openDetailsModal(selected[0].equipment);
                             }
