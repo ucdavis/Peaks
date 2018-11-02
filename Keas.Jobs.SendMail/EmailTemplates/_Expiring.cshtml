@@ -4,7 +4,7 @@
 @model Keas.Core.Models.ExpiringItemsEmailModel
 @{
     var userName = Model.Person.Name;
-    var tempCount = Model.Keys.Count() + Model.Equipment.Count() + Model.Workstations.Count();
+    var tempCount = Model.Keys.Count() + Model.Equipment.Count() + Model.Workstations.Count() + Model.AccessAssignments.Count();
     var count = tempCount.ToString();
     var itemPluralize = "item";
     if (tempCount > 1)
