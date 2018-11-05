@@ -24,7 +24,7 @@ namespace Test.TestsDatabase
         public void TestClassAttributes()
         {
             // Arrange
-            var classReflection = new ControllerReflection(_output, typeof(Serial));
+            var classReflection = new ControllerReflection(_output, typeof(KeySerial));
             // Act
             // Assert	
             classReflection.ControllerInherits("Object"); 
@@ -48,7 +48,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Number", "System.String", new List<string>()));           
             #endregion Arrange
 
-            AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(Serial));
+            AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(KeySerial));
         }
 
         #endregion Reflection of Database

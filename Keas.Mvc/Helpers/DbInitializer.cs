@@ -337,9 +337,9 @@ namespace Keas.Mvc.Helpers
             _context.Equipment.Add(equip2);
 
             // keys
-            var key1 = new Key { Number = "A1", Team = caes, Name = "38 Mrak Keycard", Active = false };
+            var key1 = new Key { Code = "A1", Team = caes, Name = "38 Mrak Keycard", Active = false };
             var key1Space = new KeyXSpace { Key = key1, Space = space2 };
-            var key1Serial = new Serial
+            var key1Serial = new KeySerial
             {
                 Key = key1,
                 Number = "1",
@@ -351,11 +351,14 @@ namespace Keas.Mvc.Helpers
                     ExpiresAt = DateTime.UtcNow.AddYears(5)
                 }
             };
+            _context.Keys.Add(key1);
+            _context.KeyXSpaces.Add(key1Space);
+            _context.KeySerials.Add(key1Serial);
 
-            var key2 = new Key { Number = "A2", Team = caes, Name = "North Hall Keycard" };
+            var key2 = new Key { Code = "A2", Team = caes, Name = "North Hall Keycard" };
             var key2Space = new KeyXSpace { Key = key2, Space = space3 };
-            var key2Serial = new Serial { Key = key2, Number = "SN1" };
-            var key2Serial2 = new Serial
+            var key2Serial = new KeySerial { Key = key2, Number = "SN1" };
+            var key2Serial2 = new KeySerial
             {
                 Key = key2,
                 Number = "2",
@@ -367,13 +370,10 @@ namespace Keas.Mvc.Helpers
                     ExpiresAt = DateTime.UtcNow.AddYears(5)
                 }
             };
-            _context.Keys.Add(key1);
-            _context.KeyXSpaces.Add(key1Space);
-            _context.Serials.Add(key1Serial);
             _context.Keys.Add(key2);
             _context.KeyXSpaces.Add(key2Space);
-            _context.Serials.Add(key2Serial);
-            _context.Serials.Add(key2Serial2);
+            _context.KeySerials.Add(key2Serial);
+            _context.KeySerials.Add(key2Serial2);
 
             // history
             var history = new History

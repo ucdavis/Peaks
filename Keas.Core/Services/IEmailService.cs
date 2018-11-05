@@ -57,7 +57,7 @@ namespace Keas.Core.Services
                 .Build();
             
             var expiringAccess = _dbContext.AccessAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Include(a=> a.Access).AsNoTracking();
-            var expiringKey = _dbContext.Serials.Where(a =>
+            var expiringKey = _dbContext.KeySerials.Where(a =>
                     a.Assignment.Person == person && a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
                     (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow)).Include(k=> k.Assignment).Include(k=> k.Key).AsNoTracking();
             var expiringEquipment = _dbContext.Equipment.Where(a =>
@@ -71,7 +71,7 @@ namespace Keas.Core.Services
 
             var expiringItems = ExpiringItemsEmailModel.Create(expiringAccess, expiringKey, expiringEquipment, expiringWorkstations, person);
             
-            if (!expiringItems.AccessAssignments.Any() && !expiringItems.Keys.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
+            if (!expiringItems.AccessAssignments.Any() && !expiringItems.KeySerials.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
             {
                 return;                
             }
@@ -95,7 +95,7 @@ namespace Keas.Core.Services
                 }
             }
 
-            if (expiringItems.Keys.Any())
+            if (expiringItems.KeySerials.Any())
             {
                 var roles = await _dbContext.Roles
                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
@@ -152,7 +152,7 @@ namespace Keas.Core.Services
                 throw;
             }
 
-            foreach (var key in expiringItems.Keys)
+            foreach (var key in expiringItems.KeySerials)
             {
                 if (key.Assignment.NextNotificationDate == null || key.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
                 {
