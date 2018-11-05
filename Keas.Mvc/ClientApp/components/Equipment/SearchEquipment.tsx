@@ -1,6 +1,7 @@
 ﻿import PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
+import {Button, Input, InputGroup, InputGroupAddon} from "reactstrap";
 
 import { AppContext, IEquipment, IEquipmentLabel, ISpace } from "../../Types";
 
@@ -131,12 +132,16 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
 
     private _renderExistingEquipment = () => {
         return (
-            <input
-                type="text"
-                className="form-control"
-                value={this.props.selectedEquipment.name}
-                disabled={true}
-            />
+            <InputGroup>
+                <Input
+                    type="text"
+                    className="form-control"
+                    value={this.props.selectedEquipment.name}
+                    disabled={true}
+                />
+                <InputGroupAddon addonType="append"><Button color="danger" onClick={() => {this._onSelected(null)}}>X</Button></InputGroupAddon>
+            </InputGroup>
+
         );
     };
 }
