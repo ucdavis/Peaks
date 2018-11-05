@@ -149,8 +149,10 @@ namespace Keas.Mvc
             {
                 // TODO: don't use dev exception
                 app.UseDeveloperExceptionPage();
+
+                // monitor in production
+                app.UseMiddleware<StackifyMiddleware.RequestTracerMiddleware>();
                 // app.UseExceptionHandler("/Error/Index");
-                
             }
             app.UseStatusCodePages("text/plain", "Status code page, status code: {0}");
 
