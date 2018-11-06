@@ -35,12 +35,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
     }
 
     public render() {
-        if (this.props.selectedEquipment != null) {
-            return this._renderExistingEquipment();
-        }
-        else {
-            return this._renderSelectEquipment();
-        } 
+        return this._renderSelectEquipment();
     }
 
     private _renderSelectEquipment = () => {
@@ -150,20 +145,4 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
             type: ""
         });
     }
-
-    private _renderExistingEquipment = () => {
-        return (
-            <div>
-            <label>Item</label>
-            <InputGroup>
-                <Input
-                    type="text"
-                    className="form-control"
-                    value={this.props.selectedEquipment.name}
-                    disabled={true}
-                    />
-            </InputGroup>
-            </div>
-        );
-    };
 }
