@@ -7,39 +7,40 @@ import {
     ModalFooter,
     ModalHeader
 } from "reactstrap";
-import { IKey } from "../../Types";
+import { IKeySerial } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
-import KeyEditValues from "./KeyEditValues";
+import KeySerialEditValues from "./KeySerialEditValues";
 
 
 interface IProps {
     modal: boolean;
     closeModal: () => void;
-    selectedKey: IKey;
+    selectedKeySerial: IKeySerial;
 }
 
 
 export default class KeyDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedKey == null)
+        if (this.props.selectedKeySerial == null)
         {
             return null;
         }
-        const key = this.props.selectedKey;
+
+        const keySerial = this.props.selectedKeySerial;
         return (
             <div>
                 <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg" className="keys-color">
 
                   <div className="modal-header row justify-content-between">
-                    <h2>Details for {key.name}</h2>
+                    <h2>Details for {keySerial.number}</h2>
                     <Button color="link" onClick={this.props.closeModal}>
                     <i className="fas fa-times fa-lg"/>
                     </Button>
                   </div>
                     <ModalBody>
-                        <KeyEditValues selectedKey={key} disableEditing={true} />
-                        <HistoryContainer controller="keys" id={key.id} />
+                        <KeySerialEditValues selectedKeySerial={keySerial} disableEditing={true} />
+                        <HistoryContainer controller="keys" id={keySerial.id} />
                     </ModalBody>
                 </Modal>
             </div>

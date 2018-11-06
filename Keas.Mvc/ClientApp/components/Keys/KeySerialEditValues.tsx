@@ -1,30 +1,30 @@
 ﻿import * as React from "react";
 
-import { IKey } from "../../Types";
+import { IKeySerial } from "../../Types";
 
 interface IProps {
-    selectedKey: IKey;
+    selectedKeySerial: IKeySerial;
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
     creating?: boolean;
 }
 
-export default class KeyEditValues extends React.Component<IProps, {}> {
+export default class KeySerialEditValues extends React.Component<IProps, {}> {
 
     public render() {
-        const { selectedKey } = this.props;
-        const code = selectedKey ? selectedKey.code : "";
+        const { selectedKeySerial } = this.props;
+        const numberValue = selectedKeySerial ? selectedKeySerial.number : "";
 
         return (
             <div>
                 {!this.props.creating &&
                     <div className="form-group">
-                        <label>Code</label>
+                        <label>Number</label>
                         <input type="text"
                             className="form-control"
                             disabled={this.props.disableEditing}
-                            value={code}
-                            onChange={this.onChangeCode}
+                            value={numberValue}
+                            onChange={this.onChangeNumber}
                         />
                     </div>
                 }
@@ -32,7 +32,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
         );
     }
 
-    private onChangeCode = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.props.changeProperty("code", event.target.value)
+    private onChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.props.changeProperty("number", event.target.value)
     }
 }

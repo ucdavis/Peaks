@@ -2,21 +2,21 @@
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
-import { IKey, AppContext } from "../../Types";
+import { IKeySerial, AppContext } from "../../Types";
 
 interface IProps {
-    selectedKey?: IKey;
-    onSelect: (key: IKey) => void;
+    selectedKeySerial?: IKeySerial;
+    onSelect: (keySerial: IKeySerial) => void;
     onDeselect: () => void;
 }
 
 interface IState {
     isSearchLoading: boolean;
-    keys: IKey[];
+    keySerials: IKeySerial[];
 }
 
 // Search for existing key then send selection back to parent
-export default class SearchKeys extends React.Component<IProps, IState> {
+export default class SearchKeySerials extends React.Component<IProps, IState> {
 
     public static contextTypes = {
         fetch: PropTypes.func,
@@ -26,17 +26,17 @@ export default class SearchKeys extends React.Component<IProps, IState> {
 
     public context: AppContext;
 
-    constructor(props) {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {
             isSearchLoading: false,
-            keys: [],
+            keySerials: [],
         };
     }
 
     public render() {
-        if (this.props.selectedKey != null) {
+        if (this.props.selectedKeySerial != null) {
             return this._renderExistingKey();
         }
 
@@ -48,7 +48,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
             <input
                 type="text"
                 className="form-control"
-                value={this.props.selectedKey.code}
+                value={this.props.selectedKeySerial.number}
                 disabled={true}
             />
         );
@@ -82,12 +82,12 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                     )}
                     onSearch={async query => {
                         this.setState({ isSearchLoading: true });
-                        const keys = await this.context.fetch(
-                            `/api/${this.context.team.slug}/keys/search?q=${query}`
+                        const results = await this.context.fetch(
+                            `/api/${this.context.team.slug}/keySerials/search?q=${query}`
                         );
                         this.setState({
                             isSearchLoading: false,
-                            keys
+                            keySerials: results,
                         });
                     }}
                     onChange={selected => {
@@ -95,25 +95,19 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                             this._onSelected(selected[0]);
                         }
                     }}
-                    options={this.state.keys}
+                    options={this.state.keySerials}
                 />
             </div>
         );
     }
 
-    private _onSelected = (key: IKey) => {
+    private _onSelected = (keySerial: IKeySerial) => {
         // onChange is called when deselected
-        if (key == null || key.code == null) {
+        if (keySerial == null || keySerial.number == null) {
             this.props.onDeselect();
             return;
         }
 
-        // if teamId is not set, this is a new key
-        this.props.onSelect({
-            id: key.teamId ? key.id : 0,
-            code: key.code,
-            keySerials: key.keySerials,
-            teamId: key.teamId ? key.teamId : 0,
-        });
+        this.props.onSelect(keySerial);
     };
 }
