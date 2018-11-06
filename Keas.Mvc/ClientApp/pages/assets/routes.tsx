@@ -14,18 +14,26 @@ import AssetNav from "../assets/AssetNav";
 // /CAESDO/person/1/keys/details/12
 export const routes = (
   <AssetNav>
-    <Route path="/:team/keys/:action?/:id?" component={KeyContainer} />
+    <Route
+      path="/:team/keys/:keyAction?/:keyId?/:assetType?/:action?/:id?"
+      component={KeyContainer}
+    />
     <Route
       path="/:team/equipment/:action?/:id?"
       component={EquipmentContainer}
     />
-    <Route path="/:team/access/:action?/:id?" component={AccessContainer} />
     <Route
-        path="/:team/spaces/:spaceAction?/:spaceId?/:assetType?/:action?/:id?" component={SpacesContainer}
+      path="/:team/access/:action?/:id?"
+      component={AccessContainer}
+    />
+    <Route
+      path="/:team/spaces/:spaceAction?/:spaceId?/:assetType?/:action?/:id?"
+      component={SpacesContainer}
     />
     <Route
       path="/:team/people/:personAction?/:personId?/:assetType?/:action?/:id?"
-      component={PeopleContainer} />
+      component={PeopleContainer}
+    />
 
   </AssetNav>
 );
