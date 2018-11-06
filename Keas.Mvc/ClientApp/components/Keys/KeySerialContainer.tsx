@@ -5,6 +5,7 @@ import { AppContext, IKey, IKeySerial, IPerson } from "../../Types";
 
 import AssignKeySerial from "./AssignKeySerial";
 import Denied from "../Shared/Denied";
+import EditKeySerial from "./EditKeySerial";
 import KeySerialList from "./KeySerialList";
 import KeySerialDetails from "./KeySerialDetails";
 
@@ -77,9 +78,10 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     }
 
     const { action, assetType, id } = this.context.router.route.match.params;
-    const activeAsset = !assetType || assetType === "keys";
-    const selectedId = parseInt(id, 10);
-    const detailKeySerial = this.state.keySerials.find(k => k.id === selectedId);
+    const activeAsset = !assetType || assetType === "keyserials";
+    const selectedKeySerialId = parseInt(id, 10);
+    const selectedKeySerial = this.state.keySerials.find(s => s.id === selectedKeySerialId);
+
     return (
       <div className="card keys-color">
         <div className="card-header-keys">
@@ -98,20 +100,20 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             modal={activeAsset && (action === "create" || action === "assign")}
             onAddNew={this._openCreateModal}
             closeModal={this._closeModals}
-            selectedKeySerial={detailKeySerial}
+            selectedKeySerial={selectedKeySerial}
             person={this.props.selectedPerson}
           />
           <KeySerialDetails
-            selectedKeySerial={detailKeySerial}
-            modal={activeAsset && action === "details" && !!detailKeySerial}
+            selectedKeySerial={selectedKeySerial}
+            modal={activeAsset && action === "details" && !!selectedKeySerial}
             closeModal={this._closeModals}
           />
-          {/* <EditKeySerial
-            onEdit={this._editKey}
+          <EditKeySerial
+            onEdit={this._editKeySerial}
             closeModal={this._closeModals}
             modal={activeAsset && (action === "edit")}
-            selectedKey={detailKey}
-          /> */}
+            selectedKeySerial={selectedKeySerial}
+          />
         </div>
       </div>
     );
@@ -122,6 +124,8 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     keySerial: IKeySerial,
     date: any
   ) => {
+    const { team } = this.context;
+
     let updateTotalAssetCount = false;
     let updateInUseAssetCount = false;
     // call API to create a key, then assign it if there is a person to assign to
@@ -137,9 +141,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/api/${this.context.team.slug}/keys/assign?keyId=${keySerial.id}&personId=${
-        person.id
-      }&date=${date}`;
+      const assignUrl = `/api/${team.slug}/keys/assign?keyId=${keySerial.id}&personId=${person.id}&date=${date}`;
 
       if(!keySerial.assignment)
       {
@@ -182,8 +184,10 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
   }
 
   private _revokeKeySerial = async (keySerial: IKeySerial) => {
+    const { team } = this.context;
+
     // call API to actually revoke
-    const removed: IKeySerial = await this.context.fetch(`/api/${this.context.team.slug}/keys/revoke`, {
+    const removed: IKeySerial = await this.context.fetch(`/api/${team.slug}/keys/revoke`, {
       body: JSON.stringify(keySerial),
       method: "POST"
     });
@@ -212,6 +216,8 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
   private _editKeySerial = async (keySerial: IKeySerial) =>
   {
+    const { team } = this.context;
+
     const index = this.state.keySerials.findIndex(x => x.id === keySerial.id);
 
     if(index === -1 ) // should always already exist
@@ -219,7 +225,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
       return;
     }
 
-    const updated: IKeySerial = await this.context.fetch(`/api/${this.context.team.slug}/keys/update`, {
+    const updated: IKeySerial = await this.context.fetch(`/api/${team.slug}/keys/update`, {
       body: JSON.stringify(keySerial),
       method: "POST"
     });
@@ -267,7 +273,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
   };
 
   private _closeModals = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/keys`);
+    this.context.router.history.push(`${this._getBaseUrl()}`);
   };
 
   private _getBaseUrl = () => {
