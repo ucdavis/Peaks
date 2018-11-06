@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -172,14 +172,14 @@ namespace Keas.Mvc
                     name: "API",
                     template: "api/{teamName}/{controller}/{action}/{id?}",
                     defaults: new { controller = "people", action = "Index" },
-                    constraints: new { controller = "(keys|equipment|access|spaces|people|person|workstations|tags)" }
+                    constraints: new { controller = "(keys|keyserials|equipment|access|spaces|people|person|workstations|tags)" }
                 );
 
                 routes.MapRoute(
                     name: "Assets",
                     template: "{teamName}/{asset}/{*type}",
                     defaults: new { controller = "Asset", action = "Index" },
-                    constraints: new { asset = "(keys|equipment|access|spaces|people|person|workstations)" }
+                    constraints: new { asset = "(keys|keyserials|equipment|access|spaces|people|person|workstations)" }
                 );
 
                 routes.MapRoute(
