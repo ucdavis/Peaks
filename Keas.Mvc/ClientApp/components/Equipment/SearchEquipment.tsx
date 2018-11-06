@@ -6,7 +6,6 @@ import {Button, Input, InputGroup, InputGroupAddon} from "reactstrap";
 import { AppContext, IEquipment, IEquipmentLabel, ISpace } from "../../Types";
 
 interface IProps {
-    changeProperty: (property: string, value: any) => void;
     onDeselect: () => void;
     onSelect: (equipment: IEquipment) => void;
     openDetailsModal: (equipment:IEquipment) => void;
@@ -161,11 +160,8 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     type="text"
                     className="form-control"
                     value={this.props.selectedEquipment.name}
-                    disabled={this.props.selectedEquipment.teamId !== 0}
-                    autoFocus={true}
-                    onChange={(e) => this.props.changeProperty("name", e.target.value)}
+                    disabled={true}
                     />
-                <InputGroupAddon addonType="append"><Button color="danger" onClick={() => {this._onSelected(null)}}>X</Button></InputGroupAddon>
             </InputGroup>
             </div>
         );

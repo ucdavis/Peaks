@@ -9,7 +9,6 @@ import EquipmentAttributes from "./EquipmentAttributes";
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
     commonAttributeKeys?: string[];
-    creating?: boolean;
     disableEditing: boolean;
     selectedEquipment: IEquipment;
     space?: ISpace;
@@ -22,7 +21,6 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
     public render() {
         return (            
             <div>
-                {!this.props.creating &&
                 <div className="form-group">
                     <label>Item</label>
                     <input type="text"
@@ -31,13 +29,13 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         value={this.props.selectedEquipment.name ? this.props.selectedEquipment.name : ""}
                         onChange={(e) => this.props.changeProperty("name", e.target.value)}
                     />
-                </div>}
+                </div>
                 <div className="form-group">
                     <label>Serial Number</label>
                     <input type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
-                        autoFocus={!this.props.disableEditing && this.props.creating && this.props.selectedEquipment.name !== ""}
+                        autoFocus={!this.props.disableEditing && this.props.selectedEquipment.name !== ""}
                         value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
                         onChange={(e) => this.props.changeProperty("serialNumber", e.target.value)}
                     />
