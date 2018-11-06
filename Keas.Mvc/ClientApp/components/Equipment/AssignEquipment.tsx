@@ -114,24 +114,32 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                 </div>}
                 {this.state.equipment &&
                   !this.state.equipment.teamId && ( // if we are creating a new equipment, edit properties
-                    <EquipmentEditValues
-                      selectedEquipment={this.state.equipment}
-                      commonAttributeKeys={this.props.commonAttributeKeys}
-                      changeProperty={this._changeProperty}
-                      disableEditing={false}
-                      updateAttributes={this._updateAttributes}
-                      space={this.props.space}
-                      tags={this.props.tags}
-                    />
+                    <div>
+                      <label>Create New Equipment</label>
+                      <Button onClick={() => this._onDeselected()}>Clear X</Button>
+                      <EquipmentEditValues
+                        selectedEquipment={this.state.equipment}
+                        commonAttributeKeys={this.props.commonAttributeKeys}
+                        changeProperty={this._changeProperty}
+                        disableEditing={false}
+                        updateAttributes={this._updateAttributes}
+                        space={this.props.space}
+                        tags={this.props.tags}
+                      />
+                    </div>
                   )}
                 {this.state.equipment &&
                   !!this.state.equipment.teamId && (
-                    <EquipmentEditValues
-                      selectedEquipment={this.state.equipment}
-                      commonAttributeKeys={this.props.commonAttributeKeys}
-                      disableEditing={true}
-                      tags={this.props.tags}
-                      />
+                    <div>
+                      <label>Assign Existing Equipment</label>
+                      <Button onClick={() => this._onDeselected()}>Clear X</Button>
+                      <EquipmentEditValues
+                        selectedEquipment={this.state.equipment}
+                        commonAttributeKeys={this.props.commonAttributeKeys}
+                        disableEditing={true}
+                        tags={this.props.tags}
+                        />
+                    </div>
                   )}
 
                 {(!!this.state.person || !!this.props.person) && (
