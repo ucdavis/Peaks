@@ -104,7 +104,6 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                 </div>
 
                 <div className="form-group">
-                  <label>Pick an equipment to assign</label>
                   <SearchEquipment
                     changeProperty={this._changeProperty}
                     selectedEquipment={this.state.equipment}

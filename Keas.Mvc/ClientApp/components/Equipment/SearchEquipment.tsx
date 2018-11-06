@@ -48,6 +48,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
 
         return (
             <div>
+                <label>Pick an equipment to assign</label>
                 <div>
                 <AsyncTypeahead
                     isLoading={this.state.isSearchLoading}
@@ -153,6 +154,8 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
 
     private _renderExistingEquipment = () => {
         return (
+            <div>
+            <label>Item</label>
             <InputGroup>
                 <Input
                     type="text"
@@ -164,7 +167,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     />
                 <InputGroupAddon addonType="append"><Button color="danger" onClick={() => {this._onSelected(null)}}>X</Button></InputGroupAddon>
             </InputGroup>
-
+            </div>
         );
     };
 }
