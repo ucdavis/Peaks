@@ -97,6 +97,7 @@ export interface IAccessAssignment {
 
 export interface IEquipment {
   assignment?: IEquipmentAssignment;
+  equipmentAssignmentId?: number;
   id: number;
   make: string;
   model: string;

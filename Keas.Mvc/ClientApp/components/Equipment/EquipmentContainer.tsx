@@ -288,11 +288,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
     if(equipment.assignment !== null)
     {
-      equipment = await this.context.fetch(`/api/${this.context.team.slug}/equipment/revoke`, {
+      await this.context.fetch(`/api/${this.context.team.slug}/equipment/revoke`, {
         body: JSON.stringify(equipment),
         method: "POST"
       });
-
+      equipment.assignment = null;
+      equipment.equipmentAssignmentId = null;
       if(this.props.assetInUseUpdated)
       {
         this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
