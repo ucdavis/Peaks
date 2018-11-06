@@ -1,4 +1,4 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -59,6 +59,22 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Key.Team)
                 .AsNoTracking()
                 .ToArrayAsync();
+
+            return Json(keys);
+        }
+
+        // list all serias for a key
+        public async Task<IActionResult> GetForKey(int keyid)
+        {
+            var keys = await _context.KeySerials
+                .Where(x => x.Key.Team.Slug == Team && x.Key.Active)
+                .Where(x => x.KeyId == keyid)
+                .Include(x => x.Key)
+                    .ThenInclude(key => key.Serials)
+                .Include(s => s.Assignment)
+                    .ThenInclude(assignment => assignment.Person.User)
+                .AsNoTracking()
+                .ToListAsync();
 
             return Json(keys);
         }
