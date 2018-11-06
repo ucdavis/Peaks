@@ -106,6 +106,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                 <div className="form-group">
                   <label>Pick an equipment to assign</label>
                   <SearchEquipment
+                    changeProperty={this._changeProperty}
                     selectedEquipment={this.state.equipment}
                     onSelect={this._onSelected}
                     onDeselect={this._onDeselected}
@@ -113,8 +114,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     openDetailsModal={this.props.openDetailsModal}
                   />
                 </div>
-                {!this.state.equipment ||
-                  (!this.state.equipment.teamId && ( // if we are creating a new equipment, edit properties
+                {this.state.equipment &&
+                  !this.state.equipment.teamId && ( // if we are creating a new equipment, edit properties
                     <EquipmentEditValues
                       selectedEquipment={this.state.equipment}
                       commonAttributeKeys={this.props.commonAttributeKeys}
@@ -125,7 +126,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                       space={this.props.space}
                       tags={this.props.tags}
                     />
-                  ))}
+                  )}
                 {this.state.equipment &&
                   !!this.state.equipment.teamId && (
                     <EquipmentEditValues

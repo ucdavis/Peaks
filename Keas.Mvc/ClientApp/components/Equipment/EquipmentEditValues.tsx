@@ -37,7 +37,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <input type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
-                        autoFocus={!this.props.disableEditing && this.props.creating}
+                        autoFocus={!this.props.disableEditing && this.props.creating && this.props.selectedEquipment.name !== ""}
                         value={this.props.selectedEquipment.serialNumber ? this.props.selectedEquipment.serialNumber : ""}
                         onChange={(e) => this.props.changeProperty("serialNumber", e.target.value)}
                     />
