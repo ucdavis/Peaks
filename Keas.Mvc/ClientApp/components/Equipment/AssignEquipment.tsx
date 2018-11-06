@@ -136,7 +136,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                   !!this.state.equipment.teamId && (
                     <div>
                       <div className="row justify-content-between">
-                        <label>Assign Existing Equipment</label>
+                        <h3>Assign Existing Equipment</h3>
                         <Button className="btn btn-link" onClick={() => this._onDeselected()}>
                         Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
                       </div>
