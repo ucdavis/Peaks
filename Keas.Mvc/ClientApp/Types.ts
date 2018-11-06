@@ -19,11 +19,17 @@ export interface AppContext {
 export interface IRouteProps {
   id: string;
   action: string;
+  
   assetType: string;
+
   personId: string;
   personAction: string;
+
   spaceId: string;
   spaceAction: string;
+
+  keyId: string;
+  keyAction: string;
 }
 
 export interface IUser {
@@ -66,16 +72,22 @@ export interface ITeam {
 export interface IKey {
   id: number;
   teamId: number;
-  name: string;
-  serialNumber: string;
+  code: string;
+  keySerials: IKeySerial[];
+}
+
+export interface IKeySerial {
+  id: number;
+  number: string;
+  key: IKey;
   assignment?: IKeyAssignment;
 }
 
 export interface IKeyAssignment {
   id: number;
-  keyId: number;
   expiresAt: Date;
-  key: IKey;
+  keySerial: IKeySerial;
+  keySerialId: number;
   person: IPerson;
 }
 
