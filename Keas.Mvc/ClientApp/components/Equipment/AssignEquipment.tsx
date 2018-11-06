@@ -50,7 +50,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      date: (!!this.props.selectedEquipment && !!this.props.selectedEquipment.assignment) 
+      date: (!!this.props.selectedEquipment && !!this.props.selectedEquipment.assignment)
         ? moment(this.props.selectedEquipment.assignment.expiresAt) : moment().add(3, "y"),
       equipment: this.props.selectedEquipment,
       error: "",
@@ -72,7 +72,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     }
     if(!!nextProps.selectedEquipment && !!nextProps.selectedEquipment.assignment)
     {
-      this.setState({ 
+      this.setState({
         date: moment(nextProps.selectedEquipment.assignment.expiresAt),
         person: nextProps.selectedEquipment.assignment.person
       });
@@ -115,8 +115,12 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                 {this.state.equipment &&
                   !this.state.equipment.teamId && ( // if we are creating a new equipment, edit properties
                     <div>
-                      <label>Create New Equipment</label>
-                      <Button onClick={() => this._onDeselected()}>Clear X</Button>
+                    <div className="row justify-content-between">
+                      <h3>Create New Equipment</h3>
+                      <Button className="btn btn-link" onClick={() => this._onDeselected()}>
+                        <i className="fas fa-plus fa-sm" aria-hidden="true" /> Clear</Button>
+                    </div>
+
                       <EquipmentEditValues
                         selectedEquipment={this.state.equipment}
                         commonAttributeKeys={this.props.commonAttributeKeys}
@@ -131,8 +135,12 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                 {this.state.equipment &&
                   !!this.state.equipment.teamId && (
                     <div>
-                      <label>Assign Existing Equipment</label>
-                      <Button onClick={() => this._onDeselected()}>Clear X</Button>
+                      <div className="row justify-content-between">
+                        <label>Assign Existing Equipment</label>
+                        <Button onClick={() => this._onDeselected()}>
+                          <i className="fas fa-plus fa-sm" aria-hidden="true" /> Clear X</Button>
+                      </div>
+
                       <EquipmentEditValues
                         selectedEquipment={this.state.equipment}
                         commonAttributeKeys={this.props.commonAttributeKeys}
@@ -215,7 +223,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     const equipment = this.state.equipment;
     equipment.attributes = equipment.attributes.filter(x => !!x.key);
     await this.props.onCreate(person, equipment, this.state.date.format());
-    
+
     this._closeModal();
   };
 

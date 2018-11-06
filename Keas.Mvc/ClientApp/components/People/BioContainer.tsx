@@ -25,7 +25,6 @@ export default class BioContainer extends React.Component<IProps, {}> {
             <i className="fas fa-tags" aria-hidden="true" />{" "}
             {this.props.person.tags}
           </p>
-          <hr/>
         <br/>
 
       </div>

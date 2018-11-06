@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
-    [Authorize(Policy = "SystemAdminAccess")]
+    // [Authorize(Policy = "SystemAdminAccess")]
     public class SystemController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -21,7 +21,7 @@ namespace Keas.Mvc.Controllers
         {
             _context = context;
         }
-        
+
 #if DEBUG
         public IActionResult ResetDb()
         {

@@ -19,8 +19,8 @@ interface IProps {
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
 
     public render() {
-        return (            
-            <div>
+        return (
+            <div className="wrapperasset">
                 <div className="form-group">
                     <label>Item</label>
                     <input type="text"
@@ -78,17 +78,17 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         onChange={(e) => this.props.changeProperty("model", e.target.value)}
                     />
                 </div>
-                <EquipmentAttributes 
+                <EquipmentAttributes
                     updateAttributes={this.props.updateAttributes}
                     disableEdit={this.props.disableEditing}
-                    equipment={this.props.selectedEquipment} 
+                    equipment={this.props.selectedEquipment}
                     commonKeys={this.props.commonAttributeKeys}
                     />
 
                 <div className="form-group">
                     <label>Tags</label>
-                    <SearchTags 
-                        tags={this.props.tags} 
+                    <SearchTags
+                        tags={this.props.tags}
                         disabled={this.props.disableEditing}
                         selected={!!this.props.selectedEquipment.tags ? this.props.selectedEquipment.tags.split(",") : []}
                         onSelect={(e) => this.props.changeProperty("tags", e.join(","))} />
@@ -107,11 +107,11 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     </div>
                 }
                 {!this.props.disableEditing &&
-                    // if we are editing or creating 
+                    // if we are editing or creating
                     <div className="form-group">
                         <label>Room</label>
                     <AssignSpace
-                        onSelect={this._selectSpace} 
+                        onSelect={this._selectSpace}
                         defaultSpace={this.props.space ? this.props.space : this.props.selectedEquipment.space} />
                     </div>}
             </div>
@@ -120,5 +120,5 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
 
     private _selectSpace = (space: ISpace) => {
         this.props.changeProperty("space", space);
-    } 
+    }
 }
