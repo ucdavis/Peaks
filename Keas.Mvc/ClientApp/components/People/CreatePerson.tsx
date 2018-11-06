@@ -50,8 +50,13 @@ export default class CreatePerson extends React.Component<IProps, IState> {
         <Button color="link" onClick={this.props.onAddNew}>
         <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add Person
         </Button>
-        <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg">
-          <ModalHeader>Create Person</ModalHeader>
+        <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg" className="people-color">
+          <div className="modal-header row justify-content-between">
+            <h2>Add Person</h2>
+            <Button color="link" onClick={this._closeModal}>
+            <i className="fas fa-times fa-lg"/>
+            </Button>
+          </div>
           <ModalBody>
             <div className="container-fluid">
 
@@ -74,11 +79,8 @@ export default class CreatePerson extends React.Component<IProps, IState> {
               onClick={this._createSelected}
               disabled={!this.state.validState || this.state.submitting}
             >
-              Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
+              Add {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
             </Button>{" "}
-            <Button color="secondary" onClick={this._closeModal}>
-              Close
-            </Button>
           </ModalFooter>
         </Modal>
       </div>

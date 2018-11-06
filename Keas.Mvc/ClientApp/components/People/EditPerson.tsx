@@ -59,11 +59,16 @@ export default class EditPerson extends React.Component<IProps, IState> {
     }
     return (
       <div>
-        <Button color="danger" onClick={this._toggleModal}>
-          Edit Person
+        <Button className="btn btn-link" onClick={this._toggleModal}>
+        <i className="fas fa-pen fa-sm" aria-hidden="true" />  Edit Person
         </Button>
-        <Modal isOpen={this.state.modal} toggle={this._closeModal} size="lg">
-        <ModalHeader>Edit Person</ModalHeader>
+        <Modal isOpen={this.state.modal} toggle={this._closeModal} size="lg" className="people-color">
+          <div className="modal-header row justify-content-between">
+            <h2>Edit Person</h2>
+            <Button color="link" onClick={this._closeModal}>
+            <i className="fas fa-times fa-lg"/>
+            </Button>
+          </div>
         <ModalBody>
           <div className="container-fluid">
             <form>
@@ -88,7 +93,7 @@ export default class EditPerson extends React.Component<IProps, IState> {
         </ModalFooter>
       </Modal>
       </div>
-      
+
     );
   }
 

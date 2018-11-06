@@ -40,11 +40,11 @@ export default class SearchUsers extends React.Component<IProps, IState> {
                         value={this.state.search}
                         onChange={(e) => this.setState({search: e.target.value})}
                     />
-            <Button onClick={this._loadUser} disabled={this.state.reloading}>
-              Search {" "}
+            <Button className="btn btn-link" onClick={this._loadUser} disabled={this.state.reloading}>
+              <i className="fas fa-search fa-sm"/> Search {" "}
               {this.state.reloaded ? <i className="fas fa-check" /> : null}
               {this.state.reloading ? <i className="fas fa-spin fa-spinner" /> : null}
-            </Button> 
+            </Button>
         </div>
         );
   }
@@ -52,7 +52,7 @@ export default class SearchUsers extends React.Component<IProps, IState> {
   private _loadUser = async () => {
     this.setState({reloading: true, reloaded: false});
     const userFetchUrl = `/api/${this.context.team.slug}/people/searchUser?searchTerm=${this.state.search}`;
-  
+
     let person = null;
     try {
       person = await this.context.fetch(userFetchUrl);
