@@ -7,6 +7,7 @@ import { IEquipment } from "../../Types";
 interface IProps {
     equipment: IEquipment[];
     onRevoke?: (equipment: IEquipment) => void;
+    onDelete?: (equipment: IEquipment) => void;
     onAdd?: (equipment: IEquipment) => void;
     showDetails?: (equipment: IEquipment) => void;
     onEdit?: (equipment: IEquipment) => void;
@@ -19,6 +20,7 @@ export default class EquipmentList extends React.Component<IProps, {}> {
               key={x.id.toString()}
               equipmentEntity={x}
               onRevoke={this.props.onRevoke}
+              onDelete={this.props.onDelete}
               onAdd={this.props.onAdd}
               showDetails={this.props.showDetails}
               onEdit={this.props.onEdit}

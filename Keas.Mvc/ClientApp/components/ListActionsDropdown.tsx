@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
 
 interface IProps {
     onAdd?: () => void;
@@ -7,6 +7,7 @@ interface IProps {
     onRevoke?: () => void;
     onUpdateAssignment?: () => void;
     showDetails?: () => void;
+    onDelete?: () => void;
 }
 
 interface IState {
@@ -38,6 +39,8 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
                         <DropdownItem onClick={this.props.onUpdateAssignment} >Update Assignment</DropdownItem>}
                     {!!this.props.showDetails &&
                         <DropdownItem onClick={this.props.showDetails} >Show Details</DropdownItem>}
+                    {!!this.props.onDelete &&
+                        <DropdownItem onClick={this.props.onDelete} >Delete</DropdownItem>}
                     </DropdownMenu>
             </Dropdown>
         );

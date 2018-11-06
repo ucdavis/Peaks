@@ -196,14 +196,14 @@ namespace Keas.Mvc.Controllers.Api
             return BadRequest(ModelState);
         }
 
-        public async Task<IActionResult> MakeInactive([FromBody]Equipment equipment)
+        public async Task<IActionResult> Delete([FromBody]Equipment equipment)
         {
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if(!equipment.Active || equipment.Assignment != null)
+            if(!equipment.Active)
             {
                 return BadRequest(ModelState);
             }

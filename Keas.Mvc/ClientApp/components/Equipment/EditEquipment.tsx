@@ -76,6 +76,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
                     space={this.props.space}
                   />
             </form>
+            {this.state.error}
           </div>
         </ModalBody>
         <ModalFooter>
