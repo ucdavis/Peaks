@@ -196,6 +196,25 @@ namespace Keas.Mvc.Controllers.Api
             return BadRequest(ModelState);
         }
 
+        public async Task<IActionResult> MakeInactive([FromBody]Equipment equipment)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(!equipment.Active || equipment.Assignment != null)
+            {
+                return BadRequest(ModelState);
+            }
+            _context.Equipment.Update(equipment);
+            equipment.Active = false;
+            await _context.SaveChangesAsync();
+            // TODO: track history?
+            return Json(null);
+
+        }
+
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
