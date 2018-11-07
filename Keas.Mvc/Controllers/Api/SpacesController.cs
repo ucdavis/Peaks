@@ -94,6 +94,7 @@ namespace Keas.Mvc.Controllers.Api
             // wrap in space info object to be consistent
             var spaces = result.Select(s => new
             {
+                id = s.Id,
                 space = s,
             });
 
