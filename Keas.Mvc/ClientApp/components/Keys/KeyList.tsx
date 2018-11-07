@@ -6,7 +6,7 @@ import { IKey } from "../../Types";
 
 interface IProps {
     keys: IKey[];
-    onRevoke?: (key: IKey) => void;
+    onDisassociate?: (key: IKey) => void;
     onAdd?: (key: IKey) => void;
     showDetails?: (key: IKey) => void;
     onEdit?: (key: IKey) => void;
@@ -36,7 +36,7 @@ export default class KeyList extends React.Component<IProps, {}> {
             <KeyListItem
                 key={key.id}
                 keyEntity={key}
-                onRevoke={this.props.onRevoke}
+                onDisassociate={this.props.onDisassociate}
                 onAdd={this.props.onAdd}
                 showDetails={this.props.showDetails}
                 onEdit={this.props.onEdit}

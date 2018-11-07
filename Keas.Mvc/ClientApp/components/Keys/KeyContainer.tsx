@@ -3,6 +3,7 @@ import * as React from "react";
 
 import { AppContext, IKey, IPerson, ISpace } from "../../Types";
 
+import AssociateSpace from "./AssociateSpace";
 import CreateKey from "./CreateKey";
 import Denied from "../Shared/Denied";
 import EditKey from "./EditKey";
@@ -93,11 +94,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   }
   
   private _renderTableView() {
-    const { keyAction, assetType, keyId } = this.context.router.route.match.params;
-    const activeAsset = !assetType || assetType === "keys";
+    const { space } = this.props;
+    const { keyAction, keyId, action } = this.context.router.route.match.params;
 
-    const selectedId = parseInt(keyId, 10);
-    const detailKey = this.state.keys.find(k => k.id === selectedId);
+    const selectedKeyId = parseInt(keyId, 10);
+    const selectedKey = this.state.keys.find(k => k.id === selectedKeyId);
 
     return (
       <div>
@@ -105,6 +106,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           keys={this.state.keys}
           onEdit={this._openEditModal}
           showDetails={this._openDetailsModal}
+          onDisassociate={!!space ? (k) => this._disassociateSpace(space, k) : null}
         />
         <CreateKey
           onCreate={this._createKey}
@@ -115,8 +117,16 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         <EditKey
           onEdit={this._editKey}
           closeModal={this._closeModals}
-          modal={activeAsset && (keyAction === "edit")}
-          selectedKey={detailKey}
+          modal={keyAction === "edit"}
+          selectedKey={selectedKey}
+        />
+        <AssociateSpace
+          selectedKey={selectedKey}
+          selectedSpace={space}
+          onAssign={this._associateSpace}
+          isModalOpen={action === "associate"}
+          openModal={this._openAssociate}
+          closeModal={this._closeModals}
         />
       </div>
     );
@@ -198,21 +208,57 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     // TODO: handle count changes once keys are related to spaces
   }
 
+  private _associateSpace = async (space: ISpace, key: IKey) => {
+    const { team } = this.context;
+    const { keys } = this.state;
+
+    const url = `/api/${team.slug}/keys/associateSpace?spaceId=${space.id}&keyId=${key.id}`;
+    const result = await this.context.fetch(url, {
+        method: "POST",
+    });
+
+    const updatedKeys = [...keys, key];
+    this.setState({
+        keys: updatedKeys,
+    });
+}
+
+private _disassociateSpace = async (space: ISpace, key: IKey) => {
+    const { team } = this.context;
+    const { keys } = this.state;
+
+    const url = `/api/${team.slug}/keys/disassociateSpace?spaceId=${space.id}&keyId=${key.id}`;
+    const result = await this.context.fetch(url, {
+        method: "POST",
+    });
+    
+    const updatedKeys = [...keys];
+    const index = updatedKeys.findIndex(k => k.id === key.id);
+    updatedKeys.splice(index, 1);
+
+    this.setState({
+      keys: updatedKeys,
+    });
+}
+
   private _openCreateModal = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/keys/create`);
+    const { team } = this.context;
+    this.context.router.history.push(`/${team.slug}/keys/create`);
   };
 
   private _openDetailsModal = (key: IKey) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/keys/details/${key.id}`
-    );
+    const { team } = this.context;
+    this.context.router.history.push(`/${team.slug}/keys/details/${key.id}`);
   };
 
   private _openEditModal = (key: IKey) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/keys/edit/${key.id}`
-    );
+    const { team } = this.context;
+    this.context.router.history.push(`/${team.slug}/keys/edit/${key.id}`);
   };
+
+  private _openAssociate = () => {
+    this.context.router.history.push(`${this._getBaseUrl()}/keys/associate`);
+  }
 
   private _closeModals = () => {
     this.context.router.history.push(`${this._getBaseUrl()}/keys`);
@@ -222,13 +268,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const { person, space } = this.props;
     const slug = this.context.team.slug;
 
-    if(!!person)
-    {
+    if(!!person) {
       return `/${slug}/people/details/${person.id}`;
     }
 
-    if(!!space)
-    {
+    if(!!space) {
       return `/${slug}/spaces/details/${space.id}`;
     }
 

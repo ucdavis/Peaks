@@ -5,7 +5,7 @@ import ListActionsDropdown from "../ListActionsDropdown";
 
 interface IProps {
   keyEntity: IKey;
-  onRevoke?: (key: IKey) => void;
+  onDisassociate?: (key: IKey) => void;
   onAdd?: (key: IKey) => void;
   showDetails?: (key: IKey) => void;
   onEdit?: (key: IKey) => void;
@@ -17,7 +17,6 @@ export default class KeyListItem extends React.Component<IProps, {}> {
 
     let total = 0;
     let available = 0;
-
 
     return (
       <tr>
@@ -34,6 +33,11 @@ export default class KeyListItem extends React.Component<IProps, {}> {
             onEdit={
               !!this.props.onEdit
                 ? () => this.props.onEdit(keyEntity)
+                : null
+            }
+            onRevoke={
+              !!this.props.onDisassociate
+                ? () => this.props.onDisassociate(keyEntity)
                 : null
             }
           />
