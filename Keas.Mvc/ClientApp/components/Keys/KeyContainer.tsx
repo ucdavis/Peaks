@@ -14,7 +14,6 @@ import {PermissionsUtil} from "../../util/permissions";
 interface IState {
   loading: boolean;
   keys: IKey[]; // either key assigned to this person, or all team keys
-  activeKey?: IKey;
 }
 
 interface IProps {
@@ -72,17 +71,17 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       return <h2>Loading...</h2>;
     }
 
-    const { activeKey } = this.state;
-
     const { keyAction } = this.context.router.route.match.params;
     
     return (
       <div className="card keys-color">
         <div className="card-header-keys">
-          <div className="card-head"><h2><i className="fas fa-key fa-xs"/> Keys</h2></div>
+          <div className="card-head">
+            <h2><i className="fas fa-key fa-xs"/> Keys</h2>
+          </div>
         </div>
         <div className="card-content">
-            {!keyAction && !activeKey &&
+            { keyAction !== "details" &&
                 this._renderTableView()
             }
             { keyAction === "details" &&
