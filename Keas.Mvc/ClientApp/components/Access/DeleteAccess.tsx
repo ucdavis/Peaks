@@ -58,7 +58,7 @@ export default class DeleteAccess extends React.Component<IProps, IState> {
                     <ModalFooter>
                     <Button
                         color="primary"
-                        onClick={() => this._deleteAccess()}
+                        onClick={this._deleteAccess}
                         disabled={this.state.submitting}
                     >
                         Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}

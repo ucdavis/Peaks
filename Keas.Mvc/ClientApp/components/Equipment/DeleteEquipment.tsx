@@ -59,7 +59,7 @@ export default class DeleteEquipment extends React.Component<IProps, IState> {
                     <ModalFooter>
                     <Button
                         color="primary"
-                        onClick={() => this._deleteEquipment()}
+                        onClick={this._deleteEquipment}
                         disabled={this.state.submitting}
                     >
                         Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
