@@ -303,3 +303,5 @@ __pycache__/
 *.xsd.cs
 
 Keas\.Mvc/package-lock\.json
+
+\.vscode/settings\.json
