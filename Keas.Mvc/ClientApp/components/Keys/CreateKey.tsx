@@ -7,7 +7,7 @@ import {
   ModalFooter,
 } from "reactstrap";
 
-import { AppContext, IKey, IKeyAssignment, IPerson } from "../../Types";
+import { AppContext, IKey } from "../../Types";
 import KeyEditValues from "./KeyEditValues";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -27,17 +27,26 @@ interface IState {
 }
 
 export default class CreateKey extends React.Component<IProps, IState> {
+
   public static contextTypes = {
     fetch: PropTypes.func,
     team: PropTypes.object
-  };
+  }
+
   public context: AppContext;
+
   constructor(props: IProps) {
     super(props);
 
     this.state = {
       error: "",
-      key: null,
+      key: {
+        id: 0,
+        code: "",
+        name: "",
+        teamId: 0,
+        serials: [],
+      },
       submitting: false,
       validState: false
     };
@@ -60,19 +69,15 @@ export default class CreateKey extends React.Component<IProps, IState> {
         <div className="modal-header row justify-content-between">
           <h2>Create Key</h2>
           <Button color="link" onClick={this._closeModal}>
-          <i className="fas fa-times fa-lg"/>
+            <i className="fas fa-times fa-lg"/>
           </Button>
         </div>
         <ModalBody>
-          <div className="container-fluid">
-            <form>
-              <KeyEditValues
-                selectedKey={this.state.key}
-                changeProperty={this._changeProperty}
-                disableEditing={false}
-              />
-            </form>
-          </div>
+            <KeyEditValues
+              selectedKey={this.state.key}
+              changeProperty={this._changeProperty}
+              disableEditing={false}
+            />
         </ModalBody>
         <ModalFooter>
           <Button
@@ -100,7 +105,13 @@ export default class CreateKey extends React.Component<IProps, IState> {
   private _closeModal = () => {
     this.setState({
       error: "",
-      key: null,
+      key: {
+        id: 0,
+        code: "",
+        name: "",
+        teamId: 0,
+        serials: [],
+      },
       submitting: false,
       validState: false
     });
@@ -120,18 +131,26 @@ export default class CreateKey extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
+    const { key } = this.state;
+    
     let valid = true;
     let error = "";
-    if (!this.state.key) {
+
+    if (!key) {
       valid = false;
-    } else if ( !this.state.key.code){
+    }
+    else if (!key.code) {
       valid = false;
       error = "You must give this key a name.";
-    } else if(this.state.key.code.length > 64)
-    {
+    }
+    else if (key.code.length > 64) {
       valid = false;
       error = "The name you have chosen is too long";
     }
-    this.setState({ validState: valid, error });
+
+    this.setState({
+      error,
+      validState: valid,
+    });
   };
 }

@@ -6,7 +6,7 @@ import ListActionsDropdown from "../ListActionsDropdown";
 interface IProps {
   keySerial: IKeySerial;
   onRevoke?: (key: IKeySerial) => void;
-  onAdd?: (key: IKeySerial) => void;
+  onAssign?: (key: IKeySerial) => void;
   showDetails?: (key: IKeySerial) => void;
   onEdit?: (key: IKeySerial) => void;
 }
@@ -19,7 +19,8 @@ export default class KeyListItem extends React.Component<IProps, {}> {
       <tr>
         <td>{keySerial.key.code}</td>
         <td>{keySerial.number}</td>
-        <td>{keySerial.assignment ? "Assigned" : "Available"}</td>
+        <td>{keySerial.assignment ? keySerial.assignment.person.name : ""}</td>
+        <td>{keySerial.assignment ? keySerial.assignment.expiresAt : ""}</td>
         <td>
           <ListActionsDropdown
             showDetails={
@@ -27,9 +28,19 @@ export default class KeyListItem extends React.Component<IProps, {}> {
                 ? () => this.props.showDetails(keySerial)
                 : null
             }
+            onAdd={
+              (!!this.props.onAssign && !keySerial.assignment)
+                ? () => this.props.onAssign(keySerial)
+                : null
+            }
             onEdit={
               !!this.props.onEdit
                 ? () => this.props.onEdit(keySerial)
+                : null
+            }
+            onRevoke={
+              (!!this.props.onRevoke && keySerial.assignment)
+                ? () => this.props.onRevoke(keySerial)
                 : null
             }
           />

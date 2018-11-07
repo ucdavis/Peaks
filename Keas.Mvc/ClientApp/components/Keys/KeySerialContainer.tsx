@@ -10,6 +10,7 @@ import KeySerialList from "./KeySerialList";
 import KeySerialDetails from "./KeySerialDetails";
 
 import {PermissionsUtil} from "../../util/permissions";
+import CreateKeySerial from "./CreateKeySerial";
 
 interface IState {
   keySerials: IKeySerial[];
@@ -50,7 +51,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     let keyFetchUrl =  "";
     if(!!selectedPerson)
     {
-      keyFetchUrl = `/api/${this.context.team.slug}/keySerials/listassigned?personid=${selectedPerson.id}`;
+      keyFetchUrl = `/api/${this.context.team.slug}/keySerials/getforperson?personid=${selectedPerson.id}`;
     }
     else if(!!selectedKey)
     {
@@ -67,6 +68,8 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
   }
 
   public render() {
+    const { selectedKey } = this.props;
+
     if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
         return (
             <Denied viewName="Keys" />
@@ -91,28 +94,29 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
           <KeySerialList
             keySerials={this.state.keySerials}
             onRevoke={this._revokeKeySerial}
-            onAdd={this._openAssignModal}
+            onAssign={this._openAssignModal}
             onEdit={this._openEditModal}
             showDetails={this._openDetailsModal}
           />
           <AssignKeySerial
-            onCreate={this._createAndMaybeAssignKey}
-            modal={activeAsset && (action === "create" || action === "assign")}
-            onAddNew={this._openCreateModal}
-            closeModal={this._closeModals}
-            selectedKeySerial={selectedKeySerial}
             person={this.props.selectedPerson}
+            selectedKey={selectedKey}
+            selectedKeySerial={selectedKeySerial}
+            onCreate={this._createAndMaybeAssignKey}
+            isModalOpen={activeAsset && (action === "create" || action === "assign")}
+            onOpenModal={this._openCreateModal}
+            closeModal={this._closeModals}
           />
           <KeySerialDetails
             selectedKeySerial={selectedKeySerial}
-            modal={activeAsset && action === "details" && !!selectedKeySerial}
+            isModalOpen={activeAsset && action === "details" && !!selectedKeySerial}
             closeModal={this._closeModals}
           />
           <EditKeySerial
-            onEdit={this._editKeySerial}
-            closeModal={this._closeModals}
-            modal={activeAsset && (action === "edit")}
             selectedKeySerial={selectedKeySerial}
+            onOpenModal={this._editKeySerial}
+            closeModal={this._closeModals}
+            isModalOpen={activeAsset && (action === "edit")}
           />
         </div>
       </div>
@@ -128,11 +132,11 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
     let updateTotalAssetCount = false;
     let updateInUseAssetCount = false;
-    // call API to create a key, then assign it if there is a person to assign to
+
     // if we are creating a new key
     if (keySerial.id === 0) {
       keySerial.key.teamId = this.context.team.id;
-      keySerial = await this.context.fetch(`/api/${this.context.team.slug}/keys/create`, {
+      keySerial = await this.context.fetch(`/api/${this.context.team.slug}/keyserials/create`, {
         body: JSON.stringify(keySerial),
         method: "POST"
       });
@@ -141,34 +145,33 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/api/${team.slug}/keys/assign?keyId=${keySerial.id}&personId=${person.id}&date=${date}`;
+      const assignUrl = `/api/${team.slug}/keyserials/assign?serialId=${keySerial.id}&personId=${person.id}&date=${date}`;
 
-      if(!keySerial.assignment)
-      {
+      if (!keySerial.assignment) {
         // don't count as assigning unless this is a new one
         updateInUseAssetCount = true;
       }
+
       keySerial = await this.context.fetch(assignUrl, {
         method: "POST"
       });
+
       keySerial.assignment.person = person;
     }
 
     const index = this.state.keySerials.findIndex(x => x.id === keySerial.id);
+    const updateKeySerials = [...this.state.keySerials];
     if (index !== -1) {
       // update already existing entry in key
-      const updateKeySerials = [...this.state.keySerials];
       updateKeySerials[index] = keySerial;
-
-      this.setState({
-        ...this.state,
-        keySerials: updateKeySerials
-      });
-    } else {
-      this.setState({
-        keySerials: [...this.state.keySerials, keySerial]
-      });
     }
+    else {
+      updateKeySerials.push(keySerial);
+    }
+
+    this.setState({
+      keySerials: [...this.state.keySerials, keySerial]
+    });
 
     // if(updateTotalAssetCount && this.props.assetTotalUpdated)
     // {

@@ -6,8 +6,8 @@ import { IKeySerial } from "../../Types";
 
 interface IProps {
     keySerials: IKeySerial[];
+    onAssign?: (keySerial: IKeySerial) => void;
     onRevoke?: (keySerial: IKeySerial) => void;
-    onAdd?: (keySerial: IKeySerial) => void;
     showDetails?: (keySerial: IKeySerial) => void;
     onEdit?: (keySerial: IKeySerial) => void;
 }
@@ -22,7 +22,8 @@ export default class KeyList extends React.Component<IProps, {}> {
                     <tr>
                         <th>Code</th>
                         <th>Serial</th>
-                        <th>Available</th>
+                        <th>Assigned To</th>
+                        <th>Expiration</th>
                         <th className="list-actions">Actions</th>
                     </tr>
                 </thead>
@@ -37,7 +38,7 @@ export default class KeyList extends React.Component<IProps, {}> {
                 key={key.id}
                 keySerial={key}
                 onRevoke={this.props.onRevoke}
-                onAdd={this.props.onAdd}
+                onAssign={this.props.onAssign}
                 showDetails={this.props.showDetails}
                 onEdit={this.props.onEdit}
             />

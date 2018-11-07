@@ -12,7 +12,7 @@ import AccessContainer from "../Access/AccessContainer";
 import BioContainer from "./BioContainer";
 import EquipmentContainer from "../Equipment/EquipmentContainer";
 import HistoryContainer from "../History/HistoryContainer";
-import KeyContainer from "../Keys/KeyContainer";
+import KeySerialContainer from "../Keys/KeySerialContainer";
 import WorkstationContainer from "../Workstations/WorkstationContainer";
 import EditPerson from "./EditPerson";
 
@@ -45,14 +45,17 @@ export default class PersonDetails extends React.Component<IProps, {}> {
               <br/>
                 <div>
                         <BioContainer person={this.props.selectedPerson}/>
-                        <KeyContainer person={this.props.selectedPerson}
+                        <KeySerialContainer
+                            selectedPerson={this.props.selectedPerson}
                             assetInUseUpdated={this.props.inUseUpdated}
                             assetEdited={this.props.edited}
                         />
-                        <EquipmentContainer person={this.props.selectedPerson}
+                        <EquipmentContainer
+                            person={this.props.selectedPerson}
                             assetInUseUpdated={this.props.inUseUpdated}
                             assetEdited={this.props.edited}/>
-                        <AccessContainer person={this.props.selectedPerson}
+                        <AccessContainer
+                            person={this.props.selectedPerson}
                             assetInUseUpdated={this.props.inUseUpdated}
                             assetEdited={this.props.edited}/>
                         <WorkstationContainer

@@ -15,14 +15,14 @@ export default class KeyListItem extends React.Component<IProps, {}> {
   public render() {
     const { keyEntity } = this.props;
 
-    let total = 0;
-    let available = 0;
+    const total = keyEntity.serials.length;
+    const available = keyEntity.serials.filter(s => !s.assignment).length;
 
     return (
       <tr>
+        <td>{keyEntity.name}</td>
         <td>{keyEntity.code}</td>
-        <td>{total}</td>
-        <td>{available}</td>
+        <td className="text-right"><i className="fas fa-key"/> {available} / {total}</td>
         <td>
           <ListActionsDropdown
             showDetails={

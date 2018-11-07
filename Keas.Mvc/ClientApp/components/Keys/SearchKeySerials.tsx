@@ -2,9 +2,10 @@
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
-import { IKeySerial, AppContext } from "../../Types";
+import { IKey, IKeySerial, AppContext } from "../../Types";
 
 interface IProps {
+    selectedKey?: IKey;
     selectedKeySerial?: IKeySerial;
     onSelect: (keySerial: IKeySerial) => void;
     onDeselect: () => void;
@@ -22,7 +23,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
         fetch: PropTypes.func,
         person: PropTypes.object,
         team: PropTypes.object
-    };
+    }
 
     public context: AppContext;
 
@@ -55,59 +56,79 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
     }
 
     private _renderSelectKey = () => {
+        const { isSearchLoading, keySerials } = this.state;
+        return (
+            <AsyncTypeahead
+                isLoading={isSearchLoading}
+                minLength={1}
+                placeholder="Search for key by name or by serial number"
+                labelKey="number"
+                filterBy={() => true} // don't filter on top of our search
+                allowNew={true}
+                renderMenuItemChildren={this.renderItem}
+                onSearch={this.onSearch}
+                onChange={this.onChange}
+                options={keySerials}
+            />
+        );
+    }
 
+    private renderItem = (option: IKeySerial, props, index) => {
         return (
             <div>
-                <AsyncTypeahead
-                    isLoading={this.state.isSearchLoading}
-                    minLength={3}
-                    placeholder="Search for key by name or by serial number"
-                    labelKey="name"
-                    filterBy={() => true} // don't filter on top of our search
-                    allowNew={true}
-                    renderMenuItemChildren={(option, props, index) => (
-                        <div>
-                            <div>
-                                <Highlighter key="name" search={props.text}>
-                                    {option.name}
-                                </Highlighter>
-                            </div>
-                            <div>
-                                <small>
-                                    Serial Number:
-                                    <Highlighter key="serialNumber" search={props.text}>{option.serialNumber}</Highlighter>
-                                </small>
-                            </div>
-                        </div>
-                    )}
-                    onSearch={async query => {
-                        this.setState({ isSearchLoading: true });
-                        const results = await this.context.fetch(
-                            `/api/${this.context.team.slug}/keySerials/search?q=${query}`
-                        );
-                        this.setState({
-                            isSearchLoading: false,
-                            keySerials: results,
-                        });
-                    }}
-                    onChange={selected => {
-                        if (selected && selected.length === 1) {
-                            this._onSelected(selected[0]);
-                        }
-                    }}
-                    options={this.state.keySerials}
-                />
+                <div>
+                    <Highlighter search={props.text}>
+                        {option.key.name}
+                    </Highlighter>
+                    <span> - </span>
+                    <Highlighter search={props.text}>
+                        {option.key.code}
+                    </Highlighter>
+                </div>
+                <div>
+                    <small>
+                        <span>Serial Number: </span>
+                        <Highlighter search={props.text}>{option.number}</Highlighter>
+                    </small>
+                </div>
             </div>
         );
     }
 
-    private _onSelected = (keySerial: IKeySerial) => {
-        // onChange is called when deselected
-        if (keySerial == null || keySerial.number == null) {
+    private onSearch = async (query) => {
+        const { team } = this.context;
+
+        this.setState({ isSearchLoading: true });
+
+        const results = await this.context.fetch(`/api/${team.slug}/keySerials/search?q=${query}`);
+
+        this.setState({
+            isSearchLoading: false,
+            keySerials: results,
+        });
+    }
+
+    private onChange = (selected: any[]) => {
+        let keySerial: IKeySerial;
+
+        // check for empty
+        if (!selected || selected.length <= 0) {
             this.props.onDeselect();
-            return;
+        }
+        
+        // check for new selection
+        if (selected[0].customOption) {
+            keySerial = {
+                id: 0,
+                key: this.props.selectedKey,
+                number: selected[0].number,
+            };
+        }
+        else {
+            keySerial = selected[0];
         }
 
         this.props.onSelect(keySerial);
-    };
+        return;
+    }
 }

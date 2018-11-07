@@ -13,8 +13,8 @@ import KeySerialEditValues from "./KeySerialEditValues";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface IProps {
-  onEdit: (keySerial: IKeySerial) => void;
-  modal: boolean;
+  onOpenModal: (keySerial: IKeySerial) => void;
+  isModalOpen: boolean;
   closeModal: () => void;
   selectedKeySerial: IKeySerial;
 }
@@ -58,7 +58,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
     }
 
     return (
-      <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg" className="keys-color">
+      <Modal isOpen={this.props.isModalOpen} toggle={this._closeModal} size="lg" className="keys-color">
         <div className="modal-header row justify-content-between">
           <h2>Edit Key</h2>
           <Button color="link" onClick={this._closeModal}>
@@ -116,7 +116,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
     }
 
     this.setState({submitting: true})
-    await this.props.onEdit(this.state.keySerial);
+    await this.props.onOpenModal(this.state.keySerial);
 
     this._closeModal();
   };

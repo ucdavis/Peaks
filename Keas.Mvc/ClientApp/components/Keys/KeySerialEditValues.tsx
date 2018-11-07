@@ -3,7 +3,7 @@
 import { IKeySerial } from "../../Types";
 
 interface IProps {
-    selectedKeySerial: IKeySerial;
+    keySerial: IKeySerial;
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
     creating?: boolean;
@@ -12,8 +12,8 @@ interface IProps {
 export default class KeySerialEditValues extends React.Component<IProps, {}> {
 
     public render() {
-        const { selectedKeySerial } = this.props;
-        const numberValue = selectedKeySerial ? selectedKeySerial.number : "";
+        const { keySerial } = this.props;
+        const numberValue = keySerial ? keySerial.number : "";
 
         return (
             <div>

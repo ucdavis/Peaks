@@ -11,18 +11,19 @@ import * as moment from "moment";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { AppContext, IKey, IKeyAssignment, IPerson, IKeySerial } from "../../Types";
+import { AppContext, IKey, IKeySerialAssignment, IPerson, IKeySerial } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
 import SearchKeySerial from "./SearchKeySerials";
 
 
 interface IProps {
-  onAddNew: () => void;
-  onCreate: (person: IPerson, keySerial: IKeySerial, date: any) => void;
-  modal: boolean;
-  closeModal: () => void;
-  selectedKeySerial: IKeySerial;
   person?: IPerson;
+  selectedKey: IKey;
+  selectedKeySerial: IKeySerial;
+  onCreate: (person: IPerson, keySerial: IKeySerial, date: any) => void;
+  isModalOpen: boolean;
+  onOpenModal: () => void;
+  closeModal: () => void;
 }
 
 interface IState {
@@ -85,7 +86,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
   public render() {
     return (
       <div>
-        <Button color="link" onClick={this.props.onAddNew}>
+        <Button color="link" onClick={this.props.onOpenModal}>
           <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add Key Serial
         </Button>
         {this.renderModal()}
@@ -94,15 +95,15 @@ export default class AssignKey extends React.Component<IProps, IState> {
   }
   
   private renderModal() {
-    const { } = this.props;
-    const { keySerial } = this.state;
+    const { isModalOpen, selectedKey } = this.props;
+    const { person, keySerial } = this.state;
 
     return (
-      <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg" className="keys-color">
+      <Modal isOpen={isModalOpen} toggle={this._closeModal} size="lg" className="keys-color">
         <div className="modal-header row justify-content-between">
-          <h2>Assign Key</h2>
+          <h2>Assign Key Serial</h2>
           <Button color="link" onClick={this._closeModal}>
-          <i className="fas fa-times fa-lg"/>
+            <i className="fas fa-times fa-lg"/>
           </Button>
         </div>
         <ModalBody>
@@ -111,7 +112,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
               <div className="form-group">
                 <label htmlFor="assignto">Assign To</label>
                 <AssignPerson
-                  person={this.state.person}
+                  person={person}
                   onSelect={this._onSelectPerson}
                 />
               </div>
@@ -119,12 +120,13 @@ export default class AssignKey extends React.Component<IProps, IState> {
               <div className="form-group">
                 <label>Pick an key serial to assign</label>
                 <SearchKeySerial
+                  selectedKey={selectedKey}
                   selectedKeySerial={keySerial}
                   onSelect={this._onSelected}
                   onDeselect={this._onDeselected}
                 />
               </div>
-              {(!!this.state.person || !!this.props.person) && (
+              {(!!person || !!this.props.person) && (
                 <div className="form-group">
                   <label>Set the expiration date</label>
                   <DatePicker
@@ -182,6 +184,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
   private _onSelected = (keySerial: IKeySerial) => {
     // if this key is not already assigned
+
 
     // TODO: more validation of name
     if (keySerial.number.length > 64) {
