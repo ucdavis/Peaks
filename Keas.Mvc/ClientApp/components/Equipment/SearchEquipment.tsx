@@ -1,7 +1,7 @@
 ﻿import PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
-import {Button, Input, InputGroup, InputGroupAddon} from "reactstrap";
+import {Button} from "reactstrap";
 
 import { AppContext, IEquipment, IEquipmentLabel, ISpace } from "../../Types";
 
@@ -108,18 +108,8 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
             this.props.onDeselect();
         }
         else {
-            // if teamId is not set, this is a new equipment
             this.props.onSelect({
-                attributes: equipmentLabel.equipment.attributes,
-                id: equipmentLabel.equipment.id,
-                make: equipmentLabel.equipment.make,
-                model: equipmentLabel.equipment.model,
-                name: equipmentLabel.equipment.name,
-                serialNumber: equipmentLabel.equipment.serialNumber,
-                space: equipmentLabel.equipment.space,
-                tags: equipmentLabel.equipment.tags,
-                teamId: equipmentLabel.equipment.teamId,
-                type: equipmentLabel.equipment.type
+                ...equipmentLabel.equipment
             });
         }
     };

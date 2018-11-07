@@ -12,7 +12,6 @@ interface IProps {
     selectedAccess: IAccess;
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
-    creating?: boolean;
     onRevoke: (accessAssignment: IAccessAssignment) => void;
     tags?: string[];
 }
@@ -52,7 +51,6 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
 
         return (
             <div>
-                {!this.props.creating &&
                 <div className="form-group">
                     <label>Item</label>
                     <input type="text"
@@ -61,7 +59,7 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
                         value={this.props.selectedAccess.name ? this.props.selectedAccess.name : ""}
                         onChange={(e) => this.props.changeProperty("name", e.target.value)}
                     />
-                </div>}
+                </div>
                 <div className="form-group">
                     <label>Tags</label>
                     <SearchTags 

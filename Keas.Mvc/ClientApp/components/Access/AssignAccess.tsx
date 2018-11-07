@@ -1,23 +1,18 @@
+import * as moment from "moment";
 import PropTypes from "prop-types";
 import * as React from "react";
+import DatePicker from "react-datepicker";
+import 'react-datepicker/dist/react-datepicker.css';
 import {
   Button,
-  ListGroup,
-  ListGroupItem,
   Modal,
   ModalBody,
   ModalFooter,
-  ModalHeader
 } from "reactstrap";
-
-import * as moment from "moment";
-import DatePicker from "react-datepicker";
 import { AppContext, IAccess, IAccessAssignment, IPerson } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
 import AccessEditValues from "./AccessEditValues";
 import SearchAccess from "./SearchAccess";
-
-import 'react-datepicker/dist/react-datepicker.css';
 
 interface IProps {
     closeModal: () => void;
@@ -93,28 +88,39 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                               <div className="form-group">
                                   <label>Pick an access to assign</label>
                                   <SearchAccess
-                                      allowNew={true}
                                       selectedAccess={this.state.access}
                                       onSelect={this._onSelected}
                                       onDeselect={this._onDeselected} />
                               </div>
-                              {!this.props.selectedAccess || !this.props.selectedAccess.teamId && // if we are creating a new access, edit properties
-                                  <AccessEditValues
-                                  selectedAccess={this.props.selectedAccess}
-                                  changeProperty={this._changeProperty}
-                                  disableEditing={false}
-                                  creating={true}
-                                  onRevoke={null}
-                                  tags={this.props.tags}
-                                  />
+                              {!!this.props.selectedAccess && !this.props.selectedAccess.teamId && // if we are creating a new access, edit properties
+                                <div>
+                                    <div className="row justify-content-between">
+                                        <h3>Create New Access</h3>
+                                        <Button className="btn btn-link" onClick={() => this._onDeselected()}>
+                                            Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
+                                    </div>
+                                    <AccessEditValues
+                                    selectedAccess={this.props.selectedAccess}
+                                    changeProperty={this._changeProperty}
+                                    disableEditing={false}
+                                    onRevoke={null}
+                                    tags={this.props.tags}
+                                    />
+                                </div>
                               }
                               {!!this.props.selectedAccess && !!this.props.selectedAccess.teamId &&
+                                  <div>
+                                  <div className="row justify-content-between">
+                                      <h3>Assign Exisiting Access</h3>
+                                      <Button className="btn btn-link" onClick={() => this._onDeselected()}>
+                                          Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
+                                  </div>
                                   <AccessEditValues
                                   selectedAccess={this.props.selectedAccess}
                                   disableEditing={true}
-                                  creating={true}
                                   tags={this.props.tags}
                                   onRevoke={null}/>
+                              </div>
                               }
 
                               {(!!this.state.person || !!this.props.person) &&
