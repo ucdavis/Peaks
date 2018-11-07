@@ -43,7 +43,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
             <AsyncTypeahead
                 defaultSelected={defaultKey ? [defaultKey] : []}
                 isLoading={isSearchLoading}
-                minLength={3}
+                minLength={2}
                 placeholder="Search for key by name or by serial number"
                 labelKey="name"
                 filterBy={() => true} // don't filter on top of our search
