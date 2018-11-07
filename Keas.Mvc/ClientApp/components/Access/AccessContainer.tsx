@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { AppContext, IAccess, IAccessAssignment, IPerson, ISpace } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
