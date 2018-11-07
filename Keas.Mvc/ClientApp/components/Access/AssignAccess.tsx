@@ -153,7 +153,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                 ...this.state.access,
                 [property]: value
             }
-        });
+        }, this._validateState);
     };
 
     // clear everything out on close
@@ -218,10 +218,12 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
     private _validateState = () => {
         let valid = true;
-        if (!this.state.access) {
+        if (!this.state.access || this.state.access.name === "") {
             valid = false;
         } else if ((!!this.state.person || !!this.props.person) &&
             !this._checkValidAssignmentToPerson()) {
+            valid = false;
+        } else if (this.state.access.teamId !== 0 && !this.state.person && !this.props.person) { // if not a new access, require a person
             valid = false;
         } else if (this.state.error !== "") {
             valid = false;

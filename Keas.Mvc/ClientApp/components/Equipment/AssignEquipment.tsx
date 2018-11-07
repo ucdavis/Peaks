@@ -196,7 +196,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         ...this.state.equipment,
         attributes
       }
-    });
+    }, this._validateState);
   }
 
   // clear everything out on close
@@ -259,7 +259,9 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   private _validateState = () => {
     let valid = true;
-    if (!this.state.equipment) {
+    if (!this.state.equipment || this.state.equipment.name === "") {
+      valid = false;
+    } else if (this.state.equipment.teamId !== 0 && !this.state.person && !this.props.person) { // if not a new equipment, require a person
       valid = false;
     } else if (this.state.error !== "") {
       valid = false;
