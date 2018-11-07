@@ -84,7 +84,9 @@ export default class SearchAccess extends React.Component<IProps, IState> {
                 </div>
                 <div>or</div>
                 <div>
-                    <Button color="link" onClick={() => {this._createNew()}}><i className="fas fa-plus fa-sm" aria-hidden="true" /> Create New Equipment</Button>    
+                    <Button color="link" onClick={() => {this._createNew()}}>
+                        <i className="fas fa-plus fa-sm" aria-hidden="true" /> Create New Access
+                        </Button>    
                 </div>
             </div>
         );
