@@ -122,5 +122,24 @@ namespace Keas.Mvc.Controllers.Api
             }
             return BadRequest(ModelState);
         }
+
+        public async Task<IActionResult> Delete([FromBody]Access access)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(!access.Active || access.Assignments != null)
+            {
+                return BadRequest(ModelState);
+            }
+            _context.Access.Update(access);
+            access.Active = false;
+            await _context.SaveChangesAsync();
+            // TODO: track history?
+            return Json(null);
+
+        }
     }
 }

@@ -9,6 +9,7 @@ import AccessList from "./AccessList";
 import AccessTable from "./AccessTable";
 import AssignAccess from "./AssignAccess";
 import EditAccess from "./EditAccess";
+import DeleteAccess from "./DeleteAccess";
 
 interface IState {
     accesses: IAccess[]; // either access assigned to this person, or all team access
@@ -97,6 +98,13 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                     onRevoke={this._revokeAccess}
                     tags={this.state.tags}
                     />
+                <DeleteAccess 
+                    selectedAccess={detailAccess}
+                    onRevoke={this._revokeAccess}
+                    closeModal={this._closeModals}
+                    deleteAccess={this._deleteAccess}
+                    modal={activeAsset && action === "delete"}
+                    />
         </div>
       </div>
     );
@@ -111,6 +119,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
             access={this.state.accesses}
             personView={this.props.person ? true : false}
             onRevoke={this._openRevokeModal}
+            onDelete={this._openDeleteModal}
             onAdd={this._openAssignModal}
             onEdit={this._openEditModal}
             showDetails={this._openDetailsModal}
@@ -132,6 +141,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
           <AccessTable
             accesses={filteredAccess}
             onRevoke={this._openRevokeModal}
+            onDelete={this._openDeleteModal}
             onAdd={this._openAssignModal}
             onEdit={this._openEditModal}
             showDetails={this._openDetailsModal}
@@ -247,6 +257,46 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         }
       }
   }
+  
+  private _deleteAccess = async (access: IAccess) => {
+
+    if(access.assignments.length > 0)
+    {
+        access.assignments.forEach(async x => {
+            await this.context.fetch(`/api/${this.context.team.slug}/access/revoke`, {
+                body: JSON.stringify(x),
+                method: "POST"
+              });
+
+              if(this.props.assetInUseUpdated)
+              {
+                  this.props.assetInUseUpdated("access", this.props.space ? this.props.space.id : null,
+                  this.props.person ? this.props.person.id : null, -1);
+              }
+        })
+
+        access.assignments = null;
+    }
+
+    const deleted: IAccess = await this.context.fetch(`/api/${this.context.team.slug}/access/delete`, {
+      body: JSON.stringify(access),
+      method: "POST"
+    });
+
+    // remove from state
+    const index = this.state.accesses.indexOf(access);
+    if (index > -1) {
+      const shallowCopy = [...this.state.accesses];
+      shallowCopy.splice(index, 1);
+      this.setState({ accesses: shallowCopy });
+
+      if(this.props.assetTotalUpdated)
+      {
+        this.props.assetTotalUpdated("access", this.props.space ? this.props.space.id : null,
+          this.props.person ? this.props.person.id : null, -1);
+      }
+    }
+  };
 
   private _editAccess = async (access: IAccess) =>
   {
@@ -310,6 +360,12 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   private _openEditModal = (access: IAccess) => {
     this.context.router.history.push(
       `${this._getBaseUrl()}/access/edit/${access.id}`
+    );
+  };
+  
+  private _openDeleteModal = (access: IAccess) => {
+    this.context.router.history.push(
+      `${this._getBaseUrl()}/access/delete/${access.id}`
     );
   };
 

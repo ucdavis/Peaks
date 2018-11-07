@@ -203,7 +203,7 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            if(!equipment.Active)
+            if(!equipment.Active || equipment.Assignment != null) // assignment should have been removed
             {
                 return BadRequest(ModelState);
             }
