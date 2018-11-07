@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 
 import { ISpace, IWorkstation } from "../../Types";
-import AssignSpace from "../Spaces/AssignSpace";
+import SearchSpaces from "../Spaces/SearchSpaces";
 import SearchTags from "../Tags/SearchTags";
 
 import { DateUtil } from "../../util/dates";
@@ -70,7 +70,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                     <div className="form-group">
                         <label>Room</label>
 
-                    <AssignSpace onSelect={(space) => this.props.changeProperty("space", space)} 
+                    <SearchSpaces onSelect={(space) => this.props.changeProperty("space", space)} 
                         defaultSpace={this.props.space ? this.props.space : this.props.selectedWorkstation.space} />
                     </div>}
               
