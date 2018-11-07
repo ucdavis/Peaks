@@ -1,4 +1,4 @@
-using Keas.Core.Data;
+﻿using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -125,9 +125,11 @@ namespace Keas.Mvc.Controllers.Api
             var serial = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team && x.Active)
                 .Include(x => x.Assignment)
+                .Include(x => x.Key)
                 .SingleAsync(x => x.Id == serialId);
 
-            if(serial.Assignment != null)
+            // check for existing assignment
+            if (serial.Assignment != null)
             {
                 // TODO: not sure what's going on here
                 _context.KeyAssignments.Update(serial.Assignment);
