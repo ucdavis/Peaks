@@ -95,7 +95,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                     <div>
                                         <div className="row justify-content-between">
                                             <h3>Create New Access</h3>
-                                            <Button className="btn btn-link" onClick={() => this._onDeselected()}>
+                                            <Button className="btn btn-link" onClick={this._onDeselected}>
                                                 Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
                                         </div>
                                         <AccessEditValues
@@ -111,7 +111,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                     <div>
                                         <div className="row justify-content-between">
                                             <h3>Assign Exisiting Access</h3>
-                                            <Button className="btn btn-link" onClick={() => this._onDeselected()}>
+                                            <Button className="btn btn-link" onClick={() => this._onDeselected}>
                                                 Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
                                         </div>
                                         <AccessEditValues

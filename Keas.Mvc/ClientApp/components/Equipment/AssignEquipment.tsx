@@ -117,7 +117,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     <div>
                     <div className="row justify-content-between">
                       <h3>Create New Equipment</h3>
-                      <Button className="btn btn-link" onClick={() => this._onDeselected()}>
+                      <Button className="btn btn-link" onClick={this._onDeselected}>
                         Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
                     </div>
 
@@ -137,7 +137,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     <div>
                       <div className="row justify-content-between">
                         <h3>Assign Existing Equipment</h3>
-                        <Button className="btn btn-link" onClick={() => this._onDeselected()}>
+                        <Button className="btn btn-link" onClick={this._onDeselected}>
                         Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
                       </div>
 
