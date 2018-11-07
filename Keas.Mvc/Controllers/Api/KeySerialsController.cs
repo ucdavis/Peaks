@@ -1,4 +1,4 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -65,6 +65,40 @@ namespace Keas.Mvc.Controllers.Api
                 .ToArrayAsync();
 
             return Json(keySerials);
+        }
+
+        public async Task<IActionResult> Create([FromBody] KeySerial keySerial)
+        {
+            // TODO Make sure user has permissions
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            // get key
+            var key = await _context.Keys
+                .Where(x => x.Team.Slug == Team && x.Active)
+                .Include(k => k.Serials)
+                .SingleOrDefaultAsync(k => k.Id == keySerial.Key.Id);
+
+            if (key == null)
+            {
+                return BadRequest();
+            }
+
+            // check for duplicate serial
+            if (key.Serials.Any(s => s.Number == keySerial.Number))
+            {
+                return BadRequest();
+            }
+
+            // add key serial
+            key.Serials.Add(keySerial);
+            await _context.SaveChangesAsync();
+
+            //await _eventService.TrackCreateKeySerial(key);
+
+            return Json(keySerial);
         }
 
         // Now returns serial. Need to pass in serialID
