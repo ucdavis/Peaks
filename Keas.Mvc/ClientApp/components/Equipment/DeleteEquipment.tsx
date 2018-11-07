@@ -59,7 +59,7 @@ export default class DeleteEquipment extends React.Component<IProps, IState> {
                     <ModalFooter>
                     <Button
                         color="primary"
-                        onClick={() => this._revokeEquipment()}
+                        onClick={() => this._deleteEquipment()}
                         disabled={this.state.submitting}
                     >
                         Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
@@ -71,7 +71,7 @@ export default class DeleteEquipment extends React.Component<IProps, IState> {
         );
     }
 
-    private _revokeEquipment = async () => {
+    private _deleteEquipment = async () => {
         if(this.props.selectedEquipment.assignment !== null &&
             !confirm("This equipment is currently assigned, are you sure you want to delete it?")){
             return false;
