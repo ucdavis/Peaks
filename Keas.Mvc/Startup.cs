@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -147,8 +147,8 @@ namespace Keas.Mvc
                 app.UseDeveloperExceptionPage();
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
-                    HotModuleReplacement = true,
-                    ReactHotModuleReplacement = true
+                    //HotModuleReplacement = true,
+                    //ReactHotModuleReplacement = true
                 });
             }
             else
