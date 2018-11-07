@@ -72,18 +72,19 @@ export interface ITeam {
 export interface IKey {
   id: number;
   teamId: number;
+  name: string;
   code: string;
-  keySerials: IKeySerial[];
+  serials: IKeySerial[];
 }
 
 export interface IKeySerial {
   id: number;
   number: string;
   key: IKey;
-  assignment?: IKeyAssignment;
+  assignment?: IKeySerialAssignment;
 }
 
-export interface IKeyAssignment {
+export interface IKeySerialAssignment {
   id: number;
   expiresAt: Date;
   keySerial: IKeySerial;
