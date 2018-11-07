@@ -9,8 +9,8 @@ import {
 
 import { AppContext, IKey, ISpace } from "../../Types";
 
-import SearchKeys from "../Keys/SearchKeys";
-import SearchSpaces from "./SearchSpaces";
+import SearchKeys from "./SearchKeys";
+import SearchSpaces from "../Spaces/SearchSpaces";
 
 
 interface IProps {
@@ -65,7 +65,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     return (
       <div>
         <Button color="link" onClick={this.props.openModal}>
-          <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add Space
+          <i className="fas fa-plus fa-sm" aria-hidden="true" /> Associate
         </Button>
         { this.renderModal() }
       </div>

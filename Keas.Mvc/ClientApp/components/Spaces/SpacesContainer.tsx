@@ -8,7 +8,7 @@ import { AppContext, ISpace, ISpaceInfo, IKey } from "../../Types";
 import Denied from "../Shared/Denied";
 import SearchTags from "../Tags/SearchTags";
 
-import AssociateSpace from "./AssociateSpace";
+import AssociateSpace from "../Keys/AssociateSpace";
 import SpacesDetails from "./SpacesDetails";
 import SpacesList from "./SpacesList";
 import SpacesTable from "./SpacesTable";
