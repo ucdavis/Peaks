@@ -1,7 +1,7 @@
 ﻿import { DateUtil } from "../../util/dates";
 import * as React from "react";
 import { IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
-import AssignSpace from "../Spaces/AssignSpace";
+import SearchSpaces from "../Spaces/SearchSpaces";
 import SearchTags from "../Tags/SearchTags";
 import EquipmentAttributes from "./EquipmentAttributes";
 
@@ -112,7 +112,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     // if we are editing or creating 
                     <div className="form-group">
                         <label>Room</label>
-                    <AssignSpace
+                    <SearchSpaces
                         onSelect={this._selectSpace} 
                         defaultSpace={this.props.space ? this.props.space : this.props.selectedEquipment.space} />
                     </div>}
