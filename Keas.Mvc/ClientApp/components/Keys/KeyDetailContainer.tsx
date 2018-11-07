@@ -2,10 +2,12 @@ import * as React from "react";
 import {
     Button,
 } from "reactstrap";
+
 import { IKey } from "../../Types";
+
 import HistoryContainer from "../History/HistoryContainer";
 import KeySerialContainer from "./KeySerialContainer";
-
+import SpacesContainer from "../Spaces/SpacesContainer";
 
 interface IProps {
     goBack: () => void;
@@ -31,6 +33,7 @@ export default class KeyDetailContainer extends React.Component<IProps, {}> {
                     </Button>
                 </div>
                 <KeySerialContainer selectedKey={selectedKey} />
+                <SpacesContainer selectedKey={selectedKey} />
                 <HistoryContainer controller="keys" id={selectedKey.id} />
             </div>
         );
