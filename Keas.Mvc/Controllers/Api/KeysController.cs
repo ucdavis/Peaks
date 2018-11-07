@@ -56,7 +56,7 @@ namespace Keas.Mvc.Controllers.Api
         // list all keys for a space
         public async Task<IActionResult> GetKeysInSpace(int spaceId)
         {
-            var keys = await _context.KeyXSpaces
+            var joins = await _context.KeyXSpaces
                 .Where(x => x.Space.Id == spaceId
                         && x.Key.Team.Slug == Team
                         && x.Key.Active)
@@ -64,9 +64,12 @@ namespace Keas.Mvc.Controllers.Api
                     .ThenInclude(key => key.Serials)
                         .ThenInclude(serials => serials.Assignment)
                             .ThenInclude(assignment => assignment.Person.User)
-                .Select(x => x.Key)
                 .AsNoTracking()
                 .ToListAsync();
+
+            // you can't do both select and include
+            // so map after fetch
+            var keys = joins.Select(k => k.Key);
 
             return Json(keys);
         }
@@ -74,12 +77,16 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Create([FromBody]Key key)
         {
             // TODO Make sure user has permissions
-            // TODO Does the space come with this request? Or handle in separate action?
-            // TODO Does the serials come with this request? Or handle in separate action?
             if (!ModelState.IsValid)
             {
-                return Json(key);
+                return BadRequest();
             }
+
+            // get and assign team
+            var team = await _context.Teams
+                .SingleAsync(t => t.Slug == Team);
+
+            key.Team = team;
 
             _context.Keys.Add(key);
             await _context.SaveChangesAsync();
