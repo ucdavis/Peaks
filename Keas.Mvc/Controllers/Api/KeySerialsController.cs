@@ -1,4 +1,4 @@
-using Keas.Core.Data;
+﻿using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -37,46 +37,34 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keys);
         }
 
-        public async Task<IActionResult> ListAssigned(int personId)
-        {
-            var keyAssignments = await _context.KeySerials
-                .Where(x => x.Assignment.PersonId == personId && x.Key.Team.Slug == Team)
-                .Include(x => x.Assignment)
-                .ThenInclude(assingment => assingment.Person.User)
-                .Include(x => x.Key.Team)
-                .AsNoTracking()
-                .ToArrayAsync();
-            return Json(keyAssignments);
-        }
-
-        // List all keys for a team
-        public async Task<IActionResult> List()
-        {
-            var keys = await _context.KeySerials
-                .Where(x => x.Key.Team.Slug == Team)
-                .Include(x => x.Assignment)
-                .ThenInclude(assignment => assignment.Person.User)
-                .Include(x => x.Key.Team)
-                .AsNoTracking()
-                .ToArrayAsync();
-
-            return Json(keys);
-        }
-
-        // list all serias for a key
+        // list all serials for a key
         public async Task<IActionResult> GetForKey(int keyid)
         {
             var keys = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team && x.Key.Active)
                 .Where(x => x.KeyId == keyid)
                 .Include(x => x.Key)
-                    .ThenInclude(key => key.Serials)
                 .Include(s => s.Assignment)
                     .ThenInclude(assignment => assignment.Person.User)
                 .AsNoTracking()
                 .ToListAsync();
 
             return Json(keys);
+        }
+
+        // get all the key serials attached to a person
+        public async Task<IActionResult> GetForPerson(int personId)
+        {
+            var keySerials = await _context.KeySerials
+                .Where(x => x.Key.Team.Slug == Team)
+                .Where(x => x.Assignment.PersonId == personId)
+                .Include(x => x.Key)
+                .Include(x => x.Assignment)
+                    .ThenInclude(assingment => assingment.Person.User)
+                .AsNoTracking()
+                .ToArrayAsync();
+
+            return Json(keySerials);
         }
 
         // Now returns serial. Need to pass in serialID
@@ -88,75 +76,70 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            var serial = await _context.KeySerials.Where(x => x.Key.Team.Slug == Team && x.Active)
-                .Include(x => x.Assignment).SingleAsync(x => x.Id == serialId);
+            // find serial
+            var serial = await _context.KeySerials
+                .Where(x => x.Key.Team.Slug == Team && x.Active)
+                .Include(x => x.Assignment)
+                .SingleAsync(x => x.Id == serialId);
 
             if(serial.Assignment != null)
             {
+                // TODO: not sure what's going on here
                 _context.KeyAssignments.Update(serial.Assignment);
                 serial.Assignment.ExpiresAt = DateTime.Parse(date);
                 // TODO: track update assignment?
             }
             else 
             {
-                serial.Assignment = new KeyAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
-                serial.Assignment.Person = await _context.People.Include(p=> p.User).SingleAsync(p=> p.Id==personId);
+                serial.Assignment = new KeyAssignment
+                {
+                    PersonId = personId,
+                    ExpiresAt = DateTime.Parse(date)
+                };
+
+                serial.Assignment.Person = await _context.People
+                    .Include(p => p.User)
+                    .SingleAsync(p => p.Id == personId);
 
                 _context.KeyAssignments.Add(serial.Assignment);
-                await _eventService.TrackAssignKey(serial);
+                await _eventService.TrackAssignKeySerial(serial);
             }
 
             await _context.SaveChangesAsync();
             return Json(serial);
         }
 
-        public async Task<IActionResult> Update([FromBody]Key key)
-        {
-            //TODO: check permissions, make sure SN isn't edited 
-            if (ModelState.IsValid)
-            {
-                var k = await _context.Keys.Where(x => x.Team.Slug == Team)
-                    .Include(x=> x.Serials)
-                    .ThenInclude(serials=> serials.Assignment)
-                    .ThenInclude(x => x.Person.User)
-                    .Include(x=> x.Team)
-                    .SingleAsync(x => x.Id == key.Id);
-                k.Name = key.Name;
-                // TODO: Should this also be updating serials? KeyXSpaces?
-                await _context.SaveChangesAsync();
-                await _eventService.TrackUpdateKey(key);
-                return Json(k);
-            }
-            return BadRequest(ModelState);
-        }
-
         // Need to pass in serial, not key. Returns Serial now.
-        public async Task<IActionResult> Revoke([FromBody]KeySerial keySerial)
+        public async Task<IActionResult> Revoke(int serialId)
         {
             //TODO: check permissions
-            if (ModelState.IsValid)
-            {
-                var s = await _context.KeySerials.Where(x => x.Key.Team.Slug == Team).Include(x => x.Assignment)
-                    .ThenInclude(x => x.Person.User)
-                    .SingleAsync(x => x.Id == keySerial.Id);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var keySerial = await _context.KeySerials
+                .Where(x => x.Key.Team.Slug == Team)
+                .Include(x => x.Assignment)
+                .SingleAsync(x => x.Id == serialId);
                 
-                _context.KeyAssignments.Remove(s.Assignment);
-                s.Assignment = null;
-                s.KeyAssignmentId = null;
-                await _context.SaveChangesAsync();
-                await _eventService.TrackUnAssignKey(keySerial);
-                return Json(s);
-            }
-            return BadRequest(ModelState);
+            _context.KeyAssignments.Remove(keySerial.Assignment);
+            keySerial.Assignment = null;
+            keySerial.KeyAssignmentId = null;
+
+            await _context.SaveChangesAsync();
+            await _eventService.TrackUnAssignKeySerial(keySerial);
+
+            return Json(keySerial);
         }
 
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
-                .Where(x => x.AssetType == "Key" && x.Equipment.Team.Slug == Team && x.EquipmentId == id)
+                .Where(x => x.AssetType == "KeySerial"
+                        && x.KeySerial.Key.Team.Slug == Team
+                        && x.KeySerial.Id == id)
                 .OrderByDescending(x => x.ActedDate)
                 .Take(5)
-                .AsNoTracking().ToListAsync();
+                .AsNoTracking()
+                .ToListAsync();
 
             return Json(history);
         }

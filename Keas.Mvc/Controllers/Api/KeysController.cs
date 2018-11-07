@@ -38,27 +38,36 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keys);
         }
 
-        public async Task<IActionResult> GetKeysInSpace(int spaceId)
-        {
-            var keys = await _context.KeyXSpaces
-                .Where(x => x.Space.Id == spaceId && x.Key.Team.Slug == Team && x.Key.Active)
-                .Include(x => x.Key)
-                .ThenInclude(key => key.Serials)
-                .ThenInclude(serials => serials.Assignment)
-                .ThenInclude(assignment => assignment.Person.User)
-                .AsNoTracking()
-                .ToListAsync();
-            return Json(keys);
-        }
-
         // List all keys for a team
         public async Task<IActionResult> List()
         {
             var keys = await _context.Keys
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Team)
+                .Include(x => x.Serials)
+                    .ThenInclude(serials => serials.Assignment)
+                        .ThenInclude(assignment => assignment.Person.User)
                 .AsNoTracking()
-                .ToArrayAsync();
+                .ToListAsync();
+
+            return Json(keys);
+        }
+
+        // list all keys for a space
+        public async Task<IActionResult> GetKeysInSpace(int spaceId)
+        {
+            var keys = await _context.KeyXSpaces
+                .Where(x => x.Space.Id == spaceId
+                        && x.Key.Team.Slug == Team
+                        && x.Key.Active)
+                .Include(x => x.Key)
+                    .ThenInclude(key => key.Serials)
+                        .ThenInclude(serials => serials.Assignment)
+                            .ThenInclude(assignment => assignment.Person.User)
+                .Select(x => x.Key)
+                .AsNoTracking()
+                .ToListAsync();
+
             return Json(keys);
         }
 
@@ -79,24 +88,98 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
         
-        public async Task<IActionResult> Update([FromBody]Key key)
+        public async Task<IActionResult> Update([FromBody]Key updateRequest)
         {
             //TODO: check permissions, make sure SN isn't edited 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var key = await _context.Keys
+                .Where(x => x.Team.Slug == Team)
+                .SingleAsync(x => x.Id == updateRequest.Id);
+
+            key.Name = updateRequest.Name;
+            // TODO: Should this also be updating serials? KeyXSpaces?
+
+            await _context.SaveChangesAsync();
+            await _eventService.TrackUpdateKey(key);
+            return Json(key);
+        }
+
+        public async Task<IActionResult> AssociateSpace(int keyId, int spaceId)
+        {
+            // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
+            if (!ModelState.IsValid)
             {
-                var k = await _context.Keys.Where(x => x.Team.Slug == Team)
-                    .Include(x=> x.Serials)
-                    .ThenInclude(serials=> serials.Assignment)
-                    .ThenInclude(x => x.Person.User)
-                    .Include(x=> x.Team)
-                    .SingleAsync(x => x.Id == key.Id);
-                k.Name = key.Name;
-                // TODO: Should this also be updating serials? KeyXSpaces?
-                await _context.SaveChangesAsync();
-                await _eventService.TrackUpdateKey(key);
-                return Json(k);
+                return BadRequest(ModelState);
             }
-            return BadRequest(ModelState);
+
+            //// find key
+            //var key = await _context.Keys
+            //    .Where(x => x.Team.Slug == Team && x.Active)
+            //    .Include(x => x.KeyXSpaces)
+            //        .ThenInclude(x => x.Space)
+            //    .SingleAsync(x => x.Id == keyId);
+
+            //// find space
+            //var space = await _context.Spaces
+            //    .SingleAsync(x => x.Id == spaceId);
+
+            // check for existing relationship
+            var association = await _context.KeyXSpaces
+                .SingleOrDefaultAsync(x => x.KeyId == keyId && x.SpaceId == spaceId);
+
+            if (association != null)
+            {
+                return BadRequest();
+            }
+
+            // create new association and save it
+            association = new KeyXSpace()
+            {
+                KeyId = keyId,
+                SpaceId = spaceId,
+            };
+
+            _context.KeyXSpaces.Add(association);
+            //await _eventService.TrackAssignKeySerial(serial);
+
+            await _context.SaveChangesAsync();
+            return Json(association);
+        }
+
+        public async Task<IActionResult> DisassociateSpace(int keyId, int spaceId)
+        {
+            // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //// find key
+            //var key = await _context.Keys
+            //    .Where(x => x.Team.Slug == Team && x.Active)
+            //    .Include(x => x.KeyXSpaces)
+            //        .ThenInclude(x => x.Space)
+            //    .SingleAsync(x => x.Id == keyId);
+
+            //// find space
+            //var space = await _context.Spaces
+            //    .SingleAsync(x => x.Id == spaceId);
+
+            // find existing relationship
+            var association = await _context.KeyXSpaces
+                .SingleOrDefaultAsync(x => x.KeyId == keyId && x.SpaceId == spaceId);
+
+            if (association == null)
+            {
+                return BadRequest();
+            }
+
+            _context.KeyXSpaces.Remove(association);
+            //await _eventService.TrackUnAssignKeySerial(serial);
+
+            await _context.SaveChangesAsync();
+            return Json(new { });
         }
 
         public async Task<IActionResult> GetHistory(int id)
