@@ -36,6 +36,25 @@ module.exports = env => {
         ]
       },
       resolve: { extensions: [".js", ".jsx", ".ts", ".tsx"] },
+      optimization: {
+        splitChunks: {
+          cacheGroups: {
+            "vendor": {
+              // test: /.../,   // <-- use the test property to specify which deps go here
+              chunks: "all",
+              name: "vendor",
+              /** Ignore minimum size, minimum chunks and maximum requests and always create chunks for this cache group */
+              enforce: true,
+            },
+            "root": {
+              test: /..../, // <-- use the test property to specify which deps go here
+              chunks: "all",
+              name: "root",
+              enforce: true,
+            }
+          }
+        }
+      },
       output: {
         path: path.join(__dirname, bundleOutputDir),
         filename: "[name].js",
@@ -63,10 +82,10 @@ module.exports = env => {
         new webpack.DefinePlugin({
           "process.env.NODE_ENV": isDevBuild ? '"development"' : '"production"'
         }),
-        new webpack.optimize.CommonsChunkPlugin({
-          name: ["vendor", "root"],
-          minChunks: Infinity
-        })
+        // new webpack.optimize.CommonsChunkPlugin({
+        //   name: ["vendor", "root"],
+        //   minChunks: Infinity
+        // })
       ].concat(
         isDevBuild
           ? [
