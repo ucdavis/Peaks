@@ -127,7 +127,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                 <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
                 <SpacesTable
                     spaces={filteredSpaces}
-                    showDetails={this._openDetailsModal}
+                    showDetails={this._openDetails}
                     filtered={this.state.tableFilters}
                     updateFilters={this._updateTableFilters}
                 />
@@ -137,7 +137,6 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
     private _renderTableList = () => {
         const { action } = this.context.router.route.match.params;
-
         const { selectedKey } = this.props;
 
         // flatten the space info for simple space
@@ -148,7 +147,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                 <SpacesList
                     selectedKey={selectedKey}
                     spaces={spaces}
-                    showDetails={this._openDetailsModal}
+                    showDetails={this._openDetails}
                     onDisassociate={this._disassociateSpace}
                 />
                 <AssociateSpace
@@ -166,13 +165,13 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     private _renderDetailsView = (selectedSpaceInfo: ISpaceInfo) => {
         return(
             <SpacesDetails
-                    closeModal={this._closeModals}
-                    selectedSpaceInfo={selectedSpaceInfo}
-                    tags={this.state.tags}
-                    inUseUpdated={this._assetInUseUpdated}
-                    totalUpdated={this._assetTotalUpdated}
-                    edited={this._assetEdited}
-                    />
+                closeModal={this._closeModals}
+                selectedSpaceInfo={selectedSpaceInfo}
+                tags={this.state.tags}
+                inUseUpdated={this._assetInUseUpdated}
+                totalUpdated={this._assetTotalUpdated}
+                edited={this._assetEdited}
+            />
         );
     }
 
@@ -180,8 +179,9 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         this.setState({tableFilters: filters});
     }
 
-    private _openDetailsModal = (space: ISpace) => {
-        this.context.router.history.push(`${this._getBaseUrl()}/spaces/details/${space.id}`);
+    private _openDetails = (space: ISpace) => {
+        const { team } = this.context;
+        this.context.router.history.push(`/${team.slug}/spaces/details/${space.id}`);
     };
 
     private _openAssociateModal = (space: ISpace) => {
