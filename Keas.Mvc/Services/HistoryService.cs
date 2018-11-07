@@ -16,13 +16,13 @@ namespace Keas.Mvc.Services
         Task<History> KeyInactivated(Key key);
         Task<History> AccessInactivated(Access access);
         Task<History> EquipmentInactivated(Equipment equipment);
-        Task<History> KeyAssigned(KeySerial keySerial);
+        Task<History> KeyAssignedSerial(KeySerial keySerial);
         Task<History> AccessAssigned(AccessAssignment accessAssignment);
         Task<History> EquipmentAssigned(Equipment equipment);
-        Task<History> KeyUnassigned(KeySerial keySerial);
+        Task<History> KeySerialUnassigned(KeySerial keySerial);
         Task<History> AccessUnassigned(AccessAssignment accessAssignment);
         Task<History> EquipmentUnassigned(Equipment equipment);
-        Task<History> KeyAccepted(KeySerial keySerial);
+        Task<History> KeySerialAccepted(KeySerial keySerial);
         Task<History> AccessAccepted(Access access);
         Task<History> EquipmentAccepted(Equipment equipment);
         Task<History> WorkstationCreated(Workstation workstation);
@@ -189,7 +189,7 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History> KeyAssigned(KeySerial keySerial)
+        public async Task<History> KeyAssignedSerial(KeySerial keySerial)
         {
             var user = await _securityService.GetUser();
             var historyEntry = new History
@@ -240,7 +240,7 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History> KeyUnassigned(KeySerial keySerial)
+        public async Task<History> KeySerialUnassigned(KeySerial keySerial)
         {
             var user = await _securityService.GetUser();
             var historyEntry = new History
@@ -292,7 +292,7 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History> KeyAccepted(KeySerial keySerial)
+        public async Task<History> KeySerialAccepted(KeySerial keySerial)
         {
             var user = await _securityService.GetUser();
             var historyEntry = new History

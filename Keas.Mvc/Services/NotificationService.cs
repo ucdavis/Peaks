@@ -11,8 +11,8 @@ namespace Keas.Mvc.Services
         Task KeyCreatedUpdatedInactive(Key key, History history);
         Task EquipmentCreatedUpdatedInactive(Equipment equipment, History history);
         Task AccessCreatedUpdatedInactive(Access access, History history);
-        Task KeyAssigned(KeySerial keySerial, History history);
-        Task KeyUnAssigned(KeySerial keySerial, History history);
+        Task KeySerialAssigned(KeySerial keySerial, History history);
+        Task KeySerialUnAssigned(KeySerial keySerial, History history);
         Task EquipmentAssigned(Equipment equipment, History history);
         Task EquipmentUnAssigned(Equipment equipment, History history);
         Task AccessAssigned(AccessAssignment accessAssignment, History history, string teamName);
@@ -20,7 +20,7 @@ namespace Keas.Mvc.Services
         Task WorkstationCreatedUpdatedInactive(Workstation workstation, History history);
         Task WorkstationAssigned(Workstation workstation, History history);
         Task WorkstationUnAssigned(Workstation workstation, History history);
-        Task KeyAccepted(KeySerial keySerial, History history);
+        Task KeySerialAccepted(KeySerial keySerial, History history);
         Task EquipmentAccepted(Equipment equipment, History history);
         Task WorkstationAccepted(Workstation workstation, History history);
     }
@@ -90,7 +90,7 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task KeyAssigned(KeySerial keySerial, History history)
+        public async Task KeySerialAssigned(KeySerial keySerial, History history)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
@@ -113,7 +113,7 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task KeyUnAssigned(KeySerial keySerial, History history)
+        public async Task KeySerialUnAssigned(KeySerial keySerial, History history)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
@@ -271,7 +271,7 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task KeyAccepted(KeySerial keySerial, History history)
+        public async Task KeySerialAccepted(KeySerial keySerial, History history)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();

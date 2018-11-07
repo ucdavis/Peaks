@@ -6,8 +6,8 @@ namespace Keas.Mvc.Services
     public interface IEventService
     {
         Task TrackCreateKey(Key key);
-        Task TrackAssignKey(KeySerial keySerial);
-        Task TrackUnAssignKey(KeySerial keySerial);
+        Task TrackAssignKeySerial(KeySerial keySerial);
+        Task TrackUnAssignKeySerial(KeySerial keySerial);
         Task TrackUpdateKey(Key key);
         Task TrackCreateEquipment(Equipment equipment);
         Task TrackAssignEquipment(Equipment equipment);
@@ -45,17 +45,17 @@ namespace Keas.Mvc.Services
             await _notificationService.KeyCreatedUpdatedInactive(key, history);
         }
 
-        public async Task TrackAssignKey(KeySerial keySerial)
+        public async Task TrackAssignKeySerial(KeySerial keySerial)
         {
-            var history = await _historyService.KeyAssigned(keySerial);
-            await _notificationService.KeyAssigned(keySerial, history);
+            var history = await _historyService.KeyAssignedSerial(keySerial);
+            await _notificationService.KeySerialAssigned(keySerial, history);
 
         }
 
-        public async Task TrackUnAssignKey(KeySerial keySerial)
+        public async Task TrackUnAssignKeySerial(KeySerial keySerial)
         {
-            var history = await _historyService.KeyUnassigned(keySerial);
-            await _notificationService.KeyUnAssigned(keySerial, history);
+            var history = await _historyService.KeySerialUnassigned(keySerial);
+            await _notificationService.KeySerialUnAssigned(keySerial, history);
         }
 
         public async Task TrackUpdateKey(Key key) 
@@ -132,8 +132,8 @@ namespace Keas.Mvc.Services
 
         public async Task TrackAcceptKey(KeySerial keySerial)
         {
-            var history = await _historyService.KeyAccepted(keySerial);
-            await _notificationService.KeyAccepted(keySerial, history);
+            var history = await _historyService.KeySerialAccepted(keySerial);
+            await _notificationService.KeySerialAccepted(keySerial, history);
         }
 
         public async Task TrackAcceptEquipment(Equipment equipment)
