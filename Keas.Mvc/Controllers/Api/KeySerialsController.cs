@@ -25,16 +25,27 @@ namespace Keas.Mvc.Controllers.Api
         //Return Serials instead????
         public async Task<IActionResult> Search(string q)
         {
+            // break out the query into terms
+            var terms = q.Split(' ');
+
             var comparison = StringComparison.InvariantCultureIgnoreCase;
-            var keys = await _context.KeySerials
-                .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active && x.Assignment == null
-                            && (x.Key.Name.StartsWith(q, comparison) || x.Number.StartsWith(q, comparison)))
+
+            var query = _context.KeySerials
+                .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active && x.Assignment == null);
+
+            foreach (var term in terms)
+            {
+                query = query.Where(x => x.Key.Name.StartsWith(term, comparison)
+                                        || x.Key.Code.StartsWith(term, comparison)
+                                        || x.Number.StartsWith(term, comparison));
+            }
+
+            var keySerials = await query
                 .Include(x => x.Key)
-                .ThenInclude(key => key.KeyXSpaces)
-                .ThenInclude(keyXSpaces => keyXSpaces.Space)
-                .Select(x=> x.Key)
-                .AsNoTracking().ToListAsync();
-            return Json(keys);
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Json(keySerials);
         }
 
         // list all serials for a key
