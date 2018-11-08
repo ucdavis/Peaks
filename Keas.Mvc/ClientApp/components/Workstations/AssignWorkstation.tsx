@@ -1,5 +1,5 @@
 import * as moment from "moment";
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import DatePicker from "react-datepicker";
 import {
