@@ -17,7 +17,7 @@ namespace Keas.Mvc.Services
     {
         Task<User> GetByEmail(string email);
         Task<User> GetByKerberos(string kerb);
-        Task BulkLoadPeople(string ppsCode, string teamslug);
+        Task<int> BulkLoadPeople(string ppsCode, string teamslug);
     }
 
     public class IdentityService : IIdentityService
@@ -86,8 +86,9 @@ namespace Keas.Mvc.Services
             };
         }
 
-        public async Task BulkLoadPeople(string ppsCode, string teamslug)
+        public async Task<int> BulkLoadPeople(string ppsCode, string teamslug)
         {
+            int newpeople = 0;
             var team = await _context.Teams.SingleAsync(t => t.Slug == teamslug);
             var clientws = new IetClient(_authSettings.IamKey);
             var iamIds = await clientws.PPSAssociations.GetIamIds(PPSAssociationsSearchField.deptCode, ppsCode);
@@ -98,16 +99,17 @@ namespace Keas.Mvc.Services
                 if (user == null)
                 {
                     // Need to add user and person
-                    var peopleResults = await clientws.Kerberos.Get(id.IamId);
+                    var kerbResults = await clientws.Kerberos.Get(id.IamId);
                     var contactResult = await clientws.Contacts.Get(id.IamId);
+                    var nameResult = await clientws.People.Get(id.IamId);
 
-                    if (peopleResults.ResponseData.Results.Length > 0)
+                    if (kerbResults.ResponseData.Results.Length > 0 && contactResult.ResponseData.Results.Length > 0 && nameResult.ResponseData.Results.Length > 0)
                     {
                         var newUser = new User()
                         {
-                            FirstName = peopleResults.ResponseData.Results[0].DFirstName,
-                            LastName = peopleResults.ResponseData.Results[0].DLastName,
-                            Id = peopleResults.ResponseData.Results[0].UserId,
+                            FirstName = nameResult.ResponseData.Results[0].DFirstName,
+                            LastName = nameResult.ResponseData.Results[0].DLastName,
+                            Id = kerbResults.ResponseData.Results[0].UserId,
                             Email = contactResult.ResponseData.Results[0].Email,
                             Iam = id.IamId
                         };
@@ -115,10 +117,15 @@ namespace Keas.Mvc.Services
                         var newPerson = new Person()
                         {
                             User = newUser,
-                            Team = team
+                            Team = team,
+                            FirstName = newUser.FirstName,
+                            LastName = newUser.LastName,
+                            Email = newUser.Email,
+                            TeamPhone = contactResult.ResponseData.Results[0].WorkPhone
                         };
                         _context.People.Add(newPerson);
                         await _context.SaveChangesAsync();
+                        newpeople += 1;
                     }
                 }
                 else if (!await _context.People.AnyAsync(p => p.User.Iam == id.IamId))
@@ -131,8 +138,10 @@ namespace Keas.Mvc.Services
                     };
                     _context.People.Add(newPerson);
                     await _context.SaveChangesAsync();
+                    newpeople +=1;
                 }
             }
+            return newpeople;
         }
     }
 }
