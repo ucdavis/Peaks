@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Keas.Core.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace Keas.Mvc.Services
 {
@@ -17,7 +18,7 @@ namespace Keas.Mvc.Services
     {
         Task<User> GetByEmail(string email);
         Task<User> GetByKerberos(string kerb);
-        Task<int> BulkLoadPeople(string ppsCode, string teamslug);
+        Task<string> BulkLoadPeople(string ppsCode, string teamslug);
     }
 
     public class IdentityService : IIdentityService
@@ -86,9 +87,10 @@ namespace Keas.Mvc.Services
             };
         }
 
-        public async Task<int> BulkLoadPeople(string ppsCode, string teamslug)
+        public async Task<string> BulkLoadPeople(string ppsCode, string teamslug)
         {
             int newpeople = 0;
+            StringBuilder warning = new StringBuilder();
             var team = await _context.Teams.SingleAsync(t => t.Slug == teamslug);
             var clientws = new IetClient(_authSettings.IamKey);
             var iamIds = await clientws.PPSAssociations.GetIamIds(PPSAssociationsSearchField.deptCode, ppsCode);
@@ -98,50 +100,69 @@ namespace Keas.Mvc.Services
                 var user = await _context.Users.SingleOrDefaultAsync(u => u.Iam == id.IamId);
                 if (user == null)
                 {
-                    // Need to add user and person
-                    var kerbResults = await clientws.Kerberos.Get(id.IamId);
+                    // User not found with IamId
+                    var kerbResults = await clientws.Kerberos.Search(KerberosSearchField.iamId, id.IamId);
                     var contactResult = await clientws.Contacts.Get(id.IamId);
-                    var nameResult = await clientws.People.Get(id.IamId);
 
-                    if (kerbResults.ResponseData.Results.Length > 0 && contactResult.ResponseData.Results.Length > 0 && nameResult.ResponseData.Results.Length > 0)
+                    if (kerbResults.ResponseData.Results.Length > 0 && contactResult.ResponseData.Results.Length > 0)
                     {
-                        var newUser = new User()
+                        user = await _context.Users.SingleOrDefaultAsync(u => u.Id == kerbResults.ResponseData.Results[0].UserId);
+                        if (user == null)
                         {
-                            FirstName = nameResult.ResponseData.Results[0].DFirstName,
-                            LastName = nameResult.ResponseData.Results[0].DLastName,
-                            Id = kerbResults.ResponseData.Results[0].UserId,
-                            Email = contactResult.ResponseData.Results[0].Email,
-                            Iam = id.IamId
-                        };
-                        _context.Users.Add(newUser);
-                        var newPerson = new Person()
+                            // User not found with Kerb Id either. Add user
+                            var newUser = new User()
+                            {
+                                FirstName = kerbResults.ResponseData.Results[0].DFirstName,
+                                LastName = kerbResults.ResponseData.Results[0].DLastName,
+                                Id = kerbResults.ResponseData.Results[0].UserId,
+                                Email = contactResult.ResponseData.Results[0].Email,
+                                Iam = id.IamId
+                            };
+                            if (newUser.Id == null || newUser.Email == null || newUser.FirstName == null || newUser.LastName == null)
+                            {
+                                warning.Append("User could not be added: IAM ID: " + id.IamId.ToString() + " Name: " + newUser.FirstName + " " + newUser.LastName + " | ");
+                            }
+                            else
+                            {
+                                _context.Users.Add(newUser);
+                                await SavePerson(team, newUser);
+                                newpeople += 1;
+                            }
+                        }
+                        else
                         {
-                            User = newUser,
-                            Team = team,
-                            FirstName = newUser.FirstName,
-                            LastName = newUser.LastName,
-                            Email = newUser.Email,
-                            TeamPhone = contactResult.ResponseData.Results[0].WorkPhone
-                        };
-                        _context.People.Add(newPerson);
-                        await _context.SaveChangesAsync();
-                        newpeople += 1;
+                            // User existed with Kerb Id, check team
+                            if (!await _context.People.AnyAsync(p => p.UserId == user.Id && p.Team.Slug == teamslug))
+                            {
+                                await SavePerson(team, user);                                
+                                newpeople += 1;
+                            }
+                        }
                     }
                 }
-                else if (!await _context.People.AnyAsync(p => p.User.Iam == id.IamId))
+                else if (!await _context.People.AnyAsync(p => p.User.Iam == id.IamId && p.Team.Slug == teamslug))
                 {
-                    // User exists, but not in this team
-                    var newPerson = new Person()
-                    {
-                        User = user,
-                        Team = team
-                    };
-                    _context.People.Add(newPerson);
-                    await _context.SaveChangesAsync();
-                    newpeople +=1;
+                    // User exists with IAM ID, but not in this team
+                    await SavePerson(team, user);
+                    newpeople += 1;
                 }
             }
-            return newpeople;
+            string returnMessage = newpeople.ToString() + " new people added to the team. " + warning.ToString();
+            return returnMessage;
+        }
+
+        private async Task SavePerson(Team team, User user)
+        {
+            var newPerson = new Person()
+            {
+                User = user,
+                Team = team,
+                FirstName = user.FirstName,
+                LastName = user.FirstName,
+                Email = user.Email
+            };
+            _context.People.Add(newPerson);
+            await _context.SaveChangesAsync();
         }
     }
 }
