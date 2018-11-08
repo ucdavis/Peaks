@@ -235,8 +235,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> LoadPeople(string ppsDeptCode)
         {
-            var count = await _identityService.BulkLoadPeople(ppsDeptCode, Team);
-            Message = count.ToString() +  " new people added to the team";
+            Message = await _identityService.BulkLoadPeople(ppsDeptCode, Team);            
             return RedirectToAction(nameof(Index));
         }
 
