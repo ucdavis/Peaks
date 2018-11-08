@@ -30,8 +30,8 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("EquipmentAttributes", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.EquipmentAttribute]", new List<string>()));
             expectedFields.Add(new NameAndType("FISOrgs", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.FinancialOrganization]", new List<string>()));
             expectedFields.Add(new NameAndType("Histories", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.History]", new List<string>()));
-            expectedFields.Add(new NameAndType("KeyAssignments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.KeyAssignment]", new List<string>()));
             expectedFields.Add(new NameAndType("Keys", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Key]", new List<string>()));
+            expectedFields.Add(new NameAndType("KeySerialAssignments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.KeySerialAssignment]", new List<string>()));
             expectedFields.Add(new NameAndType("KeySerials", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.KeySerial]", new List<string>()));
             expectedFields.Add(new NameAndType("KeyXSpaces", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.KeyXSpace]", new List<string>()));
             expectedFields.Add(new NameAndType("Model", "Microsoft.EntityFrameworkCore.Metadata.IModel", new List<string>()));
