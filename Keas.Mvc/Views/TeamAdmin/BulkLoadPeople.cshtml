@@ -1,0 +1,34 @@
+@model Keas.Mvc.Models.BulkLoadViewModel
+
+@{
+    ViewData["Title"] = "Bulk Load People";
+}
+<div class="card">
+  <div class="card-head">
+    <div class="row justify-content-between">
+      <h2>Bulk load people from PPS appointments</h2>
+      <a class="btn btn-link" asp-action="Index"><i class="fas fa-arrow-left fa-xs"/></i> Back to Team Admin</a>
+    </div>
+  </div>
+<div class="card-content">
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="LoadPeople">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="PPSDeptCode" class="control-label"></label>
+                    <input asp-for="PPSDeptCode" class="form-control"/>
+                    <span asp-validation-for="PPSDeptCode" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Add Org to Team" class="btn btn-primary"/>
+                </div>
+            </form>
+        </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

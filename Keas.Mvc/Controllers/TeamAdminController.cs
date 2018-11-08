@@ -228,11 +228,12 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(RoledMembers));
         }
 
-        public  IActionResult BulkImportMembers()
+        public async Task<IActionResult> BulkLoadPeople() 
         {
-            //TODO: Import from IAM using FIS Org code => PPS Dept ID => IAM bulk load call
-            throw new NotImplementedException();
+            return View();
         }
+
+        
 
 
 
