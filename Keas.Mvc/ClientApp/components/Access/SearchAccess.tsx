@@ -1,11 +1,10 @@
 ﻿import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
-
+import {Button} from "reactstrap";
 import { AppContext, IAccess } from "../../Types";
 
 interface IProps {
-    allowNew: boolean;
     selectedAccess?: IAccess;
     onSelect: (access: IAccess) => void;
     onDeselect: () => void;
@@ -33,42 +32,23 @@ export default class SearchAccess extends React.Component<IProps, IState> {
     }
 
     public render() {
-        if (this.props.selectedAccess != null) {
-            return this._renderExistingAccess();
-        }
-        else {
-            return this._renderSelectAccess();
-        }
+        return this._renderSelectAccess();
     }
 
-    private _onSelected = (access: IAccess) => {
-        // onChange is called when deselected
-        if (access == null || access.name == null) {
-            this.props.onDeselect();
-        }
-        else {
-            // if teamId is not set, this is a new access
-            this.props.onSelect({
-                assignments: access.teamId ? access.assignments : [],
-                id: access.teamId ? access.id : 0,
-                name: access.name,
-                tags: "",
-                teamId: access.teamId ? access.teamId : 0,
-            });
-        }
-    };
 
     private _renderSelectAccess = () => {
 
         return (
             <div>
+                <label>Pick an access to assign</label>
+                <div>
                 <AsyncTypeahead
                     isLoading={this.state.isSearchLoading}
                     minLength={3}
                     placeholder="Search for access by name or by serial number"
                     labelKey="name"
                     filterBy={() => true} // don't filter on top of our search
-                    allowNew={this.props.allowNew}
+                    allowNew={false}
                     renderMenuItemChildren={(option, props, index) => (
                         <div>
                             <div>
@@ -101,18 +81,36 @@ export default class SearchAccess extends React.Component<IProps, IState> {
                     }}
                     options={this.state.access}
                 />
+                </div>
+                <div>or</div>
+                <div>
+                    <Button color="link" onClick={() => {this._createNew()}}>
+                        <i className="fas fa-plus fa-sm" aria-hidden="true" /> Create New Access
+                        </Button>    
+                </div>
             </div>
         );
     }
 
-    private _renderExistingAccess = () => {
-        return (
-            <input
-                type="text"
-                className="form-control"
-                value={this.props.selectedAccess.name}
-                disabled={true}
-            />
-        );
+    private _onSelected = (access: IAccess) => {
+        // onChange is called when deselected
+        if (access == null || access.name == null) {
+            this.props.onDeselect();
+        }
+        else {
+            this.props.onSelect({
+                ...access
+            });
+        }
     };
+
+    private _createNew = () => {
+        this.props.onSelect({
+            assignments: [],
+            id: 0,
+            name: "",
+            tags: "",
+            teamId: 0,
+        });
+    }
 }
