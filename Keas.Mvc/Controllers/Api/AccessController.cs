@@ -130,7 +130,7 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            if(!access.Active || access.Assignments != null)
+            if(!access.Active || access.Assignments.Count > 0) // assignments should have been revoked
             {
                 return BadRequest(ModelState);
             }
