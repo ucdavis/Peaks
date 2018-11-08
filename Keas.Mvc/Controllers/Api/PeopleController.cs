@@ -34,7 +34,7 @@ namespace Keas.Mvc.Controllers.Api
                 equipmentCount = 
                     (from eq in _context.EquipmentAssignments where eq.PersonId == person.Id select eq ).Count(),
                 keyCount = 
-                    (from k in _context.KeyAssignments where k.PersonId == person.Id select k ).Count(),
+                    (from k in _context.KeySerialAssignments where k.PersonId == person.Id select k ).Count(),
                 workstationCount = 
                     (from w in _context.WorkstationAssignments where w.PersonId == person.Id select w).Count()
                 };

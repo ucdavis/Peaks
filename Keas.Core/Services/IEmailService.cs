@@ -165,7 +165,7 @@ namespace Keas.Core.Services
                 {
                     key.Assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
                 }
-                _dbContext.KeyAssignments.Update(key.Assignment);
+                _dbContext.KeySerialAssignments.Update(key.Assignment);
             }
 
             foreach (var equipment in expiringItems.Equipment)

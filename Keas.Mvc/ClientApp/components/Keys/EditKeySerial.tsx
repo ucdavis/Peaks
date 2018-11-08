@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import {
   Button,
@@ -69,7 +69,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
           <div className="container-fluid">
             <form>
               <KeySerialEditValues
-                selectedKeySerial={this.state.keySerial}
+                keySerial={this.state.keySerial}
                 changeProperty={this._changeProperty}
                 disableEditing={false}
               />
@@ -91,8 +91,8 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
 
   private _changeProperty = (property: string, value: string) => {
     this.setState({
-      key: {
-        ...this.state.key,
+      keySerial: {
+        ...this.state.keySerial,
         [property]: value
       }
     }, this._validateState);

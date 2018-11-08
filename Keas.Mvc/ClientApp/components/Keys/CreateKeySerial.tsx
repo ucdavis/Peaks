@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import {
   Button,
@@ -96,8 +96,8 @@ export default class CreateKeySerial extends React.Component<IProps, IState> {
 
   private _changeProperty = (property: string, value: string) => {
     this.setState({
-      key: {
-        ...this.state.key,
+      keySerial: {
+        ...this.state.keySerial,
         [property]: value
       }
     }, this._validateState);
@@ -107,7 +107,7 @@ export default class CreateKeySerial extends React.Component<IProps, IState> {
   private _closeModal = () => {
     this.setState({
       error: "",
-      key: null,
+      keySerial: null,
       submitting: false,
       validState: false
     });
@@ -121,7 +121,7 @@ export default class CreateKeySerial extends React.Component<IProps, IState> {
     }
 
     this.setState({submitting: true})
-    await this.props.onCreate(this.state.key);
+    await this.props.onCreate(this.state.keySerial);
 
     this._closeModal();
   };
@@ -129,16 +129,19 @@ export default class CreateKeySerial extends React.Component<IProps, IState> {
   private _validateState = () => {
     let valid = true;
     let error = "";
-    if (!this.state.key) {
+
+    if (!this.state.keySerial) {
       valid = false;
-    } else if ( !this.state.key.code){
+    }
+    else if (!this.state.keySerial.number) {
       valid = false;
-      error = "You must give this key a name.";
-    } else if(this.state.key.code.length > 64)
-    {
+      error = "You must give this key serial a number.";
+    }
+    else if (this.state.keySerial.number.length > 64) {
       valid = false;
       error = "The name you have chosen is too long";
     }
+
     this.setState({ validState: valid, error });
   };
 }
