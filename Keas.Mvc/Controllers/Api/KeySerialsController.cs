@@ -132,13 +132,13 @@ namespace Keas.Mvc.Controllers.Api
             if (serial.Assignment != null)
             {
                 // TODO: not sure what's going on here
-                _context.KeyAssignments.Update(serial.Assignment);
+                _context.KeySerialAssignments.Update(serial.Assignment);
                 serial.Assignment.ExpiresAt = DateTime.Parse(date);
                 // TODO: track update assignment?
             }
             else 
             {
-                serial.Assignment = new KeyAssignment
+                serial.Assignment = new KeySerialAssignment
                 {
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date)
@@ -148,7 +148,7 @@ namespace Keas.Mvc.Controllers.Api
                     .Include(p => p.User)
                     .SingleAsync(p => p.Id == personId);
 
-                _context.KeyAssignments.Add(serial.Assignment);
+                _context.KeySerialAssignments.Add(serial.Assignment);
                 await _eventService.TrackAssignKeySerial(serial);
             }
 
@@ -167,9 +167,9 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Assignment)
                 .SingleAsync(x => x.Id == serialId);
                 
-            _context.KeyAssignments.Remove(keySerial.Assignment);
+            _context.KeySerialAssignments.Remove(keySerial.Assignment);
             keySerial.Assignment = null;
-            keySerial.KeyAssignmentId = null;
+            keySerial.KeySerialAssignmentId = null;
 
             await _context.SaveChangesAsync();
             await _eventService.TrackUnAssignKeySerial(keySerial);

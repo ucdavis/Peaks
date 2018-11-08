@@ -20,7 +20,7 @@ namespace Keas.Core.Data
         public virtual DbSet<Key> Keys { get; set; }
         public virtual DbSet<KeyXSpace> KeyXSpaces { get; set; }
         public virtual DbSet<KeySerial> KeySerials { get; set; }
-        public virtual DbSet<KeyAssignment> KeyAssignments { get; set; }
+        public virtual DbSet<KeySerialAssignment> KeySerialAssignments { get; set; }
 
         public virtual DbSet<Equipment> Equipment { get; set; }
         public virtual DbSet<EquipmentAssignment> EquipmentAssignments { get; set; }

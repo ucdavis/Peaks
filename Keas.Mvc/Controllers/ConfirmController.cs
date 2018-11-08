@@ -60,7 +60,7 @@ namespace Keas.Mvc.Controllers
             keyAssignment.ConfirmedAt = DateTime.UtcNow;
             _context.Update(keyAssignment);
             await _context.SaveChangesAsync();
-            var serial = await _context.KeySerials.Where(s => s.KeyAssignmentId == keyAssignment.Id).Include(s=> s.Key).FirstAsync();
+            var serial = await _context.KeySerials.Where(s => s.KeySerialAssignmentId == keyAssignment.Id).Include(s=> s.Key).FirstAsync();
             await _eventService.TrackAcceptKey(serial);
             Message = "Key confirmed.";
 
