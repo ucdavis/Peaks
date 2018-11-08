@@ -271,6 +271,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       if (this.props.person == null) {
           // if we are looking at all equipment, just update assignment
        shallowCopy[index].assignment = null;
+       shallowCopy[index].equipmentAssignmentId = null;
       } else {
         // if we are looking at a person, remove from our list of equipment
         shallowCopy.splice(index, 1);
