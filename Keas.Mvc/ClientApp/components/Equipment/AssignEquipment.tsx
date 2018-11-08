@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import {
   Button,
@@ -50,7 +50,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      date: (!!this.props.selectedEquipment && !!this.props.selectedEquipment.assignment) 
+      date: (!!this.props.selectedEquipment && !!this.props.selectedEquipment.assignment)
         ? moment(this.props.selectedEquipment.assignment.expiresAt) : moment().add(3, "y"),
       equipment: this.props.selectedEquipment,
       error: "",
@@ -72,7 +72,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     }
     if(!!nextProps.selectedEquipment && !!nextProps.selectedEquipment.assignment)
     {
-      this.setState({ 
+      this.setState({
         date: moment(nextProps.selectedEquipment.assignment.expiresAt),
         person: nextProps.selectedEquipment.assignment.person
       });
@@ -102,9 +102,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     onSelect={this._onSelectPerson}
                   />
                 </div>
-
+                {!this.state.equipment &&
                 <div className="form-group">
-                  <label>Pick an equipment to assign</label>
                   <SearchEquipment
                     selectedEquipment={this.state.equipment}
                     onSelect={this._onSelected}
@@ -112,29 +111,43 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     space={this.props.space}
                     openDetailsModal={this.props.openDetailsModal}
                   />
-                </div>
-                {!this.state.equipment ||
-                  (!this.state.equipment.teamId && ( // if we are creating a new equipment, edit properties
-                    <EquipmentEditValues
-                      selectedEquipment={this.state.equipment}
-                      commonAttributeKeys={this.props.commonAttributeKeys}
-                      changeProperty={this._changeProperty}
-                      disableEditing={false}
-                      updateAttributes={this._updateAttributes}
-                      creating={true}
-                      space={this.props.space}
-                      tags={this.props.tags}
-                    />
-                  ))}
+                </div>}
+                {this.state.equipment &&
+                  !this.state.equipment.teamId && ( // if we are creating a new equipment, edit properties
+                    <div>
+                    <div className="row justify-content-between">
+                      <h3>Create New Equipment</h3>
+                      <Button className="btn btn-link" onClick={this._onDeselected}>
+                        Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
+                    </div>
+
+                      <EquipmentEditValues
+                        selectedEquipment={this.state.equipment}
+                        commonAttributeKeys={this.props.commonAttributeKeys}
+                        changeProperty={this._changeProperty}
+                        disableEditing={false}
+                        updateAttributes={this._updateAttributes}
+                        space={this.props.space}
+                        tags={this.props.tags}
+                      />
+                    </div>
+                  )}
                 {this.state.equipment &&
                   !!this.state.equipment.teamId && (
-                    <EquipmentEditValues
-                      selectedEquipment={this.state.equipment}
-                      commonAttributeKeys={this.props.commonAttributeKeys}
-                      disableEditing={true}
-                      creating={true}
-                      tags={this.props.tags}
-                      />
+                    <div>
+                      <div className="row justify-content-between">
+                        <h3>Assign Existing Equipment</h3>
+                        <Button className="btn btn-link" onClick={this._onDeselected}>
+                        Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
+                      </div>
+
+                      <EquipmentEditValues
+                        selectedEquipment={this.state.equipment}
+                        commonAttributeKeys={this.props.commonAttributeKeys}
+                        disableEditing={true}
+                        tags={this.props.tags}
+                        />
+                    </div>
                   )}
 
                 {(!!this.state.person || !!this.props.person) && (
@@ -183,7 +196,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         ...this.state.equipment,
         attributes
       }
-    });
+    }, this._validateState);
   }
 
   // clear everything out on close
@@ -210,7 +223,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     const equipment = this.state.equipment;
     equipment.attributes = equipment.attributes.filter(x => !!x.key);
     await this.props.onCreate(person, equipment, this.state.date.format());
-    
+
     this._closeModal();
   };
 
@@ -246,7 +259,9 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   private _validateState = () => {
     let valid = true;
-    if (!this.state.equipment) {
+    if (!this.state.equipment || this.state.equipment.name === "") {
+      valid = false;
+    } else if (this.state.equipment.teamId !== 0 && !this.state.person && !this.props.person) { // if not a new equipment, require a person
       valid = false;
     } else if (this.state.error !== "") {
       valid = false;

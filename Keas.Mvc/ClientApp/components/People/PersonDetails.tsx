@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import {
     Button,
@@ -40,11 +40,12 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                     <Button color="link" onClick={this.props.goBack}>
                         <i className="fas fa-arrow-left fa-xs"/> Return to Table
                     </Button>
-                    <EditPerson onEdit={this.props.onEdit} selectedPerson={this.props.selectedPerson} tags={this.props.tags}/>
+
                 </div>
               <br/>
                 <div>
                         <BioContainer person={this.props.selectedPerson}/>
+                        <EditPerson onEdit={this.props.onEdit} selectedPerson={this.props.selectedPerson} tags={this.props.tags}/>
                         <KeySerialContainer
                             selectedPerson={this.props.selectedPerson}
                             assetInUseUpdated={this.props.inUseUpdated}

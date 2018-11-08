@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 
 import { AppContext, IPerson } from "../../Types";
@@ -25,7 +25,6 @@ export default class BioContainer extends React.Component<IProps, {}> {
             <i className="fas fa-tags" aria-hidden="true" />{" "}
             {this.props.person.tags}
           </p>
-          <hr/>
         <br/>
 
       </div>

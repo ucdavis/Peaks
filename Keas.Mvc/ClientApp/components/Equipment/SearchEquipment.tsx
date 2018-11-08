@@ -1,14 +1,15 @@
-﻿import PropTypes from "prop-types";
+﻿import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
+import {Button} from "reactstrap";
 
 import { AppContext, IEquipment, IEquipmentLabel, ISpace } from "../../Types";
 
 interface IProps {
-    selectedEquipment?: IEquipment;
-    onSelect: (equipment: IEquipment) => void;
     onDeselect: () => void;
+    onSelect: (equipment: IEquipment) => void;
     openDetailsModal: (equipment:IEquipment) => void;
+    selectedEquipment?: IEquipment;
     space: ISpace // used to set default space if we are on spaces tab
 }
 
@@ -34,25 +35,22 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
     }
 
     public render() {
-        if (this.props.selectedEquipment != null) {
-            return this._renderExistingEquipment();
-        }
-        else {
-            return this._renderSelectEquipment();
-        } 
+        return this._renderSelectEquipment();
     }
 
     private _renderSelectEquipment = () => {
 
         return (
             <div>
+                <label>Pick an equipment to assign</label>
+                <div>
                 <AsyncTypeahead
                     isLoading={this.state.isSearchLoading}
                     minLength={3}
                     placeholder="Search for equipment by name or by serial number"
                     labelKey="label"
                     filterBy={() => true} // don't filter on top of our search
-                    allowNew={true}
+                    allowNew={false}
                     renderMenuItemChildren={(option, props, index) => (
                         <div className={!!option.equipment.assignment ? "disabled" : ""}>
                             <div>
@@ -83,7 +81,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     }}
                     onChange={selected => {
                         if (selected && selected.length === 1) {
-                            if(!!selected[0].assignment)
+                            if(!!selected[0].equipment && !!selected[0].equipment.assignment)
                             {
                                 this.props.openDetailsModal(selected[0].equipment);
                             }
@@ -95,6 +93,11 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     }}
                     options={this.state.equipment}
                 />
+                </div>
+                <div>or</div>
+                <div>
+                    <Button color="link" onClick={this._createNew}><i className="fas fa-plus fa-sm" aria-hidden="true" /> Create New Equipment</Button>    
+                </div>
             </div>
         );
     }
@@ -105,38 +108,31 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
             this.props.onDeselect();
         }
         else {
-            // if teamId is not set, this is a new equipment
             this.props.onSelect({
-                attributes: !!equipmentLabel.equipment ? equipmentLabel.equipment.attributes : 
+                ...equipmentLabel.equipment
+            });
+        }
+    };
+
+    private _createNew = () => {
+        this.props.onSelect({
+            attributes:
                 [ 
                 {
                     equipmentId: 0,
                     key: "",
                     value: "",
-                  }
+                }
                 ],
-                id: equipmentLabel.equipment ? equipmentLabel.equipment.id : 0,
-                make: equipmentLabel.equipment ? equipmentLabel.equipment.make : "",
-                model: equipmentLabel.equipment ? equipmentLabel.equipment.model : "",
-                name: equipmentLabel.equipment ? equipmentLabel.equipment.name : equipmentLabel.label,
-                serialNumber: equipmentLabel.equipment ? equipmentLabel.equipment.serialNumber : "",
-                space: this.props.space ? this.props.space : 
-                    (equipmentLabel.equipment ? equipmentLabel.equipment.space : null), // if we are on spaces tab, auto to the right space
-                tags: "",
-                teamId: equipmentLabel.equipment ? equipmentLabel.equipment.teamId : 0,
-                type: ""
-            });
-        }
-    };
-
-    private _renderExistingEquipment = () => {
-        return (
-            <input
-                type="text"
-                className="form-control"
-                value={this.props.selectedEquipment.name}
-                disabled={true}
-            />
-        );
-    };
+            id: 0,
+            make: "",
+            model: "",
+            name: "",
+            serialNumber: "",
+            space: this.props.space ? this.props.space : null, // if we are on spaces tab, auto to the right space
+            tags: "",
+            teamId: 0,
+            type: ""
+        });
+    }
 }

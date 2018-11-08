@@ -18,7 +18,7 @@ namespace Keas.Core.Services
     public interface IEmailService
     {
         Task SendNotificationMessage(User user);
-        Task SendExpiringMessage(Person person);
+        Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model);
     }
 
     public class EmailService : IEmailService
@@ -47,7 +47,7 @@ namespace Keas.Core.Services
             }
         }
 
-        public async Task SendExpiringMessage(Person person)
+        public async Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model)
         {
             var path = Path.GetFullPath(".");
 
@@ -55,21 +55,15 @@ namespace Keas.Core.Services
                 .UseFilesystemProject(path)
                 .UseMemoryCachingProvider()
                 .Build();
-            
-            var expiringAccess = _dbContext.AccessAssignments.Where(a => a.Person==person && a.ExpiresAt <= DateTime.UtcNow.AddDays(30) && (a.NextNotificationDate == null || a.NextNotificationDate <= DateTime.UtcNow)).Include(a=> a.Access).AsNoTracking();
-            var expiringKey = _dbContext.KeySerials.Where(a =>
-                    a.Assignment.Person == person && a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
-                    (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow)).Include(k=> k.Assignment).Include(k=> k.Key).AsNoTracking();
-            var expiringEquipment = _dbContext.Equipment.Where(a =>
-                    a.Assignment.Person == person && a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
-                    (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow))
-                .Include(e => e.Assignment).AsNoTracking();
-            var expiringWorkstations = _dbContext.Workstations.Where(a =>
-                    a.Assignment.Person == person && a.Assignment.ExpiresAt <= DateTime.UtcNow.AddDays(30) &&
-                    (a.Assignment.NextNotificationDate == null || a.Assignment.NextNotificationDate <= DateTime.UtcNow))
-                .Include(w => w.Assignment).AsNoTracking();
 
-            var expiringItems = ExpiringItemsEmailModel.Create(expiringAccess, expiringKey, expiringEquipment, expiringWorkstations, person);
+            var person = model.People.Single(a => a.Id == personId);
+
+            var expiringItems = ExpiringItemsEmailModel.Create(
+                model.AccessAssignments.Where(a => a.PersonId == personId).ToList(), 
+                model.KeySerials.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(), 
+                model.Equipment.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(), 
+                model.Workstations.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(),
+                person);
             
             if (!expiringItems.AccessAssignments.Any() && !expiringItems.KeySerials.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
             {
@@ -77,8 +71,13 @@ namespace Keas.Core.Services
             }
            
             var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };
-            //message.To.Add(person.Email);
-            message.To.Add("jscubbage@ucdavis.edu");
+#if DEBUG //Might as well do this here too. In prod real peeps are getting added
+            message.To.Add("jsylvestre@ucdavis.edu"); 
+#else
+            message.To.Add(person.Email);
+#endif            
+            
+            
 
             if (expiringItems.AccessAssignments.Any())
             {
@@ -248,7 +247,7 @@ namespace Keas.Core.Services
 
             var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };
             //message.To.Add(user.Email);
-            message.To.Add("jscubbage@ucdavis.edu");
+            message.To.Add("jsylvestre@ucdavis.edu");
 
             //Bcc anyone?
 
