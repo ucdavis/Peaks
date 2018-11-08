@@ -120,14 +120,16 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           modal={keyAction === "edit"}
           selectedKey={selectedKey}
         />
-        <AssociateSpace
-          selectedKey={selectedKey}
-          selectedSpace={space}
-          onAssign={this._associateSpace}
-          isModalOpen={action === "associate"}
-          openModal={this._openAssociate}
-          closeModal={this._closeModals}
-        />
+        {!!space &&
+          <AssociateSpace
+            selectedKey={selectedKey}
+            selectedSpace={space}
+            onAssign={this._associateSpace}
+            isModalOpen={action === "associate"}
+            openModal={this._openAssociate}
+            closeModal={this._closeModals}
+          />
+        }
       </div>
     );
   }
