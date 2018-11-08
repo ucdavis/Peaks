@@ -9,11 +9,11 @@ using Xunit.Abstractions;
 namespace Test.TestsDatabase
 {
     [Trait("Category","DatabaseTests")]
-    public class SerialTests
+    public class KeySerialTests
     {
         private readonly ITestOutputHelper _output;
 
-        public SerialTests(ITestOutputHelper output)
+        public KeySerialTests(ITestOutputHelper output)
         {
             _output = output;
         }
