@@ -1,23 +1,14 @@
 import PropTypes from "prop-types";
 import * as React from "react";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   Button,
-  ListGroup,
-  ListGroupItem,
   Modal,
   ModalBody,
   ModalFooter,
-  ModalHeader
 } from "reactstrap";
-
-import * as moment from "moment";
-import DatePicker from "react-datepicker";
 import { AppContext, IAccess, IAccessAssignment, IPerson } from "../../Types";
-import AssignPerson from "../People/AssignPerson";
 import AccessEditValues from "./AccessEditValues";
-import SearchAccess from "./SearchAccess";
-
-import "react-datepicker/dist/react-datepicker.css";
 
 interface IProps {
   onEdit: (access: IAccess) => void;

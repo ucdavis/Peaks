@@ -21,7 +21,7 @@ namespace Keas.Mvc.Controllers
         {
             _context = context;
         }
-        
+
 #if DEBUG
         public IActionResult ResetDb()
         {

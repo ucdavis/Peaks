@@ -9,3 +9,22 @@ table {
   background-color:$bg-color;
   padding:12px;
 }
+.wrapperasset {
+  padding-left:16px;
+  border-left:6px solid $borders;
+  .equipment-color & {
+    border-color:transparentize($equipment,.5);
+  }
+  .keys-color & {
+    border-color:transparentize($keys,.5);
+  }
+  .spaces-color & {
+    border-color:transparentize($spaces,.5);
+  }
+  .access-color & {
+    border-color:transparentize($access,.5);
+  }
+  .people-color & {
+    border-color:transparentize($people,.5);
+  }
+}
