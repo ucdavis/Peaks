@@ -46,7 +46,7 @@ export default class RevokeEquipment extends React.Component<IProps, IState> {
                 <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg" className="equipment-color">
                   <div className="modal-header row justify-content-between">
                     <h2>Remove {this.props.selectedEquipment.name}</h2>
-                    <Button color="link" onClick={() => this.props.closeModal}>
+                    <Button color="link" onClick={this.props.closeModal}>
                     <i className="fas fa-times fa-lg"/>
                     </Button>
                   </div>
