@@ -275,7 +275,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
               }
         })
 
-        access.assignments = null;
+        access.assignments = [];
     }
 
     const deleted: IAccess = await this.context.fetch(`/api/${this.context.team.slug}/access/delete`, {
