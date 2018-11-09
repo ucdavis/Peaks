@@ -125,7 +125,7 @@ namespace Keas.Mvc.Services
                             else
                             {
                                 _context.Users.Add(newUser);
-                                await SavePerson(team, newUser);
+                                SavePerson(team, newUser);
                                 newpeople += 1;
                             }
                         }
@@ -134,7 +134,7 @@ namespace Keas.Mvc.Services
                             // User existed with Kerb Id, check team
                             if (!await _context.People.AnyAsync(p => p.UserId == user.Id && p.Team.Slug == teamslug))
                             {
-                                await SavePerson(team, user);                                
+                                SavePerson(team, user);                                
                                 newpeople += 1;
                             }
                         }
@@ -143,15 +143,16 @@ namespace Keas.Mvc.Services
                 else if (!await _context.People.AnyAsync(p => p.User.Iam == id.IamId && p.Team.Slug == teamslug))
                 {
                     // User exists with IAM ID, but not in this team
-                    await SavePerson(team, user);
+                    SavePerson(team, user);
                     newpeople += 1;
                 }
             }
+            await _context.SaveChangesAsync();
             string returnMessage = newpeople.ToString() + " new people added to the team. " + warning.ToString();
             return returnMessage;
         }
 
-        private async Task SavePerson(Team team, User user)
+        private void SavePerson(Team team, User user)
         {
             var newPerson = new Person()
             {
@@ -161,8 +162,7 @@ namespace Keas.Mvc.Services
                 LastName = user.FirstName,
                 Email = user.Email
             };
-            _context.People.Add(newPerson);
-            await _context.SaveChangesAsync();
+            _context.People.Add(newPerson);            
         }
     }
 }
