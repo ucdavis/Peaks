@@ -104,5 +104,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Compare\ProjectToSqlExpress.scmp" />
+    <None Include="Compare\ProjectToTestDb.scmp" />
   </ItemGroup>
 </Project>
