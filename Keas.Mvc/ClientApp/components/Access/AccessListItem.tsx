@@ -1,6 +1,6 @@
-import { DateUtil } from "../../util/dates";
 import * as React from "react";
 import { IAccess } from "../../Types";
+import { DateUtil } from "../../util/dates";
 import ListActionsDropdown from "../ListActionsDropdown";
 
 
@@ -8,6 +8,7 @@ interface IProps {
     accessEntity: IAccess;
     personView: boolean;
     onRevoke: (access: IAccess) => void;
+    onDelete: (access: IAccess) => void;
     onAdd: (access: IAccess) => void;
     onEdit: (access: IAccess) => void;
     showDetails: (access: IAccess) => void;
@@ -35,7 +36,9 @@ export default class AccessListItem extends React.Component<IProps, {}> {
                         () => this.props.showDetails(this.props.accessEntity) : null}
                         onEdit={!!this.props.onEdit ? 
                         () => this.props.onEdit(this.props.accessEntity) : null}
-                    />
+                        onDelete={!!this.props.onDelete ? 
+                            () => this.props.onDelete(this.props.accessEntity) : null}
+                        />
                 </td>
             </tr>
         );

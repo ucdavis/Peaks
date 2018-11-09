@@ -196,6 +196,40 @@ namespace Keas.Mvc.Controllers.Api
             return BadRequest(ModelState);
         }
 
+        public async Task<IActionResult> Delete([FromBody]Equipment equipment)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(!equipment.Active) 
+            {
+                return BadRequest(ModelState);
+            }
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+
+                _context.Equipment.Update(equipment);
+
+                if(equipment.Assignment != null)
+                {
+                    await _eventService.TrackUnAssignEquipment(equipment); // call before we remove person info
+                    _context.EquipmentAssignments.Remove(equipment.Assignment);
+                    equipment.Assignment = null;
+                }
+
+                equipment.Active = false;
+                await _context.SaveChangesAsync();
+                // TODO: track history?
+
+                transaction.Commit();
+                return Json(null);
+            }
+
+        }
+
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories

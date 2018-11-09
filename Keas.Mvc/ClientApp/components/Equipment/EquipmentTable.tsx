@@ -11,6 +11,7 @@ import ListActionsDropdown from "../ListActionsDropdown";
 interface IProps {
     equipment: IEquipment[];
     onRevoke?: (equipment: IEquipment) => void;
+    onDelete?: (equipment: IEquipment) => void;
     onAdd?: (equipment: IEquipment) => void;
     showDetails?: (equipment: IEquipment) => void;
     onEdit?: (equipment: IEquipment) => void;
@@ -118,6 +119,8 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                         () => this.props.showDetails(row.original) : null}
                         onEdit={!!this.props.onEdit ? 
                         () => this.props.onEdit(row.original) : null}
+                        onDelete={!!this.props.onDelete ? 
+                            () => this.props.onDelete(row.original) : null}
                 />
                 ),
             },

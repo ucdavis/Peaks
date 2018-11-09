@@ -11,6 +11,7 @@ import ListActionsDropdown from "../ListActionsDropdown";
 interface IProps {
     accesses: IAccess[];
     onRevoke?: (access: IAccess) => void;
+    onDelete?: (access: IAccess) => void;
     onAdd?: (access: IAccess) => void;
     showDetails?: (access: IAccess) => void;
     onEdit?: (access: IAccess) => void;
@@ -122,6 +123,8 @@ export default class AccessTable extends React.Component<IProps, {}> {
                         () => this.props.showDetails(row.original) : null}
                         onEdit={!!this.props.onEdit ? 
                         () => this.props.onEdit(row.original) : null}
+                        onDelete={!!this.props.onDelete ? 
+                            () => this.props.onDelete(row.original) : null}
                 />
                 ),
             },

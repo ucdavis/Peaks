@@ -122,5 +122,40 @@ namespace Keas.Mvc.Controllers.Api
             }
             return BadRequest(ModelState);
         }
+
+        public async Task<IActionResult> Delete([FromBody]Access access)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(!access.Active) 
+            {
+                return BadRequest(ModelState);
+            }
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+                _context.Access.Update(access);
+
+                if(access.Assignments.Count > 0)
+                {
+                    foreach(var assignment in access.Assignments.ToList()) 
+                    {
+                        await _eventService.TrackUnAssignAccess(assignment, Team); // call before we remove person info
+                        _context.AccessAssignments.Remove(assignment);
+                    }
+                }
+
+                access.Active = false;
+                await _context.SaveChangesAsync();
+                // TODO: track history?
+
+                transaction.Commit();
+                return Json(null);
+            }
+
+        }
     }
 }

@@ -2,15 +2,17 @@ import * as PropTypes from 'prop-types';
 import * as React from "react";
 
 import { AppContext, IEquipment, IPerson, ISpace } from "../../Types";
+import { PermissionsUtil } from "../../util/permissions";
+import Denied from "../Shared/Denied";
 import SearchTags from "../Tags/SearchTags";
 import AssignEquipment from "./AssignEquipment";
+import DeleteEquipment from "./DeleteEquipment";
 import EditEquipment from "./EditEquipment";
 import EquipmentDetails from "./EquipmentDetails";
 import EquipmentList from "./EquipmentList";
 import EquipmentTable from "./EquipmentTable";
+import RevokeEquipment from "./RevokeEquipment";
 import SearchAttributes from "./SearchAttributes";
-import Denied from "../Shared/Denied";
-import { PermissionsUtil } from "../../util/permissions";
 
 interface IState {
   attributeFilters: string[];
@@ -118,6 +120,18 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             space={this.props.space}
             commonAttributeKeys={this.state.commonAttributeKeys}
             />
+            <RevokeEquipment 
+              selectedEquipment={detailEquipment}
+              revokeEquipment={this._revokeEquipment}
+              closeModal={this._closeModals}
+              modal={activeAsset && action === "revoke"}
+            />
+            <DeleteEquipment 
+              selectedEquipment={detailEquipment}
+              deleteEquipment={this._deleteEquipment}
+              closeModal={this._closeModals}
+              modal={activeAsset && action === "delete"}
+            />
         </div>
       </div>
     );
@@ -130,7 +144,8 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       <div>
         <EquipmentList
           equipment={this.state.equipment}
-          onRevoke={this._revokeEquipment}
+          onRevoke={this._openRevokeModal}
+          onDelete={this._openDeleteModal}
           onAdd={this._openAssignModal}
           showDetails={this._openDetailsModal}
           onEdit={this._openEditModal}
@@ -158,7 +173,8 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
           </div>
           <EquipmentTable
             equipment={filteredEquipment}
-            onRevoke={this._revokeEquipment}
+            onRevoke={this._openRevokeModal}
+            onDelete={this._openDeleteModal}
             onAdd={this._openAssignModal}
             showDetails={this._openDetailsModal}
             onEdit={this._openEditModal}
@@ -255,6 +271,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       if (this.props.person == null) {
           // if we are looking at all equipment, just update assignment
        shallowCopy[index].assignment = null;
+       shallowCopy[index].equipmentAssignmentId = null;
       } else {
         // if we are looking at a person, remove from our list of equipment
         shallowCopy.splice(index, 1);
@@ -263,6 +280,34 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       if(this.props.assetInUseUpdated)
       {
         this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
+          this.props.person ? this.props.person.id : null, -1);
+      }
+    }
+  };
+
+  private _deleteEquipment = async (equipment: IEquipment) => {
+
+    const deleted: IEquipment = await this.context.fetch(`/api/${this.context.team.slug}/equipment/delete`, {
+      body: JSON.stringify(equipment),
+      method: "POST"
+    });
+    
+
+    // remove from state
+    const index = this.state.equipment.indexOf(equipment);
+    if (index > -1) {
+      const shallowCopy = [...this.state.equipment];
+      shallowCopy.splice(index, 1);
+      this.setState({ equipment: shallowCopy });
+
+      if(equipment.assignment !== null && this.props.assetInUseUpdated)
+      {
+        this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
+          this.props.person ? this.props.person.id : null, -1);
+      }
+      if(this.props.assetTotalUpdated)
+      {
+        this.props.assetTotalUpdated("equipment", this.props.space ? this.props.space.id : null,
           this.props.person ? this.props.person.id : null, -1);
       }
     }
@@ -357,6 +402,19 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       `${this._getBaseUrl()}/equipment/edit/${equipment.id}`
     );
   }
+
+  private _openRevokeModal = (equipment: IEquipment) => {
+    this.context.router.history.push(
+      `${this._getBaseUrl()}/equipment/revoke/${equipment.id}`
+    );
+  }
+
+  private _openDeleteModal = (equipment: IEquipment) => {
+    this.context.router.history.push(
+      `${this._getBaseUrl()}/equipment/delete/${equipment.id}`
+    );
+  }
+
   private _closeModals = () => {
     this.context.router.history.push(`${this._getBaseUrl()}/equipment`);
   };
