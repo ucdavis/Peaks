@@ -260,24 +260,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   
   private _deleteAccess = async (access: IAccess) => {
 
-    if(access.assignments.length > 0)
-    {
-        access.assignments.forEach(async x => {
-            await this.context.fetch(`/api/${this.context.team.slug}/access/revoke`, {
-                body: JSON.stringify(x),
-                method: "POST"
-              });
-
-              if(this.props.assetInUseUpdated)
-              {
-                  this.props.assetInUseUpdated("access", this.props.space ? this.props.space.id : null,
-                  this.props.person ? this.props.person.id : null, -1);
-              }
-        })
-
-        access.assignments = [];
-    }
-
     const deleted: IAccess = await this.context.fetch(`/api/${this.context.team.slug}/access/delete`, {
       body: JSON.stringify(access),
       method: "POST"
@@ -289,6 +271,12 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       const shallowCopy = [...this.state.accesses];
       shallowCopy.splice(index, 1);
       this.setState({ accesses: shallowCopy });
+
+      if(this.props.assetInUseUpdated && access.assignments.length > 0)
+      {
+          this.props.assetInUseUpdated("access", this.props.space ? this.props.space.id : null,
+          this.props.person ? this.props.person.id : null, -1 * access.assignments.length);
+      }
 
       if(this.props.assetTotalUpdated)
       {

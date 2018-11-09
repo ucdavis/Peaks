@@ -203,15 +203,36 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            if(!equipment.Active || equipment.Assignment != null) // assignment should have been removed
+            if(!equipment.Active) 
             {
                 return BadRequest(ModelState);
             }
-            _context.Equipment.Update(equipment);
-            equipment.Active = false;
-            await _context.SaveChangesAsync();
-            // TODO: track history?
-            return Json(null);
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    _context.Equipment.Update(equipment);
+
+                    if(equipment.Assignment != null)
+                    {
+                        await _eventService.TrackUnAssignEquipment(equipment); // call before we remove person info
+                        _context.EquipmentAssignments.Remove(equipment.Assignment);
+                        equipment.Assignment = null;
+                    }
+
+                    equipment.Active = false;
+                    await _context.SaveChangesAsync();
+                    // TODO: track history?
+
+                    transaction.Commit();
+                    return Json(null);
+                }
+                catch(Exception)
+                {
+                    throw;
+                }
+            }
 
         }
 

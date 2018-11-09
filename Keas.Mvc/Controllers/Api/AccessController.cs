@@ -130,15 +130,38 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            if(!access.Active || access.Assignments.Count > 0) // assignments should have been revoked
+            if(!access.Active) 
             {
                 return BadRequest(ModelState);
             }
-            _context.Access.Update(access);
-            access.Active = false;
-            await _context.SaveChangesAsync();
-            // TODO: track history?
-            return Json(null);
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+                try
+                {
+                    _context.Access.Update(access);
+
+                    if(access.Assignments.Count > 0)
+                    {
+                        foreach(var assignment in access.Assignments.ToList()) 
+                        {
+                            await _eventService.TrackUnAssignAccess(assignment, Team); // call before we remove person info
+                            _context.AccessAssignments.Remove(assignment);
+                        }
+                    }
+
+                    access.Active = false;
+                    await _context.SaveChangesAsync();
+                    // TODO: track history?
+
+                    transaction.Commit();
+                    return Json(null);
+                }
+                catch(Exception)
+                {
+                    throw;
+                }
+            }
 
         }
     }

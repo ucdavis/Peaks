@@ -287,21 +287,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
   private _deleteEquipment = async (equipment: IEquipment) => {
 
-    if(equipment.assignment !== null)
-    {
-      await this.context.fetch(`/api/${this.context.team.slug}/equipment/revoke`, {
-        body: JSON.stringify(equipment),
-        method: "POST"
-      });
-      equipment.assignment = null;
-      equipment.equipmentAssignmentId = null;
-      if(this.props.assetInUseUpdated)
-      {
-        this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
-          this.props.person ? this.props.person.id : null, -1);
-      }
-    }
-
     const deleted: IEquipment = await this.context.fetch(`/api/${this.context.team.slug}/equipment/delete`, {
       body: JSON.stringify(equipment),
       method: "POST"
@@ -314,6 +299,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
       shallowCopy.splice(index, 1);
       this.setState({ equipment: shallowCopy });
 
+      if(equipment.assignment !== null && this.props.assetInUseUpdated)
+      {
+        this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
+          this.props.person ? this.props.person.id : null, -1);
+      }
       if(this.props.assetTotalUpdated)
       {
         this.props.assetTotalUpdated("equipment", this.props.space ? this.props.space.id : null,
