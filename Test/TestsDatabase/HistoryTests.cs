@@ -52,8 +52,8 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>()));
             expectedFields.Add(new NameAndType("Key", "Keas.Core.Domain.Key", new List<string>()));
             expectedFields.Add(new NameAndType("KeyId", "System.Nullable`1[System.Int32]", new List<string>()));
-            expectedFields.Add(new NameAndType("Serial", "Keas.Core.Domain.Serial", new List<string>()));
-            expectedFields.Add(new NameAndType("SerialId", "System.Nullable`1[System.Int32]", new List<string>()));
+            expectedFields.Add(new NameAndType("KeySerial", "Keas.Core.Domain.KeySerial", new List<string>()));
+            expectedFields.Add(new NameAndType("KeySerialId", "System.Nullable`1[System.Int32]", new List<string>()));
             expectedFields.Add(new NameAndType("Target", "Keas.Core.Domain.Person", new List<string>()));
             expectedFields.Add(new NameAndType("TargetId", "System.Nullable`1[System.Int32]", new List<string>()));
             expectedFields.Add(new NameAndType("Workstation", "Keas.Core.Domain.Workstation", new List<string>()));
