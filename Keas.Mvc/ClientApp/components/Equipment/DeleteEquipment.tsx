@@ -74,7 +74,7 @@ export default class DeleteEquipment extends React.Component<IProps, IState> {
     private _deleteEquipment = async () => {
         if(this.props.selectedEquipment.assignment !== null &&
             !confirm("This equipment is currently assigned, are you sure you want to delete it?")){
-            return false;
+            return;
           }
         this.setState({submitting: true});
         try{

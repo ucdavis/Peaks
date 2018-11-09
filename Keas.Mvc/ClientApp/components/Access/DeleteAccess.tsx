@@ -73,7 +73,7 @@ export default class DeleteAccess extends React.Component<IProps, IState> {
     private _deleteAccess = async () => {
         if(this.props.selectedAccess.assignments.length > 0 &&
             !confirm("This access is currently assigned, are you sure you want to delete it?")){
-            return false;
+            return;
           }
 
         this.setState({submitting: true});
