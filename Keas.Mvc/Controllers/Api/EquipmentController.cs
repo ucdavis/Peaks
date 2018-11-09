@@ -210,28 +210,22 @@ namespace Keas.Mvc.Controllers.Api
 
             using(var transaction = _context.Database.BeginTransaction())
             {
-                try
+
+                _context.Equipment.Update(equipment);
+
+                if(equipment.Assignment != null)
                 {
-                    _context.Equipment.Update(equipment);
-
-                    if(equipment.Assignment != null)
-                    {
-                        await _eventService.TrackUnAssignEquipment(equipment); // call before we remove person info
-                        _context.EquipmentAssignments.Remove(equipment.Assignment);
-                        equipment.Assignment = null;
-                    }
-
-                    equipment.Active = false;
-                    await _context.SaveChangesAsync();
-                    // TODO: track history?
-
-                    transaction.Commit();
-                    return Json(null);
+                    await _eventService.TrackUnAssignEquipment(equipment); // call before we remove person info
+                    _context.EquipmentAssignments.Remove(equipment.Assignment);
+                    equipment.Assignment = null;
                 }
-                catch(Exception)
-                {
-                    throw;
-                }
+
+                equipment.Active = false;
+                await _context.SaveChangesAsync();
+                // TODO: track history?
+
+                transaction.Commit();
+                return Json(null);
             }
 
         }

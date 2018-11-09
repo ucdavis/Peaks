@@ -137,30 +137,23 @@ namespace Keas.Mvc.Controllers.Api
 
             using(var transaction = _context.Database.BeginTransaction())
             {
-                try
-                {
-                    _context.Access.Update(access);
+                _context.Access.Update(access);
 
-                    if(access.Assignments.Count > 0)
+                if(access.Assignments.Count > 0)
+                {
+                    foreach(var assignment in access.Assignments.ToList()) 
                     {
-                        foreach(var assignment in access.Assignments.ToList()) 
-                        {
-                            await _eventService.TrackUnAssignAccess(assignment, Team); // call before we remove person info
-                            _context.AccessAssignments.Remove(assignment);
-                        }
+                        await _eventService.TrackUnAssignAccess(assignment, Team); // call before we remove person info
+                        _context.AccessAssignments.Remove(assignment);
                     }
-
-                    access.Active = false;
-                    await _context.SaveChangesAsync();
-                    // TODO: track history?
-
-                    transaction.Commit();
-                    return Json(null);
                 }
-                catch(Exception)
-                {
-                    throw;
-                }
+
+                access.Active = false;
+                await _context.SaveChangesAsync();
+                // TODO: track history?
+
+                transaction.Commit();
+                return Json(null);
             }
 
         }
