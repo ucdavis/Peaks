@@ -80,7 +80,10 @@ export default class RevokeEquipment extends React.Component<IProps, IState> {
         {
             return;
         }
+        this.setState({submitting: true});
         await this.props.revokeEquipment(this.props.selectedEquipment);
+        this.setState({submitting: false});
+        this.props.closeModal();
     }
 
     private _isValidToRevoke = () => {

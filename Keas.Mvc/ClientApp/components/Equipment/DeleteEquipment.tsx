@@ -76,7 +76,16 @@ export default class DeleteEquipment extends React.Component<IProps, IState> {
             !confirm("This equipment is currently assigned, are you sure you want to delete it?")){
             return false;
           }
-
-        await this.props.deleteEquipment(this.props.selectedEquipment);
+        this.setState({submitting: true});
+        try{
+            await this.props.deleteEquipment(this.props.selectedEquipment);
+        }
+        catch(err) {
+            alert("There was an error deleting this equipment, please try again");
+            this.setState({submitting: false});
+            return;
+        }
+        this.setState({submitting: false});
+        this.props.closeModal();
     }
 }
