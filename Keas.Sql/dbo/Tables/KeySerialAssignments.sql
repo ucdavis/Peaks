@@ -16,15 +16,12 @@
 
 
 
-
+GO
+CREATE NONCLUSTERED INDEX [IX_KeySerialAssignments_RequestedById]
+    ON [dbo].[KeySerialAssignments]([RequestedById] ASC);
 
 
 GO
-CREATE NONCLUSTERED INDEX [IX_KeyAssignments_RequestedById]
-    ON [dbo].[KeyAssignments]([RequestedById] ASC);
-
-
-GO
-CREATE NONCLUSTERED INDEX [IX_KeyAssignments_PersonId]
-    ON [dbo].[KeyAssignments]([PersonId] ASC);
+CREATE NONCLUSTERED INDEX [IX_KeySerialAssignments_PersonId]
+    ON [dbo].[KeySerialAssignments]([PersonId] ASC);
 
