@@ -22,7 +22,7 @@ namespace Keas.Mvc.Models
                 viewModel.PendingItems = false;
                 return viewModel;
             }
-            var keys = await context.KeyAssignments.Where(s => s.Person == person && !s.IsConfirmed).AnyAsync();
+            var keys = await context.KeySerialAssignments.Where(s => s.Person == person && !s.IsConfirmed).AnyAsync();
             var equipment = await context.EquipmentAssignments.Where(e => e.Person == person && !e.IsConfirmed).AnyAsync();
             var workstations = await context.WorkstationAssignments.Where(w => w.Person == person && !w.IsConfirmed).AnyAsync();
             viewModel.PendingItems = keys || equipment || workstations;

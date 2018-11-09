@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Keas.Core.Domain
 {
-    public class Serial
+    public class KeySerial
     {
 
-        public Serial()
+        public KeySerial()
         {
             Active = true;
         }
@@ -21,8 +21,9 @@ namespace Keas.Core.Domain
 
         public string Number { get; set; }
 
-        public KeyAssignment Assignment { get; set; }
-        public int? KeyAssignmentId { get; set; }
+        public KeySerialAssignment Assignment { get; set; }
+
+        public int? KeySerialAssignmentId { get; set; }
 
         public bool Active { get; set; }
     }

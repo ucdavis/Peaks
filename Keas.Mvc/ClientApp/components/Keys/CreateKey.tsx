@@ -1,29 +1,22 @@
-import * as PropTypes from 'prop-types';
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import {
   Button,
-  ListGroup,
-  ListGroupItem,
   Modal,
   ModalBody,
   ModalFooter,
-  ModalHeader
 } from "reactstrap";
 
-import * as moment from "moment";
-import DatePicker from "react-datepicker";
-import { AppContext, IKey, IKeySerialAssignment, IPerson } from "../../Types";
-import AssignPerson from "../People/AssignPerson";
+import { AppContext, IKey } from "../../Types";
 import KeyEditValues from "./KeyEditValues";
-import SearchKey from "./SearchKeys";
 
 import "react-datepicker/dist/react-datepicker.css";
 
 interface IProps {
-  onEdit: (key: IKey) => void;
+  onCreate: (key: IKey) => void;
   modal: boolean;
+  onOpenModal: () => void;
   closeModal: () => void;
-  selectedKey: IKey;
 }
 
 interface IState {
@@ -33,52 +26,58 @@ interface IState {
   validState: boolean;
 }
 
-export default class EditKey extends React.Component<IProps, IState> {
+export default class CreateKey extends React.Component<IProps, IState> {
+
   public static contextTypes = {
     fetch: PropTypes.func,
     team: PropTypes.object
-  };
+  }
+
   public context: AppContext;
-  constructor(props) {
+
+  constructor(props: IProps) {
     super(props);
+
     this.state = {
       error: "",
-      key: this.props.selectedKey,
+      key: {
+        id: 0,
+        code: "",
+        name: "",
+        teamId: 0,
+        serials: [],
+      },
       submitting: false,
       validState: false
     };
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedKey !== this.props.selectedKey) {
-      this.setState({ key: nextProps.selectedKey });
-    }
-  }
-
   public render() {
-    if(!this.state.key)
-    {
-      return null;
-    }
+    return (
+      <div>
+        <Button color="link" onClick={this.props.onOpenModal}>
+          <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add Key
+        </Button>
+        {this.renderModal()}
+      </div>
+    );
+  }
+  
+  private renderModal() {
     return (
       <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg" className="keys-color">
         <div className="modal-header row justify-content-between">
-          <h2>Edit Key</h2>
+          <h2>Create Key</h2>
           <Button color="link" onClick={this._closeModal}>
             <i className="fas fa-times fa-lg"/>
           </Button>
         </div>
         <ModalBody>
-          <div className="container-fluid">
-            <form>
-                  <KeyEditValues
-                    selectedKey={this.state.key}
-                    changeProperty={this._changeProperty}
-                    disableEditing={false}
-                  />
-            </form>
-          </div>
+            <KeyEditValues
+              selectedKey={this.state.key}
+              changeProperty={this._changeProperty}
+              disableEditing={false}
+            />
         </ModalBody>
         <ModalFooter>
           <Button
@@ -106,7 +105,13 @@ export default class EditKey extends React.Component<IProps, IState> {
   private _closeModal = () => {
     this.setState({
       error: "",
-      key: null,
+      key: {
+        id: 0,
+        code: "",
+        name: "",
+        teamId: 0,
+        serials: [],
+      },
       submitting: false,
       validState: false
     });
@@ -120,24 +125,32 @@ export default class EditKey extends React.Component<IProps, IState> {
     }
 
     this.setState({submitting: true})
-    await this.props.onEdit(this.state.key);
+    await this.props.onCreate(this.state.key);
 
     this._closeModal();
   };
 
   private _validateState = () => {
+    const { key } = this.state;
+    
     let valid = true;
     let error = "";
-    if (!this.state.key) {
+
+    if (!key) {
       valid = false;
-    } else if ( !this.state.key.code){
+    }
+    else if (!key.code) {
       valid = false;
       error = "You must give this key a name.";
-    } else if(this.state.key.code.length > 64)
-    {
+    }
+    else if (key.code.length > 64) {
       valid = false;
       error = "The name you have chosen is too long";
     }
-    this.setState({ validState: valid, error });
+
+    this.setState({
+      error,
+      validState: valid,
+    });
   };
 }

@@ -1,82 +1,78 @@
-import * as PropTypes from 'prop-types';
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import {
   Button,
-  ListGroup,
-  ListGroupItem,
   Modal,
   ModalBody,
   ModalFooter,
-  ModalHeader
 } from "reactstrap";
 
-import * as moment from "moment";
-import DatePicker from "react-datepicker";
-import { AppContext, IKey, IKeySerialAssignment, IPerson } from "../../Types";
-import AssignPerson from "../People/AssignPerson";
-import KeyEditValues from "./KeyEditValues";
-import SearchKey from "./SearchKeys";
+import { AppContext, IKeySerial } from "../../Types";
+import KeySerialEditValues from "./KeySerialEditValues";
 
 import "react-datepicker/dist/react-datepicker.css";
 
 interface IProps {
-  onEdit: (key: IKey) => void;
-  modal: boolean;
+  onOpenModal: (keySerial: IKeySerial) => void;
+  isModalOpen: boolean;
   closeModal: () => void;
-  selectedKey: IKey;
+  selectedKeySerial: IKeySerial;
 }
 
 interface IState {
   error: string;
-  key: IKey;
+  keySerial: IKeySerial;
   submitting: boolean;
   validState: boolean;
 }
 
-export default class EditKey extends React.Component<IProps, IState> {
+export default class EditKeySerial extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
     team: PropTypes.object
   };
+
   public context: AppContext;
-  constructor(props) {
+
+  constructor(props: IProps) {
     super(props);
     this.state = {
       error: "",
-      key: this.props.selectedKey,
+      keySerial: this.props.selectedKeySerial,
       submitting: false,
       validState: false
     };
   }
 
   // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedKey !== this.props.selectedKey) {
-      this.setState({ key: nextProps.selectedKey });
+  public componentWillReceiveProps(nextProps: IProps) {
+    if (nextProps.selectedKeySerial !== this.props.selectedKeySerial) {
+      this.setState({ keySerial: nextProps.selectedKeySerial });
     }
   }
 
   public render() {
-    if(!this.state.key)
+    if (!this.state.keySerial)
     {
       return null;
     }
+
     return (
-      <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg" className="keys-color">
+      <Modal isOpen={this.props.isModalOpen} toggle={this._closeModal} size="lg" className="keys-color">
         <div className="modal-header row justify-content-between">
           <h2>Edit Key</h2>
           <Button color="link" onClick={this._closeModal}>
-            <i className="fas fa-times fa-lg"/>
+          <i className="fas fa-times fa-lg"/>
           </Button>
         </div>
         <ModalBody>
           <div className="container-fluid">
             <form>
-                  <KeyEditValues
-                    selectedKey={this.state.key}
-                    changeProperty={this._changeProperty}
-                    disableEditing={false}
-                  />
+              <KeySerialEditValues
+                keySerial={this.state.keySerial}
+                changeProperty={this._changeProperty}
+                disableEditing={false}
+              />
             </form>
           </div>
         </ModalBody>
@@ -95,8 +91,8 @@ export default class EditKey extends React.Component<IProps, IState> {
 
   private _changeProperty = (property: string, value: string) => {
     this.setState({
-      key: {
-        ...this.state.key,
+      keySerial: {
+        ...this.state.keySerial,
         [property]: value
       }
     }, this._validateState);
@@ -106,7 +102,7 @@ export default class EditKey extends React.Component<IProps, IState> {
   private _closeModal = () => {
     this.setState({
       error: "",
-      key: null,
+      keySerial: null,
       submitting: false,
       validState: false
     });
@@ -120,7 +116,7 @@ export default class EditKey extends React.Component<IProps, IState> {
     }
 
     this.setState({submitting: true})
-    await this.props.onEdit(this.state.key);
+    await this.props.onOpenModal(this.state.keySerial);
 
     this._closeModal();
   };
@@ -128,16 +124,20 @@ export default class EditKey extends React.Component<IProps, IState> {
   private _validateState = () => {
     let valid = true;
     let error = "";
-    if (!this.state.key) {
+
+    if (!this.state.keySerial) {
       valid = false;
-    } else if ( !this.state.key.code){
+    }
+    else if ( !this.state.keySerial.number){
       valid = false;
       error = "You must give this key a name.";
-    } else if(this.state.key.code.length > 64)
+    }
+    else if(this.state.keySerial.number.length > 64)
     {
       valid = false;
       error = "The name you have chosen is too long";
     }
+
     this.setState({ validState: valid, error });
   };
 }

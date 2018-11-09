@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Keas.Core.Data;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Keas.Core.Data;
 using Keas.Core.Domain;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace Keas.Mvc.Services
 {
@@ -25,14 +21,15 @@ namespace Keas.Mvc.Services
         Task<bool> IsInRoles(List<Role> roles, string teamSlug, User user);
 
         Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId);
+
         Task<User> GetUser();
 
         Task<Person> GetPerson(string teamSlug);
+
         Task<List<User>> GetUsersInRoles(List<Role> roles, string teamSlug);
 
         Task<List<TeamPermission>> GetUserRolesInTeam(Team team);
 
-        
         Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team);
 
         Task<bool> IsInTeamOrAdmin(string teamslug);
@@ -52,51 +49,82 @@ namespace Keas.Mvc.Services
         public async Task<bool> IsInRoles(List<Role> roles, string teamSlug)
         {
             var user = await GetUser();
-            var team = await _dbContext.Teams.SingleAsync(t => t.Slug == teamSlug);
+
+            var team = await _dbContext.Teams
+                .AsNoTracking()
+                .SingleAsync(t => t.Slug == teamSlug);
+
             var roleIds = roles.Select(a => a.Id).ToArray();
 
-            if (await _dbContext.TeamPermissions.AnyAsync(a => a.Team == team && a.UserId == user.Id && roleIds.Contains(a.RoleId))){
-                return true;
-            }            
-            return await _dbContext.SystemPermissions.AsNoTracking().AnyAsync(a => a.UserId == user.Id && roleIds.Contains(a.RoleId));
-        }
+            var inRole = await _dbContext.TeamPermissions
+                .AsNoTracking()
+                .AnyAsync(a => a.Team == team && a.UserId == user.Id && roleIds.Contains(a.RoleId));
 
-        public async Task<bool> IsInRoles(List<Role> roles, string teamSlug, User user)
-        {
-             var team = await _dbContext.Teams.SingleAsync(t => t.Slug == teamSlug);
-            var roleIds = roles.Select(a => a.Id).ToArray();
-            if (await _dbContext.TeamPermissions.AnyAsync(a => a.Team == team && a.UserId == user.Id && roleIds.Contains(a.RoleId)))
+            if (inRole)
             {
                 return true;
             }
 
-            return await _dbContext.SystemPermissions.AsNoTracking().AnyAsync(a => a.UserId == user.Id && roleIds.Contains(a.RoleId));        
+            return await _dbContext.SystemPermissions
+                .AsNoTracking()
+                .AnyAsync(a => a.UserId == user.Id && roleIds.Contains(a.RoleId));
+        }
+
+        public async Task<bool> IsInRoles(List<Role> roles, string teamSlug, User user)
+        {
+            var team = await _dbContext.Teams
+                .AsNoTracking()
+                .SingleAsync(t => t.Slug == teamSlug);
+
+            var roleIds = roles.Select(a => a.Id).ToArray();
+
+            var inRole = await _dbContext.TeamPermissions
+                .AsNoTracking()
+                .AnyAsync(a => a.Team == team && a.UserId == user.Id && roleIds.Contains(a.RoleId));
+
+            if (inRole)
+            {
+                return true;
+            }
+
+            return await _dbContext.SystemPermissions
+                .AsNoTracking()
+                .AnyAsync(a => a.UserId == user.Id && roleIds.Contains(a.RoleId));        
         }
 
         public async Task<bool> IsInAdminRoles(List<Role> roles, User user)
         {
             var roleIds = roles.Select(a => a.Id).ToArray();
-            return await _dbContext.SystemPermissions.AsNoTracking().AnyAsync(a => a.UserId == user.Id && roleIds.Contains(a.RoleId));
+
+            return await _dbContext.SystemPermissions
+                .AsNoTracking()
+                .AnyAsync(a => a.UserId == user.Id && roleIds.Contains(a.RoleId));
         }
 
         public async Task<bool> IsInRole(string roleCode, string teamSlug)
         {
-            var role = await _dbContext.Roles.AsNoTracking().SingleOrDefaultAsync(x => x.Name == roleCode);
+            var role = await _dbContext.Roles
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.Name == roleCode);
+
             if (role == null)
             {
                 throw  new ArgumentException("Role not found");
             }
+
             var team = await _dbContext.Teams
-                .Include(t=> t.TeamPermissions)
-                    .ThenInclude(tp=> tp.User)
-                .Include(t=> t.TeamPermissions)
-                    .ThenInclude(tp=> tp.Role)
+                .Include(t => t.TeamPermissions)
+                    .ThenInclude(tp => tp.User)
+                .Include(t => t.TeamPermissions)
+                    .ThenInclude(tp => tp.Role)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Slug == teamSlug);
+
             if (team == null)
             {
                 throw new ArgumentException("Team not found");
             }
+
             return await IsInRole(role, team);
         }
 
@@ -109,34 +137,57 @@ namespace Keas.Mvc.Services
         public async Task<User> GetUser()
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var user = await _dbContext.Users.AsNoTracking().SingleOrDefaultAsync(x => x.Id == userId);
+
+            var user = await _dbContext.Users
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.Id == userId);
+
             return user;
         }
 
         public async Task<Person> GetPerson(string teamSlug)
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var person =
-                await _dbContext.People.SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Slug == teamSlug);
+
+            var person = await _dbContext.People
+                .AsNoTracking()
+                .SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Slug == teamSlug);
+
             return person;
         }
 
         public async Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId)
         {
-            var users = await _dbContext.TeamPermissions.Where(x => x.TeamId == teamId && roles.Any(r=> r.Id==x.RoleId)).Select(tp=>tp.User).Distinct().AsNoTracking().ToListAsync();
+            var users = await _dbContext.TeamPermissions
+                .Where(x => x.TeamId == teamId && roles.Any(r=> r.Id==x.RoleId))
+                .Select(tp => tp.User)
+                .Distinct()
+                .AsNoTracking()
+                .ToListAsync();
             
             return users;
         }
 
         public async Task<List<User>> GetUsersInRoles(List<Role> roles, string teamSlug)
         {
-            var users = await _dbContext.TeamPermissions.Where(x => x.Team.Slug== teamSlug && roles.Any(r => r.Id == x.RoleId)).Select(tp => tp.User).Distinct().ToListAsync();
+            var users = await _dbContext.TeamPermissions
+                .Where(x => x.Team.Slug == teamSlug && roles.Any(r => r.Id == x.RoleId))
+                .Select(tp => tp.User)
+                .Distinct()
+                .AsNoTracking()
+                .ToListAsync();
+
             return users;
         }
 
         public async Task<List<TeamPermission>> GetUserRolesInTeam(Team team) {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var userPermissions = await _dbContext.TeamPermissions.Where(x => x.TeamId == team.Id && x.User.Id == userId).AsNoTracking().ToListAsync();
+
+            var userPermissions = await _dbContext.TeamPermissions
+                .Where(x => x.TeamId == team.Id && x.User.Id == userId)
+                .AsNoTracking()
+                .ToListAsync();
+
             return userPermissions;
         }
 
@@ -144,8 +195,19 @@ namespace Keas.Mvc.Services
         public async Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team)
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var userPermissions = await _dbContext.TeamPermissions.Where(x => x.TeamId == team.Id && x.User.Id == userId).Select(tp=> tp.Role).AsNoTracking().ToListAsync();
-            var admin = await _dbContext.SystemPermissions.Where(sp => sp.User.Id == userId).Select(sp=> sp.Role).ToListAsync();
+
+            var userPermissions = await _dbContext.TeamPermissions
+                .Where(x => x.TeamId == team.Id && x.User.Id == userId)
+                .Select(tp => tp.Role)
+                .AsNoTracking()
+                .ToListAsync();
+
+            var admin = await _dbContext.SystemPermissions
+                .Where(sp => sp.User.Id == userId)
+                .Select(sp => sp.Role)
+                .AsNoTracking()
+                .ToListAsync();
+
             userPermissions.AddRange(admin);
             return userPermissions;
         }
@@ -153,12 +215,14 @@ namespace Keas.Mvc.Services
         public async Task<bool> IsInTeamOrAdmin(string teamslug) 
         {
             var person = await GetPerson(teamslug);
-            if (person !=null)
+            if (person != null)
             {
                 return true;
             }
-            var userId = _contextAccessor.HttpContext.User.Identity.Name;            
-            return await _dbContext.SystemPermissions.Where(sp => sp.User.Id == userId).AnyAsync();
+            var userId = _contextAccessor.HttpContext.User.Identity.Name;
+            return await _dbContext.SystemPermissions
+                .AsNoTracking()
+                .AnyAsync(sp => sp.User.Id == userId);
         }
     }
 }

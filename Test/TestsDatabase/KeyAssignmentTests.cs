@@ -24,7 +24,7 @@ namespace Test.TestsDatabase
         public void TestClassAttributes()
         {
             // Arrange
-            var classReflection = new ControllerReflection(_output, typeof(KeyAssignment));
+            var classReflection = new ControllerReflection(_output, typeof(KeySerialAssignment));
             // Act
             // Assert	
             classReflection.ControllerInherits("AssignmentBase"); 
@@ -53,7 +53,7 @@ namespace Test.TestsDatabase
 
             #endregion Arrange
 
-            AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(KeyAssignment));
+            AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(KeySerialAssignment));
         }
 
         #endregion Reflection of Database

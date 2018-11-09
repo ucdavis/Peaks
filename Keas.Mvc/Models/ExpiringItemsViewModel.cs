@@ -13,7 +13,7 @@ namespace Keas.Mvc.Models
     public class ExpiringItemsViewModel
     {
         public AccessAssignment[] Access { get; set; }
-        public Serial[] Keys { get; set; }
+        public KeySerial[] Keys { get; set; }
         public Equipment[] Equipment { get; set; }
         public Workstation[] Workstations { get; set; }
 
@@ -35,7 +35,7 @@ namespace Keas.Mvc.Models
             var expiringAccess = await context.AccessAssignments.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Access") &&
                 a.Access.Team.Slug == teamName && a.ExpiresAt <= expiresBefore && (a.Access.Active || a.Access.Active == !showInactive))
                 .Include(a => a.Access).Include(a=> a.Person).AsNoTracking().ToArrayAsync();
-            var expiringKey = await context.Serials.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Key") &&
+            var expiringKey = await context.KeySerials.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Key") &&
                 a.Key.Team.Slug == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Key.Active || a.Key.Active == !showInactive))
                 .Include(k => k.Assignment).ThenInclude(a=> a.Person).Include(k => k.Key).AsNoTracking().ToArrayAsync();
             var expiringEquipment = await context.Equipment.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Equipment") &&

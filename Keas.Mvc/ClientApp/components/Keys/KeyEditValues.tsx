@@ -6,55 +6,42 @@ interface IProps {
     selectedKey: IKey;
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
-    creating?: boolean;
 }
 
 export default class KeyEditValues extends React.Component<IProps, {}> {
 
     public render() {
+        const { name, code } = this.props.selectedKey;
+
         return (
             <div>
-                {!this.props.creating &&
                 <div className="form-group">
                     <label>Name</label>
                     <input type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
-                        value={this.props.selectedKey.name ? this.props.selectedKey.name : ""}
-                        onChange={(e) => this.props.changeProperty("name", e.target.value)}
+                        value={name}
+                        onChange={this.onChangeName}
                     />
-                </div>}
+                </div>
                 <div className="form-group">
-                    <label>Serial Number</label>
+                    <label>Code</label>
                     <input type="text"
                         className="form-control"
-                        disabled={this.props.disableEditing || !this.props.creating}
-                        autoFocus={!this.props.disableEditing && this.props.creating}
-                        value={this.props.selectedKey.serialNumber ? this.props.selectedKey.serialNumber : ""}
-                        onChange={(e) => this.props.changeProperty("serialNumber", e.target.value)}
+                        disabled={this.props.disableEditing}
+                        value={code}
+                        onChange={this.onChangeCode}
                     />
                 </div>
-                {this.props.selectedKey.assignment != null &&
-                <div>
-                    <div className="form-group">
-                        <label>Assigned To</label>
-                        <input type="text"
-                            className="form-control"
-                            disabled={true}
-                            value={this.props.selectedKey.assignment.person ? this.props.selectedKey.assignment.person.name : ""}
-                            />
-                    </div>
-                    <div className="form-group">
-                        <label>Expires at</label>
-                        <input type="text"
-                            className="form-control"
-                            disabled={true}
-                            value={this.props.selectedKey.assignment.expiresAt ? this.props.selectedKey.assignment.expiresAt.toString() : ""}
-                            />
-                    </div>
-                </div>
-                }
             </div>
         );
+    }
+
+    private onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.props.changeProperty("name", event.target.value)
+    }
+
+    private onChangeCode = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.props.changeProperty("code", event.target.value)
     }
 }

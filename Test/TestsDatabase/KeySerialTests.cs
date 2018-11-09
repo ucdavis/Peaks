@@ -9,11 +9,11 @@ using Xunit.Abstractions;
 namespace Test.TestsDatabase
 {
     [Trait("Category","DatabaseTests")]
-    public class SerialTests
+    public class KeySerialTests
     {
         private readonly ITestOutputHelper _output;
 
-        public SerialTests(ITestOutputHelper output)
+        public KeySerialTests(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -24,7 +24,7 @@ namespace Test.TestsDatabase
         public void TestClassAttributes()
         {
             // Arrange
-            var classReflection = new ControllerReflection(_output, typeof(Serial));
+            var classReflection = new ControllerReflection(_output, typeof(KeySerial));
             // Act
             // Assert	
             classReflection.ControllerInherits("Object"); 
@@ -37,18 +37,19 @@ namespace Test.TestsDatabase
             #region Arrange
             var expectedFields = new List<NameAndType>();
             expectedFields.Add(new NameAndType("Active", "System.Boolean", new List<string>()));
-            expectedFields.Add(new NameAndType("Assignment", "Keas.Core.Domain.KeyAssignment", new List<string>()));
+            expectedFields.Add(new NameAndType("Assignment", "Keas.Core.Domain.KeySerialAssignment", new List<string>()));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.KeyAttribute()]",
             }));
             expectedFields.Add(new NameAndType("Key", "Keas.Core.Domain.Key", new List<string>()));
-            expectedFields.Add(new NameAndType("KeyAssignmentId", "System.Nullable`1[System.Int32]", new List<string>()));
+           
             expectedFields.Add(new NameAndType("KeyId", "System.Int32", new List<string>()));
-            expectedFields.Add(new NameAndType("Number", "System.String", new List<string>()));           
+            expectedFields.Add(new NameAndType("KeySerialAssignmentId", "System.Nullable`1[System.Int32]", new List<string>()));
+            expectedFields.Add(new NameAndType("Number", "System.String", new List<string>()));     
             #endregion Arrange
 
-            AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(Serial));
+            AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(KeySerial));
         }
 
         #endregion Reflection of Database

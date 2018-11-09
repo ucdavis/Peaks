@@ -42,7 +42,7 @@ namespace Keas.Mvc.Controllers
                 return RedirectToAction("NoAccess","Home");
             }
             var viewModel = await ConfirmListModel.Create(_context,person);
-            if (viewModel.Equipment.Count == 0 && viewModel.Serials.Count==0 && viewModel.Workstations.Count==0)
+            if (viewModel.Equipment.Count == 0 && viewModel.KeySerials.Count==0 && viewModel.Workstations.Count==0)
             {
                 Message = "You have no pending items to accept";
                 return RedirectToAction(nameof(MyStuff));
@@ -55,12 +55,12 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> AcceptKey(int serialId)
         {
             var keyAssignment =
-                await _context.Serials.Where(s => s.Id == serialId).Select(sa => sa.Assignment).FirstAsync();
+                await _context.KeySerials.Where(s => s.Id == serialId).Select(sa => sa.Assignment).FirstAsync();
             keyAssignment.IsConfirmed = true;
             keyAssignment.ConfirmedAt = DateTime.UtcNow;
             _context.Update(keyAssignment);
             await _context.SaveChangesAsync();
-            var serial = await _context.Serials.Where(s => s.KeyAssignmentId == keyAssignment.Id).Include(s=> s.Key).FirstAsync();
+            var serial = await _context.KeySerials.Where(s => s.KeySerialAssignmentId == keyAssignment.Id).Include(s=> s.Key).FirstAsync();
             await _eventService.TrackAcceptKey(serial);
             Message = "Key confirmed.";
 
@@ -106,13 +106,13 @@ namespace Keas.Mvc.Controllers
         {
             var person = await _securityService.GetPerson(Team);
             var viewModel = await ConfirmUpdateModel.Create(_context, person);
-            if (viewModel.Equipment.Count == 0 && viewModel.Serials.Count == 0)
+            if (viewModel.Equipment.Count == 0 && viewModel.KeySerials.Count == 0)
             {
                 Message = "You have no pending items to accept";
                 return RedirectToAction(nameof(MyStuff));
             }
 
-            foreach (var serial in viewModel.Serials)
+            foreach (var serial in viewModel.KeySerials)
             {
                 serial.Assignment.IsConfirmed = true;
                 serial.Assignment.ConfirmedAt = DateTime.UtcNow;

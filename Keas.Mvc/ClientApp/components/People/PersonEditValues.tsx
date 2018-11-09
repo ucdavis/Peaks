@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 
 import { ISpace, IPerson } from "../../Types";
-import AssignSpace from "../Spaces/AssignSpace";
+import SearchSpaces from "../Spaces/SearchSpaces";
 import SearchTags from "../Tags/SearchTags";
 
 interface IProps {
