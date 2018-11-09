@@ -259,11 +259,16 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   }
   
   private _deleteAccess = async (access: IAccess) => {
-
-    const deleted: IAccess = await this.context.fetch(`/api/${this.context.team.slug}/access/delete`, {
-      body: JSON.stringify(access),
-      method: "POST"
-    });
+    try {
+        const deleted: IAccess = await this.context.fetch(`/api/${this.context.team.slug}/access/delete`, {
+            body: JSON.stringify(access),
+            method: "POST"
+          });
+      }
+      catch {
+        alert("There was an error deleting this access, please try again");
+        return;
+      }
 
     // remove from state
     const index = this.state.accesses.indexOf(access);

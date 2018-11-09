@@ -287,10 +287,16 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
   private _deleteEquipment = async (equipment: IEquipment) => {
 
-    const deleted: IEquipment = await this.context.fetch(`/api/${this.context.team.slug}/equipment/delete`, {
-      body: JSON.stringify(equipment),
-      method: "POST"
-    });
+    try {
+      const deleted: IEquipment = await this.context.fetch(`/api/${this.context.team.slug}/equipment/delete`, {
+        body: JSON.stringify(equipment),
+        method: "POST"
+      });
+    }
+    catch {
+      alert("There was an error deleting this equipment, please try again");
+      return;
+    }
 
     // remove from state
     const index = this.state.equipment.indexOf(equipment);
