@@ -228,7 +228,7 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(RoledMembers));
         }
 
-        public async Task<IActionResult> BulkLoadPeople() 
+        public IActionResult BulkLoadPeople() 
         {
             return View();
         }
