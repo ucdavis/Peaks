@@ -42,7 +42,7 @@ namespace Keas.Mvc
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
 
             // setup services
-            services.AddSingleton<IIdentityService, IdentityService>();
+            services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ISecurityService, SecurityService>();
 
 

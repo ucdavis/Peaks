@@ -228,10 +228,15 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(RoledMembers));
         }
 
-        public  IActionResult BulkImportMembers()
+        public IActionResult BulkLoadPeople() 
         {
-            //TODO: Import from IAM using FIS Org code => PPS Dept ID => IAM bulk load call
-            throw new NotImplementedException();
+            return View();
+        }
+
+        public async Task<IActionResult> LoadPeople(string ppsDeptCode)
+        {
+            Message = await _identityService.BulkLoadPeople(ppsDeptCode, Team);            
+            return RedirectToAction(nameof(Index));
         }
 
 
