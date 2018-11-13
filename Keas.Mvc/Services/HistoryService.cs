@@ -32,6 +32,12 @@ namespace Keas.Mvc.Services
         Task<History> WorkstationUnassigned(Workstation workstation);
         Task<History> WorkstationAccepted(Workstation workstation);
 
+        Task<History> KeyDeleted(Key key);
+        Task<History> AccessDeleted(Access access);
+        Task<History> EquipmentDeleted(Equipment equipment);
+        Task<History> WorkstationDeleted(Workstation workstation);
+
+
     }
 
     public class HistoryService : IHistoryService
@@ -437,6 +443,67 @@ namespace Keas.Mvc.Services
                 ActionType = "Accepted",
                 Workstation = workstation,
                 TargetId = workstation.Assignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+
+        public async Task<History> KeyDeleted(Key key)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = key.Name != null ? "Key (" + key.Name + ") Deleted by " + user.Name : "Key (" + key.Code + ") Deleted by " + user.Name,
+                ActorId = user.Id,
+                AssetType = "Key",
+                ActionType = "Deleted",
+                Key = key
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> AccessDeleted(Access access)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Access (" + access.Name + ") Deleted by " + user.Name,
+                ActorId = user.Id,
+                AssetType = "Access",
+                ActionType = "Deleted",
+                Access = access
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> EquipmentDeleted(Equipment equipment)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Equipment (" + equipment.Name +  ") Deleted by " + user.Name,
+                ActorId = user.Id,
+                AssetType = "Equipment",
+                ActionType = "Deleted",
+                Equipment = equipment,
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> WorkstationDeleted(Workstation workstation)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Workstation (" + workstation.Name + ") Deleted by " + user.Name,
+                ActorId = user.Id,
+                AssetType = "Workstation",
+                ActionType = "Deleted",
+                Workstation = workstation,
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
