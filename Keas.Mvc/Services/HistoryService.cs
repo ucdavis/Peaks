@@ -245,7 +245,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = keySerial.Key.Name != null ?  "Key (" + keySerial.Key.Name + ") Unassigned  by " + user.Name : "Key (" + keySerial.Key.Code + ") Unassigned  by " + user.Name,
+                Description = keySerial.Key.Name != null ?  "Key (" + keySerial.Key.Name + ") Unassigned from " + keySerial.Assignment.Person.User.Name + " by " + user.Name : "Key (" + keySerial.Key.Code + ") Unassigned  by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Unassigned",
@@ -280,7 +280,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Equipment Unassigned by " + user.Name,
+                Description = "Equipment (" + equipment.Name + ") Unassigned from " + equipment.Assignment.Person.User.Name + " by "  + user.Name,
                 ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Unassigned",
@@ -297,7 +297,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Key Accepted by " + user.Name,
+                Description = keySerial.Key.Name != null ? "Key (" + keySerial.Key.Name + ") Accepted by " + user.Name : "Key (" + keySerial.Key.Code + ") Accepted by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Accepted",
@@ -315,7 +315,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Access Accepted by " + user.Name,
+                Description = "Access (" + access.Name + ") Accepted by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Access",
                 ActionType = "Accepted",
@@ -332,7 +332,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Equipment Accepted by " + user.Name,                
+                Description = "Equipment (" + equipment.Name + ") Accepted by " + user.Name,                
                 ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Accepted",
@@ -349,7 +349,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Workstation Created by " + user.Name,
+                Description = "Workstation (" + workstation.Name + ") Created by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Created",
@@ -365,7 +365,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Workstation Updated by " + user.Name,
+                Description = "Workstation (" + workstation.Name + ") Updated by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Updated",
@@ -381,7 +381,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Workstation Inactivated by " + user.Name,
+                Description = "Workstation (" + workstation.Name + ") Inactivated by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Inactivated",
@@ -397,7 +397,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Workstation Assigned to " + workstation.Assignment.Person.User.Name + " by " + user.Name,
+                Description = "Workstation (" + workstation.Name + ")  Assigned to " + workstation.Assignment.Person.User.Name + " by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Assigned",
@@ -414,7 +414,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Workstation Unassigned  by " + user.Name,
+                Description = "Workstation (" + workstation.Name + ")  Unassigned from " + workstation.Assignment.Person.User.Name +  "  by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Unassigned",
@@ -431,7 +431,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Workstation Accepted by " + user.Name,
+                Description = "Workstation (" + workstation.Name + ")  Accepted by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Accepted",
