@@ -1,4 +1,4 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -236,8 +236,8 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
-                .Where(x => x.AssetType == "KeySerial"
-                        && x.KeySerial.Key.Team.Slug == Team
+                .Where(x => x.KeySerial.Key.Team.Slug == Team
+                        && x.AssetType == "KeySerial"
                         && x.KeySerial.Id == id)
                 .OrderByDescending(x => x.ActedDate)
                 .Take(5)
