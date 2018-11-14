@@ -1,4 +1,4 @@
-using Keas.Core.Data;
+﻿using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -198,23 +198,37 @@ namespace Keas.Mvc.Controllers.Api
             return Json(serial);
         }
 
-        // Need to pass in serial, not key. Returns Serial now.
-        public async Task<IActionResult> Revoke(int serialId)
+        public async Task<IActionResult> Revoke([FromBody]KeySerial revokeRequest)
         {
             //TODO: check permissions
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            // find keyserial
             var keySerial = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team)
-                .Include(x => x.Assignment)
-                .SingleAsync(x => x.Id == serialId);
-                
-            _context.KeySerialAssignments.Remove(keySerial.Assignment);
-            keySerial.Assignment = null;
-            keySerial.KeySerialAssignmentId = null;
+                .Include(s => s.Key)
+                .Include(s => s.KeySerialAssignment)
+                .SingleOrDefaultAsync(x => x.Id == revokeRequest.Id);
+
+            if (keySerial == null)
+            {
+                return NotFound();
+            }
+
+            if (keySerial.KeySerialAssignment == null)
+            {
+                return BadRequest();
+            }
+
+            // clear out assignment
+            var assignment = keySerial.KeySerialAssignment;
+            _context.KeySerialAssignments.Remove(assignment);
 
             await _context.SaveChangesAsync();
-            await _eventService.TrackUnAssignKeySerial(keySerial);
+            await _eventService.TrackUnAssignKeySerial(assignment);
 
             return Json(keySerial);
         }

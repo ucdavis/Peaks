@@ -214,7 +214,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     const { team } = this.context;
 
     // call API to actually revoke
-    const removed: IKeySerial = await this.context.fetch(`/api/${team.slug}/keys/revoke`, {
+    const removed: IKeySerial = await this.context.fetch(`/api/${team.slug}/keyserials/revoke`, {
       body: JSON.stringify(keySerial),
       method: "POST"
     });
@@ -223,6 +223,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     const index = this.state.keySerials.indexOf(keySerial);
     if (index > -1) {
       const shallowCopy = [...this.state.keySerials];
+
       if (this.props.selectedPerson == null) {
         // if we are looking at all key, just update assignment
         shallowCopy[index] = removed;
@@ -246,13 +247,13 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     const { team } = this.context;
 
     const index = this.state.keySerials.findIndex(x => x.id === keySerial.id);
-
-    if(index === -1 ) // should always already exist
-    {
+    
+    // should always already exist
+    if (index < 0) {
       return;
     }
 
-    const updated: IKeySerial = await this.context.fetch(`/api/${team.slug}/keys/update`, {
+    const updated: IKeySerial = await this.context.fetch(`/api/${team.slug}/keyserials/update`, {
       body: JSON.stringify(keySerial),
       method: "POST"
     });
