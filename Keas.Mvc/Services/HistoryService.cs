@@ -173,7 +173,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Access (" + access.Name + ") Inactivated by " + user.Name,
+                Description = access.GetDescription(nameof(access), access.Title, user, "Inactivated"),
                 ActorId = user.Id,
                 AssetType = "Access",
                 ActionType = "Inactivated",
@@ -189,7 +189,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Equipment (" + equipment.Name + ") Inactivated by " + user.Name,
+                Description = equipment.GetDescription(nameof(equipment), equipment.Title, user, "Inactivated"),
                 ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Inactivated",
@@ -205,7 +205,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = keySerial.Key.Name != null ? "Key (" + keySerial.Key.Name + ") Assigned to " + keySerial.Assignment.Person.User.Name + " by " + user.Name : "Key (" + keySerial.Key.Code + ") Assigned to " + keySerial.Assignment.Person.User.Name + " by " + user.Name,
+                Description = keySerial.Assignment.GetDescription(nameof(keySerial.Key), keySerial.Key.Title, user, "Assigned", keySerial.Assignment.Person.User.Name),
                 ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Assigned",
