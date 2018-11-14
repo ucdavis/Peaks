@@ -134,7 +134,7 @@ namespace Keas.Mvc.Controllers.Api
                 // TODO: not sure what's going on here
                 _context.KeySerialAssignments.Update(serial.Assignment);
                 serial.Assignment.ExpiresAt = DateTime.Parse(date);
-                // TODO: track update assignment?
+                await _eventService.TrackAssignmentUpdatedKeySerial(serial);
             }
             else 
             {

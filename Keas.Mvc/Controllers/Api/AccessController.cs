@@ -81,16 +81,16 @@ namespace Keas.Mvc.Controllers.Api
             {
                 var access = await _context.Access.Where(x => x.Id == accessId && x.Team.Slug == Team)
                     .Include(x => x.Assignments).SingleAsync();
-                var accessAssingment = new AccessAssignment{
+                var accessAssignment = new AccessAssignment{
                     AccessId = accessId,
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date),
                 };
-                accessAssingment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
-                access.Assignments.Add(accessAssingment);
+                accessAssignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
+                access.Assignments.Add(accessAssignment);
                 await _context.SaveChangesAsync();
-                await _eventService.TrackAssignAccess(accessAssingment, Team);
-                return Json(accessAssingment);
+                await _eventService.TrackAssignAccess(accessAssignment, Team);
+                return Json(accessAssignment);
             }
             return BadRequest(ModelState);
         }
