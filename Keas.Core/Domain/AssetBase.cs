@@ -25,12 +25,14 @@ namespace Keas.Core.Domain
         public Team Team { get; set; }
         public int TeamId { get; set; }
 
-        public bool Active { get; set; }   
+        public bool Active { get; set; }
 
         public string GetDescription(string asset, string title, User user, string action)
         {
             return asset + "(" + title + ") " + action + " by " + user.Name;
-        } 
+        }
+
+        public virtual string Title => Name;
 
     }
 }

@@ -62,7 +62,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = key.GetDescription("Key", key.ToString(), user, "Created"),
+                Description = key.GetDescription(nameof(key), key.Title, user, "Created"),
                 ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Created",
@@ -78,7 +78,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Access (" + access.Name + ") Created by " + user.Name,
+                Description = access.GetDescription(nameof(access), access.Title, user, "Created"),
                 ActorId = user.Id,
                 AssetType = "Access",
                 ActionType = "Created",
