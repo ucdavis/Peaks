@@ -37,6 +37,11 @@ namespace Keas.Mvc.Services
         Task<History> EquipmentDeleted(Equipment equipment);
         Task<History> WorkstationDeleted(Workstation workstation);
 
+        Task<History> KeySerialAssignmentUpdated(KeySerial keySerial);
+        Task<History> AccessAssignmentUpdated(AccessAssignment accessAssignment);
+        Task<History> EquipmentAssignmentUpdated(Equipment equipment);
+        Task<History> WorkstationAssignmentUpdated(Workstation workstation);
+
 
     }
 
@@ -89,7 +94,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Equipment (" + equipment.Name +  ") Created by " + user.Name,
+                Description = "Equipment (" + equipment.Name + ") Created by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Created",
@@ -251,7 +256,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = keySerial.Key.Name != null ?  "Key (" + keySerial.Key.Name + ") Unassigned from " + keySerial.Assignment.Person.User.Name + " by " + user.Name : "Key (" + keySerial.Key.Code + ") Unassigned  by " + user.Name,
+                Description = keySerial.Key.Name != null ? "Key (" + keySerial.Key.Name + ") Unassigned from " + keySerial.Assignment.Person.User.Name + " by " + user.Name : "Key (" + keySerial.Key.Code + ") Unassigned  by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Unassigned",
@@ -269,7 +274,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Access (" +  accessAssignment.Access.Name + ") Unassigned from " + accessAssignment.Person.User.Name + " by " + user.Name,
+                Description = "Access (" + accessAssignment.Access.Name + ") Unassigned from " + accessAssignment.Person.User.Name + " by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Access",
                 ActionType = "Unassigned",
@@ -286,7 +291,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Equipment (" + equipment.Name + ") Unassigned from " + equipment.Assignment.Person.User.Name + " by "  + user.Name,
+                Description = "Equipment (" + equipment.Name + ") Unassigned from " + equipment.Assignment.Person.User.Name + " by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Unassigned",
@@ -338,7 +343,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Equipment (" + equipment.Name + ") Accepted by " + user.Name,                
+                Description = "Equipment (" + equipment.Name + ") Accepted by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Accepted",
@@ -382,7 +387,7 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History>WorkstationInactivated(Workstation workstation)
+        public async Task<History> WorkstationInactivated(Workstation workstation)
         {
             var user = await _securityService.GetUser();
             var historyEntry = new History
@@ -420,7 +425,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Workstation (" + workstation.Name + ")  Unassigned from " + workstation.Assignment.Person.User.Name +  "  by " + user.Name,
+                Description = "Workstation (" + workstation.Name + ")  Unassigned from " + workstation.Assignment.Person.User.Name + "  by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Workstation",
                 ActionType = "Unassigned",
@@ -484,7 +489,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Equipment (" + equipment.Name +  ") Deleted by " + user.Name,
+                Description = "Equipment (" + equipment.Name + ") Deleted by " + user.Name,
                 ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Deleted",
@@ -504,6 +509,71 @@ namespace Keas.Mvc.Services
                 AssetType = "Workstation",
                 ActionType = "Deleted",
                 Workstation = workstation,
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+
+        public async Task<History> KeySerialAssignmentUpdated(KeySerial keySerial)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = keySerial.Key.Name != null ? "Key (" + keySerial.Key.Name + ") Assignment to " + keySerial.Assignment.Person.User.Name + " Updated by " + user.Name : "Key (" + keySerial.Key.Code + ") Assignment to " + keySerial.Assignment.Person.User.Name + " Updated by " + user.Name,
+                ActorId = user.Id,
+                AssetType = "Key",
+                ActionType = "AssignmentUpdated",
+                KeySerial = keySerial,
+                TargetId = keySerial.Assignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> AccessAssignmentUpdated(AccessAssignment accessAssignment)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Access (" + accessAssignment.Access.Name + ") Assignment to " + accessAssignment.Person.User.Name + " Updated by " + user.Name,
+                ActorId = user.Id,
+                AssetType = "Access",
+                ActionType = "AssignmentUpdated",
+                AccessId = accessAssignment.AccessId,
+                TargetId = accessAssignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> EquipmentAssignmentUpdated(Equipment equipment)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Equipment (" + equipment.Name + ") Assignment to " + equipment.Assignment.Person.User.Name + " Updated by " + user.Name,
+                ActorId = user.Id,
+                AssetType = "Equipment",
+                ActionType = "AssignmentUpdated",
+                Equipment = equipment,
+                TargetId = equipment.Assignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> WorkstationAssignmentUpdated(Workstation workstation)
+        {
+            var user = await _securityService.GetUser();
+            var historyEntry = new History
+            {
+                Description = "Workstation (" + workstation.Name + ")  Assignment to " + workstation.Assignment.Person.User.Name + " Updated by " + user.Name,
+                ActorId = user.Id,
+                AssetType = "Workstation",
+                ActionType = "AssignmentUpdated",
+                Workstation = workstation,
+                TargetId = workstation.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
