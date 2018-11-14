@@ -112,7 +112,49 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
-        // Now returns serial. Need to pass in serialID
+        public async Task<IActionResult> Update([FromBody] KeySerial updateRequest)
+        {
+            // TODO Make sure user has permissions
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            // get key
+            var key = await _context.Keys
+                .Where(x => x.Team.Slug == Team && x.Active)
+                .Include(k => k.Serials)
+                    .ThenInclude(x => x.KeySerialAssignment)
+                        .ThenInclude(assingment => assingment.Person.User)
+                .SingleOrDefaultAsync(k => k.Id == updateRequest.KeyId);
+
+            if (key == null)
+            {
+                return BadRequest();
+            }
+
+            // get key serial
+            var keySerial = key.Serials.SingleOrDefault(s => s.Id == updateRequest.Id);
+            if (keySerial == null)
+            {
+                return BadRequest();
+            }
+
+            // check for duplicate serial to target number
+            if (key.Serials.Any(s => s.Number == updateRequest.Number))
+            {
+                return BadRequest();
+            }
+
+            // update key serial
+            keySerial.Number = updateRequest.Number;
+            await _context.SaveChangesAsync();
+
+            //await _eventService.TrackCreateKeySerial(key);
+
+            return Json(keySerial);
+        }
+
         public async Task<IActionResult> Assign(int serialId, int personId, string date)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team

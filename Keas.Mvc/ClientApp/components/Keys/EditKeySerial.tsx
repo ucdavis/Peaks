@@ -13,7 +13,7 @@ import KeySerialEditValues from "./KeySerialEditValues";
 import "react-datepicker/dist/react-datepicker.css";
 
 interface IProps {
-  onOpenModal: (keySerial: IKeySerial) => void;
+  onEdit: (keySerial: IKeySerial) => void;
   isModalOpen: boolean;
   closeModal: () => void;
   selectedKeySerial: IKeySerial;
@@ -116,7 +116,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
     }
 
     this.setState({submitting: true})
-    await this.props.onOpenModal(this.state.keySerial);
+    await this.props.onEdit(this.state.keySerial);
 
     this._closeModal();
   };
@@ -128,11 +128,11 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
     if (!this.state.keySerial) {
       valid = false;
     }
-    else if ( !this.state.keySerial.number){
+    else if (!this.state.keySerial.number) {
       valid = false;
       error = "You must give this key a name.";
     }
-    else if(this.state.keySerial.number.length > 64)
+    else if (this.state.keySerial.number.length > 64)
     {
       valid = false;
       error = "The name you have chosen is too long";

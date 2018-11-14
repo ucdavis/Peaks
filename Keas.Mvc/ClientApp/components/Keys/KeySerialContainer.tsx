@@ -185,16 +185,16 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
     const index = this.state.keySerials.findIndex(x => x.id === keySerial.id);
     const updateKeySerials = [...this.state.keySerials];
-    if (index !== -1) {
+    if (index < 0) {
+      updateKeySerials.push(keySerial);
+    }
+    else {
       // update already existing entry in key
       updateKeySerials[index] = keySerial;
     }
-    else {
-      updateKeySerials.push(keySerial);
-    }
 
     this.setState({
-      keySerials: [...this.state.keySerials, keySerial]
+      keySerials: updateKeySerials,
     });
 
     // if(updateTotalAssetCount && this.props.assetTotalUpdated)
