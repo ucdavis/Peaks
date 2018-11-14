@@ -14,15 +14,16 @@ interface IProps {
 export default class KeyListItem extends React.Component<IProps, {}> {
   public render() {
     const { keyEntity } = this.props;
+    const keySerials = keyEntity.serials || [];
 
-    const total = keyEntity.serials.length;
-    const available = keyEntity.serials.filter(s => !s.assignment).length;
+    const total = keySerials.length;
+    const available = keySerials.filter(s => !s.keySerialAssignment).length;
 
     return (
       <tr>
         <td>{keyEntity.name}</td>
         <td>{keyEntity.code}</td>
-        <td className="text-right"><i className="fas fa-key"/> {available} / {total}</td>
+        <td className=""><i className="fas fa-key"/> {available} / {total}</td>
         <td>
           <ListActionsDropdown
             showDetails={

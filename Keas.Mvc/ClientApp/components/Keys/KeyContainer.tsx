@@ -53,12 +53,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     }
     // are we getting the person's key or the team's?
     let keyFetchUrl =  "";
-    if(!!this.props.person)
-    {
+    if (!!this.props.person) {
       keyFetchUrl = `/api/${this.context.team.slug}/keys/listassigned?personid=${this.props.person.id}`;
-    } else if(!!this.props.space) {
+    }
+    else if (!!this.props.space) {
       keyFetchUrl = `/api/${this.context.team.slug}/keys/getKeysInSpace?spaceId=${this.props.space.id}`;
-    } else {
+    }
+    else {
       keyFetchUrl = `/api/${this.context.team.slug}/keys/list/`;
     }
 
@@ -203,8 +204,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   {
     const index = this.state.keys.findIndex(x => x.id === key.id);
 
-    if(index === -1 ) // should always already exist
-    {
+    // should always already exist
+    if (index < 0) {
       return;
     }
 
@@ -222,9 +223,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       keys: updateKey
     });
 
-    if(this.props.assetEdited)
-    {
-      this.props.assetEdited("key", this.props.space ? this.props.space.id : null,
+    if (this.props.assetEdited) {
+      this.props.assetEdited("key",
+        this.props.space ? this.props.space.id : null,
         this.props.person ? this.props.person.id : null);
     }
     

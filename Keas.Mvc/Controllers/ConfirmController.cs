@@ -55,13 +55,13 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> AcceptKey(int serialId)
         {
             var keyAssignment =
-                await _context.KeySerials.Where(s => s.Id == serialId).Select(sa => sa.Assignment).FirstAsync();
+                await _context.KeySerials.Where(s => s.Id == serialId).Select(sa => sa.KeySerialAssignment).FirstAsync();
             keyAssignment.IsConfirmed = true;
             keyAssignment.ConfirmedAt = DateTime.UtcNow;
             _context.Update(keyAssignment);
             await _context.SaveChangesAsync();
             var serial = await _context.KeySerials.Where(s => s.KeySerialAssignmentId == keyAssignment.Id).Include(s=> s.Key).FirstAsync();
-            await _eventService.TrackAcceptKey(serial);
+            await _eventService.TrackAcceptKeySerial(serial);
             Message = "Key confirmed.";
 
             return RedirectToAction(nameof(Confirm));
@@ -114,10 +114,10 @@ namespace Keas.Mvc.Controllers
 
             foreach (var serial in viewModel.KeySerials)
             {
-                serial.Assignment.IsConfirmed = true;
-                serial.Assignment.ConfirmedAt = DateTime.UtcNow;
+                serial.KeySerialAssignment.IsConfirmed = true;
+                serial.KeySerialAssignment.ConfirmedAt = DateTime.UtcNow;
                 _context.Update(serial);
-                await _eventService.TrackAcceptKey(serial);
+                await _eventService.TrackAcceptKeySerial(serial);
             }
             foreach (var equipment in viewModel.Equipment)
             {

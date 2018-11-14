@@ -31,7 +31,7 @@ namespace Keas.Mvc.Controllers.Api
             var comparison = StringComparison.InvariantCultureIgnoreCase;
 
             var query = _context.KeySerials
-                .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active && x.Assignment == null);
+                .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active && x.KeySerialAssignment == null);
 
             foreach (var term in terms)
             {
@@ -55,7 +55,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Key.Team.Slug == Team && x.Key.Active)
                 .Where(x => x.KeyId == keyid)
                 .Include(x => x.Key)
-                .Include(s => s.Assignment)
+                .Include(s => s.KeySerialAssignment)
                     .ThenInclude(assignment => assignment.Person.User)
                 .AsNoTracking()
                 .ToListAsync();
@@ -68,9 +68,9 @@ namespace Keas.Mvc.Controllers.Api
         {
             var keySerials = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team)
-                .Where(x => x.Assignment.PersonId == personId)
+                .Where(x => x.KeySerialAssignment.PersonId == personId)
                 .Include(x => x.Key)
-                .Include(x => x.Assignment)
+                .Include(x => x.KeySerialAssignment)
                     .ThenInclude(assingment => assingment.Person.User)
                 .AsNoTracking()
                 .ToArrayAsync();
@@ -112,7 +112,49 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
-        // Now returns serial. Need to pass in serialID
+        public async Task<IActionResult> Update([FromBody] KeySerial updateRequest)
+        {
+            // TODO Make sure user has permissions
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            // get key
+            var key = await _context.Keys
+                .Where(x => x.Team.Slug == Team && x.Active)
+                .Include(k => k.Serials)
+                    .ThenInclude(x => x.KeySerialAssignment)
+                        .ThenInclude(assingment => assingment.Person.User)
+                .SingleOrDefaultAsync(k => k.Id == updateRequest.KeyId);
+
+            if (key == null)
+            {
+                return BadRequest();
+            }
+
+            // get key serial
+            var keySerial = key.Serials.SingleOrDefault(s => s.Id == updateRequest.Id);
+            if (keySerial == null)
+            {
+                return BadRequest();
+            }
+
+            // check for duplicate serial to target number
+            if (key.Serials.Any(s => s.Number == updateRequest.Number))
+            {
+                return BadRequest();
+            }
+
+            // update key serial
+            keySerial.Number = updateRequest.Number;
+            await _context.SaveChangesAsync();
+
+            //await _eventService.TrackCreateKeySerial(key);
+
+            return Json(keySerial);
+        }
+
         public async Task<IActionResult> Assign(int serialId, int personId, string date)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
@@ -124,31 +166,31 @@ namespace Keas.Mvc.Controllers.Api
             // find serial
             var serial = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team && x.Active)
-                .Include(x => x.Assignment)
+                .Include(x => x.KeySerialAssignment)
                 .Include(x => x.Key)
                 .SingleAsync(x => x.Id == serialId);
 
             // check for existing assignment
-            if (serial.Assignment != null)
+            if (serial.KeySerialAssignment != null)
             {
                 // TODO: not sure what's going on here
-                _context.KeySerialAssignments.Update(serial.Assignment);
-                serial.Assignment.ExpiresAt = DateTime.Parse(date);
+                _context.KeySerialAssignments.Update(serial.KeySerialAssignment);
+                serial.KeySerialAssignment.ExpiresAt = DateTime.Parse(date);
                 // TODO: track update assignment?
             }
             else 
             {
-                serial.Assignment = new KeySerialAssignment
+                serial.KeySerialAssignment = new KeySerialAssignment
                 {
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date)
                 };
 
-                serial.Assignment.Person = await _context.People
+                serial.KeySerialAssignment.Person = await _context.People
                     .Include(p => p.User)
                     .SingleAsync(p => p.Id == personId);
 
-                _context.KeySerialAssignments.Add(serial.Assignment);
+                _context.KeySerialAssignments.Add(serial.KeySerialAssignment);
                 await _eventService.TrackAssignKeySerial(serial);
             }
 
@@ -156,23 +198,37 @@ namespace Keas.Mvc.Controllers.Api
             return Json(serial);
         }
 
-        // Need to pass in serial, not key. Returns Serial now.
-        public async Task<IActionResult> Revoke(int serialId)
+        public async Task<IActionResult> Revoke([FromBody]KeySerial revokeRequest)
         {
             //TODO: check permissions
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
+            // find keyserial
             var keySerial = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team)
-                .Include(x => x.Assignment)
-                .SingleAsync(x => x.Id == serialId);
-                
-            _context.KeySerialAssignments.Remove(keySerial.Assignment);
-            keySerial.Assignment = null;
-            keySerial.KeySerialAssignmentId = null;
+                .Include(s => s.Key)
+                .Include(s => s.KeySerialAssignment)
+                .SingleOrDefaultAsync(x => x.Id == revokeRequest.Id);
+
+            if (keySerial == null)
+            {
+                return NotFound();
+            }
+
+            if (keySerial.KeySerialAssignment == null)
+            {
+                return BadRequest();
+            }
+
+            // clear out assignment
+            var assignment = keySerial.KeySerialAssignment;
+            _context.KeySerialAssignments.Remove(assignment);
 
             await _context.SaveChangesAsync();
-            await _eventService.TrackUnAssignKeySerial(keySerial);
+            await _eventService.TrackUnAssignKeySerial(assignment);
 
             return Json(keySerial);
         }

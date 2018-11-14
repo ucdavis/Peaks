@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
 {
@@ -21,10 +22,19 @@ namespace Keas.Core.Domain
 
         public string Number { get; set; }
 
-        public KeySerialAssignment Assignment { get; set; }
+        public KeySerialAssignment KeySerialAssignment { get; set; }
 
         public int? KeySerialAssignmentId { get; set; }
 
         public bool Active { get; set; }
+
+        protected internal static void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<KeySerial>()
+                .HasOne(s => s.KeySerialAssignment)
+                .WithOne(a => a.KeySerial)
+                .HasForeignKey<KeySerialAssignment>(a => a.KeySerialId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }
