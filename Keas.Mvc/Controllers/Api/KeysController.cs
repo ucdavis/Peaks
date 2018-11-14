@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Mvc.Models.KeyViewModels;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -74,13 +75,21 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keys);
         }
 
-        public async Task<IActionResult> Create([FromBody]Key key)
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody]CreateKeyViewModel model)
         {
             // TODO Make sure user has permissions
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
+
+            // create key
+            var key = new Key()
+            {
+                Name = model.Name,
+                Code = model.Code,
+            };
 
             // get and assign team
             var team = await _context.Teams
@@ -95,7 +104,8 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
         
-        public async Task<IActionResult> Update([FromBody]Key updateRequest)
+        [HttpPost]
+        public async Task<IActionResult> Update(int id, [FromBody]UpdateKeyViewModel model)
         {
             //TODO: check permissions, make sure SN isn't edited 
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -107,10 +117,10 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Serials)
                     .ThenInclude(serials => serials.KeySerialAssignment)
                         .ThenInclude(assignment => assignment.Person.User)
-                .SingleAsync(x => x.Id == updateRequest.Id);
+                .SingleAsync(x => x.Id == id);
 
-            key.Code = updateRequest.Code;
-            key.Name = updateRequest.Name;
+            key.Code = model.Code;
+            key.Name = model.Name;
 
             await _context.SaveChangesAsync();
             await _eventService.TrackUpdateKey(key);
@@ -118,7 +128,8 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
-        public async Task<IActionResult> AssociateSpace(int keyId, int spaceId)
+        [HttpPost]
+        public async Task<IActionResult> AssociateSpace(int id, [FromBody] AssociateKeyViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
             if (!ModelState.IsValid)
@@ -126,20 +137,20 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            //// find key
-            //var key = await _context.Keys
-            //    .Where(x => x.Team.Slug == Team && x.Active)
-            //    .Include(x => x.KeyXSpaces)
-            //        .ThenInclude(x => x.Space)
-            //    .SingleAsync(x => x.Id == keyId);
+            // find key
+            var key = await _context.Keys
+                .Where(x => x.Team.Slug == Team && x.Active)
+                .Include(x => x.KeyXSpaces)
+                    .ThenInclude(x => x.Space)
+                .SingleAsync(x => x.Id == id);
 
-            //// find space
-            //var space = await _context.Spaces
-            //    .SingleAsync(x => x.Id == spaceId);
+            // find space
+            var space = await _context.Spaces
+                .SingleAsync(x => x.Id == model.SpaceId);
 
             // check for existing relationship
             var association = await _context.KeyXSpaces
-                .SingleOrDefaultAsync(x => x.KeyId == keyId && x.SpaceId == spaceId);
+                .SingleOrDefaultAsync(x => x.KeyId == id && x.SpaceId == model.SpaceId);
 
             if (association != null)
             {
@@ -149,8 +160,8 @@ namespace Keas.Mvc.Controllers.Api
             // create new association and save it
             association = new KeyXSpace()
             {
-                KeyId = keyId,
-                SpaceId = spaceId,
+                KeyId = id,
+                SpaceId = model.SpaceId,
             };
 
             _context.KeyXSpaces.Add(association);
@@ -160,7 +171,8 @@ namespace Keas.Mvc.Controllers.Api
             return Json(association);
         }
 
-        public async Task<IActionResult> DisassociateSpace(int keyId, int spaceId)
+        [HttpPost]
+        public async Task<IActionResult> DisassociateSpace(int id, [FromBody] DisassociateKeyViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
             if (!ModelState.IsValid)
@@ -168,20 +180,20 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            //// find key
-            //var key = await _context.Keys
-            //    .Where(x => x.Team.Slug == Team && x.Active)
-            //    .Include(x => x.KeyXSpaces)
-            //        .ThenInclude(x => x.Space)
-            //    .SingleAsync(x => x.Id == keyId);
+            // find key
+            var key = await _context.Keys
+                .Where(x => x.Team.Slug == Team && x.Active)
+                .Include(x => x.KeyXSpaces)
+                    .ThenInclude(x => x.Space)
+                .SingleAsync(x => x.Id == id);
 
-            //// find space
-            //var space = await _context.Spaces
-            //    .SingleAsync(x => x.Id == spaceId);
+            // find space
+            var space = await _context.Spaces
+                .SingleAsync(x => x.Id == model.SpaceId);
 
             // find existing relationship
             var association = await _context.KeyXSpaces
-                .SingleOrDefaultAsync(x => x.KeyId == keyId && x.SpaceId == spaceId);
+                .SingleOrDefaultAsync(x => x.KeyId == id && x.SpaceId == model.SpaceId);
 
             if (association == null)
             {
@@ -192,7 +204,7 @@ namespace Keas.Mvc.Controllers.Api
             //await _eventService.TrackUnAssignKeySerial(serial);
 
             await _context.SaveChangesAsync();
-            return Json(new { });
+            return Json(key);
         }
 
         public async Task<IActionResult> GetHistory(int id)
