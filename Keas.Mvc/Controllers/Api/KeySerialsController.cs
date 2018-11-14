@@ -1,4 +1,4 @@
-using Keas.Core.Data;
+﻿using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -168,30 +168,40 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Key.Team.Slug == Team && x.Active)
                 .Include(x => x.KeySerialAssignment)
                 .Include(x => x.Key)
+                    .ThenInclude(k => k.Team)
                 .SingleAsync(x => x.Id == serialId);
 
-            // check for existing assignment
+            // find person
+            var person = await _context.People
+                .Include(p => p.User)
+                .SingleAsync(p => p.Id == personId);
+
+
+            // check for existing assignment and update
             if (serial.KeySerialAssignment != null)
             {
-                // TODO: not sure what's going on here
-                _context.KeySerialAssignments.Update(serial.KeySerialAssignment);
                 serial.KeySerialAssignment.ExpiresAt = DateTime.Parse(date);
+
+                _context.KeySerialAssignments.Update(serial.KeySerialAssignment);
+
                 // TODO: track update assignment?
+                // await _eventService.TrackUpdateAssignKeySerial(serial.KeySerialAssignment);
             }
             else 
             {
-                serial.KeySerialAssignment = new KeySerialAssignment
+                var assignment = new KeySerialAssignment
                 {
-                    PersonId = personId,
+                    KeySerial = serial,
+                    KeySerialId = serial.Id,
+                    Person = person,
+                    PersonId = person.Id,
                     ExpiresAt = DateTime.Parse(date)
                 };
 
-                serial.KeySerialAssignment.Person = await _context.People
-                    .Include(p => p.User)
-                    .SingleAsync(p => p.Id == personId);
-
-                _context.KeySerialAssignments.Add(serial.KeySerialAssignment);
-                await _eventService.TrackAssignKeySerial(serial);
+                // create, associate, and track
+                serial.KeySerialAssignment = assignment;
+                _context.KeySerialAssignments.Add(assignment);
+                await _eventService.TrackAssignKeySerial(serial.KeySerialAssignment);
             }
 
             await _context.SaveChangesAsync();
