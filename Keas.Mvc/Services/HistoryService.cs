@@ -94,7 +94,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Equipment (" + equipment.Name + ") Created by " + user.Name,
+                Description = equipment.GetDescription(nameof(equipment), equipment.Title, user, "Created"),
                 ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Created",
@@ -110,7 +110,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = key.Name != null ? "Key (" + key.Name + ") Updated by " + user.Name : "Key (" + key.Code + ") Updated by " + user.Name,
+                Description = key.GetDescription(nameof(key), key.Title, user, "Updated"),
                 ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Updated",
@@ -126,7 +126,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Access (" + access.Name + ") Updated by " + user.Name,
+                Description = access.GetDescription(nameof(access), access.Title, user, "Updated"),
                 ActorId = user.Id,
                 AssetType = "Access",
                 ActionType = "Updated",
@@ -142,7 +142,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = "Equipment (" + equipment.Name + ") Updated by " + user.Name,
+                Description = equipment.GetDescription(nameof(equipment), equipment.Title, user, "Updated"),
                 ActorId = user.Id,
                 AssetType = "Equipment",
                 ActionType = "Updated",
@@ -157,7 +157,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = key.Name != null ? "Key (" + key.Name + ") Inactivated by " + user.Name : "Key (" + key.Code + ") Inactivated by " + user.Name,
+                Description = key.GetDescription(nameof(key), key.Title, user, "Inactivated"),
                 ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Inactivated",
