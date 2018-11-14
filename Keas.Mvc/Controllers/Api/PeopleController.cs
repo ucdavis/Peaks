@@ -153,6 +153,8 @@ namespace Keas.Mvc.Controllers.Api
                         existingPerson.Email = person.Email;
                         existingPerson.Tags = person.Tags;
                         existingPerson.Active = true;
+                        existingPerson.HomePhone = person.HomePhone;
+                        existingPerson.TeamPhone = person.TeamPhone;
                         await _context.SaveChangesAsync();
                         return Json(existingPerson);
                     }

@@ -52,6 +52,13 @@ export interface IPerson {
   lastName: string;
   name: string;
   email: string;
+  homePhone: string;
+  teamPhone: string;
+  title: string;
+  // startDate: Date;
+  // endDate: Date;
+  // category: string;
+  // notes: string;
 }
 
 export interface IPersonInfo {

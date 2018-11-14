@@ -51,6 +51,36 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                         onChange={(e) => this.props.changeProperty("email", e.target.value)}
                     />
                 </div>
+
+                <div className="form-group">
+                    <label>Phone Number</label>
+                    <input type="text"
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedPerson.homePhone ? this.props.selectedPerson.homePhone : ""}
+                        onChange={(e) => this.props.changeProperty("homePhone", e.target.value)}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Team Number</label>
+                    <input type="text"
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedPerson.teamPhone ? this.props.selectedPerson.teamPhone : ""}
+                        onChange={(e) => this.props.changeProperty("teamPhone", e.target.value)}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Title</label>
+                    <input type="text"
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedPerson.title ? this.props.selectedPerson.title : ""}
+                        onChange={(e) => this.props.changeProperty("title", e.target.value)}
+                    />
+                </div>
                 
                 
                 <div className="form-group">
