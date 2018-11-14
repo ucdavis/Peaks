@@ -130,12 +130,14 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           showDetails={this._openDetailsModal}
           onDisassociate={!!space ? (k) => this._disassociateSpace(space, k) : null}
         />
-        <CreateKey
-          onCreate={this._createKey}
-          onOpenModal={this._openCreateModal}
-          closeModal={this._closeModals}
-          modal={keyAction === "create"}
-        />
+        {!space &&
+          <CreateKey
+            onCreate={this._createKey}
+            onOpenModal={this._openCreateModal}
+            closeModal={this._closeModals}
+            modal={keyAction === "create"}
+          />
+        }
         <EditKey
           onEdit={this._editKey}
           closeModal={this._closeModals}
