@@ -56,16 +56,13 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
     // are we getting the person's key or the team's?
     let keyFetchUrl =  "";
-    if(!!selectedPerson)
-    {
+    if (!!selectedPerson) {
       keyFetchUrl = `/api/${this.context.team.slug}/keySerials/getforperson?personid=${selectedPerson.id}`;
     }
-    else if(!!selectedKey)
-    {
+    else if (!!selectedKey) {
       keyFetchUrl = `/api/${this.context.team.slug}/keySerials/getforkey?keyid=${selectedKey.id}`;
     }
-    else
-    {
+    else {
       keyFetchUrl = `/api/${this.context.team.slug}/keySerials/list/`;
     }
 
@@ -138,7 +135,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
           />
           <EditKeySerial
             selectedKeySerial={selectedKeySerial}
-            onOpenModal={this._editKeySerial}
+            onEdit={this._editKeySerial}
             closeModal={this._closeModals}
             isModalOpen={activeAsset && (action === "edit")}
           />
@@ -267,8 +264,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
       keySerials: updateKeySerials
     });
 
-    // if(this.props.assetEdited)
-    // {
+    // if(this.props.assetEdited) {
     //   this.props.assetEdited("key", this.props.space ? this.props.space.id : null,
     //     this.props.person ? this.props.person.id : null);
     // }
