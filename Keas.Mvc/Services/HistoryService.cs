@@ -62,7 +62,7 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                Description = key.Name != null ? "Key (" + key.Name + ") Created by " + user.Name : "Key (" + key.Code + ") Created by " + user.Name,
+                Description = key.GetDescription("Key", key.ToString(), user, "Created"),
                 ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Created",
