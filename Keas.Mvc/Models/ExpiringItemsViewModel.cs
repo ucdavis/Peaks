@@ -36,8 +36,8 @@ namespace Keas.Mvc.Models
                 a.Access.Team.Slug == teamName && a.ExpiresAt <= expiresBefore && (a.Access.Active || a.Access.Active == !showInactive))
                 .Include(a => a.Access).Include(a=> a.Person).AsNoTracking().ToArrayAsync();
             var expiringKey = await context.KeySerials.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Key") &&
-                a.Key.Team.Slug == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Key.Active || a.Key.Active == !showInactive))
-                .Include(k => k.Assignment).ThenInclude(a=> a.Person).Include(k => k.Key).AsNoTracking().ToArrayAsync();
+                a.Key.Team.Slug == teamName && a.KeySerialAssignment.ExpiresAt <= expiresBefore && (a.Key.Active || a.Key.Active == !showInactive))
+                .Include(k => k.KeySerialAssignment).ThenInclude(a=> a.Person).Include(k => k.Key).AsNoTracking().ToArrayAsync();
             var expiringEquipment = await context.Equipment.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Equipment") &&
                   a.Team.Slug == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Active || a.Active == !showInactive))
                 .Include(e => e.Assignment).ThenInclude(a=> a.Person).AsNoTracking().ToArrayAsync();

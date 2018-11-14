@@ -19,8 +19,8 @@ export default class KeyListItem extends React.Component<IProps, {}> {
       <tr>
         <td>{keySerial.key.code}</td>
         <td>{keySerial.number}</td>
-        <td>{keySerial.assignment ? keySerial.assignment.person.name : ""}</td>
-        <td>{keySerial.assignment ? keySerial.assignment.expiresAt : ""}</td>
+        <td>{keySerial.keySerialAssignment ? keySerial.keySerialAssignment.person.name : ""}</td>
+        <td>{keySerial.keySerialAssignment ? keySerial.keySerialAssignment.expiresAt : ""}</td>
         <td>
           <ListActionsDropdown
             showDetails={
@@ -29,7 +29,7 @@ export default class KeyListItem extends React.Component<IProps, {}> {
                 : null
             }
             onAdd={
-              (!!this.props.onAssign && !keySerial.assignment)
+              (!!this.props.onAssign && !keySerial.keySerialAssignment)
                 ? () => this.props.onAssign(keySerial)
                 : null
             }
@@ -39,7 +39,7 @@ export default class KeyListItem extends React.Component<IProps, {}> {
                 : null
             }
             onRevoke={
-              (!!this.props.onRevoke && keySerial.assignment)
+              (!!this.props.onRevoke && keySerial.keySerialAssignment)
                 ? () => this.props.onRevoke(keySerial)
                 : null
             }

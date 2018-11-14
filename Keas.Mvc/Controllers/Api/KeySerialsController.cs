@@ -1,4 +1,4 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -31,7 +31,7 @@ namespace Keas.Mvc.Controllers.Api
             var comparison = StringComparison.InvariantCultureIgnoreCase;
 
             var query = _context.KeySerials
-                .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active && x.Assignment == null);
+                .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active && x.KeySerialAssignment == null);
 
             foreach (var term in terms)
             {
@@ -55,7 +55,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Key.Team.Slug == Team && x.Key.Active)
                 .Where(x => x.KeyId == keyid)
                 .Include(x => x.Key)
-                .Include(s => s.Assignment)
+                .Include(s => s.KeySerialAssignment)
                     .ThenInclude(assignment => assignment.Person.User)
                 .AsNoTracking()
                 .ToListAsync();
@@ -68,9 +68,9 @@ namespace Keas.Mvc.Controllers.Api
         {
             var keySerials = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team)
-                .Where(x => x.Assignment.PersonId == personId)
+                .Where(x => x.KeySerialAssignment.PersonId == personId)
                 .Include(x => x.Key)
-                .Include(x => x.Assignment)
+                .Include(x => x.KeySerialAssignment)
                     .ThenInclude(assingment => assingment.Person.User)
                 .AsNoTracking()
                 .ToArrayAsync();
@@ -124,31 +124,31 @@ namespace Keas.Mvc.Controllers.Api
             // find serial
             var serial = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team && x.Active)
-                .Include(x => x.Assignment)
+                .Include(x => x.KeySerialAssignment)
                 .Include(x => x.Key)
                 .SingleAsync(x => x.Id == serialId);
 
             // check for existing assignment
-            if (serial.Assignment != null)
+            if (serial.KeySerialAssignment != null)
             {
                 // TODO: not sure what's going on here
-                _context.KeySerialAssignments.Update(serial.Assignment);
-                serial.Assignment.ExpiresAt = DateTime.Parse(date);
+                _context.KeySerialAssignments.Update(serial.KeySerialAssignment);
+                serial.KeySerialAssignment.ExpiresAt = DateTime.Parse(date);
                 // TODO: track update assignment?
             }
             else 
             {
-                serial.Assignment = new KeySerialAssignment
+                serial.KeySerialAssignment = new KeySerialAssignment
                 {
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date)
                 };
 
-                serial.Assignment.Person = await _context.People
+                serial.KeySerialAssignment.Person = await _context.People
                     .Include(p => p.User)
                     .SingleAsync(p => p.Id == personId);
 
-                _context.KeySerialAssignments.Add(serial.Assignment);
+                _context.KeySerialAssignments.Add(serial.KeySerialAssignment);
                 await _eventService.TrackAssignKeySerial(serial);
             }
 

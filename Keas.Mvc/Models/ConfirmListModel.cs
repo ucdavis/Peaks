@@ -18,7 +18,7 @@ namespace Keas.Mvc.Models
         {
             var viewModel = new ConfirmListModel
             {
-                KeySerials = await context.KeySerials.Include(s=> s.Key).ThenInclude(k=> k.KeyXSpaces).ThenInclude(kxs=> kxs.Space).Where(s=> !s.Assignment.IsConfirmed && s.Assignment.Person== person).AsNoTracking().ToListAsync(),
+                KeySerials = await context.KeySerials.Include(s=> s.Key).ThenInclude(k=> k.KeyXSpaces).ThenInclude(kxs=> kxs.Space).Where(s=> !s.KeySerialAssignment.IsConfirmed && s.KeySerialAssignment.Person== person).AsNoTracking().ToListAsync(),
                 Equipment = await context.Equipment.Include(e=> e.Space).Where(e => !e.Assignment.IsConfirmed && e.Assignment.Person==person).AsNoTracking().ToListAsync(),
                 Workstations = await context.Workstations.Include(w=> w.Space).Where(w=> !w.Assignment.IsConfirmed && w.Assignment.Person==person).AsNoTracking().ToListAsync()
             };

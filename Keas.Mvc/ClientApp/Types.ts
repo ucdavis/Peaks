@@ -81,7 +81,7 @@ export interface IKeySerial {
   id: number;
   number: string;
   key: IKey;
-  assignment?: IKeySerialAssignment;
+  keySerialAssignment?: IKeySerialAssignment;
 }
 
 export interface IKeySerialAssignment {

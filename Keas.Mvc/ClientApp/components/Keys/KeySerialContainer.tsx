@@ -171,7 +171,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     if (person) {
       const assignUrl = `/api/${team.slug}/keyserials/assign?serialId=${keySerial.id}&personId=${person.id}&date=${date}`;
 
-      if (!keySerial.assignment) {
+      if (!keySerial.keySerialAssignment) {
         // don't count as assigning unless this is a new one
         updateInUseAssetCount = true;
       }
@@ -180,7 +180,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         method: "POST"
       });
 
-      keySerial.assignment.person = person;
+      keySerial.keySerialAssignment.person = person;
     }
 
     const index = this.state.keySerials.findIndex(x => x.id === keySerial.id);

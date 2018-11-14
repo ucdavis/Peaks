@@ -1,4 +1,4 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -45,7 +45,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Team)
                 .Include(x => x.Serials)
-                    .ThenInclude(serials => serials.Assignment)
+                    .ThenInclude(serials => serials.KeySerialAssignment)
                         .ThenInclude(assignment => assignment.Person.User)
                 .AsNoTracking()
                 .ToListAsync();
@@ -62,7 +62,7 @@ namespace Keas.Mvc.Controllers.Api
                         && x.Key.Active)
                 .Include(x => x.Key)
                     .ThenInclude(key => key.Serials)
-                        .ThenInclude(serials => serials.Assignment)
+                        .ThenInclude(serials => serials.KeySerialAssignment)
                             .ThenInclude(assignment => assignment.Person.User)
                 .AsNoTracking()
                 .ToListAsync();
