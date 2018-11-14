@@ -148,9 +148,9 @@ namespace Keas.Mvc.Controllers.Api
                     }
                 }
 
-                access.Active = false;
+                access.Active = false;                
                 await _context.SaveChangesAsync();
-                // TODO: track history?
+                await _eventService.TrackAccessDeleted(access);
 
                 transaction.Commit();
                 return Json(null);
