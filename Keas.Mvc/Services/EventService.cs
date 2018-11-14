@@ -23,6 +23,10 @@ namespace Keas.Mvc.Services
         Task TrackAcceptKey(KeySerial keySerial);
         Task TrackAcceptEquipment(Equipment equipment);
         Task TrackAcceptWorkstation(Workstation workstation);
+        Task TrackKeyDeleted(Key key);
+        Task TrackAccessDeleted(Access access);
+        Task TrackEquipmentDeleted(Equipment equipment);
+        Task TrackWorkstationDeleted(Workstation workstation);
 
 
 
@@ -145,6 +149,30 @@ namespace Keas.Mvc.Services
         {
             var history = await _historyService.WorkstationAccepted(workstation);
             await _notificationService.WorkstationAccepted(workstation, history);
+        }
+
+         public async Task TrackKeyDeleted(Key key)
+        {
+            var history = await _historyService.KeyDeleted(key);
+            await _notificationService.KeyCreatedUpdatedInactive(key, history);
+        }
+
+         public async Task TrackEquipmentDeleted(Equipment equipment)
+        {
+            var history = await _historyService.EquipmentDeleted(equipment);
+            await _notificationService.EquipmentCreatedUpdatedInactive(equipment, history);
+        }
+
+        public async Task TrackAccessDeleted(Access access)
+        {
+            var history = await _historyService.AccessDeleted(access);
+            await _notificationService.AccessCreatedUpdatedInactive(access, history);
+        }
+
+         public async Task TrackWorkstationDeleted(Workstation workstation)
+        {
+            var history = await _historyService.WorkstationDeleted(workstation);
+            await _notificationService.WorkstationCreatedUpdatedInactive(workstation, history);
         }
     }
 }
