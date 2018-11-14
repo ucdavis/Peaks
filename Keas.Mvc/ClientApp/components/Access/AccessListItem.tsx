@@ -1,7 +1,7 @@
 import * as React from "react";
 import { IAccess } from "../../Types";
 import { DateUtil } from "../../util/dates";
-import ListActionsDropdown from "../ListActionsDropdown";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 
 interface IProps {
@@ -22,6 +22,24 @@ export default class AccessListItem extends React.Component<IProps, {}> {
         const canAdd = !this.props.personView || !hasAssignment;
         const dates = this.props.accessEntity.assignments.map(x=> x.expiresAt);
         const expirationDate = hasAssignment ? DateUtil.formatFirstExpiration(dates) : "";
+
+        const actions: IAction[] = [];
+        if (!!this.props.onAdd && canAdd) {
+            actions.push({ title: 'Add', onClick: () => this.props.onAdd(this.props.accessEntity) });
+        }
+
+        if (!!this.props.showDetails) {
+            actions.push({ title: 'Details', onClick: () => this.props.showDetails(this.props.accessEntity) });
+        }
+
+        if (!!this.props.onEdit) {
+            actions.push({ title: 'Edit', onClick: () => this.props.onEdit(this.props.accessEntity) });
+        }
+
+        if (!!this.props.onDelete) {
+            actions.push({ title: 'Delete', onClick: () => this.props.onDelete(this.props.accessEntity) });
+        }
+
         return (
             <tr>
                 <td>{this.props.accessEntity.name}</td>
@@ -29,16 +47,7 @@ export default class AccessListItem extends React.Component<IProps, {}> {
                 <td>{this.props.accessEntity.assignments.length}</td>
                 <td>{expirationDate}</td>
                 <td>
-                    <ListActionsDropdown                        
-                        onAdd={!!this.props.onAdd && canAdd ? 
-                        () => this.props.onAdd(this.props.accessEntity) : null}
-                        showDetails={!!this.props.showDetails ? 
-                        () => this.props.showDetails(this.props.accessEntity) : null}
-                        onEdit={!!this.props.onEdit ? 
-                        () => this.props.onEdit(this.props.accessEntity) : null}
-                        onDelete={!!this.props.onDelete ? 
-                            () => this.props.onDelete(this.props.accessEntity) : null}
-                        />
+                    <ListActionsDropdown actions={actions} />
                 </td>
             </tr>
         );

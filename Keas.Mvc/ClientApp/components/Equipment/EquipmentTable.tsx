@@ -5,7 +5,7 @@ import "react-table/react-table.css";
 import { Button } from "reactstrap";
 import { IEquipment } from "../../Types";
 import { DateUtil } from "../../util/dates";
-import ListActionsDropdown from "../ListActionsDropdown";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 
 interface IProps {
@@ -107,26 +107,45 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                 sortable: false,
                 resizable: false,
                 className: "table-actions",
-                Cell: row => (
-                    <ListActionsDropdown
-                        onRevoke={!!this.props.onRevoke && !!row.original.assignment ? 
-                        () => this.props.onRevoke(row.original) : null}
-                        onAdd={!!this.props.onAdd && !row.original.assignment ? 
-                        () => this.props.onAdd(row.original) : null}
-                        onUpdateAssignment={!!this.props.onAdd && !!row.original.assignment ? 
-                            () => this.props.onAdd(row.original) : null}
-                        showDetails={!!this.props.showDetails ? 
-                        () => this.props.showDetails(row.original) : null}
-                        onEdit={!!this.props.onEdit ? 
-                        () => this.props.onEdit(row.original) : null}
-                        onDelete={!!this.props.onDelete ? 
-                            () => this.props.onDelete(row.original) : null}
-                />
-                ),
+                Cell: this.renderDropdownColumn,
             },
             
         ]}
     />
+    );
+  }
+
+  private renderDropdownColumn = (row) => {
+    const equipmentEntity: IEquipment = row.original;
+    const hasAssignment = !!equipmentEntity.assignment;
+
+    const actions: IAction[] = [];
+
+    if (!!this.props.onRevoke && hasAssignment) {
+        actions.push({ title: 'Revoke', onClick: () => this.props.onRevoke(equipmentEntity) });
+      }
+
+      if (!!this.props.onAdd && !hasAssignment) {
+          actions.push({ title: 'Add', onClick: () => this.props.onAdd(equipmentEntity) });
+      }
+      else if (!!this.props.onAdd && hasAssignment) {
+        actions.push({ title: 'Update', onClick: () => this.props.onAdd(equipmentEntity) });
+      }
+
+      if (!!this.props.showDetails) {
+          actions.push({ title: 'Details', onClick: () => this.props.showDetails(equipmentEntity) });
+      }
+
+      if (!!this.props.onEdit) {
+          actions.push({ title: 'Edit', onClick: () => this.props.onEdit(equipmentEntity) });
+      }
+
+      if (!!this.props.onDelete) {
+          actions.push({ title: 'Delete', onClick: () => this.props.onDelete(equipmentEntity) });
+      }
+
+    return (
+        <ListActionsDropdown actions={actions} />
     );
   }
 }

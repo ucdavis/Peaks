@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { ISpace } from "../../Types";
-import ListActionsDropdown from "../ListActionsDropdown";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 interface IProps {
   space: ISpace;
@@ -13,23 +13,21 @@ export default class SpacesListItem extends React.Component<IProps, {}> {
   public render() {
     const { space } = this.props;
 
+    const actions: IAction[] = [];
+    if (!!this.props.showDetails) {
+        actions.push({ title: 'Details', onClick: () => this.props.showDetails(space) });
+    }
+
+    if (!!this.props.onDisassociate) {
+        actions.push({ title: 'Disassociate', onClick: () => this.props.onDisassociate(space) });
+    }
+
     return (
       <tr>
         <td>{space.roomNumber} {space.bldgName}</td>
         <td>{space.roomName}</td>
         <td>
-          <ListActionsDropdown
-            showDetails={
-              !!this.props.showDetails
-                ? () => this.props.showDetails(space)
-                : null
-            }
-            onRevoke={
-              !!this.props.onDisassociate
-                ? () => this.props.onDisassociate(space)
-                : null
-            }
-          />
+          <ListActionsDropdown actions={actions} />
         </td>
       </tr>
     );
