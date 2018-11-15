@@ -53,6 +53,7 @@ namespace Keas.Core.Data
             Domain.Access.OnModelCreating(builder);
             Domain.Equipment.OnModelCreating(builder);
             Key.OnModelCreating(builder);
+            KeySerial.OnModelCreating(builder);
             Person.OnModelCreating(builder);
             Space.OnModelCreating(builder);
             Workstation.OnModelCreating(builder);

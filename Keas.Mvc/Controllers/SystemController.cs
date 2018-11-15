@@ -25,11 +25,19 @@ namespace Keas.Mvc.Controllers
 #if DEBUG
         public IActionResult ResetDb()
         {
-            var dbInit = new DbInitializer(_context);
-            dbInit.RecreateDatabase();
-            dbInit.Initialize();
-            dbInit.CreateSampleData();
-            return Content("Success");
+            if (_context.Database.GetDbConnection().ConnectionString.Contains("keas.database.windows.net"))
+            {
+                throw new Exception("Don't Reset the AZURE DB!!!");
+            }
+            else
+            {
+                var dbInit = new DbInitializer(_context);
+                dbInit.RecreateDatabase();
+                dbInit.Initialize();
+                dbInit.CreateSampleData();
+                return Content("Success");
+
+            }
         }
 #endif
 

@@ -56,16 +56,13 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
     // are we getting the person's key or the team's?
     let keyFetchUrl =  "";
-    if(!!selectedPerson)
-    {
+    if (!!selectedPerson) {
       keyFetchUrl = `/api/${this.context.team.slug}/keySerials/getforperson?personid=${selectedPerson.id}`;
     }
-    else if(!!selectedKey)
-    {
+    else if (!!selectedKey) {
       keyFetchUrl = `/api/${this.context.team.slug}/keySerials/getforkey?keyid=${selectedKey.id}`;
     }
-    else
-    {
+    else {
       keyFetchUrl = `/api/${this.context.team.slug}/keySerials/list/`;
     }
 
@@ -138,7 +135,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
           />
           <EditKeySerial
             selectedKeySerial={selectedKeySerial}
-            onOpenModal={this._editKeySerial}
+            onEdit={this._editKeySerial}
             closeModal={this._closeModals}
             isModalOpen={activeAsset && (action === "edit")}
           />
@@ -171,7 +168,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     if (person) {
       const assignUrl = `/api/${team.slug}/keyserials/assign?serialId=${keySerial.id}&personId=${person.id}&date=${date}`;
 
-      if (!keySerial.assignment) {
+      if (!keySerial.keySerialAssignment) {
         // don't count as assigning unless this is a new one
         updateInUseAssetCount = true;
       }
@@ -180,21 +177,21 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         method: "POST"
       });
 
-      keySerial.assignment.person = person;
+      keySerial.keySerialAssignment.person = person;
     }
 
     const index = this.state.keySerials.findIndex(x => x.id === keySerial.id);
     const updateKeySerials = [...this.state.keySerials];
-    if (index !== -1) {
+    if (index < 0) {
+      updateKeySerials.push(keySerial);
+    }
+    else {
       // update already existing entry in key
       updateKeySerials[index] = keySerial;
     }
-    else {
-      updateKeySerials.push(keySerial);
-    }
 
     this.setState({
-      keySerials: [...this.state.keySerials, keySerial]
+      keySerials: updateKeySerials,
     });
 
     // if(updateTotalAssetCount && this.props.assetTotalUpdated)
@@ -214,7 +211,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     const { team } = this.context;
 
     // call API to actually revoke
-    const removed: IKeySerial = await this.context.fetch(`/api/${team.slug}/keys/revoke`, {
+    const removed: IKeySerial = await this.context.fetch(`/api/${team.slug}/keyserials/revoke`, {
       body: JSON.stringify(keySerial),
       method: "POST"
     });
@@ -223,6 +220,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     const index = this.state.keySerials.indexOf(keySerial);
     if (index > -1) {
       const shallowCopy = [...this.state.keySerials];
+
       if (this.props.selectedPerson == null) {
         // if we are looking at all key, just update assignment
         shallowCopy[index] = removed;
@@ -246,13 +244,13 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     const { team } = this.context;
 
     const index = this.state.keySerials.findIndex(x => x.id === keySerial.id);
-
-    if(index === -1 ) // should always already exist
-    {
+    
+    // should always already exist
+    if (index < 0) {
       return;
     }
 
-    const updated: IKeySerial = await this.context.fetch(`/api/${team.slug}/keys/update`, {
+    const updated: IKeySerial = await this.context.fetch(`/api/${team.slug}/keyserials/update`, {
       body: JSON.stringify(keySerial),
       method: "POST"
     });
@@ -266,8 +264,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
       keySerials: updateKeySerials
     });
 
-    // if(this.props.assetEdited)
-    // {
+    // if(this.props.assetEdited) {
     //   this.props.assetEdited("key", this.props.space ? this.props.space.id : null,
     //     this.props.person ? this.props.person.id : null);
     // }

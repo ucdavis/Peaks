@@ -45,7 +45,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Team)
                 .Include(x => x.Serials)
-                    .ThenInclude(serials => serials.Assignment)
+                    .ThenInclude(serials => serials.KeySerialAssignment)
                         .ThenInclude(assignment => assignment.Person.User)
                 .AsNoTracking()
                 .ToListAsync();
@@ -62,7 +62,7 @@ namespace Keas.Mvc.Controllers.Api
                         && x.Key.Active)
                 .Include(x => x.Key)
                     .ThenInclude(key => key.Serials)
-                        .ThenInclude(serials => serials.Assignment)
+                        .ThenInclude(serials => serials.KeySerialAssignment)
                             .ThenInclude(assignment => assignment.Person.User)
                 .AsNoTracking()
                 .ToListAsync();
@@ -100,15 +100,21 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions, make sure SN isn't edited 
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
+            // get full object
             var key = await _context.Keys
                 .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Team)
+                .Include(x => x.Serials)
+                    .ThenInclude(serials => serials.KeySerialAssignment)
+                        .ThenInclude(assignment => assignment.Person.User)
                 .SingleAsync(x => x.Id == updateRequest.Id);
 
+            key.Code = updateRequest.Code;
             key.Name = updateRequest.Name;
-            // TODO: Should this also be updating serials? KeyXSpaces?
 
             await _context.SaveChangesAsync();
             await _eventService.TrackUpdateKey(key);
+
             return Json(key);
         }
 

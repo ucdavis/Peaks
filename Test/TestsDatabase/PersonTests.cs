@@ -53,6 +53,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Group", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("HomePhone", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>()));
+            expectedFields.Add(new NameAndType("KeySerialAssignments", "System.Collections.Generic.List`1[Keas.Core.Domain.KeySerialAssignment]", new List<string>()));
             expectedFields.Add(new NameAndType("LastName", "System.String", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"Last Name\")]",

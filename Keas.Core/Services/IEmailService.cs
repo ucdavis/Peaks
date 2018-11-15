@@ -60,7 +60,7 @@ namespace Keas.Core.Services
 
             var expiringItems = ExpiringItemsEmailModel.Create(
                 model.AccessAssignments.Where(a => a.PersonId == personId).ToList(), 
-                model.KeySerials.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(), 
+                model.KeySerials.Where(a => a.KeySerialAssignment != null && a.KeySerialAssignment.PersonId == personId).ToList(), 
                 model.Equipment.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(), 
                 model.Workstations.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(),
                 person);
@@ -153,19 +153,19 @@ namespace Keas.Core.Services
 
             foreach (var key in expiringItems.KeySerials)
             {
-                if (key.Assignment.NextNotificationDate == null || key.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
+                if (key.KeySerialAssignment.NextNotificationDate == null || key.KeySerialAssignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
                 {
-                    key.Assignment.NextNotificationDate = key.Assignment.ExpiresAt.AddDays(-7);
+                    key.KeySerialAssignment.NextNotificationDate = key.KeySerialAssignment.ExpiresAt.AddDays(-7);
                 }
-                else if (key.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
+                else if (key.KeySerialAssignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
                 {
-                    key.Assignment.NextNotificationDate = key.Assignment.ExpiresAt.AddDays(-1);
+                    key.KeySerialAssignment.NextNotificationDate = key.KeySerialAssignment.ExpiresAt.AddDays(-1);
                 }
                 else
                 {
-                    key.Assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
+                    key.KeySerialAssignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
                 }
-                _dbContext.KeySerialAssignments.Update(key.Assignment);
+                _dbContext.KeySerialAssignments.Update(key.KeySerialAssignment);
             }
 
             foreach (var equipment in expiringItems.Equipment)

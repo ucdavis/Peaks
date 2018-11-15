@@ -47,17 +47,21 @@ namespace Keas.Core.Domain
         public string Group { get; set; }
 
         public string Tags { get; set; }
+
         // METADATA
         public string Title { get; set; }
+
         public string HomePhone { get; set; }
+
         public string TeamPhone { get; set; }
+
         public List<AccessAssignment> AccessAssignments { get; set; }
 
-         protected internal  static void OnModelCreating(ModelBuilder builder)
+        public List<KeySerialAssignment> KeySerialAssignments { get; set; }
+
+        protected internal  static void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Person>().HasQueryFilter(a => a.Active);
         }
-
-
     }
 }

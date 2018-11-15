@@ -12,7 +12,7 @@ namespace Keas.Mvc.Services
         Task EquipmentCreatedUpdatedInactive(Equipment equipment, History history);
         Task AccessCreatedUpdatedInactive(Access access, History history);
         Task KeySerialAssigned(KeySerial keySerial, History history);
-        Task KeySerialUnAssigned(KeySerial keySerial, History history);
+        Task KeySerialUnAssigned(KeySerialAssignment keySerialAssignment, History history);
         Task EquipmentAssigned(Equipment equipment, History history);
         Task EquipmentUnAssigned(Equipment equipment, History history);
         Task AccessAssigned(AccessAssignment accessAssignment, History history, string teamName);
@@ -95,7 +95,7 @@ namespace Keas.Mvc.Services
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, keySerial.Key.TeamId);
-            var assignedTo = await _dbContext.Users.SingleAsync(u => u == keySerial.Assignment.Person.User);
+            var assignedTo = await _dbContext.Users.SingleAsync(u => u == keySerial.KeySerialAssignment.Person.User);
             if (!users.Contains(assignedTo)){
                 users.Add(assignedTo);
             }
@@ -113,11 +113,11 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task KeySerialUnAssigned(KeySerial keySerial, History history)
+        public async Task KeySerialUnAssigned(KeySerialAssignment keySerialAssignment, History history)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, keySerial.Key.TeamId);
+            var users = await _securityService.GetUsersInRoles(roles, keySerialAssignment.KeySerial.Key.TeamId);
             foreach (var user in users)
             {
                 var notification = new Notification

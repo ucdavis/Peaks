@@ -343,7 +343,7 @@ namespace Keas.Mvc.Helpers
             {
                 Key = key1,
                 Number = "1",
-                Assignment = new KeySerialAssignment
+                KeySerialAssignment = new KeySerialAssignment
                 {
                     Person = lauraCaes,
                     PersonId = lauraCaes.Id,
@@ -362,7 +362,7 @@ namespace Keas.Mvc.Helpers
             {
                 Key = key2,
                 Number = "2",
-                Assignment = new KeySerialAssignment
+                KeySerialAssignment = new KeySerialAssignment
                 {
                     Person = jamesCaes,
                     PersonId = jamesCaes.Id,

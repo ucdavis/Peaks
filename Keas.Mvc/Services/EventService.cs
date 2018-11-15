@@ -7,7 +7,7 @@ namespace Keas.Mvc.Services
     {
         Task TrackCreateKey(Key key);
         Task TrackAssignKeySerial(KeySerial keySerial);
-        Task TrackUnAssignKeySerial(KeySerial keySerial);
+        Task TrackUnAssignKeySerial(KeySerialAssignment keySerialAssignment);
         Task TrackUpdateKey(Key key);
         Task TrackCreateEquipment(Equipment equipment);
         Task TrackAssignEquipment(Equipment equipment);
@@ -20,7 +20,7 @@ namespace Keas.Mvc.Services
         Task TrackCreateWorkstation(Workstation workstation);
         Task TrackAssignWorkstation(Workstation workstation);
         Task TrackUnAssignWorkstation(Workstation workstation);
-        Task TrackAcceptKey(KeySerial keySerial);
+        Task TrackAcceptKeySerial(KeySerial keySerial);
         Task TrackAcceptEquipment(Equipment equipment);
         Task TrackAcceptWorkstation(Workstation workstation);
         Task TrackKeyDeleted(Key key);
@@ -60,10 +60,10 @@ namespace Keas.Mvc.Services
 
         }
 
-        public async Task TrackUnAssignKeySerial(KeySerial keySerial)
+        public async Task TrackUnAssignKeySerial(KeySerialAssignment keySerialAssignment)
         {
-            var history = await _historyService.KeySerialUnassigned(keySerial);
-            await _notificationService.KeySerialUnAssigned(keySerial, history);
+            var history = await _historyService.KeySerialUnassigned(keySerialAssignment);
+            await _notificationService.KeySerialUnAssigned(keySerialAssignment, history);
         }
 
         public async Task TrackUpdateKey(Key key) 
@@ -138,7 +138,7 @@ namespace Keas.Mvc.Services
             await _notificationService.WorkstationUnAssigned(workstation, history);
         }
 
-        public async Task TrackAcceptKey(KeySerial keySerial)
+        public async Task TrackAcceptKeySerial(KeySerial keySerial)
         {
             var history = await _historyService.KeySerialAccepted(keySerial);
             await _notificationService.KeySerialAccepted(keySerial, history);

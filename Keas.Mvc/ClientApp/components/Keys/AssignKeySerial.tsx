@@ -46,18 +46,20 @@ export default class AssignKey extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
 
-    const date = (!!this.props.selectedKeySerial && !!this.props.selectedKeySerial.assignment) 
-      ? moment(this.props.selectedKeySerial.assignment.expiresAt)
+    const assignment = props.selectedKeySerial && props.selectedKeySerial.keySerialAssignment;
+
+    const date = (!!assignment) 
+      ? moment(assignment.expiresAt)
       : moment().add(3, "y")
 
-    const person = (!!this.props.selectedKeySerial && !!this.props.selectedKeySerial.assignment)
-      ? this.props.selectedKeySerial.assignment.person
-      : this.props.person;
+    const person = (!!assignment)
+      ? assignment.person
+      : props.person;
 
     this.state = {
       date,
       error: "",
-      keySerial: this.props.selectedKeySerial,
+      keySerial: props.selectedKeySerial,
       person,
       submitting: false,
       validState: false
@@ -74,11 +76,11 @@ export default class AssignKey extends React.Component<IProps, IState> {
       this.setState({ person: nextProps.person });
     }
 
-    if(!!nextProps.selectedKeySerial && !!nextProps.selectedKeySerial.assignment)
-    {
-      this.setState({ 
-        date: moment(nextProps.selectedKeySerial.assignment.expiresAt),
-        person: nextProps.selectedKeySerial.assignment.person
+    const assignment = nextProps.selectedKeySerial && nextProps.selectedKeySerial.keySerialAssignment;
+    if (!!assignment) {
+      this.setState({
+        date: moment(assignment.expiresAt),
+        person: assignment.person
       });
     }
   }
