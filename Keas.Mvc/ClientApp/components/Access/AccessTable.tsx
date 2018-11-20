@@ -5,7 +5,7 @@ import "react-table/react-table.css";
 import { Button } from "reactstrap";
 import { IAccess } from "../../Types";
 import { DateUtil } from "../../util/dates";
-import ListActionsDropdown from "../ListActionsDropdown";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 
 interface IProps {
@@ -111,26 +111,37 @@ export default class AccessTable extends React.Component<IProps, {}> {
                 sortable: false,
                 resizable: false,
                 className: "table-actions",
-                Cell: row => (
-                    <ListActionsDropdown
-                        onRevoke={!!this.props.onRevoke && !!row.original.assignment ? 
-                        () => this.props.onRevoke(row.original) : null}
-                        onAdd={!!this.props.onAdd && !row.original.assignment ? 
-                        () => this.props.onAdd(row.original) : null}
-                        onUpdateAssignment={!!this.props.onAdd && !!row.original.assignment ? 
-                            () => this.props.onAdd(row.original) : null}
-                        showDetails={!!this.props.showDetails ? 
-                        () => this.props.showDetails(row.original) : null}
-                        onEdit={!!this.props.onEdit ? 
-                        () => this.props.onEdit(row.original) : null}
-                        onDelete={!!this.props.onDelete ? 
-                            () => this.props.onDelete(row.original) : null}
-                />
-                ),
+                Cell: this.renderDropdownColumn
             },
             
         ]}
     />
+    );
+  }
+
+  private renderDropdownColumn = (row) => {
+    const accessEntity: IAccess = row.original;
+
+    const actions: IAction[] = [];
+
+    if (!!this.props.onAdd) {
+        actions.push({ title: 'Assign', onClick: () => this.props.onAdd(accessEntity) });
+    }
+
+    if (!!this.props.showDetails) {
+        actions.push({ title: 'Details', onClick: () => this.props.showDetails(accessEntity) });
+    }
+
+    if (!!this.props.onEdit) {
+        actions.push({ title: 'Edit', onClick: () => this.props.onEdit(accessEntity) });
+    }
+
+    if (!!this.props.onDelete) {
+        actions.push({ title: 'Delete', onClick: () => this.props.onDelete(accessEntity) });
+    }
+
+    return (
+        <ListActionsDropdown actions={actions} />
     );
   }
 }

@@ -41,7 +41,7 @@ export default class KeyDetails extends React.Component<IProps, {}> {
                             keySerial={selectedKeySerial}
                             disableEditing={true}
                         />
-                        <HistoryContainer controller="keys" id={selectedKeySerial.id} />
+                        <HistoryContainer controller="keyserials" id={selectedKeySerial.id} />
                     </ModalBody>
                 </Modal>
             </div>

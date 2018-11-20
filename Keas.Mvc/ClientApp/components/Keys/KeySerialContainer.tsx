@@ -156,24 +156,37 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
     // if we are creating a new key
     if (keySerial.id === 0) {
-      keySerial.key.teamId = this.context.team.id;
-      keySerial = await this.context.fetch(`/api/${this.context.team.slug}/keyserials/create`, {
-        body: JSON.stringify(keySerial),
+      const request = {
+        keyId: keySerial.key.id,
+        number: keySerial.number,
+      };
+
+      const createUrl = `/api/${team.slug}/keyserials/create`;
+      keySerial = await this.context.fetch(createUrl, {
+        body: JSON.stringify(request),
         method: "POST"
       });
+
       updateTotalAssetCount = true;
     }
 
     // if we know who to assign it to, do it now
-    if (person) {
-      const assignUrl = `/api/${team.slug}/keyserials/assign?serialId=${keySerial.id}&personId=${person.id}&date=${date}`;
-
+    if (!!person) {
+      
       if (!keySerial.keySerialAssignment) {
         // don't count as assigning unless this is a new one
         updateInUseAssetCount = true;
       }
 
+      const request = {
+        expiresAt: date,
+        keySerialId: keySerial.id,
+        personId: person.id,
+      };
+
+      const assignUrl = `/api/${team.slug}/keyserials/assign`;
       keySerial = await this.context.fetch(assignUrl, {
+        body: JSON.stringify(request),
         method: "POST"
       });
 
@@ -211,19 +224,19 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     const { team } = this.context;
 
     // call API to actually revoke
-    const removed: IKeySerial = await this.context.fetch(`/api/${team.slug}/keyserials/revoke`, {
-      body: JSON.stringify(keySerial),
+    const revokeUrl = `/api/${team.slug}/keyserials/revoke/${keySerial.id}`;
+    keySerial = await this.context.fetch(revokeUrl, {
       method: "POST"
     });
 
-    // remove from state
-    const index = this.state.keySerials.indexOf(keySerial);
+    // should we remove from state
+    const index = this.state.keySerials.findIndex(k => k.id === keySerial.id);
     if (index > -1) {
       const shallowCopy = [...this.state.keySerials];
 
       if (this.props.selectedPerson == null) {
         // if we are looking at all key, just update assignment
-        shallowCopy[index] = removed;
+        shallowCopy[index] = keySerial;
       } else {
         // if we are looking at a person, remove from our list of key
         shallowCopy.splice(index, 1);
@@ -239,8 +252,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     }
   };
 
-  private _editKeySerial = async (keySerial: IKeySerial) =>
-  {
+  private _editKeySerial = async (keySerial: IKeySerial) => {
     const { team } = this.context;
 
     const index = this.state.keySerials.findIndex(x => x.id === keySerial.id);
@@ -250,14 +262,19 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
       return;
     }
 
-    const updated: IKeySerial = await this.context.fetch(`/api/${team.slug}/keyserials/update`, {
-      body: JSON.stringify(keySerial),
+    const request = {
+      number: keySerial.number,
+    }
+
+    const updateUrl = `/api/${team.slug}/keyserials/update/${keySerial.id}`;
+    keySerial = await this.context.fetch(updateUrl, {
+      body: JSON.stringify(request),
       method: "POST"
     });
 
     // update already existing entry in key
     const updateKeySerials = [...this.state.keySerials];
-    updateKeySerials[index] = updated;
+    updateKeySerials[index] = keySerial;
 
     this.setState({
       ...this.state,
