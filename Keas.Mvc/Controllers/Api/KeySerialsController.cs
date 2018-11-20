@@ -228,7 +228,7 @@ namespace Keas.Mvc.Controllers.Api
             _context.KeySerialAssignments.Remove(assignment);
 
             await _context.SaveChangesAsync();
-            await _eventService.TrackUnAssignKeySerial(assignment);
+            await _eventService.TrackUnAssignKeySerial(keySerial);
 
             return Json(keySerial);
         }

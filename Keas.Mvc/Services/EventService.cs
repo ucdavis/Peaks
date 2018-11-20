@@ -7,7 +7,7 @@ namespace Keas.Mvc.Services
     {
         Task TrackCreateKey(Key key);
         Task TrackAssignKeySerial(KeySerial keySerial);
-        Task TrackUnAssignKeySerial(KeySerialAssignment keySerialAssignment);
+        Task TrackUnAssignKeySerial(KeySerial keySerial);
         Task TrackUpdateKey(Key key);
         Task TrackCreateEquipment(Equipment equipment);
         Task TrackAssignEquipment(Equipment equipment);
@@ -60,10 +60,10 @@ namespace Keas.Mvc.Services
 
         }
 
-        public async Task TrackUnAssignKeySerial(KeySerialAssignment keySerialAssignment)
+        public async Task TrackUnAssignKeySerial(KeySerial keySerial)
         {
-            var history = await _historyService.KeySerialUnassigned(keySerialAssignment);
-            await _notificationService.KeySerialUnAssigned(keySerialAssignment, history);
+            var history = await _historyService.KeySerialUnassigned(keySerial);
+            await _notificationService.KeySerialUnAssigned(keySerial, history);
         }
 
         public async Task TrackUpdateKey(Key key) 

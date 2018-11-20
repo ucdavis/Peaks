@@ -19,7 +19,7 @@ namespace Keas.Mvc.Services
         Task<History> KeyAssignedSerial(KeySerial keySerial);
         Task<History> AccessAssigned(AccessAssignment accessAssignment);
         Task<History> EquipmentAssigned(Equipment equipment);
-        Task<History> KeySerialUnassigned(KeySerialAssignment keySerialAssignment);
+        Task<History> KeySerialUnassigned(KeySerial keySerial);
         Task<History> AccessUnassigned(AccessAssignment accessAssignment);
         Task<History> EquipmentUnassigned(Equipment equipment);
         Task<History> KeySerialAccepted(KeySerial keySerial);
@@ -205,12 +205,12 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-                // Description = keySerial.KeySerialAssignment.GetDescription(nameof(keySerial.Key), keySerial.Key.Title, user, "Assigned", keySerial.KeySerialAssignment.Person.Name),
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(keySerial.Key), keySerial.Key.Title, user, "Assigned", keySerial.KeySerialAssignment.Person.Name),
                 ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "Assigned",
                 KeySerial = keySerial,
-              //  TargetId = keySerial.KeySerialAssignment.PersonId
+                TargetId = keySerial.KeySerialAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -251,17 +251,16 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History> KeySerialUnassigned(KeySerialAssignment keySerialAssignment)
+        public async Task<History> KeySerialUnassigned(KeySerial keySerial)
         {
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-               // Description = keySerialAssignment.GetDescription(nameof(keySerialAssignment.KeySerial.key), keySerialAssignment.KeySerial.Key.Title, user, "Unassigned", keySerialAssignment.Person.Name) ,
-                ActorId = user.Id,
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(keySerial), keySerial.Key.Title, user, "Unassigned", keySerial.KeySerialAssignment.Person.Name),ActorId = user.Id,
                 AssetType = "KeySerial",
                 ActionType = "Unassigned",
-               // KeySerialId = keySerialAssignment.KeySerialId,
-                TargetId = keySerialAssignment.PersonId
+                KeySerialId = keySerial.Id,
+                TargetId = keySerial.KeySerialAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -313,7 +312,7 @@ namespace Keas.Mvc.Services
                 ActionType = "Accepted",
                 Key = keySerial.Key,
                 KeySerial = keySerial,
-               // TargetId = keySerial.KeySerialAssignment.PersonId
+                TargetId = keySerial.KeySerialAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -519,12 +518,12 @@ namespace Keas.Mvc.Services
             var user = await _securityService.GetUser();
             var historyEntry = new History
             {
-              //  Description = keySerial.KeyAssignment.GetDescription(nameof(keySerial.Key), keySerial.Key.Title, user, "Assignment Updated", keySerial.Assignment.Person.Name),
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(keySerial.Key), keySerial.Key.Title, user, "Assignment Updated", keySerial.KeySerialAssignment.Person.Name),
                 ActorId = user.Id,
                 AssetType = "Key",
                 ActionType = "AssignmentUpdated",
                 KeySerial = keySerial,
-                //TargetId = keySerial.Assignment.PersonId
+                TargetId = keySerial.KeySerialAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
