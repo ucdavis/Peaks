@@ -27,7 +27,7 @@ namespace Keas.Mvc.Services
         Task TrackAccessDeleted(Access access);
         Task TrackEquipmentDeleted(Equipment equipment);
         Task TrackWorkstationDeleted(Workstation workstation);
-        Task TrackAssignmentUpdatedKeySerial(KeySerial keySerial);
+        Task TrackAssignmentUpdatedKeySerial(KeySerialAssignment keySerialAssignment);
         Task TrackAccessAssignmentUpdated(AccessAssignment accessAssignment, string teamName);
         Task TrackEquipmentAssignmentUpdated(Equipment equipment);
         Task TrackWorkstationAssignmentUpdated(Workstation workstation);
@@ -60,10 +60,10 @@ namespace Keas.Mvc.Services
 
         }
 
-        public async Task TrackUnAssignKeySerial(KeySerial keySerial)
+        public async Task TrackUnAssignKeySerial(KeySerialAssignment keySerialAssignment)
         {
-            var history = await _historyService.KeySerialUnassigned(keySerial);
-            await _notificationService.KeySerialUnAssigned(keySerial, history);
+            var history = await _historyService.KeySerialUnassigned(keySerialAssignment);
+            await _notificationService.KeySerialUnAssigned(keySerialAssignment, history);
         }
 
         public async Task TrackUpdateKey(Key key) 
@@ -179,10 +179,10 @@ namespace Keas.Mvc.Services
             await _notificationService.WorkstationCreatedUpdatedInactive(workstation, history);
         }
 
-        public async Task TrackAssignmentUpdatedKeySerial(KeySerial keySerial)
+        public async Task TrackAssignmentUpdatedKeySerial(KeySerialAssignment keySerialAssignment)
         {
-            var history = await _historyService.KeySerialAssignmentUpdated(keySerial);
-            await _notificationService.KeySerialAssigned(keySerial, history);
+            var history = await _historyService.KeySerialAssignmentUpdated(keySerialAssignment);
+            await _notificationService.KeySerialAssigned(keySerialAssignment, history);
         }
         public async Task TrackAccessAssignmentUpdated(AccessAssignment accessAssignment, string teamName)
         {

@@ -113,11 +113,11 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task KeySerialUnAssigned(KeySerial keySerial, History history)
+        public async Task KeySerialUnAssigned(KeySerialAssignment keySerialAssignment, History history)
         {
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-            var users = await _securityService.GetUsersInRoles(roles, keySerial.Key.TeamId);
+            var users = await _securityService.GetUsersInRoles(roles, keySerialAssignment.KeySerial.Key.TeamId);
             foreach (var user in users)
             {
                 var notification = new Notification
