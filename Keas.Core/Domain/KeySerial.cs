@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,7 @@ namespace Keas.Core.Domain
         public int Id { get; set; }
 
         public Key Key { get; set; }
+
         public int KeyId { get; set; }
 
         public string Number { get; set; }
@@ -27,6 +29,9 @@ namespace Keas.Core.Domain
         public int? KeySerialAssignmentId { get; set; }
 
         public bool Active { get; set; }
+
+        [NotMapped]
+        public string Title => Key != null ? Key.Title: Number;
 
         protected internal static void OnModelCreating(ModelBuilder builder)
         {
