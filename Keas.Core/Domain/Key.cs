@@ -12,6 +12,8 @@ namespace Keas.Core.Domain
 
         public List<KeySerial> Serials { get; set; }
 
+        public override string Title => Name != null ? Name : Code;
+
 
         protected internal static void OnModelCreating(ModelBuilder builder)
         {
