@@ -188,7 +188,6 @@ namespace Keas.Mvc.Controllers.Api
                 serial.KeySerialAssignment.ExpiresAt = model.ExpiresAt;
 
                 _context.KeySerialAssignments.Update(serial.KeySerialAssignment);
-                serial.KeySerialAssignment.ExpiresAt = DateTime.Parse(date);
                 await _eventService.TrackAssignmentUpdatedKeySerial(serial);
             }
             else 
@@ -205,7 +204,7 @@ namespace Keas.Mvc.Controllers.Api
                 // create, associate, and track
                 serial.KeySerialAssignment = assignment;
                 _context.KeySerialAssignments.Add(assignment);
-                await _eventService.TrackAssignKeySerial(serial.KeySerialAssignment);
+                await _eventService.TrackAssignKeySerial(serial);
             }
 
             await _context.SaveChangesAsync();

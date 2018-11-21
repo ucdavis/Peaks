@@ -53,10 +53,10 @@ namespace Keas.Mvc.Services
             await _notificationService.KeyCreatedUpdatedInactive(key, history);
         }
 
-        public async Task TrackAssignKeySerial(KeySerialAssignment keySerialAssignment)
+        public async Task TrackAssignKeySerial(KeySerial keySerial)
         {
-            var history = await _historyService.KeySerialAssigned(keySerialAssignment);
-            await _notificationService.KeySerialAssigned(keySerialAssignment, history);
+            var history = await _historyService.KeySerialAssigned(keySerial);
+            await _notificationService.KeySerialAssigned(keySerial, history);
 
         }
 
