@@ -130,12 +130,14 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           showDetails={this._openDetailsModal}
           onDisassociate={!!space ? (k) => this._disassociateSpace(space, k) : null}
         />
-        <CreateKey
-          onCreate={this._createKey}
-          onOpenModal={this._openCreateModal}
-          closeModal={this._closeModals}
-          modal={keyAction === "create"}
-        />
+        {!space &&
+          <CreateKey
+            onCreate={this._createKey}
+            onOpenModal={this._openCreateModal}
+            closeModal={this._closeModals}
+            modal={keyAction === "create"}
+          />
+        }
         <EditKey
           onEdit={this._editKey}
           closeModal={this._closeModals}
@@ -170,10 +172,14 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   }
 
   private _createKey = async (key: IKey) => {
-    // call API to create a key
-    key.teamId = this.context.team.id;
-    key = await this.context.fetch(`/api/${this.context.team.slug}/keys/create`, {
-      body: JSON.stringify(key),
+    const request = {
+      code: key.code,
+      name: key.name,
+    };
+
+    const createUrl = `/api/${this.context.team.slug}/keys/create`;
+    key = await this.context.fetch(createUrl, {
+      body: JSON.stringify(request),
       method: "POST"
     });
 
@@ -209,14 +215,20 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       return;
     }
 
-    const updated: IKey = await this.context.fetch(`/api/${this.context.team.slug}/keys/update`, {
-      body: JSON.stringify(key),
+    const request = {
+      code: key.code,
+      name: key.name,
+    };
+
+    const updateUrl = `/api/${this.context.team.slug}/keys/update/${key.id}`;
+    key = await this.context.fetch(updateUrl, {
+      body: JSON.stringify(request),
       method: "POST"
     });
 
     // update already existing entry in key
     const updateKey = [...this.state.keys];
-    updateKey[index] = updated;
+    updateKey[index] = key;
 
     this.setState({
       ...this.state,
@@ -236,9 +248,14 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const { team } = this.context;
     const { keys } = this.state;
 
-    const url = `/api/${team.slug}/keys/associateSpace?spaceId=${space.id}&keyId=${key.id}`;
-    const result = await this.context.fetch(url, {
-        method: "POST",
+    const request = {
+      spaceId: space.id,
+    };
+
+    const associateUrl = `/api/${team.slug}/keys/associateSpace/${key.id}`;
+    const association = await this.context.fetch(associateUrl, {
+      body: JSON.stringify(request),
+      method: "POST",
     });
 
     const updatedKeys = [...keys, key];
@@ -251,9 +268,14 @@ private _disassociateSpace = async (space: ISpace, key: IKey) => {
     const { team } = this.context;
     const { keys } = this.state;
 
-    const url = `/api/${team.slug}/keys/disassociateSpace?spaceId=${space.id}&keyId=${key.id}`;
-    const result = await this.context.fetch(url, {
-        method: "POST",
+    const request = {
+      spaceId: space.id,
+    };
+
+    const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${key.id}`;
+    const result = await this.context.fetch(disassociateUrl, {
+      body: JSON.stringify(request),
+      method: "POST",
     });
     
     const updatedKeys = [...keys];

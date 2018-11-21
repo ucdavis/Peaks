@@ -2,7 +2,7 @@ import { DateUtil } from "../../util/dates";
 import * as React from "react";
 
 import { IEquipment } from "../../Types";
-import ListActionsDropdown from "../ListActionsDropdown";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 
 interface IProps {
@@ -18,6 +18,31 @@ interface IProps {
 export default class EquipmentListItem extends React.Component<IProps, {}> {
     public render() {
         const hasAssignment = !!this.props.equipmentEntity.assignment;
+
+        const actions: IAction[] = [];
+        if (!!this.props.onRevoke && hasAssignment) {
+          actions.push({ title: 'Revoke', onClick: () => this.props.onRevoke(this.props.equipmentEntity) });
+        }
+
+        if (!!this.props.onAdd && !hasAssignment) {
+            actions.push({ title: 'Add', onClick: () => this.props.onAdd(this.props.equipmentEntity) });
+        }
+        else if (!!this.props.onAdd && hasAssignment) {
+          actions.push({ title: 'Update', onClick: () => this.props.onAdd(this.props.equipmentEntity) });
+        }
+
+        if (!!this.props.showDetails) {
+            actions.push({ title: 'Details', onClick: () => this.props.showDetails(this.props.equipmentEntity) });
+        }
+
+        if (!!this.props.onEdit) {
+            actions.push({ title: 'Edit', onClick: () => this.props.onEdit(this.props.equipmentEntity) });
+        }
+
+        if (!!this.props.onDelete) {
+            actions.push({ title: 'Delete', onClick: () => this.props.onDelete(this.props.equipmentEntity) });
+        }
+
         return (
           <tr>
             <td>{this.props.equipmentEntity.serialNumber}</td>
@@ -27,19 +52,7 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
               {hasAssignment ? DateUtil.formatExpiration(this.props.equipmentEntity.assignment.expiresAt) : ""}
             </td>
             <td>
-              <ListActionsDropdown
-                onRevoke={!!this.props.onRevoke && hasAssignment ? 
-                  () => this.props.onRevoke(this.props.equipmentEntity) : null}
-                onAdd={!!this.props.onAdd && !hasAssignment ? 
-                  () => this.props.onAdd(this.props.equipmentEntity) : null}
-                onUpdateAssignment={!!this.props.onAdd && !!hasAssignment ? 
-                  () => this.props.onAdd(this.props.equipmentEntity) : null}
-                showDetails={!!this.props.showDetails ? 
-                  () => this.props.showDetails(this.props.equipmentEntity) : null}
-                onEdit={!!this.props.onEdit ? 
-                  () => this.props.onEdit(this.props.equipmentEntity) : null}
-                onDelete={!!this.props.onDelete ? 
-                    () => this.props.onDelete(this.props.equipmentEntity) : null}                />
+              <ListActionsDropdown actions={actions} />
             </td>
           </tr>
         );
