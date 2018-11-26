@@ -8,6 +8,7 @@ interface IProps {
     keySerials: IKeySerial[];
     onAssign?: (keySerial: IKeySerial) => void;
     onRevoke?: (keySerial: IKeySerial) => void;
+    onUpdate?: (keySerial: IKeySerial) => void;
     showDetails?: (keySerial: IKeySerial) => void;
     onEdit?: (keySerial: IKeySerial) => void;
 }
@@ -39,6 +40,7 @@ export default class KeyList extends React.Component<IProps, {}> {
                 keySerial={key}
                 onRevoke={this.props.onRevoke}
                 onAssign={this.props.onAssign}
+                onUpdate={this.props.onUpdate}
                 showDetails={this.props.showDetails}
                 onEdit={this.props.onEdit}
             />
