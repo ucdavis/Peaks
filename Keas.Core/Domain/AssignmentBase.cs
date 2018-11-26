@@ -30,9 +30,9 @@ namespace Keas.Core.Domain
         public DateTime? ConfirmedAt { get; set; }
         public DateTime? NextNotificationDate { get; set; }
 
-        public string GetDescription(string asset, string title, User user, string action, string assignee)
+        public string GetDescription(string asset, string title, Person actor, string action)
         {            
-            return asset + "(" + title + ") " + action + " to " + assignee + " by " + user.Name;
+            return asset + "(" + title + ") " + action + " to " +  Person.Name + " (" + Person.UserId + ") " + " by " + actor.Name + " (" + actor.UserId + ")";
         }
 
     }
