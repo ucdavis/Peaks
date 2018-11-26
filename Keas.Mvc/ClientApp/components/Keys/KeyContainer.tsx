@@ -165,12 +165,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const index = this.state.keys.findIndex(x => x.id === key.id);
     if (index !== -1) {
       // update already existing entry in key
-      const updateKey = [...this.state.keys];
-      updateKey[index] = key;
+      const updateKeys = [...this.state.keys];
+      updateKeys[index] = key;
 
       this.setState({
         ...this.state,
-        keys: updateKey
+        keys: updateKeys
       });
     } else {
       this.setState({
@@ -178,11 +178,15 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       });
     }
 
-    if(this.props.assetTotalUpdated)
+    if (this.props.assetTotalUpdated)
     {
-        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
-           this.props.person ? this.props.person.id : null, 1);
+        this.props.assetTotalUpdated("key",
+            this.props.space ? this.props.space.id : null,
+            this.props.person ? this.props.person.id : null,
+            1);
     }
+
+    return key;
   };
 
   private _editKey = async (key: IKey) =>
@@ -227,6 +231,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const { team } = this.context;
     const { keys } = this.state;
 
+    // possibly create key
+    if (key.id === 0) {
+      key = await this._createKey(key);
+    }
+
     const request = {
       spaceId: space.id,
     };
@@ -237,10 +246,21 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       method: "POST",
     });
 
-    const updatedKeys = [...keys, key];
-    this.setState({
-        keys: updatedKeys,
-    });
+    const index = this.state.keys.findIndex(x => x.id === key.id);
+    if (index !== -1) {
+      // update already existing entry in key
+      const updateKeys = [...this.state.keys];
+      updateKeys[index] = key;
+
+      this.setState({
+        ...this.state,
+        keys: updateKeys
+      });
+    } else {
+      this.setState({
+        keys: [...this.state.keys, key]
+      });
+    }
 }
 
 private _disassociateSpace = async (space: ISpace, key: IKey) => {

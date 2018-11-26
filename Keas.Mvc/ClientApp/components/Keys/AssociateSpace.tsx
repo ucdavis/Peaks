@@ -9,6 +9,7 @@ import {
 
 import { AppContext, IKey, ISpace } from "../../Types";
 
+import KeyEditValues from "./KeyEditValues";
 import SearchKeys from "./SearchKeys";
 import SearchSpaces from "../Spaces/SearchSpaces";
 
@@ -75,6 +76,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
   private renderModal() {
 
     const { isModalOpen, selectedKey, selectedSpace } = this.props;
+    const { validState, submitting } = this.state;
 
     return (
       <Modal isOpen={isModalOpen} toggle={this._closeModal} size="lg" className="keys-color">
@@ -97,24 +99,53 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
             <label>Pick an key to associate</label>
             <SearchKeys
               defaultKey={selectedKey}
-              onSelect={this._onSelected}
+              onSelect={this._onSelectedKey}
               onDeselect={this._onDeselected}
             />
           </div>
+
+          {this.renderCreateKey()}
+
           {this.state.error}
+
         </ModalBody>
         <ModalFooter>
           <Button
             color="primary"
             onClick={this._assignSelected}
-            disabled={!this.state.validState || this.state.submitting}
+            disabled={!validState || submitting}
           >
-            Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
+            Go! {submitting && <i className="fas fa-circle-notch fa-spin"/>}
           </Button>{" "}
         </ModalFooter>
       </Modal>
     );
   }
+
+  private renderCreateKey() {
+    const { selectedKey } = this.state;
+
+    if (!selectedKey || selectedKey.id > 0) {
+      return;
+    }
+
+    return (
+      <KeyEditValues
+        selectedKey={selectedKey}
+        changeProperty={this._changeProperty}
+        disableEditing={false}
+      />
+    );
+  }
+
+  private _changeProperty = (property: string, value: string) => {
+    this.setState({
+      selectedKey: {
+        ...this.state.selectedKey,
+        [property]: value
+      }
+    }, this._validateState);
+  };
 
   // default everything out on close
   private _closeModal = () => {
@@ -146,7 +177,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     this._closeModal();
   }
 
-  private _onSelected = (key: IKey) => {
+  private _onSelectedKey = (key: IKey) => {
     this.setState({ selectedKey: key, error: "" }, this._validateState);
   }
 

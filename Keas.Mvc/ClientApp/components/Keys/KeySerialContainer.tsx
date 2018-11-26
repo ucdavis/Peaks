@@ -131,7 +131,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     let updateTotalAssetCount = false;
     let updateInUseAssetCount = false;
 
-    // if we are creating a new key
+    // if we are creating a new key serial
     if (keySerial.id === 0) {
       const request = {
         keyId: keySerial.key.id,
