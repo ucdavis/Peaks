@@ -59,6 +59,10 @@ namespace Keas.Core.Domain
 
         public List<KeySerialAssignment> KeySerialAssignments { get; set; }
 
+        public Person Supervisor { get; set; }
+
+        public int SupervisorId {   get; set; }
+
         protected internal  static void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Person>().HasQueryFilter(a => a.Active);

@@ -20,6 +20,10 @@ export default class BioContainer extends React.Component<IProps, {}> {
           <p>
             {this.props.person.title}
           </p>
+          <p>            
+            <i className="fas fa-user-tie" aria-hidden="true" />{" "}
+            {this.props.person.supervisor ? this.props.person.supervisor.name : ""}
+          </p>
           <p>
             <i className="far fa-envelope" aria-hidden="true" />{" "}
             {this.props.person.email}

@@ -55,6 +55,8 @@ export interface IPerson {
   homePhone: string;
   teamPhone: string;
   title: string;
+  supervisorId?: number;
+  supervisor?: IPerson;
   // startDate: Date;
   // endDate: Date;
   // category: string;

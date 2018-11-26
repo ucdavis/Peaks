@@ -3,6 +3,7 @@
 import { ISpace, IPerson } from "../../Types";
 import SearchSpaces from "../Spaces/SearchSpaces";
 import SearchTags from "../Tags/SearchTags";
+import AssignPerson from "./AssignPerson";
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
@@ -82,6 +83,10 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                     />
                 </div>
                 
+                <div className="form-group">
+                    <label>Supervisor</label>
+                    <AssignPerson onSelect={(person) => this.props.changeProperty("supervisorId", person.id)}/>
+                </div>
                 
                 <div className="form-group">
                     <label>Tags</label>

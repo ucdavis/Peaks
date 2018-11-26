@@ -103,7 +103,9 @@ namespace Keas.Mvc.Controllers.Api
 
             if (id.HasValue)
             {
-                person = await _context.People.Where(x => x.Team.Slug == Team && x.Id == id.Value).Include(x => x.User).AsNoTracking().SingleAsync();
+                person = await _context.People.Where(x => x.Team.Slug == Team && x.Id == id.Value)
+                    .Include(x => x.User).Include(x => x.Supervisor)
+                    .AsNoTracking().SingleAsync();
             }
             else
             {
@@ -155,6 +157,7 @@ namespace Keas.Mvc.Controllers.Api
                         existingPerson.Active = true;
                         existingPerson.HomePhone = person.HomePhone;
                         existingPerson.TeamPhone = person.TeamPhone;
+                        existingPerson.SupervisorId = person.SupervisorId;
                         await _context.SaveChangesAsync();
                         return Json(existingPerson);
                     }
@@ -179,6 +182,7 @@ namespace Keas.Mvc.Controllers.Api
                 p.TeamPhone = person.TeamPhone;
                 p.HomePhone = person.HomePhone;
                 p.Title = person.Title;
+                p.SupervisorId = person.SupervisorId;
 
                 await _context.SaveChangesAsync();
                 return Json(p);
