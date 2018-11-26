@@ -93,6 +93,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             onRevoke={this._revokeKeySerial}
             onAssign={this._openAssignModal}
             onEdit={this._openEditModal}
+            onUpdate={this._openUpdateModal}
             showDetails={this._openDetailsModal}
           />
           <AssignKeySerial
@@ -100,7 +101,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             selectedKey={selectedKey}
             selectedKeySerial={selectedKeySerial}
             onCreate={this._createAndMaybeAssignKey}
-            isModalOpen={activeAsset && (action === "create" || action === "assign")}
+            isModalOpen={activeAsset && (action === "create" || action === "assign" || action === "update")}
             onOpenModal={this._openCreateModal}
             closeModal={this._closeModals}
           />
@@ -288,6 +289,12 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
       `${this._getBaseUrl()}/keyserials/edit/${keySerial.id}`
     );
   };
+
+  private _openUpdateModal = (keySerial: IKeySerial) => {
+    this.context.router.history.push(
+      `${this._getBaseUrl()}/keyserials/update/${keySerial.id}`
+    )
+  }
 
   private _closeModals = () => {
     this.context.router.history.push(`${this._getBaseUrl()}`);
