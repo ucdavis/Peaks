@@ -29,7 +29,7 @@ namespace Keas.Core.Domain
 
         public string GetDescription(string asset, string title, Person person, string action)
         {
-            return asset + "(" + title + ") " + action + " by " + person.Name;
+            return asset + "(" + title + ") " + action + " by " + person.Name + " (" + person.UserId + ")";
         }
 
         public virtual string Title => Name;
