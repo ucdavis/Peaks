@@ -45,13 +45,6 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
   }
   public async componentDidMount() {
     
-    let dateNow = new Date();
-    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0);
-    // TODO: remove
-    if (dateNow <= dateThen) {
-        return;
-    }
-
     const { selectedPerson, selectedKey } = this.props;
 
     // are we getting the person's key or the team's?
@@ -78,23 +71,6 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         return (
             <Denied viewName="Keys" />
         );
-    }
-
-    let dateNow = new Date();
-    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0);
-    // TODO: remove
-    if(dateNow <= dateThen)
-    {
-      return(
-        <div className="card keys-color">
-        <div className="card-header-keys">
-          <div className="card-head"><h2><i className="fas fa-key fa-xs"/> Key Serials</h2></div>
-        </div>
-        <div className="card-content">
-          <h3><i className="fas fa-wrench fa-xs fa-flip-horizontal"/> Keys are currently under construction <i className="fas fa-wrench fa-xs"/></h3>
-        </div>
-      </div>
-      );
     }
 
     if (this.state.loading) {
