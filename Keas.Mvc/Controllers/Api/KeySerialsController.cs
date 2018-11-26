@@ -220,6 +220,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Key.Team.Slug == Team)
                 .Include(s => s.Key)
                 .Include(s => s.KeySerialAssignment)
+                .ThenInclude(s => s.Person)
                 .SingleOrDefaultAsync(x => x.Id == id);
 
             if (keySerial == null)
@@ -232,12 +233,14 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
+            await _eventService.TrackUnAssignKeySerial(keySerial);
+
             // clear out assignment
             var assignment = keySerial.KeySerialAssignment;
             _context.KeySerialAssignments.Remove(assignment);
 
             await _context.SaveChangesAsync();
-            await _eventService.TrackUnAssignKeySerial(keySerial);
+            
 
             // return unassigned key serial
             return Json(keySerial);
