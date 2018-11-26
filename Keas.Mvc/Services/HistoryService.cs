@@ -516,7 +516,7 @@ namespace Keas.Mvc.Services
 
         public async Task<History> KeySerialAssignmentUpdated(KeySerial keySerial)
         {
-            var person = await _securityService.GetPerson(Key.Team.Slug);
+            var person = await _securityService.GetPerson(keySerial.Key.Team.Slug);
             var historyEntry = new History
             {
                 Description = keySerial.KeySerialAssignment.GetDescription(nameof(keySerial.Key), keySerial.Key.Title, person, "Assignment Updated"),
