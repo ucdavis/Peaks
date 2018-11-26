@@ -54,7 +54,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Tags", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Team", "Keas.Core.Domain.Team", new List<string>()));
             expectedFields.Add(new NameAndType("TeamId", "System.Int32", new List<string>()));
-            
+            expectedFields.Add(new NameAndType("Title", "System.String", new List<string>()));
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(Access));

@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { IKeySerial } from "../../Types";
-import ListActionsDropdown from "../ListActionsDropdown";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 interface IProps {
   keySerial: IKeySerial;
@@ -15,6 +15,23 @@ export default class KeyListItem extends React.Component<IProps, {}> {
   public render() {
     const { keySerial } = this.props;
 
+    const actions: IAction[] = [];
+    if (!!this.props.onAssign) {
+      actions.push({ title: 'Assign', onClick: () => this.props.onAssign(keySerial) });
+    }
+
+    if (!!this.props.onEdit) {
+      actions.push({ title: 'Edit', onClick: () => this.props.onEdit(keySerial) });
+    }
+    
+    if (!!this.props.showDetails) {
+        actions.push({ title: 'Details', onClick: () => this.props.showDetails(keySerial) });
+    }
+
+    if (!!this.props.onRevoke) {
+      actions.push({ title: 'Revoke', onClick: () => this.props.onRevoke(keySerial) });
+    }
+    
     return (
       <tr>
         <td>{keySerial.key.code}</td>
@@ -22,28 +39,7 @@ export default class KeyListItem extends React.Component<IProps, {}> {
         <td>{keySerial.keySerialAssignment ? keySerial.keySerialAssignment.person.name : ""}</td>
         <td>{keySerial.keySerialAssignment ? keySerial.keySerialAssignment.expiresAt : ""}</td>
         <td>
-          <ListActionsDropdown
-            showDetails={
-              !!this.props.showDetails
-                ? () => this.props.showDetails(keySerial)
-                : null
-            }
-            onAdd={
-              (!!this.props.onAssign && !keySerial.keySerialAssignment)
-                ? () => this.props.onAssign(keySerial)
-                : null
-            }
-            onEdit={
-              !!this.props.onEdit
-                ? () => this.props.onEdit(keySerial)
-                : null
-            }
-            onRevoke={
-              (!!this.props.onRevoke && keySerial.keySerialAssignment)
-                ? () => this.props.onRevoke(keySerial)
-                : null
-            }
-          />
+          <ListActionsDropdown actions={actions} />
         </td>
       </tr>
     );

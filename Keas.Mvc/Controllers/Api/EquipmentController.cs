@@ -129,7 +129,7 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     _context.EquipmentAssignments.Update(equipment.Assignment);
                     equipment.Assignment.ExpiresAt = DateTime.Parse(date);
-                    // TODO: track update assignment? 
+                    await _eventService.TrackEquipmentAssignmentUpdated(equipment); 
                 }
                 else
                 {
@@ -222,7 +222,7 @@ namespace Keas.Mvc.Controllers.Api
 
                 equipment.Active = false;
                 await _context.SaveChangesAsync();
-                // TODO: track history?
+                await _eventService.TrackEquipmentDeleted(equipment);
 
                 transaction.Commit();
                 return Json(null);

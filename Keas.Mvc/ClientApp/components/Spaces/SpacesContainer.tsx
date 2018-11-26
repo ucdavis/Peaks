@@ -247,8 +247,13 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         const { team } = this.context;
         const { spaces } = this.state;
 
-        const url = `/api/${team.slug}/keys/associateSpace?spaceId=${space.id}&keyId=${key.id}`;
-        const result = await this.context.fetch(url, {
+        const request = {
+            spaceId: space.id,
+        };
+
+        const associateUrl = `/api/${team.slug}/keys/associateSpace/${key.id}`;
+        const result = await this.context.fetch(associateUrl, {
+            body: JSON.stringify(request),
             method: "POST",
         });
 
@@ -271,8 +276,13 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         const { team } = this.context;
         const { spaces } = this.state;
 
-        const url = `/api/${team.slug}/keys/disassociateSpace?spaceId=${space.id}&keyId=${key.id}`;
-        const result = await this.context.fetch(url, {
+        const request = {
+            spaceId: space.id,
+        }
+
+        const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${key.id}`;
+        const result = await this.context.fetch(disassociateUrl, {
+            body: JSON.stringify(request),
             method: "POST",
         });
 

@@ -135,7 +135,7 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     _context.WorkstationAssignments.Update(workstation.Assignment);
                     workstation.Assignment.ExpiresAt = DateTime.Parse(date);
-                    // TODO: track update assignment? 
+                    await _eventService.TrackWorkstationAssignmentUpdated(workstation);
                 }
                 else
                 {

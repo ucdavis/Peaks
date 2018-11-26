@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Mvc.Models.KeySerialViewModels;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -78,7 +79,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerials);
         }
 
-        public async Task<IActionResult> Create([FromBody] KeySerial keySerial)
+        public async Task<IActionResult> Create([FromBody] CreateKeySerialViewModel model)
         {
             // TODO Make sure user has permissions
             if (!ModelState.IsValid)
@@ -90,7 +91,7 @@ namespace Keas.Mvc.Controllers.Api
             var key = await _context.Keys
                 .Where(x => x.Team.Slug == Team && x.Active)
                 .Include(k => k.Serials)
-                .SingleOrDefaultAsync(k => k.Id == keySerial.Key.Id);
+                .SingleOrDefaultAsync(k => k.Id == model.KeyId);
 
             if (key == null)
             {
@@ -98,10 +99,17 @@ namespace Keas.Mvc.Controllers.Api
             }
 
             // check for duplicate serial
-            if (key.Serials.Any(s => s.Number == keySerial.Number))
+            if (key.Serials.Any(s => s.Number == model.Number))
             {
                 return BadRequest();
             }
+
+            // create key serial
+            var keySerial = new KeySerial
+            {
+                KeyId = model.KeyId,
+                Number = model.Number,
+            };
 
             // add key serial
             key.Serials.Add(keySerial);
@@ -112,7 +120,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
-        public async Task<IActionResult> Update([FromBody] KeySerial updateRequest)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateKeySerialViewModel model)
         {
             // TODO Make sure user has permissions
             if (!ModelState.IsValid)
@@ -120,34 +128,31 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
-            // get key
-            var key = await _context.Keys
-                .Where(x => x.Team.Slug == Team && x.Active)
-                .Include(k => k.Serials)
-                    .ThenInclude(x => x.KeySerialAssignment)
-                        .ThenInclude(assingment => assingment.Person.User)
-                .SingleOrDefaultAsync(k => k.Id == updateRequest.KeyId);
-
-            if (key == null)
-            {
-                return BadRequest();
-            }
-
             // get key serial
-            var keySerial = key.Serials.SingleOrDefault(s => s.Id == updateRequest.Id);
+            var keySerial = await _context.KeySerials
+                .Where(x => x.Key.Team.Slug == Team && x.Active)
+                .Include(x => x.KeySerialAssignment)
+                    .ThenInclude(assingment => assingment.Person.User)
+                .SingleOrDefaultAsync(k => k.Id == id);
+
             if (keySerial == null)
             {
                 return BadRequest();
             }
 
+            // get key
+            var key = await _context.Keys
+                .Include(k => k.Serials)
+                .SingleOrDefaultAsync(k => k.Id == keySerial.KeyId);
+
             // check for duplicate serial to target number
-            if (key.Serials.Any(s => s.Number == updateRequest.Number))
+            if (key.Serials.Any(s => s.Number == model.Number))
             {
                 return BadRequest();
             }
 
             // update key serial
-            keySerial.Number = updateRequest.Number;
+            keySerial.Number = model.Number;
             await _context.SaveChangesAsync();
 
             //await _eventService.TrackCreateKeySerial(key);
@@ -155,7 +160,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
-        public async Task<IActionResult> Assign(int serialId, int personId, string date)
+        public async Task<IActionResult> Assign([FromBody] AssignKeySerialViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
             if (!ModelState.IsValid)
@@ -168,29 +173,37 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Key.Team.Slug == Team && x.Active)
                 .Include(x => x.KeySerialAssignment)
                 .Include(x => x.Key)
-                .SingleAsync(x => x.Id == serialId);
+                    .ThenInclude(k => k.Team)
+                .SingleAsync(x => x.Id == model.KeySerialId);
 
-            // check for existing assignment
+            // find person
+            var person = await _context.People
+                .Include(p => p.User)
+                .SingleAsync(p => p.Id == model.PersonId);
+
+
+            // check for existing assignment and update
             if (serial.KeySerialAssignment != null)
             {
-                // TODO: not sure what's going on here
+                serial.KeySerialAssignment.ExpiresAt = model.ExpiresAt;
+
                 _context.KeySerialAssignments.Update(serial.KeySerialAssignment);
-                serial.KeySerialAssignment.ExpiresAt = DateTime.Parse(date);
-                // TODO: track update assignment?
+                await _eventService.TrackAssignmentUpdatedKeySerial(serial);
             }
             else 
             {
-                serial.KeySerialAssignment = new KeySerialAssignment
+                var assignment = new KeySerialAssignment
                 {
-                    PersonId = personId,
-                    ExpiresAt = DateTime.Parse(date)
+                    KeySerial   = serial,
+                    KeySerialId = serial.Id,
+                    Person      = person,
+                    PersonId    = person.Id,
+                    ExpiresAt   = model.ExpiresAt,
                 };
 
-                serial.KeySerialAssignment.Person = await _context.People
-                    .Include(p => p.User)
-                    .SingleAsync(p => p.Id == personId);
-
-                _context.KeySerialAssignments.Add(serial.KeySerialAssignment);
+                // create, associate, and track
+                serial.KeySerialAssignment = assignment;
+                _context.KeySerialAssignments.Add(assignment);
                 await _eventService.TrackAssignKeySerial(serial);
             }
 
@@ -198,20 +211,16 @@ namespace Keas.Mvc.Controllers.Api
             return Json(serial);
         }
 
-        public async Task<IActionResult> Revoke([FromBody]KeySerial revokeRequest)
+        public async Task<IActionResult> Revoke(int id)
         {
             //TODO: check permissions
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
             // find keyserial
             var keySerial = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team)
                 .Include(s => s.Key)
                 .Include(s => s.KeySerialAssignment)
-                .SingleOrDefaultAsync(x => x.Id == revokeRequest.Id);
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             if (keySerial == null)
             {
@@ -228,16 +237,17 @@ namespace Keas.Mvc.Controllers.Api
             _context.KeySerialAssignments.Remove(assignment);
 
             await _context.SaveChangesAsync();
-            await _eventService.TrackUnAssignKeySerial(assignment);
+            await _eventService.TrackUnAssignKeySerial(keySerial);
 
+            // return unassigned key serial
             return Json(keySerial);
         }
 
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
-                .Where(x => x.AssetType == "KeySerial"
-                        && x.KeySerial.Key.Team.Slug == Team
+                .Where(x => x.KeySerial.Key.Team.Slug == Team
+                        && x.AssetType == "KeySerial"
                         && x.KeySerial.Id == id)
                 .OrderByDescending(x => x.ActedDate)
                 .Take(5)
