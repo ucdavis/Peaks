@@ -45,12 +45,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     };
   }
   public async componentDidMount() {
-    let dateNow = new Date();
-    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0);
-    // TODO: remove
-    if (dateNow <= dateThen) {
-        return;
-    }
+    
     // are we getting the person's key or the team's?
     let keyFetchUrl =  "";
     if (!!this.props.person) {
@@ -74,22 +69,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         );
     }
 
-    let dateNow = new Date();
-    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0);
-    // TODO: remove
-    if(dateNow <= dateThen)
-    {
-      return(
-        <div className="card keys-color">
-        <div className="card-header-keys">
-          <div className="card-head"><h2><i className="fas fa-key fa-xs"/> Keys</h2></div>
-        </div>
-        <div className="card-content">
-          <h3><i className="fas fa-wrench fa-xs fa-flip-horizontal"/> Keys are currently under construction <i className="fas fa-wrench fa-xs"/></h3>
-        </div>
-      </div>      );
-    }
-    
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
