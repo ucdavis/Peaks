@@ -2,6 +2,7 @@
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Services
 {
@@ -269,11 +270,12 @@ namespace Keas.Mvc.Services
         }
 
         public async Task<History> AccessUnassigned(AccessAssignment accessAssignment)
-        {
-            var person = await _securityService.GetPerson(accessAssignment.Access.Team.Slug);
+        {   
+            var access = await _context.Access.Where(x => x.Id == accessAssignment.AccessId).Include(t => t.Team).SingleAsync();
+            var person = await _securityService.GetPerson(access.Team.Slug);
             var historyEntry = new History
             {
-                Description = accessAssignment.GetDescription(nameof(Access), accessAssignment.Access.Title, person, "Unassigned"),
+                Description = accessAssignment.GetDescription(nameof(Access), access.Title, person, "Unassigned"),
                 ActorId = person.UserId,
                 AssetType = "Access",
                 ActionType = "Unassigned",
