@@ -25,6 +25,9 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                             disabled={this.props.disableEditing}
                             value={numberValue}
                             onChange={this.onChangeNumber}
+                            required={true}
+                            minLength={1}
+                            maxLength={10}
                         />
                     </div>
                 }
