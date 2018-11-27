@@ -1,4 +1,4 @@
-import * as PropTypes from 'prop-types';
+﻿import * as PropTypes from 'prop-types';
 import * as React from "react";
 
 import { PermissionsUtil } from "../../util/permissions";
@@ -136,9 +136,9 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     private _renderTableList = () => {
+        const { selectedKey } = this.props;
         const { tags } = this.state;
         const { action } = this.context.router.route.match.params;
-        const { selectedKey } = this.props;
 
         // flatten the space info for simple space
         const spaces = this.state.spaces.map(s => s.space);
