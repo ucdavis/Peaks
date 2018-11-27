@@ -46,8 +46,8 @@ export default class AssignPerson extends React.Component<IProps, IState> {
           disabled={this.props.disabled}
           isLoading={this.state.isSearchLoading}
           minLength={3}
+          defaultSelected={this.props.person ? [this.props.person] : []}
           placeholder="Search for person by name or email"
-          defaultInputValue={this.props.person ? this.props.person.name : ""}
           labelKey={(option: IPerson) =>
             `${option.name} (${option.email})`
           }
@@ -78,22 +78,13 @@ export default class AssignPerson extends React.Component<IProps, IState> {
             if (selected && selected.length === 1) {
               this.props.onSelect(selected[0]);
             }
+            if(selected && selected.length === 0) {
+              this.props.onSelect(null);
+            }
           }}
           options={this.state.people}
         />
       </div>
-    );
-  };
-
-  private _renderExistingPerson = () => {
-    return (
-      <input
-        type="text"
-        id="assignto"
-        className="form-control"
-        value={this.props.person.name}
-        disabled={true}
-      />
     );
   };
 }

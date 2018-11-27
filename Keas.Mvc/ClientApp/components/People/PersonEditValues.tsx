@@ -7,6 +7,7 @@ import AssignPerson from "./AssignPerson";
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
+    changeSupervisor?: (supervisor: IPerson) => void;
     tags?: string[];
     disableEditing: boolean;
     selectedPerson: IPerson;
@@ -87,7 +88,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                     <label>Supervisor</label>
                     <AssignPerson
                         disabled={false}
-                        onSelect={(person) => this._updateSupervisor(person)}
+                        onSelect={this.props.changeSupervisor}
                         person={this.props.selectedPerson.supervisor} />
                 </div>
                 
@@ -102,10 +103,5 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
 
             </div>
         );
-    }
-
-    private _updateSupervisor = (supervisor: IPerson) => {
-        this.props.changeProperty("supervisor", supervisor);
-        this.props.changeProperty("supervisorId", supervisor.id);
     }
 }

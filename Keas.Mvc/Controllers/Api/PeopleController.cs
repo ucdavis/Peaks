@@ -184,10 +184,13 @@ namespace Keas.Mvc.Controllers.Api
                 p.HomePhone = person.HomePhone;
                 p.Title = person.Title;
 
-                var supervisor = await _context.People.Where(x => x.Team.Slug == Team)
-                    .SingleAsync(x => x.Id == person.SupervisorId);
-                p.SupervisorId = supervisor.Id;
-                p.Supervisor = supervisor;
+                if(person.Supervisor != null || person.SupervisorId != null)
+                {
+                    var supervisor = await _context.People.Where(x => x.Team.Slug == Team)
+                        .SingleAsync(x => x.Id == person.SupervisorId);
+                    p.SupervisorId = supervisor.Id;
+                    p.Supervisor = supervisor;
+                }
 
                 await _context.SaveChangesAsync();
                 return Json(p);
@@ -211,7 +214,6 @@ namespace Keas.Mvc.Controllers.Api
             {
 
                 _context.People.Update(person);
-
 
                 person.Active = false;
                 await _context.SaveChangesAsync();
