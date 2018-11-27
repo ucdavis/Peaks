@@ -15,6 +15,7 @@ import {PermissionsUtil} from "../../util/permissions";
 interface IState {
   loading: boolean;
   keys: IKey[]; // either key assigned to this person, or all team keys
+  tags: string[];
 }
 
 interface IProps {
@@ -41,25 +42,31 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
     this.state = {
       keys: [],
-      loading: true
+      tags: [],
+      loading: true,
     };
   }
   public async componentDidMount() {
     
+    const { team } = this.context;
+
     // are we getting the person's key or the team's?
     let keyFetchUrl =  "";
     if (!!this.props.person) {
-      keyFetchUrl = `/api/${this.context.team.slug}/keys/listassigned?personid=${this.props.person.id}`;
+      keyFetchUrl = `/api/${team.slug}/keys/listassigned?personid=${this.props.person.id}`;
     }
     else if (!!this.props.space) {
-      keyFetchUrl = `/api/${this.context.team.slug}/keys/getKeysInSpace?spaceId=${this.props.space.id}`;
+      keyFetchUrl = `/api/${team.slug}/keys/getKeysInSpace?spaceId=${this.props.space.id}`;
     }
     else {
-      keyFetchUrl = `/api/${this.context.team.slug}/keys/list/`;
+      keyFetchUrl = `/api/${team.slug}/keys/list/`;
     }
 
     const keys = await this.context.fetch(keyFetchUrl);
-    this.setState({ keys, loading: false });
+
+    const tags = await this.context.fetch(`/api/${team.slug}/tags/listTags`);
+
+    this.setState({ keys, tags, loading: false });
   }
 
   public render() {
@@ -96,6 +103,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   
   private _renderTableView() {
     const { space } = this.props;
+    const { tags } = this.state;
     const { keyAction, keyId, action } = this.context.router.route.match.params;
 
     const selectedKeyId = parseInt(keyId, 10);
@@ -115,6 +123,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             onOpenModal={this._openCreateModal}
             closeModal={this._closeModals}
             modal={keyAction === "create"}
+            searchableTags={tags}
           />
         }
         <EditKey
@@ -122,7 +131,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           closeModal={this._closeModals}
           modal={keyAction === "edit"}
           selectedKey={selectedKey}
-        />
+          searchableTags={tags}
+          />
         {!!space &&
           <AssociateSpace
             selectedKey={selectedKey}
@@ -131,6 +141,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             isModalOpen={action === "associate"}
             openModal={this._openAssociate}
             closeModal={this._closeModals}
+            searchableTags={tags}
           />
         }
       </div>

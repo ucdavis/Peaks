@@ -16,9 +16,11 @@ import SearchSpaces from "../Spaces/SearchSpaces";
 
 interface IProps {
   onAssign: (space: ISpace, key: IKey) => void;
-  isModalOpen: boolean;
   openModal: () => void;
   closeModal: () => void;
+  
+  isModalOpen: boolean;
+  searchableTags: string[];
 
   selectedKey?: IKey;
   selectedSpace?: ISpace;
@@ -123,6 +125,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
   }
 
   private renderCreateKey() {
+    const { searchableTags } = this.props;
     const { selectedKey } = this.state;
 
     if (!selectedKey || selectedKey.id > 0) {
@@ -134,6 +137,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
         selectedKey={selectedKey}
         changeProperty={this._changeProperty}
         disableEditing={false}
+        searchableTags={searchableTags}
       />
     );
   }

@@ -17,6 +17,7 @@ interface IProps {
   modal: boolean;
   onOpenModal: () => void;
   closeModal: () => void;
+  searchableTags: string[];
 }
 
 interface IState {
@@ -64,6 +65,8 @@ export default class CreateKey extends React.Component<IProps, IState> {
   }
   
   private renderModal() {
+    const { searchableTags } = this.props;
+
     return (
       <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg" className="keys-color">
         <div className="modal-header row justify-content-between">
@@ -77,6 +80,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
               selectedKey={this.state.key}
               changeProperty={this._changeProperty}
               disableEditing={false}
+              searchableTags={searchableTags}
             />
         </ModalBody>
         <ModalFooter>

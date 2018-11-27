@@ -74,12 +74,14 @@ export interface IKey {
   teamId: number;
   name: string;
   code: string;
+  tags: string;
   serials: IKeySerial[];
 }
 
 export interface IKeySerial {
   id: number;
   number: string;
+  tags: string;
   key: IKey;
   keySerialAssignment?: IKeySerialAssignment;
 }

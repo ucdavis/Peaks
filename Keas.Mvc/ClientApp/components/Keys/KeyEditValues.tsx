@@ -1,4 +1,6 @@
-﻿import * as React from "react";
+import * as React from "react";
+
+import SearchTags from "../Tags/SearchTags";
 
 import { IKey } from "../../Types";
 
@@ -6,12 +8,15 @@ interface IProps {
     selectedKey: IKey;
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
+    searchableTags: string[]
 }
 
 export default class KeyEditValues extends React.Component<IProps, {}> {
 
     public render() {
-        const { name, code } = this.props.selectedKey;
+        const { name, code, tags } = this.props.selectedKey;
+
+        const parsedTags = tags ? tags.split(',') : [];
 
         return (
             <div>
@@ -38,6 +43,14 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         maxLength={10}
                     />
                 </div>
+                <div className="form-group">
+                    <label>Tags</label>
+                    <SearchTags
+                        tags={this.props.searchableTags} 
+                        disabled={this.props.disableEditing}
+                        selected={parsedTags}
+                        onSelect={this.onChangeTags} />
+            </div>
             </div>
         );
     }
@@ -53,5 +66,11 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
         value = value.toUpperCase();
 
         this.props.changeProperty("code", value)
+    }
+
+    private onChangeTags = (tags: string[]) => {
+        const value = tags.join(',');
+
+        this.props.changeProperty("tags", value)
     }
 }

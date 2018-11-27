@@ -1,4 +1,4 @@
-﻿import * as PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 
 import { PermissionsUtil } from "../../util/permissions";
@@ -136,6 +136,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     private _renderTableList = () => {
+        const { tags } = this.state;
         const { action } = this.context.router.route.match.params;
         const { selectedKey } = this.props;
 
@@ -156,6 +157,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                     openModal={() => this._openAssociateModal(null)}
                     closeModal={this._closeModals}
                     isModalOpen={action === "associate"}
+                    searchableTags={tags}
                 />
             </div>
         )

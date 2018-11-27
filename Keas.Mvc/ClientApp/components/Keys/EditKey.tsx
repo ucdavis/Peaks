@@ -24,6 +24,7 @@ interface IProps {
   modal: boolean;
   closeModal: () => void;
   selectedKey: IKey;
+  searchableTags: string[];
 }
 
 interface IState {
@@ -57,10 +58,12 @@ export default class EditKey extends React.Component<IProps, IState> {
   }
 
   public render() {
-    if(!this.state.key)
-    {
+    if (!this.state.key) {
       return null;
     }
+
+    const { searchableTags } = this.props;
+
     return (
       <Modal isOpen={this.props.modal} toggle={this._closeModal} size="lg" className="keys-color">
         <div className="modal-header row justify-content-between">
@@ -76,6 +79,7 @@ export default class EditKey extends React.Component<IProps, IState> {
                     selectedKey={this.state.key}
                     changeProperty={this._changeProperty}
                     disableEditing={false}
+                    searchableTags={searchableTags}
                   />
             </form>
           </div>
