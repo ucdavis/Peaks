@@ -9,14 +9,10 @@ import Denied from "../Shared/Denied";
 import EditKey from "./EditKey";
 import KeyDetailContainer from "./KeyDetailContainer";
 import KeyList from "./KeyList";
+import KeyTable from "./KeyTable";
+import SearchTags from "../Tags/SearchTags";
 
 import {PermissionsUtil} from "../../util/permissions";
-
-interface IState {
-  loading: boolean;
-  keys: IKey[]; // either key assigned to this person, or all team keys
-  tags: string[];
-}
 
 interface IProps {
   assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
@@ -24,6 +20,15 @@ interface IProps {
   assetEdited?: (type: string, spaceId: number, personId: number) => void; 
   person?: IPerson;
   space?: ISpace;
+}
+
+interface IState {
+  loading: boolean;
+  keys: IKey[]; // either key assigned to this person, or all team keys
+  tags: string[];
+
+  tableFilters: any[];
+  tagFilters: string[];
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
@@ -44,6 +49,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       keys: [],
       tags: [],
       loading: true,
+
+      tableFilters: [],
+      tagFilters: [],
     };
   }
   public async componentDidMount() {
@@ -90,8 +98,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           </div>
         </div>
         <div className="card-content">
-            { keyAction !== "details" &&
-                this._renderTableView()
+            {
+              keyAction !== "details" &&
+                this._renderTableOrListView()
             }
             { keyAction === "details" &&
                 this._renderDetailsView()
@@ -101,7 +110,48 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     );
   }
   
+  private _renderTableOrListView() {
+    const { space } = this.props;
+    if (!space) {
+      return this._renderTableView();
+    }
+
+    return this._renderListView();
+  }
+
   private _renderTableView() {
+    const { keys, tableFilters, tags, tagFilters } = this.state;
+
+    let filteredKeys = keys;
+
+    // check for tag filters
+    if (tagFilters && tagFilters.length) {
+      filteredKeys = keys
+        .filter(k => k.tags && k.tags.length)
+        .filter(k => {
+          const keyTags = k.tags.split(",");
+          return tagFilters.every(t => keyTags.includes(t));
+        });
+    }
+
+    return (
+      <div>
+        <SearchTags
+          tags={tags} 
+          disabled={false}
+          selected={tagFilters}
+          onSelect={this._onTagsFiltered} />
+        <KeyTable
+          keys={filteredKeys}
+          showDetails={this._openDetailsModal}
+          filters={tableFilters}
+          onFiltersChange={this._onTableFiltered}
+        />
+      </div>
+    );
+  }
+
+  private _renderListView() {
     const { space } = this.props;
     const { tags } = this.state;
     const { keyAction, keyId, action } = this.context.router.route.match.params;
@@ -276,7 +326,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     }
 }
 
-private _disassociateSpace = async (space: ISpace, key: IKey) => {
+  private _disassociateSpace = async (space: ISpace, key: IKey) => {
     const { team } = this.context;
     const { keys } = this.state;
 
@@ -297,7 +347,15 @@ private _disassociateSpace = async (space: ISpace, key: IKey) => {
     this.setState({
       keys: updatedKeys,
     });
-}
+  }
+
+  private _onTagsFiltered = (tagFilters: string[]) => {
+    this.setState({ tagFilters });
+  }
+
+  private _onTableFiltered = (tableFilters: any[]) => {
+    this.setState({ tableFilters });
+  }
 
   private _openCreateModal = () => {
     const { team } = this.context;
