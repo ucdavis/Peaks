@@ -124,7 +124,7 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
-                    .Include(w => w.Space).Include(w => w.Assignment).SingleAsync(w => w.Id == workstationId);
+                    .Include(w => w.Space).Include(t => t.Team).Include(w => w.Assignment).SingleAsync(w => w.Id == workstationId);
                     
                 if (workstation.Team.Slug != Team)
                 {
