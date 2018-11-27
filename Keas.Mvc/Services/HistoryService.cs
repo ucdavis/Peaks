@@ -256,7 +256,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> KeySerialUnassigned(KeySerial keySerial)
         {
-            var person = await _securityService.GetPerson(keySerial.KeyId);
+            var key = await _context.Keys.Where(k => k.Id == keySerial.KeyId).Include(t => t.Team).SingleAsync();
+            var person = await _securityService.GetPerson(key.TeamId);
             var historyEntry = new History
             {
                 Description = keySerial.KeySerialAssignment.GetDescription(nameof(KeySerial), key.Title, person, "Unassigned"),
@@ -273,7 +274,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> AccessUnassigned(AccessAssignment accessAssignment)
         {
-            var person = await _securityService.GetPerson(accessAssignment.AccessId);
+            var access = await _context.Access.Where(x => x.Id == accessAssignment.AccessId).Include(t => t.Team).SingleAsync();
+            var person = await _securityService.GetPerson(access.TeamId);
             var historyEntry = new History
             {
                 Description = accessAssignment.GetDescription(nameof(Access), access.Title, person, "Unassigned"),
