@@ -45,12 +45,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     };
   }
   public async componentDidMount() {
-    let dateNow = new Date();
-    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0);
-    // TODO: remove
-    if (dateNow <= dateThen) {
-        return;
-    }
+    
     // are we getting the person's key or the team's?
     let keyFetchUrl =  "";
     if (!!this.props.person) {
@@ -74,22 +69,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         );
     }
 
-    let dateNow = new Date();
-    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0);
-    // TODO: remove
-    if(dateNow <= dateThen)
-    {
-      return(
-        <div className="card keys-color">
-        <div className="card-header-keys">
-          <div className="card-head"><h2><i className="fas fa-key fa-xs"/> Keys</h2></div>
-        </div>
-        <div className="card-content">
-          <h3><i className="fas fa-wrench fa-xs fa-flip-horizontal"/> Keys are currently under construction <i className="fas fa-wrench fa-xs"/></h3>
-        </div>
-      </div>      );
-    }
-    
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
@@ -186,12 +165,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const index = this.state.keys.findIndex(x => x.id === key.id);
     if (index !== -1) {
       // update already existing entry in key
-      const updateKey = [...this.state.keys];
-      updateKey[index] = key;
+      const updateKeys = [...this.state.keys];
+      updateKeys[index] = key;
 
       this.setState({
         ...this.state,
-        keys: updateKey
+        keys: updateKeys
       });
     } else {
       this.setState({
@@ -199,11 +178,15 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       });
     }
 
-    if(this.props.assetTotalUpdated)
+    if (this.props.assetTotalUpdated)
     {
-        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
-           this.props.person ? this.props.person.id : null, 1);
+        this.props.assetTotalUpdated("key",
+            this.props.space ? this.props.space.id : null,
+            this.props.person ? this.props.person.id : null,
+            1);
     }
+
+    return key;
   };
 
   private _editKey = async (key: IKey) =>
@@ -248,6 +231,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const { team } = this.context;
     const { keys } = this.state;
 
+    // possibly create key
+    if (key.id === 0) {
+      key = await this._createKey(key);
+    }
+
     const request = {
       spaceId: space.id,
     };
@@ -258,10 +246,21 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       method: "POST",
     });
 
-    const updatedKeys = [...keys, key];
-    this.setState({
-        keys: updatedKeys,
-    });
+    const index = this.state.keys.findIndex(x => x.id === key.id);
+    if (index !== -1) {
+      // update already existing entry in key
+      const updateKeys = [...this.state.keys];
+      updateKeys[index] = key;
+
+      this.setState({
+        ...this.state,
+        keys: updateKeys
+      });
+    } else {
+      this.setState({
+        keys: [...this.state.keys, key]
+      });
+    }
 }
 
 private _disassociateSpace = async (space: ISpace, key: IKey) => {
