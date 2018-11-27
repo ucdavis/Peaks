@@ -27,7 +27,7 @@ namespace Test.TestsDatabase
             var classReflection = new ControllerReflection(_output, typeof(KeySerial));
             // Act
             // Assert	
-            classReflection.ControllerInherits("Object"); 
+            classReflection.ControllerInherits("AssetBase"); 
             classReflection.ClassExpectedNoAttribute();
         }
 
@@ -37,7 +37,10 @@ namespace Test.TestsDatabase
             #region Arrange
             var expectedFields = new List<NameAndType>();
             expectedFields.Add(new NameAndType("Active", "System.Boolean", new List<string>()));
-            
+            expectedFields.Add(new NameAndType("Group", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)32)]",
+            }));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.KeyAttribute()]",
@@ -47,7 +50,16 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("KeyId", "System.Int32", new List<string>()));
             expectedFields.Add(new NameAndType("KeySerialAssignment", "Keas.Core.Domain.KeySerialAssignment", new List<string>()));
             expectedFields.Add(new NameAndType("KeySerialAssignmentId", "System.Nullable`1[System.Int32]", new List<string>()));
-            expectedFields.Add(new NameAndType("Number", "System.String", new List<string>()));     
+            expectedFields.Add(new NameAndType("Name", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]"
+            }));            
+            expectedFields.Add(new NameAndType("Number", "System.String", new List<string>())); 
+            expectedFields.Add(new NameAndType("Tags", "System.String", new List<string>())); 
+            expectedFields.Add(new NameAndType("Team", "Keas.Core.Domain.Team", new List<string>())); 
+            expectedFields.Add(new NameAndType("TeamId", "System.Int32", new List<string>())); 
+            expectedFields.Add(new NameAndType("Title", "System.String", new List<string>())); 
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(KeySerial));

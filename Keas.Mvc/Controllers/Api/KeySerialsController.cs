@@ -222,6 +222,7 @@ namespace Keas.Mvc.Controllers.Api
             var keySerial = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team)
                 .Include(s => s.Key)
+                .ThenInclude(s => s.Team)
                 .Include(s => s.KeySerialAssignment)
                 .ThenInclude(s => s.Person)
                 .SingleOrDefaultAsync(x => x.Id == id);
