@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { DateUtil } from "../../util/dates";
 import { IKeySerial } from "../../Types";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
@@ -7,6 +8,7 @@ interface IProps {
   keySerial: IKeySerial;
   onRevoke?: (key: IKeySerial) => void;
   onAssign?: (key: IKeySerial) => void;
+  onUpdate?: (key: IKeySerial) => void;
   showDetails?: (key: IKeySerial) => void;
   onEdit?: (key: IKeySerial) => void;
 }
@@ -16,7 +18,7 @@ export default class KeyListItem extends React.Component<IProps, {}> {
     const { keySerial } = this.props;
 
     const actions: IAction[] = [];
-    if (!!this.props.onAssign) {
+    if (!!this.props.onAssign && !keySerial.keySerialAssignment) {
       actions.push({ title: 'Assign', onClick: () => this.props.onAssign(keySerial) });
     }
 
@@ -28,7 +30,11 @@ export default class KeyListItem extends React.Component<IProps, {}> {
         actions.push({ title: 'Details', onClick: () => this.props.showDetails(keySerial) });
     }
 
-    if (!!this.props.onRevoke) {
+    if (!!this.props.onUpdate && !!keySerial.keySerialAssignment) {
+      actions.push({ title: 'Update', onClick: () => this.props.onUpdate(keySerial) });
+    }
+
+    if (!!this.props.onRevoke && !!keySerial.keySerialAssignment) {
       actions.push({ title: 'Revoke', onClick: () => this.props.onRevoke(keySerial) });
     }
     
@@ -37,7 +43,7 @@ export default class KeyListItem extends React.Component<IProps, {}> {
         <td>{keySerial.key.code}</td>
         <td>{keySerial.number}</td>
         <td>{keySerial.keySerialAssignment ? keySerial.keySerialAssignment.person.name : ""}</td>
-        <td>{keySerial.keySerialAssignment ? keySerial.keySerialAssignment.expiresAt : ""}</td>
+        <td>{keySerial.keySerialAssignment ? DateUtil.formatExpiration(keySerial.keySerialAssignment.expiresAt) : ""}</td>
         <td>
           <ListActionsDropdown actions={actions} />
         </td>

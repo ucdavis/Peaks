@@ -22,6 +22,8 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         disabled={this.props.disableEditing}
                         value={name}
                         onChange={this.onChangeName}
+                        required={true}
+                        minLength={1}
                     />
                 </div>
                 <div className="form-group">
@@ -31,6 +33,9 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         disabled={this.props.disableEditing}
                         value={code}
                         onChange={this.onChangeCode}
+                        required={true}
+                        minLength={1}
+                        maxLength={10}
                     />
                 </div>
             </div>
@@ -42,6 +47,11 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
     }
 
     private onChangeCode = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.props.changeProperty("code", event.target.value)
+        let value = event.target.value;
+
+        // use upper
+        value = value.toUpperCase();
+
+        this.props.changeProperty("code", value)
     }
 }

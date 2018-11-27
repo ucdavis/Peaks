@@ -45,7 +45,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 isLoading={isSearchLoading}
                 minLength={2}
                 placeholder="Search for key by name or by serial number"
-                labelKey="name"
+                labelKey="code"
                 filterBy={() => true} // don't filter on top of our search
                 allowNew={true}
                 renderMenuItemChildren={this.renderItem}
@@ -60,14 +60,16 @@ export default class SearchKeys extends React.Component<IProps, IState> {
         return (
             <div>
                 <div>
-                    <Highlighter key="name" search={props.text}>
+                    <Highlighter search={props.text}>
                         {option.name}
                     </Highlighter>
                 </div>
                 <div>
                     <small>
                         Serial Number:
-                        <Highlighter key="serialNumber" search={props.text}>{option.serialNumber}</Highlighter>
+                        <Highlighter search={props.text}>
+                            {option.serialNumber}
+                        </Highlighter>
                     </small>
                 </div>
             </div>
@@ -87,12 +89,30 @@ export default class SearchKeys extends React.Component<IProps, IState> {
         });
     }
 
-    private onChange = (selected: IKey[]) => {
-        if (selected && selected.length === 1) {
-            this.props.onSelect(selected[0]);
-            return;
+    private onChange = (selected: any[]) => {
+
+        let key: IKey;
+
+        // check for empty
+        if (!selected || selected.length <= 0) {
+            this.props.onDeselect();
+        }
+        
+        // check for new selection
+        if (selected[0].customOption) {
+            key = {
+                code: selected[0].code,
+                id: 0,
+                name: '',
+                serials: [],
+                teamId: 0,
+            };
+        }
+        else {
+            key = selected[0];
         }
 
-        this.props.onDeselect();
+        this.props.onSelect(key);
+        return;
     };
 }

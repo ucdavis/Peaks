@@ -45,13 +45,6 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
   }
   public async componentDidMount() {
     
-    let dateNow = new Date();
-    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0);
-    // TODO: remove
-    if (dateNow <= dateThen) {
-        return;
-    }
-
     const { selectedPerson, selectedKey } = this.props;
 
     // are we getting the person's key or the team's?
@@ -80,23 +73,6 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         );
     }
 
-    let dateNow = new Date();
-    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0);
-    // TODO: remove
-    if(dateNow <= dateThen)
-    {
-      return(
-        <div className="card keys-color">
-        <div className="card-header-keys">
-          <div className="card-head"><h2><i className="fas fa-key fa-xs"/> Key Serials</h2></div>
-        </div>
-        <div className="card-content">
-          <h3><i className="fas fa-wrench fa-xs fa-flip-horizontal"/> Keys are currently under construction <i className="fas fa-wrench fa-xs"/></h3>
-        </div>
-      </div>
-      );
-    }
-
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
@@ -117,6 +93,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             onRevoke={this._revokeKeySerial}
             onAssign={this._openAssignModal}
             onEdit={this._openEditModal}
+            onUpdate={this._openUpdateModal}
             showDetails={this._openDetailsModal}
           />
           <AssignKeySerial
@@ -124,7 +101,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             selectedKey={selectedKey}
             selectedKeySerial={selectedKeySerial}
             onCreate={this._createAndMaybeAssignKey}
-            isModalOpen={activeAsset && (action === "create" || action === "assign")}
+            isModalOpen={activeAsset && (action === "create" || action === "assign" || action === "update")}
             onOpenModal={this._openCreateModal}
             closeModal={this._closeModals}
           />
@@ -154,7 +131,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     let updateTotalAssetCount = false;
     let updateInUseAssetCount = false;
 
-    // if we are creating a new key
+    // if we are creating a new key serial
     if (keySerial.id === 0) {
       const request = {
         keyId: keySerial.key.id,
@@ -312,6 +289,12 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
       `${this._getBaseUrl()}/keyserials/edit/${keySerial.id}`
     );
   };
+
+  private _openUpdateModal = (keySerial: IKeySerial) => {
+    this.context.router.history.push(
+      `${this._getBaseUrl()}/keyserials/update/${keySerial.id}`
+    )
+  }
 
   private _closeModals = () => {
     this.context.router.history.push(`${this._getBaseUrl()}`);

@@ -137,3 +137,7 @@ th.list-actions {
     color: $tertiary-font !important;
   }
 }
+
+.form-group .react-datepicker-wrapper {
+  display: inherit;
+}
