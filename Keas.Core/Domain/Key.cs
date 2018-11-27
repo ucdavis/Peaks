@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
@@ -12,8 +11,7 @@ namespace Keas.Core.Domain
 
         public List<KeySerial> Serials { get; set; }
 
-        public override string Title => Name != null ? Name : Code;
-
+        public override string Title => Name ?? Code;
 
         protected internal static void OnModelCreating(ModelBuilder builder)
         {
