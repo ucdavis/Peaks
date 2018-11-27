@@ -1,4 +1,4 @@
-import * as React from "react";
+﻿import * as React from "react";
 
 import SearchTags from "../Tags/SearchTags";
 
@@ -26,6 +26,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         className="form-control"
                         disabled={this.props.disableEditing}
                         value={name}
+                        onBlur={this.onBlurName}
                         onChange={this.onChangeName}
                         required={true}
                         minLength={1}
@@ -37,6 +38,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         className="form-control"
                         disabled={this.props.disableEditing}
                         value={code}
+                        onBlur={this.onBlurCode}
                         onChange={this.onChangeCode}
                         required={true}
                         minLength={1}
@@ -50,9 +52,27 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         disabled={this.props.disableEditing}
                         selected={parsedTags}
                         onSelect={this.onChangeTags} />
-            </div>
+                </div>
             </div>
         );
+    }
+
+    private onBlurName = () => {
+        let { name } = this.props.selectedKey;
+
+        // trim name
+        name = name.trim();
+
+        this.props.changeProperty("name", name)
+    }
+
+    private onBlurCode = () => {
+        let { code } = this.props.selectedKey;
+
+        // trim name
+        code = code.trim();
+
+        this.props.changeProperty("code", code)
     }
 
     private onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
