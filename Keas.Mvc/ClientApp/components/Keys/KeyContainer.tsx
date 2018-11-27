@@ -165,6 +165,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const request = {
       code: key.code,
       name: key.name,
+      tags: key.tags,
     };
 
     const createUrl = `/api/${this.context.team.slug}/keys/create`;
@@ -212,6 +213,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const request = {
       code: key.code,
       name: key.name,
+      tags: key.tags,
     };
 
     const updateUrl = `/api/${this.context.team.slug}/keys/update/${key.id}`;

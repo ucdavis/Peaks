@@ -89,6 +89,7 @@ namespace Keas.Mvc.Controllers.Api
             {
                 Name = model.Name,
                 Code = model.Code,
+                Tags = model.Tags,
             };
 
             // get and assign team
@@ -121,6 +122,7 @@ namespace Keas.Mvc.Controllers.Api
 
             key.Code = model.Code;
             key.Name = model.Name;
+            key.Tags = model.Tags;
 
             await _context.SaveChangesAsync();
             await _eventService.TrackUpdateKey(key);
