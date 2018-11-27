@@ -26,6 +26,8 @@ namespace Keas.Mvc.Services
 
         Task<Person> GetPerson(string teamSlug);
 
+        Task<Person> GetPerson(int teamId);
+
         Task<List<User>> GetUsersInRoles(List<Role> roles, string teamSlug);
 
         Task<List<TeamPermission>> GetUserRolesInTeam(Team team);
@@ -152,6 +154,17 @@ namespace Keas.Mvc.Services
             var person = await _dbContext.People
                 .AsNoTracking()
                 .SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Slug == teamSlug);
+
+            return person;
+        }
+
+        public async Task<Person> GetPerson(int teamId)
+        {
+            var userId = _contextAccessor.HttpContext.User.Identity.Name;
+
+            var person = await _dbContext.People
+                .AsNoTracking()
+                .SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Id == teamId);
 
             return person;
         }
