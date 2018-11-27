@@ -259,7 +259,9 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   }
   
   private _deleteAccess = async (access: IAccess) => {
-      
+    if(!confirm("Are you should you want to delete item?")){
+        return false;
+      }
     const deleted: IAccess = await this.context.fetch(`/api/${this.context.team.slug}/access/delete`, {
         body: JSON.stringify(access),
         method: "POST"

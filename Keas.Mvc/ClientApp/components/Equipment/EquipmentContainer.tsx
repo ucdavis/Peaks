@@ -286,7 +286,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
   };
 
   private _deleteEquipment = async (equipment: IEquipment) => {
-
+    if(!confirm("Are you should you want to delete item?")){
+      return false;
+    }
     const deleted: IEquipment = await this.context.fetch(`/api/${this.context.team.slug}/equipment/delete`, {
       body: JSON.stringify(equipment),
       method: "POST"
