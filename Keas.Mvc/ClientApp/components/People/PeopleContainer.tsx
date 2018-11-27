@@ -68,7 +68,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
             this._renderTableView(personAction === "create")
           }
           {personAction === "details" && !!detailPerson && !!detailPerson.person &&
-            this._renderDetailsView(detailPerson.person)
+            this._renderDetailsView(detailPerson)
           }
         </div>
       </div>
@@ -102,14 +102,15 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     );
   }
 
-  private _renderDetailsView = (detailPerson: IPerson) => {
+  private _renderDetailsView = (detailPerson: IPersonInfo) => {
     return(
       <PersonDetails
-        selectedPerson={detailPerson}
+        selectedPersonInfo={detailPerson}
         tags={this.state.tags}
         goBack={this._goBack}
         inUseUpdated={this._assetInUseUpdated}
         onEdit={this._editPerson}
+        onDelete={this._deletePerson}
       />
     );
   }
@@ -206,6 +207,36 @@ export default class PeopleContainer extends React.Component<{}, IState> {
       ...this.state,
       people: updatePeople
     }); 
+}
+
+private _deletePerson = async (person: IPerson) =>
+{
+  const index = this.state.people.findIndex(x => x.id === person.id);
+
+  if(index === -1 ) // should always already exist
+  {
+    return;
+  }
+
+  if(!confirm("Are you should you want to delete person?")){
+    return false;
+  }
+  
+  const deleted: IPerson = await this.context.fetch(`/api/${this.context.team.slug}/people/delete`, {
+    body: JSON.stringify(person),
+    method: "POST"
+  });
+
+  this._goBack();
+
+  // update already existing entry in key
+  const updatePeople = [...this.state.people];
+  updatePeople.splice(index, 1);
+
+  this.setState({
+    ...this.state,
+    people: updatePeople
+  }); 
 }
 
   // controls for modal opening to manage people

@@ -195,6 +195,33 @@ namespace Keas.Mvc.Controllers.Api
             return BadRequest(ModelState);
         }
 
+         public async Task<IActionResult> Delete([FromBody]Person person)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(!person.Active) 
+            {
+                return BadRequest(ModelState);
+            }
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+
+                _context.People.Update(person);
+
+
+                person.Active = false;
+                await _context.SaveChangesAsync();
+
+                transaction.Commit();
+                return Json(null);
+            }
+
+        }
+
         public async Task<IActionResult> GetPerson(int personId)
         {
             var person = await _context.People
