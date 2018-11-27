@@ -107,15 +107,17 @@ namespace Keas.Mvc.Controllers.Api
             // create key serial
             var keySerial = new KeySerial
             {
-                KeyId = model.KeyId,
-                Number = model.Number,
+                KeyId    = key.Id,
+                TeamId   = key.TeamId,
+                Name     = model.Number,
+                Number   = model.Number,
             };
 
             // add key serial
             key.Serials.Add(keySerial);
             await _context.SaveChangesAsync();
-
-            //await _eventService.TrackCreateKeySerial(key);
+            
+            //await _eventService.TrackCreateKeySerial(keySerial);
 
             return Json(keySerial);
         }
@@ -152,6 +154,7 @@ namespace Keas.Mvc.Controllers.Api
             }
 
             // update key serial
+            keySerial.Name = model.Number;
             keySerial.Number = model.Number;
             await _context.SaveChangesAsync();
 
