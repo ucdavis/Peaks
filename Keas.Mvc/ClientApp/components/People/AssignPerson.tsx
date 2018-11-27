@@ -8,6 +8,7 @@ import { AppContext, IKey, IPerson } from "../../Types";
 interface IProps {
   onSelect: (person: IPerson) => void;
   person?: IPerson;
+  disabled: boolean;
 }
 
 interface IState {
@@ -34,11 +35,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
   }
 
   public render() {
-    if (this.props.person) {
-      return this._renderExistingPerson();
-    } else {
       return this._renderFindPerson();
-    }
   }
 
   private _renderFindPerson = () => {
@@ -46,9 +43,11 @@ export default class AssignPerson extends React.Component<IProps, IState> {
     return (
       <div>
         <AsyncTypeahead
+          disabled={this.props.disabled}
           isLoading={this.state.isSearchLoading}
           minLength={3}
           placeholder="Search for person by name or email"
+          defaultInputValue={this.props.person ? this.props.person.name : ""}
           labelKey={(option: IPerson) =>
             `${option.name} (${option.email})`
           }

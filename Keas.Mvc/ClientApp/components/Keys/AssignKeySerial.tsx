@@ -114,6 +114,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
               <div className="form-group">
                 <label htmlFor="assignto">Assign To</label>
                 <AssignPerson
+                  disabled={!!this.props.person} // disable if we are on person page
                   person={person}
                   onSelect={this._onSelectPerson}
                 />

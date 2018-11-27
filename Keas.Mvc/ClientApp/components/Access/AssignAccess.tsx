@@ -81,6 +81,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                 <div className="form-group">
                                     <label htmlFor="assignto">Assign To</label>
                                     <AssignPerson
+                                        disabled={!!this.props.person}
                                         person={this.props.person || this.state.person}
                                         onSelect={this._onSelectPerson} />
                                 </div>

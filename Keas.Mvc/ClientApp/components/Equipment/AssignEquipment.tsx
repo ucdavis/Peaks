@@ -100,6 +100,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                   <AssignPerson
                     person={this.state.person}
                     onSelect={this._onSelectPerson}
+                    disabled={!!this.props.person} // disable if we are on person page
                   />
                 </div>
                 {!this.state.equipment &&
@@ -187,7 +188,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         ...this.state.equipment,
         [property]: value
       }
-    });
+    }, this._validateState);
   };
 
   private _updateAttributes = (attributes: IEquipmentAttribute[]) => {
