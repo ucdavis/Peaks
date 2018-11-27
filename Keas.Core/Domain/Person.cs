@@ -59,9 +59,9 @@ namespace Keas.Core.Domain
 
         public List<KeySerialAssignment> KeySerialAssignments { get; set; }
 
-        public Person Supervisor { get; set; }
+        public int? SupervisorId {   get; set; }
 
-        public int SupervisorId {   get; set; }
+        public Person Supervisor { get; set; }
 
         protected internal  static void OnModelCreating(ModelBuilder builder)
         {

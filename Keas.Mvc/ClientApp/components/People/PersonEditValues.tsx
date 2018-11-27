@@ -54,7 +54,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                 </div>
 
                 <div className="form-group">
-                    <label>Phone Number</label>
+                    <label>Home Phone Number</label>
                     <input type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
@@ -64,7 +64,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                 </div>
 
                 <div className="form-group">
-                    <label>Team Number</label>
+                    <label>Team Phone Number</label>
                     <input type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
@@ -85,7 +85,9 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                 
                 <div className="form-group">
                     <label>Supervisor</label>
-                    <AssignPerson onSelect={(person) => this.props.changeProperty("supervisorId", person.id)}/>
+                    <AssignPerson
+                        onSelect={(person) => this._updateSupervisor(person)}
+                        person={this.props.selectedPerson.supervisor} />
                 </div>
                 
                 <div className="form-group">
@@ -99,5 +101,10 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
 
             </div>
         );
+    }
+
+    private _updateSupervisor = (supervisor: IPerson) => {
+        this.props.changeProperty("supervisor", supervisor);
+        this.props.changeProperty("supervisorId", supervisor.id);
     }
 }

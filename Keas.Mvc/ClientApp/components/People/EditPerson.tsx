@@ -97,7 +97,7 @@ export default class EditPerson extends React.Component<IProps, IState> {
     );
   }
 
-  private _changeProperty = (property: string, value: string) => {
+  private _changeProperty = (property: string, value: any) => {
     this.setState({
       person: {
         ...this.state.person,
