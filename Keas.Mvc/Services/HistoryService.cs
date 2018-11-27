@@ -60,12 +60,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> KeyCreated(Key key)
         {
-            var person = await _securityService.GetPerson(key.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == key.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == key.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = key.GetDescription(nameof(Key), key.Title, person, "Created"),
@@ -81,12 +77,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> AccessCreated(Access access)
         {
-            var person = await _securityService.GetPerson(access.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == access.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == access.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = access.GetDescription(nameof(Access), access.Title, person, "Created"),
@@ -102,12 +94,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentCreated(Equipment equipment)
         {
-            var person = await _securityService.GetPerson(equipment.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = equipment.GetDescription(nameof(Equipment), equipment.Title, person, "Created"),
@@ -123,12 +111,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> KeyUpdated(Key key)
         {
-            var person = await _securityService.GetPerson(key.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == key.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == key.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = key.GetDescription(nameof(Key), key.Title, person, "Updated"),
@@ -144,12 +128,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> AccessUpdated(Access access)
         {
-            var person = await _securityService.GetPerson(access.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == access.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == access.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = access.GetDescription(nameof(Access), access.Title, person, "Updated"),
@@ -165,12 +145,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentUpdated(Equipment equipment)
         {
-            var person = await _securityService.GetPerson(equipment.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = equipment.GetDescription(nameof(Equipment), equipment.Title, person, "Updated"),
@@ -185,12 +161,8 @@ namespace Keas.Mvc.Services
         }
         public async Task<History> KeyInactivated(Key key)
         {
-            var person = await _securityService.GetPerson(key.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == key.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == key.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = key.GetDescription(nameof(Key), key.Title, person, "Inactivated"),
@@ -206,12 +178,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> AccessInactivated(Access access)
         {
-            var person = await _securityService.GetPerson(access.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == access.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == access.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = access.GetDescription(nameof(Access), access.Title, person, "Inactivated"),
@@ -227,12 +195,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentInactivated(Equipment equipment)
         {
-            var person = await _securityService.GetPerson(equipment.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = equipment.GetDescription(nameof(Equipment), equipment.Title, person, "Inactivated"),
@@ -284,12 +248,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentAssigned(Equipment equipment)
         {
-            var person = await _securityService.GetPerson(equipment.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).SingleAsync();
-                person = await _securityService.GetPerson(team.Slug);
-            }
+            var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).SingleAsync();
+            var person = await _securityService.GetPerson(team.Slug);
             var historyEntry = new History
             {
                 Description = equipment.Assignment.GetDescription(nameof(Equipment), equipment.Title, person, "Assigned"),
@@ -342,12 +302,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentUnassigned(Equipment equipment)
         {
-            var person = await _securityService.GetPerson(equipment.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = equipment.Assignment.GetDescription(nameof(Equipment), equipment.Title, person, "Unassigned"),
@@ -383,12 +339,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> AccessAccepted(Access access)
         {
-            var person = await _securityService.GetPerson(access.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == access.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == access.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = access.GetDescription(nameof(Access), access.Title, person, "Accepted"),
@@ -405,12 +357,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentAccepted(Equipment equipment)
         {
-            var person = await _securityService.GetPerson(equipment.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = equipment.GetDescription(nameof(Equipment), equipment.Title, person, "Accepted"),
@@ -427,12 +375,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> WorkstationCreated(Workstation workstation)
         {
-            var person = await _securityService.GetPerson(workstation.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Created"),
@@ -448,12 +392,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> WorkstationUpdated(Workstation workstation)
         {
-            var person = await _securityService.GetPerson(workstation.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Updated"),
@@ -469,12 +409,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> WorkstationInactivated(Workstation workstation)
         {
-            var person = await _securityService.GetPerson(workstation.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Inactivated"),
@@ -490,12 +426,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> WorkstationAssigned(Workstation workstation)
         {
-            var person = await _securityService.GetPerson(workstation.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Assigned"),
@@ -512,12 +444,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> WorkstationUnassigned(Workstation workstation)
         {
-            var person = await _securityService.GetPerson(workstation.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Unassigned"),
@@ -534,12 +462,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> WorkstationAccepted(Workstation workstation)
         {
-            var person = await _securityService.GetPerson(workstation.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Accepted"),
@@ -556,12 +480,8 @@ namespace Keas.Mvc.Services
 
         public async Task<History> KeyDeleted(Key key)
         {
-            var person = await _securityService.GetPerson(key.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == key.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == key.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = key.GetDescription(nameof(Key), key.Title, person, "Deleted"),
@@ -576,12 +496,9 @@ namespace Keas.Mvc.Services
         }
         public async Task<History> AccessDeleted(Access access)
         {
-            var person = await _securityService.GetPerson(access.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == access.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+
+            var team = await _context.Teams.Where(t => t.Id == access.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = access.GetDescription(nameof(Access), access.Title, person, "Deleted"),
@@ -596,12 +513,9 @@ namespace Keas.Mvc.Services
         }
         public async Task<History> EquipmentDeleted(Equipment equipment)
         {
-            var person = await _securityService.GetPerson(equipment.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+
+            var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = equipment.GetDescription(nameof(Equipment), equipment.Title, person, "Deleted"),
@@ -616,12 +530,9 @@ namespace Keas.Mvc.Services
         }
         public async Task<History> WorkstationDeleted(Workstation workstation)
         {
-            var person = await _securityService.GetPerson(workstation.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+
+            var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Deleted"),
@@ -671,12 +582,8 @@ namespace Keas.Mvc.Services
         }
         public async Task<History> EquipmentAssignmentUpdated(Equipment equipment)
         {
-            var person = await _securityService.GetPerson(equipment.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == equipment.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = equipment.Assignment.GetDescription(nameof(Equipment), equipment.Title, person, "Assignment Updated"),
@@ -692,12 +599,8 @@ namespace Keas.Mvc.Services
         }
         public async Task<History> WorkstationAssignmentUpdated(Workstation workstation)
         {
-            var person = await _securityService.GetPerson(workstation.Team.Slug);
-            if (person == null)
-            {
-                var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
-                person = await _securityService.GetPerson(team);
-            }
+            var team = await _context.Teams.Where(t => t.Id == workstation.TeamId).Select(t => t.Slug).SingleAsync();
+            var person = await _securityService.GetPerson(team);
             var historyEntry = new History
             {
                 Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Assignment Updated"),
