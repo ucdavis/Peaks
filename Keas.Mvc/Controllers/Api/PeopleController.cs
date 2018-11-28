@@ -61,6 +61,8 @@ namespace Keas.Mvc.Controllers.Api
             // first try and find an existing person
             var existingPerson = await _context.People
                 .Where(x => x.Team.Slug == Team && (String.Equals(x.Email,searchTerm,comparison) || String.Equals(x.UserId,searchTerm,comparison)))
+                .Include(x => x.Supervisor)
+                .IgnoreQueryFilters()
                 .FirstOrDefaultAsync();
             if(existingPerson != null)
             {
@@ -151,6 +153,7 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     // have to get this, so it doesn't think we are trying to add a new one
                     var existingPerson = await _context.People.Include(x => x.User)
+                        .IgnoreQueryFilters()
                         .FirstOrDefaultAsync( p => p.TeamId == team.Id && p.UserId == person.UserId);
                     if(existingPerson != null)
                     {
@@ -200,12 +203,10 @@ namespace Keas.Mvc.Controllers.Api
                 p.Category = person.Category;
                 p.Notes = person.Notes;
 
-                if(person.Supervisor != null || person.SupervisorId != null)
+                if(person.Supervisor != null)
                 {
-                    var supervisor = await _context.People.Where(x => x.Team.Slug == Team)
-                        .SingleAsync(x => x.Id == person.SupervisorId);
-                    p.SupervisorId = supervisor.Id;
-                    p.Supervisor = supervisor;
+                    p.Supervisor = person.Supervisor;
+                    _context.Attach(p.Supervisor);
                 }
 
                 await _context.SaveChangesAsync();
