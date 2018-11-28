@@ -94,25 +94,17 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
             <SearchSpaces
               defaultSpace={selectedSpace}
               onSelect={this._onSelectSpace}
-            />
-          </div>
+                        />
+                    </div>
 
-          <div className="form-group">
-            <label>Pick an key to associate</label>
-            <SearchKeys
-              defaultKey={selectedKey}
-              onSelect={this._onSelectedKey}
-              onDeselect={this._onDeselected}
-            />
-          </div>
+                    {this.renderSearchKey()}
 
-          {this.renderCreateKey()}
+                    {this.renderCreateKey()}
 
-          {this.state.error}
-
-        </ModalBody>
-        <ModalFooter>
-          <Button
+                    {this.state.error}
+                </ModalBody>
+                <ModalFooter>
+                    <Button
             color="primary"
             onClick={this._assignSelected}
             disabled={!validState || submitting}
@@ -124,9 +116,37 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     );
   }
 
-  private renderCreateKey() {
-    const { searchableTags } = this.props;
-    const { selectedKey } = this.state;
+    private renderSearchKey() {
+        const { selectedKey } = this.props;
+
+        // we're being given a specific key to readonly
+        if (selectedKey) {
+            return (
+                <div className="form-group">
+                    <label>Key to associate with:</label>
+                    <input
+                        className="form-control"
+                        value={`${selectedKey.name} - ${selectedKey.code}`}
+                        readOnly={true}
+                    />
+                </div>
+            );
+        }
+
+        return (
+            <div className="form-group">
+                <label>Pick an key to associate</label>
+                <SearchKeys
+                    onSelect={this._onSelectedKey}
+                    onDeselect={this._onDeselected}
+                />
+            </div>
+        );
+    }
+
+    private renderCreateKey() {
+        const { searchableTags } = this.props;
+        const { selectedKey } = this.state;
 
     if (!selectedKey || selectedKey.id > 0) {
       return;
