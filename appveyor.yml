@@ -12,11 +12,9 @@ branches:
 image: Visual Studio 2017
 
 install:
-- ps: Install-Product node $env:node_version
-- cmd: |
-    cd Keas.Mvc
-    appveyor-retry npm install
-    cd ..
+- ps: |
+    Install-Product node $env:node_version
+    npm -v
 
 - cmd: appveyor-retry dotnet restore
 - cmd: echo %APPVEYOR_REPO_COMMIT_MESSAGE% > commit.txt 
