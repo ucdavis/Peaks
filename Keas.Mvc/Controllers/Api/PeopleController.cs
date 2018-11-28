@@ -159,6 +159,10 @@ namespace Keas.Mvc.Controllers.Api
                         existingPerson.TeamPhone = person.TeamPhone;
                         existingPerson.SupervisorId = person.SupervisorId;
                         existingPerson.Supervisor = person.Supervisor;
+                        existingPerson.StartDate = person.StartDate;
+                        existingPerson.EndDate = person.EndDate;
+                        existingPerson.Category = person.Category;
+                        existingPerson.Notes = person.Notes;
                         await _context.SaveChangesAsync();
                         return Json(existingPerson);
                     }
@@ -183,6 +187,10 @@ namespace Keas.Mvc.Controllers.Api
                 p.TeamPhone = person.TeamPhone;
                 p.HomePhone = person.HomePhone;
                 p.Title = person.Title;
+                p.StartDate = person.StartDate;
+                p.EndDate = person.EndDate;
+                p.Category = person.Category;
+                p.Notes = person.Notes;
 
                 if(person.Supervisor != null || person.SupervisorId != null)
                 {
