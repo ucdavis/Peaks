@@ -31,6 +31,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         required={true}
                         minLength={1}
                     />
+                    <span className="invalid-feedback">Name is required</span>
                 </div>
                 <div className="form-group">
                     <label>Code</label>
@@ -44,6 +45,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         minLength={1}
                         maxLength={10}
                     />
+                    <span className="invalid-feedback">Code is required</span>
                 </div>
                 <div className="form-group">
                     <label>Tags</label>
