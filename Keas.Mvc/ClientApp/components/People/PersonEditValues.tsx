@@ -115,12 +115,19 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                 
                 <div className="form-group">
                     <label>Category</label>
-                    <input type="text"
-                        className="form-control"
-                        disabled={this.props.disableEditing}
-                        value={this.props.selectedPerson.category ? this.props.selectedPerson.category : ""}
+                    <select 
                         onChange={(e) => this.props.changeProperty("category", e.target.value)}
-                    />
+                        className="form-control"
+                        value={this.props.selectedPerson.category ? this.props.selectedPerson.category : "Faculty"}
+                    >
+                        <option value="Faculty">Faculty</option>
+                        <option value="Staff">Staff</option>
+                        <option value="Admin Staff">Admin Staff</option>
+                        <option value="Grad Student">Grad Student</option>
+                        <option value="Undergrad">Undergrad</option>
+                        <option value="Visitor">Visitor</option>
+                        <option value="Volunteer">Volunteer</option>
+                    </select>
                 </div>
 
                 <div className="form-group">
