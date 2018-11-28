@@ -96,6 +96,15 @@ export default class KeyTable extends React.Component<IProps, IState> {
                         sortable: false,
                         resizable: false,
                         className: "table-actions",
+                        Cell: this.renderSpacesColumn
+                    },
+                    {
+                        Header: "",
+                        headerClassName: "table-actions",
+                        filterable: false,
+                        sortable: false,
+                        resizable: false,
+                        className: "table-actions",
                         Cell: this.renderDropdownColumn
                     },
                 ]}
@@ -114,6 +123,14 @@ export default class KeyTable extends React.Component<IProps, IState> {
                 <i className="fas fa-key"/> {available} / {total}
             </span>
         );
+    }
+
+    private renderSpacesColumn = (row: IRow) => {
+        const { keyXSpaces } = row.original;
+
+        return (
+            <span><i className="fas fa-building mr-2" /> {keyXSpaces.length}</span>
+        )
     }
 
     private renderDropdownColumn = (row: IRow) => {
