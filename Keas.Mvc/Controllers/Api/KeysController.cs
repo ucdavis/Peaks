@@ -156,7 +156,7 @@ namespace Keas.Mvc.Controllers.Api
 
             if (association != null)
             {
-                return BadRequest();
+                return BadRequest("Association already exists.");
             }
 
             // create new association and save it
