@@ -15,6 +15,8 @@ interface IState {
     keys: IKey[];
 }
 
+function noopTrue() { return true; }
+
 // Search for existing key then send selection back to parent
 export default class SearchKeys extends React.Component<IProps, IState> {
 
@@ -46,7 +48,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 minLength={2}
                 placeholder="Search for key by name or by serial number"
                 labelKey="code"
-                filterBy={() => true} // don't filter on top of our search
+                filterBy={noopTrue} // don't filter on top of our search
                 allowNew={true}
                 renderMenuItemChildren={this.renderItem}
                 onSearch={this.onSearch}
@@ -56,7 +58,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
         );
     }
 
-    private renderItem = (option, props, index) => {
+    private renderItem = (option: IKey, props, index) => {
         return (
             <div>
                 <div>
@@ -66,9 +68,9 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 </div>
                 <div>
                     <small>
-                        Serial Number:
+                        Code:
                         <Highlighter search={props.text}>
-                            {option.serialNumber}
+                            {option.code}
                         </Highlighter>
                     </small>
                 </div>
@@ -106,6 +108,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 name: '',
                 serials: [],
                 teamId: 0,
+                tags: "",
             };
         }
         else {

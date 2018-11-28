@@ -302,6 +302,4 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-Keas\.Mvc/package-lock\.json
-
 .vscode/

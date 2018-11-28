@@ -136,8 +136,9 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     private _renderTableList = () => {
-        const { action } = this.context.router.route.match.params;
         const { selectedKey } = this.props;
+        const { tags } = this.state;
+        const { action } = this.context.router.route.match.params;
 
         // flatten the space info for simple space
         const spaces = this.state.spaces.map(s => s.space);
@@ -156,6 +157,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                     openModal={() => this._openAssociateModal(null)}
                     closeModal={this._closeModals}
                     isModalOpen={action === "associate"}
+                    searchableTags={tags}
                 />
             </div>
         )
