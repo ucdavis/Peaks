@@ -82,6 +82,7 @@ export interface IKeySerial {
   id: number;
   number: string;
   tags: string;
+  status: string;
   key: IKey;
   keySerialAssignment?: IKeySerialAssignment;
 }

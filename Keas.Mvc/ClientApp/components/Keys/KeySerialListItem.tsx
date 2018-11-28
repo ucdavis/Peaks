@@ -41,12 +41,21 @@ export default class KeyListItem extends React.Component<IProps, {}> {
     return (
       <tr>
         <td>{keySerial.key.code}</td>
-        <td>{keySerial.number}</td>
-        <td>{keySerial.keySerialAssignment ? keySerial.keySerialAssignment.person.name : ""}</td>
-        <td>{keySerial.keySerialAssignment ? DateUtil.formatExpiration(keySerial.keySerialAssignment.expiresAt) : ""}</td>
-        <td>
-          <ListActionsDropdown actions={actions} />
-        </td>
+                <td>{keySerial.number}</td>
+                <td>
+                    <span className="text-mono">{keySerial.status}</span>
+                </td>
+                <td>
+                    {keySerial.keySerialAssignment ? keySerial.keySerialAssignment.person.name : ""}
+                </td>
+                <td>
+                    {keySerial.keySerialAssignment
+                        ? DateUtil.formatExpiration(keySerial.keySerialAssignment.expiresAt)
+                        : ""}
+                </td>
+                <td>
+                    <ListActionsDropdown actions={actions} />
+                </td>
       </tr>
     );
   }

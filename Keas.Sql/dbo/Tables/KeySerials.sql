@@ -1,9 +1,10 @@
-﻿CREATE TABLE [dbo].[KeySerials] (
+CREATE TABLE [dbo].[KeySerials] (
     [Id]					INT            IDENTITY (1, 1) NOT NULL,
     [Active]				BIT            NOT NULL,
     [KeySerialAssignmentId] INT            NULL,
     [KeyId]					INT            NOT NULL,
     [Number]				NVARCHAR (MAX) NULL,
+    [Status]				NVARCHAR (50)  NOT NULL, 
 	[Group]                 NVARCHAR (32)  NULL,
     [Name]                  NVARCHAR (64)  NOT NULL,
     [Tags]                  NVARCHAR (MAX) NULL,

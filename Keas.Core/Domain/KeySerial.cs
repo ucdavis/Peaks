@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using Keas.Core.Resources;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
@@ -9,9 +10,12 @@ namespace Keas.Core.Domain
         public KeySerial()
         {
             Active = true;
+            Status = KeySerialStatuses.Active;
         }
 
         public string Number { get; set; }
+
+        public string Status { get; set; }
 
         public Key Key { get; set; }
 
