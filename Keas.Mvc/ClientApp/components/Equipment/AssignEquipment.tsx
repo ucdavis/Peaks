@@ -1,5 +1,8 @@
+import * as moment from "moment";
 import * as PropTypes from 'prop-types';
 import * as React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   Button,
   ListGroup,
@@ -9,15 +12,10 @@ import {
   ModalFooter,
   ModalHeader
 } from "reactstrap";
-
-import * as moment from "moment";
-import DatePicker from "react-datepicker";
 import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson, ISpace } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
 import EquipmentEditValues from "./EquipmentEditValues";
 import SearchEquipment from "./SearchEquipment";
-
-import "react-datepicker/dist/react-datepicker.css";
 
 interface IProps {
   onCreate: (person: IPerson, equipment: IEquipment, date: any) => void;

@@ -1,3 +1,4 @@
+using System;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -55,13 +56,22 @@ namespace Keas.Core.Domain
 
         public string TeamPhone { get; set; }
 
-        public List<AccessAssignment> AccessAssignments { get; set; }
-
-        public List<KeySerialAssignment> KeySerialAssignments { get; set; }
-
         public int? SupervisorId {   get; set; }
 
         public Person Supervisor { get; set; }
+        
+        public DateTime? StartDate { get; set; }
+
+        public DateTime? EndDate { get; set; }
+
+        public string Category { get; set; }
+
+        [DataType(DataType.MultilineText)]
+        public string Notes { get; set; }
+
+        public List<AccessAssignment> AccessAssignments { get; set; }
+
+        public List<KeySerialAssignment> KeySerialAssignments { get; set; }
 
         protected internal  static void OnModelCreating(ModelBuilder builder)
         {

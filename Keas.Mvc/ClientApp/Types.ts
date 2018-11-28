@@ -57,10 +57,10 @@ export interface IPerson {
   title: string;
   supervisorId?: number;
   supervisor?: IPerson;
-  // startDate: Date;
-  // endDate: Date;
-  // category: string;
-  // notes: string;
+  startDate: Date;
+  endDate: Date;
+  category: string;
+  notes: string;
 }
 
 export interface IPersonInfo {
