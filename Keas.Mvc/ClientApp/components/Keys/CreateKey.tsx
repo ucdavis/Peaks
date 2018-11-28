@@ -44,14 +44,15 @@ export default class CreateKey extends React.Component<IProps, IState> {
       key: {
         id: 0,
         code: "",
-        name: "",
-        teamId: 0,
-        serials: [],
-      },
-      submitting: false,
-      validState: false
-    };
-  }
+                name: "",
+                teamId: 0,
+                serials: [],
+                tags: "",
+            },
+            submitting: false,
+            validState: false,
+        };
+    }
 
   public render() {
     return (
@@ -112,15 +113,16 @@ export default class CreateKey extends React.Component<IProps, IState> {
       key: {
         id: 0,
         code: "",
-        name: "",
-        teamId: 0,
-        serials: [],
-      },
-      submitting: false,
-      validState: false
-    });
-    this.props.closeModal();
-  };
+                name: "",
+                teamId: 0,
+                serials: [],
+                tags: "",
+            },
+            submitting: false,
+            validState: false,
+        });
+        this.props.closeModal();
+    };
 
   // assign the selected key even if we have to create it
   private _editSelected = async () => {

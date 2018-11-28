@@ -106,6 +106,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 name: '',
                 serials: [],
                 teamId: 0,
+                tags: "",
             };
         }
         else {
