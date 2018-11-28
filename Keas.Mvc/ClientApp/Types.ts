@@ -76,7 +76,7 @@ export interface IKey {
   code: string;
   tags: string;
   serials?: IKeySerial[];
-  keyXSpaces: IKeySpaceAssociation[];
+  keyXSpaces?: IKeySpaceAssociation[];
 }
 
 export interface IKeySerial {
