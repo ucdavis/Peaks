@@ -22,6 +22,7 @@ interface IState {
 export default class AssignPerson extends React.Component<IProps, IState> {
   public static contextTypes = {
     fetch: PropTypes.func,
+    router: PropTypes.object,
     team: PropTypes.object
   };
   public context: AppContext;
@@ -41,12 +42,15 @@ export default class AssignPerson extends React.Component<IProps, IState> {
   private _renderFindPerson = () => {
     // call onSelect when a user is found
     return (
+
+
+      <div>
       <div>
         <AsyncTypeahead
           disabled={this.props.disabled}
           isLoading={this.state.isSearchLoading}
           minLength={3}
-          defaultSelected={this.props.person ? [this.props.person] : []}
+          defaultSelected={this.props.person ? [this.props.person] : [] }
           placeholder="Search for person by name or email"
           labelKey={(option: IPerson) =>
             `${option.name} (${option.email})`
@@ -85,6 +89,15 @@ export default class AssignPerson extends React.Component<IProps, IState> {
           options={this.state.people}
         />
       </div>
+      <div>
+          <Button color="link" onClick={this._goToCreatePerson}>Can't find who you're looking for? <i className="fas fa-user-plus fas-sm" aria-hidden="true" /></Button>    
+      </div>
+      </div>
     );
+  };
+  
+  private _goToCreatePerson = () => {
+    return this.context.router.history.push(`/${this.context.team.slug}/people/create`);
+
   };
 }
