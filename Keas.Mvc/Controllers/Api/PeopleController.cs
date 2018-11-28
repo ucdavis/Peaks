@@ -136,6 +136,11 @@ namespace Keas.Mvc.Controllers.Api
                         // if this user already exists, but isn't a person
                         person.User = user;
                     }
+
+                    if(person.Supervisor != null)
+                    {
+                        _context.People.Attach(person.Supervisor);
+                    }
                     person.Team = team;
                     _context.People.Add(person);
                     await _context.SaveChangesAsync();
@@ -157,8 +162,11 @@ namespace Keas.Mvc.Controllers.Api
                         existingPerson.Active = true;
                         existingPerson.HomePhone = person.HomePhone;
                         existingPerson.TeamPhone = person.TeamPhone;
-                        existingPerson.SupervisorId = person.SupervisorId;
-                        existingPerson.Supervisor = person.Supervisor;
+                        if(person.Supervisor != null)
+                        {
+                            existingPerson.Supervisor = person.Supervisor;
+                            _context.People.Attach(existingPerson.Supervisor);
+                        }
                         existingPerson.StartDate = person.StartDate;
                         existingPerson.EndDate = person.EndDate;
                         existingPerson.Category = person.Category;

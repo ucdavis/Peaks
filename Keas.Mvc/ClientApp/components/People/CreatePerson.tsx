@@ -7,10 +7,9 @@ import {
   ModalFooter,
   ModalHeader
 } from "reactstrap";
-
 import { AppContext, IPerson, IUser } from "../../Types";
-import SearchUsers from "./SearchUsers";
 import PersonEditValues from "./PersonEditValues";
+import SearchUsers from "./SearchUsers";
 
 interface IProps {
   onCreate: (person: IPerson) => void;
@@ -67,7 +66,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
                 </div>
 
                 <div className="form-group">
-                  <PersonEditValues selectedPerson={this.state.person} changeProperty={this._changeProperty} disableEditing={false} tags={this.props.tags}/>
+                  <PersonEditValues selectedPerson={this.state.person} changeProperty={this._changeProperty} changeSupervisor={this._changeSupervisor} disableEditing={false} tags={this.props.tags}/>
                 </div>
 
                 {this.state.moreInfoString}
@@ -95,6 +94,16 @@ export default class CreatePerson extends React.Component<IProps, IState> {
       }
     }, this._validateState);
   };
+
+  private _changeSupervisor = (supervisor: IPerson) => {
+    this.setState({
+      person: {
+        ...this.state.person,
+        supervisor,
+        supervisorId: supervisor !== null ? supervisor.id : null,
+      }
+    }, this._validateState)
+  }
 
   // clear everything out on close
   private _closeModal = () => {
