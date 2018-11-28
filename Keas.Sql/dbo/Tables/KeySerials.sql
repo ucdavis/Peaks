@@ -4,8 +4,13 @@
     [KeySerialAssignmentId] INT            NULL,
     [KeyId]					INT            NOT NULL,
     [Number]				NVARCHAR (MAX) NULL,
+	[Group]                 NVARCHAR (32)  NULL,
+    [Name]                  NVARCHAR (64)  NOT NULL,
+    [Tags]                  NVARCHAR (MAX) NULL,
+    [TeamId]				INT            NOT NULL,
     CONSTRAINT [PK_KeySerials] PRIMARY KEY CLUSTERED ([Id] ASC),
-    CONSTRAINT [FK_KeySerials_Keys_KeyId] FOREIGN KEY ([KeyId]) REFERENCES [dbo].[Keys] ([Id]) ON DELETE CASCADE
+    CONSTRAINT [FK_KeySerials_Keys_KeyId] FOREIGN KEY ([KeyId]) REFERENCES [dbo].[Keys] ([Id]) ON DELETE CASCADE,
+    CONSTRAINT [FK_KeySerials_Teams_TeamId] FOREIGN KEY ([TeamId]) REFERENCES [dbo].[Teams] ([Id]),
 );
 
 

@@ -22,6 +22,7 @@ namespace Keas.Core.Domain
 
         // Comma Separated List of Search Tags
         public string Tags { get; set; }
+
         public Team Team { get; set; }
         public int TeamId { get; set; }
 
@@ -33,6 +34,5 @@ namespace Keas.Core.Domain
         }
 
         public virtual string Title => Name;
-
     }
 }

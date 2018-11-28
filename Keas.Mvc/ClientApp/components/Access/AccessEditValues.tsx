@@ -16,18 +16,7 @@ interface IProps {
     tags?: string[];
 }
 
-interface IState {
-    access: IAccess;
-}
-
-
-export default class AccessEditValues extends React.Component<IProps, IState> {
-    constructor(props) {
-        super(props);
-        this.state = {
-            access: this.props.selectedAccess
-        };
-    }
+export default class AccessEditValues extends React.Component<IProps, {}> {
 
     public render() {
         const columns = [{
@@ -56,7 +45,7 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
                     <input type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
-                        value={this.props.selectedAccess.name ? this.props.selectedAccess.name : ""}
+                        value={this.props.selectedAccess && this.props.selectedAccess.name ? this.props.selectedAccess.name : ""}
                         onChange={(e) => this.props.changeProperty("name", e.target.value)}
                     />
                 </div>
@@ -65,7 +54,7 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
                     <SearchTags 
                         tags={this.props.tags} 
                         disabled={this.props.disableEditing}
-                        selected={!!this.props.selectedAccess.tags ? this.props.selectedAccess.tags.split(",") : []}
+                        selected={!!this.props.selectedAccess && !!this.props.selectedAccess.tags ? this.props.selectedAccess.tags.split(",") : []}
                         onSelect={(e) => this.props.changeProperty("tags", e.join(","))} />
                 </div>
                 {this.props.selectedAccess.teamId !== 0 &&
@@ -78,7 +67,7 @@ export default class AccessEditValues extends React.Component<IProps, IState> {
     }
 
     private _revokeSelected = async (personId: number) => { 
-        const accessAssignment = this.state.access.assignments.filter(x => x.personId === personId);
+        const accessAssignment = this.props.selectedAccess.assignments.filter(x => x.personId === personId);
         await this.props.onRevoke(accessAssignment[0]);
     };
 }

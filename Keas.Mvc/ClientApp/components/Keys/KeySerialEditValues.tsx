@@ -24,6 +24,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                             className="form-control"
                             disabled={this.props.disableEditing}
                             value={numberValue}
+                            onBlur={this.onBlurNumber}
                             onChange={this.onChangeNumber}
                             required={true}
                             minLength={1}
@@ -33,6 +34,13 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                 }
             </div>
         );
+    }
+
+    private onBlurNumber = () => {
+        let value = this.props.keySerial.number;
+        value = value.trim();
+
+        this.props.changeProperty("number", value)
     }
 
     private onChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
