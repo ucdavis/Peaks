@@ -129,7 +129,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                         className="form-control"
                         disabled={this.props.disableEditing}
                         value={this.props.selectedPerson.notes ? this.props.selectedPerson.notes : ""}
-                        onChange={(e) => this.props.changeProperty("endDate", e.target.value)}
+                        onChange={(e) => this.props.changeProperty("notes", e.target.value)}
                     />
                 </div>
 
