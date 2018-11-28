@@ -68,7 +68,8 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     return (
       <div>
         <Button color="link" onClick={this.props.openModal}>
-          <i className="fas fa-plus fa-sm" aria-hidden="true" /> Associate
+                    <i className="fas fa-plus fa-sm mr-2" aria-hidden="true" />
+                    Associate
         </Button>
         { this.renderModal() }
       </div>
@@ -106,14 +107,17 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
                 <ModalFooter>
                     <Button
             color="primary"
-            onClick={this._assignSelected}
-            disabled={!validState || submitting}
-          >
-            Go! {submitting && <i className="fas fa-circle-notch fa-spin"/>}
-          </Button>{" "}
-        </ModalFooter>
-      </Modal>
-    );
+                        onClick={this._assignSelected}
+                        disabled={!validState || submitting}
+                    >
+                        Go!
+                        {submitting && (
+                            <i className="fas fa-circle-notch fa-spin ml-2" />
+                        )}
+                    </Button>
+                </ModalFooter>
+            </Modal>
+        );
   }
 
     private renderSearchKey() {
