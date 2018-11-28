@@ -20,7 +20,8 @@ install:
 
 cache:
 - '%USERPROFILE%\.nuget\packages -> **\*.csproj'
-- Keas.Mvc\node_modules -> **\package.json
+- '%LOCALAPPDATA%\npm-cache -> **\package.json'         # npm cache
+- 'node_modules -> **\package.json'                     # local npm modules
 
 before_build:
 - ps: |
