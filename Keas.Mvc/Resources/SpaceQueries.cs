@@ -25,5 +25,5 @@ from (select Space.Id, count(Equipment.Id) as EquipmentCount
                                  on Space.Id = W.SpaceId and W.Active = 1 and W.WorkstationAssignmentId is not null
                         group by Space.Id) t4 on t1.Id = t4.Id
        inner join Spaces Space on Space.Id = t1.Id
-       where Space.OrgId in (@orgIds);";
+       where Space.OrgId in @orgIds";
 }
