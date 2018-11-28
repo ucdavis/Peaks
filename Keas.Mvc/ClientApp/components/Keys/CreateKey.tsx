@@ -28,20 +28,23 @@ interface IState {
 }
 
 export default class CreateKey extends React.Component<IProps, IState> {
+    public static contextTypes = {
+        fetch: PropTypes.func,
+        team: PropTypes.object
+    };
 
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  }
+    public context: AppContext;
 
-  public context: AppContext;
+    private _formRef: React.RefObject<HTMLFormElement>;
 
-  constructor(props: IProps) {
-    super(props);
+    constructor(props: IProps) {
+        super(props);
 
-    this.state = {
-      error: "",
-      key: {
+        this._formRef = React.createRef();
+
+        this.state = {
+            error: "",
+            key: {
         id: 0,
         code: "",
                 name: "",
@@ -77,12 +80,14 @@ export default class CreateKey extends React.Component<IProps, IState> {
           </Button>
         </div>
         <ModalBody>
+                    <form ref={this._formRef}>
             <KeyEditValues
               selectedKey={this.state.key}
               changeProperty={this._changeProperty}
               disableEditing={false}
               searchableTags={searchableTags}
             />
+                    </form>
         </ModalBody>
         <ModalFooter>
           <Button
@@ -139,7 +144,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
   private _validateState = () => {
     const { key } = this.state;
     
-    let valid = true;
+        let valid = this._formRef.current.checkValidity();
     let error = "";
 
     if (!key) {

@@ -29,15 +29,22 @@ interface IState {
 
 export default class EditKey extends React.Component<IProps, IState> {
   public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-  public context: AppContext;
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: "",
-      key: this.props.selectedKey,
+        fetch: PropTypes.func,
+        team: PropTypes.object
+    };
+
+    public context: AppContext;
+
+    private _formRef: React.RefObject<HTMLFormElement>;
+
+    constructor(props) {
+        super(props);
+
+        this._formRef = React.createRef();
+
+        this.state = {
+            error: "",
+            key: this.props.selectedKey,
       submitting: false,
       validState: false
     };
@@ -67,7 +74,7 @@ export default class EditKey extends React.Component<IProps, IState> {
         </div>
         <ModalBody>
           <div className="container-fluid">
-            <form>
+                        <form ref={this._formRef}>
                   <KeyEditValues
                     selectedKey={this.state.key}
                     changeProperty={this._changeProperty}
@@ -113,28 +120,31 @@ export default class EditKey extends React.Component<IProps, IState> {
   // assign the selected key even if we have to create it
   private _editSelected = async () => {
     if (!this.state.validState || this.state.submitting) {
-      return;
-    }
+            return;
+        }
 
-    this.setState({submitting: true})
-    await this.props.onEdit(this.state.key);
+        this.setState({ submitting: true });
+        await this.props.onEdit(this.state.key);
 
-    this._closeModal();
-  };
+        this._closeModal();
+    };
 
-  private _validateState = () => {
-    let valid = true;
-    let error = "";
-    if (!this.state.key) {
-      valid = false;
-    } else if ( !this.state.key.code){
-      valid = false;
-      error = "You must give this key a name.";
-    } else if(this.state.key.code.length > 64)
-    {
-      valid = false;
-      error = "The name you have chosen is too long";
-    }
-    this.setState({ validState: valid, error });
-  };
+    private _validateState = () => {
+        const { key } = this.state;
+
+        let valid = this._formRef.current.checkValidity();
+        let error = "";
+
+        if (!key) {
+            valid = false;
+        } else if (!key.code) {
+            valid = false;
+            error = "You must give this key a name.";
+        } else if (key.code.length > 64) {
+            valid = false;
+            error = "The name you have chosen is too long";
+        }
+
+        this.setState({ validState: valid, error });
+    };
 }
