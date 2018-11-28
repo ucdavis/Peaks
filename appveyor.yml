@@ -16,7 +16,6 @@ install:
     Install-Product node $env:node_version
     npm -v
 
-- cmd: appveyor-retry dotnet restore
 - cmd: echo %APPVEYOR_REPO_COMMIT_MESSAGE% > commit.txt 
 
 cache:
@@ -25,6 +24,8 @@ cache:
 
 before_build:
 - ps: |
+    appveyor-retry dotnet restore
+
     $path = (Get-Item .\Keas.Mvc\Keas.Mvc.csproj).FullName
     $csproj = [xml](Get-Content $path)
     $csproj.Project.PropertyGroup.Version = $Env:APPVEYOR_BUILD_VERSION
