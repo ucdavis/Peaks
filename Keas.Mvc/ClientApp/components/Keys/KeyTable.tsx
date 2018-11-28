@@ -87,14 +87,36 @@ export default class KeyTable extends React.Component<IProps, IState> {
                         sortable: false,
                         resizable: false,
                         className: "table-actions",
+                        Cell: this.renderAvailableColumn
+                    },
+                    {
+                        Header: "",
+                        headerClassName: "table-actions",
+                        filterable: false,
+                        sortable: false,
+                        resizable: false,
+                        className: "table-actions",
                         Cell: this.renderDropdownColumn
-                    }
+                    },
                 ]}
             />
         );
     }
 
-    private renderDropdownColumn = row => {
+    private renderAvailableColumn = (row: IRow) => {
+        const { serials } = row.original;
+
+        const total = serials.length;
+        const available = serials.filter(s => !s.keySerialAssignment).length;
+
+        return (
+            <span>
+                <i className="fas fa-key"/> {available} / {total}
+            </span>
+        );
+    }
+
+    private renderDropdownColumn = (row: IRow) => {
         const key = row.original;
 
         const actions: IAction[] = [];
