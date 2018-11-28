@@ -1,4 +1,4 @@
-import * as PropTypes from 'prop-types';
+﻿import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
@@ -14,6 +14,8 @@ interface IState {
     isSearchLoading: boolean;
     keys: IKey[];
 }
+
+function noopTrue() { return true; }
 
 // Search for existing key then send selection back to parent
 export default class SearchKeys extends React.Component<IProps, IState> {
@@ -46,7 +48,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 minLength={2}
                 placeholder="Search for key by name or by serial number"
                 labelKey="code"
-                filterBy={() => true} // don't filter on top of our search
+                filterBy={noopTrue} // don't filter on top of our search
                 allowNew={true}
                 renderMenuItemChildren={this.renderItem}
                 onSearch={this.onSearch}
