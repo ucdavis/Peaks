@@ -14,18 +14,19 @@ image: Visual Studio 2017
 install:
 - ps: |
     Install-Product node $env:node_version
-    npm -v
 
 - cmd: echo %APPVEYOR_REPO_COMMIT_MESSAGE% > commit.txt 
 
 cache:
 - '%USERPROFILE%\.nuget\packages -> **\*.csproj'
 - '%LOCALAPPDATA%\npm-cache -> **\package.json'         # npm cache
-- 'node_modules -> **\package.json'                     # local npm modules
+- '.\Keas.Mvc\node_modules -> **\package.json'          # local npm modules
 
 before_build:
 - ps: |
     appveyor-retry dotnet restore
+
+    rm .\Keas.Mvc\package-lock.json
 
     $path = (Get-Item .\Keas.Mvc\Keas.Mvc.csproj).FullName
     $csproj = [xml](Get-Content $path)
