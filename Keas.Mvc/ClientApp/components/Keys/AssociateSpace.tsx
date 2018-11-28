@@ -75,12 +75,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
         const { validState, submitting } = this.state;
 
         return (
-            <Modal
-                isOpen={isModalOpen}
-                toggle={this._closeModal}
-                size="lg"
-                className="keys-color"
-            >
+            <Modal isOpen={isModalOpen} toggle={this._closeModal} size="lg" className="keys-color">
                 <div className="modal-header row justify-content-between">
                     <h2>Assign Key</h2>
                     <Button color="link" onClick={this._closeModal}>
@@ -90,28 +85,22 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
                 <ModalBody>
                     <div className="form-group">
                         <label htmlFor="assignto">Associate With</label>
-                        <SearchSpaces
-                            defaultSpace={selectedSpace}
-                            onSelect={this._onSelectSpace}
-                        />
+                        <SearchSpaces defaultSpace={selectedSpace} onSelect={this._onSelectSpace} />
                     </div>
 
                     {this.renderSearchKey()}
 
                     {this.renderCreateKey()}
-
-                    {this.state.error}
                 </ModalBody>
-                <ModalFooter>
+                <ModalFooter className="justify-content-between">
+                    <span className="text-danger">{this.state.error}</span>
                     <Button
                         color="primary"
                         onClick={this._assignSelected}
                         disabled={!validState || submitting}
                     >
                         Go!
-                        {submitting && (
-                            <i className="fas fa-circle-notch fa-spin ml-2" />
-                        )}
+                        {submitting && <i className="fas fa-circle-notch fa-spin ml-2" />}
                     </Button>
                 </ModalFooter>
             </Modal>
@@ -138,10 +127,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
         return (
             <div className="form-group">
                 <label>Pick an key to associate</label>
-                <SearchKeys
-                    onSelect={this._onSelectedKey}
-                    onDeselect={this._onDeselected}
-                />
+                <SearchKeys onSelect={this._onSelectedKey} onDeselect={this._onDeselected} />
             </div>
         );
     }
@@ -219,13 +205,25 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     };
 
     private _validateState = () => {
+        const { selectedSpace, selectedKey } = this.state;
+
         let valid = true;
+        let error = "";
+
+        // ensure both values are set
         if (!this.state.selectedKey) {
             valid = false;
         } else if (this.state.error !== "") {
             valid = false;
         }
 
-        this.setState({ validState: valid });
+        // check for existing association
+        const isDuplicate = selectedKey.keyXSpaces.some(x => x.spaceId === selectedSpace.id);
+        if (isDuplicate) {
+            valid = false;
+            error = "This space and key are already associated.";
+        }
+
+        this.setState({ validState: valid, error });
     };
 }
