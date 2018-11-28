@@ -1,9 +1,9 @@
 import * as PropTypes from 'prop-types';
 import * as React from "react";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
-
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
-import { AppContext, IKey, IPerson } from "../../Types";
+import { Link } from 'react-router-dom';
+import { Button } from "reactstrap";
+import { AppContext, IPerson } from "../../Types";
 
 interface IProps {
   onSelect: (person: IPerson) => void;
@@ -90,14 +90,12 @@ export default class AssignPerson extends React.Component<IProps, IState> {
         />
       </div>
       <div>
-          <Button color="link" onClick={this._goToCreatePerson}>Can't find who you're looking for? <i className="fas fa-user-plus fas-sm" aria-hidden="true" /></Button>    
+          <Link to={`/${this.context.team.slug}/people/create`}>
+            <Button color="link">Can't find who you're looking for? <i className="fas fa-user-plus fas-sm" aria-hidden="true" /></Button>    
+          </Link>
       </div>
       </div>
     );
   };
   
-  private _goToCreatePerson = () => {
-    return this.context.router.history.push(`/${this.context.team.slug}/people/create`);
-
-  };
 }
