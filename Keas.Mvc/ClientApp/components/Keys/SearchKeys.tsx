@@ -1,4 +1,4 @@
-﻿import * as PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
@@ -66,9 +66,9 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 </div>
                 <div>
                     <small>
-                        Serial Number:
+                        Code:
                         <Highlighter search={props.text}>
-                            {option.serialNumber}
+                            {option.code}
                         </Highlighter>
                     </small>
                 </div>
