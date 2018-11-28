@@ -211,7 +211,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     if (index > -1) {
       const shallowCopy = [...this.state.keySerials];
 
-      if (this.props.selectedPerson == null) {
+      if (!this.props.selectedPerson) {
         // if we are looking at all key, just update assignment
         shallowCopy[index] = keySerial;
       } else {

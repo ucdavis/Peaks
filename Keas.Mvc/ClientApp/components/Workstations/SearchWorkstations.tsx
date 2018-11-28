@@ -104,7 +104,7 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
 
     private _onSelected = (workstation: IWorkstation) => {
         // onChange is called when deselected
-        if (workstation == null || workstation.name == null) {
+        if (!workstation || !workstation.name) {
             this.props.onDeselect();
         }
         else {

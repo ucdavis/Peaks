@@ -37,7 +37,7 @@ export default class DeletePerson extends React.Component<IProps, IState> {
       }
       
     public render() {
-        if (this.props.selectedPersonInfo == null || this.props.selectedPersonInfo.person == null)
+        if (!this.props.selectedPersonInfo || !this.props.selectedPersonInfo.person)
         {
             return null;
         }

@@ -94,7 +94,7 @@ export default class SearchAccess extends React.Component<IProps, IState> {
 
     private _onSelected = (access: IAccess) => {
         // onChange is called when deselected
-        if (access == null || access.name == null) {
+        if (!access || !access.name) {
             this.props.onDeselect();
         }
         else {

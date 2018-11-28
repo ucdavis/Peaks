@@ -38,7 +38,7 @@ export default class DeleteAccess extends React.Component<IProps, IState> {
       }
       
     public render() {
-        if (this.props.selectedAccess == null)
+        if (!this.props.selectedAccess)
         {
             return null;
         }

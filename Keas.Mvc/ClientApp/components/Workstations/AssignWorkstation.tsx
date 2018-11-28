@@ -201,10 +201,6 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         this._validateState
       );
     } else {
-      // else if (this.props.assignedWorkstationList.findIndex(x => x == workstation.name) != -1)
-      // {
-      //    this.setState({ selectedWorkstation: null, error: "The workstation you have chosen is already assigned to this user", validWorkstation: false }, this._validateState);
-      // }
       this.setState({ workstation, error: "" }, this._validateState);
     }
   };

@@ -268,7 +268,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     const index = this.state.equipment.indexOf(equipment);
     if (index > -1) {
       const shallowCopy = [...this.state.equipment];
-      if (this.props.person == null) {
+      if (!this.props.person) {
           // if we are looking at all equipment, just update assignment
        shallowCopy[index].assignment = null;
        shallowCopy[index].equipmentAssignmentId = null;

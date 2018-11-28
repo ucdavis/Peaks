@@ -198,11 +198,6 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
       return;
     }
-
-    // else if (this.props.assignedKeyList.findIndex(x => x == key.name) != -1)
-    // {
-    //    this.setState({ selectedKey: null, error: "The key you have chosen is already assigned to this user", validKey: false }, this._validateState);
-    // }
     this.setState({ keySerial, error: "" }, this._validateState);
   };
 

@@ -22,7 +22,7 @@ interface IProps {
 export default class WorkstationDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedWorkstation == null)
+        if (!this.props.selectedWorkstation)
         {
             return null;
         }

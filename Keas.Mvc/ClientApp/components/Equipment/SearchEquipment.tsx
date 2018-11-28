@@ -104,7 +104,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
 
     private _onSelected = (equipmentLabel: IEquipmentLabel) => {
         // onChange is called when deselected
-        if (equipmentLabel == null || equipmentLabel.label == null) {
+        if (!equipmentLabel || !equipmentLabel.label) {
             this.props.onDeselect();
         }
         else {

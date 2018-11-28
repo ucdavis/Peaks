@@ -240,10 +240,6 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         this._validateState
       );
     } else {
-      // else if (this.props.assignedEquipmentList.findIndex(x => x == equipment.name) != -1)
-      // {
-      //    this.setState({ selectedEquipment: null, error: "The equipment you have chosen is already assigned to this user", validEquipment: false }, this._validateState);
-      // }
       this.setState({ equipment, error: "" }, this._validateState);
     }
   };
