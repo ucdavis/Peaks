@@ -98,11 +98,11 @@ export default class CreateKey extends React.Component<IProps, IState> {
                             !this.state.validState || this.state.submitting
                         }
                     >
-                        Go!{" "}
+                        Go!
                         {this.state.submitting && (
-                            <i className="fas fa-circle-notch fa-spin" />
+                            <i className="fas fa-circle-notch fa-spin ml-2" />
                         )}
-                    </Button>{" "}
+                    </Button>
                 </ModalFooter>
             </Modal>
         );
