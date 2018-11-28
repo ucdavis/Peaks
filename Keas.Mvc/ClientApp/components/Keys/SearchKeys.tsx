@@ -56,7 +56,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
         );
     }
 
-    private renderItem = (option, props, index) => {
+    private renderItem = (option: IKey, props, index) => {
         return (
             <div>
                 <div>
