@@ -15,6 +15,7 @@ export default class SpacesDetailContainer extends React.Component<IProps, {}> {
         <div>
           <h2 className="card-title">{this.props.space.roomNumber} {this.props.space.bldgName}</h2>
           <div className="card-text">
+            {this.props.space.roomCategoryName && <div>{this.props.space.roomCategoryName}</div>}
             {this.props.space.roomName && <div>{this.props.space.roomName}</div>}
             {this.props.space.floorName && <div>{this.props.space.floorName}</div>}
             {this.props.space.sqFt && <div>{this.props.space.sqFt} Sq Feet</div>}
