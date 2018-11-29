@@ -83,10 +83,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
                     </Button>
                 </div>
                 <ModalBody>
-                    <div className="form-group">
-                        <label htmlFor="assignto">Associate With</label>
-                        <SearchSpaces defaultSpace={selectedSpace} onSelect={this._onSelectSpace} />
-                    </div>
+                    {this.renderSearchSpace()}
 
                     {this.renderSearchKey()}
 
@@ -104,6 +101,31 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
                     </Button>
                 </ModalFooter>
             </Modal>
+        );
+    }
+
+    private renderSearchSpace() {
+        const { selectedSpace } = this.props;
+
+        // we're being given a specific key to readonly
+        if (selectedSpace) {
+            return (
+                <div className="form-group">
+                    <label>Space to associate with:</label>
+                    <input
+                        className="form-control"
+                        value={`${selectedSpace.roomNumber} ${selectedSpace.bldgName}`}
+                        readOnly={true}
+                    />
+                </div>
+            );
+        }
+
+        return (
+            <div className="form-group">
+                <label>Space to associate with:</label>
+                <SearchSpaces onSelect={this._onSelectSpace} />
+            </div>
         );
     }
 
@@ -218,10 +240,12 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
         }
 
         // check for existing association
-        const isDuplicate = selectedKey.keyXSpaces.some(x => x.spaceId === selectedSpace.id);
-        if (isDuplicate) {
-            valid = false;
-            error = "This space and key are already associated.";
+        if (selectedKey.keyXSpaces && selectedKey.keyXSpaces.length) {
+            const isDuplicate = selectedKey.keyXSpaces.some(x => x.spaceId === selectedSpace.id);
+            if (isDuplicate) {
+                valid = false;
+                error = "This space and key are already associated.";
+            }
         }
 
         this.setState({ validState: valid, error });
