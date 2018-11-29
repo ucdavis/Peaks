@@ -122,6 +122,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
                 id: 0,
                 key: this.props.selectedKey,
                 number: selected[0].number,
+                status: "Active",
                 tags: "",
             };
         }
