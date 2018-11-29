@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 
 import { IKeySerial } from "../../Types";
 
@@ -40,6 +40,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                         <option value="Active">Active</option>
                         <option value="Lost">Lost</option>
                         <option value="Destoryed">Destoryed</option>
+                        <option value="Dog ate">Dog ate</option>
                     </select>
                 </div>
             </div>
