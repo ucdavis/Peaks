@@ -4,7 +4,7 @@ CREATE TABLE [dbo].[KeySerials] (
     [KeySerialAssignmentId] INT            NULL,
     [KeyId]					INT            NOT NULL,
     [Number]				NVARCHAR (MAX) NULL,
-    [Status]				NVARCHAR (50)  NOT NULL, 
+    [Status]				NVARCHAR (50)  NOT NULL DEFAULT 'Active', 
 	[Group]                 NVARCHAR (32)  NULL,
     [Name]                  NVARCHAR (64)  NOT NULL,
     [Tags]                  NVARCHAR (MAX) NULL,

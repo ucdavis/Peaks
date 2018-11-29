@@ -149,13 +149,12 @@ namespace Keas.Mvc.Controllers.Api
                 .SingleOrDefaultAsync(k => k.Id == keySerial.KeyId);
 
             // check for duplicate serial to target number
-            if (key.Serials.Any(s => s.Number == model.Number))
+            if (key.Serials.Any(s => s.Id != id && s.Number == model.Number))
             {
                 return BadRequest();
             }
 
             // update key serial properties
-            keySerial.Name   = model.Number;
             keySerial.Number = model.Number;
             keySerial.Status = model.Status;
 
