@@ -114,6 +114,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
               <div className="form-group">
                 <label htmlFor="assignto">Assign To</label>
                 <AssignPerson
+                  disabled={!!this.props.person} // disable if we are on person page
                   person={person}
                   onSelect={this._onSelectPerson}
                 />
@@ -197,11 +198,6 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
       return;
     }
-
-    // else if (this.props.assignedKeyList.findIndex(x => x == key.name) != -1)
-    // {
-    //    this.setState({ selectedKey: null, error: "The key you have chosen is already assigned to this user", validKey: false }, this._validateState);
-    // }
     this.setState({ keySerial, error: "" }, this._validateState);
   };
 

@@ -19,7 +19,7 @@ export default class KeyDetailContainer extends React.Component<IProps, {}> {
     public render() {
         const { selectedKey } = this.props;
 
-        if (selectedKey == null)
+        if (!selectedKey)
         {
             return null;
         }

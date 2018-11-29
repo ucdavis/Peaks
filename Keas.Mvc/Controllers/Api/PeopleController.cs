@@ -61,6 +61,8 @@ namespace Keas.Mvc.Controllers.Api
             // first try and find an existing person
             var existingPerson = await _context.People
                 .Where(x => x.Team.Slug == Team && (String.Equals(x.Email,searchTerm,comparison) || String.Equals(x.UserId,searchTerm,comparison)))
+                .Include(x => x.Supervisor)
+                .IgnoreQueryFilters()
                 .FirstOrDefaultAsync();
             if(existingPerson != null)
             {
@@ -103,7 +105,9 @@ namespace Keas.Mvc.Controllers.Api
 
             if (id.HasValue)
             {
-                person = await _context.People.Where(x => x.Team.Slug == Team && x.Id == id.Value).Include(x => x.User).AsNoTracking().SingleAsync();
+                person = await _context.People.Where(x => x.Team.Slug == Team && x.Id == id.Value)
+                    .Include(x => x.User).Include(x => x.Supervisor)
+                    .AsNoTracking().SingleAsync();
             }
             else
             {
@@ -134,6 +138,11 @@ namespace Keas.Mvc.Controllers.Api
                         // if this user already exists, but isn't a person
                         person.User = user;
                     }
+
+                    if(person.Supervisor != null)
+                    {
+                        _context.People.Attach(person.Supervisor);
+                    }
                     person.Team = team;
                     _context.People.Add(person);
                     await _context.SaveChangesAsync();
@@ -144,6 +153,7 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     // have to get this, so it doesn't think we are trying to add a new one
                     var existingPerson = await _context.People.Include(x => x.User)
+                        .IgnoreQueryFilters()
                         .FirstOrDefaultAsync( p => p.TeamId == team.Id && p.UserId == person.UserId);
                     if(existingPerson != null)
                     {
@@ -153,6 +163,17 @@ namespace Keas.Mvc.Controllers.Api
                         existingPerson.Email = person.Email;
                         existingPerson.Tags = person.Tags;
                         existingPerson.Active = true;
+                        existingPerson.HomePhone = person.HomePhone;
+                        existingPerson.TeamPhone = person.TeamPhone;
+                        if(person.Supervisor != null)
+                        {
+                            existingPerson.Supervisor = person.Supervisor;
+                            _context.People.Attach(existingPerson.Supervisor);
+                        }
+                        existingPerson.StartDate = person.StartDate;
+                        existingPerson.EndDate = person.EndDate;
+                        existingPerson.Category = person.Category;
+                        existingPerson.Notes = person.Notes;
                         await _context.SaveChangesAsync();
                         return Json(existingPerson);
                     }
@@ -177,11 +198,47 @@ namespace Keas.Mvc.Controllers.Api
                 p.TeamPhone = person.TeamPhone;
                 p.HomePhone = person.HomePhone;
                 p.Title = person.Title;
+                p.StartDate = person.StartDate;
+                p.EndDate = person.EndDate;
+                p.Category = person.Category;
+                p.Notes = person.Notes;
+
+                if(person.Supervisor != null)
+                {
+                    p.Supervisor = person.Supervisor;
+                    _context.Attach(p.Supervisor);
+                }
 
                 await _context.SaveChangesAsync();
                 return Json(p);
             }
             return BadRequest(ModelState);
+        }
+
+         public async Task<IActionResult> Delete([FromBody]Person person)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(!person.Active) 
+            {
+                return BadRequest(ModelState);
+            }
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+
+                _context.People.Update(person);
+
+                person.Active = false;
+                await _context.SaveChangesAsync();
+
+                transaction.Commit();
+                return Json(null);
+            }
+
         }
 
         public async Task<IActionResult> GetPerson(int personId)

@@ -1,5 +1,8 @@
+import * as moment from "moment";
 import * as PropTypes from 'prop-types';
 import * as React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   Button,
   ListGroup,
@@ -9,15 +12,10 @@ import {
   ModalFooter,
   ModalHeader
 } from "reactstrap";
-
-import * as moment from "moment";
-import DatePicker from "react-datepicker";
 import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson, ISpace } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
 import EquipmentEditValues from "./EquipmentEditValues";
 import SearchEquipment from "./SearchEquipment";
-
-import "react-datepicker/dist/react-datepicker.css";
 
 interface IProps {
   onCreate: (person: IPerson, equipment: IEquipment, date: any) => void;
@@ -100,6 +98,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                   <AssignPerson
                     person={this.state.person}
                     onSelect={this._onSelectPerson}
+                    disabled={!!this.props.person} // disable if we are on person page
                   />
                 </div>
                 {!this.state.equipment &&
@@ -187,7 +186,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         ...this.state.equipment,
         [property]: value
       }
-    });
+    }, this._validateState);
   };
 
   private _updateAttributes = (attributes: IEquipmentAttribute[]) => {
@@ -241,10 +240,6 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         this._validateState
       );
     } else {
-      // else if (this.props.assignedEquipmentList.findIndex(x => x == equipment.name) != -1)
-      // {
-      //    this.setState({ selectedEquipment: null, error: "The equipment you have chosen is already assigned to this user", validEquipment: false }, this._validateState);
-      // }
       this.setState({ equipment, error: "" }, this._validateState);
     }
   };

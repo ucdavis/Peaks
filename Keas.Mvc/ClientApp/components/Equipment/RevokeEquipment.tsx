@@ -37,7 +37,7 @@ export default class RevokeEquipment extends React.Component<IProps, IState> {
       }
       
     public render() {
-        if (this.props.selectedEquipment == null)
+        if (!this.props.selectedEquipment)
         {
             return null;
         }

@@ -95,6 +95,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                 <div className="form-group">
                   <label htmlFor="assignto">Assign To</label>
                   <AssignPerson
+                    disabled={!!this.props.person} // disable if we are on person page
                     person={this.props.person || this.state.person}
                     onSelect={this._onSelectPerson}
                   />
@@ -200,10 +201,6 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         this._validateState
       );
     } else {
-      // else if (this.props.assignedWorkstationList.findIndex(x => x == workstation.name) != -1)
-      // {
-      //    this.setState({ selectedWorkstation: null, error: "The workstation you have chosen is already assigned to this user", validWorkstation: false }, this._validateState);
-      // }
       this.setState({ workstation, error: "" }, this._validateState);
     }
   };

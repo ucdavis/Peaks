@@ -239,7 +239,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       const accessIndex = this.state.accesses.findIndex(x => x.id === accessAssignment.accessId);
       if (accessIndex > -1) {
           const shallowCopy = [...this.state.accesses];
-          if (this.props.person == null) {
+          if (!this.props.person) {
               // if we are looking at all access, remove from access.assignments
               const assignmentIndex = shallowCopy[accessIndex].assignments.indexOf(accessAssignment);
               shallowCopy[accessIndex].assignments.splice(assignmentIndex, 1);
@@ -259,7 +259,9 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   }
   
   private _deleteAccess = async (access: IAccess) => {
-      
+    if(!confirm("Are you should you want to delete item?")){
+        return false;
+      }
     const deleted: IAccess = await this.context.fetch(`/api/${this.context.team.slug}/access/delete`, {
         body: JSON.stringify(access),
         method: "POST"

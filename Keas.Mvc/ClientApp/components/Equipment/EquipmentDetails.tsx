@@ -22,7 +22,7 @@ interface IProps {
 export default class EquipmentDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedEquipment == null)
+        if (!this.props.selectedEquipment)
         {
             return null;
         }
