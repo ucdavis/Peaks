@@ -1,4 +1,4 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -111,6 +111,7 @@ namespace Keas.Mvc.Controllers.Api
                 TeamId   = key.TeamId,
                 Name     = model.Number,
                 Number   = model.Number,
+                Status   = model.Status,
             };
 
             // add key serial
@@ -153,9 +154,11 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
-            // update key serial
-            keySerial.Name = model.Number;
+            // update key serial properties
+            keySerial.Name   = model.Number;
             keySerial.Number = model.Number;
+            keySerial.Status = model.Status;
+
             await _context.SaveChangesAsync();
 
             //await _eventService.TrackCreateKeySerial(key);

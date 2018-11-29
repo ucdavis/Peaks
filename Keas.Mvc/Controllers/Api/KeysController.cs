@@ -1,4 +1,4 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -44,10 +44,11 @@ namespace Keas.Mvc.Controllers.Api
         {
             var keys = await _context.Keys
                 .Where(x => x.Team.Slug == Team)
-                .Include(x => x.Team)
                 .Include(x => x.Serials)
                     .ThenInclude(serials => serials.KeySerialAssignment)
                         .ThenInclude(assignment => assignment.Person.User)
+                .Include(x => x.KeyXSpaces)
+                    .ThenInclude(xs => xs.Space)
                 .AsNoTracking()
                 .ToListAsync();
 

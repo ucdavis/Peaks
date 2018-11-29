@@ -75,13 +75,15 @@ export interface IKey {
   name: string;
   code: string;
   tags: string;
-  serials: IKeySerial[];
+  serials?: IKeySerial[];
+  keyXSpaces?: IKeySpaceAssociation[];
 }
 
 export interface IKeySerial {
   id: number;
   number: string;
   tags: string;
+  status: string;
   key: IKey;
   keySerialAssignment?: IKeySerialAssignment;
 }
@@ -92,6 +94,14 @@ export interface IKeySerialAssignment {
   keySerial: IKeySerial;
   keySerialId: number;
   person: IPerson;
+}
+
+export interface IKeySpaceAssociation {
+    id: number;
+    spaceId: number;
+    keyId: number;
+    space?: ISpace;
+    key?: IKey;    
 }
 
 export interface IAccess {
