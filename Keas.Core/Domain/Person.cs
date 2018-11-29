@@ -60,7 +60,7 @@ namespace Keas.Core.Domain
             set { _HomePhone = value.FormatPhone(); }
         }
 
-        private string _TeamPhone { get; set; }
+        private string _TeamPhone;
 
         public string TeamPhone
         {
