@@ -21,7 +21,7 @@ export default class KeyListItem extends React.Component<IProps, {}> {
 
     const actions: IAction[] = [];
     if (!!this.props.onDisassociate) {
-      actions.push({ title: 'Disassociate', onClick: () => this.props.onAdd(keyEntity) });
+      actions.push({ title: 'Disassociate', onClick: () => this.props.onDisassociate(keyEntity) });
     }
 
     if (!!this.props.showDetails) {
