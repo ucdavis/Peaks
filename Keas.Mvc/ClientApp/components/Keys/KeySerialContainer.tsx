@@ -241,6 +241,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
     const request = {
       number: keySerial.number,
+      status: keySerial.status,
     }
 
     const updateUrl = `/api/${team.slug}/keyserials/update/${keySerial.id}`;
