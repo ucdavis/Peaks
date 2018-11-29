@@ -2,6 +2,7 @@ using System;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Keas.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
@@ -51,10 +52,21 @@ namespace Keas.Core.Domain
 
         // METADATA
         public string Title { get; set; }
+        private string _HomePhone;
 
-        public string HomePhone { get; set; }
+        public string HomePhone
+        {
+            get { return _HomePhone.FormatPhone(); }
+            set { _HomePhone = value.FormatPhone(); }
+        }
 
-        public string TeamPhone { get; set; }
+        private string _TeamPhone { get; set; }
+
+        public string TeamPhone
+        {
+            get { return _TeamPhone.FormatPhone(); }
+            set { _TeamPhone = value.FormatPhone(); }
+        }
 
         public int? SupervisorId {   get; set; }
 
