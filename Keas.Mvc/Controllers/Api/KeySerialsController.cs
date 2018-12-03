@@ -111,7 +111,7 @@ namespace Keas.Mvc.Controllers.Api
                 TeamId   = key.TeamId,
                 Name     = model.Number,
                 Number   = model.Number,
-                Status   = model.Status,
+                Status   = model.Status ?? "Active",
             };
 
             // add key serial
