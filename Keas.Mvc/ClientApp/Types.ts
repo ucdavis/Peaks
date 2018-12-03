@@ -188,6 +188,8 @@ export interface ISpace {
     floorName: string;
     roomName: string;
     roomNumber: string;
+    sqFt: string;
+    roomCategoryName: string;
 }
 
 export interface IWorkstation {
