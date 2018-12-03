@@ -1,4 +1,4 @@
-﻿import * as PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 
 import { PermissionsUtil } from "../../util/permissions";
@@ -167,7 +167,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     private _renderDetailsView = (selectedSpaceInfo: ISpaceInfo) => {
         return(
             <SpacesDetails
-                closeModal={this._closeModals}
+                goBack={this._goBack}
                 selectedSpaceInfo={selectedSpaceInfo}
                 tags={this.state.tags}
                 inUseUpdated={this._assetInUseUpdated}
@@ -197,6 +197,10 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
     private _closeModals = () => {
         this.context.router.history.push(`${this._getBaseUrl()}`);
+    };
+
+    private _goBack = () => {
+        this.context.router.history.push(`${this._getBaseUrl()}/spaces`);
     };
 
     // managing counts for assigned or revoked
