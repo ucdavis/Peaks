@@ -1,4 +1,4 @@
-﻿import * as PropTypes from 'prop-types';
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { NavLink, Redirect } from "react-router-dom";
 import {
@@ -17,7 +17,7 @@ import WorkstationContainer from "../Workstations/WorkstationContainer";
 import SpaceDetailContainer from "./SpaceDetailContainer";
 
 interface IProps {
-    closeModal: () => void;
+    goBack: () => void;
     selectedSpaceInfo: ISpaceInfo;
     inUseUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
     totalUpdated: (type: string, spaceId: number, personId: number, count: number) => void;
@@ -34,7 +34,7 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
         return (
             <div>
                 <div>
-                    <Button color="link" onClick={this.props.closeModal}>
+                    <Button color="link" onClick={this.props.goBack}>
                         <i className="fas fa-arrow-left fa-xs"/> Return to Table
                     </Button>
                 </div>
