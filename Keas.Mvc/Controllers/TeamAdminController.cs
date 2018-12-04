@@ -239,7 +239,35 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public IActionResult AddPpsDepartment()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        public async Task<IActionResult> AddPpsDepartment(string ppsDeptCode)
+        {
+            if (string.IsNullOrWhiteSpace(ppsDeptCode))
+            {
+                Message = "Code not entered";
+                return View();
+            }
+
+            var result = await _identityService.GetPpsDepartment(ppsDeptCode);
+            if (result == null)
+            {
+                Message = $"Code {ppsDeptCode} not found";
+                return View();
+            }
+
+            //Check if it is already there
+
+
+            //Do the add to the db
+            Message = $"Not adding yet, but found this dept {result.deptDisplayName}";
+
+            return View();
+        }
 
     }
 }
