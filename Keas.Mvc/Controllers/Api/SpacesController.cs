@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -45,10 +45,11 @@ namespace Keas.Mvc.Controllers.Api
         {
             //TODO clean up workstations query or integrate with list query
             var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == Team).Select(x => x.OrgCode).Distinct().ToArrayAsync();
+            var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
 
             var sql = SpaceQueries.List;            
 
-            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new { orgIds });
+            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new { orgIds, teamId });
 
             var spaces = result.Select(r => new {
                 space = new {
