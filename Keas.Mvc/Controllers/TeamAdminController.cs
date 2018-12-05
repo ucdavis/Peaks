@@ -1,4 +1,4 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Models;
 using Keas.Mvc.Services;
@@ -33,6 +33,7 @@ namespace Keas.Mvc.Controllers
         {
             var team = await _context.Teams
                 .Include(o=> o.FISOrgs)
+                .Include(i => i.PpsDepartments)
                 .SingleOrDefaultAsync(x => x.Slug == Team);
 
             return View(team);
@@ -228,18 +229,112 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(RoledMembers));
         }
 
-        public IActionResult BulkLoadPeople() 
+        public async Task<IActionResult> BulkLoadPeople() 
+        {
+            var team = await _context.Teams.Include(i => i.PpsDepartments).SingleAsync(a => a.Slug == Team);
+            return View(team.PpsDepartments);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LoadPeople()
+        {
+            var team = await _context.Teams.Include(i => i.PpsDepartments).SingleAsync(a => a.Slug == Team);
+            if (!team.PpsDepartments.Any())
+            {
+                Message = "No PPS Departments found for your team. Please add them first.";
+                return RedirectToAction("AddPpsDepartment");
+            }
+
+            foreach (var teamPpsDepartment in team.PpsDepartments)
+            {
+                Message = $"{await _identityService.BulkLoadPeople(teamPpsDepartment.PpsDepartmentCode, Team)} for {teamPpsDepartment.DepartmentName}. {Message}";
+            }
+          
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult AddPpsDepartment()
         {
             return View();
         }
 
-        public async Task<IActionResult> LoadPeople(string ppsDeptCode)
+        [HttpPost]
+        public async Task<IActionResult> AddPpsDepartment(string ppsDeptCode)
         {
-            Message = await _identityService.BulkLoadPeople(ppsDeptCode, Team);            
-            return RedirectToAction(nameof(Index));
+            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
+            if (team == null)
+            {
+                return NotFound();
+            }
+
+            if (string.IsNullOrWhiteSpace(ppsDeptCode))
+            {
+                Message = "Code not entered";
+                return View();
+            }
+
+            var result = await _identityService.GetPpsDepartment(ppsDeptCode);
+            if (result == null)
+            {
+                Message = $"Code {ppsDeptCode} not found";
+                return View();
+            }
+
+            if (await _context.TeamPpsDepartments.AnyAsync(a => a.TeamId == team.Id && a.PpsDepartmentCode == result.deptCode))
+            {
+                Message = $"Code {ppsDeptCode} was already added";
+                return RedirectToAction("Index");
+            }
+
+            var newPpsDepartment = new TeamPpsDepartment();
+            newPpsDepartment.DepartmentName = result.deptDisplayName;
+            newPpsDepartment.PpsDepartmentCode = result.deptCode;
+            newPpsDepartment.Team = team;
+
+            _context.TeamPpsDepartments.Add(newPpsDepartment);
+            await _context.SaveChangesAsync();
+
+            Message = $"Department {newPpsDepartment.DepartmentName} added";
+
+            return RedirectToAction("Index");
         }
 
 
+        public async Task<IActionResult> RemovePpsDepartment(int id)
+        {
+            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
+            if (team == null)
+            {
+                return NotFound();
+            }
+
+            var ppsDept = await _context.TeamPpsDepartments.SingleAsync(a => a.Id == id && a.TeamId == team.Id);
+
+            return View(ppsDept);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemovePpsDepartment(int id, TeamPpsDepartment ppsDepartment)
+        {
+            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
+            if (team == null)
+            {
+                return NotFound();
+            }
+
+            if (id != ppsDepartment.Id)
+            {
+                throw new Exception("Ids don't match");
+            }
+
+            var ppsDeptToDelete = await _context.TeamPpsDepartments.SingleAsync(a => a.Id == id && a.TeamId == team.Id);
+            _context.TeamPpsDepartments.Remove(ppsDeptToDelete);
+            await _context.SaveChangesAsync();
+
+            Message = "PPS Department Removed";
+
+            return RedirectToAction("Index");
+        }
 
     }
 }

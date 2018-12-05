@@ -1,4 +1,4 @@
-﻿using Keas.Core.Domain;
+using Keas.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Data
@@ -27,6 +27,7 @@ namespace Keas.Core.Data
         public virtual DbSet<EquipmentAttribute> EquipmentAttributes { get; set; }
 
         public virtual DbSet<FinancialOrganization> FISOrgs  { get; set; }
+        public virtual DbSet<TeamPpsDepartment> TeamPpsDepartments { get; set; }
 
         public virtual  DbSet<Notification> Notifications { get; set; }
 

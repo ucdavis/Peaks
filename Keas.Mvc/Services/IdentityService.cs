@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 using Keas.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using ietws.PPSDepartment;
+
 
 namespace Keas.Mvc.Services
 {
@@ -19,6 +21,7 @@ namespace Keas.Mvc.Services
         Task<User> GetByEmail(string email);
         Task<User> GetByKerberos(string kerb);
         Task<string> BulkLoadPeople(string ppsCode, string teamslug);
+        Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode);
     }
 
     public class IdentityService : IIdentityService
@@ -85,6 +88,23 @@ namespace Keas.Mvc.Services
                 Email = ucdContact.Email,
                 Iam = ucdKerbPerson.IamId
             };
+        }
+
+        public async Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode)
+        {
+            var clientws = new IetClient(_authSettings.IamKey);
+            var results = await clientws.PpsDepartment.Search(PPSDepartmentSearchField.deptCode, ppsCode);
+            if (results.ResponseStatus != 0)
+            {
+                throw new Exception("Not successful");
+            }
+
+            if (results.ResponseData.Results.Length == 0)
+            {
+                return null;
+            }
+
+            return results.ResponseData.Results.FirstOrDefault();
         }
 
         public async Task<string> BulkLoadPeople(string ppsCode, string teamslug)

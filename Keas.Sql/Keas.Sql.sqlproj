@@ -101,6 +101,7 @@
     <Build Include="dbo\Stored Procedures\usp_TruncateAndReloadLoadingSpaces.sql" />
     <Build Include="dbo\Stored Procedures\usp_MergeSpacesTable.sql" />
     <Build Include="dbo\Tables\KeySerials.sql" />
+    <Build Include="dbo\Tables\TeamPpsDepartments.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Compare\ProjectToSqlExpress.scmp" />

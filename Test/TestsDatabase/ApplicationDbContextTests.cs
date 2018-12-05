@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Keas.Core.Data;
@@ -42,12 +42,12 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("SystemPermissions", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.SystemPermission]", new List<string>()));
             expectedFields.Add(new NameAndType("Tags", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Tag]", new List<string>()));
             expectedFields.Add(new NameAndType("TeamPermissions", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.TeamPermission]", new List<string>()));
+            expectedFields.Add(new NameAndType("TeamPpsDepartments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.TeamPpsDepartment]", new List<string>()));
             expectedFields.Add(new NameAndType("Teams", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Team]", new List<string>()));
             expectedFields.Add(new NameAndType("Users", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.User]", new List<string>()));
             expectedFields.Add(new NameAndType("WorkstationAssignments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.WorkstationAssignment]", new List<string>()));
             expectedFields.Add(new NameAndType("WorkstationAttributes", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.WorkstationAttribute]", new List<string>()));
-            expectedFields.Add(new NameAndType("Workstations", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Workstation]", new List<string>()));
-            
+            expectedFields.Add(new NameAndType("Workstations", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Workstation]", new List<string>()));            
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(ApplicationDbContext));
