@@ -25,12 +25,16 @@
 
           <p>@Html.DisplayFor(model => model.Name)</p>
 
-        <p>FIS Orgs</p>
+        <h2>FIS Orgs</h2>
         @foreach (var org in Model.FISOrgs)
         {
             <p>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><i class="fas fa-trash"></i></a></p>
         }
-  
+        <h2>PPS Departments</h2>
+        @foreach (var ppsDept in Model.PpsDepartments)
+        {
+            <p>@ppsDept.DepartmentName (@ppsDept.PpsDepartmentCode) <a asp-action="RemovePpsDepartment" asp-route-id="@ppsDept.Id"><i class="fas fa-trash"></i></a></p> 
+        }
 </div>
 </div>
 </div>

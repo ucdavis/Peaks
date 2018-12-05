@@ -1,4 +1,4 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Models;
 using Keas.Mvc.Services;
@@ -33,6 +33,7 @@ namespace Keas.Mvc.Controllers
         {
             var team = await _context.Teams
                 .Include(o=> o.FISOrgs)
+                .Include(i => i.PpsDepartments)
                 .SingleOrDefaultAsync(x => x.Slug == Team);
 
             return View(team);
@@ -247,6 +248,12 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPpsDepartment(string ppsDeptCode)
         {
+            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
+            if (team == null)
+            {
+                return NotFound();
+            }
+
             if (string.IsNullOrWhiteSpace(ppsDeptCode))
             {
                 Message = "Code not entered";
@@ -260,13 +267,60 @@ namespace Keas.Mvc.Controllers
                 return View();
             }
 
-            //Check if it is already there
+            if (await _context.TeamPpsDepartments.AnyAsync(a => a.TeamId == team.Id && a.PpsDepartmentCode == result.deptCode))
+            {
+                Message = $"Code {ppsDeptCode} was already added";
+                return RedirectToAction("Index");
+            }
+
+            var newPpsDepartment = new TeamPpsDepartment();
+            newPpsDepartment.DepartmentName = result.deptDisplayName;
+            newPpsDepartment.PpsDepartmentCode = result.deptCode;
+            newPpsDepartment.Team = team;
+
+            _context.TeamPpsDepartments.Add(newPpsDepartment);
+            await _context.SaveChangesAsync();
+
+            Message = $"Department {newPpsDepartment.DepartmentName} added";
+
+            return RedirectToAction("Index");
+        }
 
 
-            //Do the add to the db
-            Message = $"Not adding yet, but found this dept {result.deptDisplayName}";
+        public async Task<IActionResult> RemovePpsDepartment(int id)
+        {
+            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
+            if (team == null)
+            {
+                return NotFound();
+            }
 
-            return View();
+            var ppsDept = await _context.TeamPpsDepartments.SingleAsync(a => a.Id == id && a.TeamId == team.Id);
+
+            return View(ppsDept);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemovePpsDepartment(int id, TeamPpsDepartment ppsDepartment)
+        {
+            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
+            if (team == null)
+            {
+                return NotFound();
+            }
+
+            if (id != ppsDepartment.Id)
+            {
+                throw new Exception("Ids don't match");
+            }
+
+            var ppsDeptToDelete = await _context.TeamPpsDepartments.SingleAsync(a => a.Id == id && a.TeamId == team.Id);
+            _context.TeamPpsDepartments.Remove(ppsDeptToDelete);
+            await _context.SaveChangesAsync();
+
+            Message = "PPS Department Removed";
+
+            return RedirectToAction("Index");
         }
 
     }
