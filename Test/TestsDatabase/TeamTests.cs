@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Keas.Core.Domain;
@@ -48,6 +48,7 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)128)]",
             }));
             expectedFields.Add(new NameAndType("People", "System.Collections.Generic.List`1[Keas.Core.Domain.Person]", new List<string>()));
+            expectedFields.Add(new NameAndType("PpsDepartments", "System.Collections.Generic.List`1[Keas.Core.Domain.TeamPpsDepartment]", new List<string>()));
             expectedFields.Add(new NameAndType("Slug", "System.String", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"Team Slug\")]",
@@ -58,7 +59,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("TeamPermissions", "System.Collections.Generic.ICollection`1[Keas.Core.Domain.TeamPermission]", new List<string>
             {
                 "[Newtonsoft.Json.JsonIgnoreAttribute()]",
-            }));
+            }));            
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(Team));
