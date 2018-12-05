@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
@@ -30,6 +30,8 @@ namespace Keas.Core.Domain
        public ICollection<TeamPermission> TeamPermissions { get; set; }
 
         public List<FinancialOrganization> FISOrgs { get; set; }
+
+        public List<TeamPpsDepartment> PpsDepartments { get; set; }
        
     }
 }
