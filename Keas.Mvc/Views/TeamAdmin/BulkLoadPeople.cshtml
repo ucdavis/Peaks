@@ -1,4 +1,4 @@
-@model Keas.Mvc.Models.BulkLoadViewModel
+@model IEnumerable<Keas.Core.Domain.TeamPpsDepartment>
 
 @{
     ViewData["Title"] = "Bulk Load People";
@@ -16,17 +16,21 @@
             Note, this may take quite some time for very large departments. You can re-run the loader to import new employees. It will add any new people as needed. It will not remove anyone, even if their appointment has ended.<hr/>
         </div>
     </div>
+        <div class="row">
+        <div class="col-md-10">
+        <h2>PPS Departments</h2>
+        @foreach (var ppsDept in Model)
+        {
+            <p>@ppsDept.DepartmentName (@ppsDept.PpsDepartmentCode)</p> 
+        }
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-4">
             <form asp-action="LoadPeople">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
-                    <label asp-for="PPSDeptCode" class="control-label"></label>
-                    <input asp-for="PPSDeptCode" class="form-control"/>
-                    <span asp-validation-for="PPSDeptCode" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input id="submitbtn" type="submit" value="Add Org to Team" class="btn btn-primary"/>
+                    <input id="submitbtn" type="submit" value="Add People from PPS Depts to Team" class="btn btn-primary"/>
                 </div>
             </form>
         </div>
@@ -43,7 +47,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
 <script type="text/javascript">
     $(function () {
         $("#submitbtn").click(function () {

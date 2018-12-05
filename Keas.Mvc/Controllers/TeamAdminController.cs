@@ -229,14 +229,27 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(RoledMembers));
         }
 
-        public IActionResult BulkLoadPeople() 
+        public async Task<IActionResult> BulkLoadPeople() 
         {
-            return View();
+            var team = await _context.Teams.Include(i => i.PpsDepartments).SingleAsync(a => a.Slug == Team);
+            return View(team.PpsDepartments);
         }
 
-        public async Task<IActionResult> LoadPeople(string ppsDeptCode)
+        [HttpPost]
+        public async Task<IActionResult> LoadPeople()
         {
-            Message = await _identityService.BulkLoadPeople(ppsDeptCode, Team);            
+            var team = await _context.Teams.Include(i => i.PpsDepartments).SingleAsync(a => a.Slug == Team);
+            if (!team.PpsDepartments.Any())
+            {
+                Message = "No PPS Departments found for your team. Please add them first.";
+                return RedirectToAction("AddPpsDepartment");
+            }
+
+            foreach (var teamPpsDepartment in team.PpsDepartments)
+            {
+                Message = $"{await _identityService.BulkLoadPeople(teamPpsDepartment.PpsDepartmentCode, Team)} for {teamPpsDepartment.DepartmentName}. {Message}";
+            }
+          
             return RedirectToAction(nameof(Index));
         }
 
