@@ -115,6 +115,14 @@ export default class KeyTable extends React.Component<IProps, IState> {
     private renderAvailableColumn = (row: IRow) => {
         const { serials } = row.original;
 
+        if(!serials || serials.length === 0)
+        {
+            return (
+                <span>
+                    <i className="fas fa-key"/> 0 / 0
+                </span>
+            );
+        }
         const total = serials.length;
         const available = serials.filter(s => !s.keySerialAssignment).length;
 
@@ -129,7 +137,7 @@ export default class KeyTable extends React.Component<IProps, IState> {
         const { keyXSpaces } = row.original;
 
         return (
-            <span><i className="fas fa-building mr-2" /> {keyXSpaces.length}</span>
+            <span><i className="fas fa-building mr-2" /> {!!keyXSpaces ? keyXSpaces.length : 0}</span>
         )
     }
 
