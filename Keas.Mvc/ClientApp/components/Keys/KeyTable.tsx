@@ -124,11 +124,11 @@ export default class KeyTable extends React.Component<IProps, IState> {
             );
         }
         const total = serials.length;
-        const available = serials.filter(s => !s.keySerialAssignment).length;
+        const inUse = serials.filter(s => s.keySerialAssignment).length;
 
         return (
             <span>
-                <i className="fas fa-key"/> {available} / {total}
+                <i className="fas fa-key"/> {inUse} / {total}
             </span>
         );
     }
