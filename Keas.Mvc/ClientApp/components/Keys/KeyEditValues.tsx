@@ -8,7 +8,7 @@ interface IProps {
     selectedKey: IKey;
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
-    searchableTags: string[]
+    searchableTags?: string[]
 }
 
 export default class KeyEditValues extends React.Component<IProps, {}> {

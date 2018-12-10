@@ -131,6 +131,55 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
+        public async Task<IActionResult> Delete([FromBody]Key key)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(!key.Active) 
+            {
+                return BadRequest(ModelState);
+            }
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+
+                _context.Keys.Update(key);
+
+                if(key.Serials.Count > 0)
+                {
+                    foreach(var serial in key.Serials.ToList()) 
+                    {
+                        _context.KeySerials.Update(serial);
+                        if(serial.KeySerialAssignment != null)
+                        {
+                            await _eventService.TrackUnAssignKeySerial(serial); // call before we remove person info
+                            _context.KeySerialAssignments.Remove(serial.KeySerialAssignment);
+                        }
+                        serial.Active = false;
+                    }
+                }
+
+                if(key.KeyXSpaces.Count > 0)
+                {
+                    foreach(var keyXSpace in key.KeyXSpaces.ToList())
+                    {
+                        _context.KeyXSpaces.Remove(keyXSpace);
+                    }
+                }
+
+                key.Active = false;
+                await _context.SaveChangesAsync();
+                await _eventService.TrackKeyDeleted(key);
+
+                transaction.Commit();
+                return Json(null);
+            }
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> AssociateSpace(int id, [FromBody] AssociateKeyViewModel model)
         {

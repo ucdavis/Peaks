@@ -10,6 +10,7 @@ interface IProps {
     onAdd?: (key: IKey) => void;
     showDetails?: (key: IKey) => void;
     onEdit?: (key: IKey) => void;
+    onDelete?: (key: IKey) => void;
 }
 
 export default class KeyList extends React.Component<IProps, {}> {
@@ -38,6 +39,7 @@ export default class KeyList extends React.Component<IProps, {}> {
                 keyEntity={key}
                 onDisassociate={this.props.onDisassociate}
                 onAdd={this.props.onAdd}
+                onDelete={this.props.onDelete}
                 showDetails={this.props.showDetails}
                 onEdit={this.props.onEdit}
             />
