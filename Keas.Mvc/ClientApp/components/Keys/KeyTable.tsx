@@ -160,26 +160,6 @@ export default class KeyTable extends React.Component<IProps, IState> {
         );
     }
 
-    private renderAvailableColumn = (row: IRow) => {
-        const { serials } = row.original;
-
-        if(!serials || serials.length === 0)
-        {
-            return (
-                <span>
-                    <i className="fas fa-key"/> 0 / 0
-                </span>
-            );
-        }
-        const total = serials.length;
-        const inUse = serials.filter(s => s.keySerialAssignment).length;
-
-        return (
-            <span>
-                <i className="fas fa-key"/> {inUse} / {total}
-            </span>
-        );
-    }
 
     private renderSpacesColumn = (row: IRow) => {
         const { keyXSpaces } = row.original;
