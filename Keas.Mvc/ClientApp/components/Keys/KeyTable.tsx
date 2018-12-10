@@ -81,13 +81,61 @@ export default class KeyTable extends React.Component<IProps, IState> {
                                 .includes(filter.value.toLowerCase())
                     },
                     {
-                        Header: "",
-                        headerClassName: "table-actions",
-                        filterable: false,
-                        sortable: false,
-                        resizable: false,
-                        className: "table-actions",
-                        Cell: this.renderAvailableColumn
+                        Header: "Serials",
+                        headerClassName: "table-10p",
+                        className: "table-10p",
+                        id: "serialsCount",
+                        accessor: key => {
+                            return {
+                                "serialsInUse": key.serials ? key.serials.filter(s => s.keySerialAssignment).length : 0,
+                                "serialsTotal": key.serials ? key.serials.length : 0,
+                            }
+                        },
+                        filterMethod: (filter, row) => {
+                            if( filter.value === "all") {
+                                return true;
+                            }
+                            if( filter.value === "unassigned") {
+                                return (row.serialsCount.serialsTotal - row.serialsCount.serialsInUse) > 0;
+                            }
+                            if( filter.value === "assigned") {
+                                return row.serialsCount.serialsInUse> 0;
+                            }
+                            if(filter.value === "any"){
+                                return row.serialsCount.serialsTotal > 0;
+                            }
+                        },
+                        Filter: ({filter, onChange}) =>
+                            <select onChange={e => onChange(e.target.value)}
+                            style={{width: "100%"}}
+                            value={filter ? filter.value : "all"}
+                            >
+                                <option value="all">Show All</option>
+                                <option value="unassigned">Unassigned</option>
+                                <option value="assigned">Assigned</option>
+                                <option value="any">Any</option>
+                            </select>,
+                        Cell: row => (
+                            <span><i className="fas fa-key"/> {row.value.serialsInUse} / {row.value.serialsTotal}</span>
+                        ),
+                        sortMethod: (a, b) => {
+                            if(a.serialsTotal === b.serialsTotal)
+                            {
+                                if(a.serialsInUse === b.serialsInUse)
+                                {
+                                    return 0;
+                                }
+                                else
+                                {
+                                    return a.serialsInUse < b.serialsInUse? 1 : -1;
+                                }
+                            }
+                            else
+                            {
+                                return a.serialsTotal < b.serialsTotal ? 1 : -1;
+                            }
+
+                        }
                     },
                     {
                         Header: "",
@@ -112,24 +160,12 @@ export default class KeyTable extends React.Component<IProps, IState> {
         );
     }
 
-    private renderAvailableColumn = (row: IRow) => {
-        const { serials } = row.original;
-
-        const total = serials.length;
-        const available = serials.filter(s => !s.keySerialAssignment).length;
-
-        return (
-            <span>
-                <i className="fas fa-key"/> {available} / {total}
-            </span>
-        );
-    }
 
     private renderSpacesColumn = (row: IRow) => {
         const { keyXSpaces } = row.original;
 
         return (
-            <span><i className="fas fa-building mr-2" /> {keyXSpaces.length}</span>
+            <span><i className="fas fa-building mr-2" /> {!!keyXSpaces ? keyXSpaces.length : 0}</span>
         )
     }
 
