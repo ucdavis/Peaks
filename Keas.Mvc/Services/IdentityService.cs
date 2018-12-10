@@ -179,7 +179,7 @@ namespace Keas.Mvc.Services
                 User = user,
                 Team = team,
                 FirstName = user.FirstName,
-                LastName = user.FirstName,
+                LastName = user.LastName,
                 Email = user.Email
             };
             _context.People.Add(newPerson);            
