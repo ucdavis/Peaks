@@ -131,17 +131,17 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
-        public async Task<IActionResult> Delete([FromBody]Key key)
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
         {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if(!key.Active) 
-            {
-                return BadRequest(ModelState);
-            }
+            var key = await _context.Keys
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Team)
+                .Include(x => x.Serials)
+                    .ThenInclude(serials => serials.KeySerialAssignment)
+                        .ThenInclude(assignment => assignment.Person.User)
+                .Include(x => x.KeyXSpaces)
+                .SingleAsync(x => x.Id == id);
 
             using(var transaction = _context.Database.BeginTransaction())
             {

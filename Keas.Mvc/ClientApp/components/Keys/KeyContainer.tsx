@@ -321,8 +321,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         if(!confirm("Are you should you want to delete item?")){
           return false;
         }
-        const deleted: IKey = await this.context.fetch(`/api/${this.context.team.slug}/keys/delete`, {
-          body: JSON.stringify(key),
+        const deleted: IKey = await this.context.fetch(`/api/${this.context.team.slug}/keys/delete/${key.id}`, {
           method: "POST"
         });
         
