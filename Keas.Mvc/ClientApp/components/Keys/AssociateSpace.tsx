@@ -2,27 +2,27 @@ import * as PropTypes from "prop-types";
 import * as React from "react";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
 
-import { AppContext, IKey, ISpace } from "../../Types";
+import { AppContext, IKey, IKeyInfo, ISpace } from "../../Types";
 
 import KeyEditValues from "./KeyEditValues";
 import SearchKeys from "./SearchKeys";
 import SearchSpaces from "../Spaces/SearchSpaces";
 
 interface IProps {
-    onAssign: (space: ISpace, key: IKey) => void;
+    onAssign: (space: ISpace, keyInfo: IKeyInfo) => void;
     openModal: () => void;
     closeModal: () => void;
 
     isModalOpen: boolean;
     searchableTags: string[];
 
-    selectedKey?: IKey;
+    selectedKeyInfo?: IKeyInfo;
     selectedSpace?: ISpace;
 }
 
 interface IState {
     error: string;
-    selectedKey: IKey;
+    selectedKeyInfo: IKeyInfo;
     selectedSpace: ISpace;
     submitting: boolean;
     validState: boolean;
@@ -41,7 +41,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
 
         this.state = {
             error: "",
-            selectedKey: this.props.selectedKey,
+            selectedKeyInfo: this.props.selectedKeyInfo,
             selectedSpace: this.props.selectedSpace,
             submitting: false,
             validState: false
@@ -49,8 +49,8 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     }
 
     public componentWillReceiveProps(nextProps: IProps) {
-        if (nextProps.selectedKey !== this.props.selectedKey) {
-            this.setState({ selectedKey: nextProps.selectedKey });
+        if (nextProps.selectedKeyInfo !== this.props.selectedKeyInfo) {
+            this.setState({ selectedKeyInfo: nextProps.selectedKeyInfo });
         }
 
         if (nextProps.selectedSpace !== this.props.selectedSpace) {
@@ -71,7 +71,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     }
 
     private renderModal() {
-        const { isModalOpen, selectedKey, selectedSpace } = this.props;
+        const { isModalOpen, selectedKeyInfo, selectedSpace } = this.props;
         const { validState, submitting } = this.state;
 
         return (
@@ -130,16 +130,16 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     }
 
     private renderSearchKey() {
-        const { selectedKey } = this.props;
+        const { selectedKeyInfo } = this.props;
 
         // we're being given a specific key to readonly
-        if (selectedKey) {
+        if (selectedKeyInfo) {
             return (
                 <div className="form-group">
                     <label>Key to associate with:</label>
                     <input
                         className="form-control"
-                        value={`${selectedKey.name} - ${selectedKey.code}`}
+                        value={`${selectedKeyInfo.key.name} - ${selectedKeyInfo.key.code}`}
                         readOnly={true}
                     />
                 </div>
@@ -149,22 +149,22 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
         return (
             <div className="form-group">
                 <label>Pick an key to associate</label>
-                <SearchKeys onSelect={this._onSelectedKey} onDeselect={this._onDeselected} />
+                <SearchKeys onSelect={this._onSelectedKeyInfo} onDeselect={this._onDeselected} />
             </div>
         );
     }
 
     private renderCreateKey() {
         const { searchableTags } = this.props;
-        const { selectedKey } = this.state;
+        const { selectedKeyInfo } = this.state;
 
-        if (!selectedKey || selectedKey.id > 0) {
+        if (!selectedKeyInfo || selectedKeyInfo.id > 0) {
             return;
         }
 
         return (
             <KeyEditValues
-                selectedKey={selectedKey}
+                selectedKey={selectedKeyInfo.key}
                 changeProperty={this._changeProperty}
                 disableEditing={false}
                 searchableTags={searchableTags}
@@ -175,9 +175,12 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     private _changeProperty = (property: string, value: string) => {
         this.setState(
             {
-                selectedKey: {
-                    ...this.state.selectedKey,
-                    [property]: value
+                selectedKeyInfo: {
+                    ...this.state.selectedKeyInfo,
+                    key: {
+                        ...this.state.selectedKeyInfo.key,
+                        [property]: value
+                    }
                 }
             },
             this._validateState
@@ -186,11 +189,11 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
 
     // default everything out on close
     private _closeModal = () => {
-        const { selectedKey, selectedSpace } = this.props;
+        const { selectedKeyInfo, selectedSpace } = this.props;
 
         this.setState({
             error: "",
-            selectedKey,
+            selectedKeyInfo,
             selectedSpace,
             submitting: false,
             validState: false
@@ -201,7 +204,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
 
     // assign the selected key even if we have to create it
     private _assignSelected = async () => {
-        const { selectedSpace, selectedKey } = this.state;
+        const { selectedSpace, selectedKeyInfo } = this.state;
 
         if (!this.state.validState || this.state.submitting) {
             return;
@@ -209,17 +212,17 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
 
         this.setState({ submitting: true });
 
-        await this.props.onAssign(selectedSpace, selectedKey);
+        await this.props.onAssign(selectedSpace, selectedKeyInfo);
 
         this._closeModal();
     };
 
-    private _onSelectedKey = (key: IKey) => {
-        this.setState({ selectedKey: key, error: "" }, this._validateState);
+    private _onSelectedKeyInfo = (keyInfo: IKeyInfo) => {
+        this.setState({ selectedKeyInfo: keyInfo, error: "" }, this._validateState);
     };
 
     private _onDeselected = () => {
-        this.setState({ selectedKey: null, error: "" }, this._validateState);
+        this.setState({ selectedKeyInfo: null, error: "" }, this._validateState);
     };
 
     private _onSelectSpace = (space: ISpace) => {
@@ -227,21 +230,21 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     };
 
     private _validateState = () => {
-        const { selectedSpace, selectedKey } = this.state;
+        const { selectedSpace, selectedKeyInfo } = this.state;
 
         let valid = true;
         let error = "";
 
         // ensure both values are set
-        if (!this.state.selectedKey) {
+        if (!this.state.selectedKeyInfo) {
             valid = false;
         } else if (this.state.error !== "") {
             valid = false;
         }
 
         // check for existing association
-        if (selectedKey.keyXSpaces && selectedKey.keyXSpaces.length) {
-            const isDuplicate = selectedKey.keyXSpaces.some(x => x.spaceId === selectedSpace.id);
+        if (selectedKeyInfo.key.keyXSpaces && selectedKeyInfo.key.keyXSpaces.length) {
+            const isDuplicate = selectedKeyInfo.key.keyXSpaces.some(x => x.spaceId === selectedSpace.id);
             if (isDuplicate) {
                 valid = false;
                 error = "This space and key are already associated.";

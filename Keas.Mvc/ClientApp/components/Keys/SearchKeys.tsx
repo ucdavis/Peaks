@@ -2,17 +2,17 @@
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 
-import { IKey, AppContext } from "../../Types";
+import { IKeyInfo, AppContext } from "../../Types";
 
 interface IProps {
-    defaultKey?: IKey;
-    onSelect: (key: IKey) => void;
+    defaultKeyInfo?: IKeyInfo;
+    onSelect: (keyInfo: IKeyInfo) => void;
     onDeselect: () => void;
 }
 
 interface IState {
     isSearchLoading: boolean;
-    keys: IKey[];
+    keysInfo: IKeyInfo[];
 }
 
 function noopTrue() { return true; }
@@ -33,17 +33,17 @@ export default class SearchKeys extends React.Component<IProps, IState> {
 
         this.state = {
             isSearchLoading: false,
-            keys: [],
+            keysInfo: [],
         };
     }
 
     public render() {
-        const { defaultKey } = this.props;
-        const { isSearchLoading, keys } = this.state;
+        const { defaultKeyInfo } = this.props;
+        const { isSearchLoading, keysInfo } = this.state;
 
         return (
             <AsyncTypeahead
-                defaultSelected={defaultKey ? [defaultKey] : []}
+                defaultSelected={defaultKeyInfo ? [defaultKeyInfo] : []}
                 isLoading={isSearchLoading}
                 minLength={2}
                 placeholder="Search for key by name or by serial number"
@@ -53,24 +53,24 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 renderMenuItemChildren={this.renderItem}
                 onSearch={this.onSearch}
                 onChange={this.onChange}
-                options={keys}
+                options={keysInfo}
             />
         );
     }
 
-    private renderItem = (option: IKey, props, index) => {
+    private renderItem = (option: IKeyInfo, props, index) => {
         return (
             <div>
                 <div>
                     <Highlighter search={props.text}>
-                        {option.name}
+                        {option.key.name}
                     </Highlighter>
                 </div>
                 <div>
                     <small>
                         Code:
                         <Highlighter search={props.text}>
-                            {option.code}
+                            {option.key.code}
                         </Highlighter>
                     </small>
                 </div>
@@ -83,17 +83,17 @@ export default class SearchKeys extends React.Component<IProps, IState> {
 
         this.setState({ isSearchLoading: true });
 
-        const keys = await this.context.fetch(`/api/${team.slug}/keys/search?q=${query}`);
+        const keysInfo = await this.context.fetch(`/api/${team.slug}/keys/search?q=${query}`);
 
         this.setState({
             isSearchLoading: false,
-            keys
+            keysInfo
         });
     }
 
     private onChange = (selected: any[]) => {
 
-        let key: IKey;
+        let keyInfo: IKeyInfo;
 
         // check for empty
         if (!selected || selected.length <= 0) {
@@ -102,20 +102,26 @@ export default class SearchKeys extends React.Component<IProps, IState> {
         
         // check for new selection
         if (selected[0].customOption) {
-            key = {
-                code: selected[0].code,
+            keyInfo = {
                 id: 0,
-                name: '',
-                serials: [],
-                teamId: 0,
-                tags: "",
+                key: {
+                    code: selected[0].code,
+                    id: 0,
+                    name: '',
+                    serials: [],
+                    teamId: 0,
+                    tags: ""
+                },
+                serialsInUseCount: 0,
+                serialsTotalCount: 0,
+                spacesCount: 0
             };
         }
         else {
-            key = selected[0];
+            keyInfo = selected[0];
         }
 
-        this.props.onSelect(key);
+        this.props.onSelect(keyInfo);
         return;
     };
 }

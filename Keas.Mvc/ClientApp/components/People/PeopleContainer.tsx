@@ -129,7 +129,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
           case "equipment": 
             people[index].equipmentCount += count;
             break;
-          case "key":
+          case "serial":
             people[index].keyCount += count;
             break;
           case "access":
@@ -140,7 +140,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         }
         this.setState({people});
     }
-}
+  }
 
   // tags 
   private _filterTags = (filters: string[]) => {

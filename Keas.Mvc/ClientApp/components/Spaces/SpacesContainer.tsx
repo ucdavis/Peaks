@@ -3,7 +3,7 @@ import * as React from "react";
 
 import { PermissionsUtil } from "../../util/permissions";
 
-import { AppContext, ISpace, ISpaceInfo, IKey } from "../../Types";
+import { AppContext, IKey, IKeyInfo, ISpace, ISpaceInfo } from "../../Types";
 
 import Denied from "../Shared/Denied";
 import SearchTags from "../Tags/SearchTags";
@@ -14,7 +14,8 @@ import SpacesList from "./SpacesList";
 import SpacesTable from "./SpacesTable";
 
 interface IProps {
-    selectedKey?: IKey;
+    selectedKeyInfo?: IKeyInfo;
+    spacesTotalUpdated?: (keyId: number, count: number) => void;
 }
 
 interface IState {
@@ -47,12 +48,12 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     public async componentDidMount() {
-        const { selectedKey } = this.props;
+        const { selectedKeyInfo } = this.props;
         const { team } = this.context;
 
         let spacesFetchUrl =  "";
-        if(!!selectedKey) {
-            spacesFetchUrl = `/api/${team.slug}/spaces/getSpacesForKey?keyid=${selectedKey.id}`;
+        if(!!selectedKeyInfo) {
+            spacesFetchUrl = `/api/${team.slug}/spaces/getSpacesForKey?keyid=${selectedKeyInfo.id}`;
         }
         else {
             spacesFetchUrl = `/api/${team.slug}/spaces/list`;
@@ -103,8 +104,8 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     private _renderTableOrList() {
-        const { selectedKey } = this.props;
-        if (!!selectedKey) {
+        const { selectedKeyInfo } = this.props;
+        if (!!selectedKeyInfo) {
             return this._renderTableList();
         }
 
@@ -136,7 +137,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     private _renderTableList = () => {
-        const { selectedKey } = this.props;
+        const { selectedKeyInfo } = this.props;
         const { tags } = this.state;
         const { action } = this.context.router.route.match.params;
 
@@ -146,13 +147,13 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         return (
             <div>
                 <SpacesList
-                    selectedKey={selectedKey}
+                    selectedKeyInfo={selectedKeyInfo}
                     spaces={spaces}
                     showDetails={this._openDetails}
                     onDisassociate={this._disassociateSpace}
                 />
                 <AssociateSpace
-                    selectedKey={selectedKey}
+                    selectedKeyInfo={selectedKeyInfo}
                     onAssign={this._associateSpace}
                     openModal={() => this._openAssociateModal(null)}
                     closeModal={this._closeModals}
@@ -249,7 +250,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         }
     }
 
-    private _associateSpace = async (space: ISpace, key: IKey) => {
+    private _associateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
         const { team } = this.context;
         const { spaces } = this.state;
 
@@ -257,7 +258,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             spaceId: space.id,
         };
 
-        const associateUrl = `/api/${team.slug}/keys/associateSpace/${key.id}`;
+        const associateUrl = `/api/${team.slug}/keys/associateSpace/${keyInfo.id}`;
         const result = await this.context.fetch(associateUrl, {
             body: JSON.stringify(request),
             method: "POST",
@@ -276,9 +277,10 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         this.setState({
             spaces: updatedSpaces,
         });
+        this.props.spacesTotalUpdated(this.props.selectedKeyInfo.id, 1);
     }
 
-    private _disassociateSpace = async (space: ISpace, key: IKey) => {
+    private _disassociateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
         const { team } = this.context;
         const { spaces } = this.state;
 
@@ -286,7 +288,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             spaceId: space.id,
         }
 
-        const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${key.id}`;
+        const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${keyInfo.id}`;
         const result = await this.context.fetch(disassociateUrl, {
             body: JSON.stringify(request),
             method: "POST",
@@ -300,15 +302,17 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         this.setState({
             spaces: updatedSpaces,
         });
+        this.props.spacesTotalUpdated(this.props.selectedKeyInfo.id, -1);
+
     }
 
     private _getBaseUrl = () => {
         const { team } = this.context;
-        const { selectedKey } = this.props;
+        const { selectedKeyInfo } = this.props;
 
-        if(!!selectedKey)
+        if(!!selectedKeyInfo)
         {
-            return `/${team.slug}/keys/details/${selectedKey.id}`;
+            return `/${team.slug}/keys/details/${selectedKeyInfo.id}`;
         }
 
         return `/${team.slug}`;

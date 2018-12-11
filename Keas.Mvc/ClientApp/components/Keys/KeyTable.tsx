@@ -6,13 +6,13 @@ import "react-table/react-table.css";
 import { Button } from "reactstrap";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
-import { IKey } from "../../Types";
+import { IKey, IKeyInfo } from "../../Types";
 
 interface IProps {
     showDetails?: (key: IKey) => void;
     onEdit?: (key: IKey) => void;
     onDelete?: (key: IKey) => void;
-    keys: IKey[];
+    keysInfo: IKeyInfo[];
     filters: any[];
     onFiltersChange: (filters: any[]) => void;
 }
@@ -25,16 +25,16 @@ interface IFilter {
 }
 
 interface IRow {
-    original: IKey;
+    original: IKeyInfo;
 }
 
 export default class KeyTable extends React.Component<IProps, IState> {
     public render() {
-        const { filters, keys } = this.props;
+        const { filters, keysInfo } = this.props;
 
         return (
             <ReactTable
-                data={keys}
+                data={keysInfo}
                 filterable={true}
                 minRows={1}
                 filtered={filters}
@@ -51,7 +51,7 @@ export default class KeyTable extends React.Component<IProps, IState> {
                             <Button
                                 color="link"
                                 onClick={() =>
-                                    this.props.showDetails(row.original)
+                                    this.props.showDetails(row.original.key)
                                 }
                             >
                                 Details
@@ -61,7 +61,7 @@ export default class KeyTable extends React.Component<IProps, IState> {
                     },
                     {
                         Header: "Key",
-                        accessor: "name",
+                        accessor: "key.name",
                         className: "word-wrap",
                         filterMethod: (filter: IFilter, row: IRow) =>
                             !!row[filter.id] &&
@@ -71,7 +71,7 @@ export default class KeyTable extends React.Component<IProps, IState> {
                     },
                     {
                         Header: "Key Code",
-                        accessor: "code",
+                        accessor: "key.code",
                         filterMethod: (filter: IFilter, row: IRow) =>
                             !!row[filter.id] &&
                             row[filter.id]
@@ -83,10 +83,10 @@ export default class KeyTable extends React.Component<IProps, IState> {
                         headerClassName: "table-10p",
                         className: "table-10p",
                         id: "serialsCount",
-                        accessor: key => {
+                        accessor: keyInfo => {
                             return {
-                                "serialsInUse": key.serials ? key.serials.filter(s => s.keySerialAssignment).length : 0,
-                                "serialsTotal": key.serials ? key.serials.length : 0,
+                                "serialsInUse": keyInfo.serialsInUseCount,
+                                "serialsTotal": keyInfo.serialsTotalCount,
                             }
                         },
                         filterMethod: (filter, row) => {
@@ -142,7 +142,10 @@ export default class KeyTable extends React.Component<IProps, IState> {
                         sortable: false,
                         resizable: false,
                         className: "table-actions",
-                        Cell: this.renderSpacesColumn
+                        Cell: (row) => (
+                            <span><i className="fas fa-building mr-2" /> {row.original.spacesCount}</span>
+
+                        )
                     },
                     {
                         Header: "",
@@ -158,17 +161,8 @@ export default class KeyTable extends React.Component<IProps, IState> {
         );
     }
 
-
-    private renderSpacesColumn = (row: IRow) => {
-        const { keyXSpaces } = row.original;
-
-        return (
-            <span><i className="fas fa-building mr-2" /> {!!keyXSpaces ? keyXSpaces.length : 0}</span>
-        )
-    }
-
     private renderDropdownColumn = (row: IRow) => {
-        const key = row.original;
+        const key = row.original.key;
 
         const actions: IAction[] = [];
 
