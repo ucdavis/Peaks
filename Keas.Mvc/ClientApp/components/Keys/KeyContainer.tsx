@@ -380,6 +380,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                 keys: [...this.state.keys, key]
             });
         }
+        if(this.props.assetTotalUpdated)
+        {
+        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
+            this.props.person ? this.props.person.id : null, 1);
+        }
     };
 
     private _disassociateSpace = async (space: ISpace, key: IKey) => {
@@ -405,6 +410,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         this.setState({
             keys: updatedKeys
         });
+
+        if(this.props.assetTotalUpdated)
+        {
+        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
+            this.props.person ? this.props.person.id : null, -1);
+        }
     };
 
     private _onTagsFiltered = (tagFilters: string[]) => {
