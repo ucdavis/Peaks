@@ -27,16 +27,28 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.InvariantCultureIgnoreCase;
 
-            var keys = await _context.Keys
+            var keys = 
+            from key in _context.Keys
                 .Where(x => x.Team.Slug == Team 
                         && x.Active
                         && (x.Name.StartsWith(q, comparison) || x.Code.StartsWith(q, comparison)))
                 .Include(x => x.Serials)
                 .Include(x => x.KeyXSpaces)
                     .ThenInclude(xs => xs.Space)
-                .AsNoTracking().ToListAsync();
-
-            return Json(keys);
+                .AsNoTracking()
+                 select new
+            {
+                key = key,
+                id = key.Id,
+                code = key.Code,
+                serialsTotalCount = 
+                    (key.Serials).Count(),
+                serialsInUseCount = 
+                    (from s in key.Serials where s.KeySerialAssignment != null select s ).Count(),
+                spacesCount = 
+                    (key.KeyXSpaces).Count(),
+                };
+            return Json(await keys.ToListAsync());
         }
 
         // List all keys for a team

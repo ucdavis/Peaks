@@ -227,7 +227,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
         return (
             <KeyDetailContainer
-                selectedKey={selectedKey}
+                selectedKeyInfo={selectedKeyInfo}
                 goBack={this._closeModals}
                 serialInUseUpdated={this._serialInUseUpdated}
                 serialTotalUpdated={this._serialTotalUpdated}

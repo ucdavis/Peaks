@@ -2,12 +2,12 @@ import * as React from "react";
 
 import SpacesListItem from "./SpacesListItem";
 
-import { ISpace, IKey } from "../../Types";
+import { ISpace, IKey, IKeyInfo } from "../../Types";
 
 interface IProps {
-    selectedKey?: IKey;
+    selectedKeyInfo?: IKeyInfo;
     spaces: ISpace[];
-    onDisassociate?: (space: ISpace, key: IKey) => void;
+    onDisassociate?: (space: ISpace, keyInfo: IKeyInfo) => void;
     showDetails?: (space: ISpace) => void;
     // onAdd?: (space: ISpace) => void;
 }
@@ -31,14 +31,14 @@ export default class SpacesList extends React.Component<IProps, {}> {
     }
 
     private renderItem = (space: ISpace) => {
-        const { selectedKey } = this.props;
+        const { selectedKeyInfo } = this.props;
         
         return (
             <SpacesListItem
                 key={space.id}
                 space={space}
-                onDisassociate={!!selectedKey
-                    ? (s) => this.props.onDisassociate(s, selectedKey)
+                onDisassociate={!!selectedKeyInfo
+                    ? (s) => this.props.onDisassociate(s, selectedKeyInfo)
                     : null}
                 showDetails={this.props.showDetails}
             />

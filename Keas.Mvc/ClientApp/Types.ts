@@ -84,6 +84,7 @@ export interface IKeyInfo {
   serialsTotalCount: number;
   serialsInUseCount: number;
   spacesCount: number;
+  code?: string;
 }
 
 export interface IKey {

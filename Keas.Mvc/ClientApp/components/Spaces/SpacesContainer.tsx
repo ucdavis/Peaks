@@ -3,7 +3,7 @@ import * as React from "react";
 
 import { PermissionsUtil } from "../../util/permissions";
 
-import { AppContext, ISpace, ISpaceInfo, IKey, IKeyInfo } from "../../Types";
+import { AppContext, IKey, IKeyInfo, ISpace, ISpaceInfo } from "../../Types";
 
 import Denied from "../Shared/Denied";
 import SearchTags from "../Tags/SearchTags";
@@ -14,7 +14,7 @@ import SpacesList from "./SpacesList";
 import SpacesTable from "./SpacesTable";
 
 interface IProps {
-    selectedKey?: IKey;
+    selectedKeyInfo?: IKeyInfo;
 }
 
 interface IState {
@@ -47,12 +47,12 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     public async componentDidMount() {
-        const { selectedKey } = this.props;
+        const { selectedKeyInfo } = this.props;
         const { team } = this.context;
 
         let spacesFetchUrl =  "";
-        if(!!selectedKey) {
-            spacesFetchUrl = `/api/${team.slug}/spaces/getSpacesForKey?keyid=${selectedKey.id}`;
+        if(!!selectedKeyInfo) {
+            spacesFetchUrl = `/api/${team.slug}/spaces/getSpacesForKey?keyid=${selectedKeyInfo.id}`;
         }
         else {
             spacesFetchUrl = `/api/${team.slug}/spaces/list`;
@@ -103,8 +103,8 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     private _renderTableOrList() {
-        const { selectedKey } = this.props;
-        if (!!selectedKey) {
+        const { selectedKeyInfo } = this.props;
+        if (!!selectedKeyInfo) {
             return this._renderTableList();
         }
 
@@ -136,7 +136,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     private _renderTableList = () => {
-        const { selectedKey } = this.props;
+        const { selectedKeyInfo } = this.props;
         const { tags } = this.state;
         const { action } = this.context.router.route.match.params;
 
@@ -146,13 +146,13 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         return (
             <div>
                 <SpacesList
-                    selectedKey={selectedKey}
+                    selectedKeyInfo={selectedKeyInfo}
                     spaces={spaces}
                     showDetails={this._openDetails}
                     onDisassociate={this._disassociateSpace}
                 />
                 <AssociateSpace
-                    selectedKey={selectedKey}
+                    selectedKeyInfo={selectedKeyInfo}
                     onAssign={this._associateSpace}
                     openModal={() => this._openAssociateModal(null)}
                     closeModal={this._closeModals}
@@ -304,11 +304,11 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
     private _getBaseUrl = () => {
         const { team } = this.context;
-        const { selectedKey } = this.props;
+        const { selectedKeyInfo } = this.props;
 
-        if(!!selectedKey)
+        if(!!selectedKeyInfo)
         {
-            return `/${team.slug}/keys/details/${selectedKey.id}`;
+            return `/${team.slug}/keys/details/${selectedKeyInfo.id}`;
         }
 
         return `/${team.slug}`;
