@@ -12,9 +12,7 @@ interface IProps {
     showDetails?: (key: IKey) => void;
     onEdit?: (key: IKey) => void;
     onDelete?: (key: IKey) => void;
-
     keys: IKey[];
-
     filters: any[];
     onFiltersChange: (filters: any[]) => void;
 }

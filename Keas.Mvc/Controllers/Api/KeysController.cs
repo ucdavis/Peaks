@@ -132,6 +132,55 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var key = await _context.Keys
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Team)
+                .Include(x => x.Serials)
+                    .ThenInclude(serials => serials.KeySerialAssignment)
+                        .ThenInclude(assignment => assignment.Person.User)
+                .Include(x => x.KeyXSpaces)
+                .SingleAsync(x => x.Id == id);
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+
+                _context.Keys.Update(key);
+
+                if(key.Serials.Count > 0)
+                {
+                    foreach(var serial in key.Serials.ToList()) 
+                    {
+                        _context.KeySerials.Update(serial);
+                        if(serial.KeySerialAssignment != null)
+                        {
+                            await _eventService.TrackUnAssignKeySerial(serial); // call before we remove person info
+                            _context.KeySerialAssignments.Remove(serial.KeySerialAssignment);
+                        }
+                        serial.Active = false;
+                    }
+                }
+
+                if(key.KeyXSpaces.Count > 0)
+                {
+                    foreach(var keyXSpace in key.KeyXSpaces.ToList())
+                    {
+                        _context.KeyXSpaces.Remove(keyXSpace);
+                    }
+                }
+
+                key.Active = false;
+                await _context.SaveChangesAsync();
+                await _eventService.TrackKeyDeleted(key);
+
+                transaction.Commit();
+                return Json(null);
+            }
+
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AssociateSpace(int id, [FromBody] AssociateKeyViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team

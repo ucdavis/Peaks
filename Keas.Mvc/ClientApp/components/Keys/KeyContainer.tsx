@@ -13,6 +13,7 @@ import KeyTable from "./KeyTable";
 import SearchTags from "../Tags/SearchTags";
 
 import { PermissionsUtil } from "../../util/permissions";
+import DeleteKey from "./DeleteKey";
 
 interface IProps {
     assetInUseUpdated?: (
@@ -136,6 +137,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         selectedKey={selectedKey}
                         searchableTags={tags}
                     />
+                    <DeleteKey 
+                        selectedKey={selectedKey}
+                        deleteKey={this._deleteKey}
+                        closeModal={this._closeModals}
+                        modal={keyAction === "delete"}
+                    />
                     {!!space && (
                         <AssociateSpace
                             selectedKey={selectedKey}
@@ -188,6 +195,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                     keys={filteredKeys}
                     onEdit={this._openEditModal}
                     showDetails={this._openDetailsModal}
+                    onDelete={this._openDeleteModal}
                     filters={tableFilters}
                     onFiltersChange={this._onTableFiltered}
                 />
@@ -204,6 +212,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                     keys={this.state.keys}
                     onEdit={this._openEditModal}
                     showDetails={this._openDetailsModal}
+                    onDelete={this._openDeleteModal}
                     onDisassociate={
                         !!space ? k => this._disassociateSpace(space, k) : null
                     }
@@ -308,6 +317,35 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         // TODO: handle count changes once keys are related to spaces
     };
 
+    private _deleteKey = async (key: IKey) => {
+        if(!confirm("Are you should you want to delete item?")){
+          return false;
+        }
+        const deleted: IKey = await this.context.fetch(`/api/${this.context.team.slug}/keys/delete/${key.id}`, {
+          method: "POST"
+        });
+        
+    
+        // remove from state
+        const index = this.state.keys.indexOf(key);
+        if (index > -1) {
+          const shallowCopy = [...this.state.keys];
+          shallowCopy.splice(index, 1);
+          this.setState({ keys: shallowCopy });
+    
+        //   if(key.assignment !== null && this.props.assetInUseUpdated)
+        //   {
+        //     this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
+        //       this.props.person ? this.props.person.id : null, -1);
+        //   }
+        //   if(this.props.assetTotalUpdated)
+        //   {
+        //     this.props.assetTotalUpdated("equipment", this.props.space ? this.props.space.id : null,
+        //       this.props.person ? this.props.person.id : null, -1);
+        //   }
+        }
+      };
+
     private _associateSpace = async (space: ISpace, key: IKey) => {
         const { team } = this.context;
         const { keys } = this.state;
@@ -393,6 +431,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         const { team } = this.context;
         this.context.router.history.push(`/${team.slug}/keys/edit/${key.id}`);
     };
+
+    private _openDeleteModal = (equipment: IKey) => {
+        this.context.router.history.push(
+          `${this._getBaseUrl()}/keys/delete/${equipment.id}`
+        );
+      }
 
     private _openAssociate = () => {
         this.context.router.history.push(

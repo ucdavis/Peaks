@@ -9,6 +9,7 @@ interface IProps {
   onAdd?: (key: IKey) => void;
   showDetails?: (key: IKey) => void;
   onEdit?: (key: IKey) => void;
+  onDelete?: (key: IKey) => void;
 }
 
 export default class KeyListItem extends React.Component<IProps, {}> {
@@ -31,6 +32,10 @@ export default class KeyListItem extends React.Component<IProps, {}> {
     if (!!this.props.onEdit) {
         actions.push({ title: 'Edit', onClick: () => this.props.onEdit(keyEntity) });
     }
+
+    if (!!this.props.onDelete) {
+      actions.push({ title: 'Delete', onClick: () => this.props.onDelete(keyEntity) });
+  }
 
     return (
       <tr>
