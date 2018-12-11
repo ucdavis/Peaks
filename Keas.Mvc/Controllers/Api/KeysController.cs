@@ -42,17 +42,26 @@ namespace Keas.Mvc.Controllers.Api
         // List all keys for a team
         public async Task<IActionResult> List()
         {
-            var keys = await _context.Keys
-                .Where(x => x.Team.Slug == Team)
+            var keys = 
+            from key in _context.Keys.Where(x => x.Team.Slug == Team )
                 .Include(x => x.Serials)
                     .ThenInclude(serials => serials.KeySerialAssignment)
                         .ThenInclude(assignment => assignment.Person.User)
                 .Include(x => x.KeyXSpaces)
                     .ThenInclude(xs => xs.Space)
                 .AsNoTracking()
-                .ToListAsync();
-
-            return Json(keys);
+            select new
+            {
+                key = key,
+                id = key.Id,
+                serialsTotalCount = 
+                    (key.Serials).Count(),
+                serialsInUseCount = 
+                    (from s in key.Serials where s.KeySerialAssignment != null select s ).Count(),
+                spacesCount = 
+                    (key.KeyXSpaces).Count(),
+                };
+            return Json(await keys.ToListAsync());
         }
 
         // list all keys for a space
@@ -71,9 +80,19 @@ namespace Keas.Mvc.Controllers.Api
 
             // you can't do both select and include
             // so map after fetch
-            var keys = joins.Select(k => k.Key);
+            var keys = 
+            from j in joins
+            select new
+            {
+                key = j.Key,
+                id = j.KeyId,
+                serialsTotalCount = j.Key.Serials.Count(),
+                serialsInUseCount = 
+                    (from s in j.Key.Serials where s.KeySerialAssignment != null select s).Count(),
+                spacesCount = 0 // doesn't matter on spaces page
+            };
 
-            return Json(keys);
+            return Json(keys.ToList());
         }
 
         [HttpPost]

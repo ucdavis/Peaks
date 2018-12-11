@@ -78,6 +78,14 @@ export interface ITeam {
   slug: string;
 }
 
+export interface IKeyInfo {
+  id: number;
+  key: IKey;
+  serialsTotalCount: number;
+  serialsInUseCount: number;
+  spacesCount: number;
+}
+
 export interface IKey {
   id: number;
   teamId: number;

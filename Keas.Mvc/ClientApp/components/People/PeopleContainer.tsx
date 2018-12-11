@@ -140,7 +140,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         }
         this.setState({people});
     }
-}
+  }
 
   // tags 
   private _filterTags = (filters: string[]) => {

@@ -1,7 +1,7 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 
-import { AppContext, IKey, IPerson, ISpace } from "../../Types";
+import { AppContext, IKey, IPerson, ISpace, IKeyInfo } from "../../Types";
 
 import AssociateSpace from "./AssociateSpace";
 import CreateKey from "./CreateKey";
@@ -37,7 +37,7 @@ interface IProps {
 
 interface IState {
     loading: boolean;
-    keys: IKey[]; // either key assigned to this person, or all team keys
+    keys: IKeyInfo[]; // either key assigned to this person, or all team keys
     tags: string[];
 
     tableFilters: any[];
@@ -71,9 +71,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
         // are we getting the person's key or the team's?
         let keyFetchUrl = "";
-        if (!!this.props.person) {
-            keyFetchUrl = `/api/${team.slug}/keys/listassigned?personid=${this.props.person.id}`;
-        } else if (!!this.props.space) {
+        if (!!this.props.space) {
             keyFetchUrl = `/api/${team.slug}/keys/getKeysInSpace?spaceId=${this.props.space.id}`;
         } else {
             keyFetchUrl = `/api/${team.slug}/keys/list/`;
@@ -106,8 +104,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         } = this.context.router.route.match.params;
 
         const selectedKeyId = parseInt(keyId, 10);
-        const selectedKey = this.state.keys.find(k => k.id === selectedKeyId);
-
+        const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
+        const selectedKey = selectedKeyInfo ? selectedKeyInfo.key : null;
         return (
             <div className="card keys-color">
                 <div className="card-header-keys">
@@ -145,7 +143,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                     />
                     {!!space && (
                         <AssociateSpace
-                            selectedKey={selectedKey}
+                            selectedKeyInfo={selectedKeyInfo}
                             selectedSpace={space}
                             onAssign={this._associateSpace}
                             isModalOpen={action === "associate"}
@@ -176,9 +174,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         // check for tag filters
         if (tagFilters && tagFilters.length) {
             filteredKeys = keys
-                .filter(k => k.tags && k.tags.length)
+                .filter(k => !!k.key && k.key.tags && k.key.tags.length)
                 .filter(k => {
-                    const keyTags = k.tags.split(",");
+                    const keyTags = k.key.tags.split(",");
                     return tagFilters.every(t => keyTags.includes(t));
                 });
         }
@@ -192,7 +190,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                     onSelect={this._onTagsFiltered}
                 />
                 <KeyTable
-                    keys={filteredKeys}
+                    keysInfo={filteredKeys}
                     onEdit={this._openEditModal}
                     showDetails={this._openDetailsModal}
                     onDelete={this._openDeleteModal}
@@ -209,7 +207,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         return (
             <div>
                 <KeyList
-                    keys={this.state.keys}
+                    keysInfo={this.state.keys}
                     onEdit={this._openEditModal}
                     showDetails={this._openDetailsModal}
                     onDelete={this._openDeleteModal}
@@ -224,12 +222,15 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     private _renderDetailsView() {
         const { keyId } = this.context.router.route.match.params;
         const selectedKeyId = parseInt(keyId, 10);
-        const selectedKey = this.state.keys.find(k => k.id === selectedKeyId);
+        const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
+        const selectedKey = selectedKeyInfo.key;
 
         return (
             <KeyDetailContainer
                 selectedKey={selectedKey}
                 goBack={this._closeModals}
+                serialInUseUpdated={this._serialInUseUpdated}
+                serialTotalUpdated={this._serialTotalUpdated}
             />
         );
     }
@@ -248,10 +249,18 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         });
 
         const index = this.state.keys.findIndex(x => x.id === key.id);
+        let keyInfo: IKeyInfo = {
+            id: key.id,
+            key,
+            serialsInUseCount: 0,
+            serialsTotalCount: 0,
+            spacesCount: 0,
+        };
         if (index !== -1) {
             // update already existing entry in key
             const updateKeys = [...this.state.keys];
-            updateKeys[index] = key;
+            updateKeys[index].key = key;
+            keyInfo = updateKeys[index];
 
             this.setState({
                 ...this.state,
@@ -259,7 +268,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             });
         } else {
             this.setState({
-                keys: [...this.state.keys, key]
+                keys: [...this.state.keys, keyInfo]
             });
         }
 
@@ -272,7 +281,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             );
         }
 
-        return key;
+        return keyInfo;
     };
 
     private _editKey = async (key: IKey) => {
@@ -299,7 +308,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
         // update already existing entry in key
         const updateKey = [...this.state.keys];
-        updateKey[index] = key;
+        updateKey[index].key = key;
 
         this.setState({
             ...this.state,
@@ -327,7 +336,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         
     
         // remove from state
-        const index = this.state.keys.indexOf(key);
+        const index = this.state.keys.findIndex(x => x.id === key.id);
         if (index > -1) {
           const shallowCopy = [...this.state.keys];
           shallowCopy.splice(index, 1);
@@ -335,30 +344,33 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         }
       };
 
-    private _associateSpace = async (space: ISpace, key: IKey) => {
+    private _associateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
         const { team } = this.context;
         const { keys } = this.state;
 
         // possibly create key
-        if (key.id === 0) {
-            key = await this._createKey(key);
+        if (keyInfo.id === 0) {
+            keyInfo = await this._createKey(keyInfo.key);
         }
 
         const request = {
             spaceId: space.id
         };
 
-        const associateUrl = `/api/${team.slug}/keys/associateSpace/${key.id}`;
+        const associateUrl = `/api/${team.slug}/keys/associateSpace/${keyInfo.id}`;
         const association = await this.context.fetch(associateUrl, {
             body: JSON.stringify(request),
             method: "POST"
         });
 
-        const index = this.state.keys.findIndex(x => x.id === key.id);
+        // update count here
+        keyInfo.spacesCount++;
+
+        const index = this.state.keys.findIndex(x => x.id === keyInfo.id);
         if (index !== -1) {
             // update already existing entry in key
             const updateKeys = [...this.state.keys];
-            updateKeys[index] = key;
+            updateKeys[index] = keyInfo;
 
             this.setState({
                 ...this.state,
@@ -366,7 +378,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             });
         } else {
             this.setState({
-                keys: [...this.state.keys, key]
+                keys: [...this.state.keys, keyInfo]
             });
         }
         if(this.props.assetTotalUpdated)
@@ -376,7 +388,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         }
     };
 
-    private _disassociateSpace = async (space: ISpace, key: IKey) => {
+    private _disassociateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
         const { team } = this.context;
         const { keys } = this.state;
 
@@ -385,15 +397,18 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         };
 
         const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${
-            key.id
+            keyInfo.id
         }`;
         const result = await this.context.fetch(disassociateUrl, {
             body: JSON.stringify(request),
             method: "POST"
         });
 
+        // update count here
+        keyInfo.spacesCount--;
+
         const updatedKeys = [...keys];
-        const index = updatedKeys.findIndex(k => k.id === key.id);
+        const index = updatedKeys.findIndex(k => k.id === keyInfo.id);
         updatedKeys.splice(index, 1);
 
         this.setState({
@@ -406,6 +421,28 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             this.props.person ? this.props.person.id : null, -1);
         }
     };
+
+    // managing counts for assigned or revoked
+    private _serialInUseUpdated = (keyId: number, count: number) => {
+        const index = this.state.keys.findIndex(x => x.id === keyId);
+        if(index > -1)
+        {
+            const keys = [...this.state.keys];
+            keys[index].serialsInUseCount += count;
+            
+            this.setState({keys});
+        }
+    }
+    private _serialTotalUpdated = (keyId: number, count: number) => {
+        const index = this.state.keys.findIndex(x => x.id === keyId);
+        if(index > -1)
+        {
+            const keys = [...this.state.keys];
+            keys[index].serialsTotalCount += count;
+            
+            this.setState({keys});
+        }
+    }
 
     private _onTagsFiltered = (tagFilters: string[]) => {
         this.setState({ tagFilters });

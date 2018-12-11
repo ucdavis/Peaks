@@ -2,11 +2,11 @@ import * as React from "react";
 
 import KeyListItem from "./KeyListItem";
 
-import { IKey } from "../../Types";
+import { IKey, IKeyInfo } from "../../Types";
 
 interface IProps {
-    keys: IKey[];
-    onDisassociate?: (key: IKey) => void;
+    keysInfo: IKeyInfo[];
+    onDisassociate?: (key: IKeyInfo) => void;
     onAdd?: (key: IKey) => void;
     showDetails?: (key: IKey) => void;
     onEdit?: (key: IKey) => void;
@@ -15,7 +15,7 @@ interface IProps {
 
 export default class KeyList extends React.Component<IProps, {}> {
     public render() {
-        const { keys } = this.props;
+        const { keysInfo } = this.props;
 
         return (
             <table className="table">
@@ -27,16 +27,16 @@ export default class KeyList extends React.Component<IProps, {}> {
                         <th className="list-actions">Actions</th>
                     </tr>
                 </thead>
-                <tbody>{keys.map(this.renderItem)}</tbody>
+                <tbody>{keysInfo.map(this.renderItem)}</tbody>
             </table>
         );
     }
 
-    private renderItem = (key) => {
+    private renderItem = (keyInfo) => {
         return (
             <KeyListItem
-                key={key.id}
-                keyEntity={key}
+                key={keyInfo.id}
+                keyInfo={keyInfo}
                 onDisassociate={this.props.onDisassociate}
                 onAdd={this.props.onAdd}
                 onDelete={this.props.onDelete}

@@ -3,7 +3,7 @@ import {
     Button,
 } from "reactstrap";
 
-import { IKey } from "../../Types";
+import { IKey, IKeySerial } from "../../Types";
 
 import HistoryContainer from "../History/HistoryContainer";
 import KeySerialContainer from "./KeySerialContainer";
@@ -12,6 +12,8 @@ import SpacesContainer from "../Spaces/SpacesContainer";
 interface IProps {
     goBack: () => void;
     selectedKey: IKey;
+    serialInUseUpdated: (keyId: number, count: number) => void;
+    serialTotalUpdated: (keyId: number, count: number) => void;
 }
 
 export default class KeyDetailContainer extends React.Component<IProps, {}> {
@@ -37,10 +39,17 @@ export default class KeyDetailContainer extends React.Component<IProps, {}> {
                         <i className="fas fa-tags mr-2" aria-hidden="true" />{ selectedKey.tags }
                     </p>
                 }
-                <KeySerialContainer selectedKey={selectedKey} />
+                <KeySerialContainer selectedKey={selectedKey} assetInUseUpdated={this._serialInUseUpdated} assetTotalUpdated={this._serialTotalUpdated} />
                 <SpacesContainer selectedKey={selectedKey} />
                 <HistoryContainer controller="keys" id={selectedKey.id} />
             </div>
         );
+    }
+    
+    private _serialInUseUpdated = (type: string, spaceId: number, personId: number, count: number) => {
+        this.props.serialInUseUpdated(this.props.selectedKey.id, count);
+    }
+    private _serialTotalUpdated = (type: string, spaceId: number, personId: number, count: number) => {
+        this.props.serialTotalUpdated(this.props.selectedKey.id, count);
     }
 }

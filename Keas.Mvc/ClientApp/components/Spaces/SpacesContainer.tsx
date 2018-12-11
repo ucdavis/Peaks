@@ -3,7 +3,7 @@ import * as React from "react";
 
 import { PermissionsUtil } from "../../util/permissions";
 
-import { AppContext, ISpace, ISpaceInfo, IKey } from "../../Types";
+import { AppContext, ISpace, ISpaceInfo, IKey, IKeyInfo } from "../../Types";
 
 import Denied from "../Shared/Denied";
 import SearchTags from "../Tags/SearchTags";
@@ -249,7 +249,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         }
     }
 
-    private _associateSpace = async (space: ISpace, key: IKey) => {
+    private _associateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
         const { team } = this.context;
         const { spaces } = this.state;
 
@@ -257,7 +257,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             spaceId: space.id,
         };
 
-        const associateUrl = `/api/${team.slug}/keys/associateSpace/${key.id}`;
+        const associateUrl = `/api/${team.slug}/keys/associateSpace/${keyInfo.id}`;
         const result = await this.context.fetch(associateUrl, {
             body: JSON.stringify(request),
             method: "POST",
@@ -278,7 +278,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         });
     }
 
-    private _disassociateSpace = async (space: ISpace, key: IKey) => {
+    private _disassociateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
         const { team } = this.context;
         const { spaces } = this.state;
 
@@ -286,7 +286,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             spaceId: space.id,
         }
 
-        const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${key.id}`;
+        const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${keyInfo.id}`;
         const result = await this.context.fetch(disassociateUrl, {
             body: JSON.stringify(request),
             method: "POST",
