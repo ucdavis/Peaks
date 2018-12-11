@@ -5,6 +5,7 @@ import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 import { IKey, IKeySerial, AppContext } from "../../Types";
 
 interface IProps {
+    allowNew: boolean;
     selectedKey?: IKey;
     selectedKeySerial?: IKeySerial;
     onSelect: (keySerial: IKeySerial) => void;
@@ -64,7 +65,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
                 placeholder="Search for key by name or by serial number"
                 labelKey="number"
                 filterBy={() => true} // don't filter on top of our search
-                allowNew={true}
+                allowNew={this.props.allowNew}
                 renderMenuItemChildren={this.renderItem}
                 onSearch={this.onSearch}
                 onChange={this.onChange}
