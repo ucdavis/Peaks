@@ -121,7 +121,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
               </div>
     
               <div className="form-group">
-                <label>Pick an key serial to assign</label>
+                <label>Pick a key serial to assign</label>
                 <SearchKeySerial
                   selectedKey={selectedKey}
                   selectedKeySerial={keySerial}
