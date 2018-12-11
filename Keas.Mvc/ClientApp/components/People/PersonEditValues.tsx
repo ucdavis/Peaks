@@ -92,6 +92,9 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                       onChange={this._changeStartDate}
                       onChangeRaw={this._changeStartDateRaw}
                       className="form-control"
+                      showMonthDropdown={true}
+                      showYearDropdown={true}
+                      dropdownMode="select"
                     />
                 </div>
 
@@ -102,6 +105,9 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                       onChange={this._changeEndDate}
                       onChangeRaw={this._changeEndDateRaw}
                       className="form-control"
+                      showMonthDropdown={true}
+                      showYearDropdown={true}
+                      dropdownMode="select"
                     />
                 </div>
                 

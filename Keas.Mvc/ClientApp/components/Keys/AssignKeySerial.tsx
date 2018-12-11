@@ -137,6 +137,9 @@ export default class AssignKey extends React.Component<IProps, IState> {
                     onChange={this._onChangeDate}
                     onChangeRaw={this._onChangeDateRaw}
                     className="form-control"
+                    showMonthDropdown={true}
+                    showYearDropdown={true}
+                    dropdownMode="select"
                   />
                 </div>
               )}
