@@ -184,17 +184,17 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
       keySerials: updateKeySerials,
     });
 
-    // if(updateTotalAssetCount && this.props.assetTotalUpdated)
-    // {
-    //     this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
-    //        this.props.person ? this.props.person.id : null, 1);
-    // }
+    if(updateTotalAssetCount && this.props.assetTotalUpdated)
+    {
+        this.props.assetTotalUpdated("serial", null,
+           this.props.selectedPerson ? this.props.selectedPerson.id : null, 1);
+    }
 
-    // if(updateInUseAssetCount && this.props.assetInUseUpdated)
-    // {
-    //     this.props.assetInUseUpdated("key", this.props.space ? this.props.space.id : null,
-    //       this.props.person ? this.props.person.id : null, 1);
-    // }
+    if(updateInUseAssetCount && this.props.assetInUseUpdated)
+    {
+        this.props.assetInUseUpdated("serial", null,
+          this.props.selectedPerson ? this.props.selectedPerson.id : null, 1);
+    }
   }
 
   private _revokeKeySerial = async (keySerial: IKeySerial) => {
@@ -221,11 +221,11 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
       this.setState({ keySerials: shallowCopy });
 
-      // if(this.props.assetInUseUpdated)
-      // {
-      //   this.props.assetInUseUpdated("key", this.props.space ? this.props.space.id: null,
-      //   this.props.person ? this.props.person.id : null, -1); 
-      // }
+      if(this.props.assetInUseUpdated)
+      {
+        this.props.assetInUseUpdated("serial", null,
+        this.props.selectedPerson ? this.props.selectedPerson.id : null, -1); 
+      }
     }
   };
 

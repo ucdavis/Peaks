@@ -332,17 +332,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           const shallowCopy = [...this.state.keys];
           shallowCopy.splice(index, 1);
           this.setState({ keys: shallowCopy });
-    
-        //   if(key.assignment !== null && this.props.assetInUseUpdated)
-        //   {
-        //     this.props.assetInUseUpdated("equipment", this.props.space ? this.props.space.id : null,
-        //       this.props.person ? this.props.person.id : null, -1);
-        //   }
-        //   if(this.props.assetTotalUpdated)
-        //   {
-        //     this.props.assetTotalUpdated("equipment", this.props.space ? this.props.space.id : null,
-        //       this.props.person ? this.props.person.id : null, -1);
-        //   }
         }
       };
 
