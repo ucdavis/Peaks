@@ -142,7 +142,10 @@ export default class KeyTable extends React.Component<IProps, IState> {
                         sortable: false,
                         resizable: false,
                         className: "table-actions",
-                        Cell: this.renderSpacesColumn
+                        Cell: (row) => (
+                            <span><i className="fas fa-building mr-2" /> {row.original.spacesCount}</span>
+
+                        )
                     },
                     {
                         Header: "",
@@ -156,15 +159,6 @@ export default class KeyTable extends React.Component<IProps, IState> {
                 ]}
             />
         );
-    }
-
-
-    private renderSpacesColumn = (row: IRow) => {
-        const { keyXSpaces } = row.original.key;
-
-        return (
-            <span><i className="fas fa-building mr-2" /> {!!keyXSpaces ? keyXSpaces.length : 0}</span>
-        )
     }
 
     private renderDropdownColumn = (row: IRow) => {

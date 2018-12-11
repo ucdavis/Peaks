@@ -231,6 +231,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                 goBack={this._closeModals}
                 serialInUseUpdated={this._serialInUseUpdated}
                 serialTotalUpdated={this._serialTotalUpdated}
+                spacesTotalUpdated={this._spacesTotalUpdated}
             />
         );
     }
@@ -439,6 +440,17 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         {
             const keys = [...this.state.keys];
             keys[index].serialsTotalCount += count;
+            
+            this.setState({keys});
+        }
+    }
+
+    private _spacesTotalUpdated = (keyId: number, count: number) => {
+        const index = this.state.keys.findIndex(x => x.id === keyId);
+        if(index > -1)
+        {
+            const keys = [...this.state.keys];
+            keys[index].spacesCount += count;
             
             this.setState({keys});
         }

@@ -15,6 +15,7 @@ import SpacesTable from "./SpacesTable";
 
 interface IProps {
     selectedKeyInfo?: IKeyInfo;
+    spacesTotalUpdated?: (keyId: number, count: number) => void;
 }
 
 interface IState {
@@ -276,6 +277,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         this.setState({
             spaces: updatedSpaces,
         });
+        this.props.spacesTotalUpdated(this.props.selectedKeyInfo.id, 1);
     }
 
     private _disassociateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
@@ -300,6 +302,8 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         this.setState({
             spaces: updatedSpaces,
         });
+        this.props.spacesTotalUpdated(this.props.selectedKeyInfo.id, -1);
+
     }
 
     private _getBaseUrl = () => {

@@ -14,6 +14,7 @@ interface IProps {
     selectedKeyInfo: IKeyInfo;
     serialInUseUpdated: (keyId: number, count: number) => void;
     serialTotalUpdated: (keyId: number, count: number) => void;
+    spacesTotalUpdated: (keyId: number, count: number) => void;
 }
 
 export default class KeyDetailContainer extends React.Component<IProps, {}> {
@@ -40,7 +41,7 @@ export default class KeyDetailContainer extends React.Component<IProps, {}> {
                     </p>
                 }
                 <KeySerialContainer selectedKey={selectedKeyInfo.key} assetInUseUpdated={this._serialInUseUpdated} assetTotalUpdated={this._serialTotalUpdated} />
-                <SpacesContainer selectedKeyInfo={selectedKeyInfo} />
+                <SpacesContainer selectedKeyInfo={selectedKeyInfo} spacesTotalUpdated={this.props.spacesTotalUpdated} />
                 <HistoryContainer controller="keys" id={selectedKeyInfo.id} />
             </div>
         );
