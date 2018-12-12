@@ -39,7 +39,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                     <select className="form-control" value={statusValue} onChange={this.onChangeStatus}>
                         <option value="Active">Active</option>
                         <option value="Lost">Lost</option>
-                        <option value="Destoryed">Destoryed</option>
+                        <option value="Destroyed">Destroyed</option>
                         <option value="Dog ate">Dog ate</option>
                     </select>
                 </div>

@@ -10,6 +10,6 @@ namespace Keas.Core.Resources
 
         public static string Lost = "Lost";
 
-        public static string Destoryed = "Destoryed";
+        public static string Destroyed = "Destroyed";
     }
 }

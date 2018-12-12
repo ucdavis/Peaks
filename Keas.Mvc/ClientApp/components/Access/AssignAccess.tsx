@@ -131,6 +131,9 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                             onChange={this._changeDate}
                                             onChangeRaw={this._changeDateRaw}
                                             className="form-control"
+                                            showMonthDropdown={true}
+                                            showYearDropdown={true}
+                                            dropdownMode="select"
                                         />
                                     </div>}
                                 {this.state.error}
