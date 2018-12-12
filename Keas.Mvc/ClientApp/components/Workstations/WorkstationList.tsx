@@ -10,6 +10,7 @@ interface IProps {
     onCreate?: () => void;
     showDetails?: (workstation: IWorkstation) => void;
     onEdit?: (workstation: IWorkstation) => void;
+    onDelete?: (workstation: IWorkstation) => void;
 }
 
 export default class WorkstationList extends React.Component<IProps, {}> {
@@ -22,6 +23,7 @@ export default class WorkstationList extends React.Component<IProps, {}> {
               onAdd={this.props.onAdd}
               showDetails={this.props.showDetails}
               onEdit={this.props.onEdit}
+              onDelete={this.props.onDelete}
           />
     ));
       return (

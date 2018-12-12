@@ -200,6 +200,37 @@ namespace Keas.Mvc.Controllers.Api
             return BadRequest(ModelState);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var workstation = await _context.Workstations
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Team)
+                .Include(x => x.Assignment)
+                    .ThenInclude(x => x.Person.User)
+                .Include(x => x.Space)
+                .SingleAsync(x => x.Id == id);
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+
+                if(workstation.Assignment != null)
+                {
+                    await _eventService.TrackUnAssignWorkstation(workstation); // call before we remove person info
+                    _context.WorkstationAssignments.Remove(workstation.Assignment);
+                    workstation.Assignment = null;
+                }
+
+                workstation.Active = false;
+                await _context.SaveChangesAsync();
+                await _eventService.TrackWorkstationDeleted(workstation);
+
+                transaction.Commit();
+                return Json(null);
+            }
+
+        }
+
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
