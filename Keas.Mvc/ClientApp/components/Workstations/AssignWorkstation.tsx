@@ -100,29 +100,42 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     onSelect={this._onSelectPerson}
                   />
                 </div>
+                {!this.state.workstation &&
                 <div className="form-group">
-                  <label>Pick a workstation to assign</label>
                   <SearchWorkstations
                     selectedWorkstation={this.state.workstation}
                     onSelect={this._onSelected}
                     onDeselect={this._onDeselected}
                     space={this.props.space}
                   />
-                  </div>
-                {(!this.state.workstation || !this.state.workstation.teamId) && // if we are creating a new workstation, edit properties
+                  </div>}
+                {(this.state.workstation && !this.state.workstation.teamId) && // if we are creating a new workstation, edit properties
+                  <div>
+                    <div className="row justify-content-between">
+                      <h3>Create New Workstation</h3>
+                      <Button className="btn btn-link" onClick={this._onDeselected}>
+                        Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
+                    </div>
                     <WorkstationEditValues
                       tags={this.props.tags}
                       selectedWorkstation={this.state.workstation}
                       changeProperty={this._changeProperty}
-                      creating={true}
                       disableEditing={false}
                     />
+                  </div>
                   }
                 {!!this.state.workstation && !!this.state.workstation.teamId &&
+                  <div>
+                    <div className="row justify-content-between">
+                      <h3>Assign Existing Workstation</h3>
+                      <Button className="btn btn-link" onClick={this._onDeselected}>
+                      Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
+                    </div>
                     <WorkstationEditValues
                       selectedWorkstation={this.state.workstation}
                       disableEditing={true}
                       />
+                    </div>
                   }
 
                 {(!!this.state.person || !!this.props.person) && (

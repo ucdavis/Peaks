@@ -11,6 +11,7 @@ interface IProps {
     onAdd?: (workstation: IWorkstation) => void;
     showDetails?: (workstation: IWorkstation) => void;
     onEdit?: (workstation: IWorkstation) => void;
+    onDelete?: (workstation: IWorkstation) => void;
 }
 
 
@@ -38,6 +39,10 @@ export default class WorkstationListItem extends React.Component<IProps, {}> {
         if (!!this.props.onEdit) {
             actions.push({ title: 'Edit', onClick: () => this.props.onEdit(workstationEntity) });
         }
+
+        if (!!this.props.onDelete) {
+          actions.push({ title: 'Delete', onClick: () => this.props.onDelete(workstationEntity) });
+      }
 
         return (
           <tr>

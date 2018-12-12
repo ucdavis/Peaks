@@ -1,7 +1,7 @@
 ﻿import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
-
+import {Button} from "reactstrap";
 import { AppContext, ISpace, IWorkstation } from "../../Types";
 
 interface IProps {
@@ -46,47 +46,54 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
             `/api/${this.context.team.slug}/workstations/search?q=`;
         return (
             <div>
-                <AsyncTypeahead
-                    isLoading={this.state.isSearchLoading}
-                    minLength={3}
-                    placeholder="Search for workstation by name or room"
-                    labelKey="name"
-                    filterBy={() => true} // don't filter on top of our search
-                    allowNew={true}
-                    renderMenuItemChildren={(option, props, index) => (
-                        <div>
+                <label>Pick a workstation to assign</label>
+                <div>
+                    <AsyncTypeahead
+                        isLoading={this.state.isSearchLoading}
+                        minLength={3}
+                        placeholder="Search for workstation by name or room"
+                        labelKey="name"
+                        filterBy={() => true} // don't filter on top of our search
+                        allowNew={false}
+                        renderMenuItemChildren={(option, props, index) => (
                             <div>
-                                <Highlighter key="name" search={props.text}>
-                                    {option.name}
-                                </Highlighter>
+                                <div>
+                                    <Highlighter key="name" search={props.text}>
+                                        {option.name}
+                                    </Highlighter>
+                                </div>
+                                <div>
+                                    <small>
+                                        Room: {" "}
+                                        <Highlighter key="space.roomNumber" search={props.text}>{option.space.roomNumber}</Highlighter>
+                                        {" "} 
+                                        <Highlighter key="space.bldgName" search={props.text}>{option.space.bldgName}</Highlighter>
+                                    </small>
+                                </div>
                             </div>
-                            <div>
-                                <small>
-                                    Room: {" "}
-                                    <Highlighter key="space.roomNumber" search={props.text}>{option.space.roomNumber}</Highlighter>
-                                    {" "} 
-                                    <Highlighter key="space.bldgName" search={props.text}>{option.space.bldgName}</Highlighter>
-                                </small>
-                            </div>
-                        </div>
-                    )}
-                    onSearch={async query => {
-                        this.setState({ isSearchLoading: true });
-                        const workstations = await this.context.fetch(
-                            searchUrl + query
-                        );
-                        this.setState({
-                            isSearchLoading: false,
-                            workstations
-                        });
-                    }}
-                    onChange={selected => {
-                        if (selected && selected.length === 1) {
-                            this._onSelected(selected[0]);
-                        }
-                    }}
-                    options={this.state.workstations}
-                />
+                        )}
+                        onSearch={async query => {
+                            this.setState({ isSearchLoading: true });
+                            const workstations = await this.context.fetch(
+                                searchUrl + query
+                            );
+                            this.setState({
+                                isSearchLoading: false,
+                                workstations
+                            });
+                        }}
+                        onChange={selected => {
+                            if (selected && selected.length === 1) {
+                                this._onSelected(selected[0]);
+                            }
+                        }}
+                        options={this.state.workstations}
+                    />
+                </div>
+                <div>or</div>
+                <div>
+                    <Button color="link" onClick={this._createNew}><i className="fas fa-plus fa-sm" aria-hidden="true" /> Create New Workstation</Button>    
+                </div>
             </div>
         );
     }
@@ -109,13 +116,17 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
         }
         else {
             // if teamId is not set, this is a new workstation
-            this.props.onSelect({
-                id: workstation.teamId ? workstation.id : 0,
-                name: workstation.name,
-                space: workstation.teamId ? workstation.space : this.props.space,
-                tags: workstation.teamId ? workstation.tags : "",
-                teamId: workstation.teamId ? workstation.teamId : 0,
-            });
+            this.props.onSelect(workstation);
         }
     };
+
+    private _createNew = () => {
+        this.props.onSelect({
+            id: 0,
+            name: "",
+            space: this.props.space ? this.props.space : null, // if we are on spaces tab, auto to the right space
+            tags: "",
+            teamId: 0,
+        });
+    }
 }
