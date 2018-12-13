@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
 {
     public class Key : AssetBase
     {
+        [Required]
         public string Code { get; set; }
 
         public List<KeyXSpace> KeyXSpaces { get; set; }
