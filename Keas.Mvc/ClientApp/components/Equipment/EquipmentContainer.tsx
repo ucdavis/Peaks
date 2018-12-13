@@ -1,6 +1,5 @@
 import * as PropTypes from 'prop-types';
 import * as React from "react";
-
 import { AppContext, IEquipment, IPerson, ISpace } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
 import Denied from "../Shared/Denied";

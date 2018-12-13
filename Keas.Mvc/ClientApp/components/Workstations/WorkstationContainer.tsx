@@ -1,6 +1,5 @@
 import * as PropTypes from 'prop-types';
 import * as React from "react";
-import { NavLink, Redirect } from "react-router-dom";
 import { Button } from "reactstrap";
 import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
 import AssignWorkstation from "../Workstations/AssignWorkstation";

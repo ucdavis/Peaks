@@ -1,9 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { Button } from "reactstrap";
-
-import { AppContext, IHistory, IPerson } from "../../Types";
-
+import { AppContext, IHistory } from "../../Types";
 import HistoryList from "./HistoryList";
 
 interface IState {

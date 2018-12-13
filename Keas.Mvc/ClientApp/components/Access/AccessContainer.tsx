@@ -8,8 +8,8 @@ import AccessDetails from "./AccessDetails";
 import AccessList from "./AccessList";
 import AccessTable from "./AccessTable";
 import AssignAccess from "./AssignAccess";
-import EditAccess from "./EditAccess";
 import DeleteAccess from "./DeleteAccess";
+import EditAccess from "./EditAccess";
 
 interface IState {
     accesses: IAccess[]; // either access assigned to this person, or all team access

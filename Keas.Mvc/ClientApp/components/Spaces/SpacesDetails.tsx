@@ -1,16 +1,8 @@
-import * as PropTypes from 'prop-types';
 import * as React from "react";
-import { NavLink, Redirect } from "react-router-dom";
 import {
     Button,
-    ListGroup,
-    ListGroupItem,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader,
 } from "reactstrap";
-import { AppContext, ISpaceInfo } from "../../Types";
+import { ISpaceInfo } from "../../Types";
 import EquipmentContainer from "../Equipment/EquipmentContainer";
 import KeyContainer from "../Keys/KeyContainer";
 import WorkstationContainer from "../Workstations/WorkstationContainer";

@@ -5,14 +5,11 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   Button,
-  ListGroup,
-  ListGroupItem,
   Modal,
   ModalBody,
   ModalFooter,
-  ModalHeader
 } from "reactstrap";
-import { AppContext, IEquipment, IEquipmentAssignment, IEquipmentAttribute, IPerson, ISpace } from "../../Types";
+import { AppContext, IEquipment, IEquipmentAttribute, IPerson, ISpace } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
 import EquipmentEditValues from "./EquipmentEditValues";
 import SearchEquipment from "./SearchEquipment";

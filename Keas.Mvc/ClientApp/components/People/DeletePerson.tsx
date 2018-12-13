@@ -5,10 +5,8 @@ import {
     Modal,
     ModalBody,
     ModalFooter,
-    ModalHeader,
 } from "reactstrap";
 import { AppContext, IPerson, IPersonInfo } from "../../Types";
-import HistoryContainer from "../History/HistoryContainer";
 import PersonEditValues from "./PersonEditValues";
 
 

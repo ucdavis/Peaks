@@ -1,11 +1,8 @@
-﻿import * as PropTypes from 'prop-types';
-import * as React from "react";
+﻿import * as React from "react";
 import {
     Button,
     Modal,
     ModalBody,
-    ModalFooter,
-    ModalHeader,
 } from "reactstrap";
 import { IEquipment } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";

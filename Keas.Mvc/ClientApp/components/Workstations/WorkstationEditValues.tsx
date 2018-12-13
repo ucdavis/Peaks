@@ -1,10 +1,8 @@
 ﻿import * as React from "react";
-
 import { ISpace, IWorkstation } from "../../Types";
+import { DateUtil } from "../../util/dates";
 import SearchSpaces from "../Spaces/SearchSpaces";
 import SearchTags from "../Tags/SearchTags";
-
-import { DateUtil } from "../../util/dates";
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;

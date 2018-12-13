@@ -7,11 +7,9 @@ import {
     Modal,
     ModalBody,
     ModalFooter,
-    ModalHeader,
 } from "reactstrap";
 import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
-import HistoryContainer from "../History/HistoryContainer";
 import SearchWorkstations from "./SearchWorkstations";
 import WorkstationEditValues from "./WorkstationEditValues";
 
@@ -211,8 +209,8 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
     if (workstation.name.length > 64) {
       this.setState(
         {
-          workstation: null,
           error: "The workstation name you have chosen is too long",
+          workstation: null,
         },
         this._validateState
       );

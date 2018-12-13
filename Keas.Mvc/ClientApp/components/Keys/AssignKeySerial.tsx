@@ -1,17 +1,15 @@
+import * as moment from "moment";
 import * as PropTypes from 'prop-types';
 import * as React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   Button,
   Modal,
   ModalBody,
   ModalFooter,
 } from "reactstrap";
-
-import * as moment from "moment";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
-import { AppContext, IKey, IKeySerialAssignment, IPerson, IKeySerial } from "../../Types";
+import { AppContext, IKey, IKeySerial, IPerson } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
 import SearchKeySerial from "./SearchKeySerials";
 

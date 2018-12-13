@@ -2,7 +2,6 @@
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 import {Button} from "reactstrap";
-
 import { AppContext, IEquipment, IEquipmentLabel, ISpace } from "../../Types";
 
 interface IProps {

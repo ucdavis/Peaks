@@ -1,7 +1,6 @@
 import * as React from "react";
-import { DateUtil } from "../../util/dates";
-
 import { IHistory } from "../../Types";
+import { DateUtil } from "../../util/dates";
 
 interface IProps {
     history: IHistory;

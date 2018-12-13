@@ -1,13 +1,12 @@
 import * as PropTypes from 'prop-types';
 import * as React from "react";
-
-import { AppContext, IPersonInfo, IPerson } from "../../Types";
-import PeopleTable from "./PeopleTable";
-import Denied from "../Shared/Denied";
+import { AppContext, IPerson, IPersonInfo } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
+import Denied from "../Shared/Denied";
 import SearchTags from "../Tags/SearchTags";
-import PersonDetails from "./PersonDetails";
 import CreatePerson from "./CreatePerson";
+import PeopleTable from "./PeopleTable";
+import PersonDetails from "./PersonDetails";
 
 interface IState {
   loading: boolean;
@@ -172,11 +171,11 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     }
     // since this is a new person, they will not have anything assigned
     const personInfo: IPersonInfo = {
-      id: person.id,
-      person,
       accessCount: 0,
       equipmentCount: 0,
+      id: person.id,
       keyCount: 0,
+      person,
       workstationCount: 0
     };
     this.setState({
@@ -239,13 +238,6 @@ private _deletePerson = async (person: IPerson) =>
   }); 
 }
 
-  // controls for modal opening to manage people
-  private _openAssignModal = (person: IPerson) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/people/assign/${person.id}`
-    );
-  };
-
   private _openCreateModal = () => {
     this.context.router.history.push(`${this._getBaseUrl()}/people/create`);
   };
@@ -256,11 +248,6 @@ private _deletePerson = async (person: IPerson) =>
     );
   };
 
-  private _openEditModal = (person: IPerson) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/people/edit/${person.id}`
-    );
-  }
   private _goBack = () => {
     this.context.router.history.push(`${this._getBaseUrl()}/people`);
   };

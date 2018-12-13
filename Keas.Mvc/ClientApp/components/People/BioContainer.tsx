@@ -1,6 +1,5 @@
 import * as PropTypes from 'prop-types';
 import * as React from "react";
-
 import { AppContext, IPerson } from "../../Types";
 
 interface IProps {

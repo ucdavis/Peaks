@@ -1,8 +1,7 @@
 ﻿import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
-
-import { IKey, IKeySerial, AppContext } from "../../Types";
+import { AppContext, IKey, IKeySerial } from "../../Types";
 
 interface IProps {
     allowNew: boolean;
