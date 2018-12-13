@@ -20,21 +20,21 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
 
     public render() {
         const columns = [{
-            id: "personFirstName",
             Header: "First Name",
-            accessor: x=> x.person.firstName
+            accessor: x=> x.person.firstName,
+            id: "personFirstName",
         }, {
-            id: "personLastName",
             Header: "Last Name",
-            accessor: x=> x.person.lastName
+            accessor: x=> x.person.lastName,
+            id: "personLastName",
         }, {
-            id: "expiresAt",
             Header: "Expires at",
-            accessor: x=> DateUtil.formatExpiration(x.expiresAt)
+            accessor: x=> DateUtil.formatExpiration(x.expiresAt),
+            id: "expiresAt",
         },{
-            Header: "Revoke",
             Cell: row => (<button type="button" className="btn btn-outline-danger" disabled={this.props.disableEditing  || !this.props.onRevoke}
-                onClick={() => this._revokeSelected(row.original.person.id)}><i className="fas fa-trash" /></button>),        
+            onClick={() => this._revokeSelected(row.original.person.id)}><i className="fas fa-trash" /></button>),        
+            Header: "Revoke",
             sortable: false,
         }]     
 

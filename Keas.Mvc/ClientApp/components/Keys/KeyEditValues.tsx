@@ -1,8 +1,6 @@
 ﻿import * as React from "react";
-
-import SearchTags from "../Tags/SearchTags";
-
 import { IKey } from "../../Types";
+import SearchTags from "../Tags/SearchTags";
 
 interface IProps {
     selectedKey: IKey;

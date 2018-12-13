@@ -1,7 +1,6 @@
-import { DateUtil } from "../../util/dates";
 import * as React from "react";
-
 import { IEquipment } from "../../Types";
+import { DateUtil } from "../../util/dates";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 

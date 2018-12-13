@@ -1,8 +1,6 @@
 import * as React from "react";
-
+import { IKeyInfo, ISpace } from "../../Types";
 import SpacesListItem from "./SpacesListItem";
-
-import { ISpace, IKey, IKeyInfo } from "../../Types";
 
 interface IProps {
     selectedKeyInfo?: IKeyInfo;

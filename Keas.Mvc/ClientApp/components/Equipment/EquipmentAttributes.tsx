@@ -1,11 +1,8 @@
-import * as PropTypes from 'prop-types';
 import * as React from "react";
 import {
   Button,
-  Collapse
 } from "reactstrap";
-
-import { AppContext, IEquipment, IEquipmentAttribute } from "../../Types";
+import { IEquipment, IEquipmentAttribute } from "../../Types";
 import EquipmentAttribute from "./EquipmentAttribute";
 
 interface IProps {

@@ -1,16 +1,12 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
-
 import { AppContext, IKey, IKeySerial, IPerson } from "../../Types";
-
-import AssignKeySerial from "./AssignKeySerial";
-import Denied from "../Shared/Denied";
-import EditKeySerial from "./EditKeySerial";
-import KeySerialList from "./KeySerialList";
-import KeySerialDetails from "./KeySerialDetails";
-
 import {PermissionsUtil} from "../../util/permissions";
-import CreateKeySerial from "./CreateKeySerial";
+import Denied from "../Shared/Denied";
+import AssignKeySerial from "./AssignKeySerial";
+import EditKeySerial from "./EditKeySerial";
+import KeySerialDetails from "./KeySerialDetails";
+import KeySerialList from "./KeySerialList";
 
 interface IState {
   keySerials: IKeySerial[];

@@ -1,7 +1,7 @@
 import * as React from "react";
 
 interface IProps {
-  viewName: String;
+  viewName: string;
 }
 
 export default class Denied extends React.Component<IProps, {}> {

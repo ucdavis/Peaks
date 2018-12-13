@@ -1,6 +1,6 @@
-﻿import { DateUtil } from "../../util/dates";
-import * as React from "react";
+﻿import * as React from "react";
 import { IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
+import { DateUtil } from "../../util/dates";
 import SearchSpaces from "../Spaces/SearchSpaces";
 import SearchTags from "../Tags/SearchTags";
 import EquipmentAttributes from "./EquipmentAttributes";

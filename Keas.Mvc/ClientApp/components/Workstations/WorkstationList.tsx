@@ -1,7 +1,6 @@
 import * as React from "react";
-import WorkstationListItem from "./WorkstationListItem";
-
 import { IWorkstation } from "../../Types";
+import WorkstationListItem from "./WorkstationListItem";
 
 interface IProps {
     workstations: IWorkstation[];

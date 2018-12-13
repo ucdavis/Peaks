@@ -1,11 +1,9 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
-
 import { AppContext, IKey } from "../../Types";
 import KeyEditValues from "./KeyEditValues";
-
-import "react-datepicker/dist/react-datepicker.css";
 
 interface IProps {
     onCreate: (key: IKey) => void;
@@ -40,12 +38,12 @@ export default class CreateKey extends React.Component<IProps, IState> {
         this.state = {
             error: "",
             key: {
-                id: 0,
                 code: "",
+                id: 0,
                 name: "",
-                teamId: 0,
                 serials: [],
                 tags: "",
+                teamId: 0,
             },
             submitting: false,
             validState: false,
@@ -125,12 +123,12 @@ export default class CreateKey extends React.Component<IProps, IState> {
         this.setState({
             error: "",
             key: {
-                id: 0,
                 code: "",
+                id: 0,
                 name: "",
-                teamId: 0,
                 serials: [],
                 tags: "",
+                teamId: 0,
             },
             submitting: false,
             validState: false,

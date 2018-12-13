@@ -2,12 +2,10 @@ import * as React from "react";
 import {
     Button,
 } from "reactstrap";
-
 import { IKeyInfo } from "../../Types";
-
 import HistoryContainer from "../History/HistoryContainer";
-import KeySerialContainer from "./KeySerialContainer";
 import SpacesContainer from "../Spaces/SpacesContainer";
+import KeySerialContainer from "./KeySerialContainer";
 
 interface IProps {
     goBack: () => void;

@@ -8,7 +8,6 @@ import {
     ModalHeader,
 } from "reactstrap";
 import { AppContext, IWorkstation } from "../../Types";
-import HistoryContainer from "../History/HistoryContainer";
 import WorkstationEditValues from "./WorkstationEditValues";
 
 

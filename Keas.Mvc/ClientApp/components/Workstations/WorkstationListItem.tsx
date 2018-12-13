@@ -1,9 +1,7 @@
 import * as React from "react";
-
 import { IWorkstation } from "../../Types";
-import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
-
 import { DateUtil } from "../../util/dates";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 interface IProps {
     workstationEntity: IWorkstation;

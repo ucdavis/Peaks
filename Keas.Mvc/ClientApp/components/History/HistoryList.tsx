@@ -1,8 +1,6 @@
 import * as React from "react";
-
-import HistoryListItem from "./HistoryListItem";
-
 import { IHistory } from "../../Types";
+import HistoryListItem from "./HistoryListItem";
 
 interface IProps {
     histories: IHistory[];
@@ -20,8 +18,7 @@ export default class HistoryList extends React.Component<IProps, {}> {
       <div className="table">
         <table className="table">
           <thead>
-            <tr>
-            </tr>
+            <tr />
           </thead>
           <tbody>{histories}</tbody>
         </table>

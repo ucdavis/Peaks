@@ -1,6 +1,6 @@
-import * as React from "react";
 import * as moment from "moment";
 import * as PropTypes from 'prop-types';
+import * as React from "react";
 import DatePicker from "react-datepicker";
 import 'react-datepicker/dist/react-datepicker.css';
 import {
@@ -9,7 +9,7 @@ import {
     ModalBody,
     ModalFooter,
 } from "reactstrap";
-import { AppContext, IAccess, IAccessAssignment, IPerson } from "../../Types";
+import { AppContext, IAccess, IPerson } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
 import AccessEditValues from "./AccessEditValues";
 import SearchAccess from "./SearchAccess";

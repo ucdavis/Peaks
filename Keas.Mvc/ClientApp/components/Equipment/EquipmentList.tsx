@@ -1,8 +1,6 @@
 import * as React from "react";
-
-import EquipmentListItem from "./EquipmentListItem";
-
 import { IEquipment } from "../../Types";
+import EquipmentListItem from "./EquipmentListItem";
 
 interface IProps {
     equipment: IEquipment[];
