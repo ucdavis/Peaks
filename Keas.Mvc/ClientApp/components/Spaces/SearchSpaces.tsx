@@ -1,6 +1,5 @@
 ﻿import * as PropTypes from 'prop-types';
 import * as React from "react";
-
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 import { AppContext, ISpace } from "../../Types";
 

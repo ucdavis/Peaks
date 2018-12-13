@@ -1,8 +1,6 @@
 import * as React from "react";
-
-import KeyListItem from "./KeyListItem";
-
 import { IKey, IKeyInfo } from "../../Types";
+import KeyListItem from "./KeyListItem";
 
 interface IProps {
     keysInfo: IKeyInfo[];

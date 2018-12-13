@@ -1,12 +1,9 @@
 import * as React from "react";
-
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-
 import { Button } from "reactstrap";
-import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
-
 import { IKey, IKeyInfo } from "../../Types";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 interface IProps {
     showDetails?: (key: IKey) => void;
@@ -17,8 +14,6 @@ interface IProps {
     onFiltersChange: (filters: any[]) => void;
 }
 
-interface IState {}
-
 interface IFilter {
     id: string;
     value: any;
@@ -28,7 +23,7 @@ interface IRow {
     original: IKeyInfo;
 }
 
-export default class KeyTable extends React.Component<IProps, IState> {
+export default class KeyTable extends React.Component<IProps, {}> {
     public render() {
         const { filters, keysInfo } = this.props;
 
@@ -41,12 +36,6 @@ export default class KeyTable extends React.Component<IProps, IState> {
                 onFilteredChange={this.props.onFiltersChange}
                 columns={[
                     {
-                        Header: "",
-                        headerClassName: "key-details",
-                        filterable: false,
-                        sortable: false,
-                        resizable: false,
-                        className: "key-details",
                         Cell: (row: IRow) => (
                             <Button
                                 color="link"
@@ -57,7 +46,13 @@ export default class KeyTable extends React.Component<IProps, IState> {
                                 Details
                             </Button>
                         ),
-                        maxWidth: 150
+                        Header: "",
+                        className: "key-details",
+                        filterable: false,
+                        headerClassName: "key-details",
+                        maxWidth: 150,
+                        resizable: false,
+                        sortable: false,
                     },
                     {
                         Header: "Key",
@@ -79,16 +74,27 @@ export default class KeyTable extends React.Component<IProps, IState> {
                                 .includes(filter.value.toLowerCase())
                     },
                     {
+                        Cell: row => (
+                            <span><i className="fas fa-key"/> {row.value.serialsInUse} / {row.value.serialsTotal}</span>
+                        ),
+                        Filter: ({filter, onChange}) =>
+                        <select onChange={e => onChange(e.target.value)}
+                        style={{width: "100%"}}
+                        value={filter ? filter.value : "all"}
+                        >
+                            <option value="all">Show All</option>
+                            <option value="unassigned">Unassigned</option>
+                            <option value="assigned">Assigned</option>
+                            <option value="any">Any</option>
+                        </select>,
                         Header: "Serials",
-                        headerClassName: "table-10p",
-                        className: "table-10p",
-                        id: "serialsCount",
                         accessor: keyInfo => {
                             return {
                                 "serialsInUse": keyInfo.serialsInUseCount,
                                 "serialsTotal": keyInfo.serialsTotalCount,
                             }
                         },
+                        className: "table-10p",
                         filterMethod: (filter, row) => {
                             if( filter.value === "all") {
                                 return true;
@@ -103,19 +109,8 @@ export default class KeyTable extends React.Component<IProps, IState> {
                                 return row.serialsCount.serialsTotal > 0;
                             }
                         },
-                        Filter: ({filter, onChange}) =>
-                            <select onChange={e => onChange(e.target.value)}
-                            style={{width: "100%"}}
-                            value={filter ? filter.value : "all"}
-                            >
-                                <option value="all">Show All</option>
-                                <option value="unassigned">Unassigned</option>
-                                <option value="assigned">Assigned</option>
-                                <option value="any">Any</option>
-                            </select>,
-                        Cell: row => (
-                            <span><i className="fas fa-key"/> {row.value.serialsInUse} / {row.value.serialsTotal}</span>
-                        ),
+                        headerClassName: "table-10p",
+                        id: "serialsCount",
                         sortMethod: (a, b) => {
                             if(a.serialsTotal === b.serialsTotal)
                             {
@@ -136,25 +131,25 @@ export default class KeyTable extends React.Component<IProps, IState> {
                         }
                     },
                     {
-                        Header: "",
-                        headerClassName: "table-actions",
-                        filterable: false,
-                        sortable: false,
-                        resizable: false,
-                        className: "table-actions",
                         Cell: (row) => (
                             <span><i className="fas fa-building mr-2" /> {row.original.spacesCount}</span>
 
-                        )
+                        ),
+                        Header: "",
+                        className: "table-actions",
+                        filterable: false,
+                        headerClassName: "table-actions",
+                        resizable: false,
+                        sortable: false,
                     },
                     {
+                        Cell: this.renderDropdownColumn,
                         Header: "",
-                        headerClassName: "table-actions",
-                        filterable: false,
-                        sortable: false,
-                        resizable: false,
                         className: "table-actions",
-                        Cell: this.renderDropdownColumn
+                        filterable: false,
+                        headerClassName: "table-actions",
+                        resizable: false,
+                        sortable: false,
                     },
                 ]}
             />
@@ -168,22 +163,22 @@ export default class KeyTable extends React.Component<IProps, IState> {
 
         if (!!this.props.showDetails) {
             actions.push({
+                onClick: () => this.props.showDetails(key),
                 title: "Details",
-                onClick: () => this.props.showDetails(key)
             });
         }
 
         if (!!this.props.onEdit) {
             actions.push({
+                onClick: () => this.props.onEdit(key),
                 title: "Edit",
-                onClick: () => this.props.onEdit(key)
             });
         }
 
         if (!!this.props.onDelete) {
             actions.push({
+                onClick: () => this.props.onDelete(key),
                 title: "Delete",
-                onClick: () => this.props.onDelete(key)
             });
         }
 

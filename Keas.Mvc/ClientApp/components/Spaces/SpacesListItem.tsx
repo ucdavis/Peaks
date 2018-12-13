@@ -1,5 +1,4 @@
 import * as React from "react";
-
 import { ISpace } from "../../Types";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 

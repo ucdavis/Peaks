@@ -5,7 +5,6 @@ import {
     Modal,
     ModalBody,
     ModalFooter,
-    ModalHeader,
 } from "reactstrap";
 import { AppContext, IKey } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";

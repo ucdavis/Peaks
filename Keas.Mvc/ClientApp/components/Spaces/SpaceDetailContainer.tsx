@@ -1,7 +1,6 @@
-import * as PropTypes from 'prop-types';
 import * as React from "react";
 
-import { AppContext, ISpace } from "../../Types";
+import { ISpace } from "../../Types";
 
 interface IProps {
     space: ISpace;

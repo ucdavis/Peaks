@@ -26,18 +26,18 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
         minRows={1}
         columns = {[
             {
-                Header: "",
-                headerClassName: "spaces-details",
-                filterable: false,
-                sortable: false,
-                resizable: false,
-                className: "spaces-details",
                 Cell: row => (
                     <Button color="link" onClick={() => this.props.showDetails(row.original)}>
                     Details
                     </Button>
                 ),
+                Header: "",
+                className: "spaces-details",
+                filterable: false,
+                headerClassName: "spaces-details",
                 maxWidth: 150,
+                resizable: false,
+                sortable: false,
             },
             {
                 Header: "Serial Number",
@@ -61,8 +61,19 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                 row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
             },
             {
+                Filter: ({filter, onChange}) => 
+                <select onChange={e => onChange(e.target.value)}
+                style={{width: "100%"}}
+                value={filter ? filter.value : "all"}
+                >
+                    <option value="all">Show All</option>
+                    <option value="unassigned">Unassigned</option>
+                    <option value="expired">Expired</option>
+                    <option value="unexpired">All Unexpired</option>
+                    <option value="3weeks">Expiring within 3 weeks</option>
+                    <option value="6weeks">Expiring within 6 weeks</option>
+                </select>,
                 Header: "Expiration",
-                id: "assignment.expiresAt",
                 accessor: x=> DateUtil.formatAssignmentExpiration(x.assignment),
                 filterMethod: (filter, row) => {
                     if( filter.value === "all") {
@@ -87,27 +98,16 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                             && moment(row._original.assignment.expiresAt).isBefore(moment().add(6,'w'))
                     }
                 },
-                Filter: ({filter, onChange}) => 
-                    <select onChange={e => onChange(e.target.value)}
-                    style={{width: "100%"}}
-                    value={filter ? filter.value : "all"}
-                    >
-                        <option value="all">Show All</option>
-                        <option value="unassigned">Unassigned</option>
-                        <option value="expired">Expired</option>
-                        <option value="unexpired">All Unexpired</option>
-                        <option value="3weeks">Expiring within 3 weeks</option>
-                        <option value="6weeks">Expiring within 6 weeks</option>
-                    </select>,
+                id: "assignment.expiresAt",
             },
             {
-                Header: "Actions",
-                headerClassName: "table-actions",
-                filterable: false,
-                sortable: false,
-                resizable: false,
-                className: "table-actions",
                 Cell: this.renderDropdownColumn,
+                Header: "Actions",
+                className: "table-actions",
+                filterable: false,
+                headerClassName: "table-actions",
+                resizable: false,
+                sortable: false,
             },
             
         ]}

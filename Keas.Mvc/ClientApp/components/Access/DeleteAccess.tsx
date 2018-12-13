@@ -5,10 +5,8 @@ import {
     Modal,
     ModalBody,
     ModalFooter,
-    ModalHeader,
 } from "reactstrap";
 import { AppContext, IAccess, IAccessAssignment } from "../../Types";
-import HistoryContainer from "../History/HistoryContainer";
 import AccessEditValues from "./AccessEditValues";
 
 

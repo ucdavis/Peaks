@@ -1,19 +1,16 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
-
-import { AppContext, IKey, IPerson, ISpace, IKeyInfo } from "../../Types";
-
+import { AppContext, IKey, IKeyInfo, IPerson, ISpace } from "../../Types";
+import { PermissionsUtil } from "../../util/permissions";
+import Denied from "../Shared/Denied";
+import SearchTags from "../Tags/SearchTags";
 import AssociateSpace from "./AssociateSpace";
 import CreateKey from "./CreateKey";
-import Denied from "../Shared/Denied";
+import DeleteKey from "./DeleteKey";
 import EditKey from "./EditKey";
 import KeyDetailContainer from "./KeyDetailContainer";
 import KeyList from "./KeyList";
 import KeyTable from "./KeyTable";
-import SearchTags from "../Tags/SearchTags";
-
-import { PermissionsUtil } from "../../util/permissions";
-import DeleteKey from "./DeleteKey";
 
 interface IProps {
     assetInUseUpdated?: (
@@ -59,11 +56,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
         this.state = {
             keys: [],
-            tags: [],
             loading: true,
-
             tableFilters: [],
-            tagFilters: []
+            tagFilters: [],
+            tags: []
         };
     }
     public async componentDidMount() {

@@ -1,12 +1,10 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
-
-import { AppContext, IKey, IKeyInfo, ISpace } from "../../Types";
-
+import { AppContext, IKeyInfo, ISpace } from "../../Types";
+import SearchSpaces from "../Spaces/SearchSpaces";
 import KeyEditValues from "./KeyEditValues";
 import SearchKeys from "./SearchKeys";
-import SearchSpaces from "../Spaces/SearchSpaces";
 
 interface IProps {
     onAssign: (space: ISpace, keyInfo: IKeyInfo) => void;

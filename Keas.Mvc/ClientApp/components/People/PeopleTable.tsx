@@ -1,10 +1,8 @@
-import * as moment from "moment";
 import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Button } from "reactstrap";
 import { IPerson, IPersonInfo } from "../../Types";
-import ListActionsDropdown from "../ListActionsDropdown";
 
 interface IProps {
     filtered: any[];
@@ -27,18 +25,18 @@ export default class PeopleTable extends React.Component<IProps, {}> {
         minRows={1}
         columns = {[
             {
-                Header: "Actions",
-                headerClassName: "spaces-details",
-                filterable: false,
-                sortable: false,
-                resizable: false,
-                className: "spaces-details",
                 Cell: row => (
                     <Button color="link" onClick={() => this.props.showDetails(row.original)}>
                     Details
                     </Button>
                 ),
+                Header: "Actions",
+                className: "spaces-details",
+                filterable: false,
+                headerClassName: "spaces-details",
                 maxWidth: 150,
+                resizable: false,
+                sortable: false,
             },
             {
                 Header: "Name",
@@ -55,44 +53,44 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                     row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
             },
             {
+                Cell: row => (
+                    <span><i className="fas fa-key"/> {row.original.keyCount}</span>
+                ),
                 Header: "Keys",
                 accessor: "keyCount",
+                className: "table-10p",
                 filterable: false,
                 headerClassName: "table-10p",
-                className: "table-10p",
-                Cell: row => (
-                    <span><i className="fas fa-key"></i> {row.original.keyCount}</span>
-                ),
             },
             {
+                Cell: row => (
+                    <span><i className="fas fa-hdd"/> {row.original.equipmentCount}</span>
+                ),
                 Header: "Equipment",
                 accessor: "equipmentCount",
+                className: "table-10p",
                 filterable: false,
                 headerClassName: "table-10p",
-                className: "table-10p",
-                Cell: row => (
-                    <span><i className="fas fa-hdd"></i> {row.original.equipmentCount}</span>
-                ),
             },
             {
+                Cell: row => (
+                    <span><i className="fas fa-address-card"/> {row.original.accessCount}</span>
+                ),
                 Header: "Accesses",
                 accessor: "accessCount",
+                className: "table-10p",
                 filterable: false,
                 headerClassName: "table-10p",
-                className: "table-10p",
-                Cell: row => (
-                    <span><i className="fas fa-address-card"></i> {row.original.accessCount}</span>
-                ),
             },
             {
+                Cell: row => (
+                    <span><i className="fas fa-briefcase"/> {row.original.workstationCount}</span>
+                ),
                 Header: "Workstations",
                 accessor: "workstationCount",
+                className: "table-10p",
                 filterable: false,
                 headerClassName: "table-10p",
-                className: "table-10p",
-                Cell: row => (
-                    <span><i className="fas fa-briefcase"></i> {row.original.workstationCount}</span>
-                ),
             }
         ]}
     />

@@ -1,14 +1,10 @@
 import * as PropTypes from 'prop-types';
 import * as React from "react";
-
+import { AppContext, IKeyInfo, ISpace, ISpaceInfo } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
-
-import { AppContext, IKey, IKeyInfo, ISpace, ISpaceInfo } from "../../Types";
-
+import AssociateSpace from "../Keys/AssociateSpace";
 import Denied from "../Shared/Denied";
 import SearchTags from "../Tags/SearchTags";
-
-import AssociateSpace from "../Keys/AssociateSpace";
 import SpacesDetails from "./SpacesDetails";
 import SpacesList from "./SpacesList";
 import SpacesTable from "./SpacesTable";

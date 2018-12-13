@@ -1,8 +1,7 @@
 ﻿import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
-
-import { IKeyInfo, AppContext } from "../../Types";
+import { AppContext, IKeyInfo } from "../../Types";
 
 interface IProps {
     defaultKeyInfo?: IKeyInfo;
@@ -109,8 +108,8 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                     id: 0,
                     name: '',
                     serials: [],
+                    tags: "",
                     teamId: 0,
-                    tags: ""
                 },
                 serialsInUseCount: 0,
                 serialsTotalCount: 0,
