@@ -140,6 +140,10 @@ img.img-fluid {
     @include main-btn;
 
   }
+  &.btn-success {
+    @include main-btn;
+    background-color:$access !important;
+  }
 &.btn-link {
   color: $primary-color;
   font-size: 1.6rem;
