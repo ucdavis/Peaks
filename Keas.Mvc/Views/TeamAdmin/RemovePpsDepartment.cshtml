@@ -39,16 +39,14 @@
 
           <form class="red" asp-action="RemovePpsDepartment">
               <input type="hidden" asp-for="Id" />
-              <i class="fas fa-delete red fa-xs"/></i> <input type="submit" value="Delete" class="btn btn-link" />
+              <input type="submit" value="Delete" class="btn btn-primary" />
           </form>
     </div>
   </div>
   </div>
   <div class="col-md-3">
-    <div class="card">
-      <div class="card-content">
+
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-      </div>
-    </div>
+
   </div>
 </div>

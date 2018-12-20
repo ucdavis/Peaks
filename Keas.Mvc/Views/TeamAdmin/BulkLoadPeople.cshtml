@@ -27,7 +27,7 @@
               <form asp-action="LoadPeople">
                   <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                   <div class="form-group">
-                      <i class="fas fa-plus blue fa-xs"/></i> <input id="submitbtn" type="submit" value="Add People from PPS Depts to Team" class="btn btn-link"/>
+              <input id="submitbtn" type="submit" value="Add People from PPS Depts to Team" class="btn btn-primary"/>
                   </div>
               </form>
 
@@ -43,11 +43,9 @@
   </div>
   </div>
   <div class="col-md-3">
-    <div class="card">
-      <div class="card-content">
+
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-      </div>
-    </div>
+
   </div>
 </div>
 
