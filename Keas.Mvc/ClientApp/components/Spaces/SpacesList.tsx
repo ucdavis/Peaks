@@ -14,7 +14,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
     public render() {
         const { spaces } = this.props;
         const spacesList = !spaces || spaces.length < 1 ?
-            <tr><td colSpan={5}>No Spaces Found</td></tr> :
+            <tr><td colSpan={3}>No Spaces Found</td></tr> :
             spaces.map(this.renderItem);
         return (
             <table className="table">

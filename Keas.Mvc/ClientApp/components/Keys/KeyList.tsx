@@ -15,7 +15,7 @@ export default class KeyList extends React.Component<IProps, {}> {
     public render() {
         const { keysInfo } = this.props;
         const keys = !keysInfo || keysInfo.length < 1 ?
-            <tr><td colSpan={5}>No Keys Found</td></tr> :
+            <tr><td colSpan={4}>No Keys Found</td></tr> :
             keysInfo.map(this.renderItem);
 
         return (
