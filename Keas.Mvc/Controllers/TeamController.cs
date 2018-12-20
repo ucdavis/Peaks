@@ -18,7 +18,7 @@ namespace Keas.Mvc.Controllers
             _context = context;
         }
 
-       
+
 
         // GET: Team/Create
         public IActionResult Create()
@@ -27,7 +27,7 @@ namespace Keas.Mvc.Controllers
         }
 
         // POST: Team/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         public async Task<IActionResult> Create([Bind("Id,Name,Slug")] Team team)
@@ -63,7 +63,7 @@ namespace Keas.Mvc.Controllers
         }
 
         // POST: Team/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         // Updated as per MS docs https://docs.microsoft.com/en-us/aspnet/core/data/ef-mvc/crud
         [HttpPost]
@@ -91,7 +91,7 @@ namespace Keas.Mvc.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction("Index","Admin");
                 }
-                catch 
+                catch
                 {
                     ModelState.AddModelError("","Unable to save changes.");
                 }
@@ -99,7 +99,7 @@ namespace Keas.Mvc.Controllers
             return View(team);
         }
 
-      
+
         private bool TeamExists(int id)
         {
             return _context.Teams.Any(e => e.Id == id);

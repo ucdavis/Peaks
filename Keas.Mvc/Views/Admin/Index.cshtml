@@ -4,12 +4,15 @@
     ViewData["Title"] = "Index";
 }
 <div class="card">
-  <div class="card-head">
-    <div class="row justify-content-between">
-      <h2>Index</h2>
-      <div>
-          <a class="btn btn-link" asp-action="Create" asp-controller="Team">Create New Team</a> | <a class="btn btn-link" asp-action="RoledMembers">View Admins</a>
-      </div>
+  <div class="card-header-primary">
+    <div class="card-head">
+      <div class="row justify-content-between">
+        <h2>Index</h2>
+        <div>
+            <a class="btn btn-link" asp-action="Create" asp-controller="Team">Create New Team</a> • <a class="btn btn-link" asp-action="RoledMembers">View Admins</a>
+        </div>
+    </div>
+
     </div>
   </div>
 
@@ -36,8 +39,7 @@
                   @Html.DisplayFor(modelItem => item.Name)
               </td>
               <td>
-                  @Html.ActionLink("Edit", "Edit", "Team", new { id=item.Id }) | 
-                  <a href='@string.Format("/{0}/Home/Index", item.Slug)' class="card-link">Home</a> |
+                  @Html.ActionLink("Edit", "Edit", "Team", new { id=item.Id }) •
                   <a href='@string.Format("/{0}/TeamAdmin", item.Slug)' class="card-link">Admin</a>
               </td>
           </tr>
