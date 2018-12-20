@@ -4,7 +4,7 @@
     ViewData["Title"] = "Role Assigned Members ";
 }
 <div class="row justify-content-between">
-  <div class="col-md-8">
+  <div class="col-md-9">
   <div class="card">
     <div class="card-header-primary">
       <div class="card-head">
@@ -33,7 +33,7 @@
                               <br/>
                           }
 
-                          <input class="btn btn-primary" type="submit" value="Remove role(s)"/>
+                          <input class="btn btn-link" type="submit" value="Remove role(s)"/>
 
 
               </form>
@@ -43,7 +43,7 @@
     </div>
   </div>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-3">
     <div class="card">
       <div class="card-content">
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}

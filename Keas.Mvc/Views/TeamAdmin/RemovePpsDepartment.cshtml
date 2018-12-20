@@ -4,7 +4,7 @@
     ViewBag.Title = "Remove PPS Department";
 }
 <div class="row justify-content-between">
-  <div class="col-md-8">
+  <div class="col-md-9">
   <div class="card">
     <div class="card-header-primary">
       <div class="card-head">
@@ -37,14 +37,14 @@
               </dd>
           </dl>
 
-          <form asp-action="RemovePpsDepartment">
+          <form class="red" asp-action="RemovePpsDepartment">
               <input type="hidden" asp-for="Id" />
-              <input type="submit" value="Delete" class="btn btn-primary" />
+              <i class="fas fa-delete red fa-xs"/></i> <input type="submit" value="Delete" class="btn btn-link" />
           </form>
     </div>
   </div>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-3">
     <div class="card">
       <div class="card-content">
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}

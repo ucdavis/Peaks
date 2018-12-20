@@ -4,7 +4,7 @@
     ViewData["Title"] = "Add Member to Role";
 }
 <div class="row justify-content-between">
-  <div class="col-md-8">
+  <div class="col-md-9">
   <div class="card">
     <div class="card-header-primary">
       <div class="card-head">
@@ -25,13 +25,13 @@
               <span asp-validation-for="UserEmail" class="text-danger"></span>
           </div>
           <div class="form-group">
-              <input type="submit" value="Assign Role to User" class="btn btn-primary" />
+              <i class="fas fa-plus blue fa-xs"/></i> <input type="submit" value="Assign Role to User" class="btn btn-link" />
           </div>
       </form>
     </div>
   </div>
   </div>
-  <div class="col-md-4">
+  <div class="col-md-3">
     <div class="card">
       <div class="card-content">
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}
