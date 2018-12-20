@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Mvc.Helpers;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Keas.Mvc
 {
@@ -18,7 +12,14 @@ namespace Keas.Mvc
         public static void Main(string[] args)
         {
             var host = BuildWebHost(args);
-            
+
+            using (var scope = host.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var dbInitilizer = new DbInitializer(dbContext);
+                dbInitilizer.Initialize();
+            }
+
             host.Run();
         }
 

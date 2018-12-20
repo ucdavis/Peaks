@@ -1,9 +1,7 @@
 import * as React from "react";
-
 import { IWorkstation } from "../../Types";
-import ListActionsDropdown from "../ListActionsDropdown";
-
 import { DateUtil } from "../../util/dates";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 interface IProps {
     workstationEntity: IWorkstation;
@@ -11,12 +9,39 @@ interface IProps {
     onAdd?: (workstation: IWorkstation) => void;
     showDetails?: (workstation: IWorkstation) => void;
     onEdit?: (workstation: IWorkstation) => void;
+    onDelete?: (workstation: IWorkstation) => void;
 }
 
 
-export default class EquipmentListItem extends React.Component<IProps, {}> {
+export default class WorkstationListItem extends React.Component<IProps, {}> {
     public render() {
+        const { workstationEntity } = this.props;
         const hasAssignment = !!this.props.workstationEntity.assignment;
+
+        const actions: IAction[] = [];
+        if (!!this.props.onRevoke && hasAssignment) {
+          actions.push({ title: 'Revoke', onClick: () => this.props.onRevoke(workstationEntity) });
+        }
+
+        if (!!this.props.onAdd && !hasAssignment) {
+            actions.push({ title: 'Add', onClick: () => this.props.onAdd(workstationEntity) });
+        }
+        else if (!!this.props.onAdd && hasAssignment) {
+          actions.push({ title: 'Update', onClick: () => this.props.onAdd(workstationEntity) });
+        }
+
+        if (!!this.props.showDetails) {
+            actions.push({ title: 'Details', onClick: () => this.props.showDetails(workstationEntity) });
+        }
+
+        if (!!this.props.onEdit) {
+            actions.push({ title: 'Edit', onClick: () => this.props.onEdit(workstationEntity) });
+        }
+
+        if (!!this.props.onDelete) {
+          actions.push({ title: 'Delete', onClick: () => this.props.onDelete(workstationEntity) });
+      }
+
         return (
           <tr>
             <td>{this.props.workstationEntity.name}</td>
@@ -27,18 +52,7 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
               {hasAssignment ? DateUtil.formatExpiration(this.props.workstationEntity.assignment.expiresAt) : ""}
             </td>
             <td>
-              <ListActionsDropdown
-                onRevoke={!!this.props.onRevoke && hasAssignment ? 
-                  () => this.props.onRevoke(this.props.workstationEntity) : null}
-                onAdd={!!this.props.onAdd && !hasAssignment ? 
-                  () => this.props.onAdd(this.props.workstationEntity) : null}
-                onUpdateAssignment={!!this.props.onAdd && hasAssignment ? 
-                  () => this.props.onAdd(this.props.workstationEntity) : null}
-                showDetails={!!this.props.showDetails ? 
-                  () => this.props.showDetails(this.props.workstationEntity) : null}
-                onEdit={!!this.props.onEdit ? 
-                  () => this.props.onEdit(this.props.workstationEntity) : null}
-                />
+              <ListActionsDropdown actions={actions} />
             </td>
           </tr>
         );

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -22,13 +22,22 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> SearchSpaces(string q)
         {
-            var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == Team).Select(x => x.OrgCode).Distinct().ToListAsync();
+            var orgIds = await _context.FISOrgs
+                .Where(f => f.Team.Slug == Team)
+                .Select(x => x.OrgCode)
+                .Distinct()
+                .ToListAsync();
+
             var queryWords = q.ToLower().Split(" ").ToList();
+
             var space = await _context.Spaces
-                .Where(x => orgIds.Contains(x.OrgId) && ((!string.IsNullOrWhiteSpace(x.BldgName) && queryWords.Any(s => x.BldgName.ToLower().Contains(s)))
-                || (!string.IsNullOrWhiteSpace(x.RoomName) && queryWords.Any(s => x.RoomName.ToLower().Contains(s)))
-                || (!string.IsNullOrWhiteSpace(x.RoomNumber) && queryWords.Any(s => x.RoomNumber.ToLower().Contains(s)))))
-                .AsNoTracking().ToListAsync();
+                .Where(x => orgIds.Contains(x.OrgId)
+                    && ((!string.IsNullOrWhiteSpace(x.BldgName) && queryWords.Any(s => x.BldgName.ToLower().Contains(s)))
+                        || (!string.IsNullOrWhiteSpace(x.RoomName) && queryWords.Any(s => x.RoomName.ToLower().Contains(s)))
+                        || (!string.IsNullOrWhiteSpace(x.RoomNumber) && queryWords.Any(s => x.RoomNumber.ToLower().Contains(s)))))
+                .AsNoTracking()
+                .ToListAsync();
+
             return Json(space);
         }
 
@@ -36,10 +45,11 @@ namespace Keas.Mvc.Controllers.Api
         {
             //TODO clean up workstations query or integrate with list query
             var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == Team).Select(x => x.OrgCode).Distinct().ToArrayAsync();
+            var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
 
             var sql = SpaceQueries.List;            
 
-            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new { orgIds });
+            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new { orgIds, teamId });
 
             var spaces = result.Select(r => new {
                 space = new {
@@ -72,9 +82,35 @@ namespace Keas.Mvc.Controllers.Api
             return Json(spaces);
         }
 
+        public async Task<IActionResult> GetSpacesForKey(int keyId)
+        {
+            var result = await _context.KeyXSpaces
+                .Where(x => x.Key.Id == keyId
+                    && x.Key.Team.Slug == Team
+                    && x.Key.Active)
+                .Select(x => x.Space)
+                .AsNoTracking()
+                .ToListAsync();
+
+            // wrap in space info object to be consistent
+            var spaces = result.Select(s => new
+            {
+                id = s.Id,
+                space = s,
+            });
+
+            return Json(spaces);
+        }
+
         public async Task<IActionResult> GetTagsInSpace(int spaceId)
         {
-            var tags = await _context.Workstations.Where(x => x.Active && x.SpaceId == spaceId && !string.IsNullOrWhiteSpace(x.Tags)).Select(x => x.Tags).ToArrayAsync();
+            var tags = await _context.Workstations
+                .Where(x => x.Active
+                    && x.SpaceId == spaceId
+                    && !string.IsNullOrWhiteSpace(x.Tags))
+                .Select(x => x.Tags)
+                .ToArrayAsync();
+
             return Json(string.Join(",", tags));
         }
 
@@ -84,6 +120,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(w => w.Active && w.Id == id)
                 .AsNoTracking()
                 .SingleOrDefaultAsync();
+
             return Json(space);
         }
     }

@@ -42,14 +42,20 @@ namespace Keas.Mvc
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
 
             // setup services
-            services.AddSingleton<IIdentityService, IdentityService>();
+            services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ISecurityService, SecurityService>();
 
 
             // setup entity framework
             if (Configuration.GetSection("Dev:UseSql").Value == "Yes")
             {
-                services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                services.AddDbContextPool<ApplicationDbContext>(o =>
+                {
+                    o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+#if DEBUG
+                    o.EnableSensitiveDataLogging();
+#endif
+                });
             }
             else
             {
@@ -141,16 +147,18 @@ namespace Keas.Mvc
                 app.UseDeveloperExceptionPage();
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
-                    // HotModuleReplacement = true,
-                    // ReactHotModuleReplacement = true
+                    //HotModuleReplacement = true,
+                    //ReactHotModuleReplacement = true
                 });
             }
             else
             {
                 // TODO: don't use dev exception
                 app.UseDeveloperExceptionPage();
+
+                // monitor in production
+                app.UseMiddleware<StackifyMiddleware.RequestTracerMiddleware>();
                 // app.UseExceptionHandler("/Error/Index");
-                
             }
             app.UseStatusCodePages("text/plain", "Status code page, status code: {0}");
 
@@ -166,14 +174,14 @@ namespace Keas.Mvc
                     name: "API",
                     template: "api/{teamName}/{controller}/{action}/{id?}",
                     defaults: new { controller = "people", action = "Index" },
-                    constraints: new { controller = "(keys|equipment|access|spaces|people|person|workstations|tags)" }
+                    constraints: new { controller = "(keys|keyserials|equipment|access|spaces|people|person|workstations|tags)" }
                 );
 
                 routes.MapRoute(
                     name: "Assets",
                     template: "{teamName}/{asset}/{*type}",
                     defaults: new { controller = "Asset", action = "Index" },
-                    constraints: new { asset = "(keys|equipment|access|spaces|people|person|workstations)" }
+                    constraints: new { asset = "(keys|keyserials|equipment|access|spaces|people|person|workstations)" }
                 );
 
                 routes.MapRoute(

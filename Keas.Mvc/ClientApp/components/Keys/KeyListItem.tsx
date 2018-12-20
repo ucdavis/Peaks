@@ -1,43 +1,46 @@
 import * as React from "react";
-
-import { IKey } from "../../Types";
-import ListActionsDropdown from "../ListActionsDropdown";
+import { IKey, IKeyInfo } from "../../Types";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 interface IProps {
-    keyEntity: IKey;
-    onRevoke?: (key: IKey) => void;
-    onAdd?: (key: IKey) => void;
-    showDetails?: (key: IKey) => void;
-    onEdit?: (key: IKey) => void;
+  keyInfo: IKeyInfo;
+  onDisassociate?: (key: IKeyInfo) => void;
+  onAdd?: (key: IKey) => void;
+  showDetails?: (key: IKey) => void;
+  onEdit?: (key: IKey) => void;
+  onDelete?: (key: IKey) => void;
 }
 
-
 export default class KeyListItem extends React.Component<IProps, {}> {
-    public render() {
-        const hasAssignment = !!this.props.keyEntity.assignment;
-        return (
-          <tr>
-            <td>{this.props.keyEntity.serialNumber}</td>
-            <td>{this.props.keyEntity.name}</td>
-            <td>{hasAssignment ? this.props.keyEntity.assignment.person.name : ""}</td>
-            <td>
-              {hasAssignment ? this.props.keyEntity.assignment.expiresAt : ""}
-            </td>
-            <td>
-                    <ListActionsDropdown
-                        onRevoke={!!this.props.onRevoke && hasAssignment ? 
-                          () => this.props.onRevoke(this.props.keyEntity) : null}
-                        onAdd={!!this.props.onAdd && !hasAssignment ? 
-                          () => this.props.onAdd(this.props.keyEntity) : null}
-                        onUpdateAssignment={!!this.props.onAdd && hasAssignment ? 
-                          () => this.props.onAdd(this.props.keyEntity) : null}
-                        showDetails={!!this.props.showDetails ? 
-                          () => this.props.showDetails(this.props.keyEntity) : null}
-                        onEdit={!!this.props.onEdit ? 
-                          () => this.props.onEdit(this.props.keyEntity) : null}
-                    />
-            </td>
-          </tr>
-        );
-      }
+  public render() {
+    const { keyInfo } = this.props;
+
+    const actions: IAction[] = [];
+    if (!!this.props.onDisassociate) {
+      actions.push({ title: 'Disassociate', onClick: () => this.props.onDisassociate(keyInfo) });
+    }
+
+    if (!!this.props.showDetails) {
+        actions.push({ title: 'Details', onClick: () => this.props.showDetails(keyInfo.key) });
+    }
+
+    if (!!this.props.onEdit) {
+        actions.push({ title: 'Edit', onClick: () => this.props.onEdit(keyInfo.key) });
+    }
+
+    if (!!this.props.onDelete) {
+      actions.push({ title: 'Delete', onClick: () => this.props.onDelete(keyInfo.key) });
+  }
+
+    return (
+      <tr>
+        <td>{keyInfo.key.name}</td>
+        <td>{keyInfo.key.code}</td>
+        <td className=""><i className="fas fa-key"/> {keyInfo.serialsInUseCount} / {keyInfo.serialsTotalCount}</td>
+        <td>
+          <ListActionsDropdown actions={actions} />
+        </td>
+      </tr>
+    );
+  }
 }

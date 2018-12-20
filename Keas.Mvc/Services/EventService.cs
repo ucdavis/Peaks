@@ -6,8 +6,8 @@ namespace Keas.Mvc.Services
     public interface IEventService
     {
         Task TrackCreateKey(Key key);
-        Task TrackAssignKey(Serial serial);
-        Task TrackUnAssignKey(Serial serial);
+        Task TrackAssignKeySerial(KeySerial keySerial);
+        Task TrackUnAssignKeySerial(KeySerial keySerial);
         Task TrackUpdateKey(Key key);
         Task TrackCreateEquipment(Equipment equipment);
         Task TrackAssignEquipment(Equipment equipment);
@@ -20,9 +20,17 @@ namespace Keas.Mvc.Services
         Task TrackCreateWorkstation(Workstation workstation);
         Task TrackAssignWorkstation(Workstation workstation);
         Task TrackUnAssignWorkstation(Workstation workstation);
-        Task TrackAcceptKey(Serial serial);
+        Task TrackAcceptKeySerial(KeySerial keySerial);
         Task TrackAcceptEquipment(Equipment equipment);
         Task TrackAcceptWorkstation(Workstation workstation);
+        Task TrackKeyDeleted(Key key);
+        Task TrackAccessDeleted(Access access);
+        Task TrackEquipmentDeleted(Equipment equipment);
+        Task TrackWorkstationDeleted(Workstation workstation);
+        Task TrackAssignmentUpdatedKeySerial(KeySerial keySerial);
+        Task TrackAccessAssignmentUpdated(AccessAssignment accessAssignment, string teamName);
+        Task TrackEquipmentAssignmentUpdated(Equipment equipment);
+        Task TrackWorkstationAssignmentUpdated(Workstation workstation);
 
 
 
@@ -45,17 +53,17 @@ namespace Keas.Mvc.Services
             await _notificationService.KeyCreatedUpdatedInactive(key, history);
         }
 
-        public async Task TrackAssignKey(Serial serial)
+        public async Task TrackAssignKeySerial(KeySerial keySerial)
         {
-            var history = await _historyService.KeyAssigned(serial);
-            await _notificationService.KeyAssigned(serial, history);
+            var history = await _historyService.KeySerialAssigned(keySerial);
+            await _notificationService.KeySerialAssigned(keySerial, history);
 
         }
 
-        public async Task TrackUnAssignKey(Serial serial)
+        public async Task TrackUnAssignKeySerial(KeySerial keySerial)
         {
-            var history = await _historyService.KeyUnassigned(serial);
-            await _notificationService.KeyUnAssigned(serial, history);
+            var history = await _historyService.KeySerialUnassigned(keySerial);
+            await _notificationService.KeySerialUnAssigned(keySerial, history);
         }
 
         public async Task TrackUpdateKey(Key key) 
@@ -130,10 +138,10 @@ namespace Keas.Mvc.Services
             await _notificationService.WorkstationUnAssigned(workstation, history);
         }
 
-        public async Task TrackAcceptKey(Serial serial)
+        public async Task TrackAcceptKeySerial(KeySerial keySerial)
         {
-            var history = await _historyService.KeyAccepted(serial);
-            await _notificationService.KeyAccepted(serial, history);
+            var history = await _historyService.KeySerialAccepted(keySerial);
+            await _notificationService.KeySerialAccepted(keySerial, history);
         }
 
         public async Task TrackAcceptEquipment(Equipment equipment)
@@ -145,6 +153,51 @@ namespace Keas.Mvc.Services
         {
             var history = await _historyService.WorkstationAccepted(workstation);
             await _notificationService.WorkstationAccepted(workstation, history);
+        }
+
+         public async Task TrackKeyDeleted(Key key)
+        {
+            var history = await _historyService.KeyDeleted(key);
+            await _notificationService.KeyCreatedUpdatedInactive(key, history);
+        }
+
+         public async Task TrackEquipmentDeleted(Equipment equipment)
+        {
+            var history = await _historyService.EquipmentDeleted(equipment);
+            await _notificationService.EquipmentCreatedUpdatedInactive(equipment, history);
+        }
+
+        public async Task TrackAccessDeleted(Access access)
+        {
+            var history = await _historyService.AccessDeleted(access);
+            await _notificationService.AccessCreatedUpdatedInactive(access, history);
+        }
+
+         public async Task TrackWorkstationDeleted(Workstation workstation)
+        {
+            var history = await _historyService.WorkstationDeleted(workstation);
+            await _notificationService.WorkstationCreatedUpdatedInactive(workstation, history);
+        }
+
+        public async Task TrackAssignmentUpdatedKeySerial(KeySerial keySerial)
+        {
+            var history = await _historyService.KeySerialAssignmentUpdated(keySerial);
+            await _notificationService.KeySerialAssigned(keySerial, history);
+        }
+        public async Task TrackAccessAssignmentUpdated(AccessAssignment accessAssignment, string teamName)
+        {
+            var history = await _historyService.AccessAssignmentUpdated(accessAssignment);
+            await _notificationService.AccessAssigned(accessAssignment, history, teamName);
+        }
+        public async Task TrackEquipmentAssignmentUpdated(Equipment equipment)
+        {
+            var history = await _historyService.EquipmentAssignmentUpdated(equipment);
+            await _notificationService.EquipmentAssigned(equipment, history);
+        }
+        public async Task TrackWorkstationAssignmentUpdated(Workstation workstation)
+        {
+            var history = await _historyService.WorkstationAssignmentUpdated(workstation);
+            await _notificationService.WorkstationAssigned(workstation, history);
         }
     }
 }

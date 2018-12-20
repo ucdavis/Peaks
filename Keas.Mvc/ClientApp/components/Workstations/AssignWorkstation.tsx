@@ -1,5 +1,5 @@
 import * as moment from "moment";
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import DatePicker from "react-datepicker";
 import {
@@ -7,11 +7,9 @@ import {
     Modal,
     ModalBody,
     ModalFooter,
-    ModalHeader,
 } from "reactstrap";
 import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
-import HistoryContainer from "../History/HistoryContainer";
 import SearchWorkstations from "./SearchWorkstations";
 import WorkstationEditValues from "./WorkstationEditValues";
 
@@ -95,33 +93,47 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                 <div className="form-group">
                   <label htmlFor="assignto">Assign To</label>
                   <AssignPerson
+                    disabled={!!this.props.person} // disable if we are on person page
                     person={this.props.person || this.state.person}
                     onSelect={this._onSelectPerson}
                   />
                 </div>
+                {!this.state.workstation &&
                 <div className="form-group">
-                  <label>Pick a workstation to assign</label>
                   <SearchWorkstations
                     selectedWorkstation={this.state.workstation}
                     onSelect={this._onSelected}
                     onDeselect={this._onDeselected}
                     space={this.props.space}
                   />
-                  </div>
-                {(!this.state.workstation || !this.state.workstation.teamId) && // if we are creating a new workstation, edit properties
+                  </div>}
+                {(this.state.workstation && !this.state.workstation.teamId) && // if we are creating a new workstation, edit properties
+                  <div>
+                    <div className="row justify-content-between">
+                      <h3>Create New Workstation</h3>
+                      <Button className="btn btn-link" onClick={this._onDeselected}>
+                        Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
+                    </div>
                     <WorkstationEditValues
                       tags={this.props.tags}
                       selectedWorkstation={this.state.workstation}
                       changeProperty={this._changeProperty}
-                      creating={true}
                       disableEditing={false}
                     />
+                  </div>
                   }
                 {!!this.state.workstation && !!this.state.workstation.teamId &&
+                  <div>
+                    <div className="row justify-content-between">
+                      <h3>Assign Existing Workstation</h3>
+                      <Button className="btn btn-link" onClick={this._onDeselected}>
+                      Clear <i className="fas fa-times fa-sm" aria-hidden="true" /></Button>
+                    </div>
                     <WorkstationEditValues
                       selectedWorkstation={this.state.workstation}
                       disableEditing={true}
                       />
+                    </div>
                   }
 
                 {(!!this.state.person || !!this.props.person) && (
@@ -132,6 +144,9 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                       onChange={this._changeDate}
                       onChangeRaw={this._changeDateRaw}
                       className="form-control"
+                      showMonthDropdown={true}
+                      showYearDropdown={true}
+                      dropdownMode="select"
                     />
                   </div>
                 )}
@@ -194,16 +209,12 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
     if (workstation.name.length > 64) {
       this.setState(
         {
-          workstation: null,
           error: "The workstation name you have chosen is too long",
+          workstation: null,
         },
         this._validateState
       );
     } else {
-      // else if (this.props.assignedWorkstationList.findIndex(x => x == workstation.name) != -1)
-      // {
-      //    this.setState({ selectedWorkstation: null, error: "The workstation you have chosen is already assigned to this user", validWorkstation: false }, this._validateState);
-      // }
       this.setState({ workstation, error: "" }, this._validateState);
     }
   };

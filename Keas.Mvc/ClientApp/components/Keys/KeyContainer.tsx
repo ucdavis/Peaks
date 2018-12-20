@@ -1,289 +1,510 @@
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as React from "react";
-
-import { AppContext, IKey, IPerson, ISpace } from "../../Types";
-
-import AssignKey from "./AssignKey";
-import EditKey from "./EditKey";
-import KeyDetails from "./KeyDetails";
-import KeyList from "./KeyList";
+import { AppContext, IKey, IKeyInfo, IPerson, ISpace } from "../../Types";
+import { PermissionsUtil } from "../../util/permissions";
 import Denied from "../Shared/Denied";
-import {PermissionsUtil} from "../../util/permissions";
-
-interface IState {
-  loading: boolean;
-  keys: IKey[]; // either key assigned to this person, or all team keys
-}
+import SearchTags from "../Tags/SearchTags";
+import AssociateSpace from "./AssociateSpace";
+import CreateKey from "./CreateKey";
+import DeleteKey from "./DeleteKey";
+import EditKey from "./EditKey";
+import KeyDetailContainer from "./KeyDetailContainer";
+import KeyList from "./KeyList";
+import KeyTable from "./KeyTable";
 
 interface IProps {
-  assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
-  assetTotalUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
-  assetEdited?: (type: string, spaceId: number, personId: number) => void; 
-  person?: IPerson;
-  space?: ISpace;
+    assetInUseUpdated?: (
+        type: string,
+        spaceId: number,
+        personId: number,
+        count: number
+    ) => void;
+
+    assetTotalUpdated?: (
+        type: string,
+        spaceId: number,
+        personId: number,
+        count: number
+    ) => void;
+
+    assetEdited?: (type: string, spaceId: number, personId: number) => void;
+    person?: IPerson;
+    space?: ISpace;
+}
+
+interface IState {
+    loading: boolean;
+    keys: IKeyInfo[]; // either key assigned to this person, or all team keys
+    tags: string[];
+
+    tableFilters: any[];
+    tagFilters: string[];
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      keys: [],
-      loading: true
+    public static contextTypes = {
+        fetch: PropTypes.func,
+        permissions: PropTypes.array,
+        router: PropTypes.object,
+        team: PropTypes.object
     };
-  }
-  public async componentDidMount() {
-    let dateNow = new Date();
-    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0);
-    // TODO: remove
-    if (dateNow <= dateThen) {
-        return;
+
+    public context: AppContext;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            keys: [],
+            loading: true,
+            tableFilters: [],
+            tagFilters: [],
+            tags: []
+        };
     }
-    // are we getting the person's key or the team's?
-    let keyFetchUrl =  "";
-    if(!!this.props.person)
-    {
-      keyFetchUrl = `/api/${this.context.team.slug}/keys/listassigned?personid=${this.props.person.id}`;
-    } else if(!!this.props.space) {
-      keyFetchUrl = `/api/${this.context.team.slug}/keys/getKeysInSpace?spaceId=${this.props.space.id}`;
-    } else {
-      keyFetchUrl = `/api/${this.context.team.slug}/keys/list/`;
+    public async componentDidMount() {
+        const { team } = this.context;
+
+        // are we getting the person's key or the team's?
+        let keyFetchUrl = "";
+        if (!!this.props.space) {
+            keyFetchUrl = `/api/${team.slug}/keys/getKeysInSpace?spaceId=${this.props.space.id}`;
+        } else {
+            keyFetchUrl = `/api/${team.slug}/keys/list/`;
+        }
+
+        const keys = await this.context.fetch(keyFetchUrl);
+
+        const tags = await this.context.fetch(
+            `/api/${team.slug}/tags/listTags`
+        );
+
+        this.setState({ keys, tags, loading: false });
     }
 
-    const keys = await this.context.fetch(keyFetchUrl);
-    this.setState({ keys, loading: false });
-  }
-  public render() {
-    if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
+    public render() {
+        if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
+            return <Denied viewName="Keys" />;
+        }
+
+        if (this.state.loading) {
+            return <h2>Loading...</h2>;
+        }
+
+        const { space } = this.props;
+        const { tags } = this.state;
+        const {
+            keyAction,
+            keyId,
+            action
+        } = this.context.router.route.match.params;
+
+        const selectedKeyId = parseInt(keyId, 10);
+        const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
+        const selectedKey = selectedKeyInfo ? selectedKeyInfo.key : null;
         return (
-            <Denied viewName="Keys" />
+            <div className="card keys-color">
+                <div className="card-header-keys">
+                    <div className="card-head">
+                        <h2>
+                            <i className="fas fa-key fa-xs" /> Keys
+                        </h2>
+                    </div>
+                </div>
+                <div className="card-content">
+                    {keyAction !== "details" && this._renderTableOrListView()}
+                    {keyAction === "details" && this._renderDetailsView()}
+
+                    {!space && (
+                        <CreateKey
+                            onCreate={this._createKey}
+                            onOpenModal={this._openCreateModal}
+                            closeModal={this._closeModals}
+                            modal={keyAction === "create"}
+                            searchableTags={tags}
+                        />
+                    )}
+                    <EditKey
+                        onEdit={this._editKey}
+                        closeModal={this._closeModals}
+                        modal={keyAction === "edit"}
+                        selectedKey={selectedKey}
+                        searchableTags={tags}
+                    />
+                    <DeleteKey 
+                        selectedKey={selectedKey}
+                        deleteKey={this._deleteKey}
+                        closeModal={this._closeModals}
+                        modal={keyAction === "delete"}
+                    />
+                    {!!space && (
+                        <AssociateSpace
+                            selectedKeyInfo={selectedKeyInfo}
+                            selectedSpace={space}
+                            onAssign={this._associateSpace}
+                            isModalOpen={action === "associate"}
+                            openModal={this._openAssociate}
+                            closeModal={this._closeModals}
+                            searchableTags={tags}
+                        />
+                    )}
+                </div>
+            </div>
         );
     }
-    let dateNow = new Date();
-    let dateThen = new Date(2040, 11, 24, 10, 33, 30, 0);
-    // TODO: remove
-    if(dateNow <= dateThen)
-    {
-      return(
-        <div className="card keys-color">
-        <div className="card-header-keys">
-          <div className="card-head"><h2><i className="fas fa-key fa-xs"/> Keys</h2></div>
-        </div>
-        <div className="card-content">
-          <h3><i className="fas fa-wrench fa-xs fa-flip-horizontal"/> Keys are currently under construction <i className="fas fa-wrench fa-xs"/></h3>
-        </div>
-      </div>      );
+
+    private _renderTableOrListView() {
+        const { space } = this.props;
+        if (!space) {
+            return this._renderTableView();
+        }
+
+        return this._renderListView();
     }
 
-    if (this.state.loading) {
-      return <h2>Loading...</h2>;
+    private _renderTableView() {
+        const { keys, tableFilters, tags, tagFilters } = this.state;
+
+        let filteredKeys = keys;
+
+        // check for tag filters
+        if (tagFilters && tagFilters.length) {
+            filteredKeys = keys
+                .filter(k => !!k.key && k.key.tags && k.key.tags.length)
+                .filter(k => {
+                    const keyTags = k.key.tags.split(",");
+                    return tagFilters.every(t => keyTags.includes(t));
+                });
+        }
+
+        return (
+            <div>
+                <SearchTags
+                    tags={tags}
+                    disabled={false}
+                    selected={tagFilters}
+                    onSelect={this._onTagsFiltered}
+                />
+                <KeyTable
+                    keysInfo={filteredKeys}
+                    onEdit={this._openEditModal}
+                    showDetails={this._openDetailsModal}
+                    onDelete={this._openDeleteModal}
+                    filters={tableFilters}
+                    onFiltersChange={this._onTableFiltered}
+                />
+            </div>
+        );
     }
 
-    const { action, assetType, id } = this.context.router.route.match.params;
-    const activeAsset = !assetType || assetType === "keys";
-    const selectedId = parseInt(id, 10);
-    const detailKey = this.state.keys.find(k => k.id === selectedId);
-    return (
-      <div className="card keys-color">
-        <div className="card-header-keys">
-          <div className="card-head"><h2><i className="fas fa-key fa-xs"/> Keys</h2></div>
-        </div>
-        <div className="card-content">
-          <KeyList
-            keys={this.state.keys}
-            onRevoke={this._revokeKey}
-            onAdd={this._openAssignModal}
-            onEdit={this._openEditModal}
-            showDetails={this._openDetailsModal}
-          />
-          <AssignKey
-            onCreate={this._createAndMaybeAssignKey}
-            modal={activeAsset && (action === "create" || action === "assign")}
-            onAddNew={this._openCreateModal}
-            closeModal={this._closeModals}
-            selectedKey={detailKey}
-            person={this.props.person}
-          />
-          <KeyDetails
-            selectedKey={detailKey}
-            modal={activeAsset && action === "details" && !!detailKey}
-            closeModal={this._closeModals}
-          />
-          <EditKey
-            onEdit={this._editKey}
-            closeModal={this._closeModals}
-            modal={activeAsset && (action === "edit")}
-            selectedKey={detailKey}
-          />
-        </div>
-      </div>
-    );
-  }
+    private _renderListView() {
+        const { space } = this.props;
 
-  private _createAndMaybeAssignKey = async (
-    person: IPerson,
-    key: IKey,
-    date: any
-  ) => {
-    let updateTotalAssetCount = false;
-    let updateInUseAssetCount = false;
-    // call API to create a key, then assign it if there is a person to assign to
-    // if we are creating a new key
-    if (key.id === 0) {
-      key.teamId = this.context.team.id;
-      key = await this.context.fetch(`/api/${this.context.team.slug}/keys/create`, {
-        body: JSON.stringify(key),
-        method: "POST"
-      });
-      updateTotalAssetCount = true;
+        return (
+            <div>
+                <KeyList
+                    keysInfo={this.state.keys}
+                    onEdit={this._openEditModal}
+                    showDetails={this._openDetailsModal}
+                    onDelete={this._openDeleteModal}
+                    onDisassociate={
+                        !!space ? k => this._disassociateSpace(space, k) : null
+                    }
+                />
+            </div>
+        );
     }
 
-    // if we know who to assign it to, do it now
-    if (person) {
-      const assignUrl = `/api/${this.context.team.slug}/keys/assign?keyId=${key.id}&personId=${
-        person.id
-      }&date=${date}`;
+    private _renderDetailsView() {
+        const { keyId } = this.context.router.route.match.params;
+        const selectedKeyId = parseInt(keyId, 10);
+        const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
+        const selectedKey = selectedKeyInfo.key;
 
-      if(!key.assignment)
-      {
-        // don't count as assigning unless this is a new one
-        updateInUseAssetCount = true;
-      }
-      key = await this.context.fetch(assignUrl, {
-        method: "POST"
-      });
-      key.assignment.person = person;
+        return (
+            <KeyDetailContainer
+                selectedKeyInfo={selectedKeyInfo}
+                goBack={this._closeModals}
+                serialInUseUpdated={this._serialInUseUpdated}
+                serialTotalUpdated={this._serialTotalUpdated}
+                spacesTotalUpdated={this._spacesTotalUpdated}
+            />
+        );
     }
 
-    const index = this.state.keys.findIndex(x => x.id === key.id);
-    if (index !== -1) {
-      // update already existing entry in key
-      const updateKey = [...this.state.keys];
-      updateKey[index] = key;
+    private _createKey = async (key: IKey) => {
+        const request = {
+            code: key.code,
+            name: key.name,
+            tags: key.tags
+        };
 
-      this.setState({
-        ...this.state,
-        keys: updateKey
-      });
-    } else {
-      this.setState({
-        keys: [...this.state.keys, key]
-      });
-    }
-    if(updateTotalAssetCount && this.props.assetTotalUpdated)
-    {
-        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
-           this.props.person ? this.props.person.id : null, 1);
-    }
-    if(updateInUseAssetCount && this.props.assetInUseUpdated)
-    {
-        this.props.assetInUseUpdated("key", this.props.space ? this.props.space.id : null,
-          this.props.person ? this.props.person.id : null, 1);
-    }
-  };
+        const createUrl = `/api/${this.context.team.slug}/keys/create`;
+        key = await this.context.fetch(createUrl, {
+            body: JSON.stringify(request),
+            method: "POST"
+        });
 
-  private _revokeKey = async (key: IKey) => {
-    // call API to actually revoke
-    const removed: IKey = await this.context.fetch(`/api/${this.context.team.slug}/keys/revoke`, {
-      body: JSON.stringify(key),
-      method: "POST"
-    });
+        const index = this.state.keys.findIndex(x => x.id === key.id);
+        let keyInfo: IKeyInfo = {
+            id: key.id,
+            key,
+            serialsInUseCount: 0,
+            serialsTotalCount: 0,
+            spacesCount: 0,
+        };
+        if (index !== -1) {
+            // update already existing entry in key
+            const updateKeys = [...this.state.keys];
+            updateKeys[index].key = key;
+            keyInfo = updateKeys[index];
 
-    // remove from state
-    const index = this.state.keys.indexOf(key);
-    if (index > -1) {
-      const shallowCopy = [...this.state.keys];
-      if (this.props.person == null) {
-        // if we are looking at all key, just update assignment
-        shallowCopy[index] = removed;
-      } else {
-        // if we are looking at a person, remove from our list of key
-        shallowCopy.splice(index, 1);
-      }
-      this.setState({ keys: shallowCopy });
-      if(this.props.assetInUseUpdated)
-      {
-        this.props.assetInUseUpdated("key", this.props.space ? this.props.space.id: null,
-        this.props.person ? this.props.person.id : null, -1); 
-      }
-  
-    }
-  };
+            this.setState({
+                ...this.state,
+                keys: updateKeys
+            });
+        } else {
+            this.setState({
+                keys: [...this.state.keys, keyInfo]
+            });
+        }
 
-  private _editKey = async (key: IKey) =>
-  {
-    const index = this.state.keys.findIndex(x => x.id === key.id);
+        if (this.props.assetTotalUpdated) {
+            this.props.assetTotalUpdated(
+                "key",
+                this.props.space ? this.props.space.id : null,
+                this.props.person ? this.props.person.id : null,
+                1
+            );
+        }
 
-    if(index === -1 ) // should always already exist
-    {
-      return;
-    }
+        return keyInfo;
+    };
 
-    const updated: IKey = await this.context.fetch(`/api/${this.context.team.slug}/keys/update`, {
-      body: JSON.stringify(key),
-      method: "POST"
-    });
+    private _editKey = async (key: IKey) => {
+        const index = this.state.keys.findIndex(x => x.id === key.id);
 
-    // update already existing entry in key
-    const updateKey = [...this.state.keys];
-    updateKey[index] = updated;
+        // should always already exist
+        if (index < 0) {
+            return;
+        }
 
-    this.setState({
-      ...this.state,
-      keys: updateKey
-    });
+        const request = {
+            code: key.code,
+            name: key.name,
+            tags: key.tags
+        };
 
-    if(this.props.assetEdited)
-    {
-      this.props.assetEdited("key", this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null);
-    }
+        const updateUrl = `/api/${this.context.team.slug}/keys/update/${
+            key.id
+        }`;
+        key = await this.context.fetch(updateUrl, {
+            body: JSON.stringify(request),
+            method: "POST"
+        });
+
+        // update already existing entry in key
+        const updateKey = [...this.state.keys];
+        updateKey[index].key = key;
+
+        this.setState({
+            ...this.state,
+            keys: updateKey
+        });
+
+        if (this.props.assetEdited) {
+            this.props.assetEdited(
+                "key",
+                this.props.space ? this.props.space.id : null,
+                this.props.person ? this.props.person.id : null
+            );
+        }
+
+        // TODO: handle count changes once keys are related to spaces
+    };
+
+    private _deleteKey = async (key: IKey) => {
+        if(!confirm("Are you should you want to delete item?")){
+          return false;
+        }
+        const deleted: IKey = await this.context.fetch(`/api/${this.context.team.slug}/keys/delete/${key.id}`, {
+          method: "POST"
+        });
+        
     
-    // TODO: handle count changes once keys are related to spaces
-  }
+        // remove from state
+        const index = this.state.keys.findIndex(x => x.id === key.id);
+        if (index > -1) {
+          const shallowCopy = [...this.state.keys];
+          shallowCopy.splice(index, 1);
+          this.setState({ keys: shallowCopy });
+        }
+      };
 
-  private _openAssignModal = (key: IKey) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/keys/assign/${key.id}`
-    );
-  };
+    private _associateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
+        const { team } = this.context;
+        const { keys } = this.state;
 
-  private _openCreateModal = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/keys/create`);
-  };
+        // possibly create key
+        if (keyInfo.id === 0) {
+            keyInfo = await this._createKey(keyInfo.key);
+        }
 
-  private _openDetailsModal = (key: IKey) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/keys/details/${key.id}`
-    );
-  };
+        const request = {
+            spaceId: space.id
+        };
 
-  private _openEditModal = (key: IKey) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/keys/edit/${key.id}`
-    );
-  };
+        const associateUrl = `/api/${team.slug}/keys/associateSpace/${keyInfo.id}`;
+        const association = await this.context.fetch(associateUrl, {
+            body: JSON.stringify(request),
+            method: "POST"
+        });
 
-  private _closeModals = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/keys`);
-  };
+        // update count here
+        keyInfo.spacesCount++;
 
-  private _getBaseUrl = () => {
-    if(!!this.props.person)
-    {
-      return `/${this.context.team.slug}/people/details/${this.props.person.id}`;
-    } else if(!!this.props.space)
-    {
-      return `/${this.context.team.slug}/spaces/details/${this.props.space.id}`;
-    } else {
-      return `/${this.context.team.slug}`;
+        const index = this.state.keys.findIndex(x => x.id === keyInfo.id);
+        if (index !== -1) {
+            // update already existing entry in key
+            const updateKeys = [...this.state.keys];
+            updateKeys[index] = keyInfo;
+
+            this.setState({
+                ...this.state,
+                keys: updateKeys
+            });
+        } else {
+            this.setState({
+                keys: [...this.state.keys, keyInfo]
+            });
+        }
+        if(this.props.assetTotalUpdated)
+        {
+        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
+            this.props.person ? this.props.person.id : null, 1);
+        }
+    };
+
+    private _disassociateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
+        const { team } = this.context;
+        const { keys } = this.state;
+
+        const request = {
+            spaceId: space.id
+        };
+
+        const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${
+            keyInfo.id
+        }`;
+        const result = await this.context.fetch(disassociateUrl, {
+            body: JSON.stringify(request),
+            method: "POST"
+        });
+
+        // update count here
+        keyInfo.spacesCount--;
+
+        const updatedKeys = [...keys];
+        const index = updatedKeys.findIndex(k => k.id === keyInfo.id);
+        updatedKeys.splice(index, 1);
+
+        this.setState({
+            keys: updatedKeys
+        });
+
+        if(this.props.assetTotalUpdated)
+        {
+        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
+            this.props.person ? this.props.person.id : null, -1);
+        }
+    };
+
+    // managing counts for assigned or revoked
+    private _serialInUseUpdated = (keyId: number, count: number) => {
+        const index = this.state.keys.findIndex(x => x.id === keyId);
+        if(index > -1)
+        {
+            const keys = [...this.state.keys];
+            keys[index].serialsInUseCount += count;
+            
+            this.setState({keys});
+        }
     }
-  }
+    private _serialTotalUpdated = (keyId: number, count: number) => {
+        const index = this.state.keys.findIndex(x => x.id === keyId);
+        if(index > -1)
+        {
+            const keys = [...this.state.keys];
+            keys[index].serialsTotalCount += count;
+            
+            this.setState({keys});
+        }
+    }
+
+    private _spacesTotalUpdated = (keyId: number, count: number) => {
+        const index = this.state.keys.findIndex(x => x.id === keyId);
+        if(index > -1)
+        {
+            const keys = [...this.state.keys];
+            keys[index].spacesCount += count;
+            
+            this.setState({keys});
+        }
+    }
+
+    private _onTagsFiltered = (tagFilters: string[]) => {
+        this.setState({ tagFilters });
+    };
+
+    private _onTableFiltered = (tableFilters: any[]) => {
+        this.setState({ tableFilters });
+    };
+
+    private _openCreateModal = () => {
+        const { team } = this.context;
+        this.context.router.history.push(`/${team.slug}/keys/create`);
+    };
+
+    private _openDetailsModal = (key: IKey) => {
+        const { team } = this.context;
+        this.context.router.history.push(
+            `/${team.slug}/keys/details/${key.id}`
+        );
+    };
+
+    private _openEditModal = (key: IKey) => {
+        const { team } = this.context;
+        this.context.router.history.push(`/${team.slug}/keys/edit/${key.id}`);
+    };
+
+    private _openDeleteModal = (equipment: IKey) => {
+        this.context.router.history.push(
+          `${this._getBaseUrl()}/keys/delete/${equipment.id}`
+        );
+      }
+
+    private _openAssociate = () => {
+        this.context.router.history.push(
+            `${this._getBaseUrl()}/keys/associate`
+        );
+    };
+
+    private _closeModals = () => {
+        this.context.router.history.push(`${this._getBaseUrl()}/keys`);
+    };
+
+    private _getBaseUrl = () => {
+        const { person, space } = this.props;
+        const slug = this.context.team.slug;
+
+        if (!!person) {
+            return `/${slug}/people/details/${person.id}`;
+        }
+
+        if (!!space) {
+            return `/${slug}/spaces/details/${space.id}`;
+        }
+
+        return `/${slug}`;
+    };
 }

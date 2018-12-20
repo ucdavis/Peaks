@@ -84,6 +84,7 @@ img.img-fluid {
 
   .equipment-color & {
     background-color: $equipment;
+
   }
 
   .spaces-color & {
@@ -527,4 +528,13 @@ ol.breadcrumb {
 }
 .card-bot-border {
   border-bottom:1px solid $borders;
+}
+.table-borderless {
+  td, th {
+    border-top:none !important;
+    padding-left:0px;
+  }
+  .rbt {
+    margin-bottom:0px;
+  }
 }

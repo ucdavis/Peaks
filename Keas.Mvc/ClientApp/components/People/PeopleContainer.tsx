@@ -1,13 +1,12 @@
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
-
-import { AppContext, IPersonInfo, IPerson } from "../../Types";
-import PeopleTable from "./PeopleTable";
-import Denied from "../Shared/Denied";
+import { AppContext, IPerson, IPersonInfo } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
+import Denied from "../Shared/Denied";
 import SearchTags from "../Tags/SearchTags";
-import PersonDetails from "./PersonDetails";
 import CreatePerson from "./CreatePerson";
+import PeopleTable from "./PeopleTable";
+import PersonDetails from "./PersonDetails";
 
 interface IState {
   loading: boolean;
@@ -68,7 +67,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
             this._renderTableView(personAction === "create")
           }
           {personAction === "details" && !!detailPerson && !!detailPerson.person &&
-            this._renderDetailsView(detailPerson.person)
+            this._renderDetailsView(detailPerson)
           }
         </div>
       </div>
@@ -102,14 +101,15 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     );
   }
 
-  private _renderDetailsView = (detailPerson: IPerson) => {
+  private _renderDetailsView = (detailPerson: IPersonInfo) => {
     return(
       <PersonDetails
-        selectedPerson={detailPerson}
+        selectedPersonInfo={detailPerson}
         tags={this.state.tags}
         goBack={this._goBack}
         inUseUpdated={this._assetInUseUpdated}
         onEdit={this._editPerson}
+        onDelete={this._deletePerson}
       />
     );
   }
@@ -128,7 +128,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
           case "equipment": 
             people[index].equipmentCount += count;
             break;
-          case "key":
+          case "serial":
             people[index].keyCount += count;
             break;
           case "access":
@@ -139,7 +139,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         }
         this.setState({people});
     }
-}
+  }
 
   // tags 
   private _filterTags = (filters: string[]) => {
@@ -171,11 +171,11 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     }
     // since this is a new person, they will not have anything assigned
     const personInfo: IPersonInfo = {
-      id: person.id,
-      person,
       accessCount: 0,
       equipmentCount: 0,
+      id: person.id,
       keyCount: 0,
+      person,
       workstationCount: 0
     };
     this.setState({
@@ -208,12 +208,35 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     }); 
 }
 
-  // controls for modal opening to manage people
-  private _openAssignModal = (person: IPerson) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/people/assign/${person.id}`
-    );
-  };
+private _deletePerson = async (person: IPerson) =>
+{
+  const index = this.state.people.findIndex(x => x.id === person.id);
+
+  if(index === -1 ) // should always already exist
+  {
+    return;
+  }
+
+  if(!confirm("Are you should you want to delete person?")){
+    return false;
+  }
+  
+  const deleted: IPerson = await this.context.fetch(`/api/${this.context.team.slug}/people/delete`, {
+    body: JSON.stringify(person),
+    method: "POST"
+  });
+
+  this._goBack();
+
+  // update already existing entry in key
+  const updatePeople = [...this.state.people];
+  updatePeople.splice(index, 1);
+
+  this.setState({
+    ...this.state,
+    people: updatePeople
+  }); 
+}
 
   private _openCreateModal = () => {
     this.context.router.history.push(`${this._getBaseUrl()}/people/create`);
@@ -225,11 +248,6 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     );
   };
 
-  private _openEditModal = (person: IPerson) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/people/edit/${person.id}`
-    );
-  }
   private _goBack = () => {
     this.context.router.history.push(`${this._getBaseUrl()}/people`);
   };

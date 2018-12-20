@@ -19,11 +19,17 @@ export interface AppContext {
 export interface IRouteProps {
   id: string;
   action: string;
+  
   assetType: string;
+
   personId: string;
   personAction: string;
+
   spaceId: string;
   spaceAction: string;
+
+  keyId: string;
+  keyAction: string;
 }
 
 export interface IUser {
@@ -46,6 +52,15 @@ export interface IPerson {
   lastName: string;
   name: string;
   email: string;
+  homePhone: string;
+  teamPhone: string;
+  title: string;
+  supervisorId?: number;
+  supervisor?: IPerson;
+  startDate: Date;
+  endDate: Date;
+  category: string;
+  notes: string;
 }
 
 export interface IPersonInfo {
@@ -63,20 +78,48 @@ export interface ITeam {
   slug: string;
 }
 
+export interface IKeyInfo {
+  id: number;
+  key: IKey;
+  serialsTotalCount: number;
+  serialsInUseCount: number;
+  spacesCount: number;
+  code?: string;
+}
+
 export interface IKey {
   id: number;
   teamId: number;
   name: string;
-  serialNumber: string;
-  assignment?: IKeyAssignment;
+  code: string;
+  tags: string;
+  serials?: IKeySerial[];
+  keyXSpaces?: IKeySpaceAssociation[];
 }
 
-export interface IKeyAssignment {
+export interface IKeySerial {
   id: number;
-  keyId: number;
-  expiresAt: Date;
+  number: string;
+  tags: string;
+  status: string;
   key: IKey;
+  keySerialAssignment?: IKeySerialAssignment;
+}
+
+export interface IKeySerialAssignment {
+  id: number;
+  expiresAt: Date;
+  keySerial: IKeySerial;
+  keySerialId: number;
   person: IPerson;
+}
+
+export interface IKeySpaceAssociation {
+    id: number;
+    spaceId: number;
+    keyId: number;
+    space?: ISpace;
+    key?: IKey;    
 }
 
 export interface IAccess {
@@ -97,6 +140,7 @@ export interface IAccessAssignment {
 
 export interface IEquipment {
   assignment?: IEquipmentAssignment;
+  equipmentAssignmentId?: number;
   id: number;
   make: string;
   model: string;
@@ -153,6 +197,8 @@ export interface ISpace {
     floorName: string;
     roomName: string;
     roomNumber: string;
+    sqFt: string;
+    roomCategoryName: string;
 }
 
 export interface IWorkstation {

@@ -81,16 +81,16 @@ namespace Keas.Mvc.Controllers.Api
             {
                 var access = await _context.Access.Where(x => x.Id == accessId && x.Team.Slug == Team)
                     .Include(x => x.Assignments).SingleAsync();
-                var accessAssingment = new AccessAssignment{
+                var accessAssignment = new AccessAssignment{
                     AccessId = accessId,
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date),
                 };
-                accessAssingment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
-                access.Assignments.Add(accessAssingment);
+                accessAssignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
+                access.Assignments.Add(accessAssignment);
                 await _context.SaveChangesAsync();
-                await _eventService.TrackAssignAccess(accessAssingment, Team);
-                return Json(accessAssingment);
+                await _eventService.TrackAssignAccess(accessAssignment, Team);
+                return Json(accessAssignment);
             }
             return BadRequest(ModelState);
         }
@@ -121,6 +121,41 @@ namespace Keas.Mvc.Controllers.Api
                 return Json(accessAssignment);
             }
             return BadRequest(ModelState);
+        }
+
+        public async Task<IActionResult> Delete([FromBody]Access access)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if(!access.Active) 
+            {
+                return BadRequest(ModelState);
+            }
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+                _context.Access.Update(access);
+
+                if(access.Assignments.Count > 0)
+                {
+                    foreach(var assignment in access.Assignments.ToList()) 
+                    {
+                        await _eventService.TrackUnAssignAccess(assignment, Team); // call before we remove person info
+                        _context.AccessAssignments.Remove(assignment);
+                    }
+                }
+
+                access.Active = false;                
+                await _context.SaveChangesAsync();
+                await _eventService.TrackAccessDeleted(access);
+
+                transaction.Commit();
+                return Json(null);
+            }
+
         }
     }
 }

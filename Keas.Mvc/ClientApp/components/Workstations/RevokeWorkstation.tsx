@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import {
     Button,
@@ -8,7 +8,6 @@ import {
     ModalHeader,
 } from "reactstrap";
 import { AppContext, IWorkstation } from "../../Types";
-import HistoryContainer from "../History/HistoryContainer";
 import WorkstationEditValues from "./WorkstationEditValues";
 
 

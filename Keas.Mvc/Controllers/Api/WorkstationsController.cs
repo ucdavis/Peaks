@@ -124,7 +124,7 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
-                    .Include(w => w.Space).Include(w => w.Assignment).SingleAsync(w => w.Id == workstationId);
+                    .Include(w => w.Space).Include(t => t.Team).Include(w => w.Assignment).SingleAsync(w => w.Id == workstationId);
                     
                 if (workstation.Team.Slug != Team)
                 {
@@ -135,7 +135,7 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     _context.WorkstationAssignments.Update(workstation.Assignment);
                     workstation.Assignment.ExpiresAt = DateTime.Parse(date);
-                    // TODO: track update assignment? 
+                    await _eventService.TrackWorkstationAssignmentUpdated(workstation);
                 }
                 else
                 {
@@ -198,6 +198,37 @@ namespace Keas.Mvc.Controllers.Api
                 return Json(w);
             }
             return BadRequest(ModelState);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var workstation = await _context.Workstations
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Team)
+                .Include(x => x.Assignment)
+                    .ThenInclude(x => x.Person.User)
+                .Include(x => x.Space)
+                .SingleAsync(x => x.Id == id);
+
+            using(var transaction = _context.Database.BeginTransaction())
+            {
+
+                if(workstation.Assignment != null)
+                {
+                    await _eventService.TrackUnAssignWorkstation(workstation); // call before we remove person info
+                    _context.WorkstationAssignments.Remove(workstation.Assignment);
+                    workstation.Assignment = null;
+                }
+
+                workstation.Active = false;
+                await _context.SaveChangesAsync();
+                await _eventService.TrackWorkstationDeleted(workstation);
+
+                transaction.Commit();
+                return Json(null);
+            }
+
         }
 
         public async Task<IActionResult> GetHistory(int id)

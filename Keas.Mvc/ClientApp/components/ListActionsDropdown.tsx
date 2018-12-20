@@ -1,16 +1,17 @@
 ﻿import * as React from "react";
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
 
 interface IProps {
-    onAdd?: () => void;
-    onEdit?: () => void;
-    onRevoke?: () => void;
-    onUpdateAssignment?: () => void;
-    showDetails?: () => void;
+    actions: IAction[]
 }
 
 interface IState {
     isOpen: boolean;
+}
+
+export interface IAction {
+    title: string;
+    onClick: () => void;
 }
 
 export default class ListActionsDropdown extends React.Component<IProps, IState> {
@@ -22,26 +23,28 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
     }
 
     public render() {
+        const { actions } = this.props;
+
         return (
             <Dropdown direction="left" isOpen={this.state.isOpen} toggle={this.toggle}>
                 <DropdownToggle color="link">
                     <i className="fas fa-ellipsis-h fa-lg" aria-hidden="true" />
                 </DropdownToggle>
                 <DropdownMenu>
-                    {!!this.props.onAdd &&
-                        <DropdownItem onClick={this.props.onAdd} >Assign</DropdownItem>}
-                    {!!this.props.onRevoke &&
-                        <DropdownItem onClick={this.props.onRevoke} >Revoke</DropdownItem>}
-                    {!!this.props.onEdit &&
-                        <DropdownItem onClick={this.props.onEdit} >Edit</DropdownItem>}
-                    {!!this.props.onUpdateAssignment &&
-                        <DropdownItem onClick={this.props.onUpdateAssignment} >Update Assignment</DropdownItem>}
-                    {!!this.props.showDetails &&
-                        <DropdownItem onClick={this.props.showDetails} >Show Details</DropdownItem>}
-                    </DropdownMenu>
+                    { actions.map(this.renderAction) }
+                </DropdownMenu>
             </Dropdown>
         );
     }
+
+    private renderAction(action: IAction) {
+        return (
+            <DropdownItem key={action.title} onClick={action.onClick}>
+                { action.title }
+            </DropdownItem>
+        )
+    }
+
     private toggle = () => {
         this.setState({ isOpen: !this.state.isOpen });
     }

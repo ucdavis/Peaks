@@ -1,11 +1,14 @@
-﻿import * as React from "react";
-
-import { ISpace, IPerson } from "../../Types";
-import AssignSpace from "../Spaces/AssignSpace";
+﻿import * as moment from "moment";
+import * as React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { IPerson, ISpace } from "../../Types";
 import SearchTags from "../Tags/SearchTags";
+import AssignPerson from "./AssignPerson";
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
+    changeSupervisor?: (supervisor: IPerson) => void;
     tags?: string[];
     disableEditing: boolean;
     selectedPerson: IPerson;
@@ -51,8 +54,98 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                         onChange={(e) => this.props.changeProperty("email", e.target.value)}
                     />
                 </div>
+
+                <div className="form-group">
+                    <label>Home Phone Number</label>
+                    <input type="text"
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedPerson.homePhone ? this.props.selectedPerson.homePhone : ""}
+                        onChange={(e) => this.props.changeProperty("homePhone", e.target.value)}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Team Phone Number</label>
+                    <input type="text"
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedPerson.teamPhone ? this.props.selectedPerson.teamPhone : ""}
+                        onChange={(e) => this.props.changeProperty("teamPhone", e.target.value)}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Title</label>
+                    <input type="text"
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedPerson.title ? this.props.selectedPerson.title : ""}
+                        onChange={(e) => this.props.changeProperty("title", e.target.value)}
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Start Date</label>
+                    <DatePicker
+                      selected={this.props.selectedPerson && this.props.selectedPerson.startDate ? moment(this.props.selectedPerson.startDate) : null}
+                      onChange={this._changeStartDate}
+                      onChangeRaw={this._changeStartDateRaw}
+                      className="form-control"
+                      showMonthDropdown={true}
+                      showYearDropdown={true}
+                      dropdownMode="select"
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>End Date</label>
+                    <DatePicker
+                      selected={this.props.selectedPerson && this.props.selectedPerson.endDate ? moment(this.props.selectedPerson.endDate) : null}
+                      onChange={this._changeEndDate}
+                      onChangeRaw={this._changeEndDateRaw}
+                      className="form-control"
+                      showMonthDropdown={true}
+                      showYearDropdown={true}
+                      dropdownMode="select"
+                    />
+                </div>
                 
+                <div className="form-group">
+                    <label>Supervisor</label>
+                    <AssignPerson
+                        disabled={this.props.disableEditing}
+                        onSelect={this.props.changeSupervisor}
+                        person={this.props.selectedPerson.supervisor} />
+                </div>
                 
+                <div className="form-group">
+                    <label>Category</label>
+                    <select 
+                        onChange={(e) => this.props.changeProperty("category", e.target.value)}
+                        className="form-control"
+                        value={this.props.selectedPerson.category ? this.props.selectedPerson.category : "Faculty"}
+                    >
+                        <option value="Faculty">Faculty</option>
+                        <option value="Staff">Staff</option>
+                        <option value="Admin Staff">Admin Staff</option>
+                        <option value="Grad Student">Grad Student</option>
+                        <option value="Undergrad">Undergrad</option>
+                        <option value="Visitor">Visitor</option>
+                        <option value="Volunteer">Volunteer</option>
+                    </select>
+                </div>
+
+                <div className="form-group">
+                    <label>Notes</label>
+                    <textarea
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedPerson.notes ? this.props.selectedPerson.notes : ""}
+                        onChange={(e) => this.props.changeProperty("notes", e.target.value)}
+                    />
+                </div>
+
                 <div className="form-group">
                     <label>Tags</label>
                     <SearchTags 
@@ -65,4 +158,33 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             </div>
         );
     }
+
+
+    private _changeStartDate = (date: any) => {
+        this.props.changeProperty("startDate", date);
+    }
+    
+    private _changeEndDate = (date: any) => {
+        this.props.changeProperty("endDate", date);
+    }
+
+    private _changeStartDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        const m = moment(value, "MM/DD/YYYY", true);
+        if (m.isValid()) {
+          this._changeStartDate(m);
+        } else {
+          this.setState({ date: null, error: "Please enter a valid date" });
+        }
+      };
+
+      private _changeEndDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        const m = moment(value, "MM/DD/YYYY", true);
+        if (m.isValid()) {
+          this._changeStartDate(m);
+        } else {
+          this.setState({ date: null, error: "Please enter a valid date" });
+        }
+      };
 }

@@ -2,6 +2,7 @@
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Services
 {
@@ -16,13 +17,13 @@ namespace Keas.Mvc.Services
         Task<History> KeyInactivated(Key key);
         Task<History> AccessInactivated(Access access);
         Task<History> EquipmentInactivated(Equipment equipment);
-        Task<History> KeyAssigned(Serial serial);
+        Task<History> KeySerialAssigned(KeySerial keySerial);
         Task<History> AccessAssigned(AccessAssignment accessAssignment);
         Task<History> EquipmentAssigned(Equipment equipment);
-        Task<History> KeyUnassigned(Serial serial);
+        Task<History> KeySerialUnassigned(KeySerial keySerial);
         Task<History> AccessUnassigned(AccessAssignment accessAssignment);
         Task<History> EquipmentUnassigned(Equipment equipment);
-        Task<History> KeyAccepted(Serial serial);
+        Task<History> KeySerialAccepted(KeySerial keySerial);
         Task<History> AccessAccepted(Access access);
         Task<History> EquipmentAccepted(Equipment equipment);
         Task<History> WorkstationCreated(Workstation workstation);
@@ -31,6 +32,17 @@ namespace Keas.Mvc.Services
         Task<History> WorkstationAssigned(Workstation workstation);
         Task<History> WorkstationUnassigned(Workstation workstation);
         Task<History> WorkstationAccepted(Workstation workstation);
+
+        Task<History> KeyDeleted(Key key);
+        Task<History> AccessDeleted(Access access);
+        Task<History> EquipmentDeleted(Equipment equipment);
+        Task<History> WorkstationDeleted(Workstation workstation);
+
+        Task<History> KeySerialAssignmentUpdated(KeySerial keySerial);
+        Task<History> AccessAssignmentUpdated(AccessAssignment accessAssignment);
+        Task<History> EquipmentAssignmentUpdated(Equipment equipment);
+        Task<History> WorkstationAssignmentUpdated(Workstation workstation);
+
 
     }
 
@@ -48,11 +60,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> KeyCreated(Key key)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(key.TeamId);
             var historyEntry = new History
             {
-                Description = "Key Created by " + user.Name,
-                ActorId = user.Id,
+                Description = key.GetDescription(nameof(Key), key.Title, person, "Created"),
+                ActorId = person.UserId,
                 AssetType = "Key",
                 ActionType = "Created",
                 Key = key
@@ -64,11 +76,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> AccessCreated(Access access)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(access.TeamId);
             var historyEntry = new History
             {
-                Description = "Access Created by " + user.Name,
-                ActorId = user.Id,
+                Description = access.GetDescription(nameof(Access), access.Title, person, "Created"),
+                ActorId = person.UserId,
                 AssetType = "Access",
                 ActionType = "Created",
                 Access = access
@@ -80,11 +92,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentCreated(Equipment equipment)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(equipment.TeamId);
             var historyEntry = new History
             {
-                Description = "Equipment Created by " + user.Name,
-                ActorId = user.Id,
+                Description = equipment.GetDescription(nameof(Equipment), equipment.Title, person, "Created"),
+                ActorId = person.UserId,
                 AssetType = "Equipment",
                 ActionType = "Created",
                 Equipment = equipment,
@@ -96,11 +108,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> KeyUpdated(Key key)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(key.TeamId);
             var historyEntry = new History
             {
-                Description = "Key Updated by " + user.Name,
-                ActorId = user.Id,
+                Description = key.GetDescription(nameof(Key), key.Title, person, "Updated"),
+                ActorId = person.UserId,
                 AssetType = "Key",
                 ActionType = "Updated",
                 Key = key
@@ -112,11 +124,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> AccessUpdated(Access access)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(access.TeamId);
             var historyEntry = new History
             {
-                Description = "Access Updated by " + user.Name,
-                ActorId = user.Id,
+                Description = access.GetDescription(nameof(Access), access.Title, person, "Updated"),
+                ActorId = person.UserId,
                 AssetType = "Access",
                 ActionType = "Updated",
                 Access = access,
@@ -128,11 +140,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentUpdated(Equipment equipment)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(equipment.TeamId);
             var historyEntry = new History
             {
-                Description = "Equipment Updated by " + user.Name,
-                ActorId = user.Id,
+                Description = equipment.GetDescription(nameof(Equipment), equipment.Title, person, "Updated"),
+                ActorId = person.UserId,
                 AssetType = "Equipment",
                 ActionType = "Updated",
                 Equipment = equipment,
@@ -143,11 +155,11 @@ namespace Keas.Mvc.Services
         }
         public async Task<History> KeyInactivated(Key key)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(key.TeamId);
             var historyEntry = new History
             {
-                Description = "Key Inactivated by " + user.Name,
-                ActorId = user.Id,
+                Description = key.GetDescription(nameof(Key), key.Title, person, "Inactivated"),
+                ActorId = person.UserId,
                 AssetType = "Key",
                 ActionType = "Inactivated",
                 Key = key
@@ -159,11 +171,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> AccessInactivated(Access access)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(access.TeamId);
             var historyEntry = new History
             {
-                Description = "Access Inactivated by " + user.Name,
-                ActorId = user.Id,
+                Description = access.GetDescription(nameof(Access), access.Title, person, "Inactivated"),
+                ActorId = person.UserId,
                 AssetType = "Access",
                 ActionType = "Inactivated",
                 Access = access
@@ -175,11 +187,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentInactivated(Equipment equipment)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(equipment.TeamId);
             var historyEntry = new History
             {
-                Description = "Equipment Inactivated by " + user.Name,
-                ActorId = user.Id,
+                Description = equipment.GetDescription(nameof(Equipment), equipment.Title, person, "Inactivated"),
+                ActorId = person.UserId,
                 AssetType = "Equipment",
                 ActionType = "Inactivated",
                 Equipment = equipment
@@ -189,17 +201,18 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History> KeyAssigned(Serial serial)
+        public async Task<History> KeySerialAssigned(KeySerial keySerial)
         {
-            var user = await _securityService.GetUser();
+            var key = await _context.Keys.Where(k => k.Id == keySerial.KeyId).Include(t => t.Team).SingleAsync();
+            var person = await _securityService.GetPerson(key.Team.Slug);
             var historyEntry = new History
             {
-                Description = "Key Assigned to " + serial.Assignment.Person.User.Name + " by " + user.Name,
-                ActorId = user.Id,
-                AssetType = "Key",
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(Key), key.Title, person, "Assigned"),
+                ActorId = person.UserId,
+                AssetType = "KeySerial",
                 ActionType = "Assigned",
-                Serial = serial,
-                TargetId = serial.Assignment.PersonId
+                KeySerialId = keySerial.Id,
+                TargetId = keySerial.KeySerialAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -208,11 +221,12 @@ namespace Keas.Mvc.Services
 
         public async Task<History> AccessAssigned(AccessAssignment accessAssignment)
         {
-            var user = await _securityService.GetUser();
+            var access = await _context.Access.Where(a => a.Id == accessAssignment.AccessId).Include(t => t.Team).SingleAsync();
+            var person = await _securityService.GetPerson(access.Team.Slug);
             var historyEntry = new History
             {
-                Description = "Access Assigned to " + accessAssignment.Person.User.Name + " by " + user.Name,
-                ActorId = user.Id,
+                Description = accessAssignment.GetDescription(nameof(Access), access.Title, person, "Assigned"),
+                ActorId = person.UserId,
                 AssetType = "Access",
                 ActionType = "Assigned",
                 AccessId = accessAssignment.AccessId,
@@ -225,11 +239,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentAssigned(Equipment equipment)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(equipment.TeamId);
             var historyEntry = new History
             {
-                Description = "Equipment Assigned to " + equipment.Assignment.Person.User.Name + " by " + user.Name,
-                ActorId = user.Id,
+                Description = equipment.Assignment.GetDescription(nameof(Equipment), equipment.Title, person, "Assigned"),
+                ActorId = person.UserId,
                 AssetType = "Equipment",
                 ActionType = "Assigned",
                 Equipment = equipment,
@@ -240,18 +254,18 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History> KeyUnassigned(Serial serial)
+        public async Task<History> KeySerialUnassigned(KeySerial keySerial)
         {
-            var user = await _securityService.GetUser();
+            var key = await _context.Keys.Where(k => k.Id == keySerial.KeyId).Include(t => t.Team).SingleAsync();
+            var person = await _securityService.GetPerson(key.TeamId);
             var historyEntry = new History
             {
-                Description = "Key Unassigned  by " + user.Name,
-                ActorId = user.Id,
-                AssetType = "Key",
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(KeySerial), key.Title, person, "Unassigned"),
+                ActorId = person.UserId,
+                AssetType = "KeySerial",
                 ActionType = "Unassigned",
-                Key = serial.Key,
-                Serial = serial,
-                TargetId = serial.Assignment.PersonId
+                KeySerialId = keySerial.Id,
+                TargetId = keySerial.KeySerialAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -260,11 +274,12 @@ namespace Keas.Mvc.Services
 
         public async Task<History> AccessUnassigned(AccessAssignment accessAssignment)
         {
-            var user = await _securityService.GetUser();
+            var access = await _context.Access.Where(x => x.Id == accessAssignment.AccessId).Include(t => t.Team).SingleAsync();
+            var person = await _securityService.GetPerson(access.TeamId);
             var historyEntry = new History
             {
-                Description = "Access Unassigned to " + accessAssignment.Person.User.Name + " by " + user.Name,
-                ActorId = user.Id,
+                Description = accessAssignment.GetDescription(nameof(Access), access.Title, person, "Unassigned"),
+                ActorId = person.UserId,
                 AssetType = "Access",
                 ActionType = "Unassigned",
                 AccessId = accessAssignment.AccessId,
@@ -277,11 +292,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentUnassigned(Equipment equipment)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(equipment.TeamId);
             var historyEntry = new History
             {
-                Description = "Equipment Unassigned by " + user.Name,
-                ActorId = user.Id,
+                Description = equipment.Assignment.GetDescription(nameof(Equipment), equipment.Title, person, "Unassigned"),
+                ActorId = person.UserId,
                 AssetType = "Equipment",
                 ActionType = "Unassigned",
                 Equipment = equipment,
@@ -292,18 +307,19 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History> KeyAccepted(Serial serial)
+        public async Task<History> KeySerialAccepted(KeySerial keySerial)
         {
-            var user = await _securityService.GetUser();
+            var key = await _context.Keys.Where(k => k.Id == keySerial.KeyId).Include(t => t.Team).SingleAsync();
+            var person = await _securityService.GetPerson(key.Team.Slug);
             var historyEntry = new History
             {
-                Description = "Key Accepted by " + user.Name,
-                ActorId = user.Id,
+                Description = keySerial.Key.GetDescription(nameof(Key), key.Title, person, "Accepted"),
+                ActorId = person.UserId,
                 AssetType = "Key",
                 ActionType = "Accepted",
-                Key = serial.Key,
-                Serial = serial,
-                TargetId = serial.Assignment.PersonId
+                Key = keySerial.Key,
+                KeySerial = keySerial,
+                TargetId = keySerial.KeySerialAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -312,11 +328,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> AccessAccepted(Access access)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(access.TeamId);
             var historyEntry = new History
             {
-                Description = "Access Accepted by " + user.Name,
-                ActorId = user.Id,
+                Description = access.GetDescription(nameof(Access), access.Title, person, "Accepted"),
+                ActorId = person.UserId,
                 AssetType = "Access",
                 ActionType = "Accepted",
                 Access = access,
@@ -329,11 +345,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> EquipmentAccepted(Equipment equipment)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(equipment.TeamId);
             var historyEntry = new History
             {
-                Description = "Equipment Accepted by " + user.Name,                
-                ActorId = user.Id,
+                Description = equipment.GetDescription(nameof(Equipment), equipment.Title, person, "Accepted"),
+                ActorId = person.UserId,
                 AssetType = "Equipment",
                 ActionType = "Accepted",
                 Equipment = equipment,
@@ -346,11 +362,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> WorkstationCreated(Workstation workstation)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = "Workstation Created by " + user.Name,
-                ActorId = user.Id,
+                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Created"),
+                ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Created",
                 Workstation = workstation,
@@ -362,11 +378,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> WorkstationUpdated(Workstation workstation)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = "Workstation Updated by " + user.Name,
-                ActorId = user.Id,
+                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Updated"),
+                ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Updated",
                 Workstation = workstation,
@@ -376,13 +392,13 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public async Task<History>WorkstationInactivated(Workstation workstation)
+        public async Task<History> WorkstationInactivated(Workstation workstation)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = "Workstation Inactivated by " + user.Name,
-                ActorId = user.Id,
+                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Inactivated"),
+                ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Inactivated",
                 Workstation = workstation
@@ -394,11 +410,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> WorkstationAssigned(Workstation workstation)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = "Workstation Assigned to " + workstation.Assignment.Person.User.Name + " by " + user.Name,
-                ActorId = user.Id,
+                Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Assigned"),
+                ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Assigned",
                 Workstation = workstation,
@@ -411,11 +427,11 @@ namespace Keas.Mvc.Services
 
         public async Task<History> WorkstationUnassigned(Workstation workstation)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = "Workstation Unassigned  by " + user.Name,
-                ActorId = user.Id,
+                Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Unassigned"),
+                ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Unassigned",
                 Workstation = workstation,
@@ -428,13 +444,144 @@ namespace Keas.Mvc.Services
 
         public async Task<History> WorkstationAccepted(Workstation workstation)
         {
-            var user = await _securityService.GetUser();
+            var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = "Workstation Accepted by " + user.Name,
-                ActorId = user.Id,
+                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Accepted"),
+                ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Accepted",
+                Workstation = workstation,
+                TargetId = workstation.Assignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+
+        public async Task<History> KeyDeleted(Key key)
+        {
+            var person = await _securityService.GetPerson(key.TeamId);
+            var historyEntry = new History
+            {
+                Description = key.GetDescription(nameof(Key), key.Title, person, "Deleted"),
+                ActorId = person.UserId,
+                AssetType = "Key",
+                ActionType = "Deleted",
+                Key = key
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> AccessDeleted(Access access)
+        {
+
+            var person = await _securityService.GetPerson(access.TeamId);
+            var historyEntry = new History
+            {
+                Description = access.GetDescription(nameof(Access), access.Title, person, "Deleted"),
+                ActorId = person.UserId,
+                AssetType = "Access",
+                ActionType = "Deleted",
+                Access = access
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> EquipmentDeleted(Equipment equipment)
+        {
+
+            var person = await _securityService.GetPerson(equipment.TeamId);
+            var historyEntry = new History
+            {
+                Description = equipment.GetDescription(nameof(Equipment), equipment.Title, person, "Deleted"),
+                ActorId = person.UserId,
+                AssetType = "Equipment",
+                ActionType = "Deleted",
+                Equipment = equipment,
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> WorkstationDeleted(Workstation workstation)
+        {
+
+            var person = await _securityService.GetPerson(workstation.TeamId);
+            var historyEntry = new History
+            {
+                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Deleted"),
+                ActorId = person.UserId,
+                AssetType = "Workstation",
+                ActionType = "Deleted",
+                Workstation = workstation,
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+
+        public async Task<History> KeySerialAssignmentUpdated(KeySerial keySerial)
+        {
+            var key = await _context.Keys.Where(k => k.Id == keySerial.KeyId).Include(t => t.Team).SingleAsync();
+            var person = await _securityService.GetPerson(key.Team.Slug);
+            var historyEntry = new History
+            {
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(Key), key.Title, person, "Assignment Updated"),
+                ActorId = person.UserId,
+                AssetType = "Key",
+                ActionType = "AssignmentUpdated",
+                KeySerial = keySerial,
+                TargetId = keySerial.KeySerialAssignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> AccessAssignmentUpdated(AccessAssignment accessAssignment)
+        {
+            var access = await _context.Access.Where(a => a.Id == accessAssignment.AccessId).Include(t => t.Team).SingleAsync();
+            var person = await _securityService.GetPerson(access.Team.Slug);
+            var historyEntry = new History
+            {
+                Description = accessAssignment.GetDescription(nameof(Access), access.Title, person, "Assignment Updated"),
+                ActorId = person.UserId,
+                AssetType = "Access",
+                ActionType = "AssignmentUpdated",
+                AccessId = accessAssignment.AccessId,
+                TargetId = accessAssignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> EquipmentAssignmentUpdated(Equipment equipment)
+        {
+            var person = await _securityService.GetPerson(equipment.TeamId);
+            var historyEntry = new History
+            {
+                Description = equipment.Assignment.GetDescription(nameof(Equipment), equipment.Title, person, "Assignment Updated"),
+                ActorId = person.UserId,
+                AssetType = "Equipment",
+                ActionType = "AssignmentUpdated",
+                Equipment = equipment,
+                TargetId = equipment.Assignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+        public async Task<History> WorkstationAssignmentUpdated(Workstation workstation)
+        {
+            var person = await _securityService.GetPerson(workstation.TeamId);
+            var historyEntry = new History
+            {
+                Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Assignment Updated"),
+                ActorId = person.UserId,
+                AssetType = "Workstation",
+                ActionType = "AssignmentUpdated",
                 Workstation = workstation,
                 TargetId = workstation.Assignment.PersonId
             };

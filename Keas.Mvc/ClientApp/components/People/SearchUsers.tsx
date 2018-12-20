@@ -1,8 +1,7 @@
-﻿import PropTypes from "prop-types";
+﻿import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { Button } from "reactstrap";
-
-import { AppContext, IUser, IPerson } from "../../Types";
+import { AppContext, IPerson } from "../../Types";
 
 interface IState {
     reloaded: boolean;

@@ -22,10 +22,17 @@ namespace Keas.Core.Domain
 
         // Comma Separated List of Search Tags
         public string Tags { get; set; }
+
         public Team Team { get; set; }
         public int TeamId { get; set; }
 
-        public bool Active { get; set; }    
+        public bool Active { get; set; }
 
+        public string GetDescription(string asset, string title, Person person, string action)
+        {
+            return asset + "(" + title + ") " + action + " by " + person.Name + " (" + person.UserId + ")";
+        }
+
+        public virtual string Title => Name;
     }
 }

@@ -5,12 +5,13 @@ import "react-table/react-table.css";
 import { Button } from "reactstrap";
 import { IAccess } from "../../Types";
 import { DateUtil } from "../../util/dates";
-import ListActionsDropdown from "../ListActionsDropdown";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 
 interface IProps {
     accesses: IAccess[];
     onRevoke?: (access: IAccess) => void;
+    onDelete?: (access: IAccess) => void;
     onAdd?: (access: IAccess) => void;
     showDetails?: (access: IAccess) => void;
     onEdit?: (access: IAccess) => void;
@@ -25,18 +26,18 @@ export default class AccessTable extends React.Component<IProps, {}> {
         minRows={1}
         columns = {[
             {
-                Header: "",
-                headerClassName: "spaces-details",
-                filterable: false,
-                sortable: false,
-                resizable: false,
-                className: "spaces-details",
                 Cell: row => (
                     <Button color="link" onClick={() => this.props.showDetails(row.original)}>
                     Details
                     </Button>
                 ),
+                Header: "",
+                className: "spaces-details",
+                filterable: false,
+                headerClassName: "spaces-details",
                 maxWidth: 150,
+                resizable: false,
+                sortable: false,
             },
             {
                 Header: "Item",
@@ -47,14 +48,13 @@ export default class AccessTable extends React.Component<IProps, {}> {
             },
             {
                 Header: "Number of Assignments",
-                id: "numAssignments",
                 accessor: x => x.assignments.length,
                 filterable: false,
+                id: "numAssignments",
                 sortable: true,
             },
             {
                 Header: "Assigned To",
-                id: "assignedTo",
                 accessor: x => (x.assignments.map(a => a.person.name).join(",")),
                 filterMethod: (filter, row) => 
                 {
@@ -63,11 +63,22 @@ export default class AccessTable extends React.Component<IProps, {}> {
                     {
                         return true;
                     }
-                }
+                },
+                id: "assignedTo",
             },
             {
+                Filter: ({filter, onChange}) => 
+                <select onChange={e => onChange(e.target.value)}
+                style={{width: "100%"}}
+                value={filter ? filter.value : "all"}
+                >
+                    <option value="all">Show All</option>
+                    <option value="expired">Expired</option>
+                    <option value="unexpired">All Unexpired</option>
+                    <option value="3weeks">Expiring within 3 weeks</option>
+                    <option value="6weeks">Expiring within 6 weeks</option>
+                </select>,
                 Header: "Expiration",
-                id: "expiresAt",
                 accessor: x=> DateUtil.formatFirstExpiration(x.assignments.map(y => y.expiresAt)),
                 filterMethod: (filter, row) => {
                     if( filter.value === "all") {
@@ -88,46 +99,49 @@ export default class AccessTable extends React.Component<IProps, {}> {
                             && moment(row.expiresAt,"MM-DD-YYYY").isBefore(moment().add(6,'w'))
                     }
                 },
-                Filter: ({filter, onChange}) => 
-                    <select onChange={e => onChange(e.target.value)}
-                    style={{width: "100%"}}
-                    value={filter ? filter.value : "all"}
-                    >
-                        <option value="all">Show All</option>
-                        <option value="expired">Expired</option>
-                        <option value="unexpired">All Unexpired</option>
-                        <option value="3weeks">Expiring within 3 weeks</option>
-                        <option value="6weeks">Expiring within 6 weeks</option>
-                    </select>,
+                id: "expiresAt",
                 sortMethod: (a, b) => {
                     return moment(a,"MM-DD-YYYY").isSameOrAfter(moment(b,"MM-DD-YYYY")) ? 1 : -1;
                 }
             },
             {
+                Cell: this.renderDropdownColumn,
                 Header: "Actions",
-                headerClassName: "table-actions",
-                filterable: false,
-                sortable: false,
-                resizable: false,
                 className: "table-actions",
-                Cell: row => (
-                    <ListActionsDropdown
-                        onRevoke={!!this.props.onRevoke && !!row.original.assignment ? 
-                        () => this.props.onRevoke(row.original) : null}
-                        onAdd={!!this.props.onAdd && !row.original.assignment ? 
-                        () => this.props.onAdd(row.original) : null}
-                        onUpdateAssignment={!!this.props.onAdd && !!row.original.assignment ? 
-                            () => this.props.onAdd(row.original) : null}
-                        showDetails={!!this.props.showDetails ? 
-                        () => this.props.showDetails(row.original) : null}
-                        onEdit={!!this.props.onEdit ? 
-                        () => this.props.onEdit(row.original) : null}
-                />
-                ),
+                filterable: false,
+                headerClassName: "table-actions",
+                resizable: false,
+                sortable: false,
             },
             
         ]}
     />
+    );
+  }
+
+  private renderDropdownColumn = (row) => {
+    const accessEntity: IAccess = row.original;
+
+    const actions: IAction[] = [];
+
+    if (!!this.props.onAdd) {
+        actions.push({ title: 'Assign', onClick: () => this.props.onAdd(accessEntity) });
+    }
+
+    if (!!this.props.showDetails) {
+        actions.push({ title: 'Details', onClick: () => this.props.showDetails(accessEntity) });
+    }
+
+    if (!!this.props.onEdit) {
+        actions.push({ title: 'Edit', onClick: () => this.props.onEdit(accessEntity) });
+    }
+
+    if (!!this.props.onDelete) {
+        actions.push({ title: 'Delete', onClick: () => this.props.onDelete(accessEntity) });
+    }
+
+    return (
+        <ListActionsDropdown actions={actions} />
     );
   }
 }

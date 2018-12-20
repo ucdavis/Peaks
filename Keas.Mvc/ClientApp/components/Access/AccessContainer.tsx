@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { AppContext, IAccess, IAccessAssignment, IPerson, ISpace } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
@@ -8,6 +8,7 @@ import AccessDetails from "./AccessDetails";
 import AccessList from "./AccessList";
 import AccessTable from "./AccessTable";
 import AssignAccess from "./AssignAccess";
+import DeleteAccess from "./DeleteAccess";
 import EditAccess from "./EditAccess";
 
 interface IState {
@@ -97,6 +98,13 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                     onRevoke={this._revokeAccess}
                     tags={this.state.tags}
                     />
+                <DeleteAccess 
+                    selectedAccess={detailAccess}
+                    onRevoke={this._revokeAccess}
+                    closeModal={this._closeModals}
+                    deleteAccess={this._deleteAccess}
+                    modal={activeAsset && action === "delete"}
+                    />
         </div>
       </div>
     );
@@ -111,6 +119,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
             access={this.state.accesses}
             personView={this.props.person ? true : false}
             onRevoke={this._openRevokeModal}
+            onDelete={this._openDeleteModal}
             onAdd={this._openAssignModal}
             onEdit={this._openEditModal}
             showDetails={this._openDetailsModal}
@@ -132,6 +141,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
           <AccessTable
             accesses={filteredAccess}
             onRevoke={this._openRevokeModal}
+            onDelete={this._openDeleteModal}
             onAdd={this._openAssignModal}
             onEdit={this._openEditModal}
             showDetails={this._openDetailsModal}
@@ -229,7 +239,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       const accessIndex = this.state.accesses.findIndex(x => x.id === accessAssignment.accessId);
       if (accessIndex > -1) {
           const shallowCopy = [...this.state.accesses];
-          if (this.props.person == null) {
+          if (!this.props.person) {
               // if we are looking at all access, remove from access.assignments
               const assignmentIndex = shallowCopy[accessIndex].assignments.indexOf(accessAssignment);
               shallowCopy[accessIndex].assignments.splice(assignmentIndex, 1);
@@ -247,6 +257,36 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         }
       }
   }
+  
+  private _deleteAccess = async (access: IAccess) => {
+    if(!confirm("Are you should you want to delete item?")){
+        return false;
+      }
+    const deleted: IAccess = await this.context.fetch(`/api/${this.context.team.slug}/access/delete`, {
+        body: JSON.stringify(access),
+        method: "POST"
+        });
+
+    // remove from state
+    const index = this.state.accesses.indexOf(access);
+    if (index > -1) {
+      const shallowCopy = [...this.state.accesses];
+      shallowCopy.splice(index, 1);
+      this.setState({ accesses: shallowCopy });
+
+      if(this.props.assetInUseUpdated && access.assignments.length > 0)
+      {
+          this.props.assetInUseUpdated("access", this.props.space ? this.props.space.id : null,
+          this.props.person ? this.props.person.id : null, -1 * access.assignments.length);
+      }
+
+      if(this.props.assetTotalUpdated)
+      {
+        this.props.assetTotalUpdated("access", this.props.space ? this.props.space.id : null,
+          this.props.person ? this.props.person.id : null, -1);
+      }
+    }
+  };
 
   private _editAccess = async (access: IAccess) =>
   {
@@ -310,6 +350,12 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   private _openEditModal = (access: IAccess) => {
     this.context.router.history.push(
       `${this._getBaseUrl()}/access/edit/${access.id}`
+    );
+  };
+  
+  private _openDeleteModal = (access: IAccess) => {
+    this.context.router.history.push(
+      `${this._getBaseUrl()}/access/delete/${access.id}`
     );
   };
 

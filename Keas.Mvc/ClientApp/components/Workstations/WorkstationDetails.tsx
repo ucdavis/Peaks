@@ -1,11 +1,8 @@
-﻿import PropTypes from "prop-types";
-import * as React from "react";
+﻿import * as React from "react";
 import {
     Button,
     Modal,
     ModalBody,
-    ModalFooter,
-    ModalHeader,
 } from "reactstrap";
 import { IWorkstation } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
@@ -22,7 +19,7 @@ interface IProps {
 export default class WorkstationDetails extends React.Component<IProps, {}> {
 
     public render() {
-        if (this.props.selectedWorkstation == null)
+        if (!this.props.selectedWorkstation)
         {
             return null;
         }

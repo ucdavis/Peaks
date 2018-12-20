@@ -2,103 +2,214 @@
 using System.Linq;
 using Keas.Core.Data;
 using Keas.Core.Domain;
-using System.Collections.Generic;
 
 namespace Keas.Mvc.Helpers
 {
-    public static class DbInitializer
+    public class DbInitializer
     {
-        public static void Initialize(ApplicationDbContext context)
+        private readonly ApplicationDbContext _context;
+
+        public DbInitializer(ApplicationDbContext context)
         {
-            context.Database.EnsureDeleted(); // TODO: remove
-            context.Database.EnsureCreated();
+            _context = context;
+        }
 
-            if (context.Users.Any()) return; // already initialized
+        public void RecreateDatabase()
+        {
+            _context.Database.EnsureDeleted();
+            _context.Database.EnsureCreated();
+        }
 
-            // add in some default factilities           
+        public void Initialize()
+        {
+            // Create All Roles
+            var keyMaster       = CreateOrFindRole(new Role { Name = "KeyMaster" });
+            var equipMaster     = CreateOrFindRole(new Role { Name = "EquipMaster" });
+            var departmentAdmin = CreateOrFindRole(new Role { Name = "DepartmentalAdmin" });
+            var accessMaster    = CreateOrFindRole(new Role { Name = "AccessMaster" });
+            var spaceMaster     = CreateOrFindRole(new Role { Name = "SpaceMaster" });
+            var admin           = CreateOrFindRole(new Role { Name = "Admin", IsAdmin = true });
 
-            var space2 = new Space { BldgKey = "02", FloorKey = "03", RoomKey = "02", BldgName = "North Hall", RoomName = "Group/Meeting Room", RoomNumber = "308", ChartNum = "3", OrgId = "ADNO" };
-            context.Spaces.Add(space2);
+            // Create All Super Users
+            var scott = CreateOrFindUser(new User { Id = "postit", FirstName = "Scott", LastName = "Kirkland", Email = "srkirkland@ucdavis.edu" });
+            var james = CreateOrFindUser(new User { Id = "jscub", FirstName = "James", LastName = "Cubbage", Email = "jscubbage@ucdavis.edu" });
+            var laura = CreateOrFindUser(new User { Id = "holstege", FirstName = "Laura", LastName = "Holstege", Email = "laholstege@ucdavis.edu" });
+            var cal   = CreateOrFindUser(new User { Id = "cydoval", FirstName = "Cal", LastName = "Doval", Email = "cydoval@ucdavis.edu" });
+            var jason = CreateOrFindUser(new User { Id = "jsylvest", FirstName = "Jason", LastName = "Sylvestre", Email = "jsylvestre@ucdavis.edu" });
+            var john  = CreateOrFindUser(new User {Id = "jpknoll", FirstName = "John", LastName = "Knoll", Email = "jpknoll@ucdavis.edu"});
 
-            var space3 = new Space { BldgKey = "02", FloorKey = "03", RoomKey = "03", BldgName = "North Hall", RoomName = "Meeting Room for CAPS Staff and Large Groups", RoomNumber = "325", ChartNum = "3", OrgId = "ADNO" };
-            context.Spaces.Add(space3);
+            // Create All Admin Assignments
+            CreateSystemPermission(new SystemPermission { Role = admin, User = james });
+            CreateSystemPermission(new SystemPermission { Role = admin, User = laura });
+            CreateSystemPermission(new SystemPermission { Role = admin, User = scott });
+            CreateSystemPermission(new SystemPermission { Role = admin, User = cal });
+            CreateSystemPermission(new SystemPermission { Role = admin, User = jason });
+            CreateSystemPermission(new SystemPermission { Role = admin, User = john });
 
-            var space4 = new Space { BldgKey = "02", FloorKey = "02", RoomKey = "04", BldgName = "North Hall", RoomNumber = "0206A", ChartNum = "3", OrgId = "ADNO" };
-            context.Spaces.Add(space4);
+            _context.SaveChanges();
+        }
 
-            var space5 = new Space { BldgKey = "02", FloorKey = "01", RoomKey = "05", BldgName = "North Hall", RoomName = "Storage", RoomNumber = "0121A", ChartNum = "3", OrgId = "ADNO" };
-            context.Spaces.Add(space5);
+        private Role CreateOrFindRole(Role role)
+        {
+            var matchingRole = _context.Roles.FirstOrDefault(r => r.Name == role.Name);
 
-            var space6 = new Space { BldgKey = "03", FloorKey = "01", RoomKey = "06", BldgName = "South Hall", RoomName = "Storage", RoomNumber = "0121A", ChartNum = "3", OrgId = "ADNO" };
-            context.Spaces.Add(space6);
+            if (matchingRole != null)
+            {
+                return matchingRole;
+            }
 
-            var scott = new User { Id = "postit", FirstName = "Scott", LastName = "Kirkland", Email = "srkirkland@ucdavis.edu" };
-            var james = new User { Id = "jscub", FirstName = "James", LastName = "Cubbage", Email = "jscubbage@ucdavis.edu" };
-            var laura = new User { Id = "holstege", FirstName = "Laura", LastName = "Holstege", Email = "laholstege@ucdavis.edu" };
-            var cal = new User { Id = "cydoval", FirstName = "Cal", LastName = "Doval", Email = "cydoval@ucdavis.edu" };
-            var jason = new User { Id = "jsylvest", FirstName = "Jason", LastName = "Sylvestre", Email = "jsylvestre@ucdavis.edu" };
+            _context.Roles.Add(role);
+            return role;
+        }
 
-            var caes = new Team {  Name = "CAESDO", Slug = "caesdo" };
-            var orgId = new FinancialOrganization{ Chart = "3", OrgCode = "ADNO", Team = caes };
-            var ps = new Team { Name = "Plant Sciences", Slug = "plantsciences"};
+        private User CreateOrFindUser(User user)
+        {
+            var matchingUser = _context.Users.FirstOrDefault(u => u.Id == user.Id);
 
-            context.Users.Add(scott);
-            context.Users.Add(james);
-            context.Users.Add(laura);
-            context.Users.Add(cal);
-            context.Users.Add(jason);
-            context.Teams.Add(caes);
-            context.Teams.Add(ps);
-            context.FISOrgs.Add(orgId);
+            if (matchingUser != null)
+            {
+                return matchingUser;
+            }
 
+            _context.Users.Add(user);
+            return user;
+        }
 
-            // Roles
-            var keyMaster = new Role {  Name = "KeyMaster"};
-            var equipMaster = new Role {Name = "EquipMaster"};
-            var departmentAdmin = new Role {Name = "DepartmentalAdmin"};
-            var accessMaster = new Role { Name = "AccessMaster"};
-            var spaceMaster = new Role { Name = "SpaceMaster"};
-            var admin = new Role { Name = "Admin", IsAdmin = true};
-            //var emulate = new Role {Id = 6, Name = "EmulationUser", IsAdmin = true};
+        private void CreateSystemPermission(SystemPermission permission)
+        {
+            var found = _context.SystemPermissions
+                .FirstOrDefault(p => p.UserId == permission.UserId && p.RoleId == permission.RoleId);
 
-            context.Roles.Add(keyMaster);
-            context.Roles.Add(equipMaster);
-            context.Roles.Add(departmentAdmin);
-            context.Roles.Add(accessMaster);
-            context.Roles.Add(spaceMaster);
-            context.Roles.Add(admin);
-            //context.Roles.Add(emulate);
+            if (found != null)
+            {
+                return;
+            }
 
-            // add assets
-            var lauraCaes = new Person { User = laura, Team = caes, Group = "CRU", Tags = "CRU,Student", 
-                FirstName = laura.FirstName, LastName = laura.LastName, Email = laura.Email};
-            var scottCaes = new Person { User = scott, Team = caes, Group = "CRU", Tags = "CRU",
-                FirstName = scott.FirstName, LastName = scott.LastName, Email = scott.Email};
-            var jamesCaes = new Person {User = james,  Team = caes, Group = "CRU", Tags = "CRU",
-                FirstName = james.FirstName, LastName = james.LastName, Email = james.Email};
-            var calCaes = new Person {User = cal,  Team = caes, Group = "CRU", Tags = "CRU", 
-                FirstName = cal.FirstName, LastName = cal.LastName, Email = cal.Email};
-            var jasonCaes = new Person {User = jason,  Team = caes, Group = "CRU", Tags = "CRU", 
-                FirstName = jason.FirstName, LastName = jason.LastName, Email = jason.Email};
+            _context.SystemPermissions.Add(permission);
+        }
 
-            var jamesPs = new Person {User = james,  Team = ps, Group = "IT",
-                FirstName = james.FirstName, LastName = james.LastName, Email = james.Email};
+        public void CreateSampleData()
+        {
+            // find users and roles
+            var scott = _context.Users.Find("postit");
+            var laura = _context.Users.Find("holstege");
+            var james = _context.Users.Find("jscub");
+            var cal   = _context.Users.Find("cydoval");
+            var jason = _context.Users.Find("jsylvest");
+            var john = _context.Users.Find("jpknoll");
 
-            context.People.Add(jamesCaes);
-            context.People.Add(lauraCaes);
-            context.People.Add(scottCaes);
-            context.People.Add(calCaes);
-            context.People.Add(jamesPs);
-            context.People.Add(jasonCaes);
-            context.People.Add(jamesPs);
+            var departmentAdmin = _context.Roles.Single(r => r.Name == "DepartmentalAdmin");
 
+            // teams
+            var caes = new Team { Name = "CAESDO", Slug = "caesdo" };
+            var ps = new Team { Name = "Plant Sciences", Slug = "plantsciences" };
+
+            _context.Teams.Add(caes);
+            _context.Teams.Add(ps);
+
+            // team permissions
+            _context.TeamPermissions.Add(new TeamPermission { Team = caes, Role = departmentAdmin, User = scott });
+            _context.TeamPermissions.Add(new TeamPermission { Team = caes, Role = departmentAdmin, User = laura });
+            _context.TeamPermissions.Add(new TeamPermission { Team = caes, Role = departmentAdmin, User = james });
+            _context.TeamPermissions.Add(new TeamPermission { Team = caes, Role = departmentAdmin, User = cal });
+            _context.TeamPermissions.Add(new TeamPermission { Team = caes, Role = departmentAdmin, User = jason });
+            _context.TeamPermissions.Add(new TeamPermission { Team = caes, Role = departmentAdmin, User = john });
+
+            // people
+            var lauraCaes = new Person
+            {
+                User = laura,
+                Team = caes,
+                Group = "CRU",
+                Tags = "CRU,Student",
+                FirstName = laura.FirstName,
+                LastName = laura.LastName,
+                Email = laura.Email
+            };
+            var scottCaes = new Person
+            {
+                User = scott,
+                Team = caes,
+                Group = "CRU",
+                Tags = "CRU",
+                FirstName = scott.FirstName,
+                LastName = scott.LastName,
+                Email = scott.Email
+            };
+            var jamesCaes = new Person
+            {
+                User = james,
+                Team = caes,
+                Group = "CRU",
+                Tags = "CRU",
+                FirstName = james.FirstName,
+                LastName = james.LastName,
+                Email = james.Email
+            };
+            var calCaes = new Person
+            {
+                User = cal,
+                Team = caes,
+                Group = "CRU",
+                Tags = "CRU",
+                FirstName = cal.FirstName,
+                LastName = cal.LastName,
+                Email = cal.Email
+            };
+            var jasonCaes = new Person
+            {
+                User = jason,
+                Team = caes,
+                Group = "CRU",
+                Tags = "CRU",
+                FirstName = jason.FirstName,
+                LastName = jason.LastName,
+                Email = jason.Email
+            };
+
+            var jamesPs = new Person
+            {
+                User = james,
+                Team = ps,
+                Group = "IT",
+                FirstName = james.FirstName,
+                LastName = james.LastName,
+                Email = james.Email
+            };
+
+            _context.People.Add(jamesCaes);
+            _context.People.Add(lauraCaes);
+            _context.People.Add(scottCaes);
+            _context.People.Add(calCaes);
+            _context.People.Add(jamesPs);
+            _context.People.Add(jasonCaes);
+            _context.People.Add(jamesPs);
+
+            // tags
+            var studentTag      = new Tag { Name = "Student", Team = caes };
+            var standingDeskTag = new Tag { Name = "Standing Desk", Team = caes };
+            var cruTag          = new Tag { Name = "CRU", Team = caes };
+            var asiTag          = new Tag { Name = "ASI", Team = caes };
+            var cabaTag         = new Tag { Name = "CABA", Team = caes };
+            var computerTag     = new Tag { Name = "Computer", Team = caes };
+            var cellPhoneTag    = new Tag { Name = "Cellphone", Team = caes };
+
+            _context.Tags.Add(cruTag);
+            _context.Tags.Add(studentTag);
+            _context.Tags.Add(standingDeskTag);
+            _context.Tags.Add(asiTag);
+            _context.Tags.Add(cabaTag);
+            _context.Tags.Add(computerTag);
+            _context.Tags.Add(cellPhoneTag);
+
+            // access
             var access = new Access
             {
-                Name = "PPS", Team = caes
+                Name = "PPS",
+                Team = caes,
             };
             var accessAssignment = new AccessAssignment
             {
-                //Access = access,
                 Person = lauraCaes,
                 PersonId = lauraCaes.Id,
                 RequestedBy = scott,
@@ -106,6 +217,9 @@ namespace Keas.Mvc.Helpers
             };
             access.Assignments.Add(accessAssignment);
             lauraCaes.AccessAssignments.Add(accessAssignment);
+
+            _context.Access.Add(access);
+            _context.AccessAssignments.Add(accessAssignment);
 
             var access2 = new Access
             {
@@ -115,7 +229,6 @@ namespace Keas.Mvc.Helpers
 
             var accessAssignment2 = new AccessAssignment
             {
-                //Access = access2,
                 Person = scottCaes,
                 PersonId = scottCaes.Id,
                 RequestedBy = scott,
@@ -123,29 +236,82 @@ namespace Keas.Mvc.Helpers
             };
             access2.Assignments.Add(accessAssignment2);
             scottCaes.AccessAssignments.Add(accessAssignment2);
+            
+            _context.Access.Add(access2);
+            _context.AccessAssignments.Add(accessAssignment2);
 
-            var keyAssignment = new KeyAssignment
+            // organization
+            var orgId = new FinancialOrganization { Chart = "3", OrgCode = "ADNO", Team = caes };
+            _context.FISOrgs.Add(orgId);
+
+            // spaces
+            var space2 = new Space { BldgKey = "02", FloorKey = "03", RoomKey = "02", BldgName = "North Hall", RoomName = "Group/Meeting Room", RoomNumber = "308", ChartNum = "3", OrgId = "ADNO" };
+            _context.Spaces.Add(space2);
+
+            var space3 = new Space { BldgKey = "02", FloorKey = "03", RoomKey = "03", BldgName = "North Hall", RoomName = "Meeting Room for CAPS Staff and Large Groups", RoomNumber = "325", ChartNum = "3", OrgId = "ADNO" };
+            _context.Spaces.Add(space3);
+
+            var space4 = new Space { BldgKey = "02", FloorKey = "02", RoomKey = "04", BldgName = "North Hall", RoomNumber = "0206A", ChartNum = "3", OrgId = "ADNO" };
+            _context.Spaces.Add(space4);
+
+            var space5 = new Space { BldgKey = "02", FloorKey = "01", RoomKey = "05", BldgName = "North Hall", RoomName = "Storage", RoomNumber = "0121A", ChartNum = "3", OrgId = "ADNO" };
+            _context.Spaces.Add(space5);
+
+            var space6 = new Space { BldgKey = "03", FloorKey = "01", RoomKey = "06", BldgName = "South Hall", RoomName = "Storage", RoomNumber = "0121A", ChartNum = "3", OrgId = "ADNO" };
+            _context.Spaces.Add(space6);
+
+            // workstations
+            var workstationAssignment = new WorkstationAssignment { Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(3) };
+            var workstation = new Workstation { Name = "Corner desk", Team = caes, Type = "Desk", Space = space2, Assignment = workstationAssignment, Tags = "CRU" };
+            _context.Workstations.Add(workstation);
+
+            var workstationAssignment1 = new WorkstationAssignment
             {
                 Person = lauraCaes,
-                PersonId = lauraCaes.Id,
-                RequestedBy = laura,
-                ExpiresAt = DateTime.UtcNow.AddYears(5)
+                RequestedBy = scott,
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
             };
 
-            var keyAssignment2 = new KeyAssignment { Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(5)};
+            var workstation1 = new Workstation
+            {
+                Name = "Laura's Workstation",
+                Team = caes,
+                Assignment = workstationAssignment1,
+                Tags = "Student,Standing Desk",
+                Space = space3
+            };
 
-            var key = new Key { Number = "A1", Team = caes, Name = "38 Mrak Keycard", Active = false};
-            var key1Space = new KeyXSpace {Key = key, Space = space2};
-            var key1Serial = new Serial {Key = key, Number = "1", Assignment = keyAssignment};
+            _context.WorkstationAssignments.Add(workstationAssignment1);
+            _context.Workstations.Add(workstation1);
 
-            var key2 = new Key { Number = "A2", Team = caes, Name = "North Hall Keycard" };
-            var key2Space = new KeyXSpace { Key = key, Space = space3 };
-            var key2Serial = new Serial { Key = key, Number = "SN1" };
-            var key2Serial2 = new Serial {Key = key2, Number = "2", Assignment = keyAssignment2};
-            var workstationAssignment = new WorkstationAssignment{ Person = jamesCaes, PersonId = jamesCaes.Id, RequestedBy = laura, ExpiresAt = DateTime.UtcNow.AddYears(3)};
-            var workstation = new Workstation{Name = "Corner desk", Team = caes, Type = "Desk", Space = space2, Assignment = workstationAssignment, Tags = "CRU"};
-            context.Workstations.Add(workstation);
+            var workstationAssignment2 = new WorkstationAssignment
+            {
+                Person = scottCaes,
+                RequestedBy = scott,
+                ExpiresAt = DateTime.UtcNow.AddYears(3)
+            };
 
+            var workstation2 = new Workstation
+            {
+                Name = "Scott's Workstation",
+                Team = caes,
+                Assignment = workstationAssignment2,
+                Tags = "Standing Desk",
+                Space = space4
+            };
+
+            _context.WorkstationAssignments.Add(workstationAssignment2);
+            _context.Workstations.Add(workstation2);
+
+            var workstation3 = new Workstation
+            {
+                Name = "Empty Workstation",
+                Team = caes,
+                Space = space3
+            };
+            _context.Workstations.Add(workstation3);
+
+            // equipment
             var equipmentAssignment = new EquipmentAssignment
             {
                 Person = lauraCaes,
@@ -155,22 +321,8 @@ namespace Keas.Mvc.Helpers
 
             var equipment = new Equipment { Name = "laptop", Team = caes, Assignment = equipmentAssignment, SerialNumber = "XYZ", Space = space3, Tags = "CRU,Computer" };
 
-            context.Access.Add(access);
-            context.AccessAssignments.Add(accessAssignment);
-            context.Access.Add(access2);
-            context.AccessAssignments.Add(accessAssignment2);
-
-            context.Keys.Add(key);
-            context.KeyXSpaces.Add(key1Space);
-            context.Serials.Add(key1Serial);
-            context.KeyAssignments.Add(keyAssignment);
-            context.Keys.Add(key2);
-            context.KeyXSpaces.Add(key2Space);
-            context.Serials.Add(key2Serial);
-            context.Serials.Add(key2Serial2);
-            context.KeyAssignments.Add(keyAssignment2);
-            context.EquipmentAssignments.Add(equipmentAssignment);
-            context.Equipment.Add(equipment);
+            _context.EquipmentAssignments.Add(equipmentAssignment);
+            _context.Equipment.Add(equipment);
 
             var equip2Assignment = new EquipmentAssignment
             {
@@ -181,18 +333,60 @@ namespace Keas.Mvc.Helpers
 
             var equip2 = new Equipment { Name = "desktop", Team = caes, Assignment = equip2Assignment, SerialNumber = "ABC", Space = space4, Tags = "CRU,Cellphone" };
 
-            context.EquipmentAssignments.Add(equip2Assignment);
-            context.Equipment.Add(equip2);
+            _context.EquipmentAssignments.Add(equip2Assignment);
+            _context.Equipment.Add(equip2);
 
-            var history = new History {
+            // keys
+            var key1 = new Key { Code = "A1", Team = caes, Name = "38 Mrak Keycard", Active = false };
+            var key1Space = new KeyXSpace { Key = key1, Space = space2 };
+            var key1Serial = new KeySerial
+            {
+                Key = key1,
+                Number = "1",
+                KeySerialAssignment = new KeySerialAssignment
+                {
+                    Person = lauraCaes,
+                    PersonId = lauraCaes.Id,
+                    RequestedBy = laura,
+                    ExpiresAt = DateTime.UtcNow.AddYears(5)
+                }
+            };
+            _context.Keys.Add(key1);
+            _context.KeyXSpaces.Add(key1Space);
+            _context.KeySerials.Add(key1Serial);
+
+            var key2 = new Key { Code = "A2", Team = caes, Name = "North Hall Keycard" };
+            var key2Space = new KeyXSpace { Key = key2, Space = space3 };
+            var key2Serial = new KeySerial { Key = key2, Number = "SN1" };
+            var key2Serial2 = new KeySerial
+            {
+                Key = key2,
+                Number = "2",
+                KeySerialAssignment = new KeySerialAssignment
+                {
+                    Person = jamesCaes,
+                    PersonId = jamesCaes.Id,
+                    RequestedBy = laura,
+                    ExpiresAt = DateTime.UtcNow.AddYears(5)
+                }
+            };
+            _context.Keys.Add(key2);
+            _context.KeyXSpaces.Add(key2Space);
+            _context.KeySerials.Add(key2Serial);
+            _context.KeySerials.Add(key2Serial2);
+
+            // history
+            var history = new History
+            {
                 Target = lauraCaes,
                 Actor = scott,
                 Description = "Something important happened",
                 AssetType = "Key",
-                Key = key
+                Key = key1
             };
 
-            var history2 = new History {
+            var history2 = new History
+            {
                 Target = lauraCaes,
                 Actor = scott,
                 Description = "Something important happened 2",
@@ -200,121 +394,21 @@ namespace Keas.Mvc.Helpers
                 Equipment = equipment
             };
 
-            var workstationAssignment1 = new WorkstationAssignment
-            {
-                Person = lauraCaes,
-                RequestedBy = scott,
-                ExpiresAt = DateTime.UtcNow.AddYears(3)
-            };
+            _context.Histories.Add(history);
+            _context.Histories.Add(history2);
 
-            var workstation1 = new Workstation {
-                Name = "Laura's Workstation",
-                Team = caes,
-                Assignment = workstationAssignment1,
-                Tags = "Student,Standing Desk",
-                Space = space3 };
-
-            context.WorkstationAssignments.Add(workstationAssignment1);
-            context.Workstations.Add(workstation1);
-
-            var workstationAssignment2 = new WorkstationAssignment
-            {
-                Person = scottCaes,
-                RequestedBy = scott,
-                ExpiresAt = DateTime.UtcNow.AddYears(3)
-            };
-
-            var workstation2 = new Workstation {
-                Name = "Scott's Workstation",
-                Team = caes,
-                Assignment = workstationAssignment2,
-                Tags = "Standing Desk",
-                Space = space4 };
-
-            context.WorkstationAssignments.Add(workstationAssignment2);
-            context.Workstations.Add(workstation2);
-
-            var workstation3 = new Workstation {
-                Name = "Empty Workstation",
-                Team = caes,
-                Space = space3 };
-            context.Workstations.Add(workstation3);
-
-            var tag1 = new Tag {
-                Name = "Student",
-                Team = caes
-            };
-
-            var tag2 = new Tag {
-                Name = "Standing Desk",
-                Team = caes
-            };
-
-            context.Tags.Add(tag1);
-            context.Add(tag2);
-
-
-            var scottKey = new TeamPermission    {Team = caes, Role = keyMaster, User = scott};
-            var scottEquip = new TeamPermission  {Team = caes, Role = equipMaster, User = scott};
-            var scottDa = new TeamPermission {Team = caes, Role = departmentAdmin, User = scott};
-            var lauraDa = new TeamPermission    {Team = caes, Role = departmentAdmin, User = laura};
-            var jamesDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = james};
-            var calDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = cal};
-            var jasonKey = new TeamPermission    {Team = caes, Role = keyMaster, User = jason};
-            var jasonDa = new TeamPermission     {Team = caes, Role = departmentAdmin, User = jason};
-
-            context.TeamPermissions.Add(scottKey);
-            context.TeamPermissions.Add(scottEquip);
-            context.TeamPermissions.Add(jasonKey);
-
-            context.TeamPermissions.Add(lauraDa);
-            context.TeamPermissions.Add(jasonDa);
-            context.TeamPermissions.Add(jamesDa);
-            context.TeamPermissions.Add(scottDa);
-            context.TeamPermissions.Add(calDa);
-
-            var jamesAdmin = new SystemPermission { Role = admin, User = james};
-            context.SystemPermissions.Add(jamesAdmin);
-
-            var lauraAdmin = new SystemPermission { Role = admin, User = laura};
-            context.SystemPermissions.Add(lauraAdmin);
-
-            var scottAdmin = new SystemPermission { Role = admin, User = scott};
-            context.SystemPermissions.Add(scottAdmin);
-
-            var calAdmin = new SystemPermission { Role = admin, User = cal};
-            context.SystemPermissions.Add(calAdmin);
-
-            var jasonAdmin = new SystemPermission { Role = admin, User = jason};
-            context.SystemPermissions.Add(jasonAdmin);
-
-            var CruTag = new Tag { Name = "CRU", Team = caes };
-            var ASITag = new Tag { Name = "ASI", Team = caes };
-            var CABATag = new Tag { Name = "CABA", Team = caes };
-            var computerTag = new Tag { Name = "Computer", Team = caes };
-            var cellPhoneTag = new Tag { Name = "Cellphone", Team = caes };
-            context.Tags.Add(CruTag);
-            context.Tags.Add(ASITag);
-            context.Tags.Add(CABATag);
-            context.Tags.Add(computerTag);
-            context.Tags.Add(cellPhoneTag);
-
-            context.Histories.Add(history);
-            context.Histories.Add(history2);
-
-
-            var notification1 = new Notification {DateTimeCreated = DateTime.UtcNow, Details = history.Description, History = history, HistoryId = history.Id, Pending = true, User = scott };
+            // notifications
+            var notification1 = new Notification { DateTimeCreated = DateTime.UtcNow, Details = history.Description, History = history, HistoryId = history.Id, Pending = true, User = scott };
             var notification2 = new Notification { DateTimeCreated = DateTime.UtcNow, Details = history2.Description, History = history2, HistoryId = history2.Id, Pending = true, User = scott };
-
             var notification3 = new Notification { DateTimeCreated = DateTime.UtcNow, Details = history.Description, History = history, HistoryId = history.Id, Pending = true, User = james };
             var notification4 = new Notification { DateTimeCreated = DateTime.UtcNow, Details = history2.Description, History = history2, HistoryId = history2.Id, Pending = true, User = james };
 
-            context.Notifications.Add(notification1);
-            context.Notifications.Add(notification2);
-            context.Notifications.Add(notification3);
-            context.Notifications.Add(notification4);
+            _context.Notifications.Add(notification1);
+            _context.Notifications.Add(notification2);
+            _context.Notifications.Add(notification3);
+            _context.Notifications.Add(notification4);
 
-            context.SaveChanges();
+            _context.SaveChanges();
         }
     }
 }

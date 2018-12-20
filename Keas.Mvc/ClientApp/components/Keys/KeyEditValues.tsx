@@ -1,60 +1,96 @@
 ﻿import * as React from "react";
-
 import { IKey } from "../../Types";
+import SearchTags from "../Tags/SearchTags";
 
 interface IProps {
     selectedKey: IKey;
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
-    creating?: boolean;
+    searchableTags?: string[]
 }
 
 export default class KeyEditValues extends React.Component<IProps, {}> {
 
     public render() {
+        const { name, code, tags } = this.props.selectedKey;
+
+        const parsedTags = tags ? tags.split(',') : [];
+
         return (
             <div>
-                {!this.props.creating &&
                 <div className="form-group">
                     <label>Name</label>
                     <input type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
-                        value={this.props.selectedKey.name ? this.props.selectedKey.name : ""}
-                        onChange={(e) => this.props.changeProperty("name", e.target.value)}
+                        value={name}
+                        onBlur={this.onBlurName}
+                        onChange={this.onChangeName}
+                        required={true}
+                        minLength={1}
                     />
-                </div>}
+                    <span className="invalid-feedback">Name is required</span>
+                </div>
                 <div className="form-group">
-                    <label>Serial Number</label>
+                    <label>Code</label>
                     <input type="text"
                         className="form-control"
-                        disabled={this.props.disableEditing || !this.props.creating}
-                        autoFocus={!this.props.disableEditing && this.props.creating}
-                        value={this.props.selectedKey.serialNumber ? this.props.selectedKey.serialNumber : ""}
-                        onChange={(e) => this.props.changeProperty("serialNumber", e.target.value)}
+                        disabled={this.props.disableEditing}
+                        value={code}
+                        onBlur={this.onBlurCode}
+                        onChange={this.onChangeCode}
+                        required={true}
+                        minLength={1}
+                        maxLength={10}
                     />
+                    <span className="invalid-feedback">Code is required</span>
                 </div>
-                {this.props.selectedKey.assignment != null &&
-                <div>
-                    <div className="form-group">
-                        <label>Assigned To</label>
-                        <input type="text"
-                            className="form-control"
-                            disabled={true}
-                            value={this.props.selectedKey.assignment.person ? this.props.selectedKey.assignment.person.name : ""}
-                            />
-                    </div>
-                    <div className="form-group">
-                        <label>Expires at</label>
-                        <input type="text"
-                            className="form-control"
-                            disabled={true}
-                            value={this.props.selectedKey.assignment.expiresAt ? this.props.selectedKey.assignment.expiresAt.toString() : ""}
-                            />
-                    </div>
+                <div className="form-group">
+                    <label>Tags</label>
+                    <SearchTags
+                        tags={this.props.searchableTags} 
+                        disabled={this.props.disableEditing}
+                        selected={parsedTags}
+                        onSelect={this.onChangeTags} />
                 </div>
-                }
             </div>
         );
+    }
+
+    private onBlurName = () => {
+        let { name } = this.props.selectedKey;
+
+        // trim name
+        name = name.trim();
+
+        this.props.changeProperty("name", name)
+    }
+
+    private onBlurCode = () => {
+        let { code } = this.props.selectedKey;
+
+        // trim name
+        code = code.trim();
+
+        this.props.changeProperty("code", code)
+    }
+
+    private onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.props.changeProperty("name", event.target.value)
+    }
+
+    private onChangeCode = (event: React.ChangeEvent<HTMLInputElement>) => {
+        let value = event.target.value;
+
+        // use upper
+        value = value.toUpperCase();
+
+        this.props.changeProperty("code", value)
+    }
+
+    private onChangeTags = (tags: string[]) => {
+        const value = tags.join(',');
+
+        this.props.changeProperty("tags", value)
     }
 }

@@ -1,4 +1,4 @@
-﻿@model Keas.Core.Domain.Team
+@model Keas.Core.Domain.Team
 
 @{
     ViewData["Title"] = "Index";
@@ -10,6 +10,8 @@
       <div>
           <a class="btn btn-link" asp-action="Index" asp-controller="TagsManager">Team Tags</a> | 
           <a class="btn btn-link" asp-action="AddFISOrg">Add New Org Code</a> |
+          <a class="btn btn-link" asp-action="AddPpsDepartment">Add PPS Department</a> |
+          <a class="btn btn-link" asp-action="BulkLoadPeople">Bulk Load People</a> |
           <a class="btn btn-link" asp-action="RoledMembers">Admin roles</a> |
           <a class="btn btn-link" asp-action="Index" asp-controller="Report">Reports</a>
       </div>
@@ -23,12 +25,16 @@
 
           <p>@Html.DisplayFor(model => model.Name)</p>
 
-        <p>FIS Orgs</p>
+        <h2>FIS Orgs</h2>
         @foreach (var org in Model.FISOrgs)
         {
             <p>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><i class="fas fa-trash"></i></a></p>
         }
-  
+        <h2>PPS Departments</h2>
+        @foreach (var ppsDept in Model.PpsDepartments)
+        {
+            <p>@ppsDept.DepartmentName (@ppsDept.PpsDepartmentCode) <a asp-action="RemovePpsDepartment" asp-route-id="@ppsDept.Id"><i class="fas fa-trash"></i></a></p> 
+        }
 </div>
 </div>
 </div>

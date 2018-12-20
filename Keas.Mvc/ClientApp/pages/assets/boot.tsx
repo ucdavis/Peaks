@@ -31,7 +31,7 @@ renderApp();
 
 // Allow Hot Module Replacement
 if (module.hot) {
-  module.hot.accept("./AssetContainer", () => {
+  module.hot.accept(() => {
     renderApp();
   });
 }

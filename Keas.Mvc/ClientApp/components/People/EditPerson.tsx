@@ -1,14 +1,11 @@
-import * as moment from "moment";
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   Button,
   Modal,
   ModalBody,
   ModalFooter,
-  ModalHeader
 } from "reactstrap";
 import { AppContext, IPerson } from "../../Types";
 import { validateEmail } from "../../util/email";
@@ -75,6 +72,7 @@ export default class EditPerson extends React.Component<IProps, IState> {
                   <PersonEditValues
                     selectedPerson={this.state.person}
                     changeProperty={this._changeProperty}
+                    changeSupervisor={this._changeSupervisor}
                     disableEditing={false}
                     tags={this.props.tags}
                   />
@@ -97,7 +95,7 @@ export default class EditPerson extends React.Component<IProps, IState> {
     );
   }
 
-  private _changeProperty = (property: string, value: string) => {
+  private _changeProperty = (property: string, value: any) => {
     this.setState({
       person: {
         ...this.state.person,
@@ -105,6 +103,16 @@ export default class EditPerson extends React.Component<IProps, IState> {
       }
     }, this._validateState);
   };
+
+  private _changeSupervisor = (supervisor: IPerson) => {
+    this.setState({
+      person: {
+        ...this.state.person,
+        supervisor,
+        supervisorId: supervisor !== null ? supervisor.id : null,
+      }
+    }, this._validateState)
+  }
 
   // clear everything out on close
   private _closeModal = () => {

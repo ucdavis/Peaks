@@ -1,6 +1,8 @@
+using System;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Keas.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
@@ -47,17 +49,45 @@ namespace Keas.Core.Domain
         public string Group { get; set; }
 
         public string Tags { get; set; }
+
         // METADATA
         public string Title { get; set; }
-        public string HomePhone { get; set; }
-        public string TeamPhone { get; set; }
+        private string _HomePhone;
+
+        public string HomePhone
+        {
+            get { return _HomePhone.FormatPhone(); }
+            set { _HomePhone = value.FormatPhone(); }
+        }
+
+        private string _TeamPhone;
+
+        public string TeamPhone
+        {
+            get { return _TeamPhone.FormatPhone(); }
+            set { _TeamPhone = value.FormatPhone(); }
+        }
+
+        public int? SupervisorId {   get; set; }
+
+        public Person Supervisor { get; set; }
+        
+        public DateTime? StartDate { get; set; }
+
+        public DateTime? EndDate { get; set; }
+
+        public string Category { get; set; }
+
+        [DataType(DataType.MultilineText)]
+        public string Notes { get; set; }
+
         public List<AccessAssignment> AccessAssignments { get; set; }
 
-         protected internal  static void OnModelCreating(ModelBuilder builder)
+        public List<KeySerialAssignment> KeySerialAssignments { get; set; }
+
+        protected internal  static void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Person>().HasQueryFilter(a => a.Active);
         }
-
-
     }
 }

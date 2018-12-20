@@ -72,13 +72,12 @@
     <Build Include="dbo\Tables\TeamPermissions.sql" />
     <Build Include="dbo\Tables\Tags.sql" />
     <Build Include="dbo\Tables\SystemPermissions.sql" />
-    <Build Include="dbo\Tables\Serials.sql" />
     <Build Include="dbo\Tables\Roles.sql" />
     <Build Include="dbo\Tables\People.sql" />
     <Build Include="dbo\Tables\Notifications.sql" />
     <Build Include="dbo\Tables\KeyXSpaces.sql" />
     <Build Include="dbo\Tables\Keys.sql" />
-    <Build Include="dbo\Tables\KeyAssignments.sql" />
+    <Build Include="dbo\Tables\KeySerialAssignments.sql" />
     <Build Include="dbo\Tables\Histories.sql" />
     <Build Include="dbo\Tables\FISOrgs.sql" />
     <Build Include="dbo\Tables\EquipmentAttributes.sql" />
@@ -101,8 +100,11 @@
     <Build Include="dbo\Tables\LoadingSpaces.sql" />
     <Build Include="dbo\Stored Procedures\usp_TruncateAndReloadLoadingSpaces.sql" />
     <Build Include="dbo\Stored Procedures\usp_MergeSpacesTable.sql" />
+    <Build Include="dbo\Tables\KeySerials.sql" />
+    <Build Include="dbo\Tables\TeamPpsDepartments.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Compare\ProjectToSqlExpress.scmp" />
+    <None Include="Compare\ProjectToTestDb.scmp" />
   </ItemGroup>
 </Project>

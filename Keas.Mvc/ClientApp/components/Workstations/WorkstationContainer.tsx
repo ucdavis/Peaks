@@ -1,6 +1,5 @@
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
-import { NavLink, Redirect } from "react-router-dom";
 import { Button } from "reactstrap";
 import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
 import AssignWorkstation from "../Workstations/AssignWorkstation";
@@ -8,6 +7,7 @@ import EditWorkstation from "../Workstations/EditWorkstation";
 import RevokeWorkstation from "../Workstations/RevokeWorkstation";
 import WorkstationDetails from "../Workstations/WorkstationDetails";
 import WorkstationList from "./../Workstations/WorkstationList";
+import DeleteWorkstation from './DeleteWorkstation';
 
 interface IProps {
     assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
@@ -78,14 +78,14 @@ export default class WorkstationContainer extends React.Component<IProps, IState
               <div className="card-head"><h2><i className="fas fa-briefcase fa-xs"/> Workstations</h2></div>
             </div>
             <div className="card-content">
-                        {this.state.workstations.length > 0 ?
                             <WorkstationList
                                     workstations={this.state.workstations}
                                     showDetails={this._openDetailsModal}
                                     onEdit={this._openEditModal}
                                     onAdd={this._openAssignModal}
                                     onCreate={this._openCreateModal}
-                                    onRevoke={this._openRevokeModal}/> : <div>No Workstations</div>}
+                                    onDelete={this._deleteWorkstation}
+                                    onRevoke={this._openRevokeModal}/> 
                             <Button color="link" onClick={() => this._openCreateModal()}>
                               <i className="fas fa-plus fa-sm" aria-hidden="true" />  Add Workstation
                             </Button>
@@ -115,6 +115,12 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                                 revokeWorkstation={this._revokeWorkstation}
                                 modal={activeAsset && action === "revoke"}
                                 selectedWorkstation={selectedWorkstation} />
+                            <DeleteWorkstation 
+                                selectedWorkstation={selectedWorkstation}
+                                deleteWorkstation={this._deleteWorkstation}
+                                closeModal={this._closeModals}
+                                modal={activeAsset && action === "delete"}
+                                />
                 </div>
             </div>
         );
@@ -213,6 +219,35 @@ export default class WorkstationContainer extends React.Component<IProps, IState
           {
             this.props.assetInUseUpdated("workstation",  this.props.space? this.props.space.id : null, 
             this.props.person? this.props.person.id : null, -1);
+          }
+        }
+      };
+
+      private _deleteWorkstation = async (workstation: IWorkstation) => {
+        if(!confirm("Are you should you want to delete item?")){
+          return false;
+        }
+        const deleted: IWorkstation = await this.context.fetch(`/api/${this.context.team.slug}/workstations/delete/${workstation.id}`, {
+          method: "POST"
+        });
+        
+    
+        // remove from state
+        const index = this.state.workstations.indexOf(workstation);
+        if (index > -1) {
+          const shallowCopy = [...this.state.workstations];
+          shallowCopy.splice(index, 1);
+          this.setState({ workstations: shallowCopy });
+    
+          if(workstation.assignment !== null && this.props.assetInUseUpdated)
+          {
+            this.props.assetInUseUpdated("workstation", this.props.space ? this.props.space.id : null,
+              this.props.person ? this.props.person.id : null, -1);
+          }
+          if(this.props.assetTotalUpdated)
+          {
+            this.props.assetTotalUpdated("workstation", this.props.space ? this.props.space.id : null,
+              this.props.person ? this.props.person.id : null, -1);
           }
         }
       };

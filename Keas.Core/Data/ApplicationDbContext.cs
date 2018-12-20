@@ -1,4 +1,4 @@
-﻿using Keas.Core.Domain;
+using Keas.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Data
@@ -13,17 +13,22 @@ namespace Keas.Core.Data
         public virtual DbSet<Team> Teams { get; set; }
        
         public virtual DbSet<Person> People { get; set; }
+
         public virtual DbSet<Access> Access { get; set; }
         public virtual DbSet<AccessAssignment> AccessAssignments { get; set; }
         
         public virtual DbSet<Key> Keys { get; set; }
         public virtual DbSet<KeyXSpace> KeyXSpaces { get; set; }
-        public virtual DbSet<Serial> Serials { get; set; }
-        public virtual DbSet<KeyAssignment> KeyAssignments { get; set; }
+        public virtual DbSet<KeySerial> KeySerials { get; set; }
+        public virtual DbSet<KeySerialAssignment> KeySerialAssignments { get; set; }
+
         public virtual DbSet<Equipment> Equipment { get; set; }
         public virtual DbSet<EquipmentAssignment> EquipmentAssignments { get; set; }
         public virtual DbSet<EquipmentAttribute> EquipmentAttributes { get; set; }
+
         public virtual DbSet<FinancialOrganization> FISOrgs  { get; set; }
+        public virtual DbSet<TeamPpsDepartment> TeamPpsDepartments { get; set; }
+
         public virtual  DbSet<Notification> Notifications { get; set; }
 
         public virtual DbSet<Workstation> Workstations { get; set; }
@@ -49,6 +54,7 @@ namespace Keas.Core.Data
             Domain.Access.OnModelCreating(builder);
             Domain.Equipment.OnModelCreating(builder);
             Key.OnModelCreating(builder);
+            KeySerial.OnModelCreating(builder);
             Person.OnModelCreating(builder);
             Space.OnModelCreating(builder);
             Workstation.OnModelCreating(builder);

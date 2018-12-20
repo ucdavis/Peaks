@@ -1,11 +1,8 @@
-import PropTypes from "prop-types";
 import * as React from "react";
 import {
   Button,
-  Collapse
 } from "reactstrap";
-
-import { AppContext, IEquipment, IEquipmentAttribute } from "../../Types";
+import { IEquipment, IEquipmentAttribute } from "../../Types";
 import EquipmentAttribute from "./EquipmentAttribute";
 
 interface IProps {
@@ -18,10 +15,10 @@ interface IProps {
 export default class EquipmentAttributes extends React.Component<IProps, {}> {
   public render() {
     const attributeList = this.props.equipment.attributes.map((attr, i) => (
-      <EquipmentAttribute key={`attr-${i}`} 
+      <EquipmentAttribute key={`attr-${i}`}
         disabledEdit={this.props.disableEdit}
         commonKeys={this.props.commonKeys}
-        attribute={attr} 
+        attribute={attr}
         index={i}
         changeProperty={this._onEditAttribute}
         onRemove={this._onRemoveAttribute}/>
@@ -29,22 +26,22 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
     return (
       <div>
         <label>Atrributes</label>
-        <table className="table">
+        <table className="table table-borderless">
           <thead>
             <tr>
-              <th>Key</th>
-              <th>Value</th>
+              <td>Key</td>
+              <td>Value</td>
               {!this.props.disableEdit &&
-                <th>Remove</th>}
+                <td>Remove</td>}
             </tr>
           </thead>
           {attributeList}
-          {!this.props.disableEdit && 
+          {!this.props.disableEdit &&
           <tfoot>
             <tr>
               <td colSpan={3}>
-                <Button className="btn btn-primary" id="add-new" onClick={this._onAddAttribute}>
-                  Add New
+                <Button className="btn btn-link" id="add-new" onClick={this._onAddAttribute}>
+                <i className="fas fa-plus fa-sm" aria-hidden="true" />  Add New
                 </Button>
               </td>
             </tr>
@@ -81,5 +78,5 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
 
     this.props.updateAttributes(attributes);
   }
-  
+
 }

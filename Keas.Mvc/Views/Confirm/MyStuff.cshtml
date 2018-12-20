@@ -39,15 +39,16 @@
             </tr>
           </thead>
           <tbody>
-            @foreach (var serial in Model.Serials) {
+            @foreach (var serial in Model.KeySerials) {
             <tr>
               <td>@serial.Number</td>
               <td>@serial.Key.Name</td>
-              <td>@serial.Assignment.ExpiresAt.ToShortDateString()</td>
-              <td>@Html.CheckBoxFor(k=> serial.Assignment.IsConfirmed, new { @disabled = "disabled" })</td>
+              <td>@serial.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>
+              <td>@Html.CheckBoxFor(k=> serial.KeySerialAssignment.IsConfirmed, new { @disabled = "disabled" })</td>
             </tr>
             }
-            @if(!Model.Serials.Any()){
+
+            @if (!Model.KeySerials.Any()) {
               <tr>
                 <td colspan="4">You have no Keys assigned.</td>
               </tr>

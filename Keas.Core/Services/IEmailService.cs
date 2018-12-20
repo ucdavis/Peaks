@@ -55,16 +55,17 @@ namespace Keas.Core.Services
                 .UseFilesystemProject(path)
                 .UseMemoryCachingProvider()
                 .Build();
+
             var person = model.People.Single(a => a.Id == personId);
 
             var expiringItems = ExpiringItemsEmailModel.Create(
                 model.AccessAssignments.Where(a => a.PersonId == personId).ToList(), 
-                model.Keys.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(), 
+                model.KeySerials.Where(a => a.KeySerialAssignment != null && a.KeySerialAssignment.PersonId == personId).ToList(), 
                 model.Equipment.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(), 
                 model.Workstations.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(),
                 person);
             
-            if (!expiringItems.AccessAssignments.Any() && !expiringItems.Keys.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
+            if (!expiringItems.AccessAssignments.Any() && !expiringItems.KeySerials.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
             {
                 return;                
             }
@@ -93,7 +94,7 @@ namespace Keas.Core.Services
                 }
             }
 
-            if (expiringItems.Keys.Any())
+            if (expiringItems.KeySerials.Any())
             {
                 var roles = await _dbContext.Roles
                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
@@ -150,21 +151,21 @@ namespace Keas.Core.Services
                 throw;
             }
 
-            foreach (var key in expiringItems.Keys)
+            foreach (var key in expiringItems.KeySerials)
             {
-                if (key.Assignment.NextNotificationDate == null || key.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
+                if (key.KeySerialAssignment.NextNotificationDate == null || key.KeySerialAssignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
                 {
-                    key.Assignment.NextNotificationDate = key.Assignment.ExpiresAt.AddDays(-7);
+                    key.KeySerialAssignment.NextNotificationDate = key.KeySerialAssignment.ExpiresAt.AddDays(-7);
                 }
-                else if (key.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
+                else if (key.KeySerialAssignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
                 {
-                    key.Assignment.NextNotificationDate = key.Assignment.ExpiresAt.AddDays(-1);
+                    key.KeySerialAssignment.NextNotificationDate = key.KeySerialAssignment.ExpiresAt.AddDays(-1);
                 }
                 else
                 {
-                    key.Assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
+                    key.KeySerialAssignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
                 }
-                _dbContext.KeyAssignments.Update(key.Assignment);
+                _dbContext.KeySerialAssignments.Update(key.KeySerialAssignment);
             }
 
             foreach (var equipment in expiringItems.Equipment)

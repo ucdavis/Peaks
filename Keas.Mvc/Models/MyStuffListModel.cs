@@ -10,7 +10,7 @@ namespace Keas.Mvc.Models
 {
     public class MyStuffListModel
     {
-        public List<Serial> Serials { get; set; }
+        public List<KeySerial> KeySerials { get; set; }
         public List<Equipment> Equipment { get; set; }
         public List<Access> Access { get; set; }
         public List<Workstation> Workstations { get; set; }
@@ -22,9 +22,9 @@ namespace Keas.Mvc.Models
         public static async Task<MyStuffListModel> Create(ApplicationDbContext context, Person person)
         {   
             var viewModel = new MyStuffListModel
-            {                
-                Serials = await context.Serials.Include(s=> s.Key).ThenInclude(k=> k.KeyXSpaces).ThenInclude(kxp=> kxp.Space).Include(s=> s.Assignment)
-                    .Where(s=> s.Assignment.Person==person).AsNoTracking().ToListAsync(),
+            {
+                KeySerials = await context.KeySerials.Include(s=> s.Key).ThenInclude(k=> k.KeyXSpaces).ThenInclude(kxp=> kxp.Space).Include(s=> s.KeySerialAssignment)
+                    .Where(s=> s.KeySerialAssignment.Person==person).AsNoTracking().ToListAsync(),
                 Equipment = await context.Equipment.Include(e => e.Space).Include(e=> e.Assignment).Where(e => e.Assignment.Person == person).AsNoTracking().ToListAsync(),
                 Access = await context.Access
                     .Where(x => x.Active && x.Assignments.Any(y => y.Person == person))
@@ -47,7 +47,7 @@ namespace Keas.Mvc.Models
                     .OrderByDescending(x => x.ActedDate)
                     .Take(10).AsNoTracking().ToListAsync()
             };
-            viewModel.PendingItems = viewModel.Serials.Where(s => !s.Assignment.IsConfirmed).Any() 
+            viewModel.PendingItems = viewModel.KeySerials.Where(s => !s.KeySerialAssignment.IsConfirmed).Any() 
                                     || viewModel.Equipment.Where(e => !e.Assignment.IsConfirmed).Any() 
                                     || viewModel.Workstations.Where(w => !w.Assignment.IsConfirmed).Any() ;
             return viewModel;

@@ -1,10 +1,8 @@
 ﻿import * as React from "react";
-
 import { ISpace, IWorkstation } from "../../Types";
-import AssignSpace from "../Spaces/AssignSpace";
-import SearchTags from "../Tags/SearchTags";
-
 import { DateUtil } from "../../util/dates";
+import SearchSpaces from "../Spaces/SearchSpaces";
+import SearchTags from "../Tags/SearchTags";
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
@@ -12,7 +10,6 @@ interface IProps {
     disableEditing: boolean;
     selectedWorkstation: IWorkstation;
     space?: ISpace;
-    creating?: boolean;
 }
 
 export default class WorkstationEditValues extends React.Component<IProps, {}> {
@@ -24,7 +21,6 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
         }
         return (
             <div>
-                {!this.props.creating &&
                 <div className="form-group">
                     <label>Name</label>
                     <input type="text"
@@ -33,7 +29,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                         value={this.props.selectedWorkstation.name ? this.props.selectedWorkstation.name : ""}
                         onChange={(e) => this.props.changeProperty("name", e.target.value)}
                     />
-                </div>}
+                </div>
                 {this.props.selectedWorkstation.assignment != null &&
                 <div>
                 <div className="form-group">
@@ -55,7 +51,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                 </div>
                 }
                 
-                {(this.props.disableEditing || !this.props.creating) &&
+                {(this.props.disableEditing) &&
                     <div className="form-group">
                         <label>Room</label>
                         <input type="text"
@@ -66,11 +62,11 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                         />
                     </div>
                 }
-                {!this.props.disableEditing && this.props.creating &&
+                {!this.props.disableEditing &&
                     <div className="form-group">
                         <label>Room</label>
 
-                    <AssignSpace onSelect={(space) => this.props.changeProperty("space", space)} 
+                    <SearchSpaces onSelect={(space) => this.props.changeProperty("space", space)} 
                         defaultSpace={this.props.space ? this.props.space : this.props.selectedWorkstation.space} />
                     </div>}
               

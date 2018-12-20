@@ -1,11 +1,10 @@
-﻿import PropTypes from "prop-types";
+﻿import { IAccess, IAccessAssignment } from "ClientApp/Types";
 import * as React from "react";
 import {
     Button,
     Modal,
     ModalBody
 } from "reactstrap";
-import { IAccess, IAccessAssignment } from "ClientApp/Types";
 import AccessEditValues from "./AccessEditValues";
 
 

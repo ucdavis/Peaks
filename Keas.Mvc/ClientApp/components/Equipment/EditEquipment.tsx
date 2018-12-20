@@ -1,4 +1,4 @@
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import {
@@ -76,6 +76,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
                     space={this.props.space}
                   />
             </form>
+            {this.state.error}
           </div>
         </ModalBody>
         <ModalFooter>
