@@ -14,6 +14,9 @@ interface IProps {
 export default class KeyList extends React.Component<IProps, {}> {
     public render() {
         const { keysInfo } = this.props;
+        const keys = !keysInfo || keysInfo.length < 1 ?
+            <tr><td colSpan={5}>No Keys Found</td></tr> :
+            keysInfo.map(this.renderItem);
 
         return (
             <table className="table">
@@ -25,7 +28,7 @@ export default class KeyList extends React.Component<IProps, {}> {
                         <th className="list-actions">Actions</th>
                     </tr>
                 </thead>
-                <tbody>{keysInfo.map(this.renderItem)}</tbody>
+                <tbody>{keys}</tbody>
             </table>
         );
     }

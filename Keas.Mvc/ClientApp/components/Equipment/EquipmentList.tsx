@@ -13,8 +13,9 @@ interface IProps {
 
 export default class EquipmentList extends React.Component<IProps, {}> {
   public render() {
-      const equipment = !this.props.equipment ? "No equipment assigned" :
-       this.props.equipment.map(x => (
+      const equipment = !this.props.equipment || this.props.equipment.length < 1 ?
+          <tr><td colSpan={5}>No Equipment Found</td></tr> :
+          this.props.equipment.map(x => (
           <EquipmentListItem
               key={x.id.toString()}
               equipmentEntity={x}

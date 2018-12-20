@@ -14,7 +14,9 @@ interface IProps {
 
 export default class WorkstationList extends React.Component<IProps, {}> {
   public render() {
-      const workstations = this.props.workstations.map(x => (
+      const workstations = !this.props.workstations || this.props.workstations.length < 1 ?
+        <tr><td colSpan={5}>No Workstations Found</td></tr> :
+        this.props.workstations.map(x => (
           <WorkstationListItem
               key={x.id.toString()}
               workstationEntity={x}

@@ -14,8 +14,10 @@ interface IProps {
 
 export default class AccessList extends React.Component<IProps, {}> {
   public render() {
-      const access = this.props.access.map(x => (
-          <AccessListItem
+      const access = !this.props.access || this.props.access.length < 1 ?
+        <tr><td colSpan={5}>No Accesses Found</td></tr> :
+        this.props.access.map(x => (
+              <AccessListItem
               key={x.id.toString()}
               accessEntity={x}
               personView={this.props.personView}
