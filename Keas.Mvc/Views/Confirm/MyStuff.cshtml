@@ -3,16 +3,21 @@
 @{
     ViewData["Title"] = "MyStuff";
 }
+@if(Model.PendingItems){
+  <div class="alert alert-warning">
+<div class="row justify-content-between">
+  <p>You have pending items!</p>
+<a href='@Url.Action("Confirm")'>Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
+</div>
+    </div>
+}
 <div class="card">
   <div class="card-header-primary">
     <div class="row justify-content-between">
       <div class="card-head">
-        <h2>MyStuff</h2></div>
-      <div class="card-head">
-        @if(Model.PendingItems){
-          <div class="alert alert-warning">You have pending items!
-          <a class="btn btn-link" href='@Url.Action("Confirm")'>Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a></div>
-        }
+        <h2>MyStuff</h2>
+      </div><div class="card-head">
+
       </div>
     </div>
   </div>
@@ -20,7 +25,7 @@
     <div class="card keys-color">
       <div class="card-header-keys">
         <div class="card-head">
-          <h2><i class="fas fa-key fa-xs"></i> Keys</h2>
+  <h2><i class="fas fa-key fa-xs"></i> Keys</h2>
         </div>
       </div>
       <div class="card-content">

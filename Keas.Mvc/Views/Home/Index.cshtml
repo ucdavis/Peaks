@@ -5,50 +5,64 @@
 @{
     ViewData["Title"] = "Home Page";
 }
+@if(Model.PendingItems){
+      <div class="alert alert-warning">
+        <div class="row justify-content-between align-middle">
+          <p>You have pending items!</p>
+          <a asp-controller="Confirm" asp-action="Confirm">Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
+
+        </div>
+      </div>
+    }
 <div class="card">
-  <div class="card-head">
-    <h1>Home</h1>
-    @if(Model.PendingItems){
-          <div class="alert alert-warning">You have pending items!
-          <a class="btn btn-link" asp-controller="Confirm" asp-action="Confirm">Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a></div>
-        }
+  <div class="card-header-primary">
+    <div class="card-head t-center">
+      <h1>PEAKS - Dashboard</h1>
+    </div>
   </div>
   <div class="card-content">
-    <div class="row">
-      <div class=""><h3>Team Actions</h3>
-              <ul>
-                 @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
-                {
+      <div class="card">
+          <div class="card-header-keys">
+            <div class="card-head">
+          <h2><i class="fas fa-id-card fa-xs"></i> Team Actions</h2>
+        </div>
+        </div>
+        <div class="card-content">
+                <ul>
+                   @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
+                  {
+                      <li>
+                          <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "People")'>Team Assets</a>
+                      </li>
+                  }
                     <li>
-                        <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "People")'>Team Assets</a>  
+                        <a asp-controller="Confirm" asp-action="MyStuff">MyStuff</a>
                     </li>
-                }                  
-                  <li>                      
-                      <a asp-controller="Confirm" asp-action="MyStuff">MyStuff</a>
-                  </li>
-                   @if ((await AuthorizationService.AuthorizeAsync(User, "DepartmentAdminAccess")).Succeeded)
-                {
-                    <li> 
-                      <a asp-controller="TeamAdmin">Administer Team</a> 
-                  </li> 
-                }   
-                   
-              </ul>
+                     @if ((await AuthorizationService.AuthorizeAsync(User, "DepartmentAdminAccess")).Succeeded)
+                  {
+                      <li>
+                        <a asp-controller="TeamAdmin">Administer Team</a>
+                    </li>
+                  }
+                </ul>
+        </div>
+      </div>
+            <div class="card">
+              <div class="card-header-keys">
+                <div class="card-head">
+                  <h2><i class="fas fa-sliders-h fa-xs"></i> System Admin</h2>
+                </div>
+              </div>
+              <div class="card-content">
+                @if ((await AuthorizationService.AuthorizeAsync(User, "SystemAdminAccess")).Succeeded)
+                    {
+                            <ul>
+                                <li>
+                                    <a asp-controller="Admin" asp-action="Index" >System Administration</a>
+                                </li>
+                            </ul>
+                    }
+              </div>
             </div>
-            @if ((await AuthorizationService.AuthorizeAsync(User, "SystemAdminAccess")).Succeeded)
-                {
-                   <div class="">
-                    <h3>System Admin</h3>
-
-                        <ul>                           
-                            <li>
-                                <a asp-controller="Admin" asp-action="Index" >System Administration</a>
-                            </li>
-                        </ul></div>
-                   
-                } 
-            
- </div>
-
   </div>
 </div>

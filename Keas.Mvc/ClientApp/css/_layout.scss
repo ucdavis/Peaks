@@ -138,4 +138,16 @@ footer {
   bottom: 0;
   display: block;
   height:45px;
+  @include breakpoint (sm) {
+    margin-left:2%;
+  }
+  @include breakpoint (md) {
+    margin-left:4%;
+  }
+  @include breakpoint(lg) {
+    margin-left:5%;
+  }
+  @include breakpoint(xl) {
+    margin-left:10%;
+  }
 }
