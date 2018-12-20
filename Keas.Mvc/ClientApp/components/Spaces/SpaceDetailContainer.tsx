@@ -24,7 +24,6 @@ export default class SpacesDetailContainer extends React.Component<IProps, {}> {
           </p>
           </div>
         </div>
-        <hr/>
         <br/>
       </div>
 

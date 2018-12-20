@@ -13,7 +13,8 @@ interface IProps {
 
 export default class EquipmentList extends React.Component<IProps, {}> {
   public render() {
-      const equipment = this.props.equipment.map(x => (
+      const equipment = !this.props.equipment ? "No equipment assigned" :
+       this.props.equipment.map(x => (
           <EquipmentListItem
               key={x.id.toString()}
               equipmentEntity={x}

@@ -22,73 +22,77 @@
       <div class="card-head">
         <h2><i class="fas fa-key fa-xs"></i> Keys</h2>
       </div>
-    </div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th>Serial #</th>
-                <th>Room</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.KeySerials)
-            {
+    </div><div class="card-content">
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@item.Key.Name</td>
-                    <td>@item.Number</td>
-                    <td>
-                        <ul>
-                            @foreach (var kxp in item.Key.KeyXSpaces)
-                            {
-                                <li>@kxp.Space.RoomName (@kxp.Space.RoomNumber @kxp.Space.BldgName)</li>
-                            }
-                        </ul>
-                    </td>
-                    <td><a href="@Url.Action("AcceptKey", new {serialId = item.Id})" class="btn btn-link">Confirm</a></td>
+                    <th>Item</th>
+                    <th>Serial #</th>
+                    <th>Room</th>
+                    <th></th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.KeySerials)
+                {
+                    <tr>
+                        <td>@item.Key.Name</td>
+                        <td>@item.Number</td>
+                        <td>
+                            <ul>
+                                @foreach (var kxp in item.Key.KeyXSpaces)
+                                {
+                                    <li>@kxp.Space.RoomName (@kxp.Space.RoomNumber @kxp.Space.BldgName)</li>
+                                }
+                            </ul>
+                        </td>
+                        <td><a href="@Url.Action("AcceptKey", new {serialId = item.Id})" class="btn btn-link">Confirm</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    
 </div>
   <div class="card equipment-color">
     <div class="card-header-equipment">
       <div class="card-head">
         <h2><i class="fas fa-hdd fa-xs"></i> Equipment</h2></div>
+      </div><div class="card-content">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Item</th>
+                <th>Serial #</th>
+                <th>Make</th>
+                <th>Model</th>
+                <th>Room</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Equipment)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.SerialNumber</td>
+                    <td>@item.Make</td>
+                    <td>@item.Model</td>
+                    @if (@item.Space != null)
+                    {
+                        <td>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
+                    }
+                    else
+                    {
+                        <td>&nbsp;</td>
+                    }
+                    <td><a href="@Url.Action("AcceptEquipment", new {equipmentId = item.Id})" class="btn btn-link">Confirm</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
       </div>
-      <table class="table">
-          <thead>
-          <tr>
-              <th>Item</th>
-              <th>Serial #</th>
-              <th>Make</th>
-              <th>Model</th>
-              <th>Room</th>
-              <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          @foreach (var item in Model.Equipment)
-          {
-              <tr>
-                  <td>@item.Name</td>
-                  <td>@item.SerialNumber</td>
-                  <td>@item.Make</td>
-                  <td>@item.Model</td>
-                  @if (@item.Space != null)
-                  {
-                      <td>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
-                  }
-                  else
-                  {
-                      <td>&nbsp;</td>
-                  }
-                  <td><a href="@Url.Action("AcceptEquipment", new {equipmentId = item.Id})" class="btn btn-link">Confirm</a></td>
-              </tr>
-          }
-          </tbody>
-      </table>
+      
     </div>
 
 <div class="card access-color">
@@ -96,33 +100,35 @@
     <div class="card-head">
       <h2><i class="fas fa-address-card fa-xs"></i> Access</h2>
     </div>
+  </div><div class="card-content">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Type</th>
+            <th>Room</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Workstations)
+        {
+            <tr>
+                <td>@item.Type</td>
+                @if (@item.Space != null)
+                {
+                    <td>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
+                }
+                else
+                {
+                    <td>&nbsp;</td>
+                }
+                <td><a href="@Url.Action("AcceptWorkstation", new {workstationId = item.Id})" class="btn btn-link">Confirm</a></td>
+            </tr>
+        }
+        </tbody>
+    </table>
   </div>
-  <table class="table">
-      <thead>
-      <tr>
-          <th>Type</th>
-          <th>Room</th>
-          <th></th>
-      </tr>
-      </thead>
-      <tbody>
-      @foreach (var item in Model.Workstations)
-      {
-          <tr>
-              <td>@item.Type</td>
-              @if (@item.Space != null)
-              {
-                  <td>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
-              }
-              else
-              {
-                  <td>&nbsp;</td>
-              }
-              <td><a href="@Url.Action("AcceptWorkstation", new {workstationId = item.Id})" class="btn btn-link">Confirm</a></td>
-          </tr>
-      }
-      </tbody>
-  </table>
+ 
 </div>
 </div>
 
