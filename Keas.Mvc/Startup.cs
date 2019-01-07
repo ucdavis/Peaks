@@ -141,7 +141,7 @@ namespace Keas.Mvc
             //Added for Email Template View Engine
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
-            services.Configure<EmailSettings>(Configuration.GetSection("Email"));
+            services.Configure<SparkpostSettings>(Configuration.GetSection("Sparkpost"));
 
             services.AddScoped<IHistoryService, HistoryService>();
             services.AddScoped<INotificationService, NotificationService>();

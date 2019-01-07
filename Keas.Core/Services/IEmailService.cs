@@ -25,9 +25,10 @@ namespace Keas.Core.Services
     public class EmailService : IEmailService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly EmailSettings _emailSettings;
 
-        public EmailService(ApplicationDbContext dbContext, IOptions<EmailSettings> emailSettings)
+        private readonly SparkpostSettings _emailSettings;
+
+        public EmailService(ApplicationDbContext dbContext, IOptions<SparkpostSettings> emailSettings)
         {
             _dbContext = dbContext;
             _emailSettings = emailSettings.Value;

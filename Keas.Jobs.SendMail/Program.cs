@@ -84,7 +84,7 @@ namespace Keas.Jobs.SendMail
             services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<IEmailService, EmailService>();
-            services.Configure<EmailSettings>(Configuration.GetSection("Email"));
+            services.Configure<SparkpostSettings>(Configuration.GetSection("Sparkpost"));
 
             return services.BuildServiceProvider();
         }
