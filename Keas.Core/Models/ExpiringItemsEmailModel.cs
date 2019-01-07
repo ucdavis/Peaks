@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Keas.Core.Domain;
@@ -31,10 +31,12 @@ namespace Keas.Core.Models
 
         public IList<int> GetPersonIdList()
         {
-            return AccessAssignments.Select(a => a.PersonId).Distinct()
-                .Union(KeySerials.Select(a => a.KeySerialAssignment.PersonId).Distinct())
-                .Union(Equipment.Select(a => a.Assignment.PersonId).Distinct())
-                .Union(Workstations.Select(a => a.Assignment.PersonId)).Distinct().ToList();
+            var list = new List<int>();
+            list.AddRange(AccessAssignments.Select(a => a.PersonId));
+            list.AddRange(KeySerials.Select(a => a.KeySerialAssignment.PersonId));
+            list.AddRange(Equipment.Select(a => a.Assignment.PersonId));
+            list.AddRange(Workstations.Select(a => a.Assignment.PersonId));
+            return list.Distinct().ToList();
         }
     }
 }
