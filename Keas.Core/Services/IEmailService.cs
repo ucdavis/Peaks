@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -70,7 +70,7 @@ namespace Keas.Core.Services
                 return;                
             }
            
-            var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };
+            var message = new System.Net.Mail.MailMessage { From = new MailAddress("peaks-notify.ucdavis.edu", "PEAKS - No Reply") };
 #if DEBUG //Might as well do this here too. In prod real peeps are getting added
             message.To.Add("jsylvestre@ucdavis.edu"); 
 #else
@@ -245,7 +245,7 @@ namespace Keas.Core.Services
             }
             //TODO: Do something with these notifications to build them into a single email.
 
-            var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };
+            var message = new System.Net.Mail.MailMessage { From = new MailAddress("peaks-notify.ucdavis.edu", "PEAKS - No Reply") };
             //message.To.Add(user.Email);
             message.To.Add("jsylvestre@ucdavis.edu");
 
