@@ -3,48 +3,52 @@
 @{
         ViewData["Title"] = "Role Assigned Members ";
     }
-    <div class="card">
-      <div class="card-head">
-        <div class="row justify-content-between">
-          <h2>Members with roles in @Model.Team.Name</h2>
-          <div>
-            <a class="btn btn-link" asp-action="AddMemberRole"><i class="fas fa-plus fa-sm"/></i> Add new team member role.</a> |
-            <a class="btn btn-link" asp-action="Index" asp-controller="TeamAdmin"><i class="fas fa-arrow-left fa-xs"/></i> Back to Team Admin</a>
+    <div class="row justify-content-between">
+      <div class="col-md-9">
+      <div class="card">
+        <div class="card-header-primary">
+          <div class="card-head">
+<h2>Members with roles in @Model.Team.Name</h2>
           </div>
         </div>
+        <div class="card-content">
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th>
+                          Name
+                      </th>
+                      <th>
+                          Roles
+                      </th>
+                      <th>
+
+                      </th>
+                  </tr>
+              </thead>
+              <tbody>
+          @foreach (var item in Model.UserRoles) {
+                  <tr>
+                      <td>
+                          @item.User.Name
+                      </td>
+                      <td>
+                      @item.RolesList
+                      </td>
+                      <td>
+                          @Html.ActionLink("Remove Role(s)", "RemoveRoles", new { userId = item.User.Id})
+                      </td>
+
+                  </tr>
+          }
+              </tbody>
+          </table>
+        </div>
       </div>
-      <div class="card-content">
+      </div>
+      <div class="col-md-3">
+  
+            @{await Html.RenderPartialAsync("_TeamAdminMenu");}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                Name
-            </th>
-            <th>
-                Roles
-            </th>
-            <th>
-
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.UserRoles) {
-        <tr>
-            <td>
-                @item.User.Name
-            </td>
-            <td>
-            @item.RolesList
-            </td>
-            <td>
-                @Html.ActionLink("Remove Role(s)", "RemoveRoles", new { userId = item.User.Id})
-            </td>
-
-        </tr>
-}
-    </tbody>
-</table>
-</div>
-</div>
+      </div>
+    </div>

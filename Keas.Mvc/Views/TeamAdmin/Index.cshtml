@@ -3,38 +3,34 @@
 @{
     ViewData["Title"] = "Index";
 }
-<div class="card">
-  <div class="card-head">
-    <div class="row justify-content-between">
-      <h2>@Model.Name</h2>
-      <div>
-          <a class="btn btn-link" asp-action="Index" asp-controller="TagsManager">Team Tags</a> | 
-          <a class="btn btn-link" asp-action="AddFISOrg">Add New Org Code</a> |
-          <a class="btn btn-link" asp-action="AddPpsDepartment">Add PPS Department</a> |
-          <a class="btn btn-link" asp-action="BulkLoadPeople">Bulk Load People</a> |
-          <a class="btn btn-link" asp-action="RoledMembers">Admin roles</a> |
-          <a class="btn btn-link" asp-action="Index" asp-controller="Report">Reports</a>
+<div class="row justify-content-between">
+  <div class="col-md-9">
+  <div class="card">
+    <div class="card-header-primary">
+      <div class="card-head">
+  <h2>@Model.Name</h2>
       </div>
     </div>
+    <div class="card-content">
+      <p><b>@Html.DisplayNameFor(model => model.Name)</b></p>
+
+      <p>@Html.DisplayFor(model => model.Name)</p>
+
+      <p><b>FIS Orgs</b></p>
+      @foreach (var org in Model.FISOrgs) {
+      <p>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><i class="fas fa-trash"></i></a></p>
+      }
+      <p><b>PPS Departments</b></p>
+      @foreach (var ppsDept in Model.PpsDepartments) {
+      <p>@ppsDept.DepartmentName (@ppsDept.PpsDepartmentCode) <a asp-action="RemovePpsDepartment" asp-route-id="@ppsDept.Id"><i class="fas fa-trash"></i></a></p>
+      }
+    </div>
   </div>
-  <div class="card-content">
+  </div>
+  <div class="col-md-3">
 
 
-<div>
-    <p><b>@Html.DisplayNameFor(model => model.Name)</b></p>
-
-          <p>@Html.DisplayFor(model => model.Name)</p>
-
-        <h2>FIS Orgs</h2>
-        @foreach (var org in Model.FISOrgs)
-        {
-            <p>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><i class="fas fa-trash"></i></a></p>
-        }
-        <h2>PPS Departments</h2>
-        @foreach (var ppsDept in Model.PpsDepartments)
-        {
-            <p>@ppsDept.DepartmentName (@ppsDept.PpsDepartmentCode) <a asp-action="RemovePpsDepartment" asp-route-id="@ppsDept.Id"><i class="fas fa-trash"></i></a></p> 
-        }
-</div>
-</div>
+        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
+  
+  </div>
 </div>

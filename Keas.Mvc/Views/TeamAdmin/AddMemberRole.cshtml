@@ -3,38 +3,41 @@
 @{
     ViewData["Title"] = "Add Member to Role";
 }
-<div class="card">
-  <div class="card-head">
-    <div class="row justify-content-between">
-      <h2>Add Member to Role</h2>
-      <a class="btn btn-link" asp-action="RoledMembers"><i class="fas fa-arrow-left fa-xs"/></i> Back to Members with Roles</a>
+<div class="row justify-content-between">
+  <div class="col-md-9">
+  <div class="card">
+    <div class="card-header-primary">
+      <div class="card-head">
+<h2>Add Member to Role</h2>
+      </div>
+    </div>
+    <div class="card-content">
+      <form asp-action="AddMemberRole">
+          <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+          <div class="form-group">
+              <label asp-for="RoleId" class="control-label"></label>
+              <select asp-for="RoleId" class="form-control" asp-items="@(new SelectList(Model.Roles, "Id", "Name"))"></select>
+              <span asp-validation-for="RoleId" class="text-danger"></span>
+          </div>
+          <div class="form-group">
+              <label asp-for="UserEmail" class="control-label"></label>
+              <input asp-for="UserEmail" class="form-control"/>
+              <span asp-validation-for="UserEmail" class="text-danger"></span>
+          </div>
+          <div class="form-group">
+              <input type="submit" value="Assign Role to User" class="btn btn-primary" />
+          </div>
+      </form>
     </div>
   </div>
-  <div class="card-content">
+  </div>
+  <div class="col-md-3">
 
+        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="AddMemberRole">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <select asp-for="RoleId" class="form-control" asp-items="@(new SelectList(Model.Roles, "Id", "Name"))"></select>
-                <span asp-validation-for="RoleId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UserEmail" class="control-label"></label>
-                <input asp-for="UserEmail" class="form-control"/>
-                <span asp-validation-for="UserEmail" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Assign Role to User" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
+  </div>
 </div>
-</div>
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

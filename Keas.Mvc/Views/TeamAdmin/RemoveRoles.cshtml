@@ -3,51 +3,49 @@
 @{
     ViewData["Title"] = "Role Assigned Members ";
 }
-<div class="card">
-  <div class="card-head">
-      <div class="row justify-content-between">
-          <h2>Remove roles for user in @Model.Team.Name</h2>
-          <div>            
-            <a class="btn btn-link" asp-action="RoledMembers" asp-controller="TeamAdmin"><i class="fas fa-arrow-left fa-xs"/></i> Back to Members with Roles</a>
-          </div>
-        </div>
-  </div>
-  <div class="card-content">
-
-
-@foreach(var item in Model.UserRoles) {
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="RemoveRoles">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" name="userId" value="@item.User.Id"/>
-            <ul>
-                <li>
-                    <div class="form-group">
-                        <div class="control-label">Name</div>
-                        <div class="form-control">@item.User.Name</div>
-                    </div>
-                </li>
-
-                <li>
-                    <div class="editor-label">Check Roles to delete</div>
-                    @foreach (var role in item.Roles)
-                    {
-                        <input type="checkbox" value="@role.Id" name="roles"/>
-                        @role.Name
-                        <br/>
-                        <br/>
-                    }
-                </li>
-                <li>
-                    <input class="btn btn-primary" type="submit" value="Remove role(s)"/> |
-                    <a asp-action="RoledMembers" class="btn btn-danger">Cancel</a>
-                </li>
-            </ul>
-
-        </form>
+<div class="row justify-content-between">
+  <div class="col-md-9">
+  <div class="card">
+    <div class="card-header-primary">
+      <div class="card-head">
+  <h2>Remove roles for user in @Model.Team.Name</h2>
+      </div>
     </div>
-</div>
-}
-</div>
+    <div class="card-content">
+      @foreach(var item in Model.UserRoles) {
+      <div class="row">
+          <div class="col-md-4">
+              <form asp-action="RemoveRoles">
+                  <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                  <input type="hidden" name="userId" value="@item.User.Id"/>
+
+                          <div class="form-group">
+                              <div class="control-label">Name</div>
+                              <div class="form-control">@item.User.Name</div>
+                          </div>
+
+                          <div class="editor-label">Check Roles to delete</div>
+                          @foreach (var role in item.Roles)
+                          {
+                              <input type="checkbox" value="@role.Id" name="roles"/>
+                              @role.Name
+                              <br/>
+                              <br/>
+                          }
+
+                          <input class="btn btn-primary" type="submit" value="Remove role(s)"/>
+
+
+              </form>
+          </div>
+      </div>
+      }
+    </div>
+  </div>
+  </div>
+  <div class="col-md-3">
+
+        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
+
+  </div>
 </div>

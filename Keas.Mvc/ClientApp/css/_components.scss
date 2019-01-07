@@ -33,7 +33,7 @@
   border-bottom:4px solid $spaces;
 }
 .card-header-primary {
-  border-bottom:4px solid $primary-font;
+  border-bottom:2px solid $borders;
 }
 .card-header-keys {
   border-bottom:4px solid $keys;
@@ -43,6 +43,9 @@
 }
 .card-header-equipment {
   border-bottom:4px solid $equipment;
+}
+.card-header-other {
+  border-bottom:2px solid $blue;
 }
 .card-header-people {
   border-bottom:4px solid $people;
@@ -205,6 +208,31 @@ img.img-fluid {
     }
   }
 }
+}
+.access-color {
+  .fa-ellipsis-h:before {
+    color:$access;
+  }
+}
+.people-color {
+  .fa-ellipsis-h:before {
+    color:$people;
+  }
+}
+.equipment-color {
+  .fa-ellipsis-h:before {
+    color:$equipment;
+  }
+}
+.spaces-color {
+  .fa-ellipsis-h:before {
+    color:$spaces;
+  }
+}
+.keys-color {
+  .fa-ellipsis-h:before {
+    color:$keys;
+  }
 }
 .keys-color .btn-primary {
   background-color:$keys;
