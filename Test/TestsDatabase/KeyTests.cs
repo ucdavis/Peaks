@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Keas.Core.Domain;
@@ -37,7 +37,11 @@ namespace Test.TestsDatabase
             #region Arrange
             var expectedFields = new List<NameAndType>();
             expectedFields.Add(new NameAndType("Active", "System.Boolean", new List<string>()));
-            expectedFields.Add(new NameAndType("Code", "System.String", new List<string>()));
+            expectedFields.Add(new NameAndType("Code", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
+            }));
             expectedFields.Add(new NameAndType("Group", "System.String", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)32)]",
