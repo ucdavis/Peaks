@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using Keas.Core.Domain;
 using System.Net;
-using System.Net.Mail;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Models;
@@ -13,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RazorLight;
 using Serilog;
+using SparkPost;
 
 namespace Keas.Core.Services
 {
@@ -34,33 +34,11 @@ namespace Keas.Core.Services
             _emailSettings = emailSettings.Value;
         }
 
-        private async Task SendMessage(MailMessage message)
-        {
-            Log.Logger.ForContext("message", message, true).Information("Sending Email.");
-
-            using (var client = new SmtpClient(_emailSettings.Host))
-            {
-                client.UseDefaultCredentials = false;
-                client.Credentials = new NetworkCredential(_emailSettings.UserName, _emailSettings.Password);
-                client.Port = _emailSettings.Port;
-                client.DeliveryMethod = SmtpDeliveryMethod.Network;
-                client.EnableSsl = true;
-
-                await client.SendMailAsync(message);
-            }
-        }
-
         public async Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model)
         {
-            var path = Path.GetFullPath(".");
-
-            var engine = new RazorLightEngineBuilder()
-                .UseFilesystemProject(path)
-                .UseMemoryCachingProvider()
-                .Build();
-
             var person = model.People.Single(a => a.Id == personId);
 
+            // build model
             var expiringItems = ExpiringItemsEmailModel.Create(
                 model.AccessAssignments.Where(a => a.PersonId == personId).ToList(), 
                 model.KeySerials.Where(a => a.KeySerialAssignment != null && a.KeySerialAssignment.PersonId == personId).ToList(), 
@@ -73,28 +51,28 @@ namespace Keas.Core.Services
                 return;                
             }
            
-            var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };
-#if DEBUG //Might as well do this here too. In prod real peeps are getting added
-            message.To.Add("jsylvestre@ucdavis.edu"); 
+            // build email
+            var transmission = new Transmission();
+            transmission.Content.Subject = "PEAKS Notification";
+            transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
+            transmission.Recipients = new List<Recipient>()
+            {
+#if DEBUG
+                new Recipient() { Address = new Address("jsylvestre@ucdavis.edu") },
 #else
-            message.To.Add(person.Email);
+                new Recipient() { Address = new Address(person.Email, person.Name) },
 #endif            
+            };
             
-            
+            // build cc list
+            var ccUsers = new List<User>();
 
             if (expiringItems.AccessAssignments.Any())
             {
                 var roles = await _dbContext.Roles
                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
                 var users = await GetUsersInRoles(roles, person.TeamId);
-                foreach (var user in users)
-                {
-#if DEBUG
-                    Console.WriteLine(user.Email);
-#else
-                    message.CC.Add(user.Email);
-#endif
-                }
+                ccUsers.AddRange(users);
             }
 
             if (expiringItems.KeySerials.Any())
@@ -102,14 +80,7 @@ namespace Keas.Core.Services
                 var roles = await _dbContext.Roles
                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
                 var users = await GetUsersInRoles(roles, person.TeamId);
-                foreach (var user in users)
-                {
-#if DEBUG
-                    Console.WriteLine(user.Email);
-#else
-                    message.CC.Add(user.Email);
-#endif
-                }
+                ccUsers.AddRange(users);
             }
 
             if (expiringItems.Equipment.Any())
@@ -117,14 +88,7 @@ namespace Keas.Core.Services
                 var roles = await _dbContext.Roles
                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
                 var users = await GetUsersInRoles(roles, person.TeamId);
-                foreach (var user in users)
-                {
-#if DEBUG
-                    Console.WriteLine(user.Email);
-#else
-                    message.CC.Add(user.Email);
-#endif
-                }
+                ccUsers.AddRange(users);
             }
 
             if (expiringItems.Workstations.Any())
@@ -132,141 +96,100 @@ namespace Keas.Core.Services
                 var roles = await _dbContext.Roles
                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
                 var users = await GetUsersInRoles(roles, person.TeamId);
-                foreach (var user in users)
-                {
-#if DEBUG
-                    Console.WriteLine(user.Email);
-#else
-                    message.CC.Add(user.Email);
+                ccUsers.AddRange(users);
+                
+            }
+
+            // transform to cc recipient
+            var ccEmails = ccUsers
+                .Distinct()
+                .Select(u => new Recipient() {Address = new Address(u.Email, u.Name, "cc")})
+                .ToList();
+
+#if !DEBUG
+            // add emails to
+            ccEmails.ForEach(transmission.Recipients.Add);
 #endif
-                }
+
+            // build view
+            var engine = GetRazorEngine();
+            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems);
+
+            var client = GetSparkpostClient();
+            var result = await client.Transmissions.Send(transmission);
+
+            // reset next notification date
+            foreach (var assignment in expiringItems.KeySerials.Select(k => k.KeySerialAssignment))
+            {
+                SetNextNotification(assignment);
             }
 
-            message.Subject = "PEAKS Notification";
-            message.IsBodyHtml = false;
-            try
+            foreach (var assignment in expiringItems.Equipment.Select(k => k.Assignment))
             {
-                message.Body = await engine.CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                throw;
+                SetNextNotification(assignment);
             }
 
-            foreach (var key in expiringItems.KeySerials)
+            foreach (var assignment in expiringItems.Workstations.Select(k => k.Assignment))
             {
-                if (key.KeySerialAssignment.NextNotificationDate == null || key.KeySerialAssignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
-                {
-                    key.KeySerialAssignment.NextNotificationDate = key.KeySerialAssignment.ExpiresAt.AddDays(-7);
-                }
-                else if (key.KeySerialAssignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
-                {
-                    key.KeySerialAssignment.NextNotificationDate = key.KeySerialAssignment.ExpiresAt.AddDays(-1);
-                }
-                else
-                {
-                    key.KeySerialAssignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
-                }
-                _dbContext.KeySerialAssignments.Update(key.KeySerialAssignment);
+                SetNextNotification(assignment);
             }
 
-            foreach (var equipment in expiringItems.Equipment)
+            foreach (var assignment in expiringItems.AccessAssignments)
             {
-                if (equipment.Assignment.NextNotificationDate == null || equipment.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
-                {
-                    equipment.Assignment.NextNotificationDate = equipment.Assignment.ExpiresAt.AddDays(-7);
-                }
-                else if (equipment.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
-                {
-                    equipment.Assignment.NextNotificationDate = equipment.Assignment.ExpiresAt.AddDays(-1);
-                }
-                else
-                {
-                    equipment.Assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
-                }
-                _dbContext.EquipmentAssignments.Update(equipment.Assignment);
-            }
-
-            foreach (var workstation in expiringItems.Workstations)
-            {
-                if (workstation.Assignment.NextNotificationDate == null || workstation.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
-                {
-                    workstation.Assignment.NextNotificationDate = workstation.Assignment.ExpiresAt.AddDays(-7);
-                }
-                else if (workstation.Assignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
-                {
-                    workstation.Assignment.NextNotificationDate = workstation.Assignment.ExpiresAt.AddDays(-1);
-                }
-                else
-                {
-                    workstation.Assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
-                }
-                _dbContext.WorkstationAssignments.Update(workstation.Assignment);
-            }
-
-            foreach (var access in expiringItems.AccessAssignments)
-            {
-                if (access.NextNotificationDate == null || access.ExpiresAt > DateTime.UtcNow.AddDays(7))
-                {
-                    access.NextNotificationDate = access.ExpiresAt.AddDays(-7);
-                }
-                else if (access.ExpiresAt > DateTime.UtcNow.AddDays(1))
-                {
-                    access.NextNotificationDate = access.ExpiresAt.AddDays(-1);
-                }
-                else
-                {
-                    access.NextNotificationDate = DateTime.UtcNow.AddDays(1);
-                }
-                _dbContext.AccessAssignments.Update(access);
+                SetNextNotification(assignment);
             }
 
             await _dbContext.SaveChangesAsync();
+        }
 
-            var mimeType = new System.Net.Mime.ContentType("text/html");
+        private void SetNextNotification(AssignmentBase assignment)
+        {
+            // first notification, push back one week before expiration
+            if (assignment.NextNotificationDate == null || assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
+            {
+                assignment.NextNotificationDate = assignment.ExpiresAt.AddDays(-7);
+                return;
+            }
 
-            var alternate = AlternateView.CreateAlternateViewFromString(message.Body, mimeType);
-            message.AlternateViews.Add(alternate);
+            // second notification, push back one day before expiration
+            if (assignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
+            {
+                assignment.NextNotificationDate = assignment.ExpiresAt.AddDays(-1);
+                return;
+            }
 
-            await SendMessage(message);
-
+            // otherwise push back to tomorrow
+            assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
         }
 
         public async Task SendNotificationMessage(User user)
         {
-            var path = Path.GetFullPath(".");
-
-            var engine = new RazorLightEngineBuilder()
-                .UseFilesystemProject(path)
-                .UseMemoryCachingProvider()
-                .Build();
             var notifications = _dbContext.Notifications.Where(a => a.Pending && a.User == user).ToArray();
-            if (notifications.Length <= 0)
+            if (!notifications.Any())
             {
                 return;
             }
+
             //TODO: Do something with these notifications to build them into a single email.
 
-            var message = new System.Net.Mail.MailMessage { From = new MailAddress("keas-notification@ucdavis.edu", "Keas - No Reply") };
-            //message.To.Add(user.Email);
-            message.To.Add("jsylvestre@ucdavis.edu");
+            // build email
+            var transmission = new Transmission();
+            transmission.Content.Subject = "PEAKS Notification";
+            transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
+            transmission.Recipients = new List<Recipient>()
+            {
+                //new Recipient() { Address = new Address(user.Email, user.Name) },
+                new Recipient() { Address = new Address("jsylvestre@ucdavis.edu") },
+            };
 
             //Bcc anyone?
 
-            message.Subject = "PEAKS Notification";
-            message.IsBodyHtml = false;
+            var engine = GetRazorEngine();
+            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList());
 
+            var client = GetSparkpostClient();
+            var result = await client.Transmissions.Send(transmission);
 
-            try
-            {
-                message.Body = await engine.CompileRenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList());            
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                throw;
-            }
 
             foreach (var notification in notifications)
             {
@@ -275,20 +198,35 @@ namespace Keas.Core.Services
                 _dbContext.Notifications.Update(notification);                
             }
             await _dbContext.SaveChangesAsync();
-
-            var mimeType = new System.Net.Mime.ContentType("text/html");
-
-            var alternate = AlternateView.CreateAlternateViewFromString(message.Body, mimeType);
-            message.AlternateViews.Add(alternate);
-
-            await SendMessage(message);
         }
 
-        public async Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId)
+        private async Task<List<User>> GetUsersInRoles(IReadOnlyCollection<Role> roles, int teamId)
         {
-            var users = await _dbContext.TeamPermissions.Where(x => x.TeamId == teamId && roles.Any(r => r.Id == x.RoleId)).Select(tp => tp.User).Distinct().ToListAsync();
+            var users = await _dbContext.TeamPermissions
+                .Where(x => x.TeamId == teamId && roles.Any(r => r.Id == x.RoleId))
+                .Select(tp => tp.User)
+                .Distinct()
+                .ToListAsync();
 
             return users;
+        }
+
+        private RazorLightEngine GetRazorEngine()
+        {
+            var path = Path.GetFullPath(".");
+
+            var engine = new RazorLightEngineBuilder()
+                .UseFilesystemProject(path)
+                .UseMemoryCachingProvider()
+                .Build();
+
+            return engine;
+        }
+
+        private Client GetSparkpostClient()
+        {
+            var client = new Client(_emailSettings.ApiKey);
+            return client;
         }
     }
 }
