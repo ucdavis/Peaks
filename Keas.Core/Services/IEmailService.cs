@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +12,7 @@ using Keas.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RazorLight;
+using Serilog;
 
 namespace Keas.Core.Services
 {
@@ -27,7 +28,6 @@ namespace Keas.Core.Services
         private readonly EmailSettings _emailSettings;
 
         public EmailService(ApplicationDbContext dbContext, IOptions<EmailSettings> emailSettings)
-        //public EmailService(IOptions<EmailSettings> emailSettings)
         {
             _dbContext = dbContext;
             _emailSettings = emailSettings.Value;
@@ -35,6 +35,8 @@ namespace Keas.Core.Services
 
         private async Task SendMessage(MailMessage message)
         {
+            Log.Logger.ForContext("message", message, true).Information("Sending Email.");
+
             using (var client = new SmtpClient(_emailSettings.Host))
             {
                 client.UseDefaultCredentials = false;
