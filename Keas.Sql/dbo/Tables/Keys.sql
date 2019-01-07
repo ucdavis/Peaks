@@ -1,7 +1,7 @@
-﻿CREATE TABLE [dbo].[Keys] (
+CREATE TABLE [dbo].[Keys] (
     [Id]     INT            IDENTITY (1, 1) NOT NULL,
     [Active] BIT            NOT NULL,
-    [Code]   NVARCHAR (MAX) NULL,
+    [Code]   NVARCHAR (MAX) NOT NULL,
     [Group]  NVARCHAR (32)  NULL,
     [Name]   NVARCHAR (64)  NOT NULL,
     [Tags]   NVARCHAR (MAX) NULL,
