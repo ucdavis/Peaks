@@ -180,8 +180,11 @@ namespace Keas.Core.Services
             transmission.Content.Text = "You have pending notifications. Please visit https://peaks.ucdavis.edu to review them.";
             transmission.Recipients = new List<Recipient>()
             {
-                //new Recipient() { Address = new Address(user.Email, user.Name) },
+#if DEBUG
                 new Recipient() { Address = new Address("jsylvestre@ucdavis.edu") },
+#else
+                new Recipient() { Address = new Address(user.Email, user.Name) },
+#endif
             };
 
             //Bcc anyone?
