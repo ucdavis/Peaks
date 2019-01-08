@@ -35,6 +35,9 @@
 .card-header-primary {
   border-bottom:2px solid $borders;
 }
+.card-header-primary-thick {
+    border-bottom: 4px solid $borders;
+}
 .card-header-keys {
   border-bottom:4px solid $keys;
 }
