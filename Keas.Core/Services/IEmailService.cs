@@ -55,6 +55,7 @@ namespace Keas.Core.Services
             var transmission = new Transmission();
             transmission.Content.Subject = "PEAKS Notification";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
+            transmission.Content.Text = "You have asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
             transmission.Recipients = new List<Recipient>()
             {
 #if DEBUG
@@ -176,6 +177,7 @@ namespace Keas.Core.Services
             var transmission = new Transmission();
             transmission.Content.Subject = "PEAKS Notification";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
+            transmission.Content.Text = "You have pending notifications. Please visit https://peaks.ucdavis.edu to review them.";
             transmission.Recipients = new List<Recipient>()
             {
                 //new Recipient() { Address = new Address(user.Email, user.Name) },
