@@ -8,5 +8,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.0" />
     <PackageReference Include="RazorLight" Version="2.0.0-beta1" />
+    <PackageReference Include="Serilog" Version="2.7.1" />
+    <PackageReference Include="SparkPost" Version="1.14.0" />
   </ItemGroup>
 </Project>
