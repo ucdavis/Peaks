@@ -1,4 +1,4 @@
-﻿@model Keas.Mvc.Models.TeamAdminMembersListModel
+@model Keas.Mvc.Models.TeamAdminMembersListModel
 
 @{
         ViewData["Title"] = "Role Assigned Members ";
@@ -7,8 +7,9 @@
       <div class="col-md-9">
       <div class="card">
         <div class="card-header-primary">
-          <div class="card-head">
+          <div class="card-head row justify-content-between">
 <h2>Members with roles in @Model.Team.Name</h2>
+              <a class="btn btn-link" asp-action="AddMemberRole"><i class="fas fa-plus fa-xs"/></i> Add new Admin Role.</a>
           </div>
         </div>
         <div class="card-content">
