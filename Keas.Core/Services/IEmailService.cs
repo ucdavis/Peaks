@@ -153,6 +153,11 @@ namespace Keas.Core.Services
             if (assignment.NextNotificationDate == null || assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
             {
                 assignment.NextNotificationDate = assignment.ExpiresAt.AddDays(-7);
+                //If this sets it to less than the current date/time, set it to tomorrow to avoid a second email right away.
+                if (assignment.NextNotificationDate <= DateTime.UtcNow)
+                {
+                    assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
+                }
                 return;
             }
 
