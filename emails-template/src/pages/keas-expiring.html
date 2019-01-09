@@ -37,12 +37,12 @@
                   </tr>
               }
 
-              @foreach (var item in Model.Keys)
+              @foreach (var item in Model.KeySerials)
               {
                   <tr>
                       <td>Key</td>
-                      <td>@item.Key.Name</td>
-                      <td>@item.Assignment.ExpiresAt.ToPacificTime().ToString("d")</td>
+                      <td>@item.Key.Title</td>
+                      <td>@item.KeySerialAssignment.ExpiresAt.ToPacificTime().ToString("d")</td>
                   </tr>
               }
 
@@ -70,15 +70,15 @@
         <hr/>
       </columns>
     </row>
-    <row class="footer text-center">
-    <columns large="2">
+  <div class="footer text-center">
+    <div>
       <img src="https://peaks.ucdavis.edu/Images/peaksLogo.png" alt="">
-    </columns>
-    <columns large="2">
-      <p>
-        This email was automatically generated please do not reply to it as the mailbox is not monitored 
+    </div>
+    <hr/>
+    <div>        
+      <p>         
+        This email was automatically generated please do not reply to it as the mailbox is not monitored. 
       </p>
-    </columns>
-    </row>
+    </div>
+  </div>
   </container>
-  

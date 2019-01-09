@@ -123,21 +123,25 @@ namespace Keas.Core.Services
             foreach (var assignment in expiringItems.KeySerials.Select(k => k.KeySerialAssignment))
             {
                 SetNextNotification(assignment);
+                _dbContext.KeySerialAssignments.Update(assignment);
             }
 
             foreach (var assignment in expiringItems.Equipment.Select(k => k.Assignment))
             {
                 SetNextNotification(assignment);
+                _dbContext.EquipmentAssignments.Update(assignment);
             }
 
             foreach (var assignment in expiringItems.Workstations.Select(k => k.Assignment))
             {
                 SetNextNotification(assignment);
+                _dbContext.WorkstationAssignments.Update(assignment);
             }
 
             foreach (var assignment in expiringItems.AccessAssignments)
             {
                 SetNextNotification(assignment);
+                _dbContext.AccessAssignments.Update(assignment);
             }
 
             await _dbContext.SaveChangesAsync();
@@ -149,6 +153,11 @@ namespace Keas.Core.Services
             if (assignment.NextNotificationDate == null || assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
             {
                 assignment.NextNotificationDate = assignment.ExpiresAt.AddDays(-7);
+                //If this sets it to less than the current date/time, set it to tomorrow to avoid a second email right away.
+                if (assignment.NextNotificationDate <= DateTime.UtcNow)
+                {
+                    assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
+                }
                 return;
             }
 
