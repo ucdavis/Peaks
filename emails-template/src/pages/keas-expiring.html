@@ -37,12 +37,12 @@
                   </tr>
               }
 
-              @foreach (var item in Model.Keys)
+              @foreach (var item in Model.KeySerials)
               {
                   <tr>
                       <td>Key</td>
-                      <td>@item.Key.Name</td>
-                      <td>@item.Assignment.ExpiresAt.ToPacificTime().ToString("d")</td>
+                      <td>@item.Key.Title</td>
+                      <td>@item.KeySerialAssignment.ExpiresAt.ToPacificTime().ToString("d")</td>
                   </tr>
               }
 
