@@ -174,7 +174,7 @@ namespace Keas.Core.Services
 
         public async Task SendNotificationMessage(User user)
         {
-            var notifications = _dbContext.Notifications.Where(a => a.Pending && a.User == user).ToArray();
+            var notifications = _dbContext.Notifications.Where(a => a.Pending && a.User == user).Include(a => a.Team).Include(a => a.User).OrderBy(a => a.TeamId).ThenBy(a => a.DateTimeCreated).GroupBy(a => a.TeamId).ToArray();
             if (!notifications.Any())
             {
                 return;
@@ -204,13 +204,16 @@ namespace Keas.Core.Services
             var client = GetSparkpostClient();
             var result = await client.Transmissions.Send(transmission);
 
-
-            foreach (var notification in notifications)
+            foreach (var notificationGroup in notifications)
             {
-                notification.Pending = false;
-                notification.DateTimeSent = DateTime.UtcNow;
-                _dbContext.Notifications.Update(notification);                
+                foreach (var notification in notificationGroup)
+                {
+                    notification.Pending = false;
+                    notification.DateTimeSent = DateTime.UtcNow;
+                    _dbContext.Notifications.Update(notification);                
+                }
             }
+
             await _dbContext.SaveChangesAsync();
         }
 
