@@ -1,4 +1,4 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -47,7 +47,8 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    TeamId = key.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -65,7 +66,8 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    TeamId = equipment.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -83,7 +85,8 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    TeamId = access.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -107,6 +110,7 @@ namespace Keas.Mvc.Services
                     History = history,
                     Details = history.Description,
                     NeedsAccept = user == assignedTo,
+                    TeamId = keySerial.Key.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -124,7 +128,8 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    TeamId = keySerial.Key.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -149,6 +154,7 @@ namespace Keas.Mvc.Services
                     History = history,
                     Details = history.Description,
                     NeedsAccept = user == assignedTo,
+                    TeamId = equipment.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -166,7 +172,8 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    TeamId = equipment.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -188,8 +195,13 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,                    
                 };
+                var team = await _dbContext.Teams.SingleOrDefaultAsync(a => a.Slug == teamName);
+                if (team != null)
+                {
+                    notification.TeamId = team.Id;
+                }
                 _dbContext.Notifications.Add(notification);
             }
             await _dbContext.SaveChangesAsync();
@@ -208,6 +220,11 @@ namespace Keas.Mvc.Services
                     History = history,
                     Details = history.Description
                 };
+                var team = await _dbContext.Teams.SingleOrDefaultAsync(a => a.Slug == teamName);
+                if (team != null)
+                {
+                    notification.TeamId = team.Id;
+                }
                 _dbContext.Notifications.Add(notification);
             }
             await _dbContext.SaveChangesAsync();
@@ -224,7 +241,8 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    TeamId = workstation.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -246,7 +264,8 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    TeamId = workstation.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -264,7 +283,8 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    TeamId = workstation.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -282,7 +302,8 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    TeamId = keySerial.Key.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -300,7 +321,8 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    TeamId = equipment.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
@@ -318,7 +340,8 @@ namespace Keas.Mvc.Services
                 {
                     UserId = user.Id,
                     History = history,
-                    Details = history.Description
+                    Details = history.Description,
+                    TeamId = workstation.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Keas.Core.Domain
 {
@@ -17,6 +17,9 @@ namespace Keas.Core.Domain
         public DateTime? DateTimeSent { get; set; }
         public DateTime DateTimeCreated { get; set; }
         public bool NeedsAccept { get; set; }
+
+        public Team Team { get; set; }
+        public int? TeamId { get; set; }
 
         public Notification()
         {
