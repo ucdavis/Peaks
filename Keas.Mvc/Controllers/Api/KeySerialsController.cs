@@ -205,6 +205,11 @@ namespace Keas.Mvc.Controllers.Api
                     PersonId    = person.Id,
                     ExpiresAt   = model.ExpiresAt,
                 };
+                var team = await _context.Teams.SingleOrDefaultAsync(a => a.Slug == Team);
+                if (team != null)
+                {
+                    assignment.TeamId = team.Id;
+                }
 
                 // create, associate, and track
                 serial.KeySerialAssignment = assignment;
