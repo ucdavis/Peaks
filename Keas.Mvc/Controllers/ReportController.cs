@@ -6,6 +6,7 @@ using Keas.Core.Data;
 using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
@@ -79,6 +80,14 @@ namespace Keas.Mvc.Controllers
             }
             var model = await ExpiringItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
             return View(model);
+        }
+
+        public async Task<ActionResult> SupervisorDirectReports (int personID = 0)
+        {
+            var model = await SupervisorReportViewModel.Create(_context, Team, personID);
+
+            return View(model);
+
         }
     }
 }
