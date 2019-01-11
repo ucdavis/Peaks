@@ -1,6 +1,6 @@
 @model Keas.Mvc.Models.SupervisorReportViewModel
 
-<form asp-action="SupervisorDirectReports">
+<form asp-action="SupervisorDirectReports" method="get">
     <div class="card">
       <div class="card-header-spaces">
         <div class="card-head">
@@ -47,7 +47,7 @@
                     @Html.DisplayFor(a=> item.Name)
                 </td>
                 <td>
-                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.Id)' target="_blank">Details <i class="fas fa-forward"></i></a>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.Id)' >Details</a>
                 </td>                
             </tr>
         }
