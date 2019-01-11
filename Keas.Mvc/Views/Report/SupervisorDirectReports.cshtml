@@ -34,6 +34,7 @@
             <th>
                Name
             </th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -42,7 +43,11 @@
         foreach (var item in Model.Reports)
         {
             <tr>                
-                <td>@Html.DisplayFor(a=> item.Name)
+                <td>
+                    @Html.DisplayFor(a=> item.Name)
+                </td>
+                <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.Id)'>Details</a>
                 </td>                
             </tr>
         }
