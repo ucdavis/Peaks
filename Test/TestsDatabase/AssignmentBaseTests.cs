@@ -50,8 +50,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("RequestedAt", "System.DateTime", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedBy", "Keas.Core.Domain.User", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedByName", "System.String", new List<string>()));
-            expectedFields.Add(new NameAndType("Team", "Keas.Core.Domain.Team", new List<string>()));
-            expectedFields.Add(new NameAndType("TeamId", "System.Nullable`1[System.Int32]", new List<string>()));
+
 
             #endregion Arrange
 
