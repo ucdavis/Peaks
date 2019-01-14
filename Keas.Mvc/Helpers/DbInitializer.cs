@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Keas.Core.Data;
 using Keas.Core.Domain;
@@ -78,7 +78,7 @@ namespace Keas.Mvc.Helpers
         private void CreateSystemPermission(SystemPermission permission)
         {
             var found = _context.SystemPermissions
-                .FirstOrDefault(p => p.UserId == permission.UserId && p.RoleId == permission.RoleId);
+                .FirstOrDefault(p => p.UserId == permission.User.Id && p.RoleId == permission.Role.Id);
 
             if (found != null)
             {
