@@ -86,11 +86,6 @@ namespace Keas.Mvc.Controllers.Api
                     PersonId = personId,
                     ExpiresAt = DateTime.Parse(date),
                 };
-                var team = await _context.Teams.SingleOrDefaultAsync(a => a.Slug == Team);
-                if (team != null)
-                {
-                    accessAssignment.TeamId = team.Id;
-                }
                 accessAssignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
                 access.Assignments.Add(accessAssignment);
                 await _context.SaveChangesAsync();

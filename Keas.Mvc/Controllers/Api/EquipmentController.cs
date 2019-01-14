@@ -134,11 +134,6 @@ namespace Keas.Mvc.Controllers.Api
                 else
                 {
                     equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
-                    var team = await _context.Teams.SingleOrDefaultAsync(a => a.Slug == Team);
-                    if (team != null)
-                    {
-                        equipment.Assignment.TeamId = team.Id;
-                    }
                     equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
 
                     _context.EquipmentAssignments.Add(equipment.Assignment);

@@ -140,11 +140,6 @@ namespace Keas.Mvc.Controllers.Api
                 else
                 {
                     workstation.Assignment = new WorkstationAssignment{PersonId = personId, ExpiresAt = DateTime.Parse(date)};
-                    var team = await _context.Teams.SingleOrDefaultAsync(a => a.Slug == Team);
-                    if (team != null)
-                    {
-                        workstation.Assignment.TeamId = team.Id;
-                    }
                     workstation.Assignment.Person =
                     await _context.People.Include(p => p.User).Include(p=> p.Team).SingleAsync(p => p.Id == personId);
 
