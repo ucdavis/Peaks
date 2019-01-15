@@ -35,7 +35,7 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
                   </div>
 
                     <ModalBody>
-                        <Button color="link" onClick={() => this.props.openEditModal(equipment)}>Edit Equipment</Button>
+                        <Button color="link" onClick={() => this.props.openEditModal(equipment)}><i className="fas fa-edit fa-xs"/> Edit Equipment</Button>
                         <EquipmentEditValues selectedEquipment={equipment} disableEditing={true} />
                         <HistoryContainer controller="equipment" id={equipment.id}/>
                     </ModalBody>

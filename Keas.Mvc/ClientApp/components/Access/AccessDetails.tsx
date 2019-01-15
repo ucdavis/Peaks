@@ -35,7 +35,7 @@ export default class AccessDetails extends React.Component<IProps, {}> {
                   </div>
 
                     <ModalBody>
-                        <Button color="link" onClick={() => this.props.openEditModal(access)}>EditAccess</Button>
+                        <Button color="link" onClick={() => this.props.openEditModal(access)}><i className="fas fa-edit fa-xs"/> Edit Access</Button>
                         <AccessEditValues selectedAccess={access} disableEditing={true} onRevoke={this.props.onRevoke} />
                     </ModalBody>
                 </Modal>
