@@ -13,6 +13,7 @@ interface IProps {
     closeModal: () => void;
     selectedAccess: IAccess;
     onRevoke: (accessAssignment: IAccessAssignment) => void;
+    openEditModal: (access: IAccess) => void;
 }
 
 
@@ -34,6 +35,7 @@ export default class AccessDetails extends React.Component<IProps, {}> {
                   </div>
 
                     <ModalBody>
+                        <Button color="link" onClick={() => this.props.openEditModal(access)}>EditAccess</Button>
                         <AccessEditValues selectedAccess={access} disableEditing={true} onRevoke={this.props.onRevoke} />
                     </ModalBody>
                 </Modal>
