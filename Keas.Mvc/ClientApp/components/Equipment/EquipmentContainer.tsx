@@ -109,6 +109,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             selectedEquipment={detailEquipment}
             modal={activeAsset && action === "details" && !!detailEquipment}
             closeModal={this._closeModals}
+            openEditModal={this._openEditModal}
           />
           <EditEquipment
             selectedEquipment={detailEquipment}
