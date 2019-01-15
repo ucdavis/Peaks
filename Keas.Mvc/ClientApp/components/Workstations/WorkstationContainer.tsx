@@ -93,6 +93,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                                 closeModal={this._closeModals}
                                 modal={activeAsset && action === "details"}
                                 selectedWorkstation={selectedWorkstation}
+                                openEditModal={this._openEditModal}
                                 />
                             <EditWorkstation
                                 closeModal={this._closeModals}

@@ -1,43 +1,46 @@
 ﻿import * as React from "react";
-import {
-    Button,
-    Modal,
-    ModalBody,
-} from "reactstrap";
+import { Button, Modal, ModalBody } from "reactstrap";
 import { IWorkstation } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
 import WorkstationEditValues from "./WorkstationEditValues";
 
-
 interface IProps {
     modal: boolean;
     closeModal: () => void;
+    openEditModal: (workstation: IWorkstation) => void;
     selectedWorkstation: IWorkstation;
 }
 
-
 export default class WorkstationDetails extends React.Component<IProps, {}> {
-
     public render() {
-        if (!this.props.selectedWorkstation)
-        {
+        if (!this.props.selectedWorkstation) {
             return null;
         }
         const workstation = this.props.selectedWorkstation;
         return (
             <div>
-                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg" className="spaces-color">
-                  <div className="modal-header row justify-content-between">
-                    <h2>Details for {workstation.name}</h2>
-                    <Button color="link" onClick={this.props.closeModal}>
-                    <i className="fas fa-times fa-lg"/>
-                    </Button>
-                  </div>
+                <Modal
+                    isOpen={this.props.modal}
+                    toggle={this.props.closeModal}
+                    size="lg"
+                    className="spaces-color"
+                >
+                    <div className="modal-header row justify-content-between">
+                        <h2>Details for {workstation.name}</h2>
+                        <Button color="link" onClick={this.props.closeModal}>
+                            <i className="fas fa-times fa-lg" />
+                        </Button>
+                    </div>
                     <ModalBody>
-                        <WorkstationEditValues selectedWorkstation={workstation} disableEditing={true} />
-                        <HistoryContainer controller="workstations" id={workstation.id}/>
+                        <Button color="link" onClick={() => this.props.openEditModal(workstation)}>
+                            <i className="fas fa-edit fa-xs" /> Edit Workstation
+                        </Button>
+                        <WorkstationEditValues
+                            selectedWorkstation={workstation}
+                            disableEditing={true}
+                        />
+                        <HistoryContainer controller="workstations" id={workstation.id} />
                     </ModalBody>
-
                 </Modal>
             </div>
         );
