@@ -104,17 +104,20 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             tags={this.state.tags}
             commonAttributeKeys={this.state.commonAttributeKeys}
             openDetailsModal={this._openDetailsModal}
+            openEditModal={this._openEditModal}
           />
           <EquipmentDetails
             selectedEquipment={detailEquipment}
             modal={activeAsset && action === "details" && !!detailEquipment}
             closeModal={this._closeModals}
             openEditModal={this._openEditModal}
+            openUpdateModal={this._openAssignModal}
           />
           <EditEquipment
             selectedEquipment={detailEquipment}
             onEdit={this._editEquipment}
             closeModal={this._closeModals}
+            openUpdateModal={this._openAssignModal}
             modal={activeAsset && (action === "edit")}
             tags={this.state.tags}
             space={this.props.space}

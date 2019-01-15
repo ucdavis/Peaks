@@ -8,12 +8,14 @@ import {
   ModalFooter,
 } from "reactstrap";
 import { AppContext, IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
+import EquipmentAssignmentValues from './EquipmentAssignmentValues';
 import EquipmentEditValues from "./EquipmentEditValues";
 
 interface IProps {
   onEdit: (equipment: IEquipment) => void;
   modal: boolean;
   closeModal: () => void;
+  openUpdateModal: (equipment: IEquipment) => void;
   commonAttributeKeys: string[];
   selectedEquipment: IEquipment;
   space: ISpace;
@@ -65,17 +67,17 @@ export default class EditEquipment extends React.Component<IProps, IState> {
         </div>
         <ModalBody>
           <div className="container-fluid">
-            <form>
-                  <EquipmentEditValues
-                    selectedEquipment={this.state.equipment}
-                    changeProperty={this._changeProperty}
-                    disableEditing={false}
-                    updateAttributes={this._updateAttributes}
-                    commonAttributeKeys={this.props.commonAttributeKeys}
-                    tags={this.props.tags}
-                    space={this.props.space}
-                  />
-            </form>
+            <EquipmentEditValues
+              selectedEquipment={this.state.equipment}
+              changeProperty={this._changeProperty}
+              disableEditing={false}
+              updateAttributes={this._updateAttributes}
+              commonAttributeKeys={this.props.commonAttributeKeys}
+              tags={this.props.tags}
+              space={this.props.space}
+            />
+            <br />
+            <EquipmentAssignmentValues selectedEquipment={this.props.selectedEquipment} openUpdateModal={this.props.openUpdateModal}/>
             {this.state.error}
           </div>
         </ModalBody>
