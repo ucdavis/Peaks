@@ -76,7 +76,6 @@ export default class EditEquipment extends React.Component<IProps, IState> {
               tags={this.props.tags}
               space={this.props.space}
             />
-            <br />
             <EquipmentAssignmentValues selectedEquipment={this.props.selectedEquipment} openUpdateModal={this.props.openUpdateModal}/>
             {this.state.error}
           </div>

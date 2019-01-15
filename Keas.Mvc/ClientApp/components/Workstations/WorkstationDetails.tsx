@@ -2,12 +2,14 @@
 import { Button, Modal, ModalBody } from "reactstrap";
 import { IWorkstation } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
+import WorkstationAssignmentValues from "./WorkstationAssignmentValues";
 import WorkstationEditValues from "./WorkstationEditValues";
 
 interface IProps {
     modal: boolean;
     closeModal: () => void;
     openEditModal: (workstation: IWorkstation) => void;
+    openUpdateModal: (workstation: IWorkstation) => void;
     selectedWorkstation: IWorkstation;
 }
 
@@ -32,12 +34,14 @@ export default class WorkstationDetails extends React.Component<IProps, {}> {
                         </Button>
                     </div>
                     <ModalBody>
-                        <Button color="link" onClick={() => this.props.openEditModal(workstation)}>
-                            <i className="fas fa-edit fa-xs" /> Edit Workstation
-                        </Button>
                         <WorkstationEditValues
                             selectedWorkstation={workstation}
                             disableEditing={true}
+                            openEditModal={this.props.openEditModal}
+                        />
+                        <WorkstationAssignmentValues
+                            selectedWorkstation={workstation}
+                            openUpdateModal={this.props.openUpdateModal}
                         />
                         <HistoryContainer controller="workstations" id={workstation.id} />
                     </ModalBody>
