@@ -8,10 +8,10 @@ import { IEquipment } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
 import EquipmentEditValues from "./EquipmentEditValues";
 
-
 interface IProps {
     modal: boolean;
     closeModal: () => void;
+    openEditModal: (equipment: IEquipment) => void;
     selectedEquipment: IEquipment;
 }
 
@@ -35,6 +35,7 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
                   </div>
 
                     <ModalBody>
+                        <Button color="link" onClick={() => this.props.openEditModal(equipment)}>Edit Equipment</Button>
                         <EquipmentEditValues selectedEquipment={equipment} disableEditing={true} />
                         <HistoryContainer controller="equipment" id={equipment.id}/>
                     </ModalBody>
