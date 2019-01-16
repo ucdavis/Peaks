@@ -1,8 +1,9 @@
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import {
     Button,
 } from "reactstrap";
-import { IPerson, IPersonInfo } from "../../Types";
+import { AppContext, IPerson, IPersonInfo } from "../../Types";
 import AccessContainer from "../Access/AccessContainer";
 import EquipmentContainer from "../Equipment/EquipmentContainer";
 import HistoryContainer from "../History/HistoryContainer";
@@ -24,7 +25,12 @@ interface IProps {
 
 
 export default class PersonDetails extends React.Component<IProps, {}> {
-
+    public static contextTypes = {
+        fetch: PropTypes.func,
+        router: PropTypes.object,
+        team: PropTypes.object
+      };
+      public context: AppContext;
     public render() {
         if (!this.props.selectedPersonInfo || !this.props.selectedPersonInfo.person)
         {
@@ -44,6 +50,13 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                         <BioContainer person={this.props.selectedPersonInfo.person}/>
                         <EditPerson onEdit={this.props.onEdit} selectedPerson={this.props.selectedPersonInfo.person} tags={this.props.tags}/>
                         <DeletePerson selectedPersonInfo={this.props.selectedPersonInfo} onDelete={this.props.onDelete} />
+                        <div>
+                            <a href={`/${this.context.team.slug}/Report/PersonTeamList/?personId=${this.props.selectedPersonInfo.id}`} target="_blank">
+                                <Button className="btn btn-link">
+                                    Lookup Teams
+                                </Button>
+                            </a>
+                        </div>
                         <KeySerialContainer
                             selectedPerson={this.props.selectedPersonInfo.person}
                             assetInUseUpdated={this.props.inUseUpdated}
