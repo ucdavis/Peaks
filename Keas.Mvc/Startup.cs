@@ -208,7 +208,8 @@ namespace Keas.Mvc
                 routes.MapRoute(
                     name: "NonTeamRoutes",
                     template: "{controller}/{action=Index}/{id?}",
-                    defaults: new { controller = "(admin|log)" }
+                    defaults: null,
+                    constraints: new { controller = "(admin|log)" }
                 );
 
                 routes.MapRoute(
