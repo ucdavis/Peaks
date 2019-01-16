@@ -20,7 +20,11 @@ module.exports = env => {
     {
       stats: { modules: false },
       entry: {
-        root: "./ClientApp/root.tsx",
+            root: [
+                "stacktrace-js",
+                "log4javascript",
+                "./ClientApp/root.tsx",
+            ],
         asset: "./ClientApp/pages/assets/boot.tsx",
         vendor: [
           "event-source-polyfill",
@@ -64,7 +68,7 @@ module.exports = env => {
           "process.env.NODE_ENV": isDevBuild ? '"development"' : '"production"'
         }),
         new webpack.optimize.CommonsChunkPlugin({
-          name: ["vendor", "root"],
+                name: ["logger", "vendor", "root"],
           minChunks: Infinity
         })
       ].concat(

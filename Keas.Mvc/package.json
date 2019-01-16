@@ -7,6 +7,10 @@
     "webpack": "node node_modules/webpack/bin/webpack.js --env.dev --watch",
     "test": "karma start"
   },
+  "dependencies": {
+    "log4javascript": "^1.4.15",
+    "stacktrace-js": "^2.0.0"
+  },
   "devDependencies": {
     "@types/history": "4.7.0",
     "@types/isomorphic-fetch": "0.0.34",
