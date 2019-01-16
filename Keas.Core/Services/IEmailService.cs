@@ -36,6 +36,11 @@ namespace Keas.Core.Services
 
         public async Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model)
         {
+            if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.Information("Email Sending Disabled");
+                return;
+            }
             var person = model.People.Single(a => a.Id == personId);
 
             // build model
@@ -174,6 +179,12 @@ namespace Keas.Core.Services
 
         public async Task SendNotificationMessage(User user)
         {
+            if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.Information("Email Sending Disabled");
+                return;
+            }
+
             var notifications = _dbContext.Notifications.Where(a => a.Pending && a.User == user).Include(a => a.Team).Include(a => a.User).OrderBy(a => a.TeamId).ThenBy(a => a.DateTimeCreated).GroupBy(a => a.TeamId).ToArray();
             if (!notifications.Any())
             {
