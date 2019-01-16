@@ -19,6 +19,7 @@ interface IProps {
     modal: boolean;
     onCreate: (access: IAccess, date: any, person: IPerson) => void;
     onAddNew: () => void;
+    openEditModal: (access: IAccess) => void;
     person?: IPerson;
     selectedAccess: IAccess;
     tags: string[];
@@ -119,6 +120,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                             selectedAccess={this.state.access}
                                             disableEditing={true}
                                             tags={this.props.tags}
+                                            openEditModal={this.props.openEditModal}
                                             onRevoke={null} />
                                     </div>
                                 }

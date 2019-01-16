@@ -85,6 +85,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                     selectedAccess={detailAccess}
                     person={this.props.person}
                     tags={this.state.tags}
+                    openEditModal={this._openEditModal}
                 />                
                 <AccessDetails selectedAccess={detailAccess}
                     modal={activeAsset && action === "details" && !!detailAccess}

@@ -1,12 +1,7 @@
 ﻿import { IAccess, IAccessAssignment } from "ClientApp/Types";
 import * as React from "react";
-import {
-    Button,
-    Modal,
-    ModalBody
-} from "reactstrap";
+import { Button, Modal, ModalBody } from "reactstrap";
 import AccessEditValues from "./AccessEditValues";
-
 
 interface IProps {
     modal: boolean;
@@ -16,27 +11,34 @@ interface IProps {
     openEditModal: (access: IAccess) => void;
 }
 
-
 export default class AccessDetails extends React.Component<IProps, {}> {
-
     public render() {
-        if (!this.props.selectedAccess){
+        if (!this.props.selectedAccess) {
             return null;
-        }             
+        }
         const access = this.props.selectedAccess;
         return (
             <div>
-                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg" className="access-color">
-                  <div className="modal-header row justify-content-between">
-                    <h2>Details for {access.name}</h2>
-                    <Button color="link" onClick={this.props.closeModal}>
-                    <i className="fas fa-times fa-lg"/>
-                    </Button>
-                  </div>
+                <Modal
+                    isOpen={this.props.modal}
+                    toggle={this.props.closeModal}
+                    size="lg"
+                    className="access-color"
+                >
+                    <div className="modal-header row justify-content-between">
+                        <h2>Details for {access.name}</h2>
+                        <Button color="link" onClick={this.props.closeModal}>
+                            <i className="fas fa-times fa-lg" />
+                        </Button>
+                    </div>
 
                     <ModalBody>
-                        <Button color="link" onClick={() => this.props.openEditModal(access)}><i className="fas fa-edit fa-xs"/> Edit Access</Button>
-                        <AccessEditValues selectedAccess={access} disableEditing={true} onRevoke={this.props.onRevoke} />
+                        <AccessEditValues
+                            selectedAccess={access}
+                            disableEditing={true}
+                            onRevoke={this.props.onRevoke}
+                            openEditModal={this.props.openEditModal}
+                        />
                     </ModalBody>
                 </Modal>
             </div>

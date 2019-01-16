@@ -1,8 +1,7 @@
 ﻿import * as React from "react";
-
-import { IAccess, IAccessAssignment } from "../../Types";
-
 import ReactTable from 'react-table';
+import { Button } from "reactstrap";
+import { IAccess, IAccessAssignment } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import SearchTags from "../Tags/SearchTags";
 
@@ -13,6 +12,7 @@ interface IProps {
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
     onRevoke: (accessAssignment: IAccessAssignment) => void;
+    openEditModal?: (access: IAccess) => void;
     tags?: string[];
 }
 
@@ -40,6 +40,11 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
 
         return (
             <div>
+                {this.props.disableEditing && this.props.openEditModal &&
+                <Button color="link" onClick={() => this.props.openEditModal(this.props.selectedAccess)}>
+                    <i className="fas fa-edit fa-xs" /> Edit Access
+                </Button>}
+
                 <div className="form-group">
                     <label>Item</label>
                     <input type="text"
