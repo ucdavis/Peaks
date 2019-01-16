@@ -42,7 +42,7 @@ export default class DeletePerson extends React.Component<IProps, IState> {
         return (
             <div>
                 <Button className="btn btn-link" onClick={this._toggleModal}>
-                <i className="fas fa-trash fa-sm" aria-hidden="true" />  Delete Person
+                <i className="fas fa-trash fa-sm fa-fw mr-2" aria-hidden="true" />Delete Person
                 </Button>
                 <Modal isOpen={this.state.modal} toggle={this._toggleModal} size="lg" className="person-color">
                   <div className="modal-header row justify-content-between">
