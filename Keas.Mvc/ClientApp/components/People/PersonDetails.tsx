@@ -53,7 +53,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                         <div>
                             <a href={`/${this.context.team.slug}/Report/PersonTeamList/?personId=${this.props.selectedPersonInfo.id}`} target="_blank">
                                 <Button className="btn btn-link">
-                                    <i className="fas fa-search fa-sm" aria-hidden="true" />  Lookup Teams
+                                    <i className="fas fa-search fa-sm fa-fw" aria-hidden="true" />  Lookup Teams
                                 </Button>
                             </a>
                         </div>
