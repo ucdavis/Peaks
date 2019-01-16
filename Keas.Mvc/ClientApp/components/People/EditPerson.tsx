@@ -57,7 +57,7 @@ export default class EditPerson extends React.Component<IProps, IState> {
     return (
       <div>
         <Button className="btn btn-link" onClick={this._toggleModal}>
-        <i className="fas fa-pen fa-sm" aria-hidden="true" />  Edit Person
+        <i className="fas fa-edit fa-sm" aria-hidden="true" />  Edit Person
         </Button>
         <Modal isOpen={this.state.modal} toggle={this._closeModal} size="lg" className="people-color">
           <div className="modal-header row justify-content-between">
