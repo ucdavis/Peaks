@@ -10,7 +10,7 @@ const bundleOutputDir = "./wwwroot/dist";
 
 module.exports = env => {
     const isDevBuild = !(env && env.prod);
-    const isStatsBuild = !(env && env.stats);
+    const isStatsBuild = (env && env.stats);
 
     const cssLoader = {
         loader: 'css-loader',
