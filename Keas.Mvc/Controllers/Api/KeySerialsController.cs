@@ -207,8 +207,11 @@ namespace Keas.Mvc.Controllers.Api
                 };
 
                 // create, associate, and track
-                serial.KeySerialAssignment = assignment;
+                
                 _context.KeySerialAssignments.Add(assignment);
+                await _context.SaveChangesAsync();
+                serial.KeySerialAssignment = assignment;
+                serial.KeySerialAssignmentId = assignment.Id;
                 await _eventService.TrackAssignKeySerial(serial);
             }
 
