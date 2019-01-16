@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +6,7 @@ using Keas.Core.Data;
 using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
@@ -79,6 +80,24 @@ namespace Keas.Mvc.Controllers
             }
             var model = await ExpiringItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
             return View(model);
+        }
+
+        public async Task<ActionResult> SupervisorDirectReports (int personID = 0)
+        {
+            var model = await SupervisorReportViewModel.Create(_context, Team, personID);
+
+            return View(model);
+
+        }
+
+        public async Task<IActionResult> PersonTeamList(int personId)
+        {
+            var person = await _context.People.Include(a => a.User).Include(a => a.Team).SingleAsync(a => a.Id == personId);
+            var teams = await _context.People.Where(a => a.UserId == person.UserId).Select(a => a.Team).Include(a => a.TeamPermissions).ThenInclude(a => a.User).ToListAsync();
+
+            ViewBag.PersonName = $"{person.Name} ({person.Email})";
+
+            return View(teams);
         }
     }
 }

@@ -58,7 +58,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
     return (
       <Modal isOpen={this.props.isModalOpen} toggle={this._closeModal} size="lg" className="keys-color">
         <div className="modal-header row justify-content-between">
-          <h2>Edit Key</h2>
+          <h2>Edit Serial {this.props.selectedKeySerial.key.code} {this.props.selectedKeySerial.number}</h2>
           <Button color="link" onClick={this._closeModal}>
           <i className="fas fa-times fa-lg"/>
           </Button>

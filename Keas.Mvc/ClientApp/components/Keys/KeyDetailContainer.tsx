@@ -2,13 +2,14 @@ import * as React from "react";
 import {
     Button,
 } from "reactstrap";
-import { IKeyInfo } from "../../Types";
+import { IKey, IKeyInfo } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
 import SpacesContainer from "../Spaces/SpacesContainer";
 import KeySerialContainer from "./KeySerialContainer";
 
 interface IProps {
     goBack: () => void;
+    openEditModal: (key: IKey) => void;
     selectedKeyInfo: IKeyInfo;
     serialInUseUpdated: (keyId: number, count: number) => void;
     serialTotalUpdated: (keyId: number, count: number) => void;
@@ -38,6 +39,11 @@ export default class KeyDetailContainer extends React.Component<IProps, {}> {
                         <i className="fas fa-tags mr-2" aria-hidden="true" />{ selectedKeyInfo.key.tags }
                     </p>
                 }
+                <div className="mb-3">
+                    <Button color="link" onClick={() => this.props.openEditModal(selectedKeyInfo.key)}>
+                        <i className="fas fa-edit fa-xs"/> Edit Key
+                    </Button>
+                </div>
                 <KeySerialContainer selectedKey={selectedKeyInfo.key} assetInUseUpdated={this._serialInUseUpdated} assetTotalUpdated={this._serialTotalUpdated} />
                 <SpacesContainer selectedKeyInfo={selectedKeyInfo} spacesTotalUpdated={this.props.spacesTotalUpdated} />
                 <HistoryContainer controller="keys" id={selectedKeyInfo.id} />

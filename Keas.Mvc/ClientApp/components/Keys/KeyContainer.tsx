@@ -228,6 +228,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                 serialInUseUpdated={this._serialInUseUpdated}
                 serialTotalUpdated={this._serialTotalUpdated}
                 spacesTotalUpdated={this._spacesTotalUpdated}
+                openEditModal={this._openEditModal}
             />
         );
     }

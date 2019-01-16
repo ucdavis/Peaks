@@ -9,7 +9,6 @@ interface IProps {
 }
 
 export default class KeySerialEditValues extends React.Component<IProps, {}> {
-
     public render() {
         const { keySerial } = this.props;
 
@@ -18,10 +17,29 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
 
         return (
             <div>
-                {!this.props.creating &&
+                <div className="form-group">
+                    <label>Key Name</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        disabled={true}
+                        value={this.props.keySerial.key.name}
+                    />
+                </div>
+                <div className="form-group">
+                    <label>Key Code</label>
+                    <input
+                        type="text"
+                        className="form-control"
+                        disabled={true}
+                        value={this.props.keySerial.key.code}
+                    />
+                </div>
+                {!this.props.creating && (
                     <div className="form-group">
-                        <label>Number</label>
-                        <input type="text"
+                        <label>Serial Number</label>
+                        <input
+                            type="text"
                             className="form-control"
                             disabled={this.props.disableEditing}
                             value={numberValue}
@@ -32,10 +50,15 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                             maxLength={10}
                         />
                     </div>
-                }
+                )}
                 <div className="form-group">
                     <label>Status</label>
-                    <select className="form-control" value={statusValue} onChange={this.onChangeStatus}>
+                    <select
+                        className="form-control"
+                        value={statusValue}
+                        onChange={this.onChangeStatus}
+                        disabled={this.props.disableEditing}
+                    >
                         <option value="Active">Active</option>
                         <option value="Lost">Lost</option>
                         <option value="Destroyed">Destroyed</option>
@@ -50,14 +73,14 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
         let value = this.props.keySerial.number;
         value = value.trim();
 
-        this.props.changeProperty("number", value)
-    }
+        this.props.changeProperty("number", value);
+    };
 
     private onChangeNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.props.changeProperty("number", event.target.value)
-    }
+        this.props.changeProperty("number", event.target.value);
+    };
 
     private onChangeStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        this.props.changeProperty("status", event.target.value)
-    }
+        this.props.changeProperty("status", event.target.value);
+    };
 }

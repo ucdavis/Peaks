@@ -15,7 +15,7 @@ install:
 - ps: |
     Install-Product node $env:node_version
 
-- cmd: echo %APPVEYOR_REPO_COMMIT_MESSAGE% > commit.txt 
+- cmd: echo '%APPVEYOR_REPO_COMMIT_MESSAGE%' > commit.txt 
 
 cache:
 - '%USERPROFILE%\.nuget\packages -> **\*.csproj'

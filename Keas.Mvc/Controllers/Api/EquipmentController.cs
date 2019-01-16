@@ -123,7 +123,7 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team && x.Active)
-                    .Include(x => x.Space).Include(x => x.Assignment).SingleAsync(x => x.Id == equipmentId);
+                    .Include(x => x.Space).Include(x => x.Assignment).ThenInclude(a => a.Person).ThenInclude(a => a.User).SingleAsync(x => x.Id == equipmentId);
                 
                 if(equipment.Assignment != null)
                 {

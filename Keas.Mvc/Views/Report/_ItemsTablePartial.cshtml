@@ -18,6 +18,9 @@
             <th>
                 Current?
             </th>
+            <th>
+                Link
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -36,6 +39,9 @@
                 <td>
                     @Html.DisplayFor(a=> item.Access.Active)
                 </td>
+                 <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "access", item.AccessId)' >Details</a>
+                </td>
             </tr>
         }
         @foreach (var item in Model.Keys)
@@ -52,6 +58,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.Key.Active)
+                </td>
+                 <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "keys", item.KeyId)' >Details</a>
                 </td>
             </tr>
         }
@@ -71,6 +80,9 @@
                 <td>
                     @Html.DisplayFor(a => item.Active)
                 </td>
+                 <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "equipment", item.Id)' >Details</a>
+                </td>
             </tr>
         }
         @foreach (var item in Model.Workstations)
@@ -88,6 +100,9 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.Active)
+                </td>
+                <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "spaces", item.SpaceId)' >Details</a>
                 </td>
             </tr>
         }
