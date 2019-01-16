@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -88,6 +88,16 @@ namespace Keas.Mvc.Controllers
 
             return View(model);
 
+        }
+
+        public async Task<IActionResult> PersonTeamList(int personId)
+        {
+            var person = await _context.People.Include(a => a.User).Include(a => a.Team).SingleAsync(a => a.Id == personId);
+            var teams = await _context.People.Where(a => a.UserId == person.UserId).Select(a => a.Team).Include(a => a.TeamPermissions).ThenInclude(a => a.User).ToListAsync();
+
+            ViewBag.PersonName = $"{person.Name} ({person.Email})";
+
+            return View(teams);
         }
     }
 }

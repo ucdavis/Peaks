@@ -1,0 +1,34 @@
+@model System.Collections.Generic.List<Keas.Core.Domain.Team>
+
+<h1>@ViewBag.PersonName</h1>
+
+@foreach (var team in Model)
+{
+    <h3>Team @team.Name Admins</h3>
+    <table id="@team.Slug" class="table dataTable">
+        <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in team.TeamPermissions.Select(a => a.User).Distinct())
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(a => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Email)                
+                </td>
+            </tr>
+        }
+
+        </tbody>
+    </table>
+}
+
+
