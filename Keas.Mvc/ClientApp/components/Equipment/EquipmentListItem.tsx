@@ -1,8 +1,8 @@
 import * as React from "react";
+import { Button } from "reactstrap";
 import { IEquipment } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
-import { Button } from "reactstrap";
 
 
 interface IProps {
