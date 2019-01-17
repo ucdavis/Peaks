@@ -1,4 +1,4 @@
-﻿using Keas.Core.Domain;
+using Keas.Core.Domain;
 using System.Collections.Generic;
 using TestHelpers.Helpers;
 using Xunit;
@@ -51,7 +51,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("RequestedAt", "System.DateTime", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedBy", "Keas.Core.Domain.User", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedByName", "System.String", new List<string>()));
-            
+
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(AccessAssignment));
