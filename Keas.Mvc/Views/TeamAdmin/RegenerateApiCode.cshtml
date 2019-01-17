@@ -5,39 +5,40 @@
 }
 
 <div class="row justify-content-between">
-  <div class="col-md-9">
-  <div class="card">
-    <div class="card-header-primary">
-      <div class="card-head">
-  <h2>@Model.Name</h2>
-      </div>
-    </div>
-    <div class="card-content">
-      <p><b>@Html.DisplayNameFor(model => model.ApiCode)</b></p>
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header-primary">
+                <div class="card-head">
+                    <h2>@Model.Name</h2>
+                </div>
+            </div>
+            <div class="card-content">
+                <p><b>@Html.DisplayNameFor(model => model.ApiCode)</b></p>
 
-      <p>@Html.DisplayFor(model => model.ApiCode)</p>     
-    </div>
-  </div>
- 
-  <form asp-action="RegenerateApiCode">
-      <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-  <div class="card">
-        <div class="well">
-            <p>Click Confirm to generate a new API code</p>
+                <p>@Html.DisplayFor(model => model.ApiCode)</p>
+            </div>
         </div>
-        <div style="padding: 19px 20px 20px;">
-            <button type="submit" class="btn btn-primary">
-                <i class="icon-save button-icon"></i>
-                Confirm
-            </button>
-            <a class="btn btn-link" asp-action="Index">Cancel</a>
-        </div>
+
+        <form asp-action="RegenerateApiCode">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="card">
+                <div class="well">
+                    <p>Click Confirm to generate a new API code</p>
+                </div>
+                <div style="padding: 19px 20px 20px;">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="icon-save button-icon"></i>
+                        Confirm
+                    </button>
+                    <a class="btn btn-link" asp-action="Index">Cancel</a>
+                </div>
+            </div>
+        </form>
     </div>
-  </form> </div>
-  <div class="col-md-3">
+    <div class="col-md-3">
 
 
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-  
-  </div>
+
+    </div>
 </div>

@@ -100,31 +100,5 @@ namespace Keas.Mvc.Controllers
 
             return View(teams);
         }
-
-         [Authorize(Policy = "DepartmentAdminAccess")]
-         public async Task<IActionResult> TeamFeed(Guid id)
-        {
-            var people = await _context.People
-                .Where(x=> x.Team.Slug == Team && x.Active && x.Team.ApiCode == id)
-                .Select(p => new {p.Name, p.FirstName, p.LastName, p.Email, p.UserId, p.Title, p.TeamPhone, p.Tags})
-                .ToListAsync();
-           
-            return Json(people);
-        }   
-
-         [Authorize(Policy = "DepartmentAdminAccess")]
-         public async Task<IActionResult> TeamFeedWithSpace(Guid id)
-        {
-            var people = await _context.People
-                .Where(x=> x.Team.Slug == Team && x.Active && x.Team.ApiCode == id)
-                .Select(p => new {p.Name, p.FirstName, p.LastName, p.Email, p.UserId, p.Title, p.TeamPhone, p.Tags,
-                workstation = (from w in _context.Workstations where w.Assignment.PersonId == p.Id select w)
-                    .Include(w => w.Space)
-                    .Select(w => new {w.Name, w.Space.BldgName, w.Space.RoomNumber})
-                })
-                .ToListAsync();
-           
-            return Json(people);
-        }      
     }
 }
