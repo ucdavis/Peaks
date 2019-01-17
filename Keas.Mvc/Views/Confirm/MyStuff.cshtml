@@ -1,4 +1,5 @@
-﻿@model Keas.Mvc.Models.MyStuffListModel
+@using Keas.Core.Extensions
+@model Keas.Mvc.Models.MyStuffListModel
 
 @{
     ViewData["Title"] = "MyStuff";
@@ -44,7 +45,7 @@
               <td>@serial.Number</td>
               <td>@serial.Key.Name</td>
               <td>@serial.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>
-              <td>@Html.CheckBoxFor(k=> serial.KeySerialAssignment.IsConfirmed, new { @disabled = "disabled" })</td>
+              <td>@serial.KeySerialAssignment.ConfirmedAt.AcceptedWithDate()</td>
             </tr>
             }
 
@@ -78,7 +79,7 @@
               <td>@equipment.SerialNumber</td>
               <td>@equipment.Name</td>
               <td>@equipment.Assignment.ExpiresAt.ToShortDateString()</td>
-              <td>@Html.CheckBoxFor(e=> equipment.Assignment.IsConfirmed)</td>
+              <td>@equipment.Assignment.ConfirmedAt.AcceptedWithDate()</td>
             </tr>
             }
             @if(!Model.Equipment.Any()){
@@ -144,7 +145,7 @@
               <td>@workstation.Type</td>
               <td>@workstation.Space.RoomNumber @workstation.Space.BldgName</td>
               <td>@workstation.Assignment.ExpiresAt.ToShortDateString()</td>
-              <td>@Html.CheckBoxFor(w=> workstation.Assignment.IsConfirmed)</td>
+              <td>@workstation.Assignment.ConfirmedAt.AcceptedWithDate()</td>
             </tr>
             }
             @if(!Model.Workstations.Any()){
