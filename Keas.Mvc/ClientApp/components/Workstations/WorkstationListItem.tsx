@@ -2,6 +2,7 @@ import * as React from "react";
 import { IWorkstation } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
+import { Button } from "reactstrap";
 
 interface IProps {
     workstationEntity: IWorkstation;
@@ -44,6 +45,11 @@ export default class WorkstationListItem extends React.Component<IProps, {}> {
 
         return (
           <tr>
+            <td>
+              <Button color="link" onClick={() => this.props.showDetails(this.props.workstationEntity)}>
+                Details
+              </Button>
+            </td>
             <td>{this.props.workstationEntity.name}</td>
             <td>{this.props.workstationEntity.space ? 
               this.props.workstationEntity.space.roomNumber + " " + this.props.workstationEntity.space.bldgName : ""}</td>

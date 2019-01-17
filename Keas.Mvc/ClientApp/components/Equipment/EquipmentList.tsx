@@ -31,6 +31,7 @@ export default class EquipmentList extends React.Component<IProps, {}> {
         <table className="table">
           <thead>
             <tr>
+              <th/>
               <th>Serial</th>
               <th>Number</th>
               <th>Assigned To</th>

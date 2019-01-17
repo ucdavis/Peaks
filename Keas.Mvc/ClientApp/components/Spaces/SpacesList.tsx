@@ -20,6 +20,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
             <table className="table">
                 <thead>
                     <tr>
+                        <th/>
                         <th>Room</th>
                         <th>Room Name</th>
                         <th className="list-actions">Actions</th>

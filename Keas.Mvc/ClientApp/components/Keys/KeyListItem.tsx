@@ -1,6 +1,7 @@
 import * as React from "react";
 import { IKey, IKeyInfo } from "../../Types";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
+import { Button } from "reactstrap";
 
 interface IProps {
   keyInfo: IKeyInfo;
@@ -34,6 +35,11 @@ export default class KeyListItem extends React.Component<IProps, {}> {
 
     return (
       <tr>
+          <td>
+            <Button color="link" onClick={() => this.props.showDetails(this.props.keyInfo.key)}>
+              Details
+            </Button>
+          </td>
         <td>{keyInfo.key.name}</td>
         <td>{keyInfo.key.code}</td>
         <td className=""><i className="fas fa-key"/> {keyInfo.serialsInUseCount} / {keyInfo.serialsTotalCount}</td>
