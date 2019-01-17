@@ -2,12 +2,14 @@ import * as React from "react";
 import { Button, Modal, ModalBody } from "reactstrap";
 import { IKeySerial } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
+import KeySerialAssignmentValues from "./KeySerialAssignmentValues";
 import KeySerialEditValues from "./KeySerialEditValues";
 
 interface IProps {
     isModalOpen: boolean;
     closeModal: () => void;
     openEditModal: (keySerial: IKeySerial) => void;
+    openUpdateModal: (keySerial: IKeySerial) => void;
     selectedKeySerial: IKeySerial;
 }
 
@@ -36,10 +38,8 @@ export default class KeyDetails extends React.Component<IProps, {}> {
                         </Button>
                     </div>
                     <ModalBody>
-                        <Button color="link" onClick={() => this.props.openEditModal(selectedKeySerial)}>
-                            <i className="fas fa-edit fa-xs" /> Edit Serial
-                        </Button>
-                        <KeySerialEditValues keySerial={selectedKeySerial} disableEditing={true} />
+                        <KeySerialEditValues keySerial={selectedKeySerial} disableEditing={true} openEditModal={this.props.openEditModal} />
+                        <KeySerialAssignmentValues selectedKeySerial={selectedKeySerial} openUpdateModal={this.props.openUpdateModal} />
                         <HistoryContainer controller="keyserials" id={selectedKeySerial.id} />
                     </ModalBody>
                 </Modal>
