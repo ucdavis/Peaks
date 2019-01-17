@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -129,6 +129,16 @@ namespace Keas.Core.Extensions
             }
 
             return begin && tail;
+        }
+
+        public static string AcceptedWithDate(this DateTime? value)
+        {
+            if (value.HasValue)
+            {
+                return value.Value.ToShortDateString();
+            }
+
+            return "No";
         }
     }
 
