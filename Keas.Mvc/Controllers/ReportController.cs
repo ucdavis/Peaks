@@ -7,7 +7,6 @@ using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Keas.Core.Domain;
 
 namespace Keas.Mvc.Controllers
 {
