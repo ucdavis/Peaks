@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Keas.Core.Data;
@@ -21,25 +21,6 @@ namespace Keas.Mvc.Controllers
         {
             _context = context;
         }
-
-#if DEBUG
-        public IActionResult ResetDb()
-        {
-            if (_context.Database.GetDbConnection().ConnectionString.Contains("keas.database.windows.net"))
-            {
-                throw new Exception("Don't Reset the AZURE DB!!!");
-            }
-            else
-            {
-                var dbInit = new DbInitializer(_context);
-                dbInit.RecreateDatabase();
-                dbInit.Initialize();
-                dbInit.CreateSampleData();
-                return Content("Success");
-
-            }
-        }
-#endif
 
         [HttpGet]
         [Authorize()]
