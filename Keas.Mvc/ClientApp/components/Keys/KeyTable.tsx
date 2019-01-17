@@ -75,7 +75,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
                     },
                     {
                         Cell: row => (
-                            <span><i className="fas fa-key"/> {row.value.serialsInUse} / {row.value.serialsTotal}</span>
+                            <span>{row.value.serialsInUse} / {row.value.serialsTotal}</span>
                         ),
                         Filter: ({filter, onChange}) =>
                         <select onChange={e => onChange(e.target.value)}
@@ -132,7 +132,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
                     },
                     {
                         Cell: (row) => (
-                            <span><i className="fas fa-building mr-2" /> {row.original.spacesCount}</span>
+                            <span>{row.original.spacesCount}</span>
 
                         ),
                         Header: "",

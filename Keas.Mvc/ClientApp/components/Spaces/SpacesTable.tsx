@@ -65,7 +65,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                     },
                     {
                         Cell: row => (
-                            <span><i className="fas fa-key"/> {row.original.keyCount}</span>
+                            <span>{row.original.keyCount}</span>
                         ),
                         Header: "Keys",
                         accessor: "keyCount",
@@ -75,7 +75,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                     },
                     {
                         Cell: row => (
-                            <span><i className="fas fa-hdd"/> {row.original.equipmentCount}</span>
+                            <span>{row.original.equipmentCount}</span>
                         ),
                         Header: "Equipment",
                         accessor: "equipmentCount",
@@ -85,7 +85,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                     },
                     {
                         Cell: row => (
-                            <span><i className="fas fa-user"/> {row.value.workstationsInUse} / {row.value.workstationsTotal}</span>
+                            <span>{row.value.workstationsInUse} / {row.value.workstationsTotal}</span>
                         ),
                         Filter: ({filter, onChange}) =>
                         <select onChange={e => onChange(e.target.value)}
