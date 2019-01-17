@@ -48,7 +48,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
     const date = (!!assignment) 
       ? moment(assignment.expiresAt)
-      : moment().add(3, "y")
+      : moment().add(3, "y").startOf("day")
 
     const person = (!!assignment)
       ? assignment.person
@@ -162,7 +162,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
-      date: moment().add(3, "y"),
+      date: moment().add(3, "y").startOf("day"),
       error: "",
       keySerial: null,
       person: null,
@@ -212,7 +212,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
   };
 
   private _onChangeDate = (newDate) => {
-    this.setState({ date: newDate, error: "" }, this._validateState);
+    this.setState({ date: newDate.startOf("day"), error: "" }, this._validateState);
   };
 
   private _validateState = () => {

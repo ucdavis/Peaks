@@ -46,7 +46,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       date: (!!this.props.selectedEquipment && !!this.props.selectedEquipment.assignment)
-        ? moment(this.props.selectedEquipment.assignment.expiresAt) : moment().add(3, "y"),
+        ? moment(this.props.selectedEquipment.assignment.expiresAt) : moment().add(3, "y").startOf("day"),
       equipment: this.props.selectedEquipment,
       error: "",
       person: (!!this.props.selectedEquipment && !!this.props.selectedEquipment.assignment)
@@ -201,7 +201,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
-      date: moment().add(3, "y"),
+      date: moment().add(3, "y").startOf("day"),
       equipment: null,
       error: "",
       person: null,
@@ -269,7 +269,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   };
 
   private _changeDate = newDate => {
-    this.setState({ date: newDate, error: "" }, this._validateState);
+    this.setState({ date: newDate.startOf("day"), error: "" }, this._validateState);
   };
 
   private _changeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {

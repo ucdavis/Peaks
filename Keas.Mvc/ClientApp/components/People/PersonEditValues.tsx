@@ -161,11 +161,11 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
 
 
     private _changeStartDate = (date: any) => {
-        this.props.changeProperty("startDate", date);
+        this.props.changeProperty("startDate", date.startOf("day"));
     }
     
     private _changeEndDate = (date: any) => {
-        this.props.changeProperty("endDate", date);
+        this.props.changeProperty("endDate", date.startOf("day"));
     }
 
     private _changeStartDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
