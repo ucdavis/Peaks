@@ -7,7 +7,7 @@ interface IProps {
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
     creating?: boolean;
-    openEditModal: (keySerial: IKeySerial) => void;
+    openEditModal?: (keySerial: IKeySerial) => void;
 }
 
 export default class KeySerialEditValues extends React.Component<IProps, {}> {
