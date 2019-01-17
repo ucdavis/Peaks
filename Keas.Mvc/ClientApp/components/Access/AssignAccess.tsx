@@ -44,7 +44,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         super(props);
         this.state = {
             access: this.props.selectedAccess,
-            date: moment().add(3, 'y'),
+            date: moment().add(3, 'y').startOf("day"),
             error: "",
             person: null,
             submitting: false,
@@ -166,6 +166,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     private _closeModal = () => {
         this.setState({
             access: null,
+            date: moment().add(3, "y").startOf("day"),
             error: "",
             person: null,
             submitting: false,
@@ -261,7 +262,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     }
 
     private _changeDate = (newDate) => {
-        this.setState({ date: newDate, error: "" }, this._validateState);
+        this.setState({ date: newDate.startOf("day"), error: "" }, this._validateState);
     }
 
     private _changeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {

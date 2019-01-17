@@ -47,7 +47,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
 
     this.state = {
       date: (!!this.props.selectedWorkstation && !!this.props.selectedWorkstation.assignment) 
-        ? moment(this.props.selectedWorkstation.assignment.expiresAt) : moment().add(3, "y"),
+        ? moment(this.props.selectedWorkstation.assignment.expiresAt) : moment().add(3, "y").startOf("day"),
       error: "",
       person: (!!this.props.selectedWorkstation && !!this.props.selectedWorkstation.assignment)
         ? this.props.selectedWorkstation.assignment.person : this.props.person,
@@ -178,7 +178,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
   // clear everything out on close
   private _closeModal = () => {
     this.setState({
-      date: moment().add(3, "y"),
+      date: moment().add(3, "y").startOf("day"),
       error: "",
       person: null,
       submitting: false,
@@ -244,7 +244,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
   };
 
   private _changeDate = newDate => {
-    this.setState({ date: newDate, error: "" }, this._validateState);
+    this.setState({ date: newDate.startOf("day"), error: "" }, this._validateState);
   };
 
   private _changeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
