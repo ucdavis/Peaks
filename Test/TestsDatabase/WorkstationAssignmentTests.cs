@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Keas.Core.Domain;
@@ -50,7 +50,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("RequestedAt", "System.DateTime", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedBy", "Keas.Core.Domain.User", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedByName", "System.String", new List<string>()));
-            
+
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(WorkstationAssignment));
