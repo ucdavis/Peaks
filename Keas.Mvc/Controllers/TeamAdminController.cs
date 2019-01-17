@@ -299,6 +299,16 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> RegenerateApiCode() 
+        {
+            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
+            if (team == null)
+            {
+                return NotFound();
+            }
+            return View(team);
+        }
+
 
         public async Task<IActionResult> RemovePpsDepartment(int id)
         {
