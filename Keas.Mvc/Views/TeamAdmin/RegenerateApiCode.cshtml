@@ -18,6 +18,18 @@
                 <p>@Html.DisplayFor(model => model.ApiCode)</p>
             </div>
         </div>
+        <div class="card">
+            <div class="card-header-primary">
+                <div class="card-head">
+                    <h2>API Links</h2>
+                </div>
+            </div>
+            <div class="card-content">
+                <p>People Feed:<br />@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode</p>
+
+                <p>People with Workstations: <br />@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode?space=yes</p>
+            </div>
+        </div>
 
         <form asp-action="RegenerateApiCode">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
