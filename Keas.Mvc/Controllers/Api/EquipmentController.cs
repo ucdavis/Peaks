@@ -111,7 +111,7 @@ namespace Keas.Mvc.Controllers.Api
                     equipment.Space = space;
                 }
                 _context.Equipment.Add(equipment);
-                // await _eventService.TrackCreateEquipment(equipment);
+                await _eventService.TrackCreateEquipment(equipment);
                 await _context.SaveChangesAsync();
             }
             return Json(equipment);
@@ -129,7 +129,7 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     _context.EquipmentAssignments.Update(equipment.Assignment);
                     equipment.Assignment.ExpiresAt = DateTime.Parse(date);
-                    //await _eventService.TrackEquipmentAssignmentUpdated(equipment); 
+                    await _eventService.TrackEquipmentAssignmentUpdated(equipment); 
                 }
                 else
                 {
@@ -137,7 +137,7 @@ namespace Keas.Mvc.Controllers.Api
                     equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
 
                     _context.EquipmentAssignments.Add(equipment.Assignment);
-                    //await _eventService.TrackAssignEquipment(equipment);
+                    await _eventService.TrackAssignEquipment(equipment);
                 }                
                 await _context.SaveChangesAsync();
                 return Json(equipment);
