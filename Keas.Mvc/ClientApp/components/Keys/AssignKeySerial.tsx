@@ -22,6 +22,7 @@ interface IProps {
   isModalOpen: boolean;
   onOpenModal: () => void;
   closeModal: () => void;
+  openEditModal: (keySerial: IKeySerial) => void;
 }
 
 interface IState {
@@ -112,22 +113,14 @@ export default class AssignKey extends React.Component<IProps, IState> {
               <div className="form-group">
                 <label htmlFor="assignto">Assign To</label>
                 <AssignPerson
-                  disabled={!!this.props.person} // disable if we are on person page
+                  disabled={!!this.props.person || 
+                    (!!this.props.selectedKeySerial && !!this.props.selectedKeySerial.keySerialAssignment)} 
+                    // disable if we are on person page or updating
                   person={person}
                   onSelect={this._onSelectPerson}
                 />
               </div>
-    
-              <div className="form-group">
-                <label>Pick a key serial to assign</label>
-                <SearchKeySerial
-                  allowNew={!this.props.person} // don't allow new on person page
-                  selectedKey={selectedKey}
-                  selectedKeySerial={keySerial}
-                  onSelect={this._onSelected}
-                  onDeselect={this._onDeselected}
-                />
-              </div>
+
               {(!!person || !!this.props.person) && (
                 <div className="form-group">
                   <label>Set the expiration date</label>
@@ -142,6 +135,22 @@ export default class AssignKey extends React.Component<IProps, IState> {
                   />
                 </div>
               )}
+              {!!this.state.keySerial && !!this.state.keySerial.id && 
+              <div>
+                <Button color="link" onClick={() => this.props.openEditModal(this.props.selectedKeySerial)}>
+                    <i className="fas fa-edit fa-xs" /> Edit Serial
+                </Button>
+              </div>}
+              <div className="form-group">
+                <label>Pick a key serial to assign</label>
+                <SearchKeySerial
+                  allowNew={!this.props.person} // don't allow new on person page
+                  selectedKey={selectedKey}
+                  selectedKeySerial={keySerial}
+                  onSelect={this._onSelected}
+                  onDeselect={this._onDeselected}
+                />
+              </div>
               {this.state.error}
             </form>
           </div>

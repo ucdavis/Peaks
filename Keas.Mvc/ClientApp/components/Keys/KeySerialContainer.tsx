@@ -100,17 +100,20 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             isModalOpen={activeAsset && (action === "create" || action === "assign" || action === "update")}
             onOpenModal={this._openCreateModal}
             closeModal={this._closeModals}
+            openEditModal={this._openEditModal}
           />
           <KeySerialDetails
             selectedKeySerial={selectedKeySerial}
             isModalOpen={activeAsset && action === "details" && !!selectedKeySerial}
             closeModal={this._closeModals}
             openEditModal={this._openEditModal}
+            openUpdateModal={this._openUpdateModal}
           />
           <EditKeySerial
             selectedKeySerial={selectedKeySerial}
             onEdit={this._editKeySerial}
             closeModal={this._closeModals}
+            openUpdateModal={this._openUpdateModal}
             isModalOpen={activeAsset && (action === "edit")}
           />
         </div>

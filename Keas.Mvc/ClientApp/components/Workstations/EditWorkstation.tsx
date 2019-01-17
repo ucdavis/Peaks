@@ -8,11 +8,13 @@ import {
 } from "reactstrap";
 import { AppContext, IWorkstation } from "../../Types";
 import WorkstationEditValues from "./WorkstationEditValues";
+import WorkstationAssignmentValues from './WorkstationAssignmentValues';
 
 interface IProps {
   onEdit: (workstation: IWorkstation) => void;
   modal: boolean;
   closeModal: () => void;
+  openUpdateModal: (workstation: IWorkstation) => void;
   selectedWorkstation: IWorkstation;
   tags: string[];
 }
@@ -70,6 +72,7 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
                     tags={this.props.tags}
                   />
             </form>
+            <WorkstationAssignmentValues selectedWorkstation={this.props.selectedWorkstation} openUpdateModal={this.props.openUpdateModal}/>
             {this.state.error}
           </div>
         </ModalBody>

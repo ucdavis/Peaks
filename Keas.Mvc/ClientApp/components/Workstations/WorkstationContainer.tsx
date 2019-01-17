@@ -94,6 +94,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                                 modal={activeAsset && action === "details"}
                                 selectedWorkstation={selectedWorkstation}
                                 openEditModal={this._openEditModal}
+                                openUpdateModal={this._openAssignModal}
                                 />
                             <EditWorkstation
                                 closeModal={this._closeModals}
@@ -101,6 +102,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                                 modal={activeAsset && action === "edit"}
                                 selectedWorkstation={selectedWorkstation}
                                 onEdit={this._editWorkstation}
+                                openUpdateModal={this._openAssignModal}
                                 />
                             <AssignWorkstation
                                 closeModal={this._closeModals}
@@ -110,6 +112,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                                 tags={this.props.tags}
                                 space={this.props.space}
                                 onCreate={this._createAndMaybeAssignWorkstation}
+                                openEditModal={this._openEditModal}
                                 onAddNew={this._openCreateModal} />
                             <RevokeWorkstation
                                 closeModal={this._closeModals}

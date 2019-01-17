@@ -20,6 +20,7 @@ interface IProps {
   modal: boolean;
   onAddNew: () => void;
   closeModal: () => void;
+  openEditModal: (workstation: IWorkstation) => void;
   selectedWorkstation: IWorkstation;
   person?: IPerson;
   space?: ISpace;
@@ -93,11 +94,26 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                 <div className="form-group">
                   <label htmlFor="assignto">Assign To</label>
                   <AssignPerson
-                    disabled={!!this.props.person} // disable if we are on person page
+                    disabled={!!this.props.person || 
+                      (!!this.props.selectedWorkstation && !!this.props.selectedWorkstation.assignment)} // disable if we are on person page or updating
                     person={this.props.person || this.state.person}
                     onSelect={this._onSelectPerson}
                   />
                 </div>
+                {(!!this.state.person || !!this.props.person) && (
+                  <div className="form-group">
+                    <label>Set the expiration date</label>
+                    <DatePicker
+                      selected={this.state.date}
+                      onChange={this._changeDate}
+                      onChangeRaw={this._changeDateRaw}
+                      className="form-control"
+                      showMonthDropdown={true}
+                      showYearDropdown={true}
+                      dropdownMode="select"
+                    />
+                  </div>
+                )}
                 {!this.state.workstation &&
                 <div className="form-group">
                   <SearchWorkstations
@@ -132,24 +148,10 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     <WorkstationEditValues
                       selectedWorkstation={this.state.workstation}
                       disableEditing={true}
+                      openEditModal={this.props.openEditModal}
                       />
                     </div>
                   }
-
-                {(!!this.state.person || !!this.props.person) && (
-                  <div className="form-group">
-                    <label>Set the expiration date</label>
-                    <DatePicker
-                      selected={this.state.date}
-                      onChange={this._changeDate}
-                      onChangeRaw={this._changeDateRaw}
-                      className="form-control"
-                      showMonthDropdown={true}
-                      showYearDropdown={true}
-                      dropdownMode="select"
-                    />
-                  </div>
-                )}
                 {this.state.error}
               </form>
             </div>

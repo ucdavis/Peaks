@@ -8,12 +8,14 @@ import {
   ModalFooter,
 } from "reactstrap";
 import { AppContext, IKeySerial } from "../../Types";
+import KeySerialAssignmentValues from "./KeySerialAssignmentValues";
 import KeySerialEditValues from "./KeySerialEditValues";
 
 interface IProps {
   onEdit: (keySerial: IKeySerial) => void;
   isModalOpen: boolean;
   closeModal: () => void;
+  openUpdateModal: (keySerial: IKeySerial) => void;
   selectedKeySerial: IKeySerial;
 }
 
@@ -71,6 +73,8 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
                 changeProperty={this._changeProperty}
                 disableEditing={false}
               />
+              <br />
+              <KeySerialAssignmentValues selectedKeySerial={this.props.selectedKeySerial} openUpdateModal={this.props.openUpdateModal} />
             </form>
           </div>
         </ModalBody>
