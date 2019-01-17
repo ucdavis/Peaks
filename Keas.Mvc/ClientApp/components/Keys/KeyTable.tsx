@@ -135,12 +135,13 @@ export default class KeyTable extends React.Component<IProps, {}> {
                             <span>{row.original.spacesCount}</span>
 
                         ),
-                        Header: "",
+                        Header: "Spaces",
+                        accessor: "spacesCount",
                         className: "table-actions",
                         filterable: false,
                         headerClassName: "table-actions",
                         resizable: false,
-                        sortable: false,
+                        sortable: true,
                     },
                     {
                         Cell: this.renderDropdownColumn,
