@@ -135,7 +135,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                   />
                 </div>
               )}
-              {!!this.state.keySerial && 
+              {!!this.state.keySerial && !!this.state.keySerial.id && 
               <div>
                 <Button color="link" onClick={() => this.props.openEditModal(this.props.selectedKeySerial)}>
                     <i className="fas fa-edit fa-xs" /> Edit Serial
