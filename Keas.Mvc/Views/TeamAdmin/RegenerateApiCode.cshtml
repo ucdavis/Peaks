@@ -18,8 +18,8 @@
       <p>@Html.DisplayFor(model => model.ApiCode)</p>     
     </div>
   </div>
-  </div>
-  <form asp-action="AddFISOrg">
+ 
+  <form asp-action="RegenerateApiCode">
       <div asp-validation-summary="ModelOnly" class="text-danger"></div>
   <div class="card">
         <div class="well">
@@ -30,10 +30,10 @@
                 <i class="icon-save button-icon"></i>
                 Confirm
             </button>
-            @Html.AdminActionLink("Cancel", "Index", new { }, new { @class = "btn" })
+            <a class="btn btn-link" asp-action="Index">Cancel</a>
         </div>
     </div>
-  </form>
+  </form> </div>
   <div class="col-md-3">
 
 
