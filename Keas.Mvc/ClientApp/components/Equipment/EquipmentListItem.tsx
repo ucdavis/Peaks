@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Button } from "reactstrap";
 import { IEquipment } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
@@ -44,6 +45,11 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
 
         return (
           <tr>
+            <td>
+              <Button color="link" onClick={() => this.props.showDetails(this.props.equipmentEntity)}>
+                Details
+              </Button>
+            </td>
             <td>{this.props.equipmentEntity.serialNumber}</td>
             <td>{this.props.equipmentEntity.name}</td>
             <td>{hasAssignment ? this.props.equipmentEntity.assignment.person.name : ""}</td>

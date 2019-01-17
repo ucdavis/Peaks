@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Button } from "reactstrap";
 import { ISpace } from "../../Types";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
@@ -23,6 +24,11 @@ export default class SpacesListItem extends React.Component<IProps, {}> {
 
     return (
       <tr>
+        <td>
+          <Button color="link" onClick={() => this.props.showDetails(this.props.space)}>
+            Details
+          </Button>
+        </td>
         <td>{space.roomNumber} {space.bldgName}</td>
         <td>{space.roomName}</td>
         <td>

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Button } from "reactstrap";
 import { IAccess } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
@@ -42,6 +43,11 @@ export default class AccessListItem extends React.Component<IProps, {}> {
 
         return (
             <tr>
+                <td>
+                    <Button color="link" onClick={() => this.props.showDetails(this.props.accessEntity)}>
+                        Details
+                    </Button>
+                </td>
                 <td>{this.props.accessEntity.name}</td>
                 <td>{hasAssignment ? "Assigned" : "Unassigned"}</td>
                 <td>{this.props.accessEntity.assignments.length}</td>

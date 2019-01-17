@@ -22,6 +22,7 @@ export default class KeyList extends React.Component<IProps, {}> {
             <table className="table">
                 <thead>
                     <tr>
+                        <th/>
                         <th>Name</th>
                         <th>Code</th>
                         <th className="">Available Serials</th>
