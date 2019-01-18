@@ -25,7 +25,7 @@ namespace Keas.Mvc.Controllers
              var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
 
             if(!validKey){
-                Unauthorized();
+               return Unauthorized();
             }   
 
             if(includeSpace == "yes")
