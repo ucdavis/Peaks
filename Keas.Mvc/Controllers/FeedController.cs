@@ -22,7 +22,7 @@ namespace Keas.Mvc.Controllers
         }
         public async Task<IActionResult> TeamFeed(Guid id, string includeSpace)
         {            
-             var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
+             var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode != null && t.ApiCode == id).AnyAsync();
 
             if(!validKey){
                return Unauthorized();
