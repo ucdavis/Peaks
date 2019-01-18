@@ -39,26 +39,48 @@ namespace Keas.Mvc.Controllers
             }  
         } 
 
-        private async Task<Array> GetPeopleFeed()
+        private async Task<List<FeedPeopleModel>> GetPeopleFeed()
         {
             var people = await _context.People
                 .Where(x=> x.Team.Slug == Team && x.Active)
-                .Select(p => new {p.Name, p.FirstName, p.LastName, p.Email, p.UserId, p.Title, p.TeamPhone, p.Tags})                
-                .ToArrayAsync();
+                .Select(p => new FeedPeopleModel
+                {
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                Name = p.Name,
+                Email = p.Email,
+                UserId = p.UserId,
+                Title = p.Title,
+                TeamPhone = p.TeamPhone,
+                Tags = p.Tags
+                })                              
+                .ToListAsync();
 
                 return people;
         }
 
-        private async Task<Array> GetPeopleFeedIncludeSpace()
+        private List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace()
         {
-            var people = await _context.People
+            var people = _context.People
                 .Where(x=> x.Team.Slug == Team && x.Active)
-                .Select(p => new {p.Name, p.FirstName, p.LastName, p.Email, p.UserId, p.Title, p.TeamPhone, p.Tags,
-                workstation = (from w in _context.Workstations where w.Assignment.PersonId == p.Id select w)
+                .Select(p => new FeedPeopleSpaceModel {
+                FirstName = p.FirstName,
+                LastName = p.LastName,
+                Name = p.Name,
+                Email = p.Email,
+                UserId = p.UserId,
+                Title = p.Title,
+                TeamPhone = p.TeamPhone,
+                Tags = p.Tags,
+                Workstations = ( from w in _context.Workstations where w.Assignment.PersonId == p.Id select w)
                     .Include(w => w.Space)
-                    .Select(w => new {w.Name, w.Space.BldgName, w.Space.RoomNumber})
+                    .Select(w => new FeedWorkstation {
+                        Name = w.Name,
+                        BldgName = w.Space.BldgName,
+                        RoomNumber = w.Space.RoomNumber
+                    }).ToList()
                 })
-                .ToArrayAsync();
+                .ToList();
 
                 return people;
         }
