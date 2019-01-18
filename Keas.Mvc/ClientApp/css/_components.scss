@@ -212,14 +212,15 @@ img.img-fluid {
   }
 }
 }
-.access-color {
-  .fa-ellipsis-h:before {
-    color:$access;
-  }
-}
+
 .people-color {
   .fa-ellipsis-h:before {
     color:$people;
+  }
+}
+.access-color {
+  .fa-ellipsis-h:before {
+    color:$access;
   }
 }
 .equipment-color {
