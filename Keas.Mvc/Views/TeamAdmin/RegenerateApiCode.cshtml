@@ -24,11 +24,20 @@
                     <h2>API Links</h2>
                 </div>
             </div>
-            <div class="card-content">
-                <p>People Feed:<br />@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode</p>
+            @if (Model.ApiCode.HasValue)
+            {
+                <div class="card-content">
+                    <p>People Feed:<br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode</p>
 
-                <p>People with Workstations: <br />@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode?includeSpace=yes</p>
-            </div>
+                    <p>People with Workstations: <br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode?includeSpace=yes</p>
+                </div>
+            }
+            else
+            {
+                <div class="card-content">
+                    <p>Generate an API code to see links</p>
+                </div>
+            }
         </div>
 
         <form asp-action="RegenerateApiCode">
