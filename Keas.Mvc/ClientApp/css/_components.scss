@@ -44,7 +44,7 @@
     transform: translateY(-1px);
     box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 3px 6px rgba(0,0,0,.08);
     background-color: lighten($primary-color, 5);
-    text-transform: none !important;
+    text-decoration: none !important;
   }
 
 }
@@ -602,4 +602,65 @@ ol.breadcrumb {
   .rbt {
     margin-bottom:0px;
   }
+}
+.ReactTable .rt-thead .rt-th.-sort-asc, .ReactTable .rt-thead .rt-td.-sort-asc {
+  .people-color & {
+    box-shadow: inset 0 3px 0 0 $people;
+  }
+  .access-color & {
+    box-shadow: inset 0 3px 0 0 $access;
+  }
+  .equipment-color & {
+    box-shadow: inset 0 3px 0 0 $equipment;
+  }
+  .keys-color & {
+    box-shadow: inset 0 3px 0 0 $keys;
+  }
+  .spaces-color & {
+    box-shadow: inset 0 3px 0 0 $spaces;
+  }
+}
+.ReactTable .rt-thead .rt-th.-sort-desc, .ReactTable .rt-thead .rt-td.-sort-desc {
+  .people-color & {
+    box-shadow: inset 0 -3px 0 0 $people;
+  }
+  .access-color & {
+    box-shadow: inset 0 -3px 0 0 $access;
+  }
+  .equipment-color & {
+    box-shadow: inset 0 -3px 0 0 $equipment;
+  }
+  .keys-color & {
+    box-shadow: inset 0 -3px 0 0 $keys;
+  }
+  .spaces-color & {
+    box-shadow: inset 0 -3px 0 0 $spaces;
+  }
+}
+.-btn {
+  color:#fff!important;
+  font-family: $sans-bold;
+  width:66% !important;
+  display:inline !important;
+  .people-color & {
+      background-color: lighten($people,5) !important;
+  }
+  .access-color & {
+    background-color: $access !important;
+  }
+  .spaces-color & {
+    background-color: $spaces !important;
+  }
+  .keys-color & {
+    background-color: $keys !important;
+  }
+  .equipment-color & {
+    background-color: transparentize($equipment,.2) !important;
+  }
+}
+.-previous {
+  text-align: left !important;
+}
+.-next {
+  text-align: right !important;
 }
