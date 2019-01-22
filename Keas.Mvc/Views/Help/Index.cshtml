@@ -23,25 +23,25 @@
                 <div class="card-header-primary-thick">
                     <div class="card-head">
                         <h2><i class="fas fa-users fa-xs"></i> Team Admin</h2>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.DepartmentalAdmin, StringComparison.OrdinalIgnoreCase)))
-                            {
-                                <tr>
-                                    <td>@item.User.Name</td>
-                                    <td>@item.User.Email</td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
                     </div>
                 </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.DepartmentalAdmin, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            <tr>
+                                <td>@item.User.Name</td>
+                                <td>@item.User.Email</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     }
@@ -52,25 +52,25 @@
                 <div class="card-header-equipment">
                     <div class="card-head">
                         <h2><i class="fas fa-hdd fa-xs"></i> Equipment Admin</h2>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.EquipmentMaster, StringComparison.OrdinalIgnoreCase)))
-                            {
-                                <tr>
-                                    <td>@item.User.Name</td>
-                                    <td>@item.User.Email</td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
                     </div>
                 </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.EquipmentMaster, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            <tr>
+                                <td>@item.User.Name</td>
+                                <td>@item.User.Email</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     }
@@ -81,25 +81,25 @@
                 <div class="card-header-access">
                     <div class="card-head">
                         <h2><i class="fas fa-address-card fa-xs"></i> Access Admin</h2>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.AccessMaster, StringComparison.OrdinalIgnoreCase)))
-                            {
-                                <tr>
-                                    <td>@item.User.Name</td>
-                                    <td>@item.User.Email</td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
                     </div>
                 </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.AccessMaster, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            <tr>
+                                <td>@item.User.Name</td>
+                                <td>@item.User.Email</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     }
@@ -110,25 +110,25 @@
                 <div class="card-header-keys">
                     <div class="card-head">
                         <h2><i class="fas fa-key fa-xs"></i> Key Admin</h2>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.KeyMaster, StringComparison.OrdinalIgnoreCase)))
-                            {
-                                <tr>
-                                    <td>@item.User.Name</td>
-                                    <td>@item.User.Email</td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
                     </div>
                 </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.KeyMaster, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            <tr>
+                                <td>@item.User.Name</td>
+                                <td>@item.User.Email</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     }
@@ -139,25 +139,25 @@
                 <div class="card-header-equipment">
                     <div class="card-head">
                         <h2><i class="fas fa-building fa-xs"></i> Space/Workstation Admin</h2>
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.SpaceMaster, StringComparison.OrdinalIgnoreCase)))
-                            {
-                                <tr>
-                                    <td>@item.User.Name</td>
-                                    <td>@item.User.Email</td>
-                                </tr>
-                            }
-                            </tbody>
-                        </table>
                     </div>
                 </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.SpaceMaster, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            <tr>
+                                <td>@item.User.Name</td>
+                                <td>@item.User.Email</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
     }
