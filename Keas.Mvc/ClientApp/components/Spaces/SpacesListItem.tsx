@@ -14,9 +14,6 @@ export default class SpacesListItem extends React.Component<IProps, {}> {
     const { space } = this.props;
 
     const actions: IAction[] = [];
-    if (!!this.props.showDetails) {
-        actions.push({ title: 'Details', onClick: () => this.props.showDetails(space) });
-    }
 
     if (!!this.props.onDisassociate) {
         actions.push({ title: 'Disassociate', onClick: () => this.props.onDisassociate(space) });

@@ -21,14 +21,6 @@ export default class KeyListItem extends React.Component<IProps, {}> {
       actions.push({ title: 'Disassociate', onClick: () => this.props.onDisassociate(keyInfo) });
     }
 
-    if (!!this.props.showDetails) {
-        actions.push({ title: 'Details', onClick: () => this.props.showDetails(keyInfo.key) });
-    }
-
-    if (!!this.props.onEdit) {
-        actions.push({ title: 'Edit', onClick: () => this.props.onEdit(keyInfo.key) });
-    }
-
     if (!!this.props.onDelete) {
       actions.push({ title: 'Delete', onClick: () => this.props.onDelete(keyInfo.key) });
   }

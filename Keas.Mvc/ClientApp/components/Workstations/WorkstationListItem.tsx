@@ -20,23 +20,13 @@ export default class WorkstationListItem extends React.Component<IProps, {}> {
         const hasAssignment = !!this.props.workstationEntity.assignment;
 
         const actions: IAction[] = [];
-        if (!!this.props.onRevoke && hasAssignment) {
-          actions.push({ title: 'Revoke', onClick: () => this.props.onRevoke(workstationEntity) });
-        }
 
         if (!!this.props.onAdd && !hasAssignment) {
-            actions.push({ title: 'Add', onClick: () => this.props.onAdd(workstationEntity) });
-        }
-        else if (!!this.props.onAdd && hasAssignment) {
-          actions.push({ title: 'Update', onClick: () => this.props.onAdd(workstationEntity) });
-        }
+          actions.push({ title: 'Add', onClick: () => this.props.onAdd(workstationEntity) });
+      }
 
-        if (!!this.props.showDetails) {
-            actions.push({ title: 'Details', onClick: () => this.props.showDetails(workstationEntity) });
-        }
-
-        if (!!this.props.onEdit) {
-            actions.push({ title: 'Edit', onClick: () => this.props.onEdit(workstationEntity) });
+      if (!!this.props.onRevoke && hasAssignment) {
+          actions.push({ title: 'Revoke', onClick: () => this.props.onRevoke(workstationEntity) });
         }
 
         if (!!this.props.onDelete) {

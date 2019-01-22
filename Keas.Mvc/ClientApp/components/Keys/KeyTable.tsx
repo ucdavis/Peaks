@@ -162,20 +162,6 @@ export default class KeyTable extends React.Component<IProps, {}> {
 
         const actions: IAction[] = [];
 
-        if (!!this.props.showDetails) {
-            actions.push({
-                onClick: () => this.props.showDetails(key),
-                title: "Details",
-            });
-        }
-
-        if (!!this.props.onEdit) {
-            actions.push({
-                onClick: () => this.props.onEdit(key),
-                title: "Edit",
-            });
-        }
-
         if (!!this.props.onDelete) {
             actions.push({
                 onClick: () => this.props.onDelete(key),

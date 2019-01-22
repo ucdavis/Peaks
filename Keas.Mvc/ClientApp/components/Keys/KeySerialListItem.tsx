@@ -25,27 +25,6 @@ export default class KeyListItem extends React.Component<IProps, {}> {
             });
         }
 
-        if (!!this.props.onEdit) {
-            actions.push({
-                onClick: () => this.props.onEdit(keySerial),
-                title: "Edit",
-            });
-        }
-
-        if (!!this.props.showDetails) {
-            actions.push({
-                onClick: () => this.props.showDetails(keySerial),
-                title: "Details",
-            });
-        }
-
-        if (!!this.props.onUpdate && !!keySerial.keySerialAssignment) {
-            actions.push({
-                onClick: () => this.props.onUpdate(keySerial),
-                title: "Update",
-            });
-        }
-
         if (!!this.props.onRevoke && !!keySerial.keySerialAssignment) {
             actions.push({
                 onClick: () => this.props.onRevoke(keySerial),
