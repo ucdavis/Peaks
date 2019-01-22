@@ -44,6 +44,7 @@
     transform: translateY(-1px);
     box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 3px 6px rgba(0,0,0,.08);
     background-color: lighten($primary-color, 5);
+    text-transform: none !important;
   }
 
 }
@@ -241,7 +242,10 @@ img.img-fluid {
   }
 }
 }
-
+.btn-border {
+  border:1px solid #C7C8CC !important;
+  color:$secondary-font !important;
+}
 .people-color {
   .fa-ellipsis-h:before {
     color:$people;
