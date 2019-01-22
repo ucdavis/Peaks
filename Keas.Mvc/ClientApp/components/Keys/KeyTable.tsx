@@ -87,7 +87,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
                             <option value="assigned">Assigned</option>
                             <option value="any">Any</option>
                         </select>,
-                        Header: "Serials",
+                        Header: header => <div><span title='In Use / Total'>Serials<sup><i class="fas fa-info-circle"></i></sup></span></div>,
                         accessor: keyInfo => {
                             return {
                                 "serialsInUse": keyInfo.serialsInUseCount,
