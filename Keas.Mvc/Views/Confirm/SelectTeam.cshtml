@@ -5,14 +5,28 @@
     ViewData["Title"] = "Select Team";
 }
 
+<div class="card">
+  <div class="card-header-primary">
+    <div class="card-head">
+      <h2>Select A Team</h2>
+    </div>
+
+  </div>
+  <div class="card-content">
+
+
+
+
+
+
 @foreach (var item in Model) {
 
-<div class="row justify-content-between">
-    <div class="card" >
-      <div class="card-body">
-    <h5 class="card-title">@item.Name</h5>
-    <a href='@string.Format("/{0}/{1}", item.Slug, ViewBag.urlRedirect)' class="card-link">Go to team</a>
+
+
+<p><a href='@string.Format("/{0}/{1}", item.Slug, ViewBag.urlRedirect)' class="team-link">@item.Name</a></p>
+
+
+
+}
   </div>
 </div>
-</div>
-}
