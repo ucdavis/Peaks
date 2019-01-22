@@ -88,7 +88,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
                             <option value="assigned">Assigned</option>
                             <option value="any">Any</option>
                         </select>,
-                        Header: header => <div>Serials<span id="serialTooltip"><i class="fas fa-info-circle"></i></span>
+                        Header: header => <div><span id="serialTooltip">Serials&#9432;</span>
                         <UncontrolledTooltip placement="right" target="serialTooltip">In Use / Total</UncontrolledTooltip></div>,
                         accessor: keyInfo => {
                             return {
