@@ -97,7 +97,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                             <option value="assigned">Assigned</option>
                             <option value="any">Any</option>
                         </select>,
-                        Header: header => <div><span>Workstations<sup><i class="fas fa-info-circle"></i></sup></span><UncontrolledTooltip placement="bottom" target="serialTooltip">In Use / Total</UncontrolledTooltip></div>,
+                        Header: header => <div>Workstations<span id="workstationsTooltip"><i class="fas fa-info-circle"></i></span><UncontrolledTooltip placement="right" target="workstationsTooltip">In Use / Total</UncontrolledTooltip></div>,
                         accessor: spaceInfo => {
                             return {
                                 "workstationsInUse": spaceInfo.workstationsInUse,

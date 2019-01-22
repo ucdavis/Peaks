@@ -26,7 +26,7 @@ export default class KeyList extends React.Component<IProps, {}> {
                         <th/>
                         <th>Name</th>
                         <th>Code</th>
-                        <th className=""><span id="serialTooltip">Available Serials<sup><i class="fas fa-info-circle"></i></sup></span><UncontrolledTooltip placement="bottom" target="serialTooltip">In Use / Total</UncontrolledTooltip></th>
+                        <th>Available Serials<span id="serialTooltip"><i class="fas fa-info-circle"></i></span><UncontrolledTooltip placement="right" target="serialTooltip">In Use / Total</UncontrolledTooltip></th>
                         <th className="list-actions">Actions</th>
                     </tr>
                 </thead>
