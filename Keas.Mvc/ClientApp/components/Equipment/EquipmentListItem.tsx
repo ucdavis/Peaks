@@ -20,23 +20,12 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
         const hasAssignment = !!this.props.equipmentEntity.assignment;
 
         const actions: IAction[] = [];
+        if (!!this.props.onAdd && !hasAssignment) {
+          actions.push({ title: 'Add', onClick: () => this.props.onAdd(this.props.equipmentEntity) });
+        }
+
         if (!!this.props.onRevoke && hasAssignment) {
           actions.push({ title: 'Revoke', onClick: () => this.props.onRevoke(this.props.equipmentEntity) });
-        }
-
-        if (!!this.props.onAdd && !hasAssignment) {
-            actions.push({ title: 'Add', onClick: () => this.props.onAdd(this.props.equipmentEntity) });
-        }
-        else if (!!this.props.onAdd && hasAssignment) {
-          actions.push({ title: 'Update', onClick: () => this.props.onAdd(this.props.equipmentEntity) });
-        }
-
-        if (!!this.props.showDetails) {
-            actions.push({ title: 'Details', onClick: () => this.props.showDetails(this.props.equipmentEntity) });
-        }
-
-        if (!!this.props.onEdit) {
-            actions.push({ title: 'Edit', onClick: () => this.props.onEdit(this.props.equipmentEntity) });
         }
 
         if (!!this.props.onDelete) {

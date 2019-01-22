@@ -29,14 +29,6 @@ export default class AccessListItem extends React.Component<IProps, {}> {
             actions.push({ title: 'Add', onClick: () => this.props.onAdd(this.props.accessEntity) });
         }
 
-        if (!!this.props.showDetails) {
-            actions.push({ title: 'Details', onClick: () => this.props.showDetails(this.props.accessEntity) });
-        }
-
-        if (!!this.props.onEdit) {
-            actions.push({ title: 'Edit', onClick: () => this.props.onEdit(this.props.accessEntity) });
-        }
-
         if (!!this.props.onDelete) {
             actions.push({ title: 'Delete', onClick: () => this.props.onDelete(this.props.accessEntity) });
         }

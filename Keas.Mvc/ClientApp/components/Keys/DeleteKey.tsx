@@ -7,7 +7,6 @@ import {
     ModalFooter,
 } from "reactstrap";
 import { AppContext, IKey } from "../../Types";
-import HistoryContainer from "../History/HistoryContainer";
 import KeyEditValues from "./KeyEditValues";
 
 
@@ -51,9 +50,7 @@ export default class DeleteKey extends React.Component<IProps, IState> {
                   </div>
 
                     <ModalBody>
-                        <KeyEditValues selectedKey={this.props.selectedKey} disableEditing={true} />
-                        <HistoryContainer controller="keys" id={this.props.selectedKey.id}/>
-                        
+                        <KeyEditValues selectedKey={this.props.selectedKey} disableEditing={true} />                        
                     </ModalBody>
                     <ModalFooter>
                     <Button
