@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-import { Button } from "reactstrap";
+import { Button, UncontrolledTooltip } from "reactstrap";
 import { ISpace, ISpaceInfo } from "../../Types";
 
 interface IProps {
@@ -97,7 +97,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                             <option value="assigned">Assigned</option>
                             <option value="any">Any</option>
                         </select>,
-                        Header: header => <div><span title='In Use / Total'>Workstations<sup><i class="fas fa-info-circle"></i></sup></span></div>,
+                        Header: header => <div><span>Workstations<sup><i class="fas fa-info-circle"></i></sup></span><UncontrolledTooltip placement="bottom" target="serialTooltip">In Use / Total</UncontrolledTooltip></div>,
                         accessor: spaceInfo => {
                             return {
                                 "workstationsInUse": spaceInfo.workstationsInUse,
