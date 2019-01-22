@@ -7,7 +7,6 @@ import {
     ModalFooter,
 } from "reactstrap";
 import { AppContext, IEquipment } from "../../Types";
-import HistoryContainer from "../History/HistoryContainer";
 import EquipmentEditValues from "./EquipmentEditValues";
 
 
@@ -51,9 +50,7 @@ export default class RevokeEquipment extends React.Component<IProps, IState> {
                   </div>
 
                     <ModalBody>
-                        <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} disableEditing={true} />
-                        <HistoryContainer controller="equipment" id={this.props.selectedEquipment.id}/>
-                        
+                        <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} disableEditing={true} />                        
                         {!this._isValidToRevoke() && 
                         <div>
                             The equipment you have chosen does not have an assignment
