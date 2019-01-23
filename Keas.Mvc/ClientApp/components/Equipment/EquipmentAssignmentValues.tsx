@@ -10,6 +10,9 @@ interface IProps {
 
 export default class EquipmentAssignmentValues extends React.Component<IProps, {}> {
     public render() {
+        if (!this.props.selectedEquipment || !this.props.selectedEquipment.assignment) {
+            return null;
+        }
         return (
             <div>
                 <Button

@@ -10,6 +10,9 @@ interface IProps {
 
 export default class KeySerialAssignmentValues extends React.Component<IProps, {}> {
     public render() {
+        if (!this.props.selectedKeySerial || !this.props.selectedKeySerial.keySerialAssignment) {
+            return null;
+        }
         return (
             <div>
                 <Button
