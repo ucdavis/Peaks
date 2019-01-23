@@ -1,9 +1,10 @@
 import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-import { Button } from "reactstrap";
+import { Button, UncontrolledTooltip } from "reactstrap";
 import { IKey, IKeyInfo } from "../../Types";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
+import Tooltip from "reactstrap/lib/Tooltip";
 
 interface IProps {
     showDetails?: (key: IKey) => void;
@@ -87,7 +88,10 @@ export default class KeyTable extends React.Component<IProps, {}> {
                             <option value="assigned">Assigned</option>
                             <option value="any">Any</option>
                         </select>,
-                        Header: "Serials",
+                        Header: header => (
+                        <div>Serials <i id="serialTooltip" className="fas fa-info-circle" />
+                        <UncontrolledTooltip placement="right" target="serialTooltip">In Use / Total</UncontrolledTooltip></div>
+                        ),
                         accessor: keyInfo => {
                             return {
                                 "serialsInUse": keyInfo.serialsInUseCount,
