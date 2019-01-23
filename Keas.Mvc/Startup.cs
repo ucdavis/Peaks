@@ -206,9 +206,10 @@ namespace Keas.Mvc
                 );
 
                 routes.MapRoute(
-                    name: "AdminRoutes",
-                    template: "admin/{action=Index}/{id?}",
-                    defaults: new { controller = "Admin" }
+                    name: "NonTeamRoutes",
+                    template: "{controller}/{action=Index}/{id?}",
+                    defaults: null,
+                    constraints: new { controller = "(admin|log)" }
                 );
 
                 routes.MapRoute(
