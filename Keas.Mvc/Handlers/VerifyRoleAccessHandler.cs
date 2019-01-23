@@ -51,10 +51,12 @@ namespace Keas.Mvc.Handlers
 
             if (await _securityService.IsInRoles(requirement.RoleStrings, team, userId)) {
                 context.Succeed(requirement);
+                return;
             }
 
             if (await _securityService.IsInAdminRoles(requirement.RoleStrings, userId)) {
                 context.Succeed(requirement);
+                return;
             }
         }
     }
