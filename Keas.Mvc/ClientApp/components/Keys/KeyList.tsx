@@ -1,6 +1,7 @@
 import * as React from "react";
 import { IKey, IKeyInfo } from "../../Types";
 import KeyListItem from "./KeyListItem";
+import { UncontrolledTooltip } from "reactstrap";
 
 interface IProps {
     keysInfo: IKeyInfo[];
@@ -22,9 +23,10 @@ export default class KeyList extends React.Component<IProps, {}> {
             <table className="table">
                 <thead>
                     <tr>
+                        <th/>
                         <th>Name</th>
                         <th>Code</th>
-                        <th className="">Available Serials</th>
+                        <th>Available Serials <i id="serialTooltip" className="fas fa-info-circle" /><UncontrolledTooltip placement="right" target="serialTooltip">In Use / Total</UncontrolledTooltip></th>
                         <th className="list-actions">Actions</th>
                     </tr>
                 </thead>

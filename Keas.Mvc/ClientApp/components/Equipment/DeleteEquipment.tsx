@@ -7,13 +7,15 @@ import {
     ModalFooter,
 } from "reactstrap";
 import { AppContext, IEquipment } from "../../Types";
-import HistoryContainer from "../History/HistoryContainer";
+import EquipmentAssignmentValues from "./EquipmentAssignmentValues";
 import EquipmentEditValues from "./EquipmentEditValues";
 
 
 interface IProps {
     modal: boolean;
     closeModal: () => void;
+    openEditModal: (equipment: IEquipment) => void;
+    openUpdateModal: (equipment: IEquipment) => void;
     deleteEquipment: (equipment: IEquipment) => void;
     selectedEquipment: IEquipment;
 }
@@ -51,9 +53,16 @@ export default class DeleteEquipment extends React.Component<IProps, IState> {
                   </div>
 
                     <ModalBody>
-                        <EquipmentEditValues selectedEquipment={this.props.selectedEquipment} disableEditing={true} />
-                        <HistoryContainer controller="equipment" id={this.props.selectedEquipment.id}/>
-                        
+                        <EquipmentEditValues 
+                            selectedEquipment={this.props.selectedEquipment}
+                            disableEditing={true}
+                            openEditModal={this.props.openEditModal}
+                        />
+                        {this.props.selectedEquipment.assignment && 
+                        <EquipmentAssignmentValues 
+                            selectedEquipment={this.props.selectedEquipment} 
+                            openUpdateModal={this.props.openUpdateModal}
+                        />}
                     </ModalBody>
                     <ModalFooter>
                     <Button

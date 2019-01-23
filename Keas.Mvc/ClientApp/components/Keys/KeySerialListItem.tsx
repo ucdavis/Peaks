@@ -2,6 +2,7 @@ import * as React from "react";
 import { IKeySerial } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
+import { Button } from "reactstrap";
 
 interface IProps {
     keySerial: IKeySerial;
@@ -24,27 +25,6 @@ export default class KeyListItem extends React.Component<IProps, {}> {
             });
         }
 
-        if (!!this.props.onEdit) {
-            actions.push({
-                onClick: () => this.props.onEdit(keySerial),
-                title: "Edit",
-            });
-        }
-
-        if (!!this.props.showDetails) {
-            actions.push({
-                onClick: () => this.props.showDetails(keySerial),
-                title: "Details",
-            });
-        }
-
-        if (!!this.props.onUpdate && !!keySerial.keySerialAssignment) {
-            actions.push({
-                onClick: () => this.props.onUpdate(keySerial),
-                title: "Update",
-            });
-        }
-
         if (!!this.props.onRevoke && !!keySerial.keySerialAssignment) {
             actions.push({
                 onClick: () => this.props.onRevoke(keySerial),
@@ -54,6 +34,11 @@ export default class KeyListItem extends React.Component<IProps, {}> {
 
         return (
             <tr>
+                <td>
+                    <Button color="link" onClick={() => this.props.showDetails(this.props.keySerial)}>
+                        Details
+                    </Button>
+                </td>
                 <td>{keySerial.key.code}</td>
                 <td>{keySerial.number}</td>
                 <td>

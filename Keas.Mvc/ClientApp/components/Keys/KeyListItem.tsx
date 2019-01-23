@@ -1,6 +1,7 @@
 import * as React from "react";
 import { IKey, IKeyInfo } from "../../Types";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
+import { Button } from "reactstrap";
 
 interface IProps {
   keyInfo: IKeyInfo;
@@ -20,20 +21,17 @@ export default class KeyListItem extends React.Component<IProps, {}> {
       actions.push({ title: 'Disassociate', onClick: () => this.props.onDisassociate(keyInfo) });
     }
 
-    if (!!this.props.showDetails) {
-        actions.push({ title: 'Details', onClick: () => this.props.showDetails(keyInfo.key) });
-    }
-
-    if (!!this.props.onEdit) {
-        actions.push({ title: 'Edit', onClick: () => this.props.onEdit(keyInfo.key) });
-    }
-
     if (!!this.props.onDelete) {
       actions.push({ title: 'Delete', onClick: () => this.props.onDelete(keyInfo.key) });
   }
 
     return (
       <tr>
+          <td>
+            <Button color="link" onClick={() => this.props.showDetails(this.props.keyInfo.key)}>
+              Details
+            </Button>
+          </td>
         <td>{keyInfo.key.name}</td>
         <td>{keyInfo.key.code}</td>
         <td className=""><i className="fas fa-key"/> {keyInfo.serialsInUseCount} / {keyInfo.serialsTotalCount}</td>

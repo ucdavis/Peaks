@@ -7,7 +7,6 @@ import {
     ModalFooter,
 } from "reactstrap";
 import { AppContext, IWorkstation } from "../../Types";
-import HistoryContainer from "../History/HistoryContainer";
 import WorkstationEditValues from "./WorkstationEditValues";
 
 
@@ -51,9 +50,7 @@ export default class DeleteWorkstation extends React.Component<IProps, IState> {
                   </div>
 
                     <ModalBody>
-                        <WorkstationEditValues selectedWorkstation={this.props.selectedWorkstation} disableEditing={true} />
-                        <HistoryContainer controller="workstation" id={this.props.selectedWorkstation.id}/>
-                        
+                        <WorkstationEditValues selectedWorkstation={this.props.selectedWorkstation} disableEditing={true} />                        
                     </ModalBody>
                     <ModalFooter>
                     <Button

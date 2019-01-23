@@ -1,4 +1,4 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;

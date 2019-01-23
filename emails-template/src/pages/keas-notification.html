@@ -27,19 +27,37 @@
             </tr>
             </thead>
             <tbody>
-            @foreach (var notification in Model)
+            @foreach (IGrouping<int?, Notification> notificationGroup in Model)
             {
+                var acceptStatement = notificationGroup.Any(n => n.NeedsAccept);
+                var teamName = "Not Set";
+                var link = "https://peaks.ucdavis.edu/";
+                if (notificationGroup.Key != null)
+                {
+                    teamName = notificationGroup.First().Team.Name;
+                    link = "https://peaks.ucdavis.edu/" + notificationGroup.First().Team.Slug + "/Confirm/Confirm";
+                }
                 <tr>
-                    <td>@notification.Details</td>
-                    <td>@notification.DateTimeCreated.ToPacificTime().ToString("g")</td>
+                    <td colspan="2">
+                        <h3>Team:  @teamName</h3>
+                        @if (acceptStatement)
+                        {
+                          <span>One or more items in this team require you to accept them. Please <a href="@link">click here to confirm receiving</a> these items.</span>
+                        }
+                        <hr/>
+                    </td>
                 </tr>
+                foreach (var notification in notificationGroup)
+                {
+                    <tr>
+                        <td>@notification.Details</td>
+                        <td>@notification.DateTimeCreated.ToPacificTime().ToString("g")</td>
+                    </tr>
+                }
+
             }
             </tbody>
         </table>
-        @if (@acceptStatement)
-        {
-          <p>One or more items require you to accept them. Please visit our wonderful website to <a href="https://peaks.ucdavis.edu/">confirm receiving</a> these items.</p>
-        }
       <hr/>
     </columns>
   </row>

@@ -6,12 +6,14 @@ import {
 } from "reactstrap";
 import { IEquipment } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
+import EquipmentAssignmentValues from "./EquipmentAssignmentValues";
 import EquipmentEditValues from "./EquipmentEditValues";
 
 interface IProps {
     modal: boolean;
     closeModal: () => void;
     openEditModal: (equipment: IEquipment) => void;
+    openUpdateModal: (equipment: IEquipment) => void;
     selectedEquipment: IEquipment;
 }
 
@@ -35,8 +37,8 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
                   </div>
 
                     <ModalBody>
-                        <Button color="link" onClick={() => this.props.openEditModal(equipment)}><i className="fas fa-edit fa-xs"/> Edit Equipment</Button>
-                        <EquipmentEditValues selectedEquipment={equipment} disableEditing={true} />
+                        <EquipmentEditValues selectedEquipment={equipment} disableEditing={true} openEditModal={this.props.openEditModal} />
+                        <EquipmentAssignmentValues selectedEquipment={equipment} openUpdateModal={this.props.openUpdateModal}/>
                         <HistoryContainer controller="equipment" id={equipment.id}/>
                     </ModalBody>
                 </Modal>
