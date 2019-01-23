@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Extensions;
@@ -23,22 +24,30 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> List()
         {
-            var people = 
-            from person in _context.People.Where(x => x.Team.Slug == Team && x.Active).Include(x => x.User) // TODO: have some way to show inactive?
-            select new
+            var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
+
+            var sql = PeopleQueries.List;
+
+            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new { teamId });
+
+            var people = result.Select(r => new
             {
-                person = person,
-                id = person.Id,
-                accessCount = 
-                    (from a in _context.AccessAssignments where a.Person.Id == person.Id select a).Count(),
-                equipmentCount = 
-                    (from eq in _context.EquipmentAssignments where eq.PersonId == person.Id select eq ).Count(),
-                keyCount = 
-                    (from k in _context.KeySerialAssignments where k.PersonId == person.Id select k ).Count(),
-                workstationCount = 
-                    (from w in _context.WorkstationAssignments where w.PersonId == person.Id select w).Count()
-                };
-            return Json(await people.ToListAsync());
+                person = new Person
+                {
+                    Id = r.Id,
+                    FirstName = r.FirstName,
+                    LastName = r.LastName,
+                    Email = r.Email,
+                    Tags = r.Tags
+                },
+                id = r.Id,
+                equipmentCount = r.EquipmentCount,
+                accessCount = r.AccessCount,
+                keyCount = r.KeyCount,
+                workstationCount = r.WorkstationCount,
+            });
+
+            return Json(people);
         }
 
         public async Task<IActionResult> Search(string q)
