@@ -18,6 +18,36 @@
   padding:$card-padding;
   padding-top:1.8rem;
 }
+.team-link {
+  white-space: nowrap;
+  display: inline-block;
+  height: 40px;
+  width:200px;
+  line-height: 40px;
+  padding: 0 20px;
+  box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 1px 3px rgba(0,0,0,.08);
+  background: $secondary-color;
+  border-radius: 2px;
+  font-size: 1.6rem;
+  letter-spacing: 0.025em;
+  color: #fff !important;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  border: none;
+  font-family: $sans-bold;
+  &:active,
+  &:focus {
+    background-color: darken($primary-color, 5);
+  }
+  &:hover {
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 3px 6px rgba(0,0,0,.08);
+    background-color: lighten($primary-color, 5);
+    text-decoration: none !important;
+  }
+
+}
 .card-gradient-header {
   background: url("/media/gradient-header.svg") center top/cover no-repeat;
   height: 6px;
@@ -212,14 +242,18 @@ img.img-fluid {
   }
 }
 }
-.access-color {
-  .fa-ellipsis-h:before {
-    color:$access;
-  }
+.btn-border {
+  border:1px solid #C7C8CC !important;
+  color:$secondary-font !important;
 }
 .people-color {
   .fa-ellipsis-h:before {
     color:$people;
+  }
+}
+.access-color {
+  .fa-ellipsis-h:before {
+    color:$access;
   }
 }
 .equipment-color {
@@ -568,4 +602,65 @@ ol.breadcrumb {
   .rbt {
     margin-bottom:0px;
   }
+}
+.ReactTable .rt-thead .rt-th.-sort-asc, .ReactTable .rt-thead .rt-td.-sort-asc {
+  .people-color & {
+    box-shadow: inset 0 3px 0 0 $people;
+  }
+  .access-color & {
+    box-shadow: inset 0 3px 0 0 $access;
+  }
+  .equipment-color & {
+    box-shadow: inset 0 3px 0 0 $equipment;
+  }
+  .keys-color & {
+    box-shadow: inset 0 3px 0 0 $keys;
+  }
+  .spaces-color & {
+    box-shadow: inset 0 3px 0 0 $spaces;
+  }
+}
+.ReactTable .rt-thead .rt-th.-sort-desc, .ReactTable .rt-thead .rt-td.-sort-desc {
+  .people-color & {
+    box-shadow: inset 0 -3px 0 0 $people;
+  }
+  .access-color & {
+    box-shadow: inset 0 -3px 0 0 $access;
+  }
+  .equipment-color & {
+    box-shadow: inset 0 -3px 0 0 $equipment;
+  }
+  .keys-color & {
+    box-shadow: inset 0 -3px 0 0 $keys;
+  }
+  .spaces-color & {
+    box-shadow: inset 0 -3px 0 0 $spaces;
+  }
+}
+.-btn {
+  color:#fff!important;
+  font-family: $sans-bold;
+  width:66% !important;
+  display:inline !important;
+  .people-color & {
+      background-color: lighten($people,5) !important;
+  }
+  .access-color & {
+    background-color: $access !important;
+  }
+  .spaces-color & {
+    background-color: $spaces !important;
+  }
+  .keys-color & {
+    background-color: $keys !important;
+  }
+  .equipment-color & {
+    background-color: transparentize($equipment,.2) !important;
+  }
+}
+.-previous {
+  text-align: left !important;
+}
+.-next {
+  text-align: right !important;
 }

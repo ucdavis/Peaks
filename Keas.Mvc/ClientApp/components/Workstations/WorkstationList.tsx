@@ -32,6 +32,7 @@ export default class WorkstationList extends React.Component<IProps, {}> {
         <table className="table">
           <thead>
             <tr>
+              <th/>
               <th>Name</th>
               <th>Space</th>
               <th>Assigned To</th>

@@ -1,7 +1,7 @@
 ﻿import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-import { Button } from "reactstrap";
+import { Button, UncontrolledTooltip } from "reactstrap";
 import { ISpace, ISpaceInfo } from "../../Types";
 
 interface IProps {
@@ -65,7 +65,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                     },
                     {
                         Cell: row => (
-                            <span><i className="fas fa-key"/> {row.original.keyCount}</span>
+                            <span>{row.original.keyCount}</span>
                         ),
                         Header: "Keys",
                         accessor: "keyCount",
@@ -75,7 +75,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                     },
                     {
                         Cell: row => (
-                            <span><i className="fas fa-hdd"/> {row.original.equipmentCount}</span>
+                            <span>{row.original.equipmentCount}</span>
                         ),
                         Header: "Equipment",
                         accessor: "equipmentCount",
@@ -85,7 +85,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                     },
                     {
                         Cell: row => (
-                            <span><i className="fas fa-user"/> {row.value.workstationsInUse} / {row.value.workstationsTotal}</span>
+                            <span>{row.value.workstationsInUse} / {row.value.workstationsTotal}</span>
                         ),
                         Filter: ({filter, onChange}) =>
                         <select onChange={e => onChange(e.target.value)}
@@ -97,7 +97,9 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                             <option value="assigned">Assigned</option>
                             <option value="any">Any</option>
                         </select>,
-                        Header: "Workstations",
+                        Header: header => ( 
+                        <div>Workstations <i id="workstationsTooltip" className="fas fa-info-circle" /><UncontrolledTooltip placement="right" target="workstationsTooltip">In Use / Total</UncontrolledTooltip></div>
+                        ),
                         accessor: spaceInfo => {
                             return {
                                 "workstationsInUse": spaceInfo.workstationsInUse,

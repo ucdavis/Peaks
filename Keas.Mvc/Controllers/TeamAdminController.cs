@@ -299,6 +299,32 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> RegenerateApiCode() 
+        {
+            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
+            if (team == null)
+            {
+                return NotFound();
+            }
+            return View(team);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RegenerateApiCode(Team team)
+        {
+            var teamToEdit = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
+            if (teamToEdit == null)
+            {
+                return NotFound();
+            }
+            teamToEdit.ApiCode = Guid.NewGuid();
+            await _context.SaveChangesAsync();
+            Message = "API Code updated";
+
+            return RedirectToAction("RegenerateApiCode");
+            
+        }
+
 
         public async Task<IActionResult> RemovePpsDepartment(int id)
         {

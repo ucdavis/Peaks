@@ -121,23 +121,12 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
 
     const actions: IAction[] = [];
 
+    if (!!this.props.onAdd && !hasAssignment) {
+        actions.push({ title: 'Add', onClick: () => this.props.onAdd(equipmentEntity) });
+    }
+
     if (!!this.props.onRevoke && hasAssignment) {
         actions.push({ title: 'Revoke', onClick: () => this.props.onRevoke(equipmentEntity) });
-      }
-
-      if (!!this.props.onAdd && !hasAssignment) {
-          actions.push({ title: 'Add', onClick: () => this.props.onAdd(equipmentEntity) });
-      }
-      else if (!!this.props.onAdd && hasAssignment) {
-        actions.push({ title: 'Update', onClick: () => this.props.onAdd(equipmentEntity) });
-      }
-
-      if (!!this.props.showDetails) {
-          actions.push({ title: 'Details', onClick: () => this.props.showDetails(equipmentEntity) });
-      }
-
-      if (!!this.props.onEdit) {
-          actions.push({ title: 'Edit', onClick: () => this.props.onEdit(equipmentEntity) });
       }
 
       if (!!this.props.onDelete) {

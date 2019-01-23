@@ -54,7 +54,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             },
             {
                 Cell: row => (
-                    <span><i className="fas fa-key"/> {row.original.keyCount}</span>
+                    <span>{row.original.keyCount}</span>
                 ),
                 Header: "Keys",
                 accessor: "keyCount",
@@ -64,7 +64,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             },
             {
                 Cell: row => (
-                    <span><i className="fas fa-hdd"/> {row.original.equipmentCount}</span>
+                    <span>{row.original.equipmentCount}</span>
                 ),
                 Header: "Equipment",
                 accessor: "equipmentCount",
@@ -74,7 +74,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             },
             {
                 Cell: row => (
-                    <span><i className="fas fa-address-card"/> {row.original.accessCount}</span>
+                    <span>{row.original.accessCount}</span>
                 ),
                 Header: "Accesses",
                 accessor: "accessCount",
@@ -84,7 +84,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             },
             {
                 Cell: row => (
-                    <span><i className="fas fa-briefcase"/> {row.original.workstationCount}</span>
+                    <span>{row.original.workstationCount}</span>
                 ),
                 Header: "Workstations",
                 accessor: "workstationCount",

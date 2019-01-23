@@ -1,9 +1,10 @@
 import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
-import { Button } from "reactstrap";
+import { Button, UncontrolledTooltip } from "reactstrap";
 import { IKey, IKeyInfo } from "../../Types";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
+import Tooltip from "reactstrap/lib/Tooltip";
 
 interface IProps {
     showDetails?: (key: IKey) => void;
@@ -75,7 +76,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
                     },
                     {
                         Cell: row => (
-                            <span><i className="fas fa-key"/> {row.value.serialsInUse} / {row.value.serialsTotal}</span>
+                            <span>{row.value.serialsInUse} / {row.value.serialsTotal}</span>
                         ),
                         Filter: ({filter, onChange}) =>
                         <select onChange={e => onChange(e.target.value)}
@@ -87,7 +88,10 @@ export default class KeyTable extends React.Component<IProps, {}> {
                             <option value="assigned">Assigned</option>
                             <option value="any">Any</option>
                         </select>,
-                        Header: "Serials",
+                        Header: header => (
+                        <div>Serials <i id="serialTooltip" className="fas fa-info-circle" />
+                        <UncontrolledTooltip placement="right" target="serialTooltip">In Use / Total</UncontrolledTooltip></div>
+                        ),
                         accessor: keyInfo => {
                             return {
                                 "serialsInUse": keyInfo.serialsInUseCount,
@@ -132,19 +136,20 @@ export default class KeyTable extends React.Component<IProps, {}> {
                     },
                     {
                         Cell: (row) => (
-                            <span><i className="fas fa-building mr-2" /> {row.original.spacesCount}</span>
+                            <span>{row.original.spacesCount}</span>
 
                         ),
-                        Header: "",
+                        Header: "Spaces",
+                        accessor: "spacesCount",
                         className: "table-actions",
                         filterable: false,
                         headerClassName: "table-actions",
                         resizable: false,
-                        sortable: false,
+                        sortable: true,
                     },
                     {
                         Cell: this.renderDropdownColumn,
-                        Header: "",
+                        Header: "Actions",
                         className: "table-actions",
                         filterable: false,
                         headerClassName: "table-actions",
@@ -160,20 +165,6 @@ export default class KeyTable extends React.Component<IProps, {}> {
         const key = row.original.key;
 
         const actions: IAction[] = [];
-
-        if (!!this.props.showDetails) {
-            actions.push({
-                onClick: () => this.props.showDetails(key),
-                title: "Details",
-            });
-        }
-
-        if (!!this.props.onEdit) {
-            actions.push({
-                onClick: () => this.props.onEdit(key),
-                title: "Edit",
-            });
-        }
 
         if (!!this.props.onDelete) {
             actions.push({

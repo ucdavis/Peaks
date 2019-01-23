@@ -128,14 +128,6 @@ export default class AccessTable extends React.Component<IProps, {}> {
         actions.push({ title: 'Assign', onClick: () => this.props.onAdd(accessEntity) });
     }
 
-    if (!!this.props.showDetails) {
-        actions.push({ title: 'Details', onClick: () => this.props.showDetails(accessEntity) });
-    }
-
-    if (!!this.props.onEdit) {
-        actions.push({ title: 'Edit', onClick: () => this.props.onEdit(accessEntity) });
-    }
-
     if (!!this.props.onDelete) {
         actions.push({ title: 'Delete', onClick: () => this.props.onDelete(accessEntity) });
     }

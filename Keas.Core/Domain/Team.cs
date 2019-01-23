@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
+using System;
 
 namespace Keas.Core.Domain
 {
@@ -23,6 +24,8 @@ namespace Keas.Core.Domain
         public string Slug { get; set; }
 
         public const string SlugRegex = "^([a-z0-9]+[a-z0-9\\-]?)+[a-z0-9]$";
+
+         public Guid? ApiCode { get; set; }
 
         public List<Person> People { get; set; }
 

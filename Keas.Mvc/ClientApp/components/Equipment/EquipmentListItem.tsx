@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Button } from "reactstrap";
 import { IEquipment } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
@@ -19,23 +20,12 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
         const hasAssignment = !!this.props.equipmentEntity.assignment;
 
         const actions: IAction[] = [];
+        if (!!this.props.onAdd && !hasAssignment) {
+          actions.push({ title: 'Add', onClick: () => this.props.onAdd(this.props.equipmentEntity) });
+        }
+
         if (!!this.props.onRevoke && hasAssignment) {
           actions.push({ title: 'Revoke', onClick: () => this.props.onRevoke(this.props.equipmentEntity) });
-        }
-
-        if (!!this.props.onAdd && !hasAssignment) {
-            actions.push({ title: 'Add', onClick: () => this.props.onAdd(this.props.equipmentEntity) });
-        }
-        else if (!!this.props.onAdd && hasAssignment) {
-          actions.push({ title: 'Update', onClick: () => this.props.onAdd(this.props.equipmentEntity) });
-        }
-
-        if (!!this.props.showDetails) {
-            actions.push({ title: 'Details', onClick: () => this.props.showDetails(this.props.equipmentEntity) });
-        }
-
-        if (!!this.props.onEdit) {
-            actions.push({ title: 'Edit', onClick: () => this.props.onEdit(this.props.equipmentEntity) });
         }
 
         if (!!this.props.onDelete) {
@@ -44,6 +34,11 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
 
         return (
           <tr>
+            <td>
+              <Button color="link" onClick={() => this.props.showDetails(this.props.equipmentEntity)}>
+                Details
+              </Button>
+            </td>
             <td>{this.props.equipmentEntity.serialNumber}</td>
             <td>{this.props.equipmentEntity.name}</td>
             <td>{hasAssignment ? this.props.equipmentEntity.assignment.person.name : ""}</td>
