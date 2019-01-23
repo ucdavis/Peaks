@@ -12,7 +12,10 @@ export default class KeySerialAssignmentValues extends React.Component<IProps, {
     public render() {
         return (
             <div>
-                <Button color="link" onClick={() => this.props.openUpdateModal(this.props.selectedKeySerial)}>
+                <Button
+                    color="link"
+                    onClick={() => this.props.openUpdateModal(this.props.selectedKeySerial)}
+                >
                     <i className="fas fa-edit fa-xs" /> Update Assignment
                 </Button>
 

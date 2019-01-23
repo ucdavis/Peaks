@@ -1,4 +1,4 @@
-﻿import * as PropTypes from 'prop-types';
+﻿import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 import { AppContext, IKeyInfo } from "../../Types";
@@ -14,11 +14,12 @@ interface IState {
     keysInfo: IKeyInfo[];
 }
 
-function noopTrue() { return true; }
+function noopTrue() {
+    return true;
+}
 
 // Search for existing key then send selection back to parent
 export default class SearchKeys extends React.Component<IProps, IState> {
-
     public static contextTypes = {
         fetch: PropTypes.func,
         person: PropTypes.object,
@@ -32,7 +33,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
 
         this.state = {
             isSearchLoading: false,
-            keysInfo: [],
+            keysInfo: []
         };
     }
 
@@ -61,21 +62,17 @@ export default class SearchKeys extends React.Component<IProps, IState> {
         return (
             <div>
                 <div>
-                    <Highlighter search={props.text}>
-                        {option.key.name}
-                    </Highlighter>
+                    <Highlighter search={props.text}>{option.key.name}</Highlighter>
                 </div>
                 <div>
                     <small>
                         Code:
-                        <Highlighter search={props.text}>
-                            {option.key.code}
-                        </Highlighter>
+                        <Highlighter search={props.text}>{option.key.code}</Highlighter>
                     </small>
                 </div>
             </div>
         );
-    }
+    };
 
     private onSearch = async query => {
         const { team } = this.context;
@@ -88,17 +85,16 @@ export default class SearchKeys extends React.Component<IProps, IState> {
             isSearchLoading: false,
             keysInfo
         });
-    }
+    };
 
     private onChange = (selected: any[]) => {
-
         let keyInfo: IKeyInfo;
 
         // check for empty
         if (!selected || selected.length <= 0) {
             this.props.onDeselect();
         }
-        
+
         // check for new selection
         if (selected[0].customOption) {
             keyInfo = {
@@ -106,17 +102,16 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 key: {
                     code: selected[0].code,
                     id: 0,
-                    name: '',
+                    name: "",
                     serials: [],
                     tags: "",
-                    teamId: 0,
+                    teamId: 0
                 },
                 serialsInUseCount: 0,
                 serialsTotalCount: 0,
                 spacesCount: 0
             };
-        }
-        else {
+        } else {
             keyInfo = selected[0];
         }
 

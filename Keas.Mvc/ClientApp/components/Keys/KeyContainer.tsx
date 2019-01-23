@@ -13,19 +13,9 @@ import KeyList from "./KeyList";
 import KeyTable from "./KeyTable";
 
 interface IProps {
-    assetInUseUpdated?: (
-        type: string,
-        spaceId: number,
-        personId: number,
-        count: number
-    ) => void;
+    assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
 
-    assetTotalUpdated?: (
-        type: string,
-        spaceId: number,
-        personId: number,
-        count: number
-    ) => void;
+    assetTotalUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
 
     assetEdited?: (type: string, spaceId: number, personId: number) => void;
     person?: IPerson;
@@ -75,9 +65,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
         const keys = await this.context.fetch(keyFetchUrl);
 
-        const tags = await this.context.fetch(
-            `/api/${team.slug}/tags/listTags`
-        );
+        const tags = await this.context.fetch(`/api/${team.slug}/tags/listTags`);
 
         this.setState({ keys, tags, loading: false });
     }
@@ -93,11 +81,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
         const { space } = this.props;
         const { tags } = this.state;
-        const {
-            keyAction,
-            keyId,
-            action
-        } = this.context.router.route.match.params;
+        const { keyAction, keyId, action } = this.context.router.route.match.params;
 
         const selectedKeyId = parseInt(keyId, 10);
         const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
@@ -131,7 +115,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         selectedKey={selectedKey}
                         searchableTags={tags}
                     />
-                    <DeleteKey 
+                    <DeleteKey
                         selectedKey={selectedKey}
                         deleteKey={this._deleteKey}
                         closeModal={this._closeModals}
@@ -207,9 +191,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                     onEdit={this._openEditModal}
                     showDetails={this._openDetailsModal}
                     onDelete={this._openDeleteModal}
-                    onDisassociate={
-                        !!space ? k => this._disassociateSpace(space, k) : null
-                    }
+                    onDisassociate={!!space ? k => this._disassociateSpace(space, k) : null}
                 />
             </div>
         );
@@ -252,7 +234,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             key,
             serialsInUseCount: 0,
             serialsTotalCount: 0,
-            spacesCount: 0,
+            spacesCount: 0
         };
         if (index !== -1) {
             // update already existing entry in key
@@ -296,9 +278,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             tags: key.tags
         };
 
-        const updateUrl = `/api/${this.context.team.slug}/keys/update/${
-            key.id
-        }`;
+        const updateUrl = `/api/${this.context.team.slug}/keys/update/${key.id}`;
         key = await this.context.fetch(updateUrl, {
             body: JSON.stringify(request),
             method: "POST"
@@ -325,22 +305,24 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     };
 
     private _deleteKey = async (key: IKey) => {
-        if(!confirm("Are you should you want to delete item?")){
-          return false;
+        if (!confirm("Are you should you want to delete item?")) {
+            return false;
         }
-        const deleted: IKey = await this.context.fetch(`/api/${this.context.team.slug}/keys/delete/${key.id}`, {
-          method: "POST"
-        });
-        
-    
+        const deleted: IKey = await this.context.fetch(
+            `/api/${this.context.team.slug}/keys/delete/${key.id}`,
+            {
+                method: "POST"
+            }
+        );
+
         // remove from state
         const index = this.state.keys.findIndex(x => x.id === key.id);
         if (index > -1) {
-          const shallowCopy = [...this.state.keys];
-          shallowCopy.splice(index, 1);
-          this.setState({ keys: shallowCopy });
+            const shallowCopy = [...this.state.keys];
+            shallowCopy.splice(index, 1);
+            this.setState({ keys: shallowCopy });
         }
-      };
+    };
 
     private _associateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
         const { team } = this.context;
@@ -379,10 +361,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                 keys: [...this.state.keys, keyInfo]
             });
         }
-        if(this.props.assetTotalUpdated)
-        {
-        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
-            this.props.person ? this.props.person.id : null, 1);
+        if (this.props.assetTotalUpdated) {
+            this.props.assetTotalUpdated(
+                "key",
+                this.props.space ? this.props.space.id : null,
+                this.props.person ? this.props.person.id : null,
+                1
+            );
         }
     };
 
@@ -394,9 +379,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             spaceId: space.id
         };
 
-        const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${
-            keyInfo.id
-        }`;
+        const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${keyInfo.id}`;
         const result = await this.context.fetch(disassociateUrl, {
             body: JSON.stringify(request),
             method: "POST"
@@ -413,45 +396,45 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             keys: updatedKeys
         });
 
-        if(this.props.assetTotalUpdated)
-        {
-        this.props.assetTotalUpdated("key", this.props.space ? this.props.space.id : null,
-            this.props.person ? this.props.person.id : null, -1);
+        if (this.props.assetTotalUpdated) {
+            this.props.assetTotalUpdated(
+                "key",
+                this.props.space ? this.props.space.id : null,
+                this.props.person ? this.props.person.id : null,
+                -1
+            );
         }
     };
 
     // managing counts for assigned or revoked
     private _serialInUseUpdated = (keyId: number, count: number) => {
         const index = this.state.keys.findIndex(x => x.id === keyId);
-        if(index > -1)
-        {
+        if (index > -1) {
             const keys = [...this.state.keys];
             keys[index].serialsInUseCount += count;
-            
-            this.setState({keys});
+
+            this.setState({ keys });
         }
-    }
+    };
     private _serialTotalUpdated = (keyId: number, count: number) => {
         const index = this.state.keys.findIndex(x => x.id === keyId);
-        if(index > -1)
-        {
+        if (index > -1) {
             const keys = [...this.state.keys];
             keys[index].serialsTotalCount += count;
-            
-            this.setState({keys});
+
+            this.setState({ keys });
         }
-    }
+    };
 
     private _spacesTotalUpdated = (keyId: number, count: number) => {
         const index = this.state.keys.findIndex(x => x.id === keyId);
-        if(index > -1)
-        {
+        if (index > -1) {
             const keys = [...this.state.keys];
             keys[index].spacesCount += count;
-            
-            this.setState({keys});
+
+            this.setState({ keys });
         }
-    }
+    };
 
     private _onTagsFiltered = (tagFilters: string[]) => {
         this.setState({ tagFilters });
@@ -468,9 +451,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
     private _openDetailsModal = (key: IKey) => {
         const { team } = this.context;
-        this.context.router.history.push(
-            `/${team.slug}/keys/details/${key.id}`
-        );
+        this.context.router.history.push(`/${team.slug}/keys/details/${key.id}`);
     };
 
     private _openEditModal = (key: IKey) => {
@@ -479,15 +460,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     };
 
     private _openDeleteModal = (equipment: IKey) => {
-        this.context.router.history.push(
-          `${this._getBaseUrl()}/keys/delete/${equipment.id}`
-        );
-      }
+        this.context.router.history.push(`${this._getBaseUrl()}/keys/delete/${equipment.id}`);
+    };
 
     private _openAssociate = () => {
-        this.context.router.history.push(
-            `${this._getBaseUrl()}/keys/associate`
-        );
+        this.context.router.history.push(`${this._getBaseUrl()}/keys/associate`);
     };
 
     private _closeModals = () => {

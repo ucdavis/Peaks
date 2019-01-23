@@ -43,10 +43,10 @@ export default class CreateKey extends React.Component<IProps, IState> {
                 name: "",
                 serials: [],
                 tags: "",
-                teamId: 0,
+                teamId: 0
             },
             submitting: false,
-            validState: false,
+            validState: false
         };
     }
 
@@ -54,8 +54,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
         return (
             <div>
                 <Button color="link" onClick={this.props.onOpenModal}>
-                    <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add
-                    Key
+                    <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add Key
                 </Button>
                 {this.renderModal()}
             </div>
@@ -92,9 +91,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
                     <Button
                         color="primary"
                         onClick={this._editSelected}
-                        disabled={
-                            !this.state.validState || this.state.submitting
-                        }
+                        disabled={!this.state.validState || this.state.submitting}
                     >
                         Go!
                         {this.state.submitting && (
@@ -128,10 +125,10 @@ export default class CreateKey extends React.Component<IProps, IState> {
                 name: "",
                 serials: [],
                 tags: "",
-                teamId: 0,
+                teamId: 0
             },
             submitting: false,
-            validState: false,
+            validState: false
         });
         this.props.closeModal();
     };

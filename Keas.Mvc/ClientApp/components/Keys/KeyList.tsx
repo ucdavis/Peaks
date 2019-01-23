@@ -1,7 +1,7 @@
 import * as React from "react";
+import { UncontrolledTooltip } from "reactstrap";
 import { IKey, IKeyInfo } from "../../Types";
 import KeyListItem from "./KeyListItem";
-import { UncontrolledTooltip } from "reactstrap";
 
 interface IProps {
     keysInfo: IKeyInfo[];
@@ -15,18 +15,29 @@ interface IProps {
 export default class KeyList extends React.Component<IProps, {}> {
     public render() {
         const { keysInfo } = this.props;
-        const keys = !keysInfo || keysInfo.length < 1 ?
-            <tr><td colSpan={4}>No Keys Found</td></tr> :
-            keysInfo.map(this.renderItem);
+        const keys =
+            !keysInfo || keysInfo.length < 1 ? (
+                <tr>
+                    <td colSpan={4}>No Keys Found</td>
+                </tr>
+            ) : (
+                keysInfo.map(this.renderItem)
+            );
 
         return (
             <table className="table">
                 <thead>
                     <tr>
-                        <th/>
+                        <th />
                         <th>Name</th>
                         <th>Code</th>
-                        <th>Available Serials <i id="serialTooltip" className="fas fa-info-circle" /><UncontrolledTooltip placement="right" target="serialTooltip">In Use / Total</UncontrolledTooltip></th>
+                        <th>
+                            Available Serials{" "}
+                            <i id="serialTooltip" className="fas fa-info-circle" />
+                            <UncontrolledTooltip placement="right" target="serialTooltip">
+                                In Use / Total
+                            </UncontrolledTooltip>
+                        </th>
                         <th className="list-actions">Actions</th>
                     </tr>
                 </thead>
@@ -35,7 +46,7 @@ export default class KeyList extends React.Component<IProps, {}> {
         );
     }
 
-    private renderItem = (keyInfo) => {
+    private renderItem = keyInfo => {
         return (
             <KeyListItem
                 key={keyInfo.id}
@@ -47,5 +58,5 @@ export default class KeyList extends React.Component<IProps, {}> {
                 onEdit={this.props.onEdit}
             />
         );
-    }
+    };
 }

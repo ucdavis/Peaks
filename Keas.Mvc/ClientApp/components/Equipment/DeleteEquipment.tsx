@@ -1,15 +1,9 @@
 ﻿import * as PropTypes from "prop-types";
 import * as React from "react";
-import {
-    Button,
-    Modal,
-    ModalBody,
-    ModalFooter,
-} from "reactstrap";
+import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
 import { AppContext, IEquipment } from "../../Types";
 import EquipmentAssignmentValues from "./EquipmentAssignmentValues";
 import EquipmentEditValues from "./EquipmentEditValues";
-
 
 interface IProps {
     modal: boolean;
@@ -28,51 +22,56 @@ export default class DeleteEquipment extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
         team: PropTypes.object
-      };
+    };
     public context: AppContext;
-      constructor(props) {
+    constructor(props) {
         super(props);
         this.state = {
-          submitting: false,
+            submitting: false
         };
-      }
-      
+    }
+
     public render() {
-        if (!this.props.selectedEquipment)
-        {
+        if (!this.props.selectedEquipment) {
             return null;
         }
         return (
             <div>
-                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg" className="equipment-color">
-                  <div className="modal-header row justify-content-between">
-                    <h2>Delete {this.props.selectedEquipment.name}</h2>
-                    <Button color="link" onClick={this.props.closeModal}>
-                    <i className="fas fa-times fa-lg"/>
-                    </Button>
-                  </div>
+                <Modal
+                    isOpen={this.props.modal}
+                    toggle={this.props.closeModal}
+                    size="lg"
+                    className="equipment-color"
+                >
+                    <div className="modal-header row justify-content-between">
+                        <h2>Delete {this.props.selectedEquipment.name}</h2>
+                        <Button color="link" onClick={this.props.closeModal}>
+                            <i className="fas fa-times fa-lg" />
+                        </Button>
+                    </div>
 
                     <ModalBody>
-                        <EquipmentEditValues 
+                        <EquipmentEditValues
                             selectedEquipment={this.props.selectedEquipment}
                             disableEditing={true}
                             openEditModal={this.props.openEditModal}
                         />
-                        {this.props.selectedEquipment.assignment && 
-                        <EquipmentAssignmentValues 
-                            selectedEquipment={this.props.selectedEquipment} 
-                            openUpdateModal={this.props.openUpdateModal}
-                        />}
+                        {this.props.selectedEquipment.assignment && (
+                            <EquipmentAssignmentValues
+                                selectedEquipment={this.props.selectedEquipment}
+                                openUpdateModal={this.props.openUpdateModal}
+                            />
+                        )}
                     </ModalBody>
                     <ModalFooter>
-                    <Button
-                        color="primary"
-                        onClick={this._deleteEquipment}
-                        disabled={this.state.submitting}
-                    >
-                        Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin"/>}
-                    </Button>{" "}
-
+                        <Button
+                            color="primary"
+                            onClick={this._deleteEquipment}
+                            disabled={this.state.submitting}
+                        >
+                            Go!{" "}
+                            {this.state.submitting && <i className="fas fa-circle-notch fa-spin" />}
+                        </Button>{" "}
                     </ModalFooter>
                 </Modal>
             </div>
@@ -80,20 +79,21 @@ export default class DeleteEquipment extends React.Component<IProps, IState> {
     }
 
     private _deleteEquipment = async () => {
-        if(this.props.selectedEquipment.assignment !== null &&
-            !confirm("This equipment is currently assigned, are you sure you want to delete it?")){
+        if (
+            this.props.selectedEquipment.assignment !== null &&
+            !confirm("This equipment is currently assigned, are you sure you want to delete it?")
+        ) {
             return;
-          }
-        this.setState({submitting: true});
-        try{
+        }
+        this.setState({ submitting: true });
+        try {
             await this.props.deleteEquipment(this.props.selectedEquipment);
-        }
-        catch(err) {
+        } catch (err) {
             alert("There was an error deleting this equipment, please try again");
-            this.setState({submitting: false});
+            this.setState({ submitting: false });
             return;
         }
-        this.setState({submitting: false});
+        this.setState({ submitting: false });
         this.props.closeModal();
-    }
+    };
 }

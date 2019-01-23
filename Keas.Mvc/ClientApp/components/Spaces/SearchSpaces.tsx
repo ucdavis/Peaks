@@ -1,4 +1,4 @@
-﻿import * as PropTypes from 'prop-types';
+﻿import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 import { AppContext, ISpace } from "../../Types";
@@ -20,7 +20,7 @@ export default class SearchSpaces extends React.Component<IProps, IState> {
         fetch: PropTypes.func,
         team: PropTypes.object
     };
-    
+
     public context: AppContext;
 
     constructor(props: IProps) {
@@ -28,7 +28,7 @@ export default class SearchSpaces extends React.Component<IProps, IState> {
 
         this.state = {
             isSearchLoading: false,
-            spaces: [],
+            spaces: []
         };
     }
 
@@ -42,43 +42,45 @@ export default class SearchSpaces extends React.Component<IProps, IState> {
                 minLength={2}
                 placeholder="Search for space"
                 defaultSelected={defaultSpace ? [defaultSpace] : []}
-                labelKey={(option: ISpace) =>
-                    `${option.roomNumber} ${option.bldgName}`
-                }
-                filterBy={() => true} 
+                labelKey={(option: ISpace) => `${option.roomNumber} ${option.bldgName}`}
+                filterBy={() => true}
                 renderMenuItemChildren={this.renderItem}
                 onSearch={this.onSearch}
                 onChange={this.onChange}
                 options={this.state.spaces}
             />
         );
-    };
+    }
 
     private renderItem = (option, props, index) => {
         return (
             <div>
                 <div>
-                    {!!option.roomNumber &&
+                    {!!option.roomNumber && (
                         <Highlighter key="roomNumber" search={props.text}>
                             {option.roomNumber}
-                        </Highlighter>}
-                    {" "}
-                    {!!option.bldgName &&
+                        </Highlighter>
+                    )}{" "}
+                    {!!option.bldgName && (
                         <Highlighter key="bldgName" search={props.text}>
                             {option.bldgName}
-                        </Highlighter>}
+                        </Highlighter>
+                    )}
                 </div>
-                {!!option.roomName &&
+                {!!option.roomName && (
                     <div>
                         <small>
-                            <Highlighter key="roomName" search={props.text}>{option.roomName}</Highlighter>
+                            <Highlighter key="roomName" search={props.text}>
+                                {option.roomName}
+                            </Highlighter>
                         </small>
-                    </div>}
+                    </div>
+                )}
             </div>
         );
-    }
+    };
 
-    private onSearch = async (query) => {
+    private onSearch = async query => {
         this.setState({ isSearchLoading: true });
         const spaces = await this.context.fetch(
             `/api/${this.context.team.slug}/spaces/searchSpaces?q=${query}`
@@ -87,14 +89,14 @@ export default class SearchSpaces extends React.Component<IProps, IState> {
             isSearchLoading: false,
             spaces
         });
-    }
+    };
 
-    private onChange = (selected) => {
+    private onChange = selected => {
         if (selected && selected.length === 1) {
             this.props.onSelect(selected[0]);
             return;
         }
-        
+
         this.props.onSelect(null);
-    }
+    };
 }

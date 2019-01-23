@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Typeahead } from "react-bootstrap-typeahead";
-import 'react-bootstrap-typeahead/css/Typeahead.css';
+import "react-bootstrap-typeahead/css/Typeahead.css";
 
 interface IProps {
     onSelect: (tag: string[]) => void;
@@ -9,7 +9,6 @@ interface IProps {
 }
 
 export default class SearchAttributes extends React.Component<IProps, {}> {
-
     public render() {
         return (
             <div>
@@ -25,7 +24,7 @@ export default class SearchAttributes extends React.Component<IProps, {}> {
                     selectHintOnEnter={true}
                     placeholder="Search attributes"
                     allowNew={true}
-                    emptyLabel={''}
+                    emptyLabel={""}
                     newSelectionPrefix="Search for: "
                 />
             </div>

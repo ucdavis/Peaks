@@ -7,11 +7,9 @@ interface IProps {
     teamName: string;
 }
 
-
 export default class PeopleListItem extends React.Component<IProps, {}> {
-
     public render() {
-        const personUrl = `/${this.props.teamName}/person/details/${this.props.person.id}`
+        const personUrl = `/${this.props.teamName}/person/details/${this.props.person.id}`;
         return (
             <div>
                 <NavLink to={personUrl}>{this.props.person.name}</NavLink>

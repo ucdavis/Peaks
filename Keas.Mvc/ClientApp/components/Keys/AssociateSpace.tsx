@@ -242,7 +242,9 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
 
         // check for existing association
         if (selectedKeyInfo.key.keyXSpaces && selectedKeyInfo.key.keyXSpaces.length) {
-            const isDuplicate = selectedKeyInfo.key.keyXSpaces.some(x => x.spaceId === selectedSpace.id);
+            const isDuplicate = selectedKeyInfo.key.keyXSpaces.some(
+                x => x.spaceId === selectedSpace.id
+            );
             if (isDuplicate) {
                 valid = false;
                 error = "This space and key are already associated.";

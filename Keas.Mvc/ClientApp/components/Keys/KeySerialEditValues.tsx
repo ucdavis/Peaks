@@ -19,10 +19,11 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
 
         return (
             <div>
-                {this.props.disableEditing && this.props.openEditModal &&
-                <Button color="link" onClick={() => this.props.openEditModal(keySerial)}>
-                    <i className="fas fa-edit fa-xs" /> Edit Serial
-                </Button>}
+                {this.props.disableEditing && this.props.openEditModal && (
+                    <Button color="link" onClick={() => this.props.openEditModal(keySerial)}>
+                        <i className="fas fa-edit fa-xs" /> Edit Serial
+                    </Button>
+                )}
                 <div className="wrapperasset">
                     <div className="form-group">
                         <label>Key Name</label>

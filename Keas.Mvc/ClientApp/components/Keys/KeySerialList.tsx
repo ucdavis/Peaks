@@ -14,15 +14,20 @@ interface IProps {
 export default class KeyList extends React.Component<IProps, {}> {
     public render() {
         const { keySerials } = this.props;
-        const serials = !keySerials || keySerials.length < 1 ?
-            <tr><td colSpan={6}>No Key Serials Found</td></tr> :
-            keySerials.map(this.renderItem);
+        const serials =
+            !keySerials || keySerials.length < 1 ? (
+                <tr>
+                    <td colSpan={6}>No Key Serials Found</td>
+                </tr>
+            ) : (
+                keySerials.map(this.renderItem)
+            );
 
         return (
             <table className="table">
                 <thead>
                     <tr>
-                        <th/>
+                        <th />
                         <th>Code</th>
                         <th>SN</th>
                         <th>Status</th>
@@ -36,7 +41,7 @@ export default class KeyList extends React.Component<IProps, {}> {
         );
     }
 
-    private renderItem = (key) => {
+    private renderItem = key => {
         return (
             <KeySerialListItem
                 key={key.id}
@@ -48,5 +53,5 @@ export default class KeyList extends React.Component<IProps, {}> {
                 onEdit={this.props.onEdit}
             />
         );
-    }
+    };
 }

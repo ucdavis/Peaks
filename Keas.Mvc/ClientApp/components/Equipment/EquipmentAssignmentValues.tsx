@@ -12,7 +12,10 @@ export default class EquipmentAssignmentValues extends React.Component<IProps, {
     public render() {
         return (
             <div>
-                <Button color="link" onClick={() => this.props.openUpdateModal(this.props.selectedEquipment)}>
+                <Button
+                    color="link"
+                    onClick={() => this.props.openUpdateModal(this.props.selectedEquipment)}
+                >
                     <i className="fas fa-edit fa-xs" /> Update Assignment
                 </Button>
 

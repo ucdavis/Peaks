@@ -18,12 +18,11 @@ interface IState {
 
 // Search for existing key then send selection back to parent
 export default class SearchKeySerials extends React.Component<IProps, IState> {
-
     public static contextTypes = {
         fetch: PropTypes.func,
         person: PropTypes.object,
         team: PropTypes.object
-    }
+    };
 
     public context: AppContext;
 
@@ -32,7 +31,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
 
         this.state = {
             isSearchLoading: false,
-            keySerials: [],
+            keySerials: []
         };
     }
 
@@ -53,7 +52,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
                 disabled={true}
             />
         );
-    }
+    };
 
     private _renderSelectKey = () => {
         const { isSearchLoading, keySerials } = this.state;
@@ -71,19 +70,15 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
                 options={keySerials}
             />
         );
-    }
+    };
 
     private renderItem = (option: IKeySerial, props, index) => {
         return (
             <div>
                 <div>
-                    <Highlighter search={props.text}>
-                        {option.key.name}
-                    </Highlighter>
+                    <Highlighter search={props.text}>{option.key.name}</Highlighter>
                     <span> - </span>
-                    <Highlighter search={props.text}>
-                        {option.key.code}
-                    </Highlighter>
+                    <Highlighter search={props.text}>{option.key.code}</Highlighter>
                 </div>
                 <div>
                     <small>
@@ -93,9 +88,9 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
                 </div>
             </div>
         );
-    }
+    };
 
-    private onSearch = async (query) => {
+    private onSearch = async query => {
         const { team } = this.context;
 
         this.setState({ isSearchLoading: true });
@@ -104,9 +99,9 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
 
         this.setState({
             isSearchLoading: false,
-            keySerials: results,
+            keySerials: results
         });
-    }
+    };
 
     private onChange = (selected: any[]) => {
         let keySerial: IKeySerial;
@@ -115,7 +110,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
         if (!selected || selected.length <= 0) {
             this.props.onDeselect();
         }
-        
+
         // check for new selection
         if (selected[0].customOption) {
             keySerial = {
@@ -123,14 +118,13 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
                 key: this.props.selectedKey,
                 number: selected[0].number,
                 status: "Active",
-                tags: "",
+                tags: ""
             };
-        }
-        else {
+        } else {
             keySerial = selected[0];
         }
 
         this.props.onSelect(keySerial);
         return;
-    }
+    };
 }
