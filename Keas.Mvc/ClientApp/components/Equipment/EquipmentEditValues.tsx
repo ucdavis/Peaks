@@ -20,10 +20,14 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
     public render() {
         return (
             <div>
-                {this.props.disableEditing && this.props.openEditModal &&
-                <Button color="link" onClick={() => this.props.openEditModal(this.props.selectedEquipment)}>
-                    <i className="fas fa-edit fa-xs" /> Edit Equipment
-                </Button>}
+                {this.props.disableEditing && this.props.openEditModal && (
+                    <Button
+                        color="link"
+                        onClick={() => this.props.openEditModal(this.props.selectedEquipment)}
+                    >
+                        <i className="fas fa-edit fa-xs" /> Edit Equipment
+                    </Button>
+                )}
 
                 <div className="wrapperasset">
                     <div className="form-group">

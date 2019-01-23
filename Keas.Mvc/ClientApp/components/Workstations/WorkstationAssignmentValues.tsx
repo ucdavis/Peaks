@@ -12,7 +12,10 @@ export default class WorkstationAssignmentValues extends React.Component<IProps,
     public render() {
         return (
             <div>
-                <Button color="link" onClick={() => this.props.openUpdateModal(this.props.selectedWorkstation)}>
+                <Button
+                    color="link"
+                    onClick={() => this.props.openUpdateModal(this.props.selectedWorkstation)}
+                >
                     <i className="fas fa-edit fa-xs" /> Update Assignment
                 </Button>
 

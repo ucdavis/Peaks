@@ -4,7 +4,6 @@ import { IAccess } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
-
 interface IProps {
     accessEntity: IAccess;
     personView: boolean;
@@ -15,28 +14,35 @@ interface IProps {
     showDetails: (access: IAccess) => void;
 }
 
-
 export default class AccessListItem extends React.Component<IProps, {}> {
-
     public render() {
         const hasAssignment = this.props.accessEntity.assignments.length > 0;
         const canAdd = !this.props.personView || !hasAssignment;
-        const dates = this.props.accessEntity.assignments.map(x=> x.expiresAt);
+        const dates = this.props.accessEntity.assignments.map(x => x.expiresAt);
         const expirationDate = hasAssignment ? DateUtil.formatFirstExpiration(dates) : "";
 
         const actions: IAction[] = [];
         if (!!this.props.onAdd && canAdd) {
-            actions.push({ title: 'Add', onClick: () => this.props.onAdd(this.props.accessEntity) });
+            actions.push({
+                onClick: () => this.props.onAdd(this.props.accessEntity),
+                title: "Add"
+            });
         }
 
         if (!!this.props.onDelete) {
-            actions.push({ title: 'Delete', onClick: () => this.props.onDelete(this.props.accessEntity) });
+            actions.push({
+                onClick: () => this.props.onDelete(this.props.accessEntity),
+                title: "Delete"
+            });
         }
 
         return (
             <tr>
                 <td>
-                    <Button color="link" onClick={() => this.props.showDetails(this.props.accessEntity)}>
+                    <Button
+                        color="link"
+                        onClick={() => this.props.showDetails(this.props.accessEntity)}
+                    >
                         Details
                     </Button>
                 </td>

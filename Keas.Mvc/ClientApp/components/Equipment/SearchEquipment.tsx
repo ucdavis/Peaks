@@ -1,15 +1,15 @@
-﻿import * as PropTypes from 'prop-types';
+﻿import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
-import {Button} from "reactstrap";
+import { Button } from "reactstrap";
 import { AppContext, IEquipment, IEquipmentLabel, ISpace } from "../../Types";
 
 interface IProps {
     onDeselect: () => void;
     onSelect: (equipment: IEquipment) => void;
-    openDetailsModal: (equipment:IEquipment) => void;
+    openDetailsModal: (equipment: IEquipment) => void;
     selectedEquipment?: IEquipment;
-    space: ISpace // used to set default space if we are on spaces tab
+    space: ISpace; // used to set default space if we are on spaces tab
 }
 
 interface IState {
@@ -29,7 +29,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
         super(props);
         this.state = {
             equipment: [],
-            isSearchLoading: false,
+            isSearchLoading: false
         };
     }
 
@@ -38,75 +38,77 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
     }
 
     private _renderSelectEquipment = () => {
-
         return (
             <div>
                 <label>Pick an equipment to assign</label>
                 <div>
-                <AsyncTypeahead
-                    isLoading={this.state.isSearchLoading}
-                    minLength={3}
-                    placeholder="Search for equipment by name or by serial number"
-                    labelKey="label"
-                    filterBy={() => true} // don't filter on top of our search
-                    allowNew={false}
-                    renderMenuItemChildren={(option, props, index) => (
-                        <div className={!!option.equipment.assignment ? "disabled" : ""}>
-                            <div>
-                                <Highlighter key="equipment.name" search={props.text}>
-                                    {option.equipment.name}
-                                </Highlighter>
+                    <AsyncTypeahead
+                        isLoading={this.state.isSearchLoading}
+                        minLength={3}
+                        placeholder="Search for equipment by name or by serial number"
+                        labelKey="label"
+                        filterBy={() => true} // don't filter on top of our search
+                        allowNew={false}
+                        renderMenuItemChildren={(option, props, index) => (
+                            <div className={!!option.equipment.assignment ? "disabled" : ""}>
+                                <div>
+                                    <Highlighter key="equipment.name" search={props.text}>
+                                        {option.equipment.name}
+                                    </Highlighter>
+                                </div>
+                                <div>
+                                    {!!option.equipment.assignment ? "Assigned" : "Unassigned"}
+                                </div>
+                                <div>
+                                    <small>
+                                        Serial Number:
+                                        <Highlighter
+                                            key="equipment.serialNumber"
+                                            search={props.text}
+                                        >
+                                            {option.equipment.serialNumber}
+                                        </Highlighter>
+                                    </small>
+                                </div>
                             </div>
-                            <div>
-                                {!!option.equipment.assignment ? "Assigned" : "Unassigned"}
-                            </div>
-                            <div>
-                                <small>
-                                    Serial Number:
-                                    <Highlighter key="equipment.serialNumber" search={props.text}>{option.equipment.serialNumber}</Highlighter>
-                                </small>
-                            </div>
-                        </div>
-                    )}
-                    onSearch={async query => {
-                        this.setState({ isSearchLoading: true });
-                        const equipment = await this.context.fetch(
-                            `/api/${this.context.team.slug}/equipment/search?q=${query}`
-                        );
-                        this.setState({
-                            equipment,
-                            isSearchLoading: false,
-                        });
-                    }}
-                    onChange={selected => {
-                        if (selected && selected.length === 1) {
-                            if(!!selected[0].equipment && !!selected[0].equipment.assignment)
-                            {
-                                this.props.openDetailsModal(selected[0].equipment);
+                        )}
+                        onSearch={async query => {
+                            this.setState({ isSearchLoading: true });
+                            const equipment = await this.context.fetch(
+                                `/api/${this.context.team.slug}/equipment/search?q=${query}`
+                            );
+                            this.setState({
+                                equipment,
+                                isSearchLoading: false
+                            });
+                        }}
+                        onChange={selected => {
+                            if (selected && selected.length === 1) {
+                                if (!!selected[0].equipment && !!selected[0].equipment.assignment) {
+                                    this.props.openDetailsModal(selected[0].equipment);
+                                } else {
+                                    this._onSelected(selected[0]);
+                                }
                             }
-                            else 
-                            {
-                                this._onSelected(selected[0]);
-                            }
-                        }
-                    }}
-                    options={this.state.equipment}
-                />
+                        }}
+                        options={this.state.equipment}
+                    />
                 </div>
                 <div>or</div>
                 <div>
-                    <Button color="link" onClick={this._createNew}><i className="fas fa-plus fa-sm" aria-hidden="true" /> Create New Equipment</Button>    
+                    <Button color="link" onClick={this._createNew}>
+                        <i className="fas fa-plus fa-sm" aria-hidden="true" /> Create New Equipment
+                    </Button>
                 </div>
             </div>
         );
-    }
+    };
 
     private _onSelected = (equipmentLabel: IEquipmentLabel) => {
         // onChange is called when deselected
         if (!equipmentLabel || !equipmentLabel.label) {
             this.props.onDeselect();
-        }
-        else {
+        } else {
             this.props.onSelect({
                 ...equipmentLabel.equipment
             });
@@ -115,14 +117,13 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
 
     private _createNew = () => {
         this.props.onSelect({
-            attributes:
-                [ 
+            attributes: [
                 {
                     equipmentId: 0,
                     key: "",
-                    value: "",
+                    value: ""
                 }
-                ],
+            ],
             id: 0,
             make: "",
             model: "",
@@ -133,5 +134,5 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
             teamId: 0,
             type: ""
         });
-    }
+    };
 }

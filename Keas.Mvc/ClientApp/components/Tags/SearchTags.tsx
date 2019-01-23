@@ -1,6 +1,6 @@
 import * as React from "react";
-import {Typeahead } from "react-bootstrap-typeahead";
-import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { Typeahead } from "react-bootstrap-typeahead";
+import "react-bootstrap-typeahead/css/Typeahead.css";
 
 interface IProps {
     onSelect: (tag: string[]) => void;
@@ -10,7 +10,6 @@ interface IProps {
 }
 
 export default class SearchTags extends React.Component<IProps, {}> {
-
     public render() {
         return (
             <div>

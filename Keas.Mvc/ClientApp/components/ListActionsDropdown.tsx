@@ -2,7 +2,7 @@
 import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap";
 
 interface IProps {
-    actions: IAction[]
+    actions: IAction[];
 }
 
 interface IState {
@@ -30,9 +30,7 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
                 <DropdownToggle color="link">
                     <i className="fas fa-ellipsis-h fa-lg" aria-hidden="true" />
                 </DropdownToggle>
-                <DropdownMenu>
-                    { actions.map(this.renderAction) }
-                </DropdownMenu>
+                <DropdownMenu>{actions.map(this.renderAction)}</DropdownMenu>
             </Dropdown>
         );
     }
@@ -40,13 +38,12 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
     private renderAction(action: IAction) {
         return (
             <DropdownItem key={action.title} onClick={action.onClick}>
-                { action.title }
+                {action.title}
             </DropdownItem>
-        )
+        );
     }
 
     private toggle = () => {
         this.setState({ isOpen: !this.state.isOpen });
-    }
-
+    };
 }

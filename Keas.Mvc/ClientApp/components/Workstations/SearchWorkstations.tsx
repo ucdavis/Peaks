@@ -1,7 +1,7 @@
-﻿import * as PropTypes from 'prop-types';
+﻿import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
-import {Button} from "reactstrap";
+import { Button } from "reactstrap";
 import { AppContext, ISpace, IWorkstation } from "../../Types";
 
 interface IProps {
@@ -28,22 +28,24 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
         super(props);
         this.state = {
             isSearchLoading: false,
-            workstations: [],
+            workstations: []
         };
     }
 
     public render() {
         if (this.props.selectedWorkstation != null) {
             return this._renderExistingWorkstation();
-        }
-        else {
+        } else {
             return this._renderSelectWorkstation();
         }
     }
 
     private _renderSelectWorkstation = () => {
-        const searchUrl = this.props.space ? `/api/${this.context.team.slug}/workstations/searchInSpace?spaceId=${this.props.space.id}&q=` :
-            `/api/${this.context.team.slug}/workstations/search?q=`;
+        const searchUrl = this.props.space
+            ? `/api/${this.context.team.slug}/workstations/searchInSpace?spaceId=${
+                  this.props.space.id
+              }&q=`
+            : `/api/${this.context.team.slug}/workstations/search?q=`;
         return (
             <div>
                 <label>Pick a workstation to assign</label>
@@ -64,19 +66,20 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
                                 </div>
                                 <div>
                                     <small>
-                                        Room: {" "}
-                                        <Highlighter key="space.roomNumber" search={props.text}>{option.space.roomNumber}</Highlighter>
-                                        {" "} 
-                                        <Highlighter key="space.bldgName" search={props.text}>{option.space.bldgName}</Highlighter>
+                                        Room:{" "}
+                                        <Highlighter key="space.roomNumber" search={props.text}>
+                                            {option.space.roomNumber}
+                                        </Highlighter>{" "}
+                                        <Highlighter key="space.bldgName" search={props.text}>
+                                            {option.space.bldgName}
+                                        </Highlighter>
                                     </small>
                                 </div>
                             </div>
                         )}
                         onSearch={async query => {
                             this.setState({ isSearchLoading: true });
-                            const workstations = await this.context.fetch(
-                                searchUrl + query
-                            );
+                            const workstations = await this.context.fetch(searchUrl + query);
                             this.setState({
                                 isSearchLoading: false,
                                 workstations
@@ -92,11 +95,14 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
                 </div>
                 <div>or</div>
                 <div>
-                    <Button color="link" onClick={this._createNew}><i className="fas fa-plus fa-sm" aria-hidden="true" /> Create New Workstation</Button>    
+                    <Button color="link" onClick={this._createNew}>
+                        <i className="fas fa-plus fa-sm" aria-hidden="true" /> Create New
+                        Workstation
+                    </Button>
                 </div>
             </div>
         );
-    }
+    };
 
     private _renderExistingWorkstation = () => {
         return (
@@ -113,8 +119,7 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
         // onChange is called when deselected
         if (!workstation || !workstation.name) {
             this.props.onDeselect();
-        }
-        else {
+        } else {
             // if teamId is not set, this is a new workstation
             this.props.onSelect(workstation);
         }
@@ -126,7 +131,7 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
             name: "",
             space: this.props.space ? this.props.space : null, // if we are on spaces tab, auto to the right space
             tags: "",
-            teamId: 0,
+            teamId: 0
         });
-    }
+    };
 }

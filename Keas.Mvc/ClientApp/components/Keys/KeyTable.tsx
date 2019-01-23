@@ -4,7 +4,6 @@ import "react-table/react-table.css";
 import { Button, UncontrolledTooltip } from "reactstrap";
 import { IKey, IKeyInfo } from "../../Types";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
-import Tooltip from "reactstrap/lib/Tooltip";
 
 interface IProps {
     showDetails?: (key: IKey) => void;
@@ -40,9 +39,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
                         Cell: (row: IRow) => (
                             <Button
                                 color="link"
-                                onClick={() =>
-                                    this.props.showDetails(row.original.key)
-                                }
+                                onClick={() => this.props.showDetails(row.original.key)}
                             >
                                 Details
                             </Button>
@@ -53,7 +50,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
                         headerClassName: "key-details",
                         maxWidth: 150,
                         resizable: false,
-                        sortable: false,
+                        sortable: false
                     },
                     {
                         Header: "Key",
@@ -61,91 +58,88 @@ export default class KeyTable extends React.Component<IProps, {}> {
                         className: "word-wrap",
                         filterMethod: (filter: IFilter, row: IRow) =>
                             !!row[filter.id] &&
-                            row[filter.id]
-                                .toLowerCase()
-                                .includes(filter.value.toLowerCase())
+                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
                     },
                     {
                         Header: "Key Code",
                         accessor: "key.code",
                         filterMethod: (filter: IFilter, row: IRow) =>
                             !!row[filter.id] &&
-                            row[filter.id]
-                                .toLowerCase()
-                                .includes(filter.value.toLowerCase())
+                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
                     },
                     {
                         Cell: row => (
-                            <span>{row.value.serialsInUse} / {row.value.serialsTotal}</span>
+                            <span>
+                                {row.value.serialsInUse} / {row.value.serialsTotal}
+                            </span>
                         ),
-                        Filter: ({filter, onChange}) =>
-                        <select onChange={e => onChange(e.target.value)}
-                        style={{width: "100%"}}
-                        value={filter ? filter.value : "all"}
-                        >
-                            <option value="all">Show All</option>
-                            <option value="unassigned">Unassigned</option>
-                            <option value="assigned">Assigned</option>
-                            <option value="any">Any</option>
-                        </select>,
+                        Filter: ({ filter, onChange }) => (
+                            <select
+                                onChange={e => onChange(e.target.value)}
+                                style={{ width: "100%" }}
+                                value={filter ? filter.value : "all"}
+                            >
+                                <option value="all">Show All</option>
+                                <option value="unassigned">Unassigned</option>
+                                <option value="assigned">Assigned</option>
+                                <option value="any">Any</option>
+                            </select>
+                        ),
                         Header: header => (
-                        <div>Serials <i id="serialTooltip" className="fas fa-info-circle" />
-                        <UncontrolledTooltip placement="right" target="serialTooltip">In Use / Total</UncontrolledTooltip></div>
+                            <div>
+                                Serials <i id="serialTooltip" className="fas fa-info-circle" />
+                                <UncontrolledTooltip placement="right" target="serialTooltip">
+                                    In Use / Total
+                                </UncontrolledTooltip>
+                            </div>
                         ),
                         accessor: keyInfo => {
                             return {
-                                "serialsInUse": keyInfo.serialsInUseCount,
-                                "serialsTotal": keyInfo.serialsTotalCount,
-                            }
+                                serialsInUse: keyInfo.serialsInUseCount,
+                                serialsTotal: keyInfo.serialsTotalCount
+                            };
                         },
                         className: "table-10p",
                         filterMethod: (filter, row) => {
-                            if( filter.value === "all") {
+                            if (filter.value === "all") {
                                 return true;
                             }
-                            if( filter.value === "unassigned") {
-                                return (row.serialsCount.serialsTotal - row.serialsCount.serialsInUse) > 0;
+                            if (filter.value === "unassigned") {
+                                return (
+                                    row.serialsCount.serialsTotal - row.serialsCount.serialsInUse >
+                                    0
+                                );
                             }
-                            if( filter.value === "assigned") {
-                                return row.serialsCount.serialsInUse> 0;
+                            if (filter.value === "assigned") {
+                                return row.serialsCount.serialsInUse > 0;
                             }
-                            if(filter.value === "any"){
+                            if (filter.value === "any") {
                                 return row.serialsCount.serialsTotal > 0;
                             }
                         },
                         headerClassName: "table-10p",
                         id: "serialsCount",
                         sortMethod: (a, b) => {
-                            if(a.serialsTotal === b.serialsTotal)
-                            {
-                                if(a.serialsInUse === b.serialsInUse)
-                                {
+                            if (a.serialsTotal === b.serialsTotal) {
+                                if (a.serialsInUse === b.serialsInUse) {
                                     return 0;
+                                } else {
+                                    return a.serialsInUse < b.serialsInUse ? 1 : -1;
                                 }
-                                else
-                                {
-                                    return a.serialsInUse < b.serialsInUse? 1 : -1;
-                                }
-                            }
-                            else
-                            {
+                            } else {
                                 return a.serialsTotal < b.serialsTotal ? 1 : -1;
                             }
-
                         }
                     },
                     {
-                        Cell: (row) => (
-                            <span>{row.original.spacesCount}</span>
-
-                        ),
+                        Cell: row => <span>{row.original.spacesCount}</span>,
                         Header: "Spaces",
                         accessor: "spacesCount",
                         className: "table-actions",
                         filterable: false,
                         headerClassName: "table-actions",
                         resizable: false,
-                        sortable: true,
+                        sortable: true
                     },
                     {
                         Cell: this.renderDropdownColumn,
@@ -154,8 +148,8 @@ export default class KeyTable extends React.Component<IProps, {}> {
                         filterable: false,
                         headerClassName: "table-actions",
                         resizable: false,
-                        sortable: false,
-                    },
+                        sortable: false
+                    }
                 ]}
             />
         );
@@ -169,7 +163,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
         if (!!this.props.onDelete) {
             actions.push({
                 onClick: () => this.props.onDelete(key),
-                title: "Delete",
+                title: "Delete"
             });
         }
 

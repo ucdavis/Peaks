@@ -7,22 +7,17 @@ interface IProps {
 }
 
 export default class HistoryList extends React.Component<IProps, {}> {
-  public render() {
-      const histories = this.props.histories.map(x => (
-          <HistoryListItem
-              key={x.id}
-              history={x}
-          />
-    ));
-      return (
-      <div className="table">
-        <table className="table">
-          <thead>
-            <tr />
-          </thead>
-          <tbody>{histories}</tbody>
-        </table>
-      </div>
-    );
-  }
+    public render() {
+        const histories = this.props.histories.map(x => <HistoryListItem key={x.id} history={x} />);
+        return (
+            <div className="table">
+                <table className="table">
+                    <thead>
+                        <tr />
+                    </thead>
+                    <tbody>{histories}</tbody>
+                </table>
+            </div>
+        );
+    }
 }

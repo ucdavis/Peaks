@@ -6,21 +6,21 @@ interface IProps {
     selectedKey: IKey;
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
-    searchableTags?: string[]
+    searchableTags?: string[];
 }
 
 export default class KeyEditValues extends React.Component<IProps, {}> {
-
     public render() {
         const { name, code, tags } = this.props.selectedKey;
 
-        const parsedTags = tags ? tags.split(',') : [];
+        const parsedTags = tags ? tags.split(",") : [];
 
         return (
             <div>
                 <div className="form-group">
                     <label>Name</label>
-                    <input type="text"
+                    <input
+                        type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
                         value={name}
@@ -33,7 +33,8 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                 </div>
                 <div className="form-group">
                     <label>Code</label>
-                    <input type="text"
+                    <input
+                        type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
                         value={code}
@@ -48,10 +49,11 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                 <div className="form-group">
                     <label>Tags</label>
                     <SearchTags
-                        tags={this.props.searchableTags} 
+                        tags={this.props.searchableTags}
                         disabled={this.props.disableEditing}
                         selected={parsedTags}
-                        onSelect={this.onChangeTags} />
+                        onSelect={this.onChangeTags}
+                    />
                 </div>
             </div>
         );
@@ -63,8 +65,8 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
         // trim name
         name = name.trim();
 
-        this.props.changeProperty("name", name)
-    }
+        this.props.changeProperty("name", name);
+    };
 
     private onBlurCode = () => {
         let { code } = this.props.selectedKey;
@@ -72,12 +74,12 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
         // trim name
         code = code.trim();
 
-        this.props.changeProperty("code", code)
-    }
+        this.props.changeProperty("code", code);
+    };
 
     private onChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
-        this.props.changeProperty("name", event.target.value)
-    }
+        this.props.changeProperty("name", event.target.value);
+    };
 
     private onChangeCode = (event: React.ChangeEvent<HTMLInputElement>) => {
         let value = event.target.value;
@@ -85,12 +87,12 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
         // use upper
         value = value.toUpperCase();
 
-        this.props.changeProperty("code", value)
-    }
+        this.props.changeProperty("code", value);
+    };
 
     private onChangeTags = (tags: string[]) => {
-        const value = tags.join(',');
+        const value = tags.join(",");
 
-        this.props.changeProperty("tags", value)
-    }
+        this.props.changeProperty("tags", value);
+    };
 }

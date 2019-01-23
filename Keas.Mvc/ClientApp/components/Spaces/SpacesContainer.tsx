@@ -1,4 +1,4 @@
-import * as PropTypes from 'prop-types';
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AppContext, IKeyInfo, ISpace, ISpaceInfo } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
@@ -39,7 +39,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             spaces: [],
             tableFilters: [],
             tagFilters: [],
-            tags: [],
+            tags: []
         };
     }
 
@@ -47,11 +47,10 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         const { selectedKeyInfo } = this.props;
         const { team } = this.context;
 
-        let spacesFetchUrl =  "";
-        if(!!selectedKeyInfo) {
+        let spacesFetchUrl = "";
+        if (!!selectedKeyInfo) {
             spacesFetchUrl = `/api/${team.slug}/spaces/getSpacesForKey?keyid=${selectedKeyInfo.id}`;
-        }
-        else {
+        } else {
             spacesFetchUrl = `/api/${team.slug}/spaces/list`;
         }
 
@@ -62,38 +61,40 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     public render() {
-        const permissionArray = ['SpaceMaster', 'DepartmentalAdmin', 'Admin'];
+        const permissionArray = ["SpaceMaster", "DepartmentalAdmin", "Admin"];
         if (!PermissionsUtil.canViewSpace(this.context.permissions)) {
-            return (
-                <Denied viewName="Space" />
-            );
+            return <Denied viewName="Space" />;
         }
 
-        if(this.state.loading) {
+        if (this.state.loading) {
             return <h2>Loading...</h2>;
         }
-        const { spaceAction, spaceId, assetType, action, id } = this.context.router.route.match.params;
+        const {
+            spaceAction,
+            spaceId,
+            assetType,
+            action,
+            id
+        } = this.context.router.route.match.params;
         const activeWorkstationAsset = assetType === "workstations";
         const selectedId = parseInt(spaceId, 10);
         const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
-
 
         return (
             <div className="card spaces-color">
                 <div className="card-header-spaces">
                     <div className="card-head">
-                        <h2><i className="fas fa-building fa-xs"/> Spaces</h2>
+                        <h2>
+                            <i className="fas fa-building fa-xs" /> Spaces
+                        </h2>
                     </div>
                 </div>
 
                 <div className="card-content">
-                    {!spaceAction && !activeWorkstationAsset &&
-                        this._renderTableOrList()
-                    }
-                    { spaceAction === "details" && (!!selectedSpaceInfo && !!selectedSpaceInfo.space) &&
-                        this._renderDetailsView(selectedSpaceInfo)
-                    }
-                    
+                    {!spaceAction && !activeWorkstationAsset && this._renderTableOrList()}
+                    {spaceAction === "details" &&
+                        (!!selectedSpaceInfo && !!selectedSpaceInfo.space) &&
+                        this._renderDetailsView(selectedSpaceInfo)}
                 </div>
             </div>
         );
@@ -110,18 +111,23 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
     // if we are at route teamName/spaces
     private _renderTableView() {
-        
         let filteredSpaces = [];
-        if(!!this.state.tagFilters && this.state.tagFilters.length > 0) {
-            filteredSpaces = this.state.spaces.filter(x => this._checkFilters(x, this.state.tagFilters));
-        }
-        else {
+        if (!!this.state.tagFilters && this.state.tagFilters.length > 0) {
+            filteredSpaces = this.state.spaces.filter(x =>
+                this._checkFilters(x, this.state.tagFilters)
+            );
+        } else {
             filteredSpaces = this.state.spaces;
         }
 
         return (
             <div>
-                <SearchTags tags={this.state.tags} selected={this.state.tagFilters} onSelect={this._filterTags} disabled={false}/>
+                <SearchTags
+                    tags={this.state.tags}
+                    selected={this.state.tagFilters}
+                    onSelect={this._filterTags}
+                    disabled={false}
+                />
                 <SpacesTable
                     spaces={filteredSpaces}
                     showDetails={this._openDetails}
@@ -157,12 +163,12 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                     searchableTags={tags}
                 />
             </div>
-        )
-    }
+        );
+    };
 
     // if we are at route teamName/spaces/details/spaceId
     private _renderDetailsView = (selectedSpaceInfo: ISpaceInfo) => {
-        return(
+        return (
             <SpacesDetails
                 goBack={this._goBack}
                 selectedSpaceInfo={selectedSpaceInfo}
@@ -172,11 +178,11 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                 edited={this._assetEdited}
             />
         );
-    }
+    };
 
     private _updateTableFilters = (filters: any[]) => {
-        this.setState({tableFilters: filters});
-    }
+        this.setState({ tableFilters: filters });
+    };
 
     private _openDetails = (space: ISpace) => {
         const { team } = this.context;
@@ -190,7 +196,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         }
 
         this.context.router.history.push(`${this._getBaseUrl()}/spaces/associate/`);
-    }
+    };
 
     private _closeModals = () => {
         this.context.router.history.push(`${this._getBaseUrl()}`);
@@ -201,63 +207,72 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     };
 
     // managing counts for assigned or revoked
-    private _assetInUseUpdated = (type: string, spaceId: number, personId: number, count: number) => {
+    private _assetInUseUpdated = (
+        type: string,
+        spaceId: number,
+        personId: number,
+        count: number
+    ) => {
         // this is called when we are assigning or revoking an asset
         const index = this.state.spaces.findIndex(x => x.id === spaceId);
-        if(index > -1)
-        {
+        if (index > -1) {
             const spaces = [...this.state.spaces];
-            switch(type) {
-            case "workstation":
-                spaces[index].workstationsInUse += count;
+            switch (type) {
+                case "workstation":
+                    spaces[index].workstationsInUse += count;
             }
-            this.setState({spaces});
+            this.setState({ spaces });
         }
-    }
+    };
 
-    private _assetTotalUpdated = (type: string, spaceId: number, personId: number, count: number) => {
+    private _assetTotalUpdated = (
+        type: string,
+        spaceId: number,
+        personId: number,
+        count: number
+    ) => {
         // this is called when we are either changing the room on an asset, or creating a workstation
         const index = this.state.spaces.findIndex(x => x.id === spaceId);
-        if(index > -1)
-        {
+        if (index > -1) {
             const spaces = [...this.state.spaces];
-            switch(type) {
-                case "equipment": 
-                spaces[index].equipmentCount += count;
-                break;
+            switch (type) {
+                case "equipment":
+                    spaces[index].equipmentCount += count;
+                    break;
                 case "key":
-                spaces[index].keyCount += count;
-                break;
+                    spaces[index].keyCount += count;
+                    break;
                 case "workstation":
-                spaces[index].workstationsTotal += count;
+                    spaces[index].workstationsTotal += count;
             }
-            this.setState({spaces});
-        } 
-    }
+            this.setState({ spaces });
+        }
+    };
 
     private _assetEdited = async (type: string, spaceId: number, personId: number) => {
         const index = this.state.spaces.findIndex(x => x.id === spaceId);
-        if(index > -1 )
-        {
-            const tags = await this.context.fetch(`/api/${this.context.team.slug}/spaces/getTagsInSpace?spaceId=${spaceId}`);
+        if (index > -1) {
+            const tags = await this.context.fetch(
+                `/api/${this.context.team.slug}/spaces/getTagsInSpace?spaceId=${spaceId}`
+            );
             const spaces = [...this.state.spaces];
             spaces[index].tags = tags;
-            this.setState({spaces});
+            this.setState({ spaces });
         }
-    }
+    };
 
     private _associateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
         const { team } = this.context;
         const { spaces } = this.state;
 
         const request = {
-            spaceId: space.id,
+            spaceId: space.id
         };
 
         const associateUrl = `/api/${team.slug}/keys/associateSpace/${keyInfo.id}`;
         const result = await this.context.fetch(associateUrl, {
             body: JSON.stringify(request),
-            method: "POST",
+            method: "POST"
         });
 
         const spaceInfo: ISpaceInfo = {
@@ -267,47 +282,44 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             space,
             tags: "",
             workstationsInUse: 0,
-            workstationsTotal: 0,
+            workstationsTotal: 0
         };
         const updatedSpaces = [...spaces, spaceInfo];
         this.setState({
-            spaces: updatedSpaces,
+            spaces: updatedSpaces
         });
         this.props.spacesTotalUpdated(this.props.selectedKeyInfo.id, 1);
-    }
+    };
 
     private _disassociateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
         const { team } = this.context;
         const { spaces } = this.state;
 
         const request = {
-            spaceId: space.id,
-        }
+            spaceId: space.id
+        };
 
         const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${keyInfo.id}`;
         const result = await this.context.fetch(disassociateUrl, {
             body: JSON.stringify(request),
-            method: "POST",
+            method: "POST"
         });
 
-        
         const updatedSpaces = [...spaces];
         const index = updatedSpaces.findIndex(s => s.space.id === space.id);
         updatedSpaces.splice(index, 1);
 
         this.setState({
-            spaces: updatedSpaces,
+            spaces: updatedSpaces
         });
         this.props.spacesTotalUpdated(this.props.selectedKeyInfo.id, -1);
-
-    }
+    };
 
     private _getBaseUrl = () => {
         const { team } = this.context;
         const { selectedKeyInfo } = this.props;
 
-        if(!!selectedKeyInfo)
-        {
+        if (!!selectedKeyInfo) {
             return `/${team.slug}/keys/details/${selectedKeyInfo.id}`;
         }
 
@@ -315,10 +327,10 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     };
 
     private _filterTags = (filters: string[]) => {
-        this.setState({tagFilters: filters});
-    }
+        this.setState({ tagFilters: filters });
+    };
 
     private _checkFilters = (space: ISpaceInfo, filters: string[]) => {
         return filters.every(f => !!space && !!space.tags && space.tags.includes(f));
-    }
+    };
 }

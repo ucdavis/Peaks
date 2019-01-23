@@ -38,8 +38,15 @@ export default class KeyDetails extends React.Component<IProps, {}> {
                         </Button>
                     </div>
                     <ModalBody>
-                        <KeySerialEditValues keySerial={selectedKeySerial} disableEditing={true} openEditModal={this.props.openEditModal} />
-                        <KeySerialAssignmentValues selectedKeySerial={selectedKeySerial} openUpdateModal={this.props.openUpdateModal} />
+                        <KeySerialEditValues
+                            keySerial={selectedKeySerial}
+                            disableEditing={true}
+                            openEditModal={this.props.openEditModal}
+                        />
+                        <KeySerialAssignmentValues
+                            selectedKeySerial={selectedKeySerial}
+                            openUpdateModal={this.props.openUpdateModal}
+                        />
                         <HistoryContainer controller="keyserials" id={selectedKeySerial.id} />
                     </ModalBody>
                 </Modal>

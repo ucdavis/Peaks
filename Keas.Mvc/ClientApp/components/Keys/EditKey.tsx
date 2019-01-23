@@ -86,14 +86,9 @@ export default class EditKey extends React.Component<IProps, IState> {
                     <Button
                         color="primary"
                         onClick={this._editSelected}
-                        disabled={
-                            !this.state.validState || this.state.submitting
-                        }
+                        disabled={!this.state.validState || this.state.submitting}
                     >
-                        Go!{" "}
-                        {this.state.submitting && (
-                            <i className="fas fa-circle-notch fa-spin" />
-                        )}
+                        Go! {this.state.submitting && <i className="fas fa-circle-notch fa-spin" />}
                     </Button>{" "}
                 </ModalFooter>
             </Modal>
