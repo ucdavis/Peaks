@@ -34,6 +34,12 @@ namespace Keas.Core.Domain
                 .WithOne(a => a.KeySerial)
                 .HasForeignKey<KeySerialAssignment>(a => a.KeySerialId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<KeySerial>()
+                .HasOne(s => s.Team)
+                .WithMany()
+                .HasForeignKey(s => s.TeamId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

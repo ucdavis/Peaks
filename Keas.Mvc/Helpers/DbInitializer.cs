@@ -14,12 +14,6 @@ namespace Keas.Mvc.Helpers
             _context = context;
         }
 
-        public void RecreateDatabase()
-        {
-            _context.Database.EnsureDeleted();
-            _context.Database.EnsureCreated();
-        }
-
         public void Initialize()
         {
             // Create All Roles
