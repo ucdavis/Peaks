@@ -175,9 +175,6 @@ namespace Keas.Mvc
             }
             else
             {
-                // TODO: don't use dev exception
-                app.UseDeveloperExceptionPage();
-
                 // monitor in production
                 app.UseMiddleware<StackifyMiddleware.RequestTracerMiddleware>();
                 // app.UseExceptionHandler("/Error/Index");
