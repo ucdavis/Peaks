@@ -155,13 +155,13 @@ namespace Keas.Core.Services
         private void SetNextNotification(AssignmentBase assignment)
         {
             // first notification, push back one week before expiration
-            if (assignment.NextNotificationDate == null || assignment.ExpiresAt > DateTime.UtcNow.AddDays(7))
+            if (assignment.NextNotificationDate == null || assignment.ExpiresAt > DateTime.UtcNow.Date.AddDays(7))
             {
                 assignment.NextNotificationDate = assignment.ExpiresAt.AddDays(-7);
                 //If this sets it to less than the current date/time, set it to tomorrow to avoid a second email right away.
                 if (assignment.NextNotificationDate <= DateTime.UtcNow)
                 {
-                    assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
+                    assignment.NextNotificationDate = DateTime.UtcNow.Date.AddDays(1);
                 }
                 return;
             }
@@ -174,7 +174,7 @@ namespace Keas.Core.Services
             }
 
             // otherwise push back to tomorrow
-            assignment.NextNotificationDate = DateTime.UtcNow.AddDays(1);
+            assignment.NextNotificationDate = DateTime.UtcNow.Date.AddDays(1);
         }
 
         public async Task SendNotificationMessage(User user)
