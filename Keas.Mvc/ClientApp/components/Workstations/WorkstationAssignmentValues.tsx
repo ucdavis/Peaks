@@ -10,6 +10,9 @@ interface IProps {
 
 export default class WorkstationAssignmentValues extends React.Component<IProps, {}> {
     public render() {
+        if (!this.props.selectedWorkstation || !this.props.selectedWorkstation.assignment) {
+            return null;
+        }
         return (
             <div>
                 <Button
