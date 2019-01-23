@@ -145,7 +145,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
                     },
                     {
                         Cell: this.renderDropdownColumn,
-                        Header: "",
+                        Header: "Actions",
                         className: "table-actions",
                         filterable: false,
                         headerClassName: "table-actions",
