@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>93abda06-2870-4006-81e8-1eecba3d977c</UserSecretsId>
     <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <AssemblyVersion>1.0.0.2</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="EmailTemplates\_Notification.cshtml" />
