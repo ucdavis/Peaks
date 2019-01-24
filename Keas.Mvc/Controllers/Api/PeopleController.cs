@@ -256,17 +256,19 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
+
+
             using (var transaction = _context.Database.BeginTransaction())
             {
+                var personToUpdate = await _context.People.SingleAsync(a => a.Id == person.Id && a.TeamId == person.TeamId);
+                personToUpdate.Active = false;
 
-                _context.People.Update(person);
-
-                person.Active = false;
                 await _context.SaveChangesAsync();
 
                 transaction.Commit();
                 return Json(null);
             }
+
         }
 
         public async Task<IActionResult> GetPerson(int personId)
