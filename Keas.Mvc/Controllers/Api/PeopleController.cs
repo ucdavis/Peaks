@@ -38,7 +38,18 @@ namespace Keas.Mvc.Controllers.Api
                     FirstName = r.FirstName,
                     LastName = r.LastName,
                     Email = r.Email,
-                    Tags = r.Tags
+                    Tags = r.Tags,
+                    TeamId = teamId,
+                    Notes = r.Notes,
+                    UserId = r.UserId,
+                    Group = r.Group,
+                    Title = r.Title,
+                    HomePhone = r.HomePhone,
+                    TeamPhone = r.TeamPhone,
+                    SupervisorId = r.SupervisorId,
+                    StartDate = r.StartDate,
+                    EndDate = r.EndDate,
+                    Category = r.Category,
                 },
                 id = r.Id,
                 equipmentCount = r.EquipmentCount,
@@ -247,7 +258,6 @@ namespace Keas.Mvc.Controllers.Api
                 transaction.Commit();
                 return Json(null);
             }
-
         }
 
         public async Task<IActionResult> GetPerson(int personId)
