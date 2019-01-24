@@ -9,7 +9,7 @@ interface IProps {
     onCreate: (person: IPerson) => void;
     modal: boolean;
     tags: string[];
-    users: IUser[];
+    userIds: string[];
     onAddNew: () => void;
     closeModal: () => void;
 }
@@ -166,7 +166,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
                 this._validateState
             );
         } else if (
-            this.props.users.findIndex(x => x.id === person.userId) !== -1 ||
+            this.props.userIds.findIndex(x => x === person.userId) !== -1 ||
             (person.active && person.teamId !== 0)
         ) {
             this.setState(

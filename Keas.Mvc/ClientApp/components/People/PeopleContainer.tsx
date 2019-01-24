@@ -103,7 +103,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
                     onAddNew={this._openCreateModal}
                     closeModal={this._goBack}
                     tags={this.state.tags}
-                    users={this.state.people.map(x => x.person.user)}
+                    userIds={this.state.people.map(x => x.person.userId)}
                 />
             </div>
         );
