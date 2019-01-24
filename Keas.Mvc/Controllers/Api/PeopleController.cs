@@ -39,7 +39,7 @@ namespace Keas.Mvc.Controllers.Api
                     LastName = r.LastName,
                     Email = r.Email,
                     Tags = r.Tags,
-                    TeamId = teamId,
+                    TeamId = r.teamId,
                     Notes = r.Notes,
                     UserId = r.UserId,
                     Group = r.Group,
