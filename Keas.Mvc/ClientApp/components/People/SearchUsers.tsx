@@ -55,7 +55,7 @@ export default class SearchUsers extends React.Component<IProps, IState> {
 
     private _loadUser = async () => {
         this.setState({ reloading: true, reloaded: false });
-        const userFetchUrl = `/api/${this.context.team.slug}/people/searchUser?searchTerm=${
+        const userFetchUrl = `/api/${this.context.team.slug}/search/searchUsers?searchTerm=${
             this.state.search
         }`;
 

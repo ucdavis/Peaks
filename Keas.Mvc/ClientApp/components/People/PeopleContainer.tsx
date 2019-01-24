@@ -36,7 +36,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     }
 
     public async componentDidMount() {
-        const people = await this.context.fetch(`/api/${this.context.team.slug}/people/list/`);
+        const people = await this.context.fetch(`/api/${this.context.team.slug}/search/peopleList/`);
         const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);
 
         this.setState({ loading: false, people, tags });
@@ -170,7 +170,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         }
         person.teamId = this.context.team.id;
         // any errors here are caught in CreatePerson
-        person = await this.context.fetch(`/api/${this.context.team.slug}/people/create`, {
+        person = await this.context.fetch(`/api/${this.context.team.slug}/search/createPerson`, {
             body: JSON.stringify(person),
             method: "POST"
         });

@@ -192,7 +192,7 @@ namespace Keas.Mvc
                     name: "API",
                     template: "api/{teamName}/{controller}/{action}/{id?}",
                     defaults: new { controller = "people", action = "Index" },
-                    constraints: new { controller = "(keys|keyserials|equipment|access|spaces|people|person|workstations|tags)" }
+                    constraints: new { controller = "(keys|keyserials|equipment|access|spaces|people|person|workstations|tags|search)" }
                 );
 
                 routes.MapRoute(
