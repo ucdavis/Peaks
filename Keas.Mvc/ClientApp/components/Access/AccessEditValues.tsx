@@ -58,7 +58,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                         <i className="fas fa-edit fa-xs" /> Edit Access
                     </Button>
                 )}
-
+            <div className="wrapperasset">
                 <div className="form-group">
                     <label>Item</label>
                     <input
@@ -97,6 +97,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                     </div>
                 )}
             </div>
+          </div>
         );
     }
 

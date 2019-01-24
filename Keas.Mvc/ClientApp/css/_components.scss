@@ -664,3 +664,14 @@ ol.breadcrumb {
 .-next {
   text-align: right !important;
 }
+.keys-anomaly {
+  &.fa-ellipsis-h:before {
+    color:$keys;
+  }
+  color:$keys;
+}
+.equipment-anomaly {
+  &.fa-ellipsis-h:before {
+    color:$equipment;
+  }
+}
