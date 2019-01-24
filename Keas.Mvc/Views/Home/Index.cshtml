@@ -1,4 +1,4 @@
-﻿@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @model Keas.Mvc.Models.HomeViewModel
 
@@ -47,22 +47,5 @@
                 </ul>
         </div>
       </div>
-            <div class="card">
-              <div class="card-header-primary">
-                <div class="card-head">
-                  <h2><i class="fas fa-sliders-h fa-xs"></i> System Admin</h2>
-                </div>
-              </div>
-              <div class="card-content">
-                @if ((await AuthorizationService.AuthorizeAsync(User, "SystemAdminAccess")).Succeeded)
-                    {
-                            <ul>
-                                <li>
-                                    <a asp-controller="Admin" asp-action="Index" >System Administration</a>
-                                </li>
-                            </ul>
-                    }
-              </div>
-            </div>
   </div>
 </div>
