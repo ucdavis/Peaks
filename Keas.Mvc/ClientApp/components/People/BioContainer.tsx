@@ -14,58 +14,121 @@ export default class BioContainer extends React.Component<IProps, {}> {
     public context: AppContext;
     public render() {
         return (
-            <div>
-                <h2>{this.props.person.name}</h2>
-                {this.props.person.title && <p>{this.props.person.title}</p>}
-                {this.props.person.category && <p>{this.props.person.category}</p>}
-                {this.props.person.startDate && (
-                    <p>
-                        <i className="fas fa-hourglass-start" aria-hidden="true" />{" "}
-                        {DateUtil.formatExpiration(this.props.person.startDate)}
-                    </p>
-                )}
-                {this.props.person.endDate && (
-                    <p>
-                        <i className="fas fa-hourglass-end" aria-hidden="true" />{" "}
-                        {DateUtil.formatExpiration(this.props.person.endDate)}
-                    </p>
-                )}
-                {this.props.person.supervisor && (
-                    <p>
-                        <i className="fas fa-user-tie" aria-hidden="true" />{" "}
-                        {this.props.person.supervisor.name}
-                    </p>
-                )}
+            <div className="card-content person-card">
+              <div className="row">
+              <div className="col emp-deet">
+                <h4>Employment Details</h4>
+                              <ul className="two-col no-list-style">
+                                {this.props.person.title &&
+                                      <li className="person-label">Title</li>
+                                }
+                              {this.props.person.category && <li>Category</li>}
+                              {this.props.person.startDate && (
+                                  <li className="person-label">
+                                      Start Date
+                                  </li>
+                              )}
+                              {this.props.person.endDate && (
+                                  <li className="person-label">
+                                      End Date
+                                  </li>
+                              )}
+                              {this.props.person.supervisor && (
+                                  <li className="person-label">
+
+                                      Supervisor
+                                  </li>
+                              )}
+
+                                {this.props.person.title &&
+                                    <li>
+                                      {this.props.person.title}
+                                    </li>
+                                }
+                                {this.props.person.category && <li>{this.props.person.category}</li>}
+                                {this.props.person.startDate && (
+                                    <li>
+                                        {DateUtil.formatExpiration(this.props.person.startDate)}
+                                    </li>
+                                )}
+
+                                {this.props.person.endDate && (
+                                    <li>
+
+                                        {DateUtil.formatExpiration(this.props.person.endDate)}
+                                    </li>
+                                )}
+                                {this.props.person.supervisor && (
+                                    <li>
+
+                                        {this.props.person.supervisor.name}
+                                    </li>
+                                )}
+                              </ul>
+              </div>
+              <div className="col contact-deet">
+                <h4>Contact Details</h4>
+                <ul className="two-col no-list-style">
                 {this.props.person.email && (
-                    <p>
-                        <i className="far fa-envelope" aria-hidden="true" />{" "}
-                        {this.props.person.email}
-                    </p>
-                )}
-                {this.props.person.homePhone && (
-                    <p className="card-text">
-                        <i className="fas fa-home" aria-hidden="true" />{" "}
-                        {this.props.person.homePhone}
-                    </p>
-                )}
-                {this.props.person.teamPhone && (
-                    <p className="card-text">
-                        <i className="fas fa-briefcase" aria-hidden="true" />{" "}
-                        {this.props.person.teamPhone}
-                    </p>
-                )}
-                {this.props.person.tags && (
-                    <p className="card-text">
-                        <i className="fas fa-tags" aria-hidden="true" /> {this.props.person.tags}
-                    </p>
-                )}
-                {this.props.person.notes && (
-                    <p className="card-text">
-                        <i className="fas fa-sticky-note" aria-hidden="true" />{" "}
-                        {this.props.person.notes}
-                    </p>
-                )}
-                <br />
+                    <li className="person-label">
+
+                      Email
+                    </li>)}
+                    {this.props.person.homePhone && (
+                        <li className="person-label">
+
+                            Home
+                        </li>
+                    )}
+                    {this.props.person.teamPhone && (
+                        <li className="person-label">
+
+                            Team
+                        </li>
+                    )}
+
+
+
+                                    {this.props.person.email && (
+                                        <li>
+
+                                            {this.props.person.email}
+                                        </li>
+                                    )}
+                                    {this.props.person.homePhone && (
+                                        <li>
+
+                                            {this.props.person.homePhone}
+                                        </li>
+                                    )}
+                                    {this.props.person.teamPhone && (
+                                        <li>
+
+                                            {this.props.person.teamPhone}
+                                        </li>
+                                    )}
+                                  </ul>
+              </div>
+              <div className="col tag-deet">
+                <h4>Tags</h4>
+                <ul className="no-list-style">
+                  {this.props.person.tags && (
+                      <li>
+                        {this.props.person.tags}
+                      </li>
+                  )}
+                </ul>
+              </div>
+              <div className="col notes-deets">
+                <h4>Notes</h4>
+                                {this.props.person.notes && (
+                                    <p className="card-text">
+
+                                        {this.props.person.notes}
+                                    </p>
+                                )}
+              </div>
+</div>
             </div>
         );
     }
