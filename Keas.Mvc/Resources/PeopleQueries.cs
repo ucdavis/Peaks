@@ -1,6 +1,6 @@
 public static class PeopleQueries
 {
-    public static string List = @"select People.*, EquipmentCount, AccessCount, KeyCount, WorkstationCount
+    public static string List = @"select People.*, SUP.FirstName SupervisorFirstName, SUP.LastName SupervisorLastName, SUP.Email SupervisorEmail, SUP.UserId SupervisorUserId, EquipmentCount, AccessCount, KeyCount, WorkstationCount
 from (select People.Id, count(E.Id) as EquipmentCount
       from People
              left join EquipmentAssignments E on People.Id = E.PersonId
@@ -24,5 +24,6 @@ from (select People.Id, count(E.Id) as EquipmentCount
       left join WorkstationAssignments WA on People.Id = WA.PersonId
       group by People.Id
     ) t4 on t1.Id = t4.Id
+    left outer join People SUP on People.SupervisorId = SUP.Id
 where People.Active = 1 and People.TeamId = @teamId;";
 }
