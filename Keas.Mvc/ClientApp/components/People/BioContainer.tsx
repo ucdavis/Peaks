@@ -15,8 +15,8 @@ export default class BioContainer extends React.Component<IProps, {}> {
     public render() {
         return (
             <div className="card-content person-card">
-              <div className="row">
-              <div className="col emp-deet">
+              <div className="row justify-content-between">
+              <div className="person-col">
                 <h4>Employment Details</h4>
                               <ul className="two-col no-list-style">
                                 {this.props.person.title &&
@@ -66,7 +66,7 @@ export default class BioContainer extends React.Component<IProps, {}> {
                                 )}
                               </ul>
               </div>
-              <div className="col contact-deet">
+              <div className="person-col">
                 <h4>Contact Details</h4>
                 <ul className="two-col no-list-style">
                 {this.props.person.email && (
@@ -109,7 +109,7 @@ export default class BioContainer extends React.Component<IProps, {}> {
                                     )}
                                   </ul>
               </div>
-              <div className="col tag-deet">
+              <div className="person-col">
                 <h4>Tags</h4>
                 <ul className="no-list-style">
                   {this.props.person.tags && (
@@ -119,15 +119,16 @@ export default class BioContainer extends React.Component<IProps, {}> {
                   )}
                 </ul>
               </div>
-              <div className="col notes-deets">
-                <h4>Notes</h4>
-                                {this.props.person.notes && (
-                                    <p className="card-text">
 
-                                        {this.props.person.notes}
-                                    </p>
-                                )}
-              </div>
+</div>
+<div className="notes-deets">
+  <h4>Notes</h4>
+                  {this.props.person.notes && (
+                      <p className="card-text">
+
+                          {this.props.person.notes}
+                      </p>
+                  )}
 </div>
             </div>
         );
