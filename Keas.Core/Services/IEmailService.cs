@@ -85,7 +85,7 @@ namespace Keas.Core.Services
             };
 
              var engine = GetRazorEngine();
-            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems);
+            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems);
 
             var client = GetSparkpostClient();
             var result = await client.Transmissions.Send(transmission);
