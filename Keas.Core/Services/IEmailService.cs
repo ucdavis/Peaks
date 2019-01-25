@@ -59,7 +59,7 @@ namespace Keas.Core.Services
                 return;                
             }
 
-            var ccUsers = await _dbContext.TeamPermissions.Where(
+            var toUsers = await _dbContext.TeamPermissions.Where(
                 t => t.TeamId == teamId && 
                 ((t.Role.Name == Role.Codes.DepartmentalAdmin) || 
                 (t.Role.Name == Role.Codes.KeyMaster && expiringItems.KeySerials.Any()) ||
@@ -67,19 +67,24 @@ namespace Keas.Core.Services
                 (t.Role.Name == Role.Codes.EquipmentMaster && expiringItems.Equipment.Any()) || 
                 (t.Role.Name == Role.Codes.SpaceMaster && expiringItems.Workstations.Any()))).Select(t => t.User).ToListAsync();
 
+            var toEmails = toUsers
+                 .Distinct()
+                 .Select(u => new Recipient() { Address = new Address(u.Email, u.Name, "cc") })
+                 .ToList();
+
             // Build list of people to email. I.E. get all DeptAdmin, if access.any then add AccessMaster, etc.
             var transmission = new Transmission();
             transmission.Content.Subject = "PEAKS Notification";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
             transmission.Content.Text = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
 #if DEBUG
-               transmission.Recipients.Add(new Recipient() {Address =  new Address("jscubbage@ucdavis.edu")});
+            transmission.Recipients.Add(new Recipient() { Address = new Address("jscubbage@ucdavis.edu") });
 #else
-               ccUsers.ForEach(transmission.Recipients.Add);
-#endif            
-            
+            toEmails.ForEach(transmission.Recipients.Add);
+#endif
 
-             var engine = GetRazorEngine();
+
+            var engine = GetRazorEngine();
             transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems);
 
             var client = GetSparkpostClient();
