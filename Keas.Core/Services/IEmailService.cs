@@ -20,6 +20,8 @@ namespace Keas.Core.Services
     {
         Task SendNotificationMessage(User user);
         Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model);
+
+        Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model);
     }
 
     public class EmailService : IEmailService
@@ -32,6 +34,59 @@ namespace Keas.Core.Services
         {
             _dbContext = dbContext;
             _emailSettings = emailSettings.Value;
+        }
+
+        public async Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model)
+        {
+            if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.Information("Email Sending Disabled");
+                return;
+            }
+
+            var expiringItems = ExpiringItemsEmailModel.Create(
+                model.AccessAssignments.Where(a => a.Access.TeamId == teamId).ToList(),
+                model.KeySerials.Where(a => a.KeySerialAssignment != null && a.TeamId == teamId).ToList(),
+                model.Equipment.Where(a => a.Assignment != null && a.TeamId == teamId).ToList(),
+                model.Workstations.Where(a => a.Assignment != null && a.TeamId == teamId).ToList(),
+                null
+            );
+
+            if (!expiringItems.AccessAssignments.Any() && !expiringItems.KeySerials.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
+            {
+                return;                
+            }
+
+            // Build list of people to email. I.E. get all DeptAdmin, if access.any then add AccessMaster, etc.
+            var transmission = new Transmission();
+            transmission.Content.Subject = "PEAKS Notification";
+            transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
+            transmission.Content.Text = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
+            transmission.Recipients = new List<Recipient>()
+            {
+#if DEBUG
+                new Recipient() { Address = new Address("jscubbage@ucdavis.edu") },
+#else
+                new Recipient() { Address = new Address(person.Email, person.Name) },
+#endif            
+            };
+
+             var engine = GetRazorEngine();
+            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems);
+
+            var client = GetSparkpostClient();
+            var result = await client.Transmissions.Send(transmission);
+
+            // reset next notification date
+            // TODO change to team notification date
+             foreach (var assignment in expiringItems.AccessAssignments)
+            {
+                SetNextNotification(assignment);
+                _dbContext.AccessAssignments.Update(assignment);
+            }
+
+            await _dbContext.SaveChangesAsync();
+
         }
 
         public async Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model)
