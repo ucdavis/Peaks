@@ -44,12 +44,14 @@ namespace Keas.Core.Services
                 return;
             }
 
+            var person = model.People.First(a => a.TeamId == teamId);
+
             var expiringItems = ExpiringItemsEmailModel.Create(
                 model.AccessAssignments.Where(a => a.Access.TeamId == teamId).ToList(),
                 model.KeySerials.Where(a => a.KeySerialAssignment != null && a.TeamId == teamId).ToList(),
                 model.Equipment.Where(a => a.Assignment != null && a.TeamId == teamId).ToList(),
                 model.Workstations.Where(a => a.Assignment != null && a.TeamId == teamId).ToList(),
-                null
+                person
             );
 
             if (!expiringItems.AccessAssignments.Any() && !expiringItems.KeySerials.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
