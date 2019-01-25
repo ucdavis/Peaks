@@ -69,7 +69,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
                         onSearch={async query => {
                             this.setState({ isSearchLoading: true });
                             const people = await this.context.fetch(
-                                `/api/${this.context.team.slug}/search/searchPeople?q=${query}`
+                                `/api/${this.context.team.slug}/people/searchPeople?q=${query}`
                             );
                             this.setState({
                                 isSearchLoading: false,
