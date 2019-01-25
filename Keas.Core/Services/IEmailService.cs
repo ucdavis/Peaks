@@ -69,7 +69,7 @@ namespace Keas.Core.Services
 
             var toEmails = toUsers
                  .Distinct()
-                 .Select(u => new Recipient() { Address = new Address(u.Email, u.Name, "cc") })
+                 .Select(u => new Recipient() { Address = new Address(u.Email, u.Name, "to") })
                  .ToList();
 
             // Build list of people to email. I.E. get all DeptAdmin, if access.any then add AccessMaster, etc.

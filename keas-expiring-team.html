@@ -23,55 +23,30 @@
 				<thead>
 					<tr>
 						<th><b>Type</b></th>
-					    <th><b>Item</b></th>
-					    <th><b>Assigned To</b></th>
-						<th><b>Date expiring</b></th>
+					    <th><b># of expiring items</b></th>
 					</tr>
 				</thead>
-				<tbody>
-					@foreach (var item in Model.AccessAssignments)
-					{
+			    <tbody>
 					<tr>
 						<td>Access</td>
-					    <td>@item.Access.Name</td>
-					    <td>@item.Person.Name</td>
-						<td>@item.ExpiresAt.ToPacificTime().ToString("d")</td>
+					    <td>@accessCount</td>
 					</tr>
-					}
-
-					@foreach (var item in Model.KeySerials)
-					{
 					<tr>
 						<td>Key</td>
-					    <td>@item.Key.Title</td>
-						<td>@item.KeySerialAssignment.Person.Name</td>
-						<td>@item.KeySerialAssignment.ExpiresAt.ToPacificTime().ToString("d")</td>
+					    <td>@keyCount</td>
 					</tr>
-					}
-
-					@foreach (var item in Model.Equipment)
-					{
 					<tr>
 						<td>Equipment</td>
-					    <td>@item.Name</td>
-					    <td>@item.Assignment.Person.Name</td>
-						<td>@item.Assignment.ExpiresAt.ToPacificTime().ToString("d")</td>
+					    <td>@equipmentCount</td>
 					</tr>
-					}
-
-					@foreach (var item in Model.Workstations)
-					{
 					<tr>
 						<td>Workstation</td>
-					    <td>@item.Name</td>
-					    <td>@item.Assignment.Person.Name</td>
-						<td>@item.Assignment.ExpiresAt.ToPacificTime().ToString("d")</td>
+					    <td>@workstationCount</td>
 					</tr>
-					}
 				</tbody>
 			</table>
 			<hr />
-			<p>Please contact the assigned individuals to either update the expiration date or return/check-in the above items.</p>
+			<p>Please review the full details under reports. Then contact the assigned individuals to either update the expiration date or return/check-in the above items.</p>
 			<hr />
 		</columns>
 	</row>
