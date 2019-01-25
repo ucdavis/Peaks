@@ -72,14 +72,12 @@ namespace Keas.Core.Services
             transmission.Content.Subject = "PEAKS Notification";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
             transmission.Content.Text = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
-            transmission.Recipients = new List<Recipient>()
-            {
 #if DEBUG
-                new Recipient() { Address = new Address("jscubbage@ucdavis.edu") },
+               transmission.Recipients.Add(new Recipient() {Address =  new Address("jscubbage@ucdavis.edu")});
 #else
-                ccUsers.ForEach(transmission.Recipients.Add);
+               ccUsers.ForEach(transmission.Recipients.Add);
 #endif            
-            };
+            
 
              var engine = GetRazorEngine();
             transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems);
