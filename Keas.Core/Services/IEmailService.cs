@@ -57,6 +57,14 @@ namespace Keas.Core.Services
                 return;                
             }
 
+            var emailList = await _dbContext.TeamPermissions.Where(
+                t => t.TeamId == teamId && 
+                ((t.Role.Name == Role.Codes.DepartmentalAdmin) || 
+                (t.Role.Name == Role.Codes.KeyMaster && expiringItems.KeySerials.Any()) ||
+                (t.Role.Name == Role.Codes.AccessMaster && expiringItems.AccessAssignments.Any()) || 
+                (t.Role.Name == Role.Codes.EquipmentMaster && expiringItems.Equipment.Any()) || 
+                (t.Role.Name == Role.Codes.SpaceMaster && expiringItems.Workstations.Any()))).Select(t => new {t.User.Email, t.User.Name}).ToListAsync();
+
             // Build list of people to email. I.E. get all DeptAdmin, if access.any then add AccessMaster, etc.
             var transmission = new Transmission();
             transmission.Content.Subject = "PEAKS Notification";
@@ -67,7 +75,10 @@ namespace Keas.Core.Services
 #if DEBUG
                 new Recipient() { Address = new Address("jscubbage@ucdavis.edu") },
 #else
-                new Recipient() { Address = new Address(person.Email, person.Name) },
+                foreach(var item in emailList)
+                {
+                    new Recipient() {Address = new Address(item.Email, item.Name)},
+                }                
 #endif            
             };
 
