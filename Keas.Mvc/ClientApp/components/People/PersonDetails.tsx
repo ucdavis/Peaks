@@ -34,6 +34,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
         if (!this.props.selectedPersonInfo || !this.props.selectedPersonInfo.person) {
             return null;
         }
+        const canEdit = PermissionsUtil.canEditPeople(this.context.permissions);
         return (
             <div>
                 <div>
@@ -44,7 +45,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                 <br />
                 <div>
                     <BioContainer person={this.props.selectedPersonInfo.person} />
-                    {PermissionsUtil.canEditPeople(this.context.permissions) && (
+                    {canEdit && (
                         <div>
                             <EditPerson
                                 onEdit={this.props.onEdit}
@@ -96,10 +97,12 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                         assetInUseUpdated={this.props.inUseUpdated}
                         assetEdited={this.props.edited}
                     />
-                    <HistoryContainer
-                        controller="people"
-                        id={this.props.selectedPersonInfo.person.id}
-                    />
+                    {canEdit && (
+                        <HistoryContainer
+                            controller="people"
+                            id={this.props.selectedPersonInfo.person.id}
+                        />
+                    )}
                 </div>
             </div>
         );
