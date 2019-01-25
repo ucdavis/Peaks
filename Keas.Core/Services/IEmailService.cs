@@ -91,14 +91,12 @@ namespace Keas.Core.Services
             var result = await client.Transmissions.Send(transmission);
 
             // reset next notification date
-            // TODO change to team notification date
-             foreach (var assignment in expiringItems.AccessAssignments)
-            {
-                SetNextNotification(assignment);
-                _dbContext.AccessAssignments.Update(assignment);
-            }
-
-            await _dbContext.SaveChangesAsync();
+            // TODO Do we need a team level notification date????
+            // var team = await _dbContext.Teams.FirstAsync(a => a.Id == teamId);
+            // team.NextNotificationDate = DateTime.Now.AddDays(1);
+            // _dbContext.Teams.Update(team);
+            // await _dbContext.SaveChangesAsync();
+            
 
         }
 
@@ -132,7 +130,7 @@ namespace Keas.Core.Services
             transmission.Recipients = new List<Recipient>()
             {
 #if DEBUG
-                new Recipient() { Address = new Address("jsylvestre@ucdavis.edu") },
+                new Recipient() { Address = new Address("jscubbage@ucdavis.edu") },
 #else
                 new Recipient() { Address = new Address(person.Email, person.Name) },
 #endif            
@@ -271,7 +269,7 @@ namespace Keas.Core.Services
             transmission.Recipients = new List<Recipient>()
             {
 #if DEBUG
-                new Recipient() { Address = new Address("jsylvestre@ucdavis.edu") },
+                new Recipient() { Address = new Address("jscubbage@ucdavis.edu") },
 #else
                 new Recipient() { Address = new Address(user.Email, user.Name) },
 #endif
