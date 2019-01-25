@@ -69,53 +69,55 @@ namespace Keas.Core.Services
                 new Recipient() { Address = new Address(person.Email, person.Name) },
 #endif            
             };
+
+            // TODO: Email supervisor?
             
             // build cc list
-            var ccUsers = new List<User>();
+//             var ccUsers = new List<User>();
 
-            if (expiringItems.AccessAssignments.Any())
-            {
-                var roles = await _dbContext.Roles
-                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
-                var users = await GetUsersInRoles(roles, person.TeamId);
-                ccUsers.AddRange(users);
-            }
+//             if (expiringItems.AccessAssignments.Any())
+//             {
+//                 var roles = await _dbContext.Roles
+//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
+//                 var users = await GetUsersInRoles(roles, person.TeamId);
+//                 ccUsers.AddRange(users);
+//             }
 
-            if (expiringItems.KeySerials.Any())
-            {
-                var roles = await _dbContext.Roles
-                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-                var users = await GetUsersInRoles(roles, person.TeamId);
-                ccUsers.AddRange(users);
-            }
+//             if (expiringItems.KeySerials.Any())
+//             {
+//                 var roles = await _dbContext.Roles
+//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
+//                 var users = await GetUsersInRoles(roles, person.TeamId);
+//                 ccUsers.AddRange(users);
+//             }
 
-            if (expiringItems.Equipment.Any())
-            {
-                var roles = await _dbContext.Roles
-                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
-                var users = await GetUsersInRoles(roles, person.TeamId);
-                ccUsers.AddRange(users);
-            }
+//             if (expiringItems.Equipment.Any())
+//             {
+//                 var roles = await _dbContext.Roles
+//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
+//                 var users = await GetUsersInRoles(roles, person.TeamId);
+//                 ccUsers.AddRange(users);
+//             }
 
-            if (expiringItems.Workstations.Any())
-            {
-                var roles = await _dbContext.Roles
-                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
-                var users = await GetUsersInRoles(roles, person.TeamId);
-                ccUsers.AddRange(users);
+//             if (expiringItems.Workstations.Any())
+//             {
+//                 var roles = await _dbContext.Roles
+//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
+//                 var users = await GetUsersInRoles(roles, person.TeamId);
+//                 ccUsers.AddRange(users);
                 
-            }
+//             }
 
-            // transform to cc recipient
-            var ccEmails = ccUsers
-                .Distinct()
-                .Select(u => new Recipient() {Address = new Address(u.Email, u.Name, "cc")})
-                .ToList();
+//             // transform to cc recipient
+//             var ccEmails = ccUsers
+//                 .Distinct()
+//                 .Select(u => new Recipient() {Address = new Address(u.Email, u.Name, "cc")})
+//                 .ToList();
 
-#if !DEBUG
-            // add emails to
-            ccEmails.ForEach(transmission.Recipients.Add);
-#endif
+// #if !DEBUG
+//             // add emails to
+//             ccEmails.ForEach(transmission.Recipients.Add);
+// #endif
 
             // build view
             var engine = GetRazorEngine();
