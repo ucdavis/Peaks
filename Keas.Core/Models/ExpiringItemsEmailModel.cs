@@ -15,7 +15,7 @@ namespace Keas.Core.Models
         public IList<Person> People { get; set; }
         public Person Person { get; set; }
 
-        public Team Team {get; set; }
+       
 
         
 

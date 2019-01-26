@@ -27,26 +27,38 @@
 					</tr>
 				</thead>
 			    <tbody>
-					<tr>
-						<td>Access</td>
-					    <td>@accessCount</td>
-					</tr>
-					<tr>
-						<td>Key</td>
-					    <td>@keyCount</td>
-					</tr>
-					<tr>
-						<td>Equipment</td>
-					    <td>@equipmentCount</td>
-					</tr>
-					<tr>
-						<td>Workstation</td>
-					    <td>@workstationCount</td>
-					</tr>
-				</tbody>
+                    @if(accessCount > 0)
+                    {
+                    <tr>
+                        <td>Access</td>
+                        <td>@accessCount</td>
+                    </tr>
+                    }
+                    @if(keyCount > 0)
+                    {
+                    <tr>
+                        <td>Key</td>
+                        <td>@keyCount</td>
+                    </tr>
+                    }
+                    @if(equipmentCount > 0)
+                    {
+                    <tr>
+                        <td>Equipment</td>
+                        <td>@equipmentCount</td>
+                    </tr>
+                    }
+                    @if(workstationCount > 0)
+                    {
+                    <tr>
+                        <td>Workstation</td>
+                        <td>@workstationCount</td>
+                    </tr>
+                    }
+                </tbody>
 			</table>
 			<hr />
-			<p>Please review the full details under reports. Then contact the assigned individuals to either update the expiration date or return/check-in the above items.</p>
+			<p>Please review the full details under <a href="https://peaks.ucdavis.edu/@teamSlug/Report">reports</a>. Then contact the assigned individuals to either update the expiration date or return/check-in the items.</p>
 			<hr />
 		</columns>
 	</row>
