@@ -49,7 +49,7 @@ namespace Keas.Jobs.SendMail
             _log.Information("Notifications Sent {counter}", counter);
             _log.Information("Staring Expiry Notifications");
 
-            // Email persons with expiring items, cc teammembers as needed
+            // Email persons with expiring items
             counter = 0;
 
             var expiringItems = new ExpiringItemsEmailModel();
@@ -74,7 +74,26 @@ namespace Keas.Jobs.SendMail
             }
             _log.Information("Expiring Sent {count}", counter);
 
+           
+
+            // Email team admins who have expiring items
+            counter = 0;
+
+            var teamIds = expiringItems.GetTeamIdList();
+            _log.Information("About to write {count} Team Expiry Emails", teamIds.Count);
+
+            if(teamIds.Any())
+            {
+                foreach(var teamId in teamIds)
+                {
+                    emailService.SendTeamExpiringMessage(teamId, expiringItems).GetAwaiter().GetResult();
+                    counter++;
+                }
+            }
+            _log.Information("Team Expiring Emails Sent {count}", counter);
+            
             _log.Information("Done Email Job");
+
         }
 
         private static ServiceProvider ConfigureServices()

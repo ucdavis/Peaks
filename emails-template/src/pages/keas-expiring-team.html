@@ -1,0 +1,76 @@
+<style type="text/css">
+	body,
+	html,
+	.body {
+	  background: #f3f3f3 !important;
+	}
+</style>
+
+<container>
+
+	<spacer size="16"></spacer>
+
+	<row>
+		<columns>
+			<h1>The team @teamName has @count expiring @itemPluralize in PEAKS.</h1>
+			<p>Thanks for PEAKing at this email. It sPEAKS well of you.</p>
+
+			<spacer size="16"></spacer>
+
+			<h4>Notification Details</h4>
+
+			<table>
+				<thead>
+					<tr>
+						<th><b>Type</b></th>
+					    <th><b># of expiring items</b></th>
+					</tr>
+				</thead>
+			    <tbody>
+                    @if(accessCount > 0)
+                    {
+                    <tr>
+                        <td>Access</td>
+                        <td>@accessCount</td>
+                    </tr>
+                    }
+                    @if(keyCount > 0)
+                    {
+                    <tr>
+                        <td>Key</td>
+                        <td>@keyCount</td>
+                    </tr>
+                    }
+                    @if(equipmentCount > 0)
+                    {
+                    <tr>
+                        <td>Equipment</td>
+                        <td>@equipmentCount</td>
+                    </tr>
+                    }
+                    @if(workstationCount > 0)
+                    {
+                    <tr>
+                        <td>Workstation</td>
+                        <td>@workstationCount</td>
+                    </tr>
+                    }
+                </tbody>
+			</table>
+			<hr />
+			<p>Please review the full details under <a href="https://peaks.ucdavis.edu/@teamSlug/Report">reports</a>. Then contact the assigned individuals to either update the expiration date or return/check-in the items.</p>
+			<hr />
+		</columns>
+	</row>
+	<div class="footer text-center">
+		<div>
+			<img src="https://peaks.ucdavis.edu/Images/peaksLogo.png" alt="">
+		</div>
+		<hr />
+		<div>
+			<p>
+				This email was automatically generated please do not reply to it as the mailbox is not monitored.
+			</p>
+		</div>
+	</div>
+</container>
