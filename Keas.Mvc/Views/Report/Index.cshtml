@@ -31,6 +31,17 @@
     </div>
 </div>
 
+ <div class="card primary-color">
+        <div class="card-header-primary-thick">
+            <div class="card-head">
+                <h2>Items Pending Acceptance</h2>
+            </div>
+        </div>
+        <div class="card-content">
+            <a href="Report/UnAcceptedItems" class="btn btn-link">Items Pending Acceptance <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+        </div>
+    </div>
+
 @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.KeyMasterAccess)).Succeeded)
 {
     <div class="card keys-color">
