@@ -99,7 +99,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                     />
                     {canEdit && (
                         <HistoryContainer
-                            controller="people"
+                            controller="peopleAdmin"
                             id={this.props.selectedPersonInfo.person.id}
                         />
                     )}

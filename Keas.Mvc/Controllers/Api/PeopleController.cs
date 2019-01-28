@@ -24,7 +24,7 @@ namespace Keas.Mvc.Controllers.Api
             this._identityService = identityService;
         }
 
-        public async Task<IActionResult> ListPeople()
+        public async Task<IActionResult> List()
         {
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
 
@@ -130,7 +130,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(person);
         }
 
-        public async Task<IActionResult> CreatePerson([FromBody] Person person)
+        public async Task<IActionResult> Create([FromBody] Person person)
         {
             // TODO Make sure user has permission; Protect from overpost
             if (ModelState.IsValid)
