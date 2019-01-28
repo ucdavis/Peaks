@@ -2,6 +2,8 @@ import * as PropTypes from "prop-types";
 import * as React from "react";
 import { Button } from "reactstrap";
 import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
+import { PermissionsUtil } from "../../util/permissions";
+import Denied from "../Shared/Denied";
 import AssignWorkstation from "../Workstations/AssignWorkstation";
 import EditWorkstation from "../Workstations/EditWorkstation";
 import RevokeWorkstation from "../Workstations/RevokeWorkstation";
@@ -26,6 +28,7 @@ interface IState {
 export default class WorkstationContainer extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
+        permissions: PropTypes.array,
         router: PropTypes.object,
         team: PropTypes.object
     };
@@ -62,6 +65,9 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     }
 
     public render() {
+        if (!PermissionsUtil.canViewSpace(this.context.permissions)) {
+            return <Denied viewName="Workstations" />;
+        }
         if (!this.props.space && !this.props.person) {
             return null;
         }

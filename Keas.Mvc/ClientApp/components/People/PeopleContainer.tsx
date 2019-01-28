@@ -200,7 +200,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         }
 
         const updated: IPerson = await this.context.fetch(
-            `/api/${this.context.team.slug}/people/update`,
+            `/api/${this.context.team.slug}/peopleAdmin/update`,
             {
                 body: JSON.stringify(person),
                 method: "POST"
@@ -230,7 +230,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         }
 
         const deleted: IPerson = await this.context.fetch(
-            `/api/${this.context.team.slug}/people/delete`,
+            `/api/${this.context.team.slug}/peopleAdmin/delete`,
             {
                 body: JSON.stringify(person),
                 method: "POST"
