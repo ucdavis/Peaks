@@ -26,8 +26,21 @@
             break;
     }
 
-    <div class="jumbotron">
-        <h3>@statusmessage</h3>
+    <div class="err-container">
+        <h1>@statusmessage</h1>
     </div>
 }
+
+   <style type="text/css">
+        .err-container 
+        {
+            background-image: url('@Url.Content("~/images/error-cat.jpg")');
+            height:960px;
+            background-repeat: no-repeat;
+            background-size: contain;
+            -webkit-text-fill-color: white; /* Will override color (regardless of order) */
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: black;
+        }
+    </style>
 
