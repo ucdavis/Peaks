@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Core.Models;
 using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
-    [Authorize(Policy = "AnyRole")]
+    [Authorize(Policy = AccessCodes.Codes.AnyRole)]
     public class ReportController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -34,7 +35,7 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
-        [Authorize(Policy = "KeyMasterAccess")]
+        [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
         public async Task<ActionResult> ExpiringKeys (bool showInactive = false, DateTime? expiresBefore = null)
         {
             string showType = "Key";
@@ -46,7 +47,7 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
-        [Authorize(Policy = "EquipMasterAccess")]
+        [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
         public async Task<ActionResult> ExpiringEquipment (bool showInactive = false, DateTime? expiresBefore = null)
         {
             string showType = "Equipment";
@@ -58,7 +59,7 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
-        [Authorize(Policy = "AccessMasterAccess")]
+        [Authorize(Policy = AccessCodes.Codes.AccessMasterAccess)]
         public async Task<ActionResult> ExpiringAccess (bool showInactive = false, DateTime? expiresBefore = null)
         {
             string showType = "Access";
@@ -70,7 +71,7 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
-        [Authorize(Policy = "SpaceMasterAccess")]
+        [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
         public async Task<ActionResult> ExpiringWorkstations (bool showInactive = false, DateTime? expiresBefore = null)
         {
             string showType = "Workstation";
