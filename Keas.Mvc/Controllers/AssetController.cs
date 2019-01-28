@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Models;
 
 namespace Keas.Mvc.Controllers
 {
-   [Authorize(Policy = "AnyRole")]
+   [Authorize(Policy = AccessCodes.Codes.AnyRole)]
     public class AssetController : SuperController
     {
        

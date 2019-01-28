@@ -7,10 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Models;
 
 namespace Keas.Mvc.Controllers.Api
 {
-    [Authorize(Policy = "SpaceMasterAccess")]
+    [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
     public class WorkstationsController : SuperController
     {
         private readonly ApplicationDbContext _context;

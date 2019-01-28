@@ -2,6 +2,7 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Core.Models;
 using Keas.Mvc.Helpers;
 using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -12,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
-    [Authorize(Policy = "SystemAdminAccess")]
+    [Authorize(Policy = AccessCodes.Codes.SystemAdminAccess)]
     public class SystemController : SuperController
     {
         private readonly ApplicationDbContext _context;
