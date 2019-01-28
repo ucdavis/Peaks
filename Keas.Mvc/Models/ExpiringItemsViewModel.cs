@@ -10,7 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Keas.Mvc.Models
 {
-    public class ExpiringItemsViewModel
+    public class ReportItemsViewModel
     {
         public AccessAssignment[] Access { get; set; }
         public KeySerial[] Keys { get; set; }
@@ -29,7 +29,7 @@ namespace Keas.Mvc.Models
         public String ShowType { get; set; }
        
 
-        public static async Task<ExpiringItemsViewModel> Create(ApplicationDbContext context, DateTime expiresBefore, string teamName, bool showInactive, string showType)
+        public static async Task<ReportItemsViewModel> Create(ApplicationDbContext context, DateTime expiresBefore, string teamName, bool showInactive, string showType)
         {
             
             var expiringAccess = await context.AccessAssignments.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Access") &&
@@ -46,7 +46,7 @@ namespace Keas.Mvc.Models
                 .Include(w => w.Assignment).ThenInclude(a=> a.Person).AsNoTracking().ToArrayAsync();
 
             var itemList = new List<string>(new string[] {"All", "Access", "Equipment", "Key", "Workstation"});
-            var viewModel = new ExpiringItemsViewModel
+            var viewModel = new ReportItemsViewModel
             {
                 Access = expiringAccess,
                 Keys = expiringKey,

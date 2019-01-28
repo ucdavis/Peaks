@@ -31,7 +31,7 @@ namespace Keas.Mvc.Controllers
             {
                 expiresBefore = DateTime.Now.AddDays(30);
             }
-            var model = await ExpiringItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
+            var model = await ReportItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
             return View(model);
         }
 
@@ -43,7 +43,7 @@ namespace Keas.Mvc.Controllers
             {
                 expiresBefore = DateTime.Now.AddDays(30);
             }
-            var model = await ExpiringItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
+            var model = await ReportItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
             return View(model);
         }
 
@@ -55,7 +55,7 @@ namespace Keas.Mvc.Controllers
             {
                 expiresBefore = DateTime.Now.AddDays(30);
             }
-            var model = await ExpiringItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
+            var model = await ReportItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
             return View(model);
         }
 
@@ -67,7 +67,7 @@ namespace Keas.Mvc.Controllers
             {
                 expiresBefore = DateTime.Now.AddDays(30);
             }
-            var model = await ExpiringItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
+            var model = await ReportItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
             return View(model);
         }
 
@@ -79,7 +79,7 @@ namespace Keas.Mvc.Controllers
             {
                 expiresBefore = DateTime.Now.AddDays(30);
             }
-            var model = await ExpiringItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
+            var model = await ReportItemsViewModel.Create(_context, expiresBefore.Value, Team, showInactive, showType);
             return View(model);
         }
 
