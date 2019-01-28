@@ -1,0 +1,151 @@
+@model Keas.Mvc.Models.ReportItemsViewModel
+
+@{
+    ViewData["Title"] = "Items Pending Acceptance";
+}
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+   @await Html.PartialAsync("_ReportScriptsPartial")                             
+}
+
+
+<form asp-action="UnAcceptedItems" method="get">
+    <div class="card">
+      <div class="card-header-primary-thick">
+        <div class="card-head">
+          <h2>Items Pending Acceptance</h2>
+
+        </div>
+      </div>
+        <div class="card-content">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+              <div class="shade">
+
+
+                  <div class="row align-items-end">                     
+                      <div class="col-sm">
+                          <h3>Filters</h3>
+                          <div class="form-group">
+                              <label asp-for="ShowType" class="control-label"></label>
+                              <br>
+                              <select asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
+                          </div>
+                      </div>
+                      <div class="col-sm">
+                          <div class="form-group">
+                              <label asp-for="ShowInactive" class="control-label"></label>
+                              <input asp-for="ShowInactive" class="form-control" />
+                          </div>
+                      </div>
+                      <div class="col-sm">
+                          <div class="form-group">
+                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                          </div>
+                      </div>
+                  </div>
+
+              </div>
+<br>
+<br>
+<table id="dtExpiringItems" class="table dataTable">
+        <thead>
+        <tr>
+            <th>
+                Type
+            </th>
+            <th>
+                Item Name
+            </th>
+            <th>
+                Assigned To
+            </th>            
+            <th>
+                Current?
+            </th>
+            <th>
+                Link
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Access)
+        {
+            <tr>
+                <td>Access</td>
+                <td>@Html.DisplayFor(a=> item.Access.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a=> item.Person.Name)
+                </td>               
+                <td>
+                    @Html.DisplayFor(a=> item.Access.Active)
+                </td>
+                 <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "access", item.AccessId)' >Details</a>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model.Keys)
+        {
+            <tr>
+                <td>Key</td>
+                <td>@Html.DisplayFor(a => item.Key.Name) @Html.DisplayFor(a => item.Key.Code)-@Html.DisplayFor(a => item.Number)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.KeySerialAssignment.Person.Name)
+                </td>                
+                <td>
+                    @Html.DisplayFor(a => item.Key.Active)
+                </td>
+                 <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "keys", item.KeyId)' >Details</a>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model.Equipment)
+        {
+            <tr>
+                <td>Equipment</td>
+                <td>
+                    @Html.DisplayFor(a => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.Person.Name)
+                </td>                
+                <td>
+                    @Html.DisplayFor(a => item.Active)
+                </td>
+                 <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "equipment", item.Id)' >Details</a>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model.Workstations)
+        {
+            <tr>
+                <td>Workstation</td>
+                <td>
+                    @Html.DisplayFor(a => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.Person.Name)
+                </td>                
+                <td>
+                    @Html.DisplayFor(a => item.Active)
+                </td>
+                <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "spaces", item.SpaceId)' >Details</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+
+        </div>
+    </div>
+</form>
