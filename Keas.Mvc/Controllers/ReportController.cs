@@ -24,7 +24,7 @@ namespace Keas.Mvc.Controllers
         public ActionResult Index () {
             return View();
         }
-
+        [Authorize(Policy = AccessCodes.Codes.DepartmentAdminAccess)]
         public async Task<ActionResult> ExpiringItems (bool showInactive = false, DateTime? expiresBefore = null, string showType = "All")
         {
             if (expiresBefore == null)
@@ -91,6 +91,7 @@ namespace Keas.Mvc.Controllers
 
         }
 
+        [Authorize(Policy = AccessCodes.Codes.DepartmentAdminAccess)]
         public async Task<IActionResult> PersonTeamList(int personId)
         {
             var person = await _context.People.Include(a => a.User).Include(a => a.Team).SingleAsync(a => a.Id == personId);
