@@ -80,7 +80,7 @@ namespace Keas.Mvc.Models
                 .Include(w => w.Assignment).ThenInclude(a=> a.Person)
                 .Include(k => k.Assignment).ThenInclude(a => a.RequestedBy).AsNoTracking().ToArrayAsync();
 
-            var itemList = populateItemList(userRoles, _securityService);
+            var itemList = populateItemList(userRoles, _securityService, false);
             var viewModel = new ReportItemsViewModel
             {                
                 Keys = expiringKey,
@@ -93,11 +93,11 @@ namespace Keas.Mvc.Models
             return viewModel;
         }
 
-        public static List<string> populateItemList(List<Role> userRoles, ISecurityService _securityService) 
+        public static List<string> populateItemList(List<Role> userRoles, ISecurityService _securityService, bool includeAccess) 
         {
             var itemList = new List<string>() {"All"};
 
-            if(_securityService.IsRoleOrDAInList(userRoles, Role.Codes.AccessMaster))
+            if(includeAccess && _securityService.IsRoleOrDAInList(userRoles, Role.Codes.AccessMaster))
             {
                 itemList.Add("Access");
             }
