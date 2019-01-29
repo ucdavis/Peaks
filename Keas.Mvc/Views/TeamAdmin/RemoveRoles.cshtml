@@ -29,8 +29,8 @@
                           <div class="editor-label">Check Roles to delete</div>
                           @foreach (var role in item.Roles)
                           {
-                              <input type="checkbox" value="@role.Id" name="roles"/>
-                              @role.Name.Humanize(LetterCasing.Sentence).SafeHumanizeTitle()
+                              <input id="@role.Id" type="checkbox" value="@role.Id" name="roles"/>
+                              <label for="@role.Id">@role.Name.Humanize(LetterCasing.Sentence).SafeHumanizeTitle()</label>
                               <br/>
                               <br/>
                           }
