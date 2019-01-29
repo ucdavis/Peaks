@@ -30,7 +30,6 @@ namespace Keas.Mvc.Models
         public List<String> ItemList { get; set; }
         public String ShowType { get; set; }
 
-        public List<Role> UserRoles {get; set; }
 
         public static async Task<ReportItemsViewModel> CreateExpiry(ApplicationDbContext context, DateTime expiresBefore, string teamName, bool showInactive, string showType)
         {
@@ -58,7 +57,7 @@ namespace Keas.Mvc.Models
                 ExpiresBefore = expiresBefore,
                 ShowInactive = showInactive,
                 ItemList =  itemList,
-                ShowType = showType,                
+                ShowType = showType               
             };
             return viewModel;
         }
@@ -82,8 +81,6 @@ namespace Keas.Mvc.Models
                     a.Team.Slug == teamName && !a.Assignment.IsConfirmed && (a.Active || a.Active == !showInactive))
                 .Include(w => w.Assignment).ThenInclude(a=> a.Person).AsNoTracking().ToArrayAsync();
 
-            //var itemList = new List<string>(new string[] {"All", "Access", "Equipment", "Key", "Workstation"});
-
             var itemList = populateItemList(userRoles);
             var viewModel = new ReportItemsViewModel
             {
@@ -93,7 +90,7 @@ namespace Keas.Mvc.Models
                 Workstations = expiringWorkstations,
                 ShowInactive = showInactive,
                 ItemList =  itemList,
-                ShowType = showType,                
+                ShowType = showType                
             };
             return viewModel;
         }
