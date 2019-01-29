@@ -23,6 +23,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using StackifyLib;
 
 namespace Keas.Mvc
 {
@@ -154,11 +155,14 @@ namespace Keas.Mvc
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
             // setup logging
             LogConfiguration.Setup(Configuration);
+            app.ConfigureStackifyLogging(Configuration);
             loggerFactory.AddSerilog();
+
+            appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
 
             app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<LogIdentityMiddleware>();
@@ -169,8 +173,8 @@ namespace Keas.Mvc
                 app.UseDatabaseErrorPage();
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
-                    //HotModuleReplacement = true,
-                    //ReactHotModuleReplacement = true
+                    HotModuleReplacement = true,
+                    ReactHotModuleReplacement = true
                 });
             }
             else
