@@ -41,6 +41,8 @@ namespace Keas.Mvc.Services
         Task<List<Role>> GetUserRolesInTeamOrAdmin(string teamSlug);
 
         Task<bool> IsInTeamOrAdmin(string teamslug);
+
+        bool IsRoleOrDAInList(List<Role> list, string roleName);
     }
     public class SecurityService : ISecurityService
     {
@@ -277,6 +279,17 @@ namespace Keas.Mvc.Services
             return await _dbContext.SystemPermissions
                 .AsNoTracking()
                 .AnyAsync(sp => sp.User.Id == userId);
+        }
+
+        public bool IsRoleOrDAInList(List<Role> list, string roleName)
+        {
+            if(list.Where(r => r.Name == Role.Codes.DepartmentalAdmin).Any() || list.Where(r => r.Name == roleName).Any())
+            {
+                return true;
+            } else 
+            {
+                return false;
+            }
         }
     }
 }
