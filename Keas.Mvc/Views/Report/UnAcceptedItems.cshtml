@@ -63,7 +63,10 @@
             </th>
             <th>
                 Assigned To
-            </th>            
+            </th> 
+            <th>
+                Assigned By / When
+            </th>           
             <th>
                 Current?
             </th>
@@ -77,10 +80,14 @@
         {
             <tr>
                 <td>Access</td>
-                <td>@Html.DisplayFor(a=> item.Access.Name)
+                <td>@Html.DisplayFor(a => item.Access.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(a=> item.Person.Name)
+                    @Html.DisplayFor(a => item.Person.Name)
+                </td>
+                <td>
+                   @Html.DisplayFor(a => item.RequestedBy.Name) 
+                   @Html.DisplayFor(a => item.RequestedAt) 
                 </td>               
                 <td>
                     @Html.DisplayFor(a=> item.Access.Active)
@@ -98,7 +105,11 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.KeySerialAssignment.Person.Name)
-                </td>                
+                </td> 
+                 <td>
+                   @Html.DisplayFor(a => item.KeySerialAssignment.RequestedBy.Name) 
+                   @Html.DisplayFor(a => item.KeySerialAssignment.RequestedAt) 
+                </td>                                
                 <td>
                     @Html.DisplayFor(a => item.Key.Active)
                 </td>
@@ -116,7 +127,11 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.Assignment.Person.Name)
-                </td>                
+                </td> 
+                 <td>
+                   @Html.DisplayFor(a => item.Assignment.RequestedBy.Name) 
+                   @Html.DisplayFor(a => item.Assignment.RequestedAt) 
+                </td>                                 
                 <td>
                     @Html.DisplayFor(a => item.Active)
                 </td>
@@ -134,7 +149,11 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.Assignment.Person.Name)
-                </td>                
+                </td> 
+                 <td>
+                   @Html.DisplayFor(a => item.Assignment.RequestedBy.Name) 
+                   @Html.DisplayFor(a => item.Assignment.RequestedAt) 
+                </td>                              
                 <td>
                     @Html.DisplayFor(a => item.Active)
                 </td>
