@@ -192,6 +192,7 @@ namespace Keas.Mvc.Controllers.Api
             if (serial.KeySerialAssignment != null)
             {
                 serial.KeySerialAssignment.ExpiresAt = model.ExpiresAt;
+                serial.KeySerialAssignment.RequestedById =  User.Identity.Name;
 
                 _context.KeySerialAssignments.Update(serial.KeySerialAssignment);
                 await _eventService.TrackAssignmentUpdatedKeySerial(serial);
@@ -205,6 +206,7 @@ namespace Keas.Mvc.Controllers.Api
                     Person      = person,
                     PersonId    = person.Id,
                     ExpiresAt   = model.ExpiresAt,
+                    RequestedById = User.Identity.Name
                 };
 
                 // create, associate, and track

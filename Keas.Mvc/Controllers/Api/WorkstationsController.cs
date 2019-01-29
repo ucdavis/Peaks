@@ -136,6 +136,7 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     _context.WorkstationAssignments.Update(workstation.Assignment);
                     workstation.Assignment.ExpiresAt = DateTime.Parse(date);
+                    workstation.Assignment.RequestedById = User.Identity.Name;
                     await _eventService.TrackWorkstationAssignmentUpdated(workstation);
                 }
                 else
@@ -143,6 +144,7 @@ namespace Keas.Mvc.Controllers.Api
                     workstation.Assignment = new WorkstationAssignment{PersonId = personId, ExpiresAt = DateTime.Parse(date)};
                     workstation.Assignment.Person =
                     await _context.People.Include(p => p.User).Include(p=> p.Team).SingleAsync(p => p.Id == personId);
+                    workstation.Assignment.RequestedById = User.Identity.Name;
 
                     if (workstation.Assignment.Person.Team.Slug != Team)
                     {

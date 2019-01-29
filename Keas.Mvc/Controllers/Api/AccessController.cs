@@ -16,11 +16,13 @@ namespace Keas.Mvc.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
+        private readonly ISecurityService _securityService;
 
-        public AccessController(ApplicationDbContext context, IEventService eventService)
+        public AccessController(ApplicationDbContext context, IEventService eventService, ISecurityService securityService)
         {
             this._context = context;
             _eventService = eventService;
+            _securityService = securityService;
         }
 
         public string GetTeam()
@@ -79,12 +81,13 @@ namespace Keas.Mvc.Controllers.Api
         {
             // TODO Make sure user has permssion, make sure access exists, makes sure access is in this team
             if (ModelState.IsValid)
-            {
+            {               
                 var access = await _context.Access.Where(x => x.Id == accessId && x.Team.Slug == Team)
                     .Include(x => x.Assignments).SingleAsync();
                 var accessAssignment = new AccessAssignment{
                     AccessId = accessId,
-                    PersonId = personId,
+                    PersonId = personId, 
+                    RequestedById = User.Identity.Name,
                     ExpiresAt = DateTime.Parse(date),
                 };
                 accessAssignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
