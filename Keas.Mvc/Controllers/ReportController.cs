@@ -110,7 +110,7 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> UnAcceptedItems(bool showInactive = false, string showType = "All")
         {
             var userRoles = await _securityService.GetUserRolesInTeamOrAdmin(Team);
-            var model = await ReportItemsViewModel.CreateUnaccepted(_context, Team, showInactive, showType, userRoles);
+            var model = await ReportItemsViewModel.CreateUnaccepted(_context, Team, showInactive, showType, userRoles, _securityService);
             return View(model);
             
         }
