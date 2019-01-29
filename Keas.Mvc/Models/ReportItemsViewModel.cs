@@ -63,11 +63,7 @@ namespace Keas.Mvc.Models
         }
 
         public static async Task<ReportItemsViewModel> CreateUnaccepted(ApplicationDbContext context, string teamName, bool showInactive, string showType, List<Role> userRoles, ISecurityService _securityService)
-        {  
-            var expiringAccess = await context.AccessAssignments.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Access") && 
-                (_securityService.IsRoleOrDAInList(userRoles, Role.Codes.AccessMaster)) &&
-                a.Access.Team.Slug == teamName && !a.IsConfirmed && (a.Access.Active || a.Access.Active == !showInactive))
-                .Include(a => a.Access).Include(a=> a.Person).Include(a => a.RequestedBy).AsNoTracking().ToArrayAsync();
+        {             
             var expiringKey = await context.KeySerials.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Key") &&
                 (_securityService.IsRoleOrDAInList(userRoles, Role.Codes.KeyMaster)) &&
                 a.Key.Team.Slug == teamName && !a.KeySerialAssignment.IsConfirmed && (a.Key.Active || a.Key.Active == !showInactive))
@@ -86,8 +82,7 @@ namespace Keas.Mvc.Models
 
             var itemList = populateItemList(userRoles, _securityService);
             var viewModel = new ReportItemsViewModel
-            {
-                Access = expiringAccess,
+            {                
                 Keys = expiringKey,
                 Equipment = expiringEquipment,
                 Workstations = expiringWorkstations,
