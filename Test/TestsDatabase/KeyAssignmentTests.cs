@@ -54,6 +54,7 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.DisplayFormatAttribute(DataFormatString = \"{0:d}\")]",
             }));
             expectedFields.Add(new NameAndType("RequestedBy", "Keas.Core.Domain.User", new List<string>()));
+            expectedFields.Add(new NameAndType("RequestedById", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedByName", "System.String", new List<string>()));
 
             #endregion Arrange
