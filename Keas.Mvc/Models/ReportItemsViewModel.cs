@@ -68,17 +68,17 @@ namespace Keas.Mvc.Models
                 (_securityService.IsRoleOrDAInList(userRoles, Role.Codes.KeyMaster)) &&
                 a.Key.Team.Slug == teamName && !a.KeySerialAssignment.IsConfirmed && (a.Key.Active || a.Key.Active == !showInactive))
                 .Include(k => k.KeySerialAssignment).ThenInclude(a=> a.Person).Include(k => k.Key)
-                .Include(k => k.KeySerialAssignment).ThenInclude(a => a.RequestedBy).AsNoTracking().ToArrayAsync();
+                .AsNoTracking().ToArrayAsync();
             var expiringEquipment = await context.Equipment.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Equipment") &&
                  (_securityService.IsRoleOrDAInList(userRoles, Role.Codes.EquipmentMaster)) &&
                   a.Team.Slug == teamName && !a.Assignment.IsConfirmed && (a.Active || a.Active == !showInactive))
                 .Include(e => e.Assignment).ThenInclude(a=> a.Person)
-                .Include(k => k.Assignment).ThenInclude(a => a.RequestedBy).AsNoTracking().ToArrayAsync();
+                .AsNoTracking().ToArrayAsync();
             var expiringWorkstations = await context.Workstations.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Workstation") &&
                 (_securityService.IsRoleOrDAInList(userRoles, Role.Codes.SpaceMaster)) &&
                     a.Team.Slug == teamName && !a.Assignment.IsConfirmed && (a.Active || a.Active == !showInactive))
                 .Include(w => w.Assignment).ThenInclude(a=> a.Person)
-                .Include(k => k.Assignment).ThenInclude(a => a.RequestedBy).AsNoTracking().ToArrayAsync();
+                .AsNoTracking().ToArrayAsync();
 
             var itemList = populateItemList(userRoles, _securityService, false);
             var viewModel = new ReportItemsViewModel
