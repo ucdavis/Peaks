@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
+using Keas.Mvc.Extensions;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -88,6 +89,7 @@ namespace Keas.Mvc.Controllers.Api
                     AccessId = accessId,
                     PersonId = personId, 
                     RequestedById = User.Identity.Name,
+                    RequestedByName = User.GetNameClaim(),
                     ExpiresAt = DateTime.Parse(date),
                 };
                 accessAssignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
