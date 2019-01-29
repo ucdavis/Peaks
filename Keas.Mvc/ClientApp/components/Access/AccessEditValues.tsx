@@ -86,16 +86,17 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                         onSelect={e => this.props.changeProperty("tags", e.join(","))}
                     />
                 </div>
-                {this.props.selectedAccess.teamId !== 0 && (
-                    <div>
-                        <h3>Assigned to:</h3>
-                        <ReactTable
-                            data={this.props.selectedAccess.assignments}
-                            columns={columns}
-                            minRows={1}
-                        />
-                    </div>
-                )}
+                {this.props.selectedAccess.teamId !== 0 &&
+                    this.props.selectedAccess.assignments.length > 0 && (
+                        <div>
+                            <h3>Assigned to:</h3>
+                            <ReactTable
+                                data={this.props.selectedAccess.assignments}
+                                columns={columns}
+                                minRows={1}
+                            />
+                        </div>
+                    )}
             </div>
         );
     }
