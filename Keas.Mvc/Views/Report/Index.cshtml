@@ -6,19 +6,18 @@
     ViewData["Title"] = "Reports";
 }
 
-@if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
-{
+
     <div class="card primary-color">
         <div class="card-header-primary-thick">
             <div class="card-head">
-                <h2>Expiring Items (all)</h2>
+                <h2>Expiring Items</h2>
             </div>
         </div>
         <div class="card-content">
             <a href="Report/ExpiringItems" class="btn btn-link">Expiring Items <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
         </div>
     </div>
-}
+
 
 <div class="card people-color">
     <div class="card-header-people">
@@ -42,58 +41,4 @@
         </div>
     </div>
 
-@if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.KeyMasterAccess)).Succeeded)
-{
-    <div class="card keys-color">
-        <div class="card-header-keys">
-            <div class="card-head">
-                <h2><i class="fas fa-key fa-xs"></i> Expiring Keys</h2>
-            </div>
-        </div>
-        <div class="card-content">
-            <a href="Report/ExpiringKeys" class="btn btn-link">Expiring Keys <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-        </div>
-    </div>
-}
 
-@if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.EquipMasterAccess)).Succeeded)
-{
-    <div class="card equipment-color">
-        <div class="card-header-equipment">
-            <div class="card-head">
-                <h2><i class="fas fa-hdd fa-xs"></i> Expiring Equipment</h2>
-            </div>
-        </div>
-        <div class="card-content">
-            <a href="Report/ExpiringEquipment" class="btn btn-link">Expiring Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-        </div>
-    </div>
-}
-
-@if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AccessMasterAccess)).Succeeded)
-{
-    <div class="card access-color">
-        <div class="card-header-access">
-            <div class="card-head">
-                <h2><i class="fas fa-address-card fa-xs"></i> Expiring Access</h2>
-            </div>
-        </div>
-        <div class="card-content">
-            <a href="Report/ExpiringAccess" class="btn btn-link">Expiring Access <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-        </div>
-    </div>
-}
-
-@if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.SpaceMasterAccess)).Succeeded)
-{
-    <div class="card spaces-color">
-        <div class="card-header-spaces">
-            <div class="card-head">
-                <h2><i class="fas fa-briefcase fa-xs"></i> Expiring Workstations</h2>
-            </div>
-        </div>
-        <div class="card-content">
-            <a href="Report/ExpiringWorkstations" class="btn btn-link">Expiring Workstations <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-        </div>
-    </div>
-}
