@@ -15,6 +15,8 @@ namespace Keas.Core.Models
             public const string DepartmentAdminAccess = "DepartmentAdminAccess";
             public const string AnyRole = "AnyRole";
             public const string SystemAdminAccess = "SystemAdminAccess";
+
+            public const string DepartmentOrSystemAdminAccess = "DepartmentOrSystemAdminAccess";
         }
     }
 }
