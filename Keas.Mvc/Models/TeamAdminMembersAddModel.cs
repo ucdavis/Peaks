@@ -1,9 +1,11 @@
-﻿using Keas.Core.Domain;
+using Keas.Core.Domain;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Humanizer;
 using Keas.Core.Data;
+using Keas.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Models
@@ -25,10 +27,11 @@ namespace Keas.Mvc.Models
             var viewModel = new TeamAdminMembersAddModel
             {
                 Team = team,
-                Roles = await context.Roles.Where(r=> !r.IsAdmin).OrderBy(x => x.Name).ToListAsync(),
+                Roles = await context.Roles.Where(r=> !r.IsAdmin).OrderBy(x => x.Name).Select(a => new Role {Id = a.Id, IsAdmin = a.IsAdmin, Name = a.Name.Humanize(LetterCasing.Sentence).SafeHumanizeTitle()}).ToListAsync(),
             };
 
             viewModel.Roles.Insert(0, new Role{ Id = 0, Name = "--Select--"});
+
             return viewModel;
         }
 

@@ -1,4 +1,6 @@
-﻿@model Keas.Mvc.Models.TeamAdminMembersListModel
+@using Humanizer
+@using Keas.Core.Extensions
+@model Keas.Mvc.Models.TeamAdminMembersListModel
 
 @{
     ViewData["Title"] = "Role Assigned Members ";
@@ -27,8 +29,8 @@
                           <div class="editor-label">Check Roles to delete</div>
                           @foreach (var role in item.Roles)
                           {
-                              <input type="checkbox" value="@role.Id" name="roles"/>
-                              @role.Name
+                              <input id="@role.Id" type="checkbox" value="@role.Id" name="roles"/>
+                              <label for="@role.Id">@role.Name.Humanize(LetterCasing.Sentence).SafeHumanizeTitle()</label>
                               <br/>
                               <br/>
                           }
