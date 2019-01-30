@@ -28,64 +28,65 @@ namespace Keas.Mvc.Controllers
         public ActionResult Index () {
             return View();
         }
-        [Authorize(Policy = AccessCodes.Codes.DepartmentAdminAccess)]
+        
         public async Task<ActionResult> ExpiringItems (bool showInactive = false, DateTime? expiresBefore = null, string showType = "All")
         {
             if (expiresBefore == null)
             {
                 expiresBefore = DateTime.Now.AddDays(30);
             }
-            var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showInactive, showType);
+            var userRoles = await _securityService.GetUserRolesInTeamOrAdmin(Team);
+            var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showInactive, showType, userRoles, _securityService);
             return View(model);
         }
 
-        [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
-        public async Task<ActionResult> ExpiringKeys (bool showInactive = false, DateTime? expiresBefore = null)
-        {
-            string showType = "Key";
-            if (expiresBefore == null)
-            {
-                expiresBefore = DateTime.Now.AddDays(30);
-            }
-            var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showInactive, showType);
-            return View(model);
-        }
+        // [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
+        // public async Task<ActionResult> ExpiringKeys (bool showInactive = false, DateTime? expiresBefore = null)
+        // {
+        //     string showType = "Key";
+        //     if (expiresBefore == null)
+        //     {
+        //         expiresBefore = DateTime.Now.AddDays(30);
+        //     }
+        //     var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showInactive, showType);
+        //     return View(model);
+        // }
 
-        [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
-        public async Task<ActionResult> ExpiringEquipment (bool showInactive = false, DateTime? expiresBefore = null)
-        {
-            string showType = "Equipment";
-            if (expiresBefore == null)
-            {
-                expiresBefore = DateTime.Now.AddDays(30);
-            }
-            var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showInactive, showType);
-            return View(model);
-        }
+        // [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
+        // public async Task<ActionResult> ExpiringEquipment (bool showInactive = false, DateTime? expiresBefore = null)
+        // {
+        //     string showType = "Equipment";
+        //     if (expiresBefore == null)
+        //     {
+        //         expiresBefore = DateTime.Now.AddDays(30);
+        //     }
+        //     var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showInactive, showType);
+        //     return View(model);
+        // }
 
-        [Authorize(Policy = AccessCodes.Codes.AccessMasterAccess)]
-        public async Task<ActionResult> ExpiringAccess (bool showInactive = false, DateTime? expiresBefore = null)
-        {
-            string showType = "Access";
-            if (expiresBefore == null)
-            {
-                expiresBefore = DateTime.Now.AddDays(30);
-            }
-            var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showInactive, showType);
-            return View(model);
-        }
+        // [Authorize(Policy = AccessCodes.Codes.AccessMasterAccess)]
+        // public async Task<ActionResult> ExpiringAccess (bool showInactive = false, DateTime? expiresBefore = null)
+        // {
+        //     string showType = "Access";
+        //     if (expiresBefore == null)
+        //     {
+        //         expiresBefore = DateTime.Now.AddDays(30);
+        //     }
+        //     var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showInactive, showType);
+        //     return View(model);
+        // }
 
-        [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
-        public async Task<ActionResult> ExpiringWorkstations (bool showInactive = false, DateTime? expiresBefore = null)
-        {
-            string showType = "Workstation";
-            if (expiresBefore == null)
-            {
-                expiresBefore = DateTime.Now.AddDays(30);
-            }
-            var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showInactive, showType);
-            return View(model);
-        }
+        // [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
+        // public async Task<ActionResult> ExpiringWorkstations (bool showInactive = false, DateTime? expiresBefore = null)
+        // {
+        //     string showType = "Workstation";
+        //     if (expiresBefore == null)
+        //     {
+        //         expiresBefore = DateTime.Now.AddDays(30);
+        //     }
+        //     var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showInactive, showType);
+        //     return View(model);
+        // }
 
         public async Task<ActionResult> SupervisorDirectReports (int personID = 0)
         {

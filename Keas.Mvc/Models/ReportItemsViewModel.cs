@@ -31,23 +31,27 @@ namespace Keas.Mvc.Models
         public String ShowType { get; set; }
 
 
-        public static async Task<ReportItemsViewModel> CreateExpiry(ApplicationDbContext context, DateTime expiresBefore, string teamName, bool showInactive, string showType)
+        public static async Task<ReportItemsViewModel> CreateExpiry(ApplicationDbContext context, DateTime expiresBefore, string teamName, bool showInactive, string showType,  List<Role> userRoles, ISecurityService _securityService)
         {
             
             var expiringAccess = await context.AccessAssignments.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Access") &&
+                (_securityService.IsRoleOrDAInList(userRoles, Role.Codes.AccessMaster)) &&
                 a.Access.Team.Slug == teamName && a.ExpiresAt <= expiresBefore && (a.Access.Active || a.Access.Active == !showInactive))
                 .Include(a => a.Access).Include(a=> a.Person).AsNoTracking().ToArrayAsync();
             var expiringKey = await context.KeySerials.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Key") &&
+                (_securityService.IsRoleOrDAInList(userRoles, Role.Codes.KeyMaster)) &&
                 a.Key.Team.Slug == teamName && a.KeySerialAssignment.ExpiresAt <= expiresBefore && (a.Key.Active || a.Key.Active == !showInactive))
                 .Include(k => k.KeySerialAssignment).ThenInclude(a=> a.Person).Include(k => k.Key).AsNoTracking().ToArrayAsync();
             var expiringEquipment = await context.Equipment.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Equipment") &&
-                  a.Team.Slug == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Active || a.Active == !showInactive))
+                (_securityService.IsRoleOrDAInList(userRoles, Role.Codes.EquipmentMaster)) &&
+                a.Team.Slug == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Active || a.Active == !showInactive))
                 .Include(e => e.Assignment).ThenInclude(a=> a.Person).AsNoTracking().ToArrayAsync();
             var expiringWorkstations = await context.Workstations.IgnoreQueryFilters().Where(a => (showType == "All" || showType == "Workstation") &&
-                    a.Team.Slug == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Active || a.Active == !showInactive))
+                (_securityService.IsRoleOrDAInList(userRoles, Role.Codes.SpaceMaster)) &&
+                a.Team.Slug == teamName && a.Assignment.ExpiresAt <= expiresBefore && (a.Active || a.Active == !showInactive))
                 .Include(w => w.Assignment).ThenInclude(a=> a.Person).AsNoTracking().ToArrayAsync();
 
-            var itemList = new List<string>(new string[] {"All", "Access", "Equipment", "Key", "Workstation"});
+            var itemList = populateItemList(userRoles, _securityService, true);
             var viewModel = new ReportItemsViewModel
             {
                 Access = expiringAccess,
