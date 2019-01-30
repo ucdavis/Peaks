@@ -59,7 +59,114 @@
               </div>
 <br>
 <br>
-@await Html.PartialAsync("_ItemsTablePartial.cshtml", Model)
+<table id="dtExpiringItems" class="table dataTable">
+        <thead>
+        <tr>
+            <th>
+                Type
+            </th>
+            <th>
+                Item Name
+            </th>
+            <th>
+                Assigned To
+            </th>
+            <th>
+                Expiration
+            </th>
+            <th>
+                Current?
+            </th>
+            <th>
+                Link
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Access)
+        {
+            <tr>
+                <td>Access</td>
+                <td>@Html.DisplayFor(a=> item.Access.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a=> item.Person.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.ExpiresAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(a=> item.Access.Active)
+                </td>
+                 <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "access", item.AccessId)' >Details</a>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model.Keys)
+        {
+            <tr>
+                <td>Key</td>
+                <td>@Html.DisplayFor(a => item.Key.Name) @Html.DisplayFor(a => item.Key.Code)-@Html.DisplayFor(a => item.Number)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.KeySerialAssignment.Person.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.KeySerialAssignment.ExpiresAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Key.Active)
+                </td>
+                 <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "keys", item.KeyId)' >Details</a>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model.Equipment)
+        {
+            <tr>
+                <td>Equipment</td>
+                <td>
+                    @Html.DisplayFor(a => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.Person.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.ExpiresAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Active)
+                </td>
+                 <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "equipment", item.Id)' >Details</a>
+                </td>
+            </tr>
+        }
+        @foreach (var item in Model.Workstations)
+        {
+            <tr>
+                <td>Workstation</td>
+                <td>
+                    @Html.DisplayFor(a => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.Person.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Assignment.ExpiresAt)
+                </td>
+                <td>
+                    @Html.DisplayFor(a => item.Active)
+                </td>
+                <td>
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "spaces", item.SpaceId)' >Details</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
 
         </div>
     </div>
