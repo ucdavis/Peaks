@@ -18,104 +18,108 @@ export default class BioContainer extends React.Component<IProps, {}> {
               <div className="row justify-content-between">
               <div className="person-col">
                 <h4>Employment Details</h4>
-                              <ul className="two-col no-list-style">
-                                {this.props.person.title &&
-                                      <li className="person-label">Title</li>
-                                }
-                              {this.props.person.category && <li>Category</li>}
-                              {this.props.person.startDate && (
-                                  <li className="person-label">
-                                      Start Date
-                                  </li>
-                              )}
-                              {this.props.person.endDate && (
-                                  <li className="person-label">
-                                      End Date
-                                  </li>
-                              )}
-                              {this.props.person.supervisor && (
-                                  <li className="person-label">
+                <div className="row justify-content-between">
+                  <div className="person-label-list">
+                    {this.props.person.title &&
+                          <p className="person-label">Title</p>
+                    }
+                    {this.props.person.category && <p>Category</p>}
+                    {this.props.person.startDate && (
+                      <p className="person-label">
+                          Start Date
+                      </p>
+                    )}
+                    {this.props.person.endDate && (
+                      <p className="person-label">
+                          End Date
+                      </p>
+                    )}
+                    {this.props.person.supervisor && (
+                      <p className="person-label">
 
-                                      Supervisor
-                                  </li>
-                              )}
+                          Supervisor
+                      </p>
+                  )}
+                  </div>
+                  <div>
+                    {this.props.person.title &&
+                        <p>
+                          {this.props.person.title}
+                        </p>
+                    }
+                    {this.props.person.category && <p>{this.props.person.category}</p>}
+                    {this.props.person.startDate && (
+                        <p>
+                            {DateUtil.formatExpiration(this.props.person.startDate)}
+                        </p>
+                    )}
 
-                                {this.props.person.title &&
-                                    <li>
-                                      {this.props.person.title}
-                                    </li>
-                                }
-                                {this.props.person.category && <li>{this.props.person.category}</li>}
-                                {this.props.person.startDate && (
-                                    <li>
-                                        {DateUtil.formatExpiration(this.props.person.startDate)}
-                                    </li>
-                                )}
+                    {this.props.person.endDate && (
+                        <p>
 
-                                {this.props.person.endDate && (
-                                    <li>
+                            {DateUtil.formatExpiration(this.props.person.endDate)}
+                        </p>
+                    )}
+                    {this.props.person.supervisor && (
+                        <p>
 
-                                        {DateUtil.formatExpiration(this.props.person.endDate)}
-                                    </li>
-                                )}
-                                {this.props.person.supervisor && (
-                                    <li>
+                            {this.props.person.supervisor.name}
+                        </p>
+                    )}
+                  </div>
+                </div>
 
-                                        {this.props.person.supervisor.name}
-                                    </li>
-                                )}
-                              </ul>
               </div>
               <div className="person-col">
                 <h4>Contact Details</h4>
-                <ul className="two-col no-list-style">
-                {this.props.person.email && (
-                    <li className="person-label">
+                <div className="row justify-content-between">
+                  <div className="person-label-list">
+                  {this.props.person.email && (
+                      <p className="person-label">
+                        Email
+                      </p>)}
+                      {this.props.person.homePhone && (
+                          <p className="person-label">
+                              Home
+                          </p>
+                      )}
+                      {this.props.person.teamPhone && (
+                          <p className="person-label">
+                              Team
+                          </p>
+                      )}
+                  </div>
+                  <div>
+                      {this.props.person.email && (
+                          <p>
 
-                      Email
-                    </li>)}
-                    {this.props.person.homePhone && (
-                        <li className="person-label">
+                              {this.props.person.email}
+                          </p>
+                      )}
+                      {this.props.person.homePhone && (
+                          <p>
 
-                            Home
-                        </li>
-                    )}
-                    {this.props.person.teamPhone && (
-                        <li className="person-label">
+                              {this.props.person.homePhone}
+                          </p>
+                      )}
+                      {this.props.person.teamPhone && (
+                          <p>
 
-                            Team
-                        </li>
-                    )}
+                              {this.props.person.teamPhone}
+                          </p>
+                      )}
+                    </div>
+                </div>
 
 
-
-                                    {this.props.person.email && (
-                                        <li>
-
-                                            {this.props.person.email}
-                                        </li>
-                                    )}
-                                    {this.props.person.homePhone && (
-                                        <li>
-
-                                            {this.props.person.homePhone}
-                                        </li>
-                                    )}
-                                    {this.props.person.teamPhone && (
-                                        <li>
-
-                                            {this.props.person.teamPhone}
-                                        </li>
-                                    )}
-                                  </ul>
               </div>
               <div className="person-col">
                 <h4>Tags</h4>
                 <ul className="no-list-style">
                   {this.props.person.tags && (
-                      <li>
+                      <p>
                         {this.props.person.tags}
-                      </li>
+                      </p>
                   )}
                 </ul>
               </div>
