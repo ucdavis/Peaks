@@ -74,7 +74,7 @@ namespace Keas.Core.Services
 
             // Build list of people to email. I.E. get all DeptAdmin, if access.any then add AccessMaster, etc.
             var transmission = new Transmission();
-            transmission.Content.Subject = "PEAKS Notification";
+            transmission.Content.Subject = "PEAKS Admin Expiring Items Notification";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
             transmission.Content.Text = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
 #if DEBUG
@@ -124,7 +124,7 @@ namespace Keas.Core.Services
            
             // build email
             var transmission = new Transmission();
-            transmission.Content.Subject = "PEAKS Notification";
+            transmission.Content.Subject = "PEAKS Expiring Items";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
             transmission.Content.Text = "You have asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
             transmission.Recipients = new List<Recipient>()
