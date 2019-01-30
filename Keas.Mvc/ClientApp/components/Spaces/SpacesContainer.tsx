@@ -87,10 +87,13 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                         <h2>
                             <i className="fas fa-building fa-xs" /> Spaces
                         </h2>
-                    </div>
-                    <div className="card-body">
-                        Don't see your spaces? Visit the <a href="https://computing.caes.ucdavis.edu/faq/peaks/spaces">Space FAQ</a>. 
-                    </div>
+                    </div>                    
+                    {this.state.spaces.length === 0 &&
+                    (
+                        <div className="card-body">
+                            Don't see your spaces? Visit the <a href="https://computing.caes.ucdavis.edu/faq/peaks/spaces" target="_blank">Space FAQ</a>. 
+                        </div>
+                    )}
                 </div>
 
                 <div className="card-content">
