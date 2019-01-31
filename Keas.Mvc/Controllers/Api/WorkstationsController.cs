@@ -28,10 +28,12 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
-                .Where(x => x.Team.Slug == Team && x.Active && x.Assignment == null &&
+                .Where(x => x.Team.Slug == Team && x.Active  &&
                 (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
                     || x.Space.RoomNumber.StartsWith(q, comparison)))
                 .Include(x => x.Space)
+                .Include(x => x.Assignment)
+                .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
                 .AsNoTracking().ToListAsync();
 
             return Json(equipment);
@@ -42,10 +44,12 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
-                .Where(x => x.Team.Slug == Team && x.SpaceId == spaceId && x.Active && x.Assignment == null &&
+                .Where(x => x.Team.Slug == Team && x.SpaceId == spaceId && x.Active && 
                 (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
                     || x.Space.RoomNumber.StartsWith(q, comparison)))
-                .Include(x => x.Space).AsNoTracking().ToListAsync();
+                .Include(x => x.Space).Include(x => x.Assignment)
+                .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
+                .AsNoTracking().ToListAsync();
 
             return Json(equipment);
         }

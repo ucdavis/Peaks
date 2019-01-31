@@ -15,6 +15,7 @@ interface IProps {
     modal: boolean;
     onAddNew: () => void;
     closeModal: () => void;
+    openDetailsModal: (workstation: IWorkstation) => void;
     openEditModal: (workstation: IWorkstation) => void;
     selectedWorkstation: IWorkstation;
     person?: IPerson;
@@ -130,6 +131,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                                             onSelect={this._onSelected}
                                             onDeselect={this._onDeselected}
                                             space={this.props.space}
+                                            openDetailsModal={this.props.openDetailsModal}
                                         />
                                     </div>
                                 )}
