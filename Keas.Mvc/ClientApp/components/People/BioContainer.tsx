@@ -115,13 +115,13 @@ export default class BioContainer extends React.Component<IProps, {}> {
               </div>
               <div className="person-col">
                 <h4>Tags</h4>
-                <ul className="no-list-style">
+
                   {this.props.person.tags && (
                       <p>
                         {this.props.person.tags}
                       </p>
                   )}
-                </ul>
+            
               </div>
 
 </div>

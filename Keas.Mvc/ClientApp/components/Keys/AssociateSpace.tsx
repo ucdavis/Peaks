@@ -59,7 +59,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     public render() {
         return (
             <div>
-                <Button color="link" onClick={this.props.openModal}>
+                <Button className="keys-anomaly" color="link" onClick={this.props.openModal}>
                     <i className="fas fa-plus fa-sm mr-2" aria-hidden="true" />
                     Associate
                 </Button>
