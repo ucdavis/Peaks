@@ -34,11 +34,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         <Label for="item">Item</Label>
                         <Input 
                             type="text"
-                            className={
-                                !!this.props.selectedEquipment.name
-                                    ? "form-control"
-                                    : "form-control is-invalid"
-                            }
+                            className="form-control"
                             disabled={this.props.disableEditing}
                             value={
                                 this.props.selectedEquipment.name

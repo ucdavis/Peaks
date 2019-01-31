@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import Button from "reactstrap/lib/Button";
+import { Button, FormFeedback, FormGroup, Input, Label } from "reactstrap";
 import { ISpace, IWorkstation } from "../../Types";
 import SearchSpaces from "../Spaces/SearchSpaces";
 import SearchTags from "../Tags/SearchTags";
@@ -29,9 +29,9 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                     </Button>
                 )}
                 <div className="wrapperasset">
-                    <div className="form-group">
-                        <label>Name</label>
-                        <input
+                <FormGroup>
+                        <Label for="item">Item</Label>
+                        <Input 
                             type="text"
                             className="form-control"
                             disabled={this.props.disableEditing}
@@ -41,8 +41,10 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                                     : ""
                             }
                             onChange={e => this.props.changeProperty("name", e.target.value)}
+                            invalid={!this.props.selectedWorkstation.name}
                         />
-                    </div>
+                        <FormFeedback>Item name is required</FormFeedback>
+                    </FormGroup>
                     {this.props.disableEditing && (
                         <div className="form-group">
                             <label>Room</label>
