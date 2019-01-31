@@ -87,6 +87,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                         disabled={!!this.props.person}
                                         person={this.props.person || this.state.person}
                                         onSelect={this._onSelectPerson}
+                                        isRequired={this.state.access && this.state.access.teamId !== 0}
                                     />
                                 </div>
                                 {!this.state.access && (

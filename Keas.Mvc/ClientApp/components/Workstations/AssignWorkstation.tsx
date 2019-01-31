@@ -103,6 +103,10 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                                         } // disable if we are on person page or updating
                                         person={this.props.person || this.state.person}
                                         onSelect={this._onSelectPerson}
+                                        isRequired={
+                                            this.state.workstation &&
+                                            this.state.workstation.teamId !== 0
+                                        }
                                     />
                                 </div>
                                 {(!!this.state.person || !!this.props.person) && (
@@ -150,6 +154,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                                                 selectedWorkstation={this.state.workstation}
                                                 changeProperty={this._changeProperty}
                                                 disableEditing={false}
+                                                disableSpaceEditing={false}
                                             />
                                         </div>
                                     )}
@@ -172,6 +177,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                                             selectedWorkstation={this.state.workstation}
                                             disableEditing={true}
                                             openEditModal={this.props.openEditModal}
+                                            disableSpaceEditing={true}
                                         />
                                     </div>
                                 )}
@@ -264,7 +270,11 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
 
     private _validateState = () => {
         let valid = true;
-        if (!this.state.workstation) {
+        if (
+            !this.state.workstation ||
+            !this.state.workstation.space ||
+            !this.state.workstation.name
+        ) {
             valid = false;
         } else if (this.state.error !== "") {
             valid = false;

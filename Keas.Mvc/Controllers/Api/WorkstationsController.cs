@@ -195,6 +195,7 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var w = await _context.Workstations.Where(x => x.Team.Slug == Team)
+                    .Include(x => x.Space)
                     .SingleAsync(x => x.Id == workstation.Id);
                     
                 w.Name = workstation.Name;

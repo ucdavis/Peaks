@@ -1,5 +1,5 @@
 ﻿import * as React from "react";
-import Button from "reactstrap/lib/Button";
+import { Button, FormFeedback, FormGroup, Input, Label } from "reactstrap";
 import { ISpace, IWorkstation } from "../../Types";
 import SearchSpaces from "../Spaces/SearchSpaces";
 import SearchTags from "../Tags/SearchTags";
@@ -9,6 +9,7 @@ interface IProps {
     openEditModal?: (workstation: IWorkstation) => void;
     tags?: string[];
     disableEditing: boolean;
+    disableSpaceEditing: boolean;
     selectedWorkstation: IWorkstation;
     space?: ISpace;
 }
@@ -29,9 +30,9 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                     </Button>
                 )}
                 <div className="wrapperasset">
-                    <div className="form-group">
-                        <label>Name</label>
-                        <input
+                    <FormGroup>
+                        <Label for="item">Item</Label>
+                        <Input
                             type="text"
                             className="form-control"
                             disabled={this.props.disableEditing}
@@ -41,9 +42,11 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                                     : ""
                             }
                             onChange={e => this.props.changeProperty("name", e.target.value)}
+                            invalid={!this.props.selectedWorkstation.name}
                         />
-                    </div>
-                    {this.props.disableEditing && (
+                        <FormFeedback>Item name is required</FormFeedback>
+                    </FormGroup>
+                    {(this.props.disableSpaceEditing) && (
                         <div className="form-group">
                             <label>Room</label>
                             <input
@@ -60,10 +63,9 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                             />
                         </div>
                     )}
-                    {!this.props.disableEditing && (
-                        <div className="form-group">
-                            <label>Room</label>
-
+                    {(!this.props.disableSpaceEditing) && (
+                        <FormGroup>
+                            <Label for="room">Room</Label>
                             <SearchSpaces
                                 onSelect={space => this.props.changeProperty("space", space)}
                                 defaultSpace={
@@ -71,8 +73,9 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                                         ? this.props.space
                                         : this.props.selectedWorkstation.space
                                 }
+                                isRequired={true}
                             />
-                        </div>
+                        </FormGroup>
                     )}
 
                     <div className="form-group">

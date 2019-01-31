@@ -37,6 +37,7 @@ export default class WorkstationDetails extends React.Component<IProps, {}> {
                         <WorkstationEditValues
                             selectedWorkstation={workstation}
                             disableEditing={true}
+                            disableSpaceEditing={true}
                             openEditModal={this.props.openEditModal}
                         />
                         <WorkstationAssignmentValues
