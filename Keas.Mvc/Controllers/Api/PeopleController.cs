@@ -30,7 +30,7 @@ namespace Keas.Mvc.Controllers.Api
 
             var sql = PeopleQueries.List;
 
-            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new { teamId });
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId });
 
             var people = result.Select(r => new
             {
