@@ -4,8 +4,7 @@ import { Button } from "reactstrap";
 import { AppContext, IPerson } from "../../Types";
 
 interface IState {
-    reloaded: boolean;
-    reloading: boolean;
+    loading: boolean;
     search: string;
 }
 
@@ -24,8 +23,7 @@ export default class SearchUsers extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
-            reloaded: false, // controls checkmark to show that user have been searched for
-            reloading: false, // controls loading icon while fetching
+            loading: false, // controls loading icon while fetching
             search: ""
         };
     }
@@ -43,18 +41,17 @@ export default class SearchUsers extends React.Component<IProps, IState> {
                 <Button
                     className="btn btn-link"
                     onClick={this._loadUser}
-                    disabled={this.state.reloading}
+                    disabled={this.state.loading}
                 >
                     <i className="fas fa-search fa-sm" /> Search{" "}
-                    {this.state.reloaded ? <i className="fas fa-check" /> : null}
-                    {this.state.reloading ? <i className="fas fa-spin fa-spinner" /> : null}
+                    {this.state.loading ? <i className="fas fa-spin fa-spinner" /> : null}
                 </Button>
             </div>
         );
     }
 
     private _loadUser = async () => {
-        this.setState({ reloading: true, reloaded: false });
+        this.setState({ loading: true });
         const userFetchUrl = `/api/${this.context.team.slug}/people/searchUsers?searchTerm=${
             this.state.search
         }`;
@@ -72,6 +69,6 @@ export default class SearchUsers extends React.Component<IProps, IState> {
             }
         }
         this.props.updatePerson(person);
-        this.setState({ reloading: false, reloaded: true });
+        this.setState({ loading: false });
     };
 }
