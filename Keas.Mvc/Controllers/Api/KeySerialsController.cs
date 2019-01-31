@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Models.KeySerialViewModels;
+using Keas.Mvc.Extensions;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -192,6 +193,8 @@ namespace Keas.Mvc.Controllers.Api
             if (serial.KeySerialAssignment != null)
             {
                 serial.KeySerialAssignment.ExpiresAt = model.ExpiresAt;
+                serial.KeySerialAssignment.RequestedById =  User.Identity.Name;
+                serial.KeySerialAssignment.RequestedByName = User.GetNameClaim();
 
                 _context.KeySerialAssignments.Update(serial.KeySerialAssignment);
                 await _eventService.TrackAssignmentUpdatedKeySerial(serial);
@@ -205,6 +208,8 @@ namespace Keas.Mvc.Controllers.Api
                     Person      = person,
                     PersonId    = person.Id,
                     ExpiresAt   = model.ExpiresAt,
+                    RequestedById = User.Identity.Name,
+                    RequestedByName = User.GetNameClaim()
                 };
 
                 // create, associate, and track

@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
+using Keas.Mvc.Extensions;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -130,12 +131,16 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     _context.EquipmentAssignments.Update(equipment.Assignment);
                     equipment.Assignment.ExpiresAt = DateTime.Parse(date);
+                    equipment.Assignment.RequestedById =  User.Identity.Name;
+                    equipment.Assignment.RequestedByName = User.GetNameClaim();
                     await _eventService.TrackEquipmentAssignmentUpdated(equipment); 
                 }
                 else
                 {
                     equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
                     equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
+                    equipment.Assignment.RequestedById = User.Identity.Name;
+                    equipment.Assignment.RequestedByName = User.GetNameClaim();
 
                     _context.EquipmentAssignments.Add(equipment.Assignment);
                     await _eventService.TrackAssignEquipment(equipment);

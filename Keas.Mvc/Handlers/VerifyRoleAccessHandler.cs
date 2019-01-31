@@ -54,10 +54,15 @@ namespace Keas.Mvc.Handlers
                 return;
             }
 
-            if (await _securityService.IsInAdminRoles(requirement.RoleStrings, userId)) {
+
+            if(requirement.RoleStrings.Contains(Role.Codes.Admin))
+            {
+                if (await _securityService.IsInAdminRoles(requirement.RoleStrings, userId)) {
                 context.Succeed(requirement);
                 return;
             }
+            }
+            
         }
     }
 }

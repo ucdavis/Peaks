@@ -17,8 +17,10 @@ namespace Keas.Core.Domain
         
         //TODO: copy the person name for easy access
 
+        [DisplayFormat(DataFormatString = "{0:d}")]   
         public DateTime RequestedAt { get; set; }
         public User RequestedBy {get;set;}
+        public string RequestedById { get; set; }
         public string RequestedByName { get; set; }
         
         public DateTime? ApprovedAt { get; set; }

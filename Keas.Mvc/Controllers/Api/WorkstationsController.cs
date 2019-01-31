@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
+using Keas.Mvc.Extensions;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -136,6 +137,8 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     _context.WorkstationAssignments.Update(workstation.Assignment);
                     workstation.Assignment.ExpiresAt = DateTime.Parse(date);
+                    workstation.Assignment.RequestedById = User.Identity.Name;
+                    workstation.Assignment.RequestedByName = User.GetNameClaim();
                     await _eventService.TrackWorkstationAssignmentUpdated(workstation);
                 }
                 else
@@ -143,6 +146,8 @@ namespace Keas.Mvc.Controllers.Api
                     workstation.Assignment = new WorkstationAssignment{PersonId = personId, ExpiresAt = DateTime.Parse(date)};
                     workstation.Assignment.Person =
                     await _context.People.Include(p => p.User).Include(p=> p.Team).SingleAsync(p => p.Id == personId);
+                    workstation.Assignment.RequestedById = User.Identity.Name;
+                    workstation.Assignment.RequestedByName = User.GetNameClaim();
 
                     if (workstation.Assignment.Person.Team.Slug != Team)
                     {

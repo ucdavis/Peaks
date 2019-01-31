@@ -1,6 +1,8 @@
-﻿using Keas.Core.Domain;
+using Keas.Core.Domain;
 using System.Collections.Generic;
 using System.Linq;
+using Humanizer;
+using Keas.Core.Extensions;
 
 namespace Keas.Mvc.Models
 {
@@ -55,7 +57,7 @@ namespace Keas.Mvc.Models
 
         public string RolesList
         {
-            get { return string.Join(", ", Roles.OrderBy(x => x.Name).Select(a => a.Name).ToArray()); }
+            get { return string.Join(", ", Roles.OrderBy(x => x.Name).Select(a => a.Name.Humanize(LetterCasing.Sentence).SafeHumanizeTitle()).ToArray()); }
         }
     }
 }
