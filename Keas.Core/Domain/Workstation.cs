@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
@@ -13,6 +14,7 @@ namespace Keas.Core.Domain
         // Desk Table ???
         public string Type { get; set; }
         
+        [Required]        
         public Space Space { get; set; }
         public int SpaceId { get; set; }
         

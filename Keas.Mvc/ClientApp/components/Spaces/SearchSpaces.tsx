@@ -6,6 +6,7 @@ import { AppContext, ISpace } from "../../Types";
 interface IProps {
     onSelect: (space: ISpace) => void;
     defaultSpace?: ISpace;
+    isRequired?: boolean;
 }
 
 interface IState {
@@ -37,6 +38,7 @@ export default class SearchSpaces extends React.Component<IProps, IState> {
 
         return (
             <AsyncTypeahead
+                isInvalid={this.props.isRequired && !this.props.defaultSpace}
                 clearButton={true}
                 isLoading={this.state.isSearchLoading}
                 minLength={2}

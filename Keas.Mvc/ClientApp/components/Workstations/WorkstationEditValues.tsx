@@ -29,9 +29,9 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                     </Button>
                 )}
                 <div className="wrapperasset">
-                <FormGroup>
+                    <FormGroup>
                         <Label for="item">Item</Label>
-                        <Input 
+                        <Input
                             type="text"
                             className="form-control"
                             disabled={this.props.disableEditing}
@@ -63,9 +63,8 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                         </div>
                     )}
                     {!this.props.disableEditing && (
-                        <div className="form-group">
-                            <label>Room</label>
-
+                        <FormGroup>
+                            <Label for="room">Room</Label>
                             <SearchSpaces
                                 onSelect={space => this.props.changeProperty("space", space)}
                                 defaultSpace={
@@ -73,8 +72,9 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                                         ? this.props.space
                                         : this.props.selectedWorkstation.space
                                 }
+                                isRequired={true}
                             />
-                        </div>
+                        </FormGroup>
                     )}
 
                     <div className="form-group">
