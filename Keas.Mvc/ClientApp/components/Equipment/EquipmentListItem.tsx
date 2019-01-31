@@ -21,7 +21,7 @@ export default class EquipmentListItem extends React.Component<IProps, {}> {
         if (!!this.props.onAdd && !hasAssignment) {
             actions.push({
                 onClick: () => this.props.onAdd(this.props.equipmentEntity),
-                title: "Add"
+                title: "Assign"
             });
         }
 
