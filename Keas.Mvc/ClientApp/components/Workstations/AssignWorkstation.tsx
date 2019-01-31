@@ -264,7 +264,11 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
 
     private _validateState = () => {
         let valid = true;
-        if (!this.state.workstation) {
+        if (
+            !this.state.workstation ||
+            !this.state.workstation.space ||
+            !this.state.workstation.name
+        ) {
             valid = false;
         } else if (this.state.error !== "") {
             valid = false;
