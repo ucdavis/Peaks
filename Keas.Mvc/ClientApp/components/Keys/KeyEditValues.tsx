@@ -34,7 +34,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                     <FormFeedback>Item name is required</FormFeedback>
                 </FormGroup>
                 <FormGroup>
-                    <Label for="item">Item</Label>
+                    <Label for="code">Code</Label>
                     <Input
                         type="text"
                         className="form-control"
