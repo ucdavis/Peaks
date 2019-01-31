@@ -7,6 +7,7 @@ interface IProps {
     defaultKeyInfo?: IKeyInfo;
     onSelect: (keyInfo: IKeyInfo) => void;
     onDeselect: () => void;
+    allowNew: boolean;
 }
 
 interface IState {
@@ -49,7 +50,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 placeholder="Search for key by name or by serial number"
                 labelKey="code"
                 filterBy={noopTrue} // don't filter on top of our search
-                allowNew={true}
+                allowNew={this.props.allowNew}
                 renderMenuItemChildren={this.renderItem}
                 onSearch={this.onSearch}
                 onChange={this.onChange}
