@@ -149,6 +149,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                         disabled={this.props.disableEditing}
                         onSelect={this.props.changeSupervisor}
                         person={this.props.selectedPerson.supervisor}
+                        isRequired={false}
                     />
                 </div>
 

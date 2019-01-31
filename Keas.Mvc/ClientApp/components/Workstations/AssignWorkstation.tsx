@@ -103,6 +103,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                                         } // disable if we are on person page or updating
                                         person={this.props.person || this.state.person}
                                         onSelect={this._onSelectPerson}
+                                        isRequired={this.state.workstation && this.state.workstation.teamId !== 0}
                                     />
                                 </div>
                                 {(!!this.state.person || !!this.props.person) && (
