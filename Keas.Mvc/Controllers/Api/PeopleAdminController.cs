@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Dapper;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Extensions;
