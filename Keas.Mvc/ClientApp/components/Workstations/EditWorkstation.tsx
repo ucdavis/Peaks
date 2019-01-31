@@ -131,7 +131,11 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
     private _validateState = () => {
         let valid = true;
         let error = "";
-        if (!this.state.workstation) {
+        if (
+            !this.state.workstation ||
+            !this.state.workstation.space ||
+            !this.state.workstation.name
+        ) {
             valid = false;
         } else if (!this.state.workstation.name) {
             valid = false;

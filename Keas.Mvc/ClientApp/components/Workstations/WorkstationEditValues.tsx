@@ -46,7 +46,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                         />
                         <FormFeedback>Item name is required</FormFeedback>
                     </FormGroup>
-                    {(this.props.disableEditing || this.props.disableSpaceEditing) && (
+                    {(this.props.disableEditing && this.props.disableSpaceEditing) && (
                         <div className="form-group">
                             <label>Room</label>
                             <input
