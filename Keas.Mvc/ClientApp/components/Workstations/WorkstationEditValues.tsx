@@ -9,6 +9,7 @@ interface IProps {
     openEditModal?: (workstation: IWorkstation) => void;
     tags?: string[];
     disableEditing: boolean;
+    disableSpaceEditing: boolean;
     selectedWorkstation: IWorkstation;
     space?: ISpace;
 }
@@ -45,7 +46,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                         />
                         <FormFeedback>Item name is required</FormFeedback>
                     </FormGroup>
-                    {this.props.disableEditing && (
+                    {(this.props.disableEditing || this.props.disableSpaceEditing) && (
                         <div className="form-group">
                             <label>Room</label>
                             <input
@@ -62,7 +63,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                             />
                         </div>
                     )}
-                    {!this.props.disableEditing && (
+                    {(!this.props.disableEditing || !this.props.disableSpaceEditing) && (
                         <FormGroup>
                             <Label for="room">Room</Label>
                             <SearchSpaces

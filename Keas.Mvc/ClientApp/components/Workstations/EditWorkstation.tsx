@@ -69,6 +69,7 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
                                 changeProperty={this._changeProperty}
                                 disableEditing={false}
                                 tags={this.props.tags}
+                                disableSpaceEditing={true}
                             />
                         </form>
                         <WorkstationAssignmentValues
