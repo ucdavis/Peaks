@@ -431,7 +431,15 @@ namespace Keas.Mvc.Controllers
                                 serial.Number = r.SerialNumber;
                                 serial.Name = r.SerialNumber;
                                 serial.Key = key;
-                                serial.Status = r.Status;
+                                serial.Status = "Active";
+                                if(r.Status == "L" || r.Status == "Lost")
+                                {
+                                    serial.Status = "Lost";
+                                }
+                                if(r.Status == "B" || r.Status == "Destroyed")
+                                {
+                                    serial.Status = "Destroyed";
+                                }                                
                                 serial.TeamId = team.Id;
 
                                 TryValidateModel(serial);
