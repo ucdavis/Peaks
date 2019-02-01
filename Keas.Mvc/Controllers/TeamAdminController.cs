@@ -9,6 +9,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
+using System.IO;
+using CsvHelper;
 
 namespace Keas.Mvc.Controllers
 {
@@ -361,6 +363,97 @@ namespace Keas.Mvc.Controllers
             Message = "PPS Department Removed";
 
             return RedirectToAction("Index");
+        }
+
+        public IActionResult Upload()
+        {
+            return View();
+        }
+
+        public async Task<IActionResult> UploadCSV()
+        {
+            // Add counts
+            var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
+            using (var reader = new StreamReader("physics.csv"))
+            using (var csv = new CsvReader(reader))
+            {    
+               csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
+                 var record = new KeyImport();
+                var records = csv.EnumerateRecords(record);
+                foreach (var r in records)
+                {
+                    var key = await _context.Keys.Where(k => k.Team.Slug == Team).SingleOrDefaultAsync(k => k.Code == r.Keynumber);
+                    if(key == null)
+                    {
+                        key = new Key();
+                        key.Code = r.Keynumber;
+                        key.TeamId = team.Id;
+                        key.Name = r.Description;
+                        _context.Keys.Add(key);                        
+                    }
+
+                    var serial = await _context.KeySerials.Where(s => s.KeyId == key.Id).SingleOrDefaultAsync(s => s.Number == r.SerialNumber);
+                    if(serial == null)
+                    {
+                        serial = new KeySerial();
+                        serial.Number = r.SerialNumber;
+                        serial.Name = r.SerialNumber;
+                        serial.Key = key;
+                        serial.Status = r.Status;
+                        serial.TeamId = team.Id;
+                        _context.KeySerials.Add(serial);
+                    }
+
+                    if(!string.IsNullOrWhiteSpace(r.KerbUser))
+                    {
+                        var person = await _context.People.SingleOrDefaultAsync(p => p.TeamId == team.Id && p.UserId == r.KerbUser);
+                        if(person == null)
+                        {
+                            // Person doesn't exist. Check for user
+                            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == r.KerbUser);
+                            if(user == null)
+                            {
+                                // No existing user
+                                user = await _identityService.GetByKerberos(r.KerbUser);
+                                if(user !=  null)
+                                {
+                                    // IAM found user by Kerb
+                                    _context.Users.Add(user);
+                                } else {
+                                    // No user found, skip this assignment
+                                    continue;
+                                }                           
+                            }
+                            person = new Person();
+                            person.User = user;
+                            person.FirstName = user.FirstName;
+                            person.LastName = user.LastName;
+                            person.Email = user.Email;
+                            person.Active = true;
+                            person.TeamId = team.Id;
+                            _context.People.Add(person);
+                        }
+
+                        var assignment = await _context.KeySerialAssignments.SingleOrDefaultAsync(a => a.KeySerialId == serial.Id);
+                        if(assignment == null)
+                        {
+                            assignment = new KeySerialAssignment();
+                            assignment.RequestedAt = r.DateIssued;
+                            assignment.ExpiresAt = r.DateDue;
+                            assignment.PersonId = person.Id;
+                            assignment.KeySerialId = serial.Id;
+                            _context.KeySerialAssignments.Add(assignment);
+                        }
+                        assignment.RequestedAt = r.DateIssued;
+                        assignment.ExpiresAt = r.DateDue;
+                        assignment.PersonId = person.Id;
+                        assignment.KeySerialId = serial.Id;                        
+                    }
+                    await _context.SaveChangesAsync();
+                }
+            }
+             return RedirectToAction("Index");
+
         }
 
     }
