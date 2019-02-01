@@ -12,6 +12,7 @@ using Keas.Core.Models;
 using System.IO;
 using CsvHelper;
 using Microsoft.AspNetCore.Http;
+using System.Text;
 
 namespace Keas.Mvc.Controllers
 {
@@ -380,6 +381,8 @@ namespace Keas.Mvc.Controllers
             var serialCount = 0;
             var peopleCount = 0;
             var assignmentCount = 0;
+            var rowNumber = 0;
+            StringBuilder warning = new StringBuilder();
 
             if (file == null || file.Length == 0)
             {
@@ -396,8 +399,9 @@ namespace Keas.Mvc.Controllers
                 var records = csv.EnumerateRecords(record);
                 foreach (var r in records)
                 {
-                    if(!string.IsNullOrWhiteSpace(r.Keynumber))
-                    {                    
+                    rowNumber += 1;
+                    if (!string.IsNullOrWhiteSpace(r.Keynumber))
+                    {
                         var key = await _context.Keys.Where(k => k.Team.Slug == Team).SingleOrDefaultAsync(k => k.Code.ToUpper() == r.Keynumber.ToUpper());
                         if (key == null)
                         {
@@ -405,11 +409,20 @@ namespace Keas.Mvc.Controllers
                             key.Code = r.Keynumber.ToUpper();
                             key.TeamId = team.Id;
                             key.Name = r.Description;
-                            _context.Keys.Add(key);
-                            keyCount += 1;
+
+                            if (ModelState.IsValid)
+                            {
+                                _context.Keys.Add(key);
+                                keyCount += 1;
+                            }
+                            else
+                            {
+                                warning.Append(String.Format("Could not save key in line {0}", rowNumber));
+
+                            }
                         }
 
-                        if(!string.IsNullOrWhiteSpace(r.SerialNumber))
+                        if (!string.IsNullOrWhiteSpace(r.SerialNumber))
                         {
                             var serial = await _context.KeySerials.Where(s => s.KeyId == key.Id).SingleOrDefaultAsync(s => s.Number.ToUpper() == r.SerialNumber.ToUpper());
                             if (serial == null)
@@ -420,11 +433,20 @@ namespace Keas.Mvc.Controllers
                                 serial.Key = key;
                                 serial.Status = r.Status;
                                 serial.TeamId = team.Id;
-                                _context.KeySerials.Add(serial);
-                                serialCount += 1;
+
+                                if (ModelState.IsValid)
+                                {
+                                    _context.KeySerials.Add(serial);
+                                    serialCount += 1;
+                                }
+                                else
+                                {
+                                    warning.Append(String.Format("Could not save serial in line {0}", rowNumber));
+                                }
+
                             }
 
-                            if(!string.IsNullOrWhiteSpace(r.KerbUser)) 
+                            if (!string.IsNullOrWhiteSpace(r.KerbUser))
                             {
                                 if (!string.IsNullOrWhiteSpace(r.KerbUser))
                                 {
@@ -455,8 +477,17 @@ namespace Keas.Mvc.Controllers
                                         person.Email = user.Email;
                                         person.Active = true;
                                         person.TeamId = team.Id;
-                                        _context.People.Add(person);
-                                        peopleCount += 1;
+
+                                        if (ModelState.IsValid)
+                                        {
+                                            _context.People.Add(person);
+                                            peopleCount += 1;
+                                        }
+                                        else
+                                        {
+                                            warning.Append(String.Format("Could not save person in line {0}", rowNumber));
+                                        }                                        
+                                        
                                     }
 
                                     var assignment = await _context.KeySerialAssignments.SingleOrDefaultAsync(a => a.KeySerialId == serial.Id);
@@ -467,8 +498,17 @@ namespace Keas.Mvc.Controllers
                                         assignment.ExpiresAt = r.DateDue;
                                         assignment.PersonId = person.Id;
                                         assignment.KeySerialId = serial.Id;
-                                        _context.KeySerialAssignments.Add(assignment);
-                                        assignmentCount += 1;
+
+                                        if (ModelState.IsValid)
+                                        {
+                                            _context.KeySerialAssignments.Add(assignment);
+                                            assignmentCount += 1;
+                                        }
+                                        else
+                                        {
+                                            warning.Append(String.Format("Could not save assignmetn in line {0}", rowNumber));
+                                        }  
+                                       
                                     }
                                     assignment.RequestedAt = r.DateIssued;
                                     assignment.ExpiresAt = r.DateDue;
@@ -481,7 +521,7 @@ namespace Keas.Mvc.Controllers
                     }
                 }
             }
-            Message = string.Format("Successfully loaded {0} new keys, {1} new keySerials, {2} new team members, and {3} new assignments recorded.", keyCount, serialCount, peopleCount, assignmentCount);
+            Message = string.Format("Successfully loaded {0} new keys, {1} new keySerials, {2} new team members, and {3} new assignments recorded. The following errors were found: {4}", keyCount, serialCount, peopleCount, assignmentCount, warning.ToString());
             return RedirectToAction("Index");
 
         }
