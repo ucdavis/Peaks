@@ -418,7 +418,7 @@ namespace Keas.Mvc.Controllers
                             }
                             else
                             {
-                                warning.Append(String.Format("Could not save key in line {0}", rowNumber));
+                                warning.Append(String.Format("Could not save key in line {0} | ", rowNumber));
                             }
                         }
 
@@ -442,7 +442,7 @@ namespace Keas.Mvc.Controllers
                                 }
                                 else
                                 {
-                                    warning.Append(String.Format("Could not save serial in line {0}", rowNumber));
+                                    warning.Append(String.Format("Could not save serial in line {0} | ", rowNumber));
                                 }
 
                             }
@@ -487,7 +487,7 @@ namespace Keas.Mvc.Controllers
                                         }
                                         else
                                         {
-                                            warning.Append(String.Format("Could not save person in line {0}", rowNumber));
+                                            warning.Append(String.Format("Could not save person in line {0} | ", rowNumber));
                                         }                                        
                                         
                                     }
@@ -509,7 +509,7 @@ namespace Keas.Mvc.Controllers
                                         }
                                         else
                                         {
-                                            warning.Append(String.Format("Could not save assignment in line {0}", rowNumber));
+                                            warning.Append(String.Format("Could not save assignment in line {0} | ", rowNumber));
                                         }                                         
                                     }
                                     assignment.RequestedAt = r.DateIssued;
@@ -523,7 +523,7 @@ namespace Keas.Mvc.Controllers
                     }
                 }
             }
-            Message = string.Format("Successfully loaded {0} new keys, {1} new keySerials, {2} new team members, and {3} new assignments recorded. The following errors were found: {4}", keyCount, serialCount, peopleCount, assignmentCount, warning.ToString());
+            Message = string.Format("Successfully loaded {0} new keys, {1} new keySerials, {2} new team members, and {3} new assignments recorded. {4}", keyCount, serialCount, peopleCount, assignmentCount, warning.ToString());
             return RedirectToAction("Index");
 
         }
