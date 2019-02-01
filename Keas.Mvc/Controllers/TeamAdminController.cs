@@ -504,8 +504,8 @@ namespace Keas.Mvc.Controllers
                                     if (assignment == null)
                                     {
                                         assignment = new KeySerialAssignment();
-                                        assignment.RequestedAt = r.DateIssued;
-                                        assignment.ExpiresAt = r.DateDue;
+                                        assignment.RequestedAt = r.DateIssued.ToUniversalTime();
+                                        assignment.ExpiresAt = r.DateDue.ToUniversalTime();
                                         assignment.PersonId = person.Id;
                                         assignment.KeySerialId = serial.Id;
 
