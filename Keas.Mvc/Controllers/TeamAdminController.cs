@@ -28,7 +28,7 @@ namespace Keas.Mvc.Controllers
         public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService)
         {
             _context = context;
-            _identityService = identityService;            
+            _identityService = identityService;
             _userService = userService;
             _financialService = financialService;
         }
@@ -36,7 +36,7 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> Index()
         {
             var team = await _context.Teams
-                .Include(o=> o.FISOrgs)
+                .Include(o => o.FISOrgs)
                 .Include(i => i.PpsDepartments)
                 .SingleOrDefaultAsync(x => x.Slug == Team);
 
@@ -59,11 +59,11 @@ namespace Keas.Mvc.Controllers
             }
             if (!await _financialService.ValidateFISOrg(model.Chart, model.OrgCode))
             {
-                    ModelState.AddModelError("OrgCode", "Chart and OrgCode are not valid");
+                ModelState.AddModelError("OrgCode", "Chart and OrgCode are not valid");
             }
-        
-            var FISOrg = new FinancialOrganization { Chart = model.Chart, OrgCode = model.OrgCode, Team = team};
-            
+
+            var FISOrg = new FinancialOrganization { Chart = model.Chart, OrgCode = model.OrgCode, Team = team };
+
             if (ModelState.IsValid)
             {
                 _context.FISOrgs.Add(FISOrg);
@@ -76,14 +76,14 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> RemoveFISOrg(int fisorgId)
         {
-            var fisOrg = await _context.FISOrgs.Include(t=> t.Team).SingleAsync(f => f.Id == fisorgId && f.Team.Slug == Team);
+            var fisOrg = await _context.FISOrgs.Include(t => t.Team).SingleAsync(f => f.Id == fisorgId && f.Team.Slug == Team);
             if (fisOrg == null)
             {
                 Message = "FIS Org not found or not attached to this team";
                 return RedirectToAction(nameof(Index));
             }
             return View(fisOrg);
-           
+
         }
 
         [HttpPost]
@@ -101,19 +101,19 @@ namespace Keas.Mvc.Controllers
         {
             var team = await _context.Teams
                 .Include(t => t.TeamPermissions)
-                    .ThenInclude(tp=> tp.User)
-                .Include(t=> t.TeamPermissions)
-                    .ThenInclude(tp=>tp.Role)
+                    .ThenInclude(tp => tp.User)
+                .Include(t => t.TeamPermissions)
+                    .ThenInclude(tp => tp.Role)
                 .SingleAsync(x => x.Slug == Team);
-            
-            var viewModel = TeamAdminMembersListModel.Create(team,null);
+
+            var viewModel = TeamAdminMembersListModel.Create(team, null);
             return View(viewModel);
         }
 
         public async Task<IActionResult> AddMemberRole()
         {
             var team = await _context.Teams.SingleAsync(x => x.Slug == Team);
-            
+
             var viewModel = await TeamAdminMembersAddModel.Create(team, _context);
             return View(viewModel);
         }
@@ -135,20 +135,22 @@ namespace Keas.Mvc.Controllers
 
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.UserEmail || u.Id == model.UserEmail);
             var role = await _context.Roles.SingleOrDefaultAsync(r => r.Id == model.RoleId);
-            
+
             if (user == null)
             {
-                if(model.UserEmail.Contains("@")){
-                   user = await _userService.CreateUserFromEmail(model.UserEmail);
-                } else
+                if (model.UserEmail.Contains("@"))
                 {
-                   user = await _userService.CreateUserFromKerberos(model.UserEmail);
+                    user = await _userService.CreateUserFromEmail(model.UserEmail);
+                }
+                else
+                {
+                    user = await _userService.CreateUserFromKerberos(model.UserEmail);
                 }
             }
 
             // Check if already Team Person. Add if not.
             var person = await _context.People.SingleOrDefaultAsync(p => p.UserId == user.Id && p.TeamId == team.Id);
-            if (person == null) 
+            if (person == null)
             {
                 person = new Person();
                 person.TeamId = team.Id;
@@ -172,11 +174,11 @@ namespace Keas.Mvc.Controllers
 
             if (existingTeamPermision != null)
             {
-                ModelState.AddModelError(string.Empty,"User already in that role!");
+                ModelState.AddModelError(string.Empty, "User already in that role!");
                 return View(viewModel);
             }
 
-            var teamPermission = new TeamPermission {Role = role, Team = team, User = user};
+            var teamPermission = new TeamPermission { Role = role, Team = team, User = user };
             if (ModelState.IsValid)
             {
                 _context.TeamPermissions.Add(teamPermission);
@@ -184,7 +186,7 @@ namespace Keas.Mvc.Controllers
                 Message = "User " + user.Name + " has been added as " + role.Name + " to the " + team.Name + " team.";
                 return RedirectToAction(nameof(RoledMembers));
             }
-            
+
             return View(viewModel);
         }
 
@@ -215,16 +217,16 @@ namespace Keas.Mvc.Controllers
                 Message = "User not found!";
                 return RedirectToAction(nameof(RoledMembers));
             }
-            
+
             if (roles.Length < 1)
             {
                 Message = "Must select a role to remove.";
-                return RedirectToAction(nameof(RemoveRoles), new {userId = userId});
+                return RedirectToAction(nameof(RemoveRoles), new { userId = userId });
             }
-            
+
             foreach (var role in roles)
             {
-                var teamPermssionToDelete = _context.TeamPermissions.Single(tptd => tptd.RoleId == role && tptd.UserId == userId && tptd.Team.Slug==Team);
+                var teamPermssionToDelete = _context.TeamPermissions.Single(tptd => tptd.RoleId == role && tptd.UserId == userId && tptd.Team.Slug == Team);
                 _context.TeamPermissions.Remove(teamPermssionToDelete);
             }
             await _context.SaveChangesAsync();
@@ -233,7 +235,7 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(RoledMembers));
         }
 
-        public async Task<IActionResult> BulkLoadPeople() 
+        public async Task<IActionResult> BulkLoadPeople()
         {
             var team = await _context.Teams.Include(i => i.PpsDepartments).SingleAsync(a => a.Slug == Team);
             return View(team.PpsDepartments);
@@ -253,7 +255,7 @@ namespace Keas.Mvc.Controllers
             {
                 Message = $"{await _identityService.BulkLoadPeople(teamPpsDepartment.PpsDepartmentCode, Team)} for {teamPpsDepartment.DepartmentName}. {Message}";
             }
-          
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -303,7 +305,7 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> RegenerateApiCode() 
+        public async Task<IActionResult> RegenerateApiCode()
         {
             var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
             if (team == null)
@@ -326,7 +328,7 @@ namespace Keas.Mvc.Controllers
             Message = "API Code updated";
 
             return RedirectToAction("RegenerateApiCode");
-            
+
         }
 
 
@@ -374,7 +376,12 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadCSV(IFormFile file)
         {
-            if(file == null || file.Length == 0)
+            var keyCount = 0;
+            var serialCount = 0;
+            var peopleCount = 0;
+            var assignmentCount = 0;
+
+            if (file == null || file.Length == 0)
             {
                 Message = "File not selected";
                 return RedirectToAction("Upload");
@@ -383,24 +390,25 @@ namespace Keas.Mvc.Controllers
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
             using (var reader = new StreamReader(file.OpenReadStream()))
             using (var csv = new CsvReader(reader))
-            {    
-               csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
-                 var record = new KeyImport();
+            {
+                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
+                var record = new KeyImport();
                 var records = csv.EnumerateRecords(record);
                 foreach (var r in records)
                 {
                     var key = await _context.Keys.Where(k => k.Team.Slug == Team).SingleOrDefaultAsync(k => k.Code == r.Keynumber);
-                    if(key == null)
+                    if (key == null)
                     {
                         key = new Key();
                         key.Code = r.Keynumber;
                         key.TeamId = team.Id;
                         key.Name = r.Description;
-                        _context.Keys.Add(key);                        
+                        _context.Keys.Add(key);
+                        keyCount += 1;
                     }
 
                     var serial = await _context.KeySerials.Where(s => s.KeyId == key.Id).SingleOrDefaultAsync(s => s.Number == r.SerialNumber);
-                    if(serial == null)
+                    if (serial == null)
                     {
                         serial = new KeySerial();
                         serial.Number = r.SerialNumber;
@@ -409,27 +417,30 @@ namespace Keas.Mvc.Controllers
                         serial.Status = r.Status;
                         serial.TeamId = team.Id;
                         _context.KeySerials.Add(serial);
+                        serialCount += 1;
                     }
 
-                    if(!string.IsNullOrWhiteSpace(r.KerbUser))
+                    if (!string.IsNullOrWhiteSpace(r.KerbUser))
                     {
                         var person = await _context.People.SingleOrDefaultAsync(p => p.TeamId == team.Id && p.UserId == r.KerbUser);
-                        if(person == null)
+                        if (person == null)
                         {
                             // Person doesn't exist. Check for user
                             var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == r.KerbUser);
-                            if(user == null)
+                            if (user == null)
                             {
                                 // No existing user
                                 user = await _identityService.GetByKerberos(r.KerbUser);
-                                if(user !=  null)
+                                if (user != null)
                                 {
                                     // IAM found user by Kerb
                                     _context.Users.Add(user);
-                                } else {
+                                }
+                                else
+                                {
                                     // No user found, skip this assignment
                                     continue;
-                                }                           
+                                }
                             }
                             person = new Person();
                             person.User = user;
@@ -439,10 +450,11 @@ namespace Keas.Mvc.Controllers
                             person.Active = true;
                             person.TeamId = team.Id;
                             _context.People.Add(person);
+                            peopleCount += 1;
                         }
 
                         var assignment = await _context.KeySerialAssignments.SingleOrDefaultAsync(a => a.KeySerialId == serial.Id);
-                        if(assignment == null)
+                        if (assignment == null)
                         {
                             assignment = new KeySerialAssignment();
                             assignment.RequestedAt = r.DateIssued;
@@ -450,16 +462,18 @@ namespace Keas.Mvc.Controllers
                             assignment.PersonId = person.Id;
                             assignment.KeySerialId = serial.Id;
                             _context.KeySerialAssignments.Add(assignment);
+                            assignmentCount += 1;
                         }
                         assignment.RequestedAt = r.DateIssued;
                         assignment.ExpiresAt = r.DateDue;
                         assignment.PersonId = person.Id;
-                        assignment.KeySerialId = serial.Id;                        
+                        assignment.KeySerialId = serial.Id;
                     }
                     await _context.SaveChangesAsync();
                 }
             }
-             return RedirectToAction("Index");
+            Message = string.Format("Successfully loaded {0} new keys, {1} new keySerials, {2} new team members, and {3} new assignments recorded.", keyCount, serialCount, peopleCount, assignmentCount);
+            return RedirectToAction("Index");
 
         }
 
