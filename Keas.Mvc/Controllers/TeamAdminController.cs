@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Keas.Core.Models;
 using System.IO;
 using CsvHelper;
+using Microsoft.AspNetCore.Http;
 
 namespace Keas.Mvc.Controllers
 {
@@ -370,11 +371,17 @@ namespace Keas.Mvc.Controllers
             return View();
         }
 
-        public async Task<IActionResult> UploadCSV()
+        [HttpPost]
+        public async Task<IActionResult> UploadCSV(IFormFile file)
         {
+            if(file == null || file.Length == 0)
+            {
+                Message = "File not selected";
+                return RedirectToAction("Upload");
+            }
             // Add counts
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
-            using (var reader = new StreamReader("physics.csv"))
+            using (var reader = new StreamReader(file.OpenReadStream()))
             using (var csv = new CsvReader(reader))
             {    
                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
