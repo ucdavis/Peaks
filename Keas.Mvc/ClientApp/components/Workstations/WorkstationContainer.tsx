@@ -125,6 +125,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                         space={this.props.space}
                         onCreate={this._createAndMaybeAssignWorkstation}
                         openEditModal={this._openEditModal}
+                        openDetailsModal={this._openDetailsModal}
                         onAddNew={this._openCreateModal}
                     />
                     <RevokeWorkstation
@@ -326,9 +327,17 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     };
 
     private _openDetailsModal = (workstation: IWorkstation) => {
-        this.context.router.history.push(
-            `${this._getBaseUrl()}/workstations/details/${workstation.id}`
-        );
+        // if we are on spaces or person page, and this workstation is not in our state
+        // this happens on the search, when selecting already assigned 
+        if (this.state.workstations.findIndex(x => x.id === workstation.id) === -1) {
+            this.context.router.history.push(
+                `/${this.context.team.slug}/spaces/details/${workstation.space.id}/workstations/details/${workstation.id}`
+            );
+        } else {
+            this.context.router.history.push(
+                `${this._getBaseUrl()}/workstations/details/${workstation.id}`
+            );
+        }
     };
 
     private _openEditModal = (workstation: IWorkstation) => {
