@@ -396,80 +396,89 @@ namespace Keas.Mvc.Controllers
                 var records = csv.EnumerateRecords(record);
                 foreach (var r in records)
                 {
-                    var key = await _context.Keys.Where(k => k.Team.Slug == Team).SingleOrDefaultAsync(k => k.Code == r.Keynumber);
-                    if (key == null)
-                    {
-                        key = new Key();
-                        key.Code = r.Keynumber;
-                        key.TeamId = team.Id;
-                        key.Name = r.Description;
-                        _context.Keys.Add(key);
-                        keyCount += 1;
-                    }
-
-                    var serial = await _context.KeySerials.Where(s => s.KeyId == key.Id).SingleOrDefaultAsync(s => s.Number == r.SerialNumber);
-                    if (serial == null)
-                    {
-                        serial = new KeySerial();
-                        serial.Number = r.SerialNumber;
-                        serial.Name = r.SerialNumber;
-                        serial.Key = key;
-                        serial.Status = r.Status;
-                        serial.TeamId = team.Id;
-                        _context.KeySerials.Add(serial);
-                        serialCount += 1;
-                    }
-
-                    if (!string.IsNullOrWhiteSpace(r.KerbUser))
-                    {
-                        var person = await _context.People.SingleOrDefaultAsync(p => p.TeamId == team.Id && p.UserId == r.KerbUser);
-                        if (person == null)
+                    if(!string.IsNullOrWhiteSpace(r.Keynumber))
+                    {                    
+                        var key = await _context.Keys.Where(k => k.Team.Slug == Team).SingleOrDefaultAsync(k => k.Code.ToUpper() == r.Keynumber.ToUpper());
+                        if (key == null)
                         {
-                            // Person doesn't exist. Check for user
-                            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == r.KerbUser);
-                            if (user == null)
+                            key = new Key();
+                            key.Code = r.Keynumber.ToUpper();
+                            key.TeamId = team.Id;
+                            key.Name = r.Description;
+                            _context.Keys.Add(key);
+                            keyCount += 1;
+                        }
+
+                        if(!string.IsNullOrWhiteSpace(r.SerialNumber))
+                        {
+                            var serial = await _context.KeySerials.Where(s => s.KeyId == key.Id).SingleOrDefaultAsync(s => s.Number.ToUpper() == r.SerialNumber.ToUpper());
+                            if (serial == null)
                             {
-                                // No existing user
-                                user = await _identityService.GetByKerberos(r.KerbUser);
-                                if (user != null)
+                                serial = new KeySerial();
+                                serial.Number = r.SerialNumber;
+                                serial.Name = r.SerialNumber;
+                                serial.Key = key;
+                                serial.Status = r.Status;
+                                serial.TeamId = team.Id;
+                                _context.KeySerials.Add(serial);
+                                serialCount += 1;
+                            }
+
+                            if(!string.IsNullOrWhiteSpace(r.KerbUser)) 
+                            {
+                                if (!string.IsNullOrWhiteSpace(r.KerbUser))
                                 {
-                                    // IAM found user by Kerb
-                                    _context.Users.Add(user);
-                                }
-                                else
-                                {
-                                    // No user found, skip this assignment
-                                    continue;
+                                    var person = await _context.People.SingleOrDefaultAsync(p => p.TeamId == team.Id && p.UserId == r.KerbUser);
+                                    if (person == null)
+                                    {
+                                        // Person doesn't exist. Check for user
+                                        var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == r.KerbUser);
+                                        if (user == null)
+                                        {
+                                            // No existing user
+                                            user = await _identityService.GetByKerberos(r.KerbUser);
+                                            if (user != null)
+                                            {
+                                                // IAM found user by Kerb
+                                                _context.Users.Add(user);
+                                            }
+                                            else
+                                            {
+                                                // No user found, skip this assignment
+                                                continue;
+                                            }
+                                        }
+                                        person = new Person();
+                                        person.User = user;
+                                        person.FirstName = user.FirstName;
+                                        person.LastName = user.LastName;
+                                        person.Email = user.Email;
+                                        person.Active = true;
+                                        person.TeamId = team.Id;
+                                        _context.People.Add(person);
+                                        peopleCount += 1;
+                                    }
+
+                                    var assignment = await _context.KeySerialAssignments.SingleOrDefaultAsync(a => a.KeySerialId == serial.Id);
+                                    if (assignment == null)
+                                    {
+                                        assignment = new KeySerialAssignment();
+                                        assignment.RequestedAt = r.DateIssued;
+                                        assignment.ExpiresAt = r.DateDue;
+                                        assignment.PersonId = person.Id;
+                                        assignment.KeySerialId = serial.Id;
+                                        _context.KeySerialAssignments.Add(assignment);
+                                        assignmentCount += 1;
+                                    }
+                                    assignment.RequestedAt = r.DateIssued;
+                                    assignment.ExpiresAt = r.DateDue;
+                                    assignment.PersonId = person.Id;
+                                    assignment.KeySerialId = serial.Id;
                                 }
                             }
-                            person = new Person();
-                            person.User = user;
-                            person.FirstName = user.FirstName;
-                            person.LastName = user.LastName;
-                            person.Email = user.Email;
-                            person.Active = true;
-                            person.TeamId = team.Id;
-                            _context.People.Add(person);
-                            peopleCount += 1;
                         }
-
-                        var assignment = await _context.KeySerialAssignments.SingleOrDefaultAsync(a => a.KeySerialId == serial.Id);
-                        if (assignment == null)
-                        {
-                            assignment = new KeySerialAssignment();
-                            assignment.RequestedAt = r.DateIssued;
-                            assignment.ExpiresAt = r.DateDue;
-                            assignment.PersonId = person.Id;
-                            assignment.KeySerialId = serial.Id;
-                            _context.KeySerialAssignments.Add(assignment);
-                            assignmentCount += 1;
-                        }
-                        assignment.RequestedAt = r.DateIssued;
-                        assignment.ExpiresAt = r.DateDue;
-                        assignment.PersonId = person.Id;
-                        assignment.KeySerialId = serial.Id;
+                        await _context.SaveChangesAsync();
                     }
-                    await _context.SaveChangesAsync();
                 }
             }
             Message = string.Format("Successfully loaded {0} new keys, {1} new keySerials, {2} new team members, and {3} new assignments recorded.", keyCount, serialCount, peopleCount, assignmentCount);
