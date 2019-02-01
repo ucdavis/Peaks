@@ -410,6 +410,7 @@ namespace Keas.Mvc.Controllers
                             key.TeamId = team.Id;
                             key.Name = r.Description;
 
+                            TryValidateModel(key);
                             if (ModelState.IsValid)
                             {
                                 _context.Keys.Add(key);
@@ -418,7 +419,6 @@ namespace Keas.Mvc.Controllers
                             else
                             {
                                 warning.Append(String.Format("Could not save key in line {0}", rowNumber));
-
                             }
                         }
 
@@ -434,6 +434,7 @@ namespace Keas.Mvc.Controllers
                                 serial.Status = r.Status;
                                 serial.TeamId = team.Id;
 
+                                TryValidateModel(serial);
                                 if (ModelState.IsValid)
                                 {
                                     _context.KeySerials.Add(serial);
@@ -478,6 +479,7 @@ namespace Keas.Mvc.Controllers
                                         person.Active = true;
                                         person.TeamId = team.Id;
 
+                                        TryValidateModel(person);
                                         if (ModelState.IsValid)
                                         {
                                             _context.People.Add(person);
@@ -499,6 +501,7 @@ namespace Keas.Mvc.Controllers
                                         assignment.PersonId = person.Id;
                                         assignment.KeySerialId = serial.Id;
 
+                                        TryValidateModel(assignment);
                                         if (ModelState.IsValid)
                                         {
                                             _context.KeySerialAssignments.Add(assignment);
@@ -506,9 +509,8 @@ namespace Keas.Mvc.Controllers
                                         }
                                         else
                                         {
-                                            warning.Append(String.Format("Could not save assignmetn in line {0}", rowNumber));
-                                        }  
-                                       
+                                            warning.Append(String.Format("Could not save assignment in line {0}", rowNumber));
+                                        }                                         
                                     }
                                     assignment.RequestedAt = r.DateIssued;
                                     assignment.ExpiresAt = r.DateDue;
