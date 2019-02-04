@@ -382,6 +382,7 @@ namespace Keas.Mvc.Controllers
             var peopleCount = 0;
             var assignmentCount = 0;
             var rowNumber = 0;
+            bool import = true;
             StringBuilder warning = new StringBuilder();
 
             if (file == null || file.Length == 0)
@@ -503,22 +504,27 @@ namespace Keas.Mvc.Controllers
                                     }
 
                                     var assignment = await _context.KeySerialAssignments.SingleOrDefaultAsync(a => a.KeySerialId == serial.Id);
+                                    import = true;
                                     if (assignment == null)
                                     {
                                         assignment = new KeySerialAssignment();
                                         if(r.DateIssued.HasValue && r.DateIssued < DateTime.Now) 
                                         {
                                              assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                        } else {
+                                            import = false;
                                         }
                                         if(r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
                                         {
                                           assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();  
+                                        } else {
+                                            import = false;
                                         }
                                         assignment.PersonId = person.Id;
                                         assignment.KeySerialId = serial.Id;
 
                                         TryValidateModel(assignment);
-                                        if (ModelState.IsValid)
+                                        if (ModelState.IsValid && import)
                                         {
                                             _context.KeySerialAssignments.Add(assignment);
                                             assignmentCount += 1;
@@ -531,13 +537,20 @@ namespace Keas.Mvc.Controllers
                                     if(r.DateIssued.HasValue && r.DateIssued < DateTime.Now) 
                                     {
                                             assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                    } else {
+                                        import = false;
                                     }
                                     if(r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
                                     {
                                         assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();  
+                                    } else {
+                                        import = false;
                                     }
-                                    assignment.PersonId = person.Id;
-                                    assignment.KeySerialId = serial.Id;
+                                    if(import)
+                                    {
+                                        assignment.PersonId = person.Id;
+                                        assignment.KeySerialId = serial.Id;
+                                    }                                    
                                 }
                             }
                         }
