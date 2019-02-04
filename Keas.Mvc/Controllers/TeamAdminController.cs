@@ -528,8 +528,14 @@ namespace Keas.Mvc.Controllers
                                             warning.Append(String.Format("Could not save assignment in line {0} | ", rowNumber));
                                         }                                         
                                     }
-                                    assignment.RequestedAt = r.DateIssued;
-                                    assignment.ExpiresAt = r.DateDue;
+                                    if(r.DateIssued.HasValue && r.DateIssued < DateTime.Now) 
+                                    {
+                                            assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                    }
+                                    if(r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
+                                    {
+                                        assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();  
+                                    }
                                     assignment.PersonId = person.Id;
                                     assignment.KeySerialId = serial.Id;
                                 }
