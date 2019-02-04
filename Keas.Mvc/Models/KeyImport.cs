@@ -11,9 +11,9 @@ public class KeyImport
 
     public string KerbUser { get; set; }
 
-    public DateTime DateIssued { get; set; }
+    public DateTime? DateIssued { get; set; }
 
-    public DateTime DateDue { get; set; }
+    public DateTime? DateDue { get; set; }
 
     public string Status { get; set; }
 
