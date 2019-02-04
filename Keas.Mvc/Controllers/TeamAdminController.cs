@@ -381,6 +381,7 @@ namespace Keas.Mvc.Controllers
             var serialCount = 0;
             var peopleCount = 0;
             var assignmentCount = 0;
+            var reactivatedCount = 0;
             var rowNumber = 0;
             bool import = true;
             StringBuilder warning = new StringBuilder();
@@ -462,7 +463,7 @@ namespace Keas.Mvc.Controllers
                             {
                                 if (!string.IsNullOrWhiteSpace(r.KerbUser))
                                 {
-                                    var person = await _context.People.SingleOrDefaultAsync(p => p.TeamId == team.Id && p.UserId == r.KerbUser);
+                                    var person = await _context.People.IgnoreQueryFilters().SingleOrDefaultAsync(p => p.TeamId == team.Id && p.UserId == r.KerbUser);
                                     if (person == null)
                                     {
                                         // Person doesn't exist. Check for user
@@ -500,6 +501,13 @@ namespace Keas.Mvc.Controllers
                                         {
                                             warning.Append(String.Format("Could not save person in line {0} | ", rowNumber));
                                         }                                        
+                                        
+                                    } else {
+                                        if(!person.Active) 
+                                        {
+                                            person.Active = true;
+                                            reactivatedCount += 1;
+                                        }
                                         
                                     }
 
@@ -558,7 +566,7 @@ namespace Keas.Mvc.Controllers
                     }
                 }
             }
-            Message = string.Format("Successfully loaded {0} new keys, {1} new keySerials, {2} new team members, and {3} new assignments recorded. {4}", keyCount, serialCount, peopleCount, assignmentCount, warning.ToString());
+            Message = string.Format("Successfully loaded {0} new keys, {1} new keySerials, {2} new and {3} reactivated team members, and {4} new assignments recorded. {5}", keyCount, serialCount, peopleCount, reactivatedCount, assignmentCount, warning.ToString());
             return RedirectToAction("Index");
 
         }
