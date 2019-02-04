@@ -431,15 +431,9 @@ namespace Keas.Mvc.Controllers
                                 serial.Number = r.SerialNumber;
                                 serial.Name = r.SerialNumber;
                                 serial.Key = key;
-                                switch (r.Status) {
-                                    case "L" :
-                                        serial.Status = "Lost";
-                                        break;
+                                switch (r.Status) {                                    
                                     case "Lost" :
                                         serial.Status = "Lost";
-                                        break;
-                                    case "B" :
-                                        serial.Status = "Destroyed";
                                         break;
                                     case "Destroyed" :
                                         serial.Status = "Destroyed";
