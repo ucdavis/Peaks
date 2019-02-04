@@ -431,15 +431,23 @@ namespace Keas.Mvc.Controllers
                                 serial.Number = r.SerialNumber;
                                 serial.Name = r.SerialNumber;
                                 serial.Key = key;
-                                serial.Status = "Active";
-                                if(r.Status == "L" || r.Status == "Lost")
-                                {
-                                    serial.Status = "Lost";
+                                switch (r.Status) {
+                                    case "L" :
+                                        serial.Status = "Lost";
+                                        break;
+                                    case "Lost" :
+                                        serial.Status = "Lost";
+                                        break;
+                                    case "B" :
+                                        serial.Status = "Destroyed";
+                                        break;
+                                    case "Destroyed" :
+                                        serial.Status = "Destroyed";
+                                        break;
+                                    default:
+                                        serial.Status = "Active";
+                                        break;
                                 }
-                                if(r.Status == "B" || r.Status == "Destroyed")
-                                {
-                                    serial.Status = "Destroyed";
-                                }                                
                                 serial.TeamId = team.Id;
 
                                 TryValidateModel(serial);
@@ -504,8 +512,14 @@ namespace Keas.Mvc.Controllers
                                     if (assignment == null)
                                     {
                                         assignment = new KeySerialAssignment();
-                                        assignment.RequestedAt = r.DateIssued.ToUniversalTime();
-                                        assignment.ExpiresAt = r.DateDue.ToUniversalTime();
+                                        if(r.DateIssued.HasValue && r.DateIssued < DateTime.Now) 
+                                        {
+                                             assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                        }
+                                        if(r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
+                                        {
+                                          assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();  
+                                        }
                                         assignment.PersonId = person.Id;
                                         assignment.KeySerialId = serial.Id;
 
