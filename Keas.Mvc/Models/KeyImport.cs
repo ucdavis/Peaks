@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 public class KeyImport
 {
+    [Required]
     public string KeyName { get; set; }
     [Required]
     public string KeyCode { get; set; }     
