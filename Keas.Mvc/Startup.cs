@@ -23,6 +23,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using StackifyLib;
 
 namespace Keas.Mvc
 {
@@ -126,13 +127,14 @@ namespace Keas.Mvc
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("KeyMasterAccess", policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
-                options.AddPolicy("EquipMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.EquipmentMaster, Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
-                options.AddPolicy("AccessMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
-                options.AddPolicy("SpaceMasterAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.SpaceMaster,Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
-                options.AddPolicy("DepartmentAdminAccess", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
-                options.AddPolicy("AnyRole", policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.SpaceMaster, Role.Codes.Admin, Role.Codes.DepartmentalAdmin, Role.Codes.AccessMaster, Role.Codes.EquipmentMaster, Role.Codes.KeyMaster)));
-                options.AddPolicy("SystemAdminAccess", policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.Admin)));
+                options.AddPolicy(AccessCodes.Codes.KeyMasterAccess, policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy(AccessCodes.Codes.EquipMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.EquipmentMaster, Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy(AccessCodes.Codes.AccessMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy(AccessCodes.Codes.SpaceMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.SpaceMaster,Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy(AccessCodes.Codes.DepartmentAdminAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy(AccessCodes.Codes.AnyRole, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.SpaceMaster, Role.Codes.DepartmentalAdmin, Role.Codes.AccessMaster, Role.Codes.EquipmentMaster, Role.Codes.KeyMaster)));
+                options.AddPolicy(AccessCodes.Codes.SystemAdminAccess, policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.Admin)));
+                options.AddPolicy(AccessCodes.Codes.DepartmentOrSystemAdminAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
             });
             services.AddScoped<IAuthorizationHandler, VerifyRoleAccessHandler>();
             
@@ -154,11 +156,14 @@ namespace Keas.Mvc
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
         {
             // setup logging
             LogConfiguration.Setup(Configuration);
+            app.ConfigureStackifyLogging(Configuration);
             loggerFactory.AddSerilog();
+
+            appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
 
             app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<LogIdentityMiddleware>();
@@ -192,7 +197,7 @@ namespace Keas.Mvc
                     name: "API",
                     template: "api/{teamName}/{controller}/{action}/{id?}",
                     defaults: new { controller = "people", action = "Index" },
-                    constraints: new { controller = "(keys|keyserials|equipment|access|spaces|people|person|workstations|tags)" }
+                    constraints: new { controller = "(keys|keyserials|equipment|access|spaces|people|person|workstations|tags|peopleAdmin)" }
                 );
 
                 routes.MapRoute(

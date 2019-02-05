@@ -49,7 +49,7 @@ namespace Keas.Mvc.Controllers.Api
 
             var sql = SpaceQueries.List;            
 
-            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new { orgIds, teamId });
+            var result = _context.Database.GetDbConnection().Query(sql, new { orgIds, teamId });
 
             var spaces = result.Select(r => new {
                 space = new {

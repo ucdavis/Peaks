@@ -101,6 +101,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                                     <AssignPerson
                                         person={this.state.person}
                                         onSelect={this._onSelectPerson}
+                                        isRequired={this.state.equipment && this.state.equipment.teamId !== 0}
                                         disabled={
                                             !!this.props.person ||
                                             (!!this.props.selectedEquipment &&

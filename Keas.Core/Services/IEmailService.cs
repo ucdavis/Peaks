@@ -20,6 +20,8 @@ namespace Keas.Core.Services
     {
         Task SendNotificationMessage(User user);
         Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model);
+
+        Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model);
     }
 
     public class EmailService : IEmailService
@@ -32,6 +34,70 @@ namespace Keas.Core.Services
         {
             _dbContext = dbContext;
             _emailSettings = emailSettings.Value;
+        }
+
+        public async Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model)
+        {
+            if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.Information("Email Sending Disabled");
+                return;
+            }
+
+            var person = model.People.First(a => a.TeamId == teamId);
+
+            var expiringItems = ExpiringItemsEmailModel.Create(
+                model.AccessAssignments.Where(a => a.Access.TeamId == teamId).ToList(),
+                model.KeySerials.Where(a => a.KeySerialAssignment != null && a.TeamId == teamId).ToList(),
+                model.Equipment.Where(a => a.Assignment != null && a.TeamId == teamId).ToList(),
+                model.Workstations.Where(a => a.Assignment != null && a.TeamId == teamId).ToList(),
+                person
+            );
+
+            if (!expiringItems.AccessAssignments.Any() && !expiringItems.KeySerials.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
+            {
+                return;                
+            }
+
+            var toUsers = await _dbContext.TeamPermissions.Where(
+                t => t.TeamId == teamId && 
+                ((t.Role.Name == Role.Codes.DepartmentalAdmin) || 
+                (t.Role.Name == Role.Codes.KeyMaster && expiringItems.KeySerials.Any()) ||
+                (t.Role.Name == Role.Codes.AccessMaster && expiringItems.AccessAssignments.Any()) || 
+                (t.Role.Name == Role.Codes.EquipmentMaster && expiringItems.Equipment.Any()) || 
+                (t.Role.Name == Role.Codes.SpaceMaster && expiringItems.Workstations.Any()))).Select(t => t.User).ToListAsync();
+
+            var toEmails = toUsers
+                 .Distinct()
+                 .Select(u => new Recipient() { Address = new Address(u.Email, u.Name, "to") })
+                 .ToList();
+
+            // Build list of people to email. I.E. get all DeptAdmin, if access.any then add AccessMaster, etc.
+            var transmission = new Transmission();
+            transmission.Content.Subject = "PEAKS Admin Expiring Items Notification";
+            transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
+            transmission.Content.Text = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
+#if DEBUG
+            transmission.Recipients.Add(new Recipient() { Address = new Address("jscubbage@ucdavis.edu") });
+#else
+            toEmails.ForEach(transmission.Recipients.Add);
+#endif
+
+
+            var engine = GetRazorEngine();
+            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems);
+
+            var client = GetSparkpostClient();
+            var result = await client.Transmissions.Send(transmission);
+
+            // reset next notification date
+            // TODO Do we need a team level notification date????
+            // var team = await _dbContext.Teams.FirstAsync(a => a.Id == teamId);
+            // team.NextNotificationDate = DateTime.Now.AddDays(1);
+            // _dbContext.Teams.Update(team);
+            // await _dbContext.SaveChangesAsync();
+            
+
         }
 
         public async Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model)
@@ -58,64 +124,66 @@ namespace Keas.Core.Services
            
             // build email
             var transmission = new Transmission();
-            transmission.Content.Subject = "PEAKS Notification";
+            transmission.Content.Subject = "PEAKS Expiring Items";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
             transmission.Content.Text = "You have asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
             transmission.Recipients = new List<Recipient>()
             {
 #if DEBUG
-                new Recipient() { Address = new Address("jsylvestre@ucdavis.edu") },
+                new Recipient() { Address = new Address("jscubbage@ucdavis.edu") },
 #else
                 new Recipient() { Address = new Address(person.Email, person.Name) },
 #endif            
             };
+
+            // TODO: Email supervisor?
             
             // build cc list
-            var ccUsers = new List<User>();
+//             var ccUsers = new List<User>();
 
-            if (expiringItems.AccessAssignments.Any())
-            {
-                var roles = await _dbContext.Roles
-                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
-                var users = await GetUsersInRoles(roles, person.TeamId);
-                ccUsers.AddRange(users);
-            }
+//             if (expiringItems.AccessAssignments.Any())
+//             {
+//                 var roles = await _dbContext.Roles
+//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
+//                 var users = await GetUsersInRoles(roles, person.TeamId);
+//                 ccUsers.AddRange(users);
+//             }
 
-            if (expiringItems.KeySerials.Any())
-            {
-                var roles = await _dbContext.Roles
-                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-                var users = await GetUsersInRoles(roles, person.TeamId);
-                ccUsers.AddRange(users);
-            }
+//             if (expiringItems.KeySerials.Any())
+//             {
+//                 var roles = await _dbContext.Roles
+//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
+//                 var users = await GetUsersInRoles(roles, person.TeamId);
+//                 ccUsers.AddRange(users);
+//             }
 
-            if (expiringItems.Equipment.Any())
-            {
-                var roles = await _dbContext.Roles
-                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
-                var users = await GetUsersInRoles(roles, person.TeamId);
-                ccUsers.AddRange(users);
-            }
+//             if (expiringItems.Equipment.Any())
+//             {
+//                 var roles = await _dbContext.Roles
+//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
+//                 var users = await GetUsersInRoles(roles, person.TeamId);
+//                 ccUsers.AddRange(users);
+//             }
 
-            if (expiringItems.Workstations.Any())
-            {
-                var roles = await _dbContext.Roles
-                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
-                var users = await GetUsersInRoles(roles, person.TeamId);
-                ccUsers.AddRange(users);
+//             if (expiringItems.Workstations.Any())
+//             {
+//                 var roles = await _dbContext.Roles
+//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
+//                 var users = await GetUsersInRoles(roles, person.TeamId);
+//                 ccUsers.AddRange(users);
                 
-            }
+//             }
 
-            // transform to cc recipient
-            var ccEmails = ccUsers
-                .Distinct()
-                .Select(u => new Recipient() {Address = new Address(u.Email, u.Name, "cc")})
-                .ToList();
+//             // transform to cc recipient
+//             var ccEmails = ccUsers
+//                 .Distinct()
+//                 .Select(u => new Recipient() {Address = new Address(u.Email, u.Name, "cc")})
+//                 .ToList();
 
-#if !DEBUG
-            // add emails to
-            ccEmails.ForEach(transmission.Recipients.Add);
-#endif
+// #if !DEBUG
+//             // add emails to
+//             ccEmails.ForEach(transmission.Recipients.Add);
+// #endif
 
             // build view
             var engine = GetRazorEngine();
@@ -201,7 +269,7 @@ namespace Keas.Core.Services
             transmission.Recipients = new List<Recipient>()
             {
 #if DEBUG
-                new Recipient() { Address = new Address("jsylvestre@ucdavis.edu") },
+                new Recipient() { Address = new Address("jscubbage@ucdavis.edu") },
 #else
                 new Recipient() { Address = new Address(user.Email, user.Name) },
 #endif

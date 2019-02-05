@@ -7,10 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Models;
+using Keas.Mvc.Extensions;
 
 namespace Keas.Mvc.Controllers.Api
 {
-    [Authorize(Policy = "SpaceMasterAccess")]
+    [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
     public class WorkstationsController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -26,10 +28,12 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
-                .Where(x => x.Team.Slug == Team && x.Active && x.Assignment == null &&
+                .Where(x => x.Team.Slug == Team && x.Active  &&
                 (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
                     || x.Space.RoomNumber.StartsWith(q, comparison)))
                 .Include(x => x.Space)
+                .Include(x => x.Assignment)
+                .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
                 .AsNoTracking().ToListAsync();
 
             return Json(equipment);
@@ -40,10 +44,12 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
-                .Where(x => x.Team.Slug == Team && x.SpaceId == spaceId && x.Active && x.Assignment == null &&
+                .Where(x => x.Team.Slug == Team && x.SpaceId == spaceId && x.Active && 
                 (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
                     || x.Space.RoomNumber.StartsWith(q, comparison)))
-                .Include(x => x.Space).AsNoTracking().ToListAsync();
+                .Include(x => x.Space).Include(x => x.Assignment)
+                .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
+                .AsNoTracking().ToListAsync();
 
             return Json(equipment);
         }
@@ -135,6 +141,8 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     _context.WorkstationAssignments.Update(workstation.Assignment);
                     workstation.Assignment.ExpiresAt = DateTime.Parse(date);
+                    workstation.Assignment.RequestedById = User.Identity.Name;
+                    workstation.Assignment.RequestedByName = User.GetNameClaim();
                     await _eventService.TrackWorkstationAssignmentUpdated(workstation);
                 }
                 else
@@ -142,6 +150,8 @@ namespace Keas.Mvc.Controllers.Api
                     workstation.Assignment = new WorkstationAssignment{PersonId = personId, ExpiresAt = DateTime.Parse(date)};
                     workstation.Assignment.Person =
                     await _context.People.Include(p => p.User).Include(p=> p.Team).SingleAsync(p => p.Id == personId);
+                    workstation.Assignment.RequestedById = User.Identity.Name;
+                    workstation.Assignment.RequestedByName = User.GetNameClaim();
 
                     if (workstation.Assignment.Person.Team.Slug != Team)
                     {
@@ -189,6 +199,7 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var w = await _context.Workstations.Where(x => x.Team.Slug == Team)
+                    .Include(x => x.Space)
                     .SingleAsync(x => x.Id == workstation.Id);
                     
                 w.Name = workstation.Name;

@@ -7,11 +7,12 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Models;
 using Keas.Mvc.Models.KeyViewModels;
 
 namespace Keas.Mvc.Controllers.Api
 {
-    [Authorize(Policy = "KeyMasterAccess")]
+    [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
     public class KeysController : SuperController
     {
         private readonly ApplicationDbContext _context;

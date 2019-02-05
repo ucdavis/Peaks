@@ -8,6 +8,7 @@ interface IProps {
     selectedWorkstation?: IWorkstation;
     space: ISpace;
     onSelect: (workstation: IWorkstation) => void;
+    openDetailsModal: (workstation: IWorkstation) => void;
     onDeselect: () => void;
 }
 
@@ -58,19 +59,28 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
                         filterBy={() => true} // don't filter on top of our search
                         allowNew={false}
                         renderMenuItemChildren={(option, props, index) => (
-                            <div>
+                            <div className={!!option.assignment ? "disabled" : ""}>
                                 <div>
                                     <Highlighter key="name" search={props.text}>
                                         {option.name}
                                     </Highlighter>
                                 </div>
                                 <div>
+                                    {!!option.assignment ? "Assigned" : "Unassigned"}
+                                </div>
+                                <div>
                                     <small>
-                                        Room:{" "}
-                                        <Highlighter key="space.roomNumber" search={props.text}>
+                                        Space:
+                                        <Highlighter
+                                            key="space.roomNumber"
+                                            search={props.text}
+                                        >
                                             {option.space.roomNumber}
-                                        </Highlighter>{" "}
-                                        <Highlighter key="space.bldgName" search={props.text}>
+                                        </Highlighter>
+                                        <Highlighter
+                                            key="space.bldgName"
+                                            search={props.text}
+                                        >
                                             {option.space.bldgName}
                                         </Highlighter>
                                     </small>
@@ -87,7 +97,11 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
                         }}
                         onChange={selected => {
                             if (selected && selected.length === 1) {
-                                this._onSelected(selected[0]);
+                                if (!!selected[0] && !!selected[0].assignment) {
+                                    this.props.openDetailsModal(selected[0]);
+                                } else {
+                                    this._onSelected(selected[0]);
+                                }
                             }
                         }}
                         options={this.state.workstations}

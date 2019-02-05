@@ -1,14 +1,15 @@
-﻿using Keas.Core.Data;
+using Keas.Core.Data;
 using Keas.Core.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Models;
 
 namespace Keas.Mvc.Controllers
 {
-    [Authorize(Policy = "SystemAdminAccess")]
+    [Authorize(Policy = AccessCodes.Codes.SystemAdminAccess)]
     public class TeamController : Controller
     {
         private readonly ApplicationDbContext _context;

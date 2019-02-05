@@ -8,9 +8,9 @@ namespace Keas.Mvc.Attributes
 {
     public class VerifyRoleAccess : IAuthorizationRequirement
     {
-        public readonly object[] RoleStrings;
+        public readonly string[] RoleStrings;
 
-        public VerifyRoleAccess(params object[] roleStrings)
+        public VerifyRoleAccess(params string[] roleStrings)
         {
             RoleStrings = roleStrings;
         }

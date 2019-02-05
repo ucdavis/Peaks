@@ -15,6 +15,10 @@ namespace Keas.Core.Models
         public IList<Person> People { get; set; }
         public Person Person { get; set; }
 
+       
+
+        
+
 
         public static ExpiringItemsEmailModel Create(IList<AccessAssignment> access, IList<KeySerial> keySerials, IList<Equipment> equipment, IList<Workstation> workstations, Person person)
         {
@@ -36,6 +40,16 @@ namespace Keas.Core.Models
             list.AddRange(KeySerials.Select(a => a.KeySerialAssignment.PersonId));
             list.AddRange(Equipment.Select(a => a.Assignment.PersonId));
             list.AddRange(Workstations.Select(a => a.Assignment.PersonId));
+            return list.Distinct().ToList();
+        }
+
+        public IList<int> GetTeamIdList()
+        {
+            var list = new List<int>();
+            list.AddRange(AccessAssignments.Select(a => a.Access.TeamId));
+            list.AddRange(KeySerials.Select(a => a.TeamId));
+            list.AddRange(Equipment.Select(a => a.TeamId));
+            list.AddRange(Workstations.Select(a => a.TeamId));
             return list.Distinct().ToList();
         }
     }

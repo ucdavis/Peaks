@@ -1,4 +1,5 @@
-﻿@using Microsoft.AspNetCore.Authorization
+@using Keas.Core.Models
+@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @model Keas.Mvc.Models.HomeViewModel
 
@@ -29,7 +30,7 @@
         </div>
         <div class="card-content">
                 <ul>
-                   @if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
+                   @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded)
                   {
                       <li>
                           <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "People")'>Team Assets</a>
@@ -38,7 +39,7 @@
                     <li>
                         <a asp-controller="Confirm" asp-action="MyStuff">MyStuff</a>
                     </li>
-                     @if ((await AuthorizationService.AuthorizeAsync(User, "DepartmentAdminAccess")).Succeeded)
+                     @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
                   {
                       <li>
                         <a asp-controller="TeamAdmin">Administer Team</a>
@@ -47,22 +48,5 @@
                 </ul>
         </div>
       </div>
-            <div class="card">
-              <div class="card-header-primary">
-                <div class="card-head">
-                  <h2><i class="fas fa-sliders-h fa-xs"></i> System Admin</h2>
-                </div>
-              </div>
-              <div class="card-content">
-                @if ((await AuthorizationService.AuthorizeAsync(User, "SystemAdminAccess")).Succeeded)
-                    {
-                            <ul>
-                                <li>
-                                    <a asp-controller="Admin" asp-action="Index" >System Administration</a>
-                                </li>
-                            </ul>
-                    }
-              </div>
-            </div>
   </div>
 </div>

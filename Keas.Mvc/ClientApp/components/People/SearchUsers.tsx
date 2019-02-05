@@ -1,11 +1,11 @@
 ﻿import * as PropTypes from "prop-types";
 import * as React from "react";
-import { Button } from "reactstrap";
+import { Button, FormGroup, Input, InputGroup, InputGroupAddon, Label } from "reactstrap";
 import { AppContext, IPerson } from "../../Types";
 
 interface IState {
-    reloaded: boolean;
-    reloading: boolean;
+    isInvalid: boolean;
+    loading: boolean;
     search: string;
 }
 
@@ -24,38 +24,54 @@ export default class SearchUsers extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
-            reloaded: false, // controls checkmark to show that user have been searched for
-            reloading: false, // controls loading icon while fetching
+            isInvalid: false,
+            loading: false, // controls loading icon while fetching
             search: ""
         };
     }
 
     public render() {
         return (
-            <div className="form-group">
-                <label>Search For User Using Kerberos or Email</label>
-                <input
-                    type="text"
-                    className="form-control"
-                    value={this.state.search}
-                    onChange={e => this.setState({ search: e.target.value })}
-                />
-                <Button
-                    className="btn btn-link"
-                    onClick={this._loadUser}
-                    disabled={this.state.reloading}
-                >
-                    <i className="fas fa-search fa-sm" /> Search{" "}
-                    {this.state.reloaded ? <i className="fas fa-check" /> : null}
-                    {this.state.reloading ? <i className="fas fa-spin fa-spinner" /> : null}
-                </Button>
-            </div>
+            <FormGroup>
+                <Label for="search">Search For User Using Kerberos or Email</Label>
+                <InputGroup>
+                    <Input
+                        type="search"
+                        name="search"
+                        id="userSearch"
+                        placeholder="Search . . ."
+                        className="form-control"
+                        value={this.state.search}
+                        invalid={this.state.isInvalid}
+                        onChange={e => this.setState({ search: e.target.value })}
+                        onKeyPress={e => this._handleKeyPress(e)}
+                    />
+                    <InputGroupAddon addonType="append">
+                        <Button className="btn btn-link" onClick={this._loadUser}>
+                            {this.state.loading ? (
+                                <i className="fas fa-spin fa-spinner" />
+                            ) : (
+                                <i className="fas fa-search fa-sm" />
+                            )}
+                        </Button>
+                    </InputGroupAddon>
+                </InputGroup>
+            </FormGroup>
         );
     }
 
+    private _handleKeyPress = e => {
+        if (e.which === 13) {
+            this._loadUser();
+        }
+    };
+
     private _loadUser = async () => {
-        this.setState({ reloading: true, reloaded: false });
-        const userFetchUrl = `/api/${this.context.team.slug}/people/searchUser?searchTerm=${
+        if (this.state.loading || this.state.search === "") {
+            return;
+        }
+        this.setState({ loading: true });
+        const userFetchUrl = `/api/${this.context.team.slug}/people/searchUsers?searchTerm=${
             this.state.search
         }`;
 
@@ -72,6 +88,6 @@ export default class SearchUsers extends React.Component<IProps, IState> {
             }
         }
         this.props.updatePerson(person);
-        this.setState({ reloading: false, reloaded: true });
+        this.setState({ loading: false, isInvalid: !person });
     };
 }

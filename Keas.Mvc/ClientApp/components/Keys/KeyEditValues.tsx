@@ -1,4 +1,5 @@
 ﻿import * as React from "react";
+import { FormFeedback, FormGroup, Input, Label } from "reactstrap";
 import { IKey } from "../../Types";
 import SearchTags from "../Tags/SearchTags";
 
@@ -17,9 +18,9 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
 
         return (
             <div>
-                <div className="form-group">
-                    <label>Name</label>
-                    <input
+                <FormGroup>
+                    <Label for="item">Item</Label>
+                    <Input
                         type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
@@ -28,12 +29,13 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         onChange={this.onChangeName}
                         required={true}
                         minLength={1}
+                        invalid={!name}
                     />
-                    <span className="invalid-feedback">Name is required</span>
-                </div>
-                <div className="form-group">
-                    <label>Code</label>
-                    <input
+                    <FormFeedback>Item name is required</FormFeedback>
+                </FormGroup>
+                <FormGroup>
+                    <Label for="code">Code</Label>
+                    <Input
                         type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
@@ -43,9 +45,10 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                         required={true}
                         minLength={1}
                         maxLength={10}
+                        invalid={!code}
                     />
-                    <span className="invalid-feedback">Code is required</span>
-                </div>
+                    <FormFeedback>Code is required</FormFeedback>
+                </FormGroup>
                 <div className="form-group">
                     <label>Tags</label>
                     <SearchTags

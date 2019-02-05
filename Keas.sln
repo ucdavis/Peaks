@@ -1,4 +1,4 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.16
@@ -22,6 +22,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{C8C38CD2-AA12-4F8F-AFF6-C660531175FD}"
 	ProjectSection(SolutionItems) = preProject
 		emails-template\src\pages\index.html = emails-template\src\pages\index.html
+		emails-template\src\pages\keas-expiring-team.html = emails-template\src\pages\keas-expiring-team.html
 		emails-template\src\pages\keas-expiring.html = emails-template\src\pages\keas-expiring.html
 		emails-template\src\pages\keas-notification.html = emails-template\src\pages\keas-notification.html
 	EndProjectSection
@@ -29,6 +30,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dest", "Dest", "{7980177D-8422-4D90-838D-0735E50055F9}"
 	ProjectSection(SolutionItems) = preProject
 		emails-template\dist\keas-expiring.html = emails-template\dist\keas-expiring.html
+		emails-template\dist\keas-expiring-team.html = emails-template\dist\keas-expiring-team.html
 		emails-template\dist\keas-notification.html = emails-template\dist\keas-notification.html
 	EndProjectSection
 EndProject
