@@ -28,12 +28,13 @@ namespace Keas.Mvc.Controllers
         private readonly IFinancialService _financialService;
         
 
-        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService)
+        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService, IPersonService personService)
         {
             _context = context;
             _identityService = identityService;
             _userService = userService;
             _financialService = financialService;
+            _personService = personService;
         }
 
         public async Task<IActionResult> Index()
