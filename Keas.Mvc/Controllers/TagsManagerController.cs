@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
-    [Authorize(Policy = "DepartmentAdminAccess")]
+    [Authorize(Policy = AccessCodes.Codes.DepartmentAdminAccess)]
     public class TagsManagerController : SuperController
     {
         private readonly ApplicationDbContext _context;

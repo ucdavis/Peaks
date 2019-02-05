@@ -26,7 +26,7 @@ namespace Keas.Mvc.Handlers
         {
             _dbContext = dbContext;
             _securityService = securityService;
-             _httpContext = httpContext;
+            _httpContext = httpContext;
             _tempDataDictionaryFactory = tempDataDictionary;
         }
 
@@ -40,41 +40,29 @@ namespace Keas.Mvc.Handlers
                 {
                     team = mvcContext.RouteData.Values["teamName"].ToString();
                 }
-            }  
-            if (string.IsNullOrWhiteSpace(team)) 
-             {
+            }
+            if (string.IsNullOrWhiteSpace(team))
+            {
                 var tempData = _tempDataDictionaryFactory.GetTempData(_httpContext.HttpContext);
-                team = Convert.ToString(tempData["TeamName"]); 
-            }     
-
-            // fetch logged in user 
-            var user = _dbContext.Users
-                .AsNoTracking()
-                .SingleOrDefault(u => u.Id == context.User.Identity.Name);
-
-            // get policy roles
-            var roles = await _dbContext.Roles
-                .AsNoTracking()
-                .Where(r => requirement.RoleStrings.Contains(r.Name))
-                .ToListAsync();
-
-            // check for user in role
-            if (user != null && !string.IsNullOrEmpty(team))
-            {
-                if (await _securityService.IsInRoles(roles, team, user))
-                {
-                    context.Succeed(requirement);
-                }
+                team = Convert.ToString(tempData["TeamName"]);
             }
 
-            // checkfor user in admin role
-            if (user != null)
-            {
-                if (await _securityService.IsInAdminRoles(roles, user))
-                {
-                    context.Succeed(requirement);
-                }
+            var userId = context.User.Identity.Name;
+
+            if (await _securityService.IsInRoles(requirement.RoleStrings, team, userId)) {
+                context.Succeed(requirement);
+                return;
             }
+
+
+            if(requirement.RoleStrings.Contains(Role.Codes.Admin))
+            {
+                if (await _securityService.IsInAdminRoles(requirement.RoleStrings, userId)) {
+                context.Succeed(requirement);
+                return;
+            }
+            }
+            
         }
     }
 }

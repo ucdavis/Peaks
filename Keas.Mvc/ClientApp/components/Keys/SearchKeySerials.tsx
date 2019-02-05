@@ -58,6 +58,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
         const { isSearchLoading, keySerials } = this.state;
         return (
             <AsyncTypeahead
+                isInvalid={!this.props.selectedKey || !this.props.selectedKeySerial}
                 isLoading={isSearchLoading}
                 minLength={1}
                 placeholder="Search for key by name or by serial number"

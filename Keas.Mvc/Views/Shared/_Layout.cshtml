@@ -1,3 +1,4 @@
+@using Keas.Core.Models
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.Extensions.Configuration
 @inject IAuthorizationService AuthorizationService
@@ -88,23 +89,24 @@
                 <ul class="navbar-nav mr-auto">
                     @if (TempData["TeamName"] != null)
                     {
-                        if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
+                        if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded)
                         {
                             <li class="nav-item">
                                 <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"], "People")'>Assets</a>
                             </li>
-                        }
-
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
-                        </li>
-                        if ((await AuthorizationService.AuthorizeAsync(User, "AnyRole")).Succeeded)
-                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
                             </li>
+                        } else {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
+                            </li>
                         }
-                        if ((await AuthorizationService.AuthorizeAsync(User, "DepartmentAdminAccess")).Succeeded)
+
+                        if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="TeamAdmin" asp-action="Index">Admin</a>

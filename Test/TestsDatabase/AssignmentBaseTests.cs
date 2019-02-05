@@ -47,8 +47,12 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("NextNotificationDate", "System.Nullable`1[System.DateTime]", new List<string>()));
             expectedFields.Add(new NameAndType("Person", "Keas.Core.Domain.Person", new List<string>()));
             expectedFields.Add(new NameAndType("PersonId", "System.Int32", new List<string>()));
-            expectedFields.Add(new NameAndType("RequestedAt", "System.DateTime", new List<string>()));
+            expectedFields.Add(new NameAndType("RequestedAt", "System.DateTime", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.DisplayFormatAttribute(DataFormatString = \"{0:d}\")]",
+            }));
             expectedFields.Add(new NameAndType("RequestedBy", "Keas.Core.Domain.User", new List<string>()));
+            expectedFields.Add(new NameAndType("RequestedById", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedByName", "System.String", new List<string>()));
 
 

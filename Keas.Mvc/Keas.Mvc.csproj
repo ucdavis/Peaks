@@ -16,6 +16,7 @@
     <PackageReference Include="Serilog.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Serilog.Exceptions" Version="5.0.0" />
     <PackageReference Include="Serilog.Sinks.Stackify" Version="2.0.2" />
+    <PackageReference Include="StackifyLib.AspNetCore" Version="2.1.1" />
     <PackageReference Include="StackifyMiddleware" Version="3.0.2" />
   </ItemGroup>
   <ItemGroup>

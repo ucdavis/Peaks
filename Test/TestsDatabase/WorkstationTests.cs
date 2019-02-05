@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Keas.Core.Domain;
@@ -52,7 +52,10 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
             }));
-            expectedFields.Add(new NameAndType("Space", "Keas.Core.Domain.Space", new List<string>()));
+            expectedFields.Add(new NameAndType("Space", "Keas.Core.Domain.Space", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
+            }));
             expectedFields.Add(new NameAndType("SpaceId", "System.Int32", new List<string>()));
             expectedFields.Add(new NameAndType("Tags", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Team", "Keas.Core.Domain.Team", new List<string>()));

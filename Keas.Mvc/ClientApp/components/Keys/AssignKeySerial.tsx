@@ -113,6 +113,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                                         (!!this.props.selectedKeySerial &&
                                             !!this.props.selectedKeySerial.keySerialAssignment)
                                     }
+                                    isRequired={keySerial && keySerial.id !== 0 && !person}
                                     // disable if we are on person page or updating
                                     person={person}
                                     onSelect={this._onSelectPerson}
@@ -133,7 +134,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                                     />
                                 </div>
                             )}
-                            {!!this.state.keySerial && !!this.state.keySerial.id && (
+                            {!!this.props.selectedKeySerial && !!this.props.selectedKeySerial.id && (
                                 <div>
                                     <Button
                                         color="link"
@@ -235,6 +236,8 @@ export default class AssignKey extends React.Component<IProps, IState> {
     private _validateState = () => {
         let valid = true;
         if (!this.state.keySerial) {
+            valid = false;
+        } else if (this.state.keySerial.id !== 0 && !this.state.person) {
             valid = false;
         } else if (this.state.error !== "") {
             valid = false;

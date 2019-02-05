@@ -452,7 +452,17 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     };
 
     private _openDetailsModal = (equipment: IEquipment) => {
-        this.context.router.history.push(`${this._getBaseUrl()}/equipment/details/${equipment.id}`);
+        // if we are on spaces page, and this equipment is not assigned to this space
+        // this happens on the search
+        if (this.state.equipment.findIndex(x => x.id === equipment.id) === -1) {
+            this.context.router.history.push(
+                `/${this.context.team.slug}/equipment/details/${equipment.id}`
+            );
+        } else {
+            this.context.router.history.push(
+                `${this._getBaseUrl()}/equipment/details/${equipment.id}`
+            );
+        }
     };
 
     private _openEditModal = (equipment: IEquipment) => {

@@ -1,7 +1,7 @@
 @model Keas.Mvc.Models.ReportItemsViewModel
 
 @{
-    ViewData["Title"] = "Expiring Items";
+    ViewData["Title"] = "Items Pending Acceptance";
 }
 
 @section Styles {
@@ -13,11 +13,11 @@
 }
 
 
-<form asp-action="ExpiringItems" method="get">
+<form asp-action="UnAcceptedItems" method="get">
     <div class="card">
       <div class="card-header-primary-thick">
         <div class="card-head">
-          <h2>Expiring Items</h2>
+          <h2>Items Pending Acceptance</h2>
 
         </div>
       </div>
@@ -27,16 +27,9 @@
               <div class="shade">
 
 
-                  <div class="row align-items-end">
+                  <div class="row align-items-end">                     
                       <div class="col-sm">
-                        <h3>Filters</h3>
-                          <div class="form-group">
-                              <label asp-for="ExpiresBefore" class="control-label"></label>
-                              <input style="height:34px" asp-for="ExpiresBefore" class="form-control datepicker" height="34px" width="276" />
-                              <span asp-validation-for="ExpiresBefore" class="text-danger"></span>
-                          </div>
-                      </div>
-                      <div class="col-sm">
+                          <h3>Filters</h3>
                           <div class="form-group">
                               <label asp-for="ShowType" class="control-label"></label>
                               <br>
@@ -70,10 +63,10 @@
             </th>
             <th>
                 Assigned To
-            </th>
+            </th> 
             <th>
-                Expiration
-            </th>
+                Assigned By / When
+            </th>           
             <th>
                 Current?
             </th>
@@ -82,27 +75,7 @@
             </th>
         </tr>
         </thead>
-        <tbody>
-        @foreach (var item in Model.Access)
-        {
-            <tr>
-                <td>Access</td>
-                <td>@Html.DisplayFor(a=> item.Access.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(a=> item.Person.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(a => item.ExpiresAt)
-                </td>
-                <td>
-                    @Html.DisplayFor(a=> item.Access.Active)
-                </td>
-                 <td>
-                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "access", item.AccessId)' >Details</a>
-                </td>
-            </tr>
-        }
+        <tbody>        
         @foreach (var item in Model.Keys)
         {
             <tr>
@@ -111,10 +84,11 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.KeySerialAssignment.Person.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(a => item.KeySerialAssignment.ExpiresAt)
-                </td>
+                </td> 
+                 <td>
+                   @Html.DisplayFor(a => item.KeySerialAssignment.RequestedByName) 
+                   @Html.DisplayFor(a => item.KeySerialAssignment.RequestedAt) 
+                </td>                                
                 <td>
                     @Html.DisplayFor(a => item.Key.Active)
                 </td>
@@ -132,10 +106,11 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.Assignment.Person.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(a => item.Assignment.ExpiresAt)
-                </td>
+                </td> 
+                 <td>
+                   @Html.DisplayFor(a => item.Assignment.RequestedByName) 
+                   @Html.DisplayFor(a => item.Assignment.RequestedAt) 
+                </td>                                 
                 <td>
                     @Html.DisplayFor(a => item.Active)
                 </td>
@@ -153,10 +128,11 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.Assignment.Person.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(a => item.Assignment.ExpiresAt)
-                </td>
+                </td> 
+                 <td>
+                   @Html.DisplayFor(a => item.Assignment.RequestedByName) 
+                   @Html.DisplayFor(a => item.Assignment.RequestedAt) 
+                </td>                              
                 <td>
                     @Html.DisplayFor(a => item.Active)
                 </td>

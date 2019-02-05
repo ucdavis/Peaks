@@ -2,6 +2,7 @@ import * as PropTypes from "prop-types";
 import * as React from "react";
 import { Button } from "reactstrap";
 import { AppContext, IPerson, IPersonInfo } from "../../Types";
+import { PermissionsUtil } from "../../util/permissions";
 import AccessContainer from "../Access/AccessContainer";
 import EquipmentContainer from "../Equipment/EquipmentContainer";
 import HistoryContainer from "../History/HistoryContainer";
@@ -24,6 +25,7 @@ interface IProps {
 export default class PersonDetails extends React.Component<IProps, {}> {
     public static contextTypes = {
         fetch: PropTypes.func,
+        permissions: PropTypes.array,
         router: PropTypes.object,
         team: PropTypes.object
     };
@@ -32,6 +34,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
         if (!this.props.selectedPersonInfo || !this.props.selectedPersonInfo.person) {
             return null;
         }
+        const canEdit = PermissionsUtil.canEditPeople(this.context.permissions);
         return (
             <div>
                 <div>
@@ -96,12 +99,13 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                         assetInUseUpdated={this.props.inUseUpdated}
                         assetEdited={this.props.edited}
                     />
-                    <HistoryContainer
-                        controller="people"
-                        id={this.props.selectedPersonInfo.person.id}
-                    />
-
-            </div>
+                    {canEdit && (
+                        <HistoryContainer
+                            controller="peopleAdmin"
+                            id={this.props.selectedPersonInfo.person.id}
+                        />
+                    )}
+                </div>
         );
     }
 }

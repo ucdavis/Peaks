@@ -2,6 +2,8 @@ import * as PropTypes from "prop-types";
 import * as React from "react";
 import { Button } from "reactstrap";
 import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
+import { PermissionsUtil } from "../../util/permissions";
+import Denied from "../Shared/Denied";
 import AssignWorkstation from "../Workstations/AssignWorkstation";
 import EditWorkstation from "../Workstations/EditWorkstation";
 import RevokeWorkstation from "../Workstations/RevokeWorkstation";
@@ -26,6 +28,7 @@ interface IState {
 export default class WorkstationContainer extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
+        permissions: PropTypes.array,
         router: PropTypes.object,
         team: PropTypes.object
     };
@@ -62,6 +65,9 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     }
 
     public render() {
+        if (!PermissionsUtil.canViewSpace(this.context.permissions)) {
+            return <Denied viewName="Workstations" />;
+        }
         if (!this.props.space && !this.props.person) {
             return null;
         }
@@ -119,6 +125,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                         space={this.props.space}
                         onCreate={this._createAndMaybeAssignWorkstation}
                         openEditModal={this._openEditModal}
+                        openDetailsModal={this._openDetailsModal}
                         onAddNew={this._openCreateModal}
                     />
                     <RevokeWorkstation
@@ -320,9 +327,17 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     };
 
     private _openDetailsModal = (workstation: IWorkstation) => {
-        this.context.router.history.push(
-            `${this._getBaseUrl()}/workstations/details/${workstation.id}`
-        );
+        // if we are on spaces or person page, and this workstation is not in our state
+        // this happens on the search, when selecting already assigned 
+        if (this.state.workstations.findIndex(x => x.id === workstation.id) === -1) {
+            this.context.router.history.push(
+                `/${this.context.team.slug}/spaces/details/${workstation.space.id}/workstations/details/${workstation.id}`
+            );
+        } else {
+            this.context.router.history.push(
+                `${this._getBaseUrl()}/workstations/details/${workstation.id}`
+            );
+        }
     };
 
     private _openEditModal = (workstation: IWorkstation) => {

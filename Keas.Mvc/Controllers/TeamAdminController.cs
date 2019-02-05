@@ -8,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Models;
 
 namespace Keas.Mvc.Controllers
 {
-    [Authorize(Policy = "DepartmentAdminAccess")]
+    [Authorize(Policy = AccessCodes.Codes.DepartmentOrSystemAdminAccess)]
     public class TeamAdminController : SuperController
     {
         // TODO: Authorize to appropriate roles. Maybe just require DA or SystemAdmin?

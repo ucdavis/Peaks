@@ -21,7 +21,7 @@ export default class WorkstationListItem extends React.Component<IProps, {}> {
         const actions: IAction[] = [];
 
         if (!!this.props.onAdd && !hasAssignment) {
-            actions.push({ title: "Add", onClick: () => this.props.onAdd(workstationEntity) });
+            actions.push({ title: "Assign", onClick: () => this.props.onAdd(workstationEntity) });
         }
 
         if (!!this.props.onRevoke && hasAssignment) {
