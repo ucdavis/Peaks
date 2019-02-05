@@ -38,12 +38,6 @@
                       </div>
                       <div class="col-sm">
                           <div class="form-group">
-                              <label asp-for="ShowInactive" class="control-label"></label>
-                              <input asp-for="ShowInactive" class="form-control" />
-                          </div>
-                      </div>
-                      <div class="col-sm">
-                          <div class="form-group">
                             <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
                           </div>
                       </div>
@@ -66,9 +60,6 @@
             </th> 
             <th>
                 Assigned By / When
-            </th>           
-            <th>
-                Current?
             </th>
             <th>
                 Link
@@ -88,9 +79,6 @@
                  <td>
                    @Html.DisplayFor(a => item.KeySerialAssignment.RequestedByName) 
                    @Html.DisplayFor(a => item.KeySerialAssignment.RequestedAt) 
-                </td>                                
-                <td>
-                    @Html.DisplayFor(a => item.Key.Active)
                 </td>
                  <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "keys", item.KeyId)' >Details</a>
@@ -110,10 +98,7 @@
                  <td>
                    @Html.DisplayFor(a => item.Assignment.RequestedByName) 
                    @Html.DisplayFor(a => item.Assignment.RequestedAt) 
-                </td>                                 
-                <td>
-                    @Html.DisplayFor(a => item.Active)
-                </td>
+                </td>  
                  <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "equipment", item.Id)' >Details</a>
                 </td>
@@ -132,10 +117,7 @@
                  <td>
                    @Html.DisplayFor(a => item.Assignment.RequestedByName) 
                    @Html.DisplayFor(a => item.Assignment.RequestedAt) 
-                </td>                              
-                <td>
-                    @Html.DisplayFor(a => item.Active)
-                </td>
+                </td> 
                 <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "spaces", item.SpaceId)' >Details</a>
                 </td>
