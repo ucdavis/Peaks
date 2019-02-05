@@ -31,7 +31,7 @@ export default class KeyListItem extends React.Component<IProps, {}> {
         return (
             <tr>
                 <td>
-                    <Button
+                    <Button className="keys-anomaly"
                         color="link"
                         onClick={() => this.props.showDetails(this.props.keyInfo.key)}
                     >

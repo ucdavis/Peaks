@@ -33,7 +33,15 @@ table {
     margin-top:16px;
   }
   .person-col {
-    width:330px;
+    padding-right:40px;
+    width:66%;
+    margin-top:16px;
+    @include breakpoint(md) {
+      width:45%;
+    }
+    @include breakpoint(lg) {
+      width:29%;
+    }
   }
   .notes-deets {
     margin-top:16px;

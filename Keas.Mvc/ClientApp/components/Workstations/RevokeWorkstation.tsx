@@ -53,7 +53,7 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
                         <Button color="primary" onClick={this._revokeWorkstation}>
                             Confirm Revoke
                         </Button>
-                        <Button color="secondary" onClick={this.props.closeModal}>
+                        <Button className="link" color="secondary" onClick={this.props.closeModal}>
                             Close
                         </Button>
                     </ModalFooter>
