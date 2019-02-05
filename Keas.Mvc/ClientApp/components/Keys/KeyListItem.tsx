@@ -31,7 +31,8 @@ export default class KeyListItem extends React.Component<IProps, {}> {
         return (
             <tr>
                 <td>
-                    <Button className="keys-anomaly"
+                    <Button
+                        className="keys-anomaly"
                         color="link"
                         onClick={() => this.props.showDetails(this.props.keyInfo.key)}
                     >
@@ -45,7 +46,7 @@ export default class KeyListItem extends React.Component<IProps, {}> {
                     {keyInfo.serialsTotalCount}
                 </td>
                 <td>
-                    <ListActionsDropdown actions={actions} />
+                    <ListActionsDropdown actions={actions} className="keys-anomaly"/>
                 </td>
             </tr>
         );
