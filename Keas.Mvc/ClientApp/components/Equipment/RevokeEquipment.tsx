@@ -70,7 +70,7 @@ export default class RevokeEquipment extends React.Component<IProps, IState> {
                             onClick={() => this._revokeEquipment()}
                             disabled={!this._isValidToRevoke() || this.state.submitting}
                         >
-                            Go!{" "}
+                            Revoke{" "}
                             {this.state.submitting && <i className="fas fa-circle-notch fa-spin" />}
                         </Button>{" "}
                     </ModalFooter>
