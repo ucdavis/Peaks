@@ -28,11 +28,13 @@ namespace Keas.Mvc.Services
     {
         private readonly AuthSettings _authSettings;
         private readonly ApplicationDbContext _context;
+        private readonly IPersonService _personService;
 
-        public IdentityService(IOptions<AuthSettings> authSettings, ApplicationDbContext context)
+        public IdentityService(IOptions<AuthSettings> authSettings, ApplicationDbContext context, IPersonService personService)
         {
             _authSettings = authSettings.Value;
             _context = context;
+            _personService = personService;
         }
 
         public async Task<User> GetByEmail(string email)
@@ -116,7 +118,7 @@ namespace Keas.Mvc.Services
             var iamIds = await clientws.PPSAssociations.GetIamIds(PPSAssociationsSearchField.deptCode, ppsCode);
 
             foreach (var id in iamIds.ResponseData.Results)
-            {
+            {                
                 var user = await _context.Users.SingleOrDefaultAsync(u => u.Iam == id.IamId);
                 if (user == null)
                 {
@@ -126,38 +128,8 @@ namespace Keas.Mvc.Services
 
                     if (kerbResults.ResponseData.Results.Length > 0 && contactResult.ResponseData.Results.Length > 0)
                     {
-                        user = await _context.Users.SingleOrDefaultAsync(u => u.Id == kerbResults.ResponseData.Results[0].UserId);
-                        if (user == null)
-                        {
-                            // User not found with Kerb Id either. Add user
-                            var newUser = new User()
-                            {
-                                FirstName = kerbResults.ResponseData.Results[0].DFirstName,
-                                LastName = kerbResults.ResponseData.Results[0].DLastName,
-                                Id = kerbResults.ResponseData.Results[0].UserId,
-                                Email = contactResult.ResponseData.Results[0].Email,
-                                Iam = id.IamId
-                            };
-                            if (newUser.Id == null || newUser.Email == null || newUser.FirstName == null || newUser.LastName == null)
-                            {
-                                warning.Append("User could not be added: IAM ID: " + id.IamId.ToString() + " Name: " + newUser.FirstName + " " + newUser.LastName + " | ");
-                            }
-                            else
-                            {
-                                _context.Users.Add(newUser);
-                                SavePerson(team, newUser);
-                                newpeople += 1;
-                            }
-                        }
-                        else
-                        {
-                            // User existed with Kerb Id, check team
-                            if (!await _context.People.AnyAsync(p => p.UserId == user.Id && p.Team.Slug == teamslug))
-                            {
-                                SavePerson(team, user);                                
-                                newpeople += 1;
-                            }
-                        }
+                        var personResult = await _personService.GetOrCreateFromKerberos(kerbResults.ResponseData.Results[0].UserId, team.Id);
+                        newpeople += personResult.peopleCount;
                     }
                 }
                 else if (!await _context.People.AnyAsync(p => p.User.Iam == id.IamId && p.Team.Slug == teamslug))
