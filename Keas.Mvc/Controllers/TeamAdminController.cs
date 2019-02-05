@@ -464,7 +464,7 @@ namespace Keas.Mvc.Controllers
 
                             if (!string.IsNullOrWhiteSpace(r.KerbUser))
                             {
-                                var personResult = await _identityService.GetOrCreateFromKerberos(r.KerbUser, team.Id);
+                                var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id);
                                 peopleCount += personResult.peopleCount;
                                 var person = personResult.Person;
 

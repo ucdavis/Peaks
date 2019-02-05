@@ -23,7 +23,7 @@ namespace Keas.Mvc.Services
         Task<string> BulkLoadPeople(string ppsCode, string teamslug);
         Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode);
 
-        Task<(Person Person, int peopleCount)> GetOrCreateFromKerberos(string kerb, int teamId);
+        Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId);
     }
 
     public class IdentityService : IIdentityService
@@ -38,7 +38,7 @@ namespace Keas.Mvc.Services
             _context = context;
         }
 
-        public async Task<(Person Person, int peopleCount)> GetOrCreateFromKerberos(string kerb, int teamId)
+        public async Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId)
         {
             var user = await _context.Users.Include(u => u.People).IgnoreQueryFilters().Where(u => u.Id == kerb).FirstOrDefaultAsync();
             if (user == null)
@@ -189,7 +189,7 @@ namespace Keas.Mvc.Services
 
                     if (kerbResults.ResponseData.Results.Length > 0 && contactResult.ResponseData.Results.Length > 0)
                     {
-                        var personResult = await GetOrCreateFromKerberos(kerbResults.ResponseData.Results[0].UserId, team.Id);
+                        var personResult = await GetOrCreatePersonFromKerberos(kerbResults.ResponseData.Results[0].UserId, team.Id);
                         newpeople += personResult.peopleCount;
                     }
                 }
