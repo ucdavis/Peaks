@@ -8,7 +8,7 @@ namespace Keas.Mvc.Services
 {
     public interface IPersonService
     {
-        Task<(Person Person, int peopleCount)> GetOrCreateFromKerberos(string kerb, Team team);
+        Task<(Person Person, int peopleCount)> GetOrCreateFromKerberos(string kerb, int teamId);
     }
 
     public class PersonService : IPersonService
@@ -21,7 +21,7 @@ namespace Keas.Mvc.Services
             _identityService = identityService;
         }
 
-        public async Task<(Person Person, int peopleCount)> GetOrCreateFromKerberos(string kerb, Team team)
+        public async Task<(Person Person, int peopleCount)> GetOrCreateFromKerberos(string kerb, int teamId)
         {
             var user = await _context.Users.Include(u => u.People).IgnoreQueryFilters().Where(u => u.Id == kerb).FirstOrDefaultAsync();
             if (user == null)
@@ -31,7 +31,7 @@ namespace Keas.Mvc.Services
                 if (user != null)
                 {
                     _context.Users.Add(user);
-                    var person = CreatePersonFromUser(user, team.Id);
+                    var person = CreatePersonFromUser(user, teamId);
                     _context.People.Add(person);
                     await _context.SaveChangesAsync();
                     return (person,1);
@@ -45,7 +45,7 @@ namespace Keas.Mvc.Services
             else
             {
                 //User found. Check if in team, add if not
-                var person = user.People.FirstOrDefault(p => p.TeamId == team.Id);
+                var person = user.People.FirstOrDefault(p => p.TeamId == teamId);
                 if(person != null)
                 {
                     //Person already in team, activate if needed
@@ -60,7 +60,7 @@ namespace Keas.Mvc.Services
                 else
                 {
                     // Need to create person
-                    person = CreatePersonFromUser(user, team.Id);
+                    person = CreatePersonFromUser(user, teamId);
                      _context.People.Add(person);
                     await _context.SaveChangesAsync();
                     return (person,1);
