@@ -57,9 +57,10 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     }
 
     public render() {
+        const className = this.props.selectedKeyInfo ? "" : "keys-anomaly"; // purple on keys/details
         return (
             <div>
-                <Button className="keys-anomaly" color="link" onClick={this.props.openModal}>
+                <Button className={className} color="link" onClick={this.props.openModal}>
                     <i className="fas fa-plus fa-sm mr-2" aria-hidden="true" />
                     Associate
                 </Button>
