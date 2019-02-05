@@ -436,11 +436,12 @@ namespace Keas.Mvc.Controllers
                                 serial.Number = r.SerialNumber;
                                 serial.Name = r.SerialNumber;
                                 serial.Key = key;
-                                switch (r.Status) {                                    
-                                    case "Lost" :
+                                switch (r.Status)
+                                {
+                                    case "Lost":
                                         serial.Status = "Lost";
                                         break;
-                                    case "Destroyed" :
+                                    case "Destroyed":
                                         serial.Status = "Destroyed";
                                         break;
                                     default:
@@ -463,26 +464,30 @@ namespace Keas.Mvc.Controllers
                             }
 
                             if (!string.IsNullOrWhiteSpace(r.KerbUser))
-                            {   
-                                var personResult = await _personService.GetOrCreateFromKerberos(r.KerbUser, team.Id);  
+                            {
+                                var personResult = await _personService.GetOrCreateFromKerberos(r.KerbUser, team.Id);
                                 peopleCount += personResult.peopleCount;
-                                var person = personResult.Person;                           
-                                
+                                var person = personResult.Person;
+
                                 var assignment = await _context.KeySerialAssignments.SingleOrDefaultAsync(a => a.KeySerialId == serial.Id);
                                 import = true;
                                 if (assignment == null)
                                 {
                                     assignment = new KeySerialAssignment();
-                                    if(r.DateIssued.HasValue && r.DateIssued < DateTime.Now) 
+                                    if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
                                     {
-                                            assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
-                                    } else {
+                                        assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                    }
+                                    else
+                                    {
                                         import = false;
                                     }
-                                    if(r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
+                                    if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
                                     {
-                                        assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();  
-                                    } else {
+                                        assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();
+                                    }
+                                    else
+                                    {
                                         import = false;
                                     }
                                     assignment.PersonId = person.Id;
@@ -499,28 +504,32 @@ namespace Keas.Mvc.Controllers
                                     else
                                     {
                                         warning.Append(String.Format("Could not save assignment in line {0} | ", rowNumber));
-                                    }                                         
+                                    }
                                 }
-                                if(r.DateIssued.HasValue && r.DateIssued < DateTime.Now) 
+                                if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
                                 {
-                                        assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
-                                } else {
+                                    assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                }
+                                else
+                                {
                                     import = false;
                                 }
-                                if(r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
+                                if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
                                 {
-                                    assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();  
-                                } else {
+                                    assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();
+                                }
+                                else
+                                {
                                     import = false;
                                 }
-                                if(import)
+                                if (import)
                                 {
                                     assignment.PersonId = person.Id;
                                     assignment.KeySerialId = serial.Id;
                                     assignment.RequestedById = User.Identity.Name;
                                     assignment.RequestedByName = User.GetNameClaim();
-                                }                                    
-                            
+                                }
+
                             }
                         }
                         await _context.SaveChangesAsync();

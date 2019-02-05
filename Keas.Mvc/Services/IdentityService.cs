@@ -118,7 +118,7 @@ namespace Keas.Mvc.Services
             var iamIds = await clientws.PPSAssociations.GetIamIds(PPSAssociationsSearchField.deptCode, ppsCode);
 
             foreach (var id in iamIds.ResponseData.Results)
-            {                
+            {
                 var user = await _context.Users.SingleOrDefaultAsync(u => u.Iam == id.IamId);
                 if (user == null)
                 {
@@ -154,7 +154,7 @@ namespace Keas.Mvc.Services
                 LastName = user.LastName,
                 Email = user.Email
             };
-            _context.People.Add(newPerson);            
+            _context.People.Add(newPerson);
         }
     }
 }
