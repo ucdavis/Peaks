@@ -406,7 +406,7 @@ namespace Keas.Mvc.Controllers
                     rowNumber += 1;
                     if (!string.IsNullOrWhiteSpace(r.Keynumber))
                     {
-                        var key = await _context.Keys.Where(k => k.Team.Slug == Team).IgnoreQueryFilters().SingleOrDefaultAsync(k => k.Code.ToUpper() == r.Keynumber.ToUpper());
+                        var key = await _context.Keys.Where(k => k.Team.Slug == Team).SingleOrDefaultAsync(k => k.Code.ToUpper() == r.Keynumber.ToUpper());
                         if (key == null)
                         {
                             key = new Key();
@@ -424,15 +424,11 @@ namespace Keas.Mvc.Controllers
                             {
                                 warning.Append(String.Format("Could not save key in line {0} | ", rowNumber));
                             }
-                        } 
-                        else
-                        {
-                            key.Active = true;
                         }
 
                         if (!string.IsNullOrWhiteSpace(r.SerialNumber))
                         {
-                            var serial = await _context.KeySerials.Where(s => s.KeyId == key.Id).IgnoreQueryFilters().SingleOrDefaultAsync(s => s.Number.ToUpper() == r.SerialNumber.ToUpper());
+                            var serial = await _context.KeySerials.Where(s => s.KeyId == key.Id).SingleOrDefaultAsync(s => s.Number.ToUpper() == r.SerialNumber.ToUpper());
                             if (serial == null)
                             {
                                 serial = new KeySerial();
@@ -464,10 +460,6 @@ namespace Keas.Mvc.Controllers
                                     warning.Append(String.Format("Could not save serial in line {0} | ", rowNumber));
                                 }
 
-                            }
-                            else
-                            {
-                                serial.Active = true;
                             }
 
                             if (!string.IsNullOrWhiteSpace(r.KerbUser))
