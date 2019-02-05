@@ -32,11 +32,10 @@ namespace Keas.Mvc.Services
         private readonly ApplicationDbContext _context;
     
 
-        public IdentityService(IOptions<AuthSettings> authSettings, ApplicationDbContext context, IPersonService personService)
+        public IdentityService(IOptions<AuthSettings> authSettings, ApplicationDbContext context)
         {
             _authSettings = authSettings.Value;
             _context = context;
-            _personService = personService;
         }
 
         public async Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId)
