@@ -42,13 +42,7 @@
                               <br>
                               <select asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
                           </div>
-                      </div>
-                      <div class="col-sm">
-                          <div class="form-group">
-                              <label asp-for="ShowInactive" class="control-label"></label>
-                              <input asp-for="ShowInactive" class="form-control" />
-                          </div>
-                      </div>
+                      </div>                      
                       <div class="col-sm">
                           <div class="form-group">
                             <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
@@ -73,10 +67,7 @@
             </th>
             <th>
                 Expiration
-            </th>
-            <th>
-                Current?
-            </th>
+            </th>           
             <th>
                 Link
             </th>
@@ -94,10 +85,7 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.ExpiresAt)
-                </td>
-                <td>
-                    @Html.DisplayFor(a=> item.Access.Active)
-                </td>
+                </td>               
                  <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "access", item.AccessId)' >Details</a>
                 </td>
@@ -114,9 +102,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.KeySerialAssignment.ExpiresAt)
-                </td>
-                <td>
-                    @Html.DisplayFor(a => item.Key.Active)
                 </td>
                  <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "keys", item.KeyId)' >Details</a>
@@ -136,9 +121,6 @@
                 <td>
                     @Html.DisplayFor(a => item.Assignment.ExpiresAt)
                 </td>
-                <td>
-                    @Html.DisplayFor(a => item.Active)
-                </td>
                  <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "equipment", item.Id)' >Details</a>
                 </td>
@@ -156,9 +138,6 @@
                 </td>
                 <td>
                     @Html.DisplayFor(a => item.Assignment.ExpiresAt)
-                </td>
-                <td>
-                    @Html.DisplayFor(a => item.Active)
                 </td>
                 <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "spaces", item.SpaceId)' >Details</a>
