@@ -32,10 +32,11 @@ namespace Keas.Mvc.Services
         private readonly ApplicationDbContext _context;
     
 
-        public IdentityService(IOptions<AuthSettings> authSettings, ApplicationDbContext context)
+        public IdentityService(IOptions<AuthSettings> authSettings, ApplicationDbContext context, IPersonService personService)
         {
             _authSettings = authSettings.Value;
             _context = context;
+            _personService = personService;
         }
 
         public async Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId)
@@ -179,7 +180,7 @@ namespace Keas.Mvc.Services
             var iamIds = await clientws.PPSAssociations.GetIamIds(PPSAssociationsSearchField.deptCode, ppsCode);
 
             foreach (var id in iamIds.ResponseData.Results)
-            {
+            {                
                 var user = await _context.Users.SingleOrDefaultAsync(u => u.Iam == id.IamId);
                 if (user == null)
                 {
