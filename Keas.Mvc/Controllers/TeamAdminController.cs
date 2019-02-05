@@ -384,7 +384,7 @@ namespace Keas.Mvc.Controllers
             var peopleCount = 0;
             var assignmentCount = 0;
             var reactivatedCount = 0;
-            var rowNumber = 0;
+            var rowNumber = 1;
             bool import = true;
             StringBuilder warning = new StringBuilder();
 
@@ -404,15 +404,15 @@ namespace Keas.Mvc.Controllers
                 foreach (var r in records)
                 {
                     rowNumber += 1;
-                    if (!string.IsNullOrWhiteSpace(r.Keynumber))
+                    if (!string.IsNullOrWhiteSpace(r.KeyCode))
                     {
-                        var key = await _context.Keys.Where(k => k.Team.Slug == Team).SingleOrDefaultAsync(k => k.Code.ToUpper() == r.Keynumber.ToUpper());
+                        var key = await _context.Keys.Where(k => k.Team.Slug == Team).SingleOrDefaultAsync(k => k.Code.ToUpper() == r.KeyCode.ToUpper());
                         if (key == null)
                         {
                             key = new Key();
-                            key.Code = r.Keynumber.ToUpper();
+                            key.Code = r.KeyCode.ToUpper();
                             key.TeamId = team.Id;
-                            key.Name = r.Description;
+                            key.Name = r.KeyName;
 
                             TryValidateModel(key);
                             if (ModelState.IsValid)

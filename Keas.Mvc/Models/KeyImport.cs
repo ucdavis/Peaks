@@ -3,11 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 public class KeyImport
 {
+    public string KeyName { get; set; }
     [Required]
-    public string Keynumber { get; set; }
+    public string KeyCode { get; set; }     
+    
     [Required]
-    public string  SerialNumber { get; set; }
-    public string Description { get; set; }
+    public string  SerialNumber { get; set; }  
 
     public string KerbUser { get; set; }
 
