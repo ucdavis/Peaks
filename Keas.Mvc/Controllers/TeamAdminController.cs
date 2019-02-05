@@ -26,13 +26,15 @@ namespace Keas.Mvc.Controllers
         private readonly IIdentityService _identityService;
         private readonly IUserService _userService;
         private readonly IFinancialService _financialService;
+        private readonly IPersonService _personService;
 
-        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService)
+        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService, IPersonService personService)
         {
             _context = context;
             _identityService = identityService;
             _userService = userService;
             _financialService = financialService;
+            _personService = personService;
         }
 
         public async Task<IActionResult> Index()
@@ -461,90 +463,16 @@ namespace Keas.Mvc.Controllers
                             }
 
                             if (!string.IsNullOrWhiteSpace(r.KerbUser))
-                            {
-                                if (!string.IsNullOrWhiteSpace(r.KerbUser))
+                            {   
+                                var personResult = await _personService.GetOrCreateFromKerberos(r.KerbUser, team);  
+                                peopleCount += personResult.peopleCount;
+                                var person = personResult.Person;                           
+                                
+                                var assignment = await _context.KeySerialAssignments.SingleOrDefaultAsync(a => a.KeySerialId == serial.Id);
+                                import = true;
+                                if (assignment == null)
                                 {
-                                    var person = await _context.People.IgnoreQueryFilters().SingleOrDefaultAsync(p => p.TeamId == team.Id && p.UserId == r.KerbUser);
-                                    if (person == null)
-                                    {
-                                        // Person doesn't exist. Check for user
-                                        var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == r.KerbUser);
-                                        if (user == null)
-                                        {
-                                            // No existing user
-                                            user = await _identityService.GetByKerberos(r.KerbUser);
-                                            if (user != null)
-                                            {
-                                                // IAM found user by Kerb
-                                                _context.Users.Add(user);
-                                            }
-                                            else
-                                            {
-                                                // No user found, skip this assignment
-                                                continue;
-                                            }
-                                        }
-                                        person = new Person();
-                                        person.User = user;
-                                        person.FirstName = user.FirstName;
-                                        person.LastName = user.LastName;
-                                        person.Email = user.Email;
-                                        person.Active = true;
-                                        person.TeamId = team.Id;
-
-                                        TryValidateModel(person);
-                                        if (ModelState.IsValid)
-                                        {
-                                            _context.People.Add(person);
-                                            peopleCount += 1;
-                                        }
-                                        else
-                                        {
-                                            warning.Append(String.Format("Could not save person in line {0} | ", rowNumber));
-                                        }                                        
-                                        
-                                    } else {
-                                        if(!person.Active) 
-                                        {
-                                            person.Active = true;
-                                            reactivatedCount += 1;
-                                        }
-                                        
-                                    }
-
-                                    var assignment = await _context.KeySerialAssignments.SingleOrDefaultAsync(a => a.KeySerialId == serial.Id);
-                                    import = true;
-                                    if (assignment == null)
-                                    {
-                                        assignment = new KeySerialAssignment();
-                                        if(r.DateIssued.HasValue && r.DateIssued < DateTime.Now) 
-                                        {
-                                             assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
-                                        } else {
-                                            import = false;
-                                        }
-                                        if(r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
-                                        {
-                                          assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();  
-                                        } else {
-                                            import = false;
-                                        }
-                                        assignment.PersonId = person.Id;
-                                        assignment.KeySerialId = serial.Id;
-                                        assignment.RequestedById = User.Identity.Name;
-                                        assignment.RequestedByName = User.GetNameClaim();
-
-                                        TryValidateModel(assignment);
-                                        if (ModelState.IsValid && import)
-                                        {
-                                            _context.KeySerialAssignments.Add(assignment);
-                                            assignmentCount += 1;
-                                        }
-                                        else
-                                        {
-                                            warning.Append(String.Format("Could not save assignment in line {0} | ", rowNumber));
-                                        }                                         
-                                    }
+                                    assignment = new KeySerialAssignment();
                                     if(r.DateIssued.HasValue && r.DateIssued < DateTime.Now) 
                                     {
                                             assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
@@ -557,14 +485,42 @@ namespace Keas.Mvc.Controllers
                                     } else {
                                         import = false;
                                     }
-                                    if(import)
+                                    assignment.PersonId = person.Id;
+                                    assignment.KeySerialId = serial.Id;
+                                    assignment.RequestedById = User.Identity.Name;
+                                    assignment.RequestedByName = User.GetNameClaim();
+
+                                    TryValidateModel(assignment);
+                                    if (ModelState.IsValid && import)
                                     {
-                                        assignment.PersonId = person.Id;
-                                        assignment.KeySerialId = serial.Id;
-                                        assignment.RequestedById = User.Identity.Name;
-                                        assignment.RequestedByName = User.GetNameClaim();
-                                    }                                    
+                                        _context.KeySerialAssignments.Add(assignment);
+                                        assignmentCount += 1;
+                                    }
+                                    else
+                                    {
+                                        warning.Append(String.Format("Could not save assignment in line {0} | ", rowNumber));
+                                    }                                         
                                 }
+                                if(r.DateIssued.HasValue && r.DateIssued < DateTime.Now) 
+                                {
+                                        assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                } else {
+                                    import = false;
+                                }
+                                if(r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
+                                {
+                                    assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();  
+                                } else {
+                                    import = false;
+                                }
+                                if(import)
+                                {
+                                    assignment.PersonId = person.Id;
+                                    assignment.KeySerialId = serial.Id;
+                                    assignment.RequestedById = User.Identity.Name;
+                                    assignment.RequestedByName = User.GetNameClaim();
+                                }                                    
+                            
                             }
                         }
                         await _context.SaveChangesAsync();
