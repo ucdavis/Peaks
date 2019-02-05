@@ -424,10 +424,6 @@ namespace Keas.Mvc.Controllers
                             {
                                 warning.Append(String.Format("Could not save key in line {0} | ", rowNumber));
                             }
-                        } 
-                        else
-                        {
-                            key.Active = true;
                         }
 
                         if (!string.IsNullOrWhiteSpace(r.SerialNumber))
@@ -464,10 +460,6 @@ namespace Keas.Mvc.Controllers
                                     warning.Append(String.Format("Could not save serial in line {0} | ", rowNumber));
                                 }
 
-                            }
-                            else
-                            {
-                                serial.Active = true;
                             }
 
                             if (!string.IsNullOrWhiteSpace(r.KerbUser))
