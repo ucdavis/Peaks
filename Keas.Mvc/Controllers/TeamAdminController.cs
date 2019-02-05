@@ -13,6 +13,7 @@ using System.IO;
 using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using System.Text;
+using Keas.Mvc.Extensions;
 
 namespace Keas.Mvc.Controllers
 {
@@ -530,6 +531,8 @@ namespace Keas.Mvc.Controllers
                                         }
                                         assignment.PersonId = person.Id;
                                         assignment.KeySerialId = serial.Id;
+                                        assignment.RequestedById = User.Identity.Name;
+                                        assignment.RequestedByName = User.GetNameClaim();
 
                                         TryValidateModel(assignment);
                                         if (ModelState.IsValid && import)
@@ -558,6 +561,8 @@ namespace Keas.Mvc.Controllers
                                     {
                                         assignment.PersonId = person.Id;
                                         assignment.KeySerialId = serial.Id;
+                                        assignment.RequestedById = User.Identity.Name;
+                                        assignment.RequestedByName = User.GetNameClaim();
                                     }                                    
                                 }
                             }
