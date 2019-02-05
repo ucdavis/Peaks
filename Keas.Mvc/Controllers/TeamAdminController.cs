@@ -26,15 +26,14 @@ namespace Keas.Mvc.Controllers
         private readonly IIdentityService _identityService;
         private readonly IUserService _userService;
         private readonly IFinancialService _financialService;
-        private readonly IPersonService _personService;
+        
 
-        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService, IPersonService personService)
+        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService)
         {
             _context = context;
             _identityService = identityService;
             _userService = userService;
             _financialService = financialService;
-            _personService = personService;
         }
 
         public async Task<IActionResult> Index()
@@ -465,7 +464,7 @@ namespace Keas.Mvc.Controllers
 
                             if (!string.IsNullOrWhiteSpace(r.KerbUser))
                             {
-                                var personResult = await _personService.GetOrCreateFromKerberos(r.KerbUser, team.Id);
+                                var personResult = await _identityService.GetOrCreateFromKerberos(r.KerbUser, team.Id);
                                 peopleCount += personResult.peopleCount;
                                 var person = personResult.Person;
 

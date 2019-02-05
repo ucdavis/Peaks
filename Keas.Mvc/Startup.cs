@@ -150,7 +150,6 @@ namespace Keas.Mvc
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFinancialService, FinancialService>();
-            services.AddScoped<IPersonService, PersonService>();
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
