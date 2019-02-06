@@ -117,6 +117,11 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
+            if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code.Equals(model.Code, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new Exception($"Duplicate Code detected for Team. {model.Code}");
+            }
+
             // create key
             var key = new Key()
             {
