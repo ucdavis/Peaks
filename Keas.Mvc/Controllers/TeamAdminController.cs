@@ -406,11 +406,11 @@ namespace Keas.Mvc.Controllers
                     rowNumber += 1;
                     if (!string.IsNullOrWhiteSpace(r.KeyCode))
                     {
-                        var key = await _context.Keys.Where(k => k.Team.Slug == Team).SingleOrDefaultAsync(k => k.Code.ToUpper() == r.KeyCode.ToUpper());
+                        var key = await _context.Keys.Where(k => k.Team.Slug == Team).SingleOrDefaultAsync(k => k.Code.Equals(r.KeyCode.Trim(), StringComparison.OrdinalIgnoreCase));
                         if (key == null)
                         {
                             key = new Key();
-                            key.Code = r.KeyCode.ToUpper();
+                            key.Code = r.KeyCode.ToUpper().Trim();
                             key.TeamId = team.Id;
                             key.Name = r.KeyName;
 
@@ -428,11 +428,11 @@ namespace Keas.Mvc.Controllers
 
                         if (!string.IsNullOrWhiteSpace(r.SerialNumber))
                         {
-                            var serial = await _context.KeySerials.Where(s => s.KeyId == key.Id).SingleOrDefaultAsync(s => s.Number.ToUpper() == r.SerialNumber.ToUpper());
+                            var serial = await _context.KeySerials.Where(s => s.KeyId == key.Id).SingleOrDefaultAsync(s => s.Number.Equals(r.SerialNumber.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (serial == null)
                             {
                                 serial = new KeySerial();
-                                serial.Number = r.SerialNumber;
+                                serial.Number = r.SerialNumber.Trim();
                                 serial.Name = r.SerialNumber;
                                 serial.Key = key;
                                 switch (r.Status)
