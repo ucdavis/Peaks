@@ -119,7 +119,8 @@ namespace Keas.Mvc.Controllers.Api
 
             if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code.Equals(model.Code, StringComparison.OrdinalIgnoreCase)))
             {
-                throw new Exception($"Duplicate Code detected for Team. {model.Code}");
+                return BadRequest();
+                //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
             }
 
             // create key
@@ -160,7 +161,8 @@ namespace Keas.Mvc.Controllers.Api
 
             if (await _context.Keys.AnyAsync(a => a.Id != key.Id && a.Team.Slug == Team && a.Code.Equals(model.Code, StringComparison.OrdinalIgnoreCase)))
             {
-                throw new Exception($"Duplicate Code detected for Team. {model.Code}");
+                return BadRequest();
+                //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
             }
 
             key.Code = model.Code;
