@@ -101,7 +101,7 @@ namespace Keas.Mvc.Controllers.Api
             }
 
             // check for duplicate serial
-            if (key.Serials.Any(s => s.Number == model.Number))
+            if (key.Serials.Any(s => s.Number.Equals(model.Number.Trim(), StringComparison.OrdinalIgnoreCase)))
             {
                 return BadRequest();
             }
@@ -111,8 +111,8 @@ namespace Keas.Mvc.Controllers.Api
             {
                 KeyId    = key.Id,
                 TeamId   = key.TeamId,
-                Name     = model.Number,
-                Number   = model.Number,
+                Name     = model.Number.Trim(),
+                Number   = model.Number.Trim(),
                 Status   = model.Status ?? "Active",
             };
 
@@ -151,13 +151,14 @@ namespace Keas.Mvc.Controllers.Api
                 .SingleOrDefaultAsync(k => k.Id == keySerial.KeyId);
 
             // check for duplicate serial to target number
-            if (key.Serials.Any(s => s.Id != id && s.Number == model.Number))
+            if (key.Serials.Any(s => s.Id != id && s.Number.Equals(model.Number.Trim(), StringComparison.OrdinalIgnoreCase)))
             {
                 return BadRequest();
             }
 
             // update key serial properties
-            keySerial.Number = model.Number;
+            keySerial.Number = model.Number.Trim();
+            //TODO: Do we want to update the Name too? When we create it, we make Number and Name the same.
             keySerial.Status = model.Status;
 
             await _context.SaveChangesAsync();
