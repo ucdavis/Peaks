@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Keas.Core.Data;
 using Keas.Mvc.Models;
 using Keas.Mvc.Services;
@@ -106,11 +106,13 @@ namespace Keas.Mvc.Controllers
         {
             var person = await _securityService.GetPerson(Team);
             var viewModel = await ConfirmUpdateModel.Create(_context, person);
-            if (viewModel.Equipment.Count == 0 && viewModel.KeySerials.Count == 0)
+            if (viewModel.Equipment.Count == 0 && viewModel.KeySerials.Count == 0 && viewModel.Workstations.Count == 0)
             {
                 Message = "You have no pending items to accept";
                 return RedirectToAction(nameof(MyStuff));
             }
+
+            var extendedMessage = string.Empty;
 
             foreach (var serial in viewModel.KeySerials)
             {
@@ -118,6 +120,7 @@ namespace Keas.Mvc.Controllers
                 serial.KeySerialAssignment.ConfirmedAt = DateTime.UtcNow;
                 _context.Update(serial);
                 await _eventService.TrackAcceptKeySerial(serial);
+                extendedMessage = "keys";
             }
             foreach (var equipment in viewModel.Equipment)
             {
@@ -125,6 +128,14 @@ namespace Keas.Mvc.Controllers
                 equipment.Assignment.ConfirmedAt = DateTime.UtcNow;
                 _context.Update(equipment);
                 await _eventService.TrackAcceptEquipment(equipment);
+                if(string.IsNullOrWhiteSpace(extendedMessage))
+                {
+                    extendedMessage = "equipment items";
+                }
+                else
+                {
+                    extendedMessage = $"{extendedMessage} and equipment items";
+                }
             }
             foreach (var workstation in viewModel.Workstations)
             {
@@ -132,9 +143,17 @@ namespace Keas.Mvc.Controllers
                 workstation.Assignment.ConfirmedAt = DateTime.UtcNow;
                 _context.Update(workstation);
                 await _eventService.TrackAcceptWorkstation(workstation);
+                if(string.IsNullOrWhiteSpace(extendedMessage))
+                {
+                    extendedMessage = "workstations";
+                }
+                else
+                {
+                    extendedMessage = $"{extendedMessage} and workstations";
+                }
             }
             await _context.SaveChangesAsync();
-            Message = "All keys and equipment confirmed!";
+            Message = $"All {extendedMessage} have been confirmed!";
             return RedirectToAction(nameof(MyStuff));
         }
 
