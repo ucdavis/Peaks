@@ -117,7 +117,7 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
-            if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code.Equals(model.Code, StringComparison.OrdinalIgnoreCase)))
+            if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code.Equals(model.Code.Trim(), StringComparison.OrdinalIgnoreCase)))
             {
                 return BadRequest();
                 //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
@@ -126,8 +126,8 @@ namespace Keas.Mvc.Controllers.Api
             // create key
             var key = new Key()
             {
-                Name = model.Name,
-                Code = model.Code,
+                Name = model.Name.Trim(),
+                Code = model.Code.Trim(),
                 Tags = model.Tags,
             };
 
@@ -159,14 +159,14 @@ namespace Keas.Mvc.Controllers.Api
                         .ThenInclude(assignment => assignment.Person.User)
                 .SingleAsync(x => x.Id == id);
 
-            if (await _context.Keys.AnyAsync(a => a.Id != key.Id && a.Team.Slug == Team && a.Code.Equals(model.Code, StringComparison.OrdinalIgnoreCase)))
+            if (await _context.Keys.AnyAsync(a => a.Id != key.Id && a.Team.Slug == Team && a.Code.Equals(model.Code.Trim(), StringComparison.OrdinalIgnoreCase)))
             {
                 return BadRequest();
                 //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
             }
 
-            key.Code = model.Code;
-            key.Name = model.Name;
+            key.Code = model.Code.Trim();
+            key.Name = model.Name.Trim();
             key.Tags = model.Tags;
 
             await _context.SaveChangesAsync();
