@@ -412,7 +412,7 @@ namespace Keas.Mvc.Controllers
                             key = new Key();
                             key.Code = r.KeyCode.ToUpper().Trim();
                             key.TeamId = team.Id;
-                            key.Name = r.KeyName;
+                            key.Name = r.KeyName.Trim();
 
                             TryValidateModel(key);
                             if (ModelState.IsValid)
@@ -433,7 +433,7 @@ namespace Keas.Mvc.Controllers
                             {
                                 serial = new KeySerial();
                                 serial.Number = r.SerialNumber.Trim();
-                                serial.Name = r.SerialNumber;
+                                serial.Name = r.SerialNumber.Trim();
                                 serial.Key = key;
                                 switch (r.Status)
                                 {
