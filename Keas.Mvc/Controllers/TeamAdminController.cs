@@ -406,7 +406,7 @@ namespace Keas.Mvc.Controllers
                     rowNumber += 1;
                     if (!string.IsNullOrWhiteSpace(r.KeyCode))
                     {
-                        var key = await _context.Keys.Where(k => k.Team.Slug == Team).SingleOrDefaultAsync(k => k.Code.Equals(r.KeyCode.Trim(), StringComparison.OrdinalIgnoreCase));
+                        var key = await _context.Keys.SingleOrDefaultAsync(k => k.Team.Slug == Team && k.Code.Equals(r.KeyCode.Trim(), StringComparison.OrdinalIgnoreCase));
                         if (key == null)
                         {
                             key = new Key();
@@ -428,7 +428,7 @@ namespace Keas.Mvc.Controllers
 
                         if (!string.IsNullOrWhiteSpace(r.SerialNumber))
                         {
-                            var serial = await _context.KeySerials.Where(s => s.KeyId == key.Id).SingleOrDefaultAsync(s => s.Number.Equals(r.SerialNumber.Trim(), StringComparison.OrdinalIgnoreCase));
+                            var serial = await _context.KeySerials.SingleOrDefaultAsync(s => s.KeyId == key.Id && s.Number.Equals(r.SerialNumber.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (serial == null)
                             {
                                 serial = new KeySerial();
