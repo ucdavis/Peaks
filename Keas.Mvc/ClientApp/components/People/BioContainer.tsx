@@ -39,7 +39,7 @@ export default class BioContainer extends React.Component<IProps, {}> {
                     </p>
                 )}
                 {this.props.person.isSupervisor && (
-                     <p>
+                     <p><h4>Supervisor</h4>
                      <a
                          href={`/${
                              this.context.team.slug
