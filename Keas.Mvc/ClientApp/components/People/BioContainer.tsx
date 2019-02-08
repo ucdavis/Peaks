@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { Button } from "reactstrap";
 import { AppContext, IPerson } from "../../Types";
 import { DateUtil } from "../../util/dates";
 
@@ -9,7 +10,8 @@ interface IProps {
 
 export default class BioContainer extends React.Component<IProps, {}> {
     public static contextTypes = {
-        fetch: PropTypes.func
+        fetch: PropTypes.func,
+        team: PropTypes.object
     };
     public context: AppContext;
     public render() {
@@ -35,6 +37,26 @@ export default class BioContainer extends React.Component<IProps, {}> {
                         <i className="fas fa-user-tie" aria-hidden="true" />{" "}
                         {this.props.person.supervisor.name}
                     </p>
+                )}
+                {this.props.person.isSupervisor && (
+                     <p>
+                     <a
+                         href={`/${
+                             this.context.team.slug
+                         }/Report/SupervisorDirectReports/?personId=${
+                             this.props.person.id
+                         }`}
+                         target="_blank"
+                     >
+                         <Button className="btn btn-link">
+                            <i
+                                className="fas fa-search fa-sm fa-fw mr-2"
+                                aria-hidden="true"
+                            />
+                            See who this person supervises
+                        </Button>
+                     </a>
+                 </p>
                 )}
                 {this.props.person.email && (
                     <p>
