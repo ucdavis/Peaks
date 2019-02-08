@@ -60,12 +60,13 @@ namespace Keas.Mvc.Controllers.Api
                     StartDate = r.StartDate,
                     EndDate = r.EndDate,
                     Category = r.Category,
+                    IsSupervisor = r.isSupervisor,
                 },
                 id = r.Id,
                 equipmentCount = r.EquipmentCount,
                 accessCount = r.AccessCount,
                 keyCount = r.KeyCount,
-                workstationCount = r.WorkstationCount,
+                workstationCount = r.WorkstationCount,                
             });
 
             return Json(people);
