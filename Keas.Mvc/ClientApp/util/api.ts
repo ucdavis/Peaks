@@ -16,6 +16,7 @@ const doFetch = async (
   });
 
   if (!res.ok) {
+    alert("Error Detected.")
     throw new Error(res.statusText);
   }
 
