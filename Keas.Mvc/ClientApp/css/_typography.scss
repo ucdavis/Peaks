@@ -54,6 +54,12 @@ ul, ol {
       font-family: $sans-reg;
       color:$primary-font;
     }
+
+  }
+  &.two-col {
+  columns: 2;
+  -webkit-columns: 2;
+  -moz-columns: 2;
   }
   &.funding-list {
     font-family: $sans-bold;
@@ -61,6 +67,9 @@ ul, ol {
   font-family: $sans-reg;
   li {
     font-size:1.6rem;
+    &.person-label {
+      color:$secondary-font;
+    }
   }
 }
 
@@ -120,4 +129,10 @@ h2 {
 h3 {
   font-size:2.0rem;
   color:$secondary-font;
+}
+h4 {
+  font-size:1.4;
+  // font-family: $sans-reg;
+  text-transform: uppercase;
+
 }

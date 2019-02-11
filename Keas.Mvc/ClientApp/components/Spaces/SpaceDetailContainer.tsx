@@ -21,9 +21,11 @@ export default class SpacesDetailContainer extends React.Component<IProps, {}> {
                         {this.props.space.roomName && <div>{this.props.space.roomName}</div>}
                         {this.props.space.floorName && <div>{this.props.space.floorName}</div>}
                         {this.props.space.sqFt && <div>{this.props.space.sqFt} Sq Feet</div>}
-                        <p className="card-text">
-                            <i className="fas fa-tags" aria-hidden="true" /> {this.props.tags}
-                        </p>
+                        {this.props.tags && (
+                            <p className="card-text">
+                                <i className="fas fa-tags" aria-hidden="true" /> {this.props.tags}
+                            </p>
+                        )}
                     </div>
                 </div>
                 <br />

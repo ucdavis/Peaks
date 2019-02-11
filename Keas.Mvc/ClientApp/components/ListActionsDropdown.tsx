@@ -3,6 +3,7 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle } from "reactstrap
 
 interface IProps {
     actions: IAction[];
+    className?: string; // for spaces/details/keys action buttons
 }
 
 interface IState {
@@ -28,7 +29,7 @@ export default class ListActionsDropdown extends React.Component<IProps, IState>
         return (
             <Dropdown direction="left" isOpen={this.state.isOpen} toggle={this.toggle}>
                 <DropdownToggle color="link">
-                    <i className="fas fa-ellipsis-h fa-lg" aria-hidden="true" />
+                    <i className={`fas fa-ellipsis-h fa-lg ${this.props.className}`} aria-hidden="true" />
                 </DropdownToggle>
                 <DropdownMenu>{actions.map(this.renderAction)}</DropdownMenu>
             </Dropdown>
