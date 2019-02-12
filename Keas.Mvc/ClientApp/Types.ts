@@ -61,6 +61,7 @@ export interface IPerson {
   endDate: Date;
   category: string;
   notes: string;
+  isSupervisor: boolean;
 }
 
 export interface IPersonInfo {

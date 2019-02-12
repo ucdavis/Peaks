@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Keas.Core.Domain;
@@ -55,6 +55,10 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Group", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("HomePhone", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>()));
+            expectedFields.Add(new NameAndType("IsSupervisor", "System.Boolean", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute()]",
+            }));
             expectedFields.Add(new NameAndType("KeySerialAssignments", "System.Collections.Generic.List`1[Keas.Core.Domain.KeySerialAssignment]", new List<string>()));
             expectedFields.Add(new NameAndType("LastName", "System.String", new List<string>
             {
