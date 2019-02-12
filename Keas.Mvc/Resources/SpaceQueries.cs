@@ -6,16 +6,16 @@ public static class SpaceQueries {
        WorkstationsTotalCount,
        WorkstationsInUseCount,      
       CONCAT_ws(',', WorkstationTags, KeyTags, EquipmentTags) as Tags
-from (select Space.Id, count(Equipment.Id) as EquipmentCount, STRING_AGG(Tags, ',') as EquipmentTags
+from (select Space.Id, count(Equipment.Id) as EquipmentCount, STRING_AGG(nullif(Tags,''), ',') as EquipmentTags
       from Spaces Space
              left join Equipment on Space.Id = Equipment.SpaceId and Equipment.Active = 1 and Equipment.TeamId = @teamId
       group by Space.Id) t1
-       left outer join (select Space.Id, count(KeyXSpaces.Id) as KeyCount, STRING_AGG(Tags, ',') as KeyTags
+       left outer join (select Space.Id, count(KeyXSpaces.Id) as KeyCount, STRING_AGG(nullif(Tags,''), ',') as KeyTags
                         from Spaces Space
                                left join KeyXSpaces on Space.Id = KeyXSpaces.SpaceId
                                inner join Keys K on KeyXSpaces.KeyId = K.Id and K.Active = 1 and K.TeamId = @teamId
                         group by Space.Id) t3 on t1.Id = t3.Id
-       left outer join (select Space.Id, count(W.Id) as WorkstationsTotalCount, STRING_AGG(Tags, ',') as WorkstationTags
+       left outer join (select Space.Id, count(W.Id) as WorkstationsTotalCount, STRING_AGG(nullif(Tags,''), ',') as WorkstationTags
                         from Spaces Space
                                left join Workstations W on Space.Id = W.SpaceId and W.Active = 1 and W.TeamId = @teamId
                         group by Space.Id) t2 on t1.Id = t2.Id
