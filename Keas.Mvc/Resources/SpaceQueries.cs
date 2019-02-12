@@ -5,7 +5,7 @@ public static class SpaceQueries {
        COALESCE(KeyCount, 0) as KeyCount,
        WorkstationsTotalCount,
        WorkstationsInUseCount,      
-      CONCAT_ws(',', WorkstationTags, KeyTags, EquipmentTags)
+      CONCAT_ws(',', WorkstationTags, KeyTags, EquipmentTags) as Tags
 from (select Space.Id, count(Equipment.Id) as EquipmentCount, STRING_AGG(Tags, ',') as EquipmentTags
       from Spaces Space
              left join Equipment on Space.Id = Equipment.SpaceId and Equipment.Active = 1 and Equipment.TeamId = @teamId
