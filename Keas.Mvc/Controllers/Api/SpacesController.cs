@@ -43,13 +43,12 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> List()
         {
-            //TODO clean up workstations query or integrate with list query
-            var orgIds = await _context.FISOrgs.Where(f => f.Team.Slug == Team).Select(x => x.OrgCode).Distinct().ToArrayAsync();
+            //TODO clean up workstations query or integrate with list query           
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
 
             var sql = SpaceQueries.List;            
 
-            var result = _context.Database.GetDbConnection().Query(sql, new { orgIds, teamId });
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId });
 
             var spaces = result.Select(r => new {
                 space = new {
