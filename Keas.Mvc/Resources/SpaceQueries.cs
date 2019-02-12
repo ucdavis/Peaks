@@ -4,13 +4,13 @@ public static class SpaceQueries {
        EquipmentCount,
        COALESCE(KeyCount, 0) as KeyCount,
        WorkstationsTotalCount,
-       WorkstationsInUseCount,
-       COALESCE(WorkstationTags, '') as Tags
-from (select Space.Id, count(Equipment.Id) as EquipmentCount
+       WorkstationsInUseCount,      
+      CONCAT_ws(',', WorkstationTags, KeyTags, EquipmentTags)
+from (select Space.Id, count(Equipment.Id) as EquipmentCount, STRING_AGG(Tags, ',') as EquipmentTags
       from Spaces Space
              left join Equipment on Space.Id = Equipment.SpaceId and Equipment.Active = 1 and Equipment.TeamId = @teamId
       group by Space.Id) t1
-       left outer join (select Space.Id, count(KeyXSpaces.Id) as KeyCount
+       left outer join (select Space.Id, count(KeyXSpaces.Id) as KeyCount, STRING_AGG(Tags, ',') as KeyTags
                         from Spaces Space
                                left join KeyXSpaces on Space.Id = KeyXSpaces.SpaceId
                                inner join Keys K on KeyXSpaces.KeyId = K.Id and K.Active = 1 and K.TeamId = @teamId
@@ -25,5 +25,6 @@ from (select Space.Id, count(Equipment.Id) as EquipmentCount
                                  on Space.Id = W.SpaceId and W.Active = 1 and W.WorkstationAssignmentId is not null and W.TeamId = @teamId
                         group by Space.Id) t4 on t1.Id = t4.Id
        inner join Spaces Space on Space.Id = t1.Id
-       where Space.Active = 1 AND Space.OrgId in @orgIds";
+       inner join FISOrgs on space.OrgId = FISOrgs.OrgCode
+       where Space.Active = 1 AND FISOrgs.TeamId = @teamid";
 }
