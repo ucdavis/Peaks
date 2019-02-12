@@ -23,7 +23,7 @@ namespace Keas.Mvc.Models
             var supervisors = await context.People.Where(p => supervisorIds.Contains(p.Id)).ToListAsync();
             
 
-            var reportingMembers = selectedSupervisorId == 0 ? null : await context.People.Where(p => p.SupervisorId == selectedSupervisorId && p.Team.Slug == teamSlug).ToArrayAsync();
+            var reportingMembers = selectedSupervisorId == 0 ? null : await context.People.Where(p => p.SupervisorId == selectedSupervisorId && p.Team.Slug == teamSlug).OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToArrayAsync();
            
             var viewModel = new SupervisorReportViewModel
             {
