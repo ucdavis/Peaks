@@ -99,9 +99,9 @@ namespace Keas.Mvc.Controllers.Api
             {
                 key = j.Key,
                 id = j.KeyId,
-                serialsTotalCount = j.Key.Serials.Count(),
+                serialsTotalCount = (from s in j.Key.Serials where s.Status == "Active" select s).Count(),
                 serialsInUseCount = 
-                    (from s in j.Key.Serials where s.KeySerialAssignment != null select s).Count(),
+                    (from s in j.Key.Serials where s.KeySerialAssignment != null && s.Status == "Active" select s).Count(),
                 spacesCount = 0 // doesn't matter on spaces page
             };
 
