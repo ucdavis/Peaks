@@ -42,10 +42,9 @@ namespace Keas.Mvc.Controllers.Api
                 key = key,
                 id = key.Id,
                 code = key.Code,
-                serialsTotalCount = 
-                    (key.Serials).Count(),
+                serialsTotalCount = (from s in key.Serials where s.Status == "Active" select s).Count(),
                 serialsInUseCount = 
-                    (from s in key.Serials where s.KeySerialAssignment != null select s ).Count(),
+                    (from s in key.Serials where s.KeySerialAssignment != null && s.Status == "Active" select s ).Count(),
                 spacesCount = 
                     (key.KeyXSpaces).Count(),
                 };
@@ -67,10 +66,9 @@ namespace Keas.Mvc.Controllers.Api
             {
                 key = key,
                 id = key.Id,
-                serialsTotalCount = 
-                    (key.Serials).Count(),
+                serialsTotalCount = (from s in key.Serials where s.Status == "Active" select s).Count(),
                 serialsInUseCount = 
-                    (from s in key.Serials where s.KeySerialAssignment != null select s ).Count(),
+                    (from s in key.Serials where s.KeySerialAssignment != null && s.Status == "Active" select s ).Count(),
                 spacesCount = 
                     (key.KeyXSpaces).Count(),
                 };
