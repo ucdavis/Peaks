@@ -44,3 +44,10 @@ Our integration with Facilities Link gives you a list of every space (roughly eq
 
 ## People Tracking
 
+Track individual employees, faculty and students to determine which assets they have assigned, when each should expire, and also maintian additional person information like title, supervior, start/end dates, and more.  You list of people can be synchronized based on Payroll department codes and/or entered manually.
+
+![Person](./assets/img/person.png)
+
+# I want it!!
+
+Well today is your lucky day.  Visit [our help ticketing system](https://secure.caes.ucdavis.edu/help/Ticket/Submit?appName=peaks) and drop us a line.
