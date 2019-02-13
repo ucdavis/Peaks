@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Edit Tag";
 }
+<div class="row justify-content-between">
+    <div class="col-md-9">
 <div class="card">
   <div class="card-header-primary">
     <div class="card-head">
@@ -30,6 +32,13 @@
             </form>
         </div>
     </div>
+
+  </div>
+</div>
+</div>
+<div class="col-md-3">
+
+        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
 
   </div>
 </div>
