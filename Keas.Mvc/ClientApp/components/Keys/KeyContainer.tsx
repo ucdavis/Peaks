@@ -86,6 +86,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         const selectedKeyId = parseInt(keyId, 10);
         const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
         const selectedKey = selectedKeyInfo ? selectedKeyInfo.key : null;
+
+        const keyCodes = this.state.keys.map(x => x.key.code);
         return (
             <div className="card keys-color">
                 <div className="card-header-keys">
@@ -106,6 +108,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                             closeModal={this._closeModals}
                             modal={keyAction === "create"}
                             searchableTags={tags}
+                            keyCodes={keyCodes}
                         />
                     )}
                     <EditKey

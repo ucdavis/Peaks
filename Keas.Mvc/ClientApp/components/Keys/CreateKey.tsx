@@ -11,6 +11,7 @@ interface IProps {
     onOpenModal: () => void;
     closeModal: () => void;
     searchableTags: string[];
+    keyCodes: string[];
 }
 
 interface IState {
@@ -86,6 +87,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
                             searchableTags={searchableTags}
                         />
                     </form>
+                    {this.state.error}
                 </ModalBody>
                 <ModalFooter>
                     <Button
@@ -158,7 +160,10 @@ export default class CreateKey extends React.Component<IProps, IState> {
             error = "You must give this key a name.";
         } else if (key.code.length > 64) {
             valid = false;
-            error = "The name you have chosen is too long";
+            error = "The code you have chosen is too long";
+        } else if (this.props.keyCodes.indexOf(key.code) !== -1) {
+            valid = false;
+            error = "The code you have chosen is already in use."
         }
 
         this.setState({
