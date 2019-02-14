@@ -1,0 +1,4 @@
+KeyName,KeyCode,SerialNumber,KerbUser,DateIssued,DateDue,Status
+Example key. Delete this line,AEXMPLE,1,xxxx,8/18/1994,12/15/2032,Active
+Example lost key,AEXMPLE,2,,,,Lost
+Destroyed key,AEXMPLE2,1,,,,Destroyed
