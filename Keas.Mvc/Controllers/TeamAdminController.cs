@@ -493,7 +493,6 @@ namespace Keas.Mvc.Controllers
                                     assignment.KeySerialId = serial.Id;
                                     assignment.RequestedById = User.Identity.Name;
                                     assignment.RequestedByName = User.GetNameClaim();
-                                    assignment.RequestedAt = DateTime.UtcNow;
                                     serial.KeySerialAssignment = assignment;
 
                                     TryValidateModel(assignment);
