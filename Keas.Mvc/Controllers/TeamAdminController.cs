@@ -404,7 +404,7 @@ namespace Keas.Mvc.Controllers
                 foreach (var r in records)
                 {
                     rowNumber += 1;
-                    if (!string.IsNullOrWhiteSpace(r.KeyCode))
+                    if (!string.IsNullOrWhiteSpace(r.KeyCode) && !r.KeyCode.Contains("AEXMPLE"))
                     {
                         var key = await _context.Keys.SingleOrDefaultAsync(k => k.Team.Slug == Team && k.Code.Equals(r.KeyCode.Trim(), StringComparison.OrdinalIgnoreCase));
                         if (key == null)
@@ -462,7 +462,7 @@ namespace Keas.Mvc.Controllers
 
                             }
 
-                            if (!string.IsNullOrWhiteSpace(r.KerbUser))
+                            if (!string.IsNullOrWhiteSpace(r.KerbUser) && (r.Status == "Active" || string.IsNullOrWhiteSpace(r.Status)))
                             {
                                 var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id);
                                 peopleCount += personResult.peopleCount;
