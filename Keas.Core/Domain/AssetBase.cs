@@ -8,6 +8,7 @@ namespace Keas.Core.Domain
         public AssetBase()
         {
             Active = true;
+            Tags = "";
         }
 
         [Key]

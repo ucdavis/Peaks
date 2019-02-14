@@ -1,0 +1,78 @@
+@{
+    ViewData["Title"] = "Upload CSV Keys File";
+}
+<div class="row justify-content-between">
+  <div class="col-md-9">
+  <div class="card">
+    <div class="card-header-primary">
+      <div class="card-head">
+  <h2>Upload a CSV File for Key import</h2>
+      </div>
+    </div>
+    <div class="card-content">
+      <form asp-action="UploadCSV" method="post" enctype="multipart/form-data">
+          <div asp-validation-summary="ModelOnly" class="text-danger"></div>          
+         <fieldset>
+        <div class="form-horizontal">
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-10">Select CSV file to upload:</div>
+              </div>
+                <div class="row">                  
+                <div class="col-md-10">
+                    <div class="input-group">
+                        <input type="hidden" id="filename" name="filename" value="">
+                        <input type="file" id="file" name="file" class="form-control" accept=".csv">                        
+                        <div class="input-group-btn">
+                            <input type="submit" value="Upload CSV" class="btn btn-primary">
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>                        
+        </div>
+    </fieldset>    
+      </form>
+    </div>    
+  </div>
+  <div class="card">
+    <div class="card-header-primary">
+      <div class="card-head">
+        <h2>Instructions/Example</h2>
+      </div>
+    </div>
+    <div class="card-content">
+      <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
+      <p><b>KeyName,	KeyCode,	SerialNumber,	KerbUser,	DateIssued,	DateDue,	Status</b></p>
+      <p>Example <a href="@Url.Content("~/files/csv_example.csv")">CSV file.</a></p>
+      <dl>
+        <dt>KeyName</dt>
+        <dd>Description of key (e.g. Example Hall exterior doors). If the same KeyCode appears later in the document, only the first KeyName will be used.</dd>
+        <dt>KeyCode</dt>
+        <dd>Number for this key. First part of number on key</dd>
+        <dt>SerialNumber</dt>
+        <dd>Identifier for this key within given KeyCode. Usually the second part of number on key. If serial is blank, the key will be created without any serials.</dd>
+        <dt>KerbUser</dt>
+        <dd>Kerberos ID of the person this serial is assigned to. Maybe left blank. If no ID provided, no assignment will be created</dd>
+        <dt>DateIssue</dt>
+        <dd>Date this serial was issued to the person</dd>
+        <dt>DateDue</dt>
+        <dd>Date this key should be returned</dd>
+        <dt>Status</dt>
+        <dd>Status of this serial. Valid entries are "Active", "Lost", "Destroyed". If blank, serial will be set to "Active"</dd>
+      </dl>
+
+    </div>
+  </div>
+  </div>
+  <div class="col-md-3">
+
+        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
+
+  </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
