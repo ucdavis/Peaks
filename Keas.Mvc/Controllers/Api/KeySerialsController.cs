@@ -34,7 +34,7 @@ namespace Keas.Mvc.Controllers.Api
             var comparison = StringComparison.InvariantCultureIgnoreCase;
 
             var query = _context.KeySerials
-                .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active && x.KeySerialAssignment == null);
+                .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active);
 
             foreach (var term in terms)
             {
@@ -45,6 +45,8 @@ namespace Keas.Mvc.Controllers.Api
 
             var keySerials = await query
                 .Include(x => x.Key)
+                .Include(x => x.KeySerialAssignment)
+                .OrderBy(x => x.KeySerialAssignment != null).ThenBy(x => x.Number)
                 .AsNoTracking()
                 .ToListAsync();
 

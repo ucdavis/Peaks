@@ -17,6 +17,7 @@ interface IProps {
     onOpenModal: () => void;
     closeModal: () => void;
     openEditModal: (keySerial: IKeySerial) => void;
+    openDetailsModal: (keySerial: IKeySerial) => void;
 }
 
 interface IState {
@@ -154,6 +155,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                                     selectedKeySerial={keySerial}
                                     onSelect={this._onSelected}
                                     onDeselect={this._onDeselected}
+                                    openDetailsModal={this.props.openDetailsModal}
                                 />
                             </div>
                             {this.state.error}

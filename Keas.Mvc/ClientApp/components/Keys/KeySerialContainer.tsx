@@ -117,6 +117,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                         onOpenModal={this._openCreateModal}
                         closeModal={this._closeModals}
                         openEditModal={this._openEditModal}
+                        openDetailsModal={this._openDetailsModal}
                     />
                     <KeySerialDetails
                         selectedKeySerial={selectedKeySerial}

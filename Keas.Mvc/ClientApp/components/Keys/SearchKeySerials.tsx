@@ -1,6 +1,7 @@
 ﻿import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
+import { Button } from "reactstrap";
 import { AppContext, IKey, IKeySerial } from "../../Types";
 
 interface IProps {
@@ -9,6 +10,7 @@ interface IProps {
     selectedKeySerial?: IKeySerial;
     onSelect: (keySerial: IKeySerial) => void;
     onDeselect: () => void;
+    openDetailsModal: (keySerial: IKeySerial) => void;
 }
 
 interface IState {
@@ -57,34 +59,50 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
     private _renderSelectKey = () => {
         const { isSearchLoading, keySerials } = this.state;
         return (
-            <AsyncTypeahead
-                isInvalid={!this.props.selectedKey || !this.props.selectedKeySerial}
-                isLoading={isSearchLoading}
-                minLength={1}
-                placeholder="Search for key by name or by serial number"
-                labelKey="number"
-                filterBy={() => true} // don't filter on top of our search
-                allowNew={this.props.allowNew}
-                renderMenuItemChildren={this.renderItem}
-                onSearch={this.onSearch}
-                onChange={this.onChange}
-                options={keySerials}
-            />
+            <div>
+                <label>Pick an equipment to assign</label>
+                <div>
+                    <AsyncTypeahead
+                        isInvalid={!this.props.selectedKey || !this.props.selectedKeySerial}
+                        isLoading={isSearchLoading}
+                        minLength={1}
+                        placeholder="Search for key by name or by serial number"
+                        labelKey="number"
+                        filterBy={() => true} // don't filter on top of our search
+                        allowNew={this.props.allowNew}
+                        renderMenuItemChildren={this.renderItem}
+                        onSearch={this.onSearch}
+                        onChange={this.onChange}
+                        options={keySerials}
+                    />
+                </div>
+                <div>or</div>
+                <div>
+                    <Button color="link" onClick={this._createNew}>
+                        <i className="fas fa-plus fa-sm" aria-hidden="true" /> Create New Serial
+                    </Button>
+                </div>
+            </div>
         );
     };
 
     private renderItem = (option: IKeySerial, props, index) => {
         return (
-            <div>
+            <div className={!!option.keySerialAssignment ? "disabled" : ""}>
                 <div>
-                    <Highlighter search={props.text}>{option.key.name}</Highlighter>
-                    <span> - </span>
-                    <Highlighter search={props.text}>{option.key.code}</Highlighter>
+                    <div>
+                        <Highlighter search={props.text}>{option.key.name}</Highlighter>
+                        <span> - </span>
+                        <Highlighter search={props.text}>{option.key.code}</Highlighter>
+                    </div>
                 </div>
+                <div>{!!option.keySerialAssignment ? "Assigned" : "Unassigned"}</div>
                 <div>
                     <small>
-                        <span>Serial Number: </span>
-                        <Highlighter search={props.text}>{option.number}</Highlighter>
+                        Serial Number:
+                        <Highlighter key="number" search={props.text}>
+                            {option.number}
+                        </Highlighter>
                     </small>
                 </div>
             </div>
@@ -121,11 +139,25 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
                 status: "Active",
                 tags: ""
             };
+            this.props.onSelect(keySerial);
+        } else if (!!selected[0].keySerialAssignment) {
+            this.props.openDetailsModal(selected[0]);
         } else {
             keySerial = selected[0];
+            this.props.onSelect(keySerial);
         }
 
-        this.props.onSelect(keySerial);
         return;
+    };
+
+    private _createNew = () => {
+        const keySerial = {
+            id: 0,
+            key: this.props.selectedKey,
+            number: "",
+            status: "Active",
+            tags: ""
+        };
+        this.props.onSelect(keySerial);
     };
 }
