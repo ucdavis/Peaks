@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 public class KeyImport
@@ -20,4 +21,25 @@ public class KeyImport
 
     public string Status { get; set; }
 
+}
+
+public class KeyImportResults 
+{
+    public KeyImport Import { get; set; }
+    public int LineNumber { get; set; }
+    public bool Success { get; set; }
+    public string ErrorMessage { get; set; }
+
+    public List<string> Messages { get; set; }
+
+    public KeyImportResults(KeyImport import)
+    {
+        Messages = new List<string>();
+        Import = import;
+    }
+
+    public KeyImportResults()
+    {
+        Messages = new List<string>();
+    }
 }
