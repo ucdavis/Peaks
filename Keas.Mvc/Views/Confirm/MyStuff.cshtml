@@ -33,6 +33,7 @@
         <table class="table">
           <thead>
             <tr>
+              <th>Code</th>
               <th>Serial</th>
               <th>Item</th>
               <th>Expiration</th>
@@ -42,6 +43,7 @@
           <tbody>
             @foreach (var serial in Model.KeySerials) {
             <tr>
+              <td>@serial.Key.Code</td>
               <td>@serial.Number</td>
               <td>@serial.Key.Name</td>
               <td>@serial.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>

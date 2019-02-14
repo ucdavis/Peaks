@@ -109,27 +109,25 @@ img.img-fluid {
 .btn-primary:not(:disabled):not(.disabled):active,
 .show > .btn-primary.dropdown-toggle {
   border-color: rgba(255,255,255,.9999) !important;
-
+  .people-color & {
+    background-color: $people;
+  }
   .keys-color & {
     background-color: $keys;
   }
-
+  .spaces-color & {
+    background-color: $spaces;
+  }
   .access-color & {
     background-color: $access;
   }
-
   .equipment-color & {
     background-color: $equipment;
 
   }
 
-  .spaces-color & {
-    background-color: $spaces;
-  }
 
-  .people-color & {
-    background-color: $people;
-  }
+
 }
 .alert-red {
   background-color:transparentize($unitrans-red,0.35);
@@ -199,19 +197,20 @@ img.img-fluid {
       text-decoration:none;
     }
   }
-  .spaces-color & {
-    color:$spaces;
-    border-color:$spaces;
-    &:hover {
-      color:(darken($spaces,10));
-      text-decoration:none;
-    }
-  }
+
   .keys-color & {
     color:$keys;
     border-color:$keys;
     &:hover {
       color:(darken($keys,10));
+      text-decoration:none;
+    }
+  }
+  .spaces-color & {
+    color:$spaces;
+    border-color:$spaces;
+    &:hover {
+      color:(darken($spaces,10));
       text-decoration:none;
     }
   }
@@ -256,9 +255,9 @@ img.img-fluid {
     color:$access;
   }
 }
-.equipment-color {
+.keys-color {
   .fa-ellipsis-h:before {
-    color:$equipment;
+    color:$keys;
   }
 }
 .spaces-color {
@@ -266,11 +265,12 @@ img.img-fluid {
     color:$spaces;
   }
 }
-.keys-color {
+.equipment-color {
   .fa-ellipsis-h:before {
-    color:$keys;
+    color:$equipment;
   }
 }
+
 .keys-color .btn-primary {
   background-color:$keys;
   &:active,
@@ -607,28 +607,23 @@ ol.breadcrumb {
   .people-color & {
     box-shadow: inset 0 3px 0 0 $people;
   }
-  .access-color & {
-    box-shadow: inset 0 3px 0 0 $access;
-  }
-  .equipment-color & {
-    box-shadow: inset 0 3px 0 0 $equipment;
-  }
   .keys-color & {
     box-shadow: inset 0 3px 0 0 $keys;
   }
   .spaces-color & {
     box-shadow: inset 0 3px 0 0 $spaces;
   }
+  .access-color & {
+    box-shadow: inset 0 3px 0 0 $access;
+  }
+  .equipment-color & {
+    box-shadow: inset 0 3px 0 0 $equipment;
+  }
+
 }
 .ReactTable .rt-thead .rt-th.-sort-desc, .ReactTable .rt-thead .rt-td.-sort-desc {
   .people-color & {
     box-shadow: inset 0 -3px 0 0 $people;
-  }
-  .access-color & {
-    box-shadow: inset 0 -3px 0 0 $access;
-  }
-  .equipment-color & {
-    box-shadow: inset 0 -3px 0 0 $equipment;
   }
   .keys-color & {
     box-shadow: inset 0 -3px 0 0 $keys;
@@ -636,6 +631,14 @@ ol.breadcrumb {
   .spaces-color & {
     box-shadow: inset 0 -3px 0 0 $spaces;
   }
+  .access-color & {
+    box-shadow: inset 0 -3px 0 0 $access;
+  }
+  .equipment-color & {
+    box-shadow: inset 0 -3px 0 0 $equipment;
+  }
+
+
 }
 .-btn {
   color:#fff!important;
@@ -645,14 +648,14 @@ ol.breadcrumb {
   .people-color & {
       background-color: lighten($people,5) !important;
   }
-  .access-color & {
-    background-color: $access !important;
+  .keys-color & {
+    background-color: $keys !important;
   }
   .spaces-color & {
     background-color: $spaces !important;
   }
-  .keys-color & {
-    background-color: $keys !important;
+  .access-color & {
+    background-color: $access !important;
   }
   .equipment-color & {
     background-color: transparentize($equipment,.2) !important;
@@ -663,4 +666,16 @@ ol.breadcrumb {
 }
 .-next {
   text-align: right !important;
+}
+
+.keys-anomaly {
+    color:$keys !important;
+    border-color:$keys;
+    &:hover {
+      color:(darken($keys,10));
+      text-decoration:none;
+    }
+    &.fa-ellipsis-h:before {
+      color:$keys;
+    }
 }

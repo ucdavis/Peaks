@@ -51,6 +51,7 @@ export default class DeleteWorkstation extends React.Component<IProps, IState> {
                         <WorkstationEditValues
                             selectedWorkstation={this.props.selectedWorkstation}
                             disableEditing={true}
+                            disableSpaceEditing={true}
                         />
                     </ModalBody>
                     <ModalFooter>

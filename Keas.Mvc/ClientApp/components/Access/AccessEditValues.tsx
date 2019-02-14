@@ -1,6 +1,6 @@
 ﻿import * as React from "react";
 import ReactTable from "react-table";
-import { Button } from "reactstrap";
+import { Button, FormFeedback, FormGroup, Input, Label } from "reactstrap";
 import { IAccess, IAccessAssignment } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import SearchTags from "../Tags/SearchTags";
@@ -58,10 +58,10 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                         <i className="fas fa-edit fa-xs" /> Edit Access
                     </Button>
                 )}
-
-                <div className="form-group">
-                    <label>Item</label>
-                    <input
+            <div className="wrapperasset">
+                <FormGroup>
+                    <Label for="item">Item</Label>
+                    <Input
                         type="text"
                         className="form-control"
                         disabled={this.props.disableEditing}
@@ -71,8 +71,10 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                                 : ""
                         }
                         onChange={e => this.props.changeProperty("name", e.target.value)}
+                        invalid={!this.props.selectedAccess.name}
                     />
-                </div>
+                    <FormFeedback>Item name is required</FormFeedback>
+                </FormGroup>
                 <div className="form-group">
                     <label>Tags</label>
                     <SearchTags
@@ -98,6 +100,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                         </div>
                     )}
             </div>
+          </div>
         );
     }
 

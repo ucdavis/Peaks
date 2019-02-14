@@ -9,6 +9,7 @@ interface IProps {
     onSelect: (person: IPerson) => void;
     person?: IPerson;
     disabled: boolean;
+    isRequired: boolean;
 }
 
 interface IState {
@@ -45,6 +46,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
             <div>
                 <div>
                     <AsyncTypeahead
+                        isInvalid={this.props.isRequired && !this.props.person}
                         disabled={this.props.disabled}
                         isLoading={this.state.isSearchLoading}
                         minLength={3}

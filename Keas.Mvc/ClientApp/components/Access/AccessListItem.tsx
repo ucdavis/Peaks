@@ -25,7 +25,7 @@ export default class AccessListItem extends React.Component<IProps, {}> {
         if (!!this.props.onAdd && canAdd) {
             actions.push({
                 onClick: () => this.props.onAdd(this.props.accessEntity),
-                title: "Add"
+                title: "Assign"
             });
         }
 

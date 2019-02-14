@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Keas.Core.Extensions;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keas.Core.Domain
 {
@@ -80,6 +81,9 @@ namespace Keas.Core.Domain
 
         [DataType(DataType.MultilineText)]
         public string Notes { get; set; }
+
+        [NotMapped]
+        public bool IsSupervisor { get; set; }
 
         public List<AccessAssignment> AccessAssignments { get; set; }
 

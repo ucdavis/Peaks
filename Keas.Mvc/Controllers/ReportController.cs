@@ -22,26 +22,27 @@ namespace Keas.Mvc.Controllers
         public ReportController(ApplicationDbContext context, ISecurityService securityService)
         {
             this._context = context;
-             this._securityService = securityService;
+            this._securityService = securityService;
         }
 
-        public ActionResult Index () {
+        public ActionResult Index()
+        {
             return View();
         }
-        
-        public async Task<ActionResult> ExpiringItems (bool showInactive = false, DateTime? expiresBefore = null, string showType = "All")
+
+        public async Task<ActionResult> ExpiringItems(DateTime? expiresBefore = null, string showType = "All")
         {
             if (expiresBefore == null)
             {
                 expiresBefore = DateTime.Now.AddDays(30);
             }
             var userRoles = await _securityService.GetUserRolesInTeamOrAdmin(Team);
-            var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showInactive, showType, userRoles, _securityService);
+            var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showType, userRoles, _securityService);
             return View(model);
         }
 
-      
-        public async Task<ActionResult> SupervisorDirectReports (int personID = 0)
+
+        public async Task<ActionResult> SupervisorDirectReports(int personID = 0)
         {
             var model = await SupervisorReportViewModel.Create(_context, Team, personID);
 
@@ -60,13 +61,13 @@ namespace Keas.Mvc.Controllers
             return View(teams);
         }
 
-        
-        public async Task<IActionResult> UnAcceptedItems(bool showInactive = false, string showType = "All")
+
+        public async Task<IActionResult> UnAcceptedItems(string showType = "All")
         {
             var userRoles = await _securityService.GetUserRolesInTeamOrAdmin(Team);
-            var model = await ReportItemsViewModel.CreateUnaccepted(_context, Team, showInactive, showType, userRoles, _securityService);
+            var model = await ReportItemsViewModel.CreateUnaccepted(_context, Team, showType, userRoles, _securityService);
             return View(model);
-            
+
         }
     }
 }

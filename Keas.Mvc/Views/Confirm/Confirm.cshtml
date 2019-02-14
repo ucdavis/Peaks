@@ -26,9 +26,10 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Item</th>
-                    <th>Serial #</th>
-                    <th>Room</th>
+                  <th>Code</th>
+                  <th>Serial</th>
+                  <th>Item</th>
+                  <th>Expiration</th>
                     <th></th>
                 </tr>
             </thead>
@@ -36,16 +37,10 @@
                 @foreach (var item in Model.KeySerials)
                 {
                     <tr>
-                        <td>@item.Key.Name</td>
+                        <td>@item.Key.Code</td>
                         <td>@item.Number</td>
-                        <td>
-                            <ul>
-                                @foreach (var kxp in item.Key.KeyXSpaces)
-                                {
-                                    <li>@kxp.Space.RoomName (@kxp.Space.RoomNumber @kxp.Space.BldgName)</li>
-                                }
-                            </ul>
-                        </td>
+                        <td>@item.Key.Name</td>   
+                        <td>@item.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>                                             
                         <td align="right"><a href="@Url.Action("AcceptKey", new {serialId = item.Id})" class="btn btn-link">Confirm</a></td>
                     </tr>
                 }

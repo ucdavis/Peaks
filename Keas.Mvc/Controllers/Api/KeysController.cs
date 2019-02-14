@@ -28,35 +28,34 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.InvariantCultureIgnoreCase;
 
-            var keys = 
+            var keys =
             from key in _context.Keys
-                .Where(x => x.Team.Slug == Team 
+                .Where(x => x.Team.Slug == Team
                         && x.Active
                         && (x.Name.StartsWith(q, comparison) || x.Code.StartsWith(q, comparison)))
                 .Include(x => x.Serials)
                 .Include(x => x.KeyXSpaces)
                     .ThenInclude(xs => xs.Space)
                 .AsNoTracking()
-                 select new
+            select new
             {
                 key = key,
                 id = key.Id,
                 code = key.Code,
-                serialsTotalCount = 
-                    (key.Serials).Count(),
-                serialsInUseCount = 
-                    (from s in key.Serials where s.KeySerialAssignment != null select s ).Count(),
-                spacesCount = 
-                    (key.KeyXSpaces).Count(),
-                };
+                serialsTotalCount = (from s in key.Serials where s.Status == "Active" select s).Count(),
+                serialsInUseCount =
+               (from s in key.Serials where s.KeySerialAssignment != null && s.Status == "Active" select s).Count(),
+                spacesCount =
+               (key.KeyXSpaces).Count(),
+            };
             return Json(await keys.ToListAsync());
         }
 
         // List all keys for a team
         public async Task<IActionResult> List()
         {
-            var keys = 
-            from key in _context.Keys.Where(x => x.Team.Slug == Team )
+            var keys =
+            from key in _context.Keys.Where(x => x.Team.Slug == Team)
                 .Include(x => x.Serials)
                     .ThenInclude(serials => serials.KeySerialAssignment)
                         .ThenInclude(assignment => assignment.Person.User)
@@ -67,13 +66,12 @@ namespace Keas.Mvc.Controllers.Api
             {
                 key = key,
                 id = key.Id,
-                serialsTotalCount = 
-                    (key.Serials).Count(),
-                serialsInUseCount = 
-                    (from s in key.Serials where s.KeySerialAssignment != null select s ).Count(),
-                spacesCount = 
+                serialsTotalCount = (from s in key.Serials where s.Status == "Active" select s).Count(),
+                serialsInUseCount =
+                    (from s in key.Serials where s.KeySerialAssignment != null && s.Status == "Active" select s).Count(),
+                spacesCount =
                     (key.KeyXSpaces).Count(),
-                };
+            };
             return Json(await keys.ToListAsync());
         }
 
@@ -93,15 +91,15 @@ namespace Keas.Mvc.Controllers.Api
 
             // you can't do both select and include
             // so map after fetch
-            var keys = 
+            var keys =
             from j in joins
             select new
             {
                 key = j.Key,
                 id = j.KeyId,
-                serialsTotalCount = j.Key.Serials.Count(),
-                serialsInUseCount = 
-                    (from s in j.Key.Serials where s.KeySerialAssignment != null select s).Count(),
+                serialsTotalCount = (from s in j.Key.Serials where s.Status == "Active" select s).Count(),
+                serialsInUseCount =
+                    (from s in j.Key.Serials where s.KeySerialAssignment != null && s.Status == "Active" select s).Count(),
                 spacesCount = 0 // doesn't matter on spaces page
             };
 
@@ -117,11 +115,17 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
+            if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code.Equals(model.Code.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
+                return BadRequest();
+                //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
+            }
+
             // create key
             var key = new Key()
             {
-                Name = model.Name,
-                Code = model.Code,
+                Name = model.Name.Trim(),
+                Code = model.Code.Trim(),
                 Tags = model.Tags,
             };
 
@@ -137,7 +141,7 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(key);
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Update(int id, [FromBody]UpdateKeyViewModel model)
         {
@@ -153,8 +157,14 @@ namespace Keas.Mvc.Controllers.Api
                         .ThenInclude(assignment => assignment.Person.User)
                 .SingleAsync(x => x.Id == id);
 
-            key.Code = model.Code;
-            key.Name = model.Name;
+            if (await _context.Keys.AnyAsync(a => a.Id != key.Id && a.Team.Slug == Team && a.Code.Equals(model.Code.Trim(), StringComparison.OrdinalIgnoreCase)))
+            {
+                return BadRequest();
+                //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
+            }
+
+            key.Code = model.Code.Trim();
+            key.Name = model.Name.Trim();
             key.Tags = model.Tags;
 
             await _context.SaveChangesAsync();
@@ -175,17 +185,17 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.KeyXSpaces)
                 .SingleAsync(x => x.Id == id);
 
-            using(var transaction = _context.Database.BeginTransaction())
+            using (var transaction = _context.Database.BeginTransaction())
             {
 
                 _context.Keys.Update(key);
 
-                if(key.Serials.Count > 0)
+                if (key.Serials.Count > 0)
                 {
-                    foreach(var serial in key.Serials.ToList()) 
+                    foreach (var serial in key.Serials.ToList())
                     {
                         _context.KeySerials.Update(serial);
-                        if(serial.KeySerialAssignment != null)
+                        if (serial.KeySerialAssignment != null)
                         {
                             await _eventService.TrackUnAssignKeySerial(serial); // call before we remove person info
                             _context.KeySerialAssignments.Remove(serial.KeySerialAssignment);
@@ -194,9 +204,9 @@ namespace Keas.Mvc.Controllers.Api
                     }
                 }
 
-                if(key.KeyXSpaces.Count > 0)
+                if (key.KeyXSpaces.Count > 0)
                 {
-                    foreach(var keyXSpace in key.KeyXSpaces.ToList())
+                    foreach (var keyXSpace in key.KeyXSpaces.ToList())
                     {
                         _context.KeyXSpaces.Remove(keyXSpace);
                     }

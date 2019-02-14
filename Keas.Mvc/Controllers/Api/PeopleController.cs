@@ -30,7 +30,7 @@ namespace Keas.Mvc.Controllers.Api
 
             var sql = PeopleQueries.List;
 
-            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new { teamId });
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId });
 
             var people = result.Select(r => new
             {
@@ -60,12 +60,13 @@ namespace Keas.Mvc.Controllers.Api
                     StartDate = r.StartDate,
                     EndDate = r.EndDate,
                     Category = r.Category,
+                    IsSupervisor = r.isSupervisor,
                 },
                 id = r.Id,
                 equipmentCount = r.EquipmentCount,
                 accessCount = r.AccessCount,
                 keyCount = r.KeyCount,
-                workstationCount = r.WorkstationCount,
+                workstationCount = r.WorkstationCount,                
             });
 
             return Json(people);

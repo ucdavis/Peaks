@@ -57,9 +57,10 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     }
 
     public render() {
+        const className = this.props.selectedKeyInfo ? "" : "keys-anomaly"; // purple on keys/details
         return (
             <div>
-                <Button color="link" onClick={this.props.openModal}>
+                <Button className={className} color="link" onClick={this.props.openModal}>
                     <i className="fas fa-plus fa-sm mr-2" aria-hidden="true" />
                     Associate
                 </Button>
@@ -147,7 +148,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
         return (
             <div className="form-group">
                 <label>Pick an key to associate</label>
-                <SearchKeys onSelect={this._onSelectedKeyInfo} onDeselect={this._onDeselected} />
+                <SearchKeys onSelect={this._onSelectedKeyInfo} onDeselect={this._onDeselected} allowNew={false} />
             </div>
         );
     }

@@ -41,20 +41,22 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
         }
         return (
             <div>
-                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg">
-                    <ModalHeader>Details for {this.props.selectedWorkstation.name}</ModalHeader>
+                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg" className="spaces-color">
+                    <div className="modal-header row justify-content-between">
+                      <h2>Details for {this.props.selectedWorkstation.name}</h2>
+                      <Button color="link" onClick={this.props.closeModal}>
+                          <i className="fas fa-times fa-lg" />
+                      </Button></div>
                     <ModalBody>
                         <WorkstationEditValues
                             selectedWorkstation={this.props.selectedWorkstation}
                             disableEditing={true}
+                            disableSpaceEditing={true}
                         />
                     </ModalBody>
                     <ModalFooter>
                         <Button color="primary" onClick={this._revokeWorkstation}>
-                            Confirm Revoke
-                        </Button>
-                        <Button color="secondary" onClick={this.props.closeModal}>
-                            Close
+                            Revoke
                         </Button>
                     </ModalFooter>
                 </Modal>{" "}
