@@ -113,7 +113,11 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
 
         this.setState({ isSearchLoading: true });
 
-        const results = await this.context.fetch(`/api/${team.slug}/keySerials/search?q=${query}`);
+        const searchUrl = this.props.selectedKey
+            ? `/api/${team.slug}/keySerials/searchInKey?keyId=${this.props.selectedKey.id}&q=${query}`
+            : `/api/${team.slug}/keySerials/search?q=${query}`;
+
+        const results = await this.context.fetch(searchUrl);
 
         this.setState({
             isSearchLoading: false,

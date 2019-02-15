@@ -300,7 +300,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     };
 
     private _openDetailsModal = (keySerial: IKeySerial) => {
-        // if we are on spaces or person page, and this serial is not in our state
+        // if we are on person page, and this serial is not in our state
         // this happens on the search, when selecting already assigned 
         if (this.state.keySerials.findIndex(x => x.id === keySerial.id) === -1) {
             this.context.router.history.push(
