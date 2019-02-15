@@ -157,7 +157,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
             valid = false;
         } else if (!key.code) {
             valid = false;
-            error = "You must give this key a name.";
+            error = "You must give this key a code.";
         } else if (key.code.length > 64) {
             valid = false;
             error = "The code you have chosen is too long";

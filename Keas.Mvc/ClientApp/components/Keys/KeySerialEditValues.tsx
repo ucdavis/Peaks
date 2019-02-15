@@ -31,7 +31,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                             type="text"
                             className="form-control"
                             disabled={true}
-                            value={this.props.keySerial.key.name}
+                            value={this.props.keySerial.key.name ? this.props.keySerial.key.name : ""}
                         />
                     </div>
                     <div className="form-group">
