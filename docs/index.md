@@ -30,13 +30,13 @@ For each equipment asset you can define custom attributes that can viewed and se
 
 ## Access Tracking
 
-Access is unique because multiple people can be assigned to the same access entry.  Use it to keep track of who has access to your systems -- for example you can track everyone who uses Banner or Adobe Creative Cloud.
+Access is unique because multiple people can be assigned to the same access entry.  Use it to keep track of who has access to your systems -- for example you can track everyone who uses Banner or Adobe Creative Cloud (or PEAKS!).
 
 ![Access](./assets/img/access.png)
 
 ## Space & Workstation Tracking
 
-Our integration with Facilities Link gives you a list of every space (roughly equivalent to a room) within your organization.  Each will give you details on what keys allow access to that space, what equipment should be in that space, and what workstations are in tht space (and if those workstations are open or occupied).
+Our integration with Facilities Link gives you a list of every space (roughly equivalent to a room) within your organization.  Each will give you details on what keys allow access to that space, what equipment should be in that space, and what workstations are in that space (and if those workstations are open or occupied).
 
 ![Space](./assets/img/spaces.png)
 
@@ -44,7 +44,7 @@ Our integration with Facilities Link gives you a list of every space (roughly eq
 
 ## People Tracking
 
-Track individual employees, faculty and students to determine which assets they have assigned, when each should expire, and also maintian additional person information like title, supervior, start/end dates, and more.  You list of people can be synchronized based on Payroll department codes and/or entered manually.
+Track individual employees, faculty and students to determine which assets they have assigned, when each should expire, and also maintain additional person information like title, supervior, start/end dates, and more.  Your list of people can be synchronized based on Payroll department codes and/or entered manually.
 
 ![Person](./assets/img/person.png)
 
