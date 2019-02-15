@@ -676,6 +676,27 @@ namespace Keas.Mvc.Controllers
                             if (somethingSaved)
                             {
                                 transaction.Rollback();
+                                if (!string.IsNullOrWhiteSpace(r.KerbUser))
+                                {
+                                    var local = _context.Set<User>()
+                                        .Local
+                                        .FirstOrDefault(entry => entry.Id.Equals(r.KerbUser));
+
+                                    // check if local is not null 
+                                    if (local != null) // I'm using a extension method
+                                    {
+                                        // detach
+                                        _context.Entry(local).State = EntityState.Detached;
+                                    }
+
+                                    var localPerson = _context.Set<Person>().Local
+                                        .FirstOrDefault(entry => entry.UserId.Equals(r.KerbUser));
+                                    if (localPerson != null) // I'm using a extension method
+                                    {
+                                        // detach
+                                        _context.Entry(localPerson).State = EntityState.Detached;
+                                    }
+                                }
                             }
                         }
 
