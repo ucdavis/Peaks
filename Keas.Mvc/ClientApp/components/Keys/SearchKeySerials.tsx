@@ -60,7 +60,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
         const { isSearchLoading, keySerials } = this.state;
         return (
             <div>
-                <label>Pick an equipment to assign</label>
+                <label>Pick a key serial to assign</label>
                 <div>
                     <AsyncTypeahead
                         isInvalid={!this.props.selectedKey || !this.props.selectedKeySerial}

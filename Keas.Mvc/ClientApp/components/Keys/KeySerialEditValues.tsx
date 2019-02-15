@@ -1,12 +1,12 @@
 import * as React from "react";
-import { Button } from "reactstrap";
+import { Button, FormGroup, Label, Input, FormFeedback } from "reactstrap";
 import { IKeySerial } from "../../Types";
+import { number } from "prop-types";
 
 interface IProps {
     keySerial: IKeySerial;
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
-    creating?: boolean;
     openEditModal?: (keySerial: IKeySerial) => void;
 }
 
@@ -43,22 +43,19 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                             value={this.props.keySerial.key.code}
                         />
                     </div>
-                    {!this.props.creating && (
-                        <div className="form-group">
-                            <label>Serial Number</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                disabled={this.props.disableEditing}
-                                value={numberValue}
-                                onBlur={this.onBlurNumber}
-                                onChange={this.onChangeNumber}
-                                required={true}
-                                minLength={1}
-                                maxLength={10}
-                            />
-                        </div>
-                    )}
+                    <FormGroup>
+                        <Label for="item">Number</Label>
+                        <Input
+                            type="text"
+                            className="form-control"
+                            disabled={this.props.disableEditing}
+                            value={numberValue}
+                            onChange={this.onChangeNumber}
+                            onBlur={this.onBlurNumber}
+                            invalid={!numberValue}
+                        />
+                        <FormFeedback>Serial number is required</FormFeedback>
+                    </FormGroup>
                     <div className="form-group">
                         <label>Status</label>
                         <select
