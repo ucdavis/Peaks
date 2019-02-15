@@ -402,7 +402,7 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> Upload(IFormFile file)
         {
             var resultsView = new List<KeyImportResults>();
-            
+
             var keyCount = 0;
             var serialCount = 0;
             var peopleCount = 0;
@@ -418,23 +418,27 @@ namespace Keas.Mvc.Controllers
                 Message = "File not selected";
                 return RedirectToAction("Upload");
             }
+
             // Add counts
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
             using (var reader = new StreamReader(file.OpenReadStream()))
             using (var csv = new CsvReader(reader))
             {
-                using (var transaction = await _context.Database.BeginTransactionAsync())
-                {
+
                 csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
                 var record = new KeyImport();
                 var records = csv.EnumerateRecords(record);
-                    foreach (var r in records)
+                foreach (var r in records)
+                {
+                    using (var transaction = await _context.Database.BeginTransactionAsync())
                     {
                         somethingSaved = false;
                         rowNumber += 1;
-                        var result = new KeyImportResults(r);
-                        result.LineNumber = rowNumber;
-                        result.Success = true;
+                        var result = new KeyImportResults(r)
+                        {
+                            LineNumber = rowNumber,
+                            Success = true
+                        };
                         ModelState.Clear();
 
                         if (!string.IsNullOrWhiteSpace(r.KeyCode) && !r.KeyCode.Contains("AEXMPLE"))
@@ -656,7 +660,16 @@ namespace Keas.Mvc.Controllers
 
                         if (result.Success)
                         {
-                            transaction.Commit();
+                            try
+                            {
+                                transaction.Commit();
+                            }
+                            catch (Exception e)
+                            {
+                                result.Success = false;
+                                result.ErrorMessage = $"{result.ErrorMessage} There was a problem saving this record.";
+                            }
+
                         }
                         else
                         {
@@ -670,7 +683,10 @@ namespace Keas.Mvc.Controllers
                     }
                 }
             }
-            Message = string.Format("Successfully loaded {0} new keys, {1} new keySerials, {2} new and {3} reactivated team members, and {4} new assignments recorded. {5}", keyCount, serialCount, peopleCount, reactivatedCount, assignmentCount, warning.ToString());
+
+            Message = string.Format(
+                "Successfully loaded {0} new keys, {1} new keySerials, {2} new and {3} reactivated team members, and {4} new assignments recorded. {5}",
+                keyCount, serialCount, peopleCount, reactivatedCount, assignmentCount, warning.ToString());
             return View(resultsView);
 
         }

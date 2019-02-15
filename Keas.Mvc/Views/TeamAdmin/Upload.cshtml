@@ -1,3 +1,4 @@
+@using Keas.Core.Extensions
 @model List<KeyImportResults>
 
 @{
@@ -37,89 +38,7 @@
                 </form>
             </div>
         </div>
-        @if (Model != null && Model.Count > 0)
-        {
-        <table id="results" class="table dataTable">
-            <thead>
-                <tr>
-                    <th>
-                        Row
-                    </th>
-                    <th>
-                        Success
-                    </th>
-                    <th>
-                        KeyName
-                    </th>
-                    <th>
-                        KeyCode
-                    </th>
-                    <th>
-                        SerialNumber
-                    </th>
-                    <th>
-                        KerbUser
-                    </th>
-                    <th>
-                        DateIssued
-                    </th>
-                    <th>
-                        DateDue
-                    </th>
-                    <th>
-                        Status
-                    </th>
-                    <th>
-                        Messages
-                    </th>
-                    <th>
-                        Errors
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.LineNumber</td>
-                        <td>
-                            @Html.DisplayFor(a => item.Success)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(a => item.Import.KeyName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(a => item.Import.KeyCode)
-                        </td>
-                                                <td>
-                            @Html.DisplayFor(a => item.Import.SerialNumber)
-                        </td>
-                                                <td>
-                            @Html.DisplayFor(a => item.Import.KerbUser)
-                        </td>
-                                                <td>
-                            @Html.DisplayFor(a => item.Import.DateIssued)
-                        </td>
-                                                <td>
-                            @Html.DisplayFor(a => item.Import.DateDue)
-                        </td>
-                                                <td>
-                            @Html.DisplayFor(a => item.Import.Status)
-                        </td>
-
-                    <th>
-                        @string.Join(", ", item.Messages)
-                    </th>
-                    <th>
-                        @Html.DisplayFor(a => item.ErrorMessage)
-                    </th>
-                    </tr>
-                }
-
-            </tbody>
-        </table>
-        }
-        else
+        @if (Model == null || Model.Count <= 0)
         {
             <div class="card">
                 <div class="card-header-primary">
@@ -154,9 +73,119 @@
     <div class="col-md-3">
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}
     </div>
-</div>
+    @if (Model != null && Model.Count > 0)
+    {
+        <div style="padding-top: 15px">
+            <div class="card">
+                <div class="card-header-primary">
+                    <div class="card-head">
+                        <h2>Import Results</h2>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <table id="results" class="table dataTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Row
+                                </th>
+                                <th>
+                                    Success
+                                </th>
+                                <th>
+                                    KeyName
+                                </th>
+                                <th>
+                                    KeyCode
+                                </th>
+                                <th>
+                                    SerialNumber
+                                </th>
+                                <th>
+                                    KerbUser
+                                </th>
+                                <th>
+                                    DateIssued
+                                </th>
+                                <th>
+                                    DateDue
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                                <th>
+                                    Messages
+                                </th>
+                                <th>
+                                    Errors
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.LineNumber</td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.Success)
+                                    </td>
+                                    <td style="word-wrap: break-word; word-break: break-all; white-space: normal;">
+                                        @Html.DisplayFor(a => item.Import.KeyName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.Import.KeyCode)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.Import.SerialNumber)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.Import.KerbUser)
+                                    </td>
+                                    <td>
+                                        @item.Import.DateIssued.Format("d")
+                                    </td>
+                                    <td>
+                                        @item.Import.DateDue.Format("d")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.Import.Status)
+                                    </td>
 
+                                    <th>
+                                        @string.Join(", ", item.Messages)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayFor(a => item.ErrorMessage)
+                                    </th>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+        <script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            $("#results").dataTable({
+                "pageLength": 100,
+                 "columnDefs": [
+                    { "width": "10%;", "targets": [2] },
+                    { "type": "date", "targets": [6, 7]}
+                ]
+            });
+        });
+    </script>
 }
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+

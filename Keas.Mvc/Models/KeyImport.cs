@@ -35,7 +35,16 @@ public class KeyImportResults
     public KeyImportResults(KeyImport import)
     {
         Messages = new List<string>();
-        Import = import;
+        Import = new KeyImport
+        {
+            DateDue = import.DateDue,
+            DateIssued = import.DateIssued,
+            KerbUser = import.KerbUser,
+            KeyCode = import.KeyCode,
+            SerialNumber = import.SerialNumber,
+            KeyName = import.KeyName,
+            Status = import.Status
+        };
     }
 
     public KeyImportResults()
