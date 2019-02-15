@@ -140,7 +140,6 @@ export default class AssignKey extends React.Component<IProps, IState> {
                             {!this.state.keySerial && (
                                 <div className="form-group">
                                     <SearchKeySerial
-                                        allowNew={!this.props.person} // don't allow new on person page
                                         selectedKey={selectedKey}
                                         selectedKeySerial={keySerial}
                                         onSelect={this._onSelected}
