@@ -394,7 +394,8 @@ namespace Keas.Mvc.Controllers
 
         public IActionResult Upload()
         {
-            return View();
+            var model = new List<KeyImportResults>();
+            return View(model);
         }
 
         [HttpPost]
@@ -409,6 +410,7 @@ namespace Keas.Mvc.Controllers
             var reactivatedCount = 0;
             var rowNumber = 1;
             bool import = true;
+            bool somethingSaved = false;
             StringBuilder warning = new StringBuilder();
 
             if (file == null || file.Length == 0)
@@ -428,6 +430,7 @@ namespace Keas.Mvc.Controllers
                 var records = csv.EnumerateRecords(record);
                     foreach (var r in records)
                     {
+                        somethingSaved = false;
                         rowNumber += 1;
                         var result = new KeyImportResults(r);
                         result.LineNumber = rowNumber;
@@ -506,6 +509,7 @@ namespace Keas.Mvc.Controllers
                                     }
                                     else
                                     {
+                                        //TODO: Write the errors to a list including the Field name. Then have result.ErrorMessage parse that out nicely. (Just a getter)
                                         result.Success = false;
                                         result.ErrorMessage =
                                             $"{result.ErrorMessage}Invalid Serial values Error(s): {GetModelErrors(ModelState)} ";
@@ -578,6 +582,7 @@ namespace Keas.Mvc.Controllers
                                             {
                                                 _context.KeySerialAssignments.Add(assignment);
                                                 await _context.SaveChangesAsync();
+                                                somethingSaved = true;
                                                 serial.KeySerialAssignment = assignment;
                                                 serial.KeySerialAssignmentId = assignment.Id;
                                                 assignmentCount += 1;
@@ -641,6 +646,7 @@ namespace Keas.Mvc.Controllers
 
 
                             await _context.SaveChangesAsync();
+                            somethingSaved = true;
                         }
                         else
                         {
@@ -654,7 +660,10 @@ namespace Keas.Mvc.Controllers
                         }
                         else
                         {
-                            transaction.Rollback();
+                            if (somethingSaved)
+                            {
+                                transaction.Rollback();
+                            }
                         }
 
                         resultsView.Add(result);
@@ -662,7 +671,7 @@ namespace Keas.Mvc.Controllers
                 }
             }
             Message = string.Format("Successfully loaded {0} new keys, {1} new keySerials, {2} new and {3} reactivated team members, and {4} new assignments recorded. {5}", keyCount, serialCount, peopleCount, reactivatedCount, assignmentCount, warning.ToString());
-            return RedirectToAction("Index");
+            return View(resultsView);
 
         }
 
