@@ -124,7 +124,10 @@
                         <tbody>
                             @foreach (var item in Model)
                             {
-                                <tr>
+                                var style = string.Empty;
+                                if(!item.Success)
+                                {style="background-color: lightcoral";}
+                                <tr style="@style">
                                     <td>@item.LineNumber</td>
                                     <td>
                                         @Html.DisplayFor(a => item.Success)
@@ -178,7 +181,8 @@
                 "pageLength": 100,
                  "columnDefs": [
                     { "width": "10%;", "targets": [2] },
-                    { "type": "date", "targets": [6, 7]}
+                    { "type": "date", "targets": [6, 7]},
+                    { "type": "bool", "targets": [1]}
                 ]
             });
         });
