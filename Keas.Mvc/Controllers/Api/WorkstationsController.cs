@@ -60,7 +60,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Space.Id == spaceId && x.Team.Slug == Team && x.Active)
                 .Include(x => x.Space)
                 .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person.User)
+                .ThenInclude(x => x.Person)
                 .AsNoTracking()
                 .ToListAsync();
             return Json(workstations);
@@ -83,7 +83,7 @@ namespace Keas.Mvc.Controllers.Api
             var workstationAssignments = await _context.Workstations
                 .Where(w => w.Assignment.PersonId == personId && w.Team.Slug==Team)
                 .Include(w => w.Assignment)
-                .ThenInclude(w => w.Person.User)
+                .ThenInclude(w => w.Person)
                 .Include(w => w.Space)
                 .Include(w => w.Attributes)
                 .Include(w => w.Team)
@@ -97,7 +97,7 @@ namespace Keas.Mvc.Controllers.Api
             var workstations = await _context.Workstations
                 .Where(w => w.Team.Slug == Team)
                 .Include(w => w.Assignment)
-                .ThenInclude(w => w.Person.User)
+                .ThenInclude(w => w.Person)
                 .Include(w => w.Space)
                 .Include(w => w.Attributes)
                 .Include(w => w.Team)
@@ -130,7 +130,7 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
-                    .Include(w => w.Space).Include(t => t.Team).Include(w => w.Assignment).ThenInclude(a => a.Person).ThenInclude(a => a.User).SingleAsync(w => w.Id == workstationId);
+                    .Include(w => w.Space).Include(t => t.Team).Include(w => w.Assignment).ThenInclude(a => a.Person).SingleAsync(w => w.Id == workstationId);
                     
                 if (workstation.Team.Slug != Team)
                 {
@@ -149,7 +149,7 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     workstation.Assignment = new WorkstationAssignment{PersonId = personId, ExpiresAt = DateTime.Parse(date)};
                     workstation.Assignment.Person =
-                    await _context.People.Include(p => p.User).Include(p=> p.Team).SingleAsync(p => p.Id == personId);
+                    await _context.People.Include(p=> p.Team).SingleAsync(p => p.Id == personId);
                     workstation.Assignment.RequestedById = User.Identity.Name;
                     workstation.Assignment.RequestedByName = User.GetNameClaim();
 
@@ -181,7 +181,7 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var workstationToUpdate = await _context.Workstations.Where(x => x.Team.Slug == Team)
-                    .Include(w => w.Assignment).ThenInclude(w => w.Person.User)
+                    .Include(w => w.Assignment).ThenInclude(w => w.Person)
                     .SingleAsync(w => w.Id == workstation.Id);
 
                 _context.WorkstationAssignments.Remove(workstationToUpdate.Assignment);
@@ -218,7 +218,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Team)
                 .Include(x => x.Assignment)
-                    .ThenInclude(x => x.Person.User)
+                    .ThenInclude(x => x.Person)
                 .Include(x => x.Space)
                 .SingleAsync(x => x.Id == id);
 

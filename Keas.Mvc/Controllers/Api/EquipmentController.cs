@@ -55,7 +55,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
                 .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person.User)
+                .ThenInclude(x => x.Person)
                 .AsNoTracking()
                 .ToListAsync();
             return Json(equipment);
@@ -78,7 +78,7 @@ namespace Keas.Mvc.Controllers.Api
             var equipmentAssignments = await _context.Equipment
                 .Where(x => x.Assignment.PersonId == personId && x.Team.Slug == Team)
                 .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person.User)
+                .ThenInclude(x => x.Person)
                 .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
@@ -93,7 +93,7 @@ namespace Keas.Mvc.Controllers.Api
             var equipments = await _context.Equipment
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignment)
-                .ThenInclude(x=>x.Person.User)
+                .ThenInclude(x=>x.Person)
                 .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
@@ -125,7 +125,7 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team && x.Active)
-                    .Include(x => x.Space).Include(x => x.Assignment).ThenInclude(a => a.Person).ThenInclude(a => a.User).SingleAsync(x => x.Id == equipmentId);
+                    .Include(x => x.Space).Include(x => x.Assignment).ThenInclude(a => a.Person).SingleAsync(x => x.Id == equipmentId);
                 
                 if(equipment.Assignment != null)
                 {
@@ -138,7 +138,7 @@ namespace Keas.Mvc.Controllers.Api
                 else
                 {
                     equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
-                    equipment.Assignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
+                    equipment.Assignment.Person = await _context.People.SingleAsync(p => p.Id == personId);
                     equipment.Assignment.RequestedById = User.Identity.Name;
                     equipment.Assignment.RequestedByName = User.GetNameClaim();
 
@@ -190,7 +190,7 @@ namespace Keas.Mvc.Controllers.Api
             if (ModelState.IsValid)
             {
                 var eq = await _context.Equipment.Where(x => x.Team.Slug == Team)
-                    .Include(x => x.Assignment).ThenInclude(x => x.Person.User)
+                    .Include(x => x.Assignment).ThenInclude(x => x.Person)
                     .SingleAsync(x => x.Id == equipment.Id);
 
                 _context.EquipmentAssignments.Remove(eq.Assignment);
