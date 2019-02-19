@@ -122,7 +122,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValidOnEdit}
                     />
                     <DeleteKey
-                        selectedKey={selectedKey}
+                        selectedKeyInfo={selectedKeyInfo}
                         deleteKey={this._deleteKey}
                         closeModal={this._closeModals}
                         modal={keyAction === "delete"}
