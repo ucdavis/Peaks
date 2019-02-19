@@ -45,6 +45,10 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     }
 
     public async componentDidMount() {
+        if(!PermissionsUtil.canViewWorkstations(this.context.permissions))
+        {
+            return;
+        }
         this.setState({ loading: true });
         let workstations = [];
         if (!this.props.space && !!this.props.person) {
@@ -65,7 +69,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     }
 
     public render() {
-        if (!PermissionsUtil.canViewSpace(this.context.permissions)) {
+        if (!PermissionsUtil.canViewWorkstations(this.context.permissions)) {
             return <Denied viewName="Workstations" />;
         }
         if (!this.props.space && !this.props.person) {

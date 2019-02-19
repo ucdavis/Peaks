@@ -53,6 +53,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         };
     }
     public async componentDidMount() {
+        if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
+            return;
+        }
         const { team } = this.context;
 
         // are we getting the person's key or the team's?
@@ -86,6 +89,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         const selectedKeyId = parseInt(keyId, 10);
         const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
         const selectedKey = selectedKeyInfo ? selectedKeyInfo.key : null;
+
         return (
             <div className="card keys-color">
                 <div className="card-header-keys">
@@ -106,6 +110,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                             closeModal={this._closeModals}
                             modal={keyAction === "create"}
                             searchableTags={tags}
+                            checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValid}
                         />
                     )}
                     <EditKey
@@ -114,6 +119,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         modal={keyAction === "edit"}
                         selectedKey={selectedKey}
                         searchableTags={tags}
+                        checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValidOnEdit}
                     />
                     <DeleteKey
                         selectedKey={selectedKey}
@@ -263,6 +269,14 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
         return keyInfo;
     };
+
+    private _checkIfKeyCodeIsValid = (code: string) => {
+        return !this.state.keys.some(x => x.key.code === code);
+    }
+
+    private _checkIfKeyCodeIsValidOnEdit = (code: string, id: number) => {
+        return !this.state.keys.some(x => x.id !== id && x.key.code === code);
+    }
 
     private _editKey = async (key: IKey) => {
         const index = this.state.keys.findIndex(x => x.id === key.id);

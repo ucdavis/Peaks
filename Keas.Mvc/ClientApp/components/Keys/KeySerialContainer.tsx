@@ -50,6 +50,9 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         };
     }
     public async componentDidMount() {
+        if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
+            return;
+        }
         const { selectedPerson, selectedKey } = this.props;
 
         // are we getting the person's key or the team's?
@@ -117,6 +120,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                         onOpenModal={this._openCreateModal}
                         closeModal={this._closeModals}
                         openEditModal={this._openEditModal}
+                        openDetailsModal={this._openDetailsModal}
                     />
                     <KeySerialDetails
                         selectedKeySerial={selectedKeySerial}
@@ -299,9 +303,17 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     };
 
     private _openDetailsModal = (keySerial: IKeySerial) => {
-        this.context.router.history.push(
-            `${this._getBaseUrl()}/keyserials/details/${keySerial.id}`
-        );
+        // if we are on person page, and this serial is not in our state
+        // this happens on the search, when selecting already assigned 
+        if (this.state.keySerials.findIndex(x => x.id === keySerial.id) === -1) {
+            this.context.router.history.push(
+                `/${this.context.team.slug}/keys/details/${keySerial.key.id}/keyserials/details/${keySerial.id}`
+            );
+        } else {
+            this.context.router.history.push(
+                `${this._getBaseUrl()}/keyserials/details/${keySerial.id}`
+            );
+        }
     };
 
     private _openEditModal = (keySerial: IKeySerial) => {
