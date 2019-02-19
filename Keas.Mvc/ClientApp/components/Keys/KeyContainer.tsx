@@ -268,13 +268,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     };
 
     private _checkIfKeyCodeIsValid = (code: string) => {
-        const keyCodes = this.state.keys.map(x => x.key.code);
-        return keyCodes.indexOf(code) === -1;
+        return !this.state.keys.some(x => x.key.code === code);
     }
 
     private _checkIfKeyCodeIsValidOnEdit = (code: string, id: number) => {
-        const keyCodes = this.state.keys.map(x => x.key.id !== id && x.key.code);
-        return keyCodes.indexOf(code) === -1;
+        return !this.state.keys.some(x => x.id !== id && x.key.code === code);
     }
 
     private _editKey = async (key: IKey) => {
