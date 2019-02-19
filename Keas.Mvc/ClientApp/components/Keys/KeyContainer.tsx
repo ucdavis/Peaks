@@ -53,6 +53,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         };
     }
     public async componentDidMount() {
+        if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
+            return <Denied viewName="Keys" />;
+        }
         const { team } = this.context;
 
         // are we getting the person's key or the team's?
