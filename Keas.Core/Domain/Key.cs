@@ -19,7 +19,6 @@ namespace Keas.Core.Domain
         protected internal static void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Key>().HasQueryFilter(a => a.Active);
-            builder.Entity<Key>().HasIndex(x => x.Code).IsUnique();
         }
     }
 }
