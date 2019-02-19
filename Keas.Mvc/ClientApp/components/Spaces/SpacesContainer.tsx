@@ -44,6 +44,9 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     public async componentDidMount() {
+        if (!PermissionsUtil.canViewSpaces(this.context.permissions)) {
+            return <Denied viewName="Spaces" />;
+        }
         const { selectedKeyInfo } = this.props;
         const { team } = this.context;
 
@@ -61,7 +64,9 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     public render() {
-
+        if (!PermissionsUtil.canViewSpaces(this.context.permissions)) {
+            return <Denied viewName="Spaces" />;
+        }
         if (this.state.loading) {
             return <h2>Loading...</h2>;
         }
@@ -83,11 +88,17 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                         <h2>
                             <i className="fas fa-building fa-xs" /> Spaces
                         </h2>
-                    </div>                    
-                    {this.state.spaces.length === 0 &&
-                    (
+                    </div>
+                    {this.state.spaces.length === 0 && (
                         <div className="card-body">
-                            Don't see your spaces? Visit the <a href="https://computing.caes.ucdavis.edu/faq/peaks/spaces" target="_blank">Space FAQ</a>. 
+                            Don't see your spaces? Visit the{" "}
+                            <a
+                                href="https://computing.caes.ucdavis.edu/faq/peaks/spaces"
+                                target="_blank"
+                            >
+                                Space FAQ
+                            </a>
+                            .
                         </div>
                     )}
                 </div>
