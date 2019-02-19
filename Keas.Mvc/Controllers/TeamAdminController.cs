@@ -545,10 +545,20 @@ namespace Keas.Mvc.Controllers
                                 if (!string.IsNullOrWhiteSpace(r.KerbUser) &&
                                     (r.Status == "Active" || string.IsNullOrWhiteSpace(r.Status)))
                                 {
-                                    var personResult =
-                                        await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id);
-                                    peopleCount += personResult.peopleCount;
-                                    var person = personResult.Person;
+                                    Person person = null;
+                                    try
+                                    {
+                                        var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id);
+                                        peopleCount += personResult.peopleCount;
+                                        person = personResult.Person;
+                                    }
+                                    catch (Exception)
+                                    {
+                                        person = null;
+                                        result.Success = false;
+                                        result.ErrorMessage = $"{result.ErrorMessage}!!!!!!!!!!!!!THERE IS A PROBLEM WITH KerbUser {r.KerbUser} PLEASE CONTACT PEAKS HELP with this User ID.!!!!!!!!!!!!!!!";
+                                    }
+
 
                                     if (person == null)
                                     {
