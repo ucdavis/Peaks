@@ -755,6 +755,10 @@ namespace Keas.Mvc.Controllers
                             }
                         }
 
+                        if (!result.Success)
+                        {
+                            result.Messages = new List<string>();
+                        }
                         resultsView.Add(result);
                     }
                 }
