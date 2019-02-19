@@ -116,6 +116,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         modal={keyAction === "edit"}
                         selectedKey={selectedKey}
                         searchableTags={tags}
+                        checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValid}
                     />
                     <DeleteKey
                         selectedKey={selectedKey}
