@@ -7,8 +7,7 @@ interface IProps {
 }
 
 export default class SpacesDetailContainer extends React.Component<IProps, {}> {
-    public render() {
-        const tag = this.props.tags.split(',').reduce((acc, value) => !acc.includes(value) ? acc.concat(value) : acc, []).join(',');
+    public render() {        
         return (
             <div>
                 <div>
@@ -24,7 +23,7 @@ export default class SpacesDetailContainer extends React.Component<IProps, {}> {
                         {this.props.space.sqFt && <div>{this.props.space.sqFt} Sq Feet</div>}
                         {this.props.tags && (
                             <p className="card-text">
-                                <i className="fas fa-tags" aria-hidden="true" /> {tag}
+                                <i className="fas fa-tags" aria-hidden="true" /> {this.props.tags}
                             </p>
                         )}
                     </div>

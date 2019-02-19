@@ -75,7 +75,7 @@ namespace Keas.Mvc.Controllers.Api
                 keyCount = r.KeyCount,
                 workstationsTotal = r.WorkstationsTotalCount,
                 workstationsInUse = r.WorkstationsInUseCount,
-                tags = r.Tags
+                tags = !string.IsNullOrWhiteSpace(r.Tags) ? string.Join(",", r.Tags.ToString().Split(',').Distinct().ToArray()) : "" 
             });
 
             return Json(spaces);
