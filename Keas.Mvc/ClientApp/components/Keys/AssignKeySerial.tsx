@@ -4,9 +4,11 @@ import * as React from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
-import { AppContext, IKey, IKeySerial, IPerson } from "../../Types";
+import { AppContext, IKey, IKeySerial, IPerson, IKeyInfo } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
 import SearchKeySerial from "./SearchKeySerials";
+import KeySerialEditValues from "./KeySerialEditValues";
+import SearchKeys from "./SearchKeys";
 
 interface IProps {
     person?: IPerson;
@@ -17,6 +19,7 @@ interface IProps {
     onOpenModal: () => void;
     closeModal: () => void;
     openEditModal: (keySerial: IKeySerial) => void;
+    openDetailsModal: (keySerial: IKeySerial) => void;
 }
 
 interface IState {
@@ -134,28 +137,75 @@ export default class AssignKey extends React.Component<IProps, IState> {
                                     />
                                 </div>
                             )}
-                            {!!this.props.selectedKeySerial && !!this.props.selectedKeySerial.id && (
-                                <div>
-                                    <Button
-                                        color="link"
-                                        onClick={() =>
-                                            this.props.openEditModal(this.props.selectedKeySerial)
-                                        }
-                                    >
-                                        <i className="fas fa-edit fa-xs" /> Edit Serial
-                                    </Button>
+                            {!this.state.keySerial && (
+                                <div className="form-group">
+                                    <SearchKeySerial
+                                        selectedKey={selectedKey}
+                                        selectedKeySerial={keySerial}
+                                        onSelect={this._onSelected}
+                                        onDeselect={this._onDeselected}
+                                        openDetailsModal={this.props.openDetailsModal}
+                                    />
                                 </div>
                             )}
-                            <div className="form-group">
-                                <label>Pick a key serial to assign</label>
-                                <SearchKeySerial
-                                    allowNew={!this.props.person} // don't allow new on person page
-                                    selectedKey={selectedKey}
-                                    selectedKeySerial={keySerial}
-                                    onSelect={this._onSelected}
-                                    onDeselect={this._onDeselected}
-                                />
-                            </div>
+                            {this.state.keySerial &&
+                            !this.state.keySerial.id && ( // if we are creating a new serial, edit properties
+                                    <div>
+                                        <div className="row justify-content-between">
+                                            <h3>Create New Serial</h3>
+                                            <Button
+                                                className="btn btn-link"
+                                                onClick={this._onDeselected}
+                                            >
+                                                Clear{" "}
+                                                <i
+                                                    className="fas fa-times fa-sm"
+                                                    aria-hidden="true"
+                                                />
+                                            </Button>
+                                        </div>
+                                        {!this.state.keySerial.key && (
+                                            <div>
+                                                <label>
+                                                    Choose a key to create a new serial for
+                                                </label>
+                                                <SearchKeys
+                                                    onSelect={this._selectKey}
+                                                    onDeselect={this._deselectKey}
+                                                    allowNew={false}
+                                                />
+                                            </div>
+                                        )}
+                                        {!!this.state.keySerial.key && (
+                                            <KeySerialEditValues
+                                                keySerial={this.state.keySerial}
+                                                changeProperty={this._changeProperty}
+                                                disableEditing={false}
+                                            />
+                                        )}
+                                    </div>
+                                )}
+                            {this.state.keySerial && !!this.state.keySerial.id && (
+                                <div>
+                                    <div className="row justify-content-between">
+                                        <h3>Assign Existing Serial</h3>
+                                        <Button
+                                            className="btn btn-link"
+                                            onClick={this._onDeselected}
+                                        >
+                                            Clear{" "}
+                                            <i className="fas fa-times fa-sm" aria-hidden="true" />
+                                        </Button>
+                                    </div>
+
+                                    <KeySerialEditValues
+                                        keySerial={this.state.keySerial}
+                                        disableEditing={true}
+                                        openEditModal={this.props.openEditModal}
+                                    />
+                                </div>
+                            )}
+
                             {this.state.error}
                         </form>
                     </div>
@@ -172,6 +222,36 @@ export default class AssignKey extends React.Component<IProps, IState> {
             </Modal>
         );
     }
+
+    private _changeProperty = (property: string, value: string) => {
+        this.setState(
+            {
+                keySerial: {
+                    ...this.state.keySerial,
+                    [property]: value
+                }
+            },
+            this._validateState
+        );
+    };
+
+    private _selectKey = (keyInfo: IKeyInfo) => {
+        this.setState({
+            keySerial: {
+                ...this.state.keySerial,
+                key: keyInfo.key
+            }
+        });
+    };
+
+    private _deselectKey = () => {
+        this.setState({
+            keySerial: {
+                ...this.state.keySerial,
+                key: null
+            }
+        });
+    };
 
     // clear everything out on close
     private _closeModal = () => {
