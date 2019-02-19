@@ -274,7 +274,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
     private _checkIfKeyCodeIsValidOnEdit = (code: string, id: number) => {
         const keyCodes = this.state.keys.map(x => x.key.id !== id && x.key.code);
-        debugger;
         return keyCodes.indexOf(code) === -1;
     }
 
