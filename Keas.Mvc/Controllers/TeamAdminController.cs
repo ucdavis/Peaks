@@ -504,7 +504,18 @@ namespace Keas.Mvc.Controllers
                                     serial.TeamId = team.Id;
 
                                     ModelState.Clear();
-                                    TryValidateModel(serial);
+                                    //TryValidateModel(serial); This seems really slow with a large load. Trying manually checking
+                                    if (string.IsNullOrWhiteSpace(serial.Name))
+                                    {
+                                        ModelState.AddModelError("KeySerial", "Name/Serial Number is required");
+                                    }
+                                    else
+                                    {
+                                        if (serial.Name.Length > 64)
+                                        {
+                                            ModelState.AddModelError("KeySerial", "Name/Serial Number has max 64 characters");
+                                        }
+                                    }
                                     if (ModelState.IsValid && result.Success)
                                     {
                                         _context.KeySerials.Add(serial);
@@ -598,6 +609,9 @@ namespace Keas.Mvc.Controllers
                                                     $"{result.ErrorMessage}Invalid Assignment values Error(s): {GetModelErrors(ModelState)} ";
                                                 warning.Append(String.Format("Could not save assignment in line {0} | ",
                                                     rowNumber));
+                                                //Clear out values on error, otherwise it can throw a foreign key exception the next time through for the same person
+                                                assignment = new KeySerialAssignment();
+                                                serial.KeySerialAssignment = null;
                                             }
                                         }
                                         else
@@ -648,8 +662,17 @@ namespace Keas.Mvc.Controllers
                                 result.Messages.Add("No Serial Number supplied");
                             }
 
-
-                            await _context.SaveChangesAsync();
+                            try
+                            {
+                                await _context.SaveChangesAsync();
+                            }
+                            catch (Exception e)
+                            {
+                                //For dubugging
+                                Console.WriteLine(e);
+                                throw;
+                            }
+                            
                             somethingSaved = true;
                         }
                         else
@@ -696,6 +719,18 @@ namespace Keas.Mvc.Controllers
                                         // detach
                                         _context.Entry(localPerson).State = EntityState.Detached;
                                     }
+
+                                    //var localAssignments = _context.Set<KeySerialAssignment>().Local.FirstOrDefault();
+                                    //if (localAssignments != null)
+                                    //{
+                                    //    _context.Entry(localAssignments).State = EntityState.Detached;
+                                    //}
+
+                                    //var localSerial = _context.Set<KeySerial>().Local.FirstOrDefault();
+                                    //if (localSerial != null)
+                                    //{
+                                    //    _context.Entry(localSerial).State = EntityState.Detached;
+                                    //}
                                 }
                             }
                         }
