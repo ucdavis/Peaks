@@ -45,7 +45,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
     public async componentDidMount() {
         if (!PermissionsUtil.canViewSpaces(this.context.permissions)) {
-            return <Denied viewName="Spaces" />;
+            return;
         }
         const { selectedKeyInfo } = this.props;
         const { team } = this.context;

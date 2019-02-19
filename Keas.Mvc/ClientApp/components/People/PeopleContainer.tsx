@@ -37,7 +37,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
 
     public async componentDidMount() {
         if (!PermissionsUtil.canViewPeople(this.context.permissions)) {
-            return <Denied viewName="People" />;
+            return;
         }
         const people = await this.context.fetch(`/api/${this.context.team.slug}/people/list/`);
         const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);

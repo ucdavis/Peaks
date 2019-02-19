@@ -51,7 +51,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     }
     public async componentDidMount() {
         if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
-            return <Denied viewName="Keys" />;
+            return;
         }
         const { selectedPerson, selectedKey } = this.props;
 

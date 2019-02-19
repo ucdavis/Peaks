@@ -46,7 +46,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     }
     public async componentDidMount() {
         if (!PermissionsUtil.canViewAccess(this.context.permissions)) {
-            return <Denied viewName="Access" />;
+            return;
         }
         // are we getting the person's access or the team's?
         const accessFetchUrl = this.props.person

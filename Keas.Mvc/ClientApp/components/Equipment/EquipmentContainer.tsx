@@ -52,7 +52,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     }
     public async componentDidMount() {
         if (!PermissionsUtil.canViewEquipment(this.context.permissions)) {
-            return <Denied viewName="Equipment" />;
+            return;
         }
         // are we getting the person's equipment or the team's?
         let equipmentFetchUrl = "";
