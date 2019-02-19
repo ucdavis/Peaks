@@ -410,11 +410,11 @@ namespace Keas.Mvc.Controllers
             var serialCount = 0;
             var peopleCount = 0;
             var assignmentCount = 0;
-            var reactivatedCount = 0;
+            //var reactivatedCount = 0; Not used
             var rowNumber = 1;
             bool import = true;
             bool somethingSaved = false;
-            StringBuilder warning = new StringBuilder();
+            //StringBuilder warning = new StringBuilder();
 
             if (file == null || file.Length == 0)
             {
@@ -427,12 +427,16 @@ namespace Keas.Mvc.Controllers
             using (var reader = new StreamReader(file.OpenReadStream()))
             using (var csv = new CsvReader(reader))
             {
-
                 csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
                 var record = new KeyImport();
                 var records = csv.EnumerateRecords(record);
                 foreach (var r in records)
                 {
+                    var recKeyCount = 0;
+                    var recSerialCount = 0;
+                    var recPeopleCount = 0;
+                    var recAssignmentCount = 0;
+
                     using (var transaction = await _context.Database.BeginTransactionAsync())
                     {
                         somethingSaved = false;
@@ -461,14 +465,15 @@ namespace Keas.Mvc.Controllers
                                 if (ModelState.IsValid)
                                 {
                                     _context.Keys.Add(key);
-                                    keyCount += 1;
+                                    //keyCount += 1;
+                                    recKeyCount += 1;
                                     result.Messages.Add("Key Added.");
                                 }
                                 else
                                 {
                                     result.Success = false;
                                     result.ErrorMessage = $"Invalid Key values Error(s): {GetModelErrors(ModelState)} ";
-                                    warning.Append(String.Format("Could not save key in line {0} | ", rowNumber));
+                                    //warning.Append(String.Format("Could not save key in line {0} | ", rowNumber));
                                 }
                             }
                             else
@@ -522,17 +527,16 @@ namespace Keas.Mvc.Controllers
                                     if (ModelState.IsValid && result.Success)
                                     {
                                         _context.KeySerials.Add(serial);
-                                        serialCount += 1;
+                                        //serialCount += 1;
+                                        recSerialCount += 1;
                                         result.Messages.Add("Serial Added.");
                                     }
                                     else
                                     {
                                         //TODO: Write the errors to a list including the Field name. Then have result.ErrorMessage parse that out nicely. (Just a getter)
                                         result.Success = false;
-                                        result.ErrorMessage =
-                                            $"{result.ErrorMessage}Invalid Serial values Error(s): {GetModelErrors(ModelState)} ";
-                                        warning.Append(String.Format("Could not save serial in line {0} | ",
-                                            rowNumber));
+                                        result.ErrorMessage = $"{result.ErrorMessage}Invalid Serial values Error(s): {GetModelErrors(ModelState)} ";
+                                        //warning.Append(String.Format("Could not save serial in line {0} | ", rowNumber));
                                     }
 
                                 }
@@ -549,7 +553,8 @@ namespace Keas.Mvc.Controllers
                                     try
                                     {
                                         var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id);
-                                        peopleCount += personResult.peopleCount;
+                                        //peopleCount += personResult.peopleCount;
+                                        recPeopleCount += personResult.peopleCount;
                                         person = personResult.Person;
                                     }
                                     catch (Exception)
@@ -613,15 +618,14 @@ namespace Keas.Mvc.Controllers
                                                 somethingSaved = true;
                                                 serial.KeySerialAssignment = assignment;
                                                 serial.KeySerialAssignmentId = assignment.Id;
-                                                assignmentCount += 1;
+                                                //assignmentCount += 1;
+                                                recAssignmentCount += 1;
                                             }
                                             else
                                             {
                                                 result.Success = false;
-                                                result.ErrorMessage =
-                                                    $"{result.ErrorMessage}Invalid Assignment values Error(s): {GetModelErrors(ModelState)} ";
-                                                warning.Append(String.Format("Could not save assignment in line {0} | ",
-                                                    rowNumber));
+                                                result.ErrorMessage = $"{result.ErrorMessage}Invalid Assignment values Error(s): {GetModelErrors(ModelState)} ";
+                                                //warning.Append(String.Format("Could not save assignment in line {0} | ", rowNumber));
                                                 //Clear out values on error, otherwise it can throw a foreign key exception the next time through for the same person
                                                 assignment = new KeySerialAssignment();
                                                 serial.KeySerialAssignment = null;
@@ -646,8 +650,7 @@ namespace Keas.Mvc.Controllers
                                             }
                                             else
                                             {
-                                                ModelState.AddModelError("DateDue",
-                                                    "DateDue value not supplied or not in the future.");
+                                                ModelState.AddModelError("DateDue", "DateDue value not supplied or not in the future.");
                                                 import = false;
                                             }
 
@@ -665,8 +668,7 @@ namespace Keas.Mvc.Controllers
                                 {
                                     if (!string.IsNullOrWhiteSpace(r.KerbUser))
                                     {
-                                        result.Messages.Add(
-                                            "Supplied kerbUser to assign not used as Serial was not Active.");
+                                        result.Messages.Add("Supplied kerbUser to assign not used as Serial was not Active.");
                                     }
                                 }
                             }
@@ -699,6 +701,11 @@ namespace Keas.Mvc.Controllers
                             try
                             {
                                 transaction.Commit();
+                                keyCount += recKeyCount;
+                                serialCount += recSerialCount;
+                                peopleCount += recPeopleCount;
+                                assignmentCount += recAssignmentCount;
+
                             }
                             catch (Exception e)
                             {
@@ -753,9 +760,7 @@ namespace Keas.Mvc.Controllers
                 }
             }
 
-            Message = string.Format(
-                "Successfully loaded {0} new keys, {1} new keySerials, {2} new and {3} reactivated team members, and {4} new assignments recorded. {5}",
-                keyCount, serialCount, peopleCount, reactivatedCount, assignmentCount, warning.ToString());
+            Message = $"Successfully loaded {keyCount} new keys, {serialCount} new keySerials, {peopleCount} new or reactivated team members, and {assignmentCount} new assignments recorded.";
             return View(resultsView);
 
         }
