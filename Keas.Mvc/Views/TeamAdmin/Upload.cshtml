@@ -125,8 +125,8 @@
                             @foreach (var item in Model)
                             {
                                 var style = string.Empty;
-                                if(!item.Success)
-                                {style="background-color: lightcoral";}
+                                if (!item.Success)
+                                { style = "background-color: lightcoral"; }
                                 <tr style="@style">
                                     <td>@item.LineNumber</td>
                                     <td>
@@ -173,16 +173,28 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-        <script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
 
     <script type="text/javascript">
         $(function () {
             $("#results").dataTable({
+                "dom": 'Bfrtip',
+                "buttons": [
+                    { extend: 'copyHtml5', footer: true },
+                    { extend: 'excelHtml5', footer: true },
+                    { extend: 'csvHtml5', footer: true },
+                    { extend: 'print', footer: true},
+                ],
                 "pageLength": 100,
-                 "columnDefs": [
+                "columnDefs": [
                     { "width": "10%;", "targets": [2] },
-                    { "type": "date", "targets": [6, 7]},
-                    { "type": "bool", "targets": [1]}
+                    { "type": "date", "targets": [6, 7] },
+                    { "type": "bool", "targets": [1] }
                 ]
             });
         });
@@ -191,5 +203,6 @@
 
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" />
 }
 
