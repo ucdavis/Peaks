@@ -61,10 +61,6 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     public render() {
-        const permissionArray = ["SpaceMaster", "DepartmentalAdmin", "Admin"];
-        if (!PermissionsUtil.canViewSpace(this.context.permissions)) {
-            return <Denied viewName="Space" />;
-        }
 
         if (this.state.loading) {
             return <h2>Loading...</h2>;

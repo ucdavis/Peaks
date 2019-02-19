@@ -25,7 +25,7 @@
         return r.some(a => permissionArray.includes(a));
     }
 
-    public static canViewSpace(r: string[]) {
+    public static canViewWorkstations(r: string[]) {
         const permissionArray = ['SpaceMaster', 'DepartmentalAdmin', 'Admin'];
         return r.some(a => permissionArray.includes(a));
     }
