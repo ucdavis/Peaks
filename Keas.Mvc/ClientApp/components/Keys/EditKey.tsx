@@ -11,7 +11,7 @@ interface IProps {
     closeModal: () => void;
     selectedKey: IKey;
     searchableTags: string[];
-    checkIfKeyCodeIsValid: (code: string) => boolean;
+    checkIfKeyCodeIsValid: (code: string, id: number) => boolean;
 }
 
 interface IState {
@@ -82,6 +82,7 @@ export default class EditKey extends React.Component<IProps, IState> {
                             />
                         </form>
                     </div>
+                    {this.state.error}
                 </ModalBody>
                 <ModalFooter>
                     <Button
@@ -144,7 +145,7 @@ export default class EditKey extends React.Component<IProps, IState> {
         } else if (key.code.length > 64) {
             valid = false;
             error = "The name you have chosen is too long";
-        } else if (!this.props.checkIfKeyCodeIsValid(key.code)) {
+        } else if (!this.props.checkIfKeyCodeIsValid(key.code, key.id)) {
             valid = false;
             error = "The code you have chosen is already in use."
         }

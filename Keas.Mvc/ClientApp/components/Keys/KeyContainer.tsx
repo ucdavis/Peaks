@@ -116,7 +116,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         modal={keyAction === "edit"}
                         selectedKey={selectedKey}
                         searchableTags={tags}
-                        checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValid}
+                        checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValidOnEdit}
                     />
                     <DeleteKey
                         selectedKey={selectedKey}
@@ -269,6 +269,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
     private _checkIfKeyCodeIsValid = (code: string) => {
         const keyCodes = this.state.keys.map(x => x.key.code);
+        return keyCodes.indexOf(code) === -1;
+    }
+
+    private _checkIfKeyCodeIsValidOnEdit = (code: string, id: number) => {
+        const keyCodes = this.state.keys.map(x => x.key.id !== id && x.key.code);
+        debugger;
         return keyCodes.indexOf(code) === -1;
     }
 
