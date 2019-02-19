@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Models.KeyViewModels;
+using Dapper;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -54,20 +55,29 @@ namespace Keas.Mvc.Controllers.Api
         // List all keys for a team
         public async Task<IActionResult> List()
         {
-            var keys =
-            from key in _context.Keys.Where(x => x.Team.Slug == Team)
-                .AsNoTracking()
-            select new
+            var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
+
+            var sql = KeyQueries.List;
+
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId });
+
+            var keys = result.Select(r => new
             {
-                key = key,
-                id = key.Id,
-                serialsTotalCount = (from s in key.Serials where s.Status == "Active" select s).Count(),
-                serialsInUseCount =
-                    (from s in key.Serials where s.KeySerialAssignment != null && s.Status == "Active" select s).Count(),
-                spacesCount =
-                    (key.KeyXSpaces).Count(),
-            };
-            return Json(await keys.ToListAsync());
+                key = new Key
+                {
+                    Id = r.Id,
+                    Code = r.Code,
+                    Name = r.Name,
+                    TeamId = r.TeamId,
+                    Tags = r.Tags
+                },
+                id = r.Id,
+                SpacesCount = r.SpacesCount,
+                SerialsInUseCount = r.SerialsInUseCount,
+                SerialsTotalCount = r.SerialsTotalCount
+            });
+
+            return Json(keys);
         }
 
         // list all keys for a space
