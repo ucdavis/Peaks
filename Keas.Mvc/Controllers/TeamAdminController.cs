@@ -451,7 +451,7 @@ namespace Keas.Mvc.Controllers
                         if (!string.IsNullOrWhiteSpace(r.KeyCode) && !r.KeyCode.Contains("AEXMPLE"))
                         {
                             var key = await _context.Keys.SingleOrDefaultAsync(k =>
-                                k.Team.Slug == Team &&
+                                k.Team.Slug == Team && k.Active &&
                                 k.Code.Equals(r.KeyCode.Trim(), StringComparison.OrdinalIgnoreCase));
                             if (key == null)
                             {
@@ -484,7 +484,7 @@ namespace Keas.Mvc.Controllers
                             if (!string.IsNullOrWhiteSpace(r.SerialNumber))
                             {
                                 var serial = await _context.KeySerials.SingleOrDefaultAsync(s =>
-                                    s.KeyId == key.Id && s.Number.Equals(r.SerialNumber.Trim(),
+                                    s.KeyId == key.Id && s.Active && s.Number.Equals(r.SerialNumber.Trim(),
                                         StringComparison.OrdinalIgnoreCase));
                                 if (serial == null)
                                 {
