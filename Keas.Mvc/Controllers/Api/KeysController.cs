@@ -90,7 +90,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Key)
                     .ThenInclude(key => key.Serials)
                         .ThenInclude(serials => serials.KeySerialAssignment)
-                            .ThenInclude(assignment => assignment.Person.User)
+                            .ThenInclude(assignment => assignment.Person)
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -159,7 +159,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Team)
                 .Include(x => x.Serials)
                     .ThenInclude(serials => serials.KeySerialAssignment)
-                        .ThenInclude(assignment => assignment.Person.User)
+                        .ThenInclude(assignment => assignment.Person)
                 .SingleAsync(x => x.Id == id);
 
             if (await _context.Keys.AnyAsync(a => a.Id != key.Id && a.Team.Slug == Team && a.Code.Equals(model.Code.Trim(), StringComparison.OrdinalIgnoreCase)))
@@ -186,7 +186,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Team)
                 .Include(x => x.Serials)
                     .ThenInclude(serials => serials.KeySerialAssignment)
-                        .ThenInclude(assignment => assignment.Person.User)
+                        .ThenInclude(assignment => assignment.Person)
                 .Include(x => x.KeyXSpaces)
                 .SingleAsync(x => x.Id == id);
 
