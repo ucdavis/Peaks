@@ -11,7 +11,7 @@ interface IProps {
     onOpenModal: () => void;
     closeModal: () => void;
     searchableTags: string[];
-    keyCodes: string[];
+    checkIfKeyCodeIsValid: (code: string) => boolean;
 }
 
 interface IState {
@@ -161,7 +161,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
         } else if (key.code.length > 64) {
             valid = false;
             error = "The code you have chosen is too long";
-        } else if (this.props.keyCodes.indexOf(key.code) !== -1) {
+        } else if (!this.props.checkIfKeyCodeIsValid(key.code)) {
             valid = false;
             error = "The code you have chosen is already in use."
         }

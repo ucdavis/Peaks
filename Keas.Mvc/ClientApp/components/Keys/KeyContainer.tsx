@@ -87,7 +87,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
         const selectedKey = selectedKeyInfo ? selectedKeyInfo.key : null;
 
-        const keyCodes = this.state.keys.map(x => x.key.code);
         return (
             <div className="card keys-color">
                 <div className="card-header-keys">
@@ -108,7 +107,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                             closeModal={this._closeModals}
                             modal={keyAction === "create"}
                             searchableTags={tags}
-                            keyCodes={keyCodes}
+                            checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValid}
                         />
                     )}
                     <EditKey
@@ -266,6 +265,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
         return keyInfo;
     };
+
+    private _checkIfKeyCodeIsValid = (code: string) => {
+        const keyCodes = this.state.keys.map(x => x.key.code);
+        return keyCodes.indexOf(code) === -1;
+    }
 
     private _editKey = async (key: IKey) => {
         const index = this.state.keys.findIndex(x => x.id === key.id);
