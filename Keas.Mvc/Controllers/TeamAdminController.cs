@@ -403,6 +403,9 @@ namespace Keas.Mvc.Controllers
         {
             var resultsView = new List<KeyImportResults>();
 
+            var userIdentity = User.Identity.Name;
+            var userName = User.GetNameClaim();
+
             var keyCount = 0;
             var serialCount = 0;
             var peopleCount = 0;
@@ -587,8 +590,8 @@ namespace Keas.Mvc.Controllers
 
                                             assignment.PersonId = person.Id;
                                             assignment.KeySerialId = serial.Id;
-                                            assignment.RequestedById = User.Identity.Name;
-                                            assignment.RequestedByName = User.GetNameClaim();
+                                            assignment.RequestedById = userIdentity;
+                                            assignment.RequestedByName = userName;
                                             serial.KeySerialAssignment = assignment;
 
 
@@ -642,8 +645,8 @@ namespace Keas.Mvc.Controllers
                                             {
                                                 assignment.PersonId = person.Id;
                                                 assignment.KeySerialId = serial.Id;
-                                                assignment.RequestedById = User.Identity.Name;
-                                                assignment.RequestedByName = User.GetNameClaim();
+                                                assignment.RequestedById = userIdentity;
+                                                assignment.RequestedByName = userName;
                                             }
                                         }
                                     }
