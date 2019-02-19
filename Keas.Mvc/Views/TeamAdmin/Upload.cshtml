@@ -130,7 +130,7 @@
                                 <tr style="@style">
                                     <td>@item.LineNumber</td>
                                     <td>
-                                        @Html.DisplayFor(a => item.Success)
+                                        @item.Success.ToYesNoString()
                                     </td>
                                     <td style="word-wrap: break-word; word-break: break-all; white-space: normal;">
                                         @Html.DisplayFor(a => item.Import.KeyName)
@@ -183,7 +183,7 @@
     <script type="text/javascript">
         $(function () {
             $("#results").dataTable({
-                "dom": 'Bfrtip',
+                
                 "buttons": [
                     { extend: 'copyHtml5', footer: true },
                     { extend: 'excelHtml5', footer: true },

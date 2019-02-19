@@ -410,6 +410,7 @@ namespace Keas.Mvc.Controllers
             var serialCount = 0;
             var peopleCount = 0;
             var assignmentCount = 0;
+            var errorCount = 0;
             //var reactivatedCount = 0; Not used
             var rowNumber = 1;
             bool import = true;
@@ -711,6 +712,7 @@ namespace Keas.Mvc.Controllers
                             {
                                 result.Success = false;
                                 result.ErrorMessage = $"{result.ErrorMessage} There was a problem saving this record.";
+                                errorCount += 1;
                             }
 
                         }
@@ -718,6 +720,7 @@ namespace Keas.Mvc.Controllers
                         {
                             if (somethingSaved)
                             {
+                                errorCount += 1;
                                 transaction.Rollback();
                                 if (!string.IsNullOrWhiteSpace(r.KerbUser))
                                 {
@@ -765,6 +768,10 @@ namespace Keas.Mvc.Controllers
             }
 
             Message = $"Successfully loaded {keyCount} new keys, {serialCount} new keySerials, {peopleCount} new or reactivated team members, and {assignmentCount} new assignments recorded.";
+            if (errorCount > 0)
+            {
+                ErrorMessage = $"{errorCount} rows not imported due to errors.";
+            }
             return View(resultsView);
 
         }
