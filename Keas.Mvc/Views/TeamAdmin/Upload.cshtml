@@ -183,18 +183,16 @@
     <script type="text/javascript">
         $(function () {
             $("#results").dataTable({
-                
+                "dom": 'lBfrtip',
                 "buttons": [
-                    { extend: 'copyHtml5', footer: true },
-                    { extend: 'excelHtml5', footer: true },
-                    { extend: 'csvHtml5', footer: true },
-                    { extend: 'print', footer: true},
+                    { extend: 'copyHtml5' },
+                    { extend: 'excelHtml5' },
+                    { extend: 'csvHtml5' },
+                    { extend: 'print'},
                 ],
-                "pageLength": 100,
                 "columnDefs": [
                     { "width": "10%;", "targets": [2] },
                     { "type": "date", "targets": [6, 7] },
-                    { "type": "bool", "targets": [1] }
                 ]
             });
         });
@@ -204,5 +202,11 @@
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" />
+    <style>
+        .dt-buttons {
+            padding-left: 50px;
+            padding-bottom: 20px;
+        }
+    </style>
 }
 
