@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Extensions;
+using Keas.Core.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers.Api
 {
-    [Authorize(Policy = "DepartmentAdminAccess")]
+   [Authorize(Policy = AccessCodes.Codes.DepartmentAdminAccess)]
     public class PeopleAdminController : SuperController
     {
         private readonly ApplicationDbContext _context;
