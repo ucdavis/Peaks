@@ -56,11 +56,6 @@ namespace Keas.Mvc.Controllers.Api
         {
             var keys =
             from key in _context.Keys.Where(x => x.Team.Slug == Team)
-                .Include(x => x.Serials)
-                    .ThenInclude(serials => serials.KeySerialAssignment)
-                        .ThenInclude(assignment => assignment.Person.User)
-                .Include(x => x.KeyXSpaces)
-                    .ThenInclude(xs => xs.Space)
                 .AsNoTracking()
             select new
             {

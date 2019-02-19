@@ -34,7 +34,7 @@ namespace Keas.Mvc.Controllers.Api
             var comparison = StringComparison.InvariantCultureIgnoreCase;
 
             var query = _context.KeySerials
-                .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active && x.KeySerialAssignment == null);
+                .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active);
 
             foreach (var term in terms)
             {
@@ -45,6 +45,34 @@ namespace Keas.Mvc.Controllers.Api
 
             var keySerials = await query
                 .Include(x => x.Key)
+                .Include(x => x.KeySerialAssignment)
+                .OrderBy(x => x.KeySerialAssignment != null).ThenBy(x => x.Number)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Json(keySerials);
+        }
+     public async Task<IActionResult> SearchInKey(int keyId, string q)
+        {
+            // break out the query into terms
+            var terms = q.Split(' ');
+
+            var comparison = StringComparison.InvariantCultureIgnoreCase;
+
+            var query = _context.KeySerials
+                .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active && x.Key.Id == keyId);
+
+            foreach (var term in terms)
+            {
+                query = query.Where(x => x.Key.Name.StartsWith(term, comparison)
+                                        || x.Key.Code.StartsWith(term, comparison)
+                                        || x.Number.StartsWith(term, comparison));
+            }
+
+            var keySerials = await query
+                .Include(x => x.Key)
+                .Include(x => x.KeySerialAssignment)
+                .OrderBy(x => x.KeySerialAssignment != null).ThenBy(x => x.Number)
                 .AsNoTracking()
                 .ToListAsync();
 
