@@ -5,6 +5,7 @@ using Dapper;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Extensions;
+using Keas.Core.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers.Api
 {
-    [Authorize(Policy = "AnyRole")]
+   [Authorize(Policy = AccessCodes.Codes.AnyRole)]
     public class PeopleController : SuperController
     {
         private readonly ApplicationDbContext _context;
