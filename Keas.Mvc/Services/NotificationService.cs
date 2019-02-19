@@ -98,7 +98,7 @@ namespace Keas.Mvc.Services
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, keySerial.Key.TeamId);
-            var assignedTo = await _dbContext.Users.SingleAsync(u => u == keySerial.KeySerialAssignment.Person.User);
+            var assignedTo = await _dbContext.Users.SingleAsync(u => u.Id == keySerial.KeySerialAssignment.Person.UserId);
             if (!users.Contains(assignedTo)){
                 users.Add(assignedTo);
             }
@@ -142,7 +142,7 @@ namespace Keas.Mvc.Services
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, equipment.TeamId);
-            var assignedTo = await _dbContext.Users.SingleAsync(u => u == equipment.Assignment.Person.User);
+            var assignedTo = await _dbContext.Users.SingleAsync(u => u.Id == equipment.Assignment.Person.UserId);
             if (!users.Contains(assignedTo)){
                 users.Add(assignedTo);
             } 
@@ -185,7 +185,7 @@ namespace Keas.Mvc.Services
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.AccessMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, teamName);
-            var assignedTo = await _dbContext.Users.SingleAsync(u => u == accessAssignment.Person.User);
+            var assignedTo = await _dbContext.Users.SingleAsync(u => u.Id == accessAssignment.Person.UserId);
             if (!users.Contains(assignedTo)){
                 users.Add(assignedTo);
             }
@@ -254,7 +254,7 @@ namespace Keas.Mvc.Services
             var roles = await _dbContext.Roles
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, workstation.TeamId);
-            var assignedTo = await _dbContext.Users.SingleAsync(u => u == workstation.Assignment.Person.User);
+            var assignedTo = await _dbContext.Users.SingleAsync(u => u.Id == workstation.Assignment.Person.UserId);
             if (!users.Contains(assignedTo)){
                 users.Add(assignedTo);
             } 

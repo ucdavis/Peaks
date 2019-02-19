@@ -78,7 +78,7 @@ namespace Keas.Mvc.Controllers.Api
             var people = await _context.People
                 .Where(x => x.Team.Slug == Team && x.Active &&
                 (x.Email.IndexOf(q, comparison) >= 0 || x.Name.IndexOf(q, comparison) >= 0)) // case-insensitive version of .Contains
-                .Include(x => x.User).AsNoTracking().ToListAsync();
+                .AsNoTracking().ToListAsync();
 
             return Json(people);
         }

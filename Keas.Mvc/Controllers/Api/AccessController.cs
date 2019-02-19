@@ -34,7 +34,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
-            var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person.User)
+            var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person)
                 .Where(x => x.Team.Slug == Team && x.Active &&
                 (x.Name.StartsWith(q, comparison))) //|| x.SerialNumber.StartsWith(q, comparison)))
                 .AsNoTracking().ToListAsync();
@@ -45,7 +45,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> ListAssigned(int personId) {
             var assignedAccess = await _context.Access 
                 .Where(x => x.Active && x.Team.Slug == Team && x.Assignments.Any(y => y.Person.Id == personId))
-                .Include(x => x.Assignments).ThenInclude(x => x.Person.User)
+                .Include(x => x.Assignments).ThenInclude(x => x.Person)
                 .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
 
@@ -58,7 +58,6 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Team.Slug == Team)
                 .Include(x=> x.Assignments)
                 .ThenInclude(x => x.Person)
-                .ThenInclude(x => x.User)
                 .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
 
@@ -92,7 +91,7 @@ namespace Keas.Mvc.Controllers.Api
                     RequestedByName = User.GetNameClaim(),
                     ExpiresAt = DateTime.Parse(date),
                 };
-                accessAssignment.Person = await _context.People.Include(p => p.User).SingleAsync(p => p.Id == personId);
+                accessAssignment.Person = await _context.People.SingleAsync(p => p.Id == personId);
                 access.Assignments.Add(accessAssignment);
                 await _context.SaveChangesAsync();
                 await _eventService.TrackAssignAccess(accessAssignment, Team);

@@ -59,7 +59,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.KeyId == keyid)
                 .Include(x => x.Key)
                 .Include(s => s.KeySerialAssignment)
-                    .ThenInclude(assignment => assignment.Person.User)
+                    .ThenInclude(assignment => assignment.Person)
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -74,7 +74,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.KeySerialAssignment.PersonId == personId)
                 .Include(x => x.Key)
                 .Include(x => x.KeySerialAssignment)
-                    .ThenInclude(assingment => assingment.Person.User)
+                    .ThenInclude(assingment => assingment.Person)
                 .AsNoTracking()
                 .ToArrayAsync();
 
@@ -137,7 +137,7 @@ namespace Keas.Mvc.Controllers.Api
             var keySerial = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team && x.Active)
                 .Include(x => x.KeySerialAssignment)
-                    .ThenInclude(assingment => assingment.Person.User)
+                    .ThenInclude(assingment => assingment.Person)
                 .SingleOrDefaultAsync(k => k.Id == id);
 
             if (keySerial == null)
@@ -186,7 +186,6 @@ namespace Keas.Mvc.Controllers.Api
 
             // find person
             var person = await _context.People
-                .Include(p => p.User)
                 .SingleAsync(p => p.Id == model.PersonId);
 
 
