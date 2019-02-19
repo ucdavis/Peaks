@@ -5,12 +5,14 @@ using System.Threading.Tasks;
 using Dapper;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers.Api
 {
+    [Authorize(Policy = "AnyRole")]
     public class SpacesController : SuperController
     {
         private readonly ApplicationDbContext _context;
