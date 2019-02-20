@@ -459,6 +459,7 @@ namespace Keas.Mvc.Controllers
                                 key.Code = r.KeyCode.ToUpper().Trim();
                                 key.TeamId = team.Id;
                                 key.Name = r.KeyName.Trim();
+                                key.Tags = "Imported";
 
                                 ModelState.Clear();
                                 TryValidateModel(key);
