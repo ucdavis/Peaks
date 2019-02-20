@@ -1,0 +1,38 @@
+@model Keas.Mvc.Models.KeyValueReportViewModel
+
+@{
+    ViewData["Title"] = "Key/Values used by Team";
+}
+
+<div class="card">
+    <div class="card-header-primary-thick">
+        <div class="card-head">
+            <h2>Key/Value Pairs in Equipment</h2>
+
+        </div>
+    </div>
+    <div class="card-content">
+        <table class="table dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        Key
+                    </th>
+                    <th>
+                        Values
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pair in Model.KeyPairs)
+                {
+                    <tr>
+                        <td>@pair.Key</td>
+                        <td>@pair.ValuesList</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
