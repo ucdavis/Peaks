@@ -61,7 +61,7 @@ namespace Keas.Mvc.Controllers
             return View(teams);
         }
         
-        [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
+        
         public async Task<IActionResult> UnAcceptedItems(string showType = "All")
         {
             var userRoles = await _securityService.GetUserRolesInTeamOrAdmin(Team);
@@ -70,6 +70,7 @@ namespace Keas.Mvc.Controllers
 
         }
 
+        [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
         public async Task<IActionResult> KeyValues()
         {
             var model = await KeyValueReportViewModel.Create(_context, Team);
