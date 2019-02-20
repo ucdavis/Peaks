@@ -1,0 +1,22 @@
+@model System.Collections.Generic.List<Keas.Core.Domain.Tag>
+
+@{
+    ViewData["Title"] = "Tags For My Team";
+}
+
+<div class="card">
+    <div class="card-header-primary-thick">
+        <div class="card-head">
+            <h2>Tags</h2>
+
+        </div>
+    </div>
+    <div class="card-content">
+        <ul>
+            @foreach (var item in Model)
+            {
+                <li>@item.Name</li>                
+            }
+        </ul>        
+    </div>
+</div>

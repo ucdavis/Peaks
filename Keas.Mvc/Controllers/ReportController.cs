@@ -76,5 +76,11 @@ namespace Keas.Mvc.Controllers
             var model = await KeyValueReportViewModel.Create(_context, Team);
             return View(model);
         }
+
+        public async Task<IActionResult> Tags()
+        {
+            var model = await _context.Tags.Where(t => t.Team.Slug == Team).OrderBy(t => t.Name).ToListAsync();
+            return View(model);
+        }
     }
 }
