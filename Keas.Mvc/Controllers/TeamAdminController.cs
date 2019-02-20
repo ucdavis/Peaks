@@ -415,7 +415,6 @@ namespace Keas.Mvc.Controllers
             var rowNumber = 1;
             bool import = true;
             bool somethingSaved = false;
-            //StringBuilder warning = new StringBuilder();
 
             if (file == null || file.Length == 0)
             {
@@ -466,15 +465,13 @@ namespace Keas.Mvc.Controllers
                                 if (ModelState.IsValid)
                                 {
                                     _context.Keys.Add(key);
-                                    //keyCount += 1;
                                     recKeyCount += 1;
                                     result.Messages.Add("Key Added.");
                                 }
                                 else
                                 {
                                     result.Success = false;
-                                    result.ErrorMessage = $"Invalid Key values Error(s): {GetModelErrors(ModelState)} ";
-                                    //warning.Append(String.Format("Could not save key in line {0} | ", rowNumber));
+                                    result.ErrorMessage.Add($"Invalid Key values Error(s): {GetModelErrors(ModelState)} ");
                                 }
                             }
                             else
@@ -528,16 +525,13 @@ namespace Keas.Mvc.Controllers
                                     if (ModelState.IsValid && result.Success)
                                     {
                                         _context.KeySerials.Add(serial);
-                                        //serialCount += 1;
                                         recSerialCount += 1;
                                         result.Messages.Add("Serial Added.");
                                     }
                                     else
                                     {
-                                        //TODO: Write the errors to a list including the Field name. Then have result.ErrorMessage parse that out nicely. (Just a getter)
                                         result.Success = false;
-                                        result.ErrorMessage = $"{result.ErrorMessage}Invalid Serial values Error(s): {GetModelErrors(ModelState)} ";
-                                        //warning.Append(String.Format("Could not save serial in line {0} | ", rowNumber));
+                                        result.ErrorMessage.Add($"Invalid Serial values Error(s): {GetModelErrors(ModelState)} ");
                                     }
 
                                 }
@@ -554,7 +548,6 @@ namespace Keas.Mvc.Controllers
                                     try
                                     {
                                         var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id);
-                                        //peopleCount += personResult.peopleCount;
                                         recPeopleCount += personResult.peopleCount;
                                         person = personResult.Person;
                                     }
@@ -562,14 +555,14 @@ namespace Keas.Mvc.Controllers
                                     {
                                         person = null;
                                         result.Success = false;
-                                        result.ErrorMessage = $"{result.ErrorMessage}!!!!!!!!!!!!!THERE IS A PROBLEM WITH KerbUser {r.KerbUser} PLEASE CONTACT PEAKS HELP with this User ID.!!!!!!!!!!!!!!!";
+                                        result.ErrorMessage.Add($"!!!!!!!!!!!!!THERE IS A PROBLEM WITH KerbUser {r.KerbUser} PLEASE CONTACT PEAKS HELP with this User ID.!!!!!!!!!!!!!!!");
                                     }
 
 
                                     if (person == null)
                                     {
                                         result.Success = false;
-                                        result.ErrorMessage = $"{result.ErrorMessage}KerbUser not found.";
+                                        result.ErrorMessage.Add($"KerbUser not found.");
                                     }
                                     else
                                     {
@@ -619,14 +612,12 @@ namespace Keas.Mvc.Controllers
                                                 somethingSaved = true;
                                                 serial.KeySerialAssignment = assignment;
                                                 serial.KeySerialAssignmentId = assignment.Id;
-                                                //assignmentCount += 1;
                                                 recAssignmentCount += 1;
                                             }
                                             else
                                             {
                                                 result.Success = false;
-                                                result.ErrorMessage = $"{result.ErrorMessage}Invalid Assignment values Error(s): {GetModelErrors(ModelState)} ";
-                                                //warning.Append(String.Format("Could not save assignment in line {0} | ", rowNumber));
+                                                result.ErrorMessage.Add($"Invalid Assignment values Error(s): {GetModelErrors(ModelState)} ");
                                                 //Clear out values on error, otherwise it can throw a foreign key exception the next time through for the same person
                                                 assignment = new KeySerialAssignment();
                                                 serial.KeySerialAssignment = null;
@@ -662,6 +653,10 @@ namespace Keas.Mvc.Controllers
                                                 assignment.RequestedById = userIdentity;
                                                 assignment.RequestedByName = userName;
                                             }
+                                            else
+                                            {
+                                                result.ErrorMessage.Add($"Assignment not updated, error(s): {GetModelErrors(ModelState)}");
+                                            }
                                         }
                                     }
                                 }
@@ -694,7 +689,7 @@ namespace Keas.Mvc.Controllers
                         else
                         {
                             result.Success = false;
-                            result.ErrorMessage = "Key Code missing or Key Code contains AEXAMPLE. Line Ignored";
+                            result.ErrorMessage.Add("Key Code missing or Key Code contains AEXAMPLE. Line Ignored");
                         }
 
                         if (result.Success)
@@ -711,7 +706,7 @@ namespace Keas.Mvc.Controllers
                             catch (Exception e)
                             {
                                 result.Success = false;
-                                result.ErrorMessage = $"{result.ErrorMessage} There was a problem saving this record.";
+                                result.ErrorMessage.Add("There was a problem saving this record.");
                                 errorCount += 1;
                             }
 
@@ -743,17 +738,6 @@ namespace Keas.Mvc.Controllers
                                         _context.Entry(localPerson).State = EntityState.Detached;
                                     }
 
-                                    //var localAssignments = _context.Set<KeySerialAssignment>().Local.FirstOrDefault();
-                                    //if (localAssignments != null)
-                                    //{
-                                    //    _context.Entry(localAssignments).State = EntityState.Detached;
-                                    //}
-
-                                    //var localSerial = _context.Set<KeySerial>().Local.FirstOrDefault();
-                                    //if (localSerial != null)
-                                    //{
-                                    //    _context.Entry(localSerial).State = EntityState.Detached;
-                                    //}
                                 }
                             }
                         }

@@ -28,13 +28,14 @@ public class KeyImportResults
     public KeyImport Import { get; set; }
     public int LineNumber { get; set; }
     public bool Success { get; set; }
-    public string ErrorMessage { get; set; }
+    public List<string> ErrorMessage { get; set; }
 
     public List<string> Messages { get; set; }
 
     public KeyImportResults(KeyImport import)
     {
         Messages = new List<string>();
+        ErrorMessage = new List<string>();
         Import = new KeyImport
         {
             DateDue = import.DateDue,
@@ -50,5 +51,6 @@ public class KeyImportResults
     public KeyImportResults()
     {
         Messages = new List<string>();
+        ErrorMessage = new List<string>();
     }
 }
