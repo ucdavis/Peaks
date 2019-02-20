@@ -69,5 +69,11 @@ namespace Keas.Mvc.Controllers
             return View(model);
 
         }
+
+        public async Task<IActionResult> KeyValues()
+        {
+            var model = await KeyValueReportViewModel.Create(_context, Team);
+            return View(model);
+        }
     }
 }
