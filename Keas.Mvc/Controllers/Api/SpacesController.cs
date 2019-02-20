@@ -78,10 +78,15 @@ namespace Keas.Mvc.Controllers.Api
                 keyCount = r.KeyCount,
                 workstationsTotal = r.WorkstationsTotalCount,
                 workstationsInUse = r.WorkstationsInUseCount,
-                tags = r.Tags
+                tags = removeDuplications(r.Tags)
             });
 
             return Json(spaces);
+        }
+
+        private string removeDuplications(string tags) 
+        {
+            return !string.IsNullOrWhiteSpace(tags) ? string.Join(",", tags.ToString().Split(',').Distinct().ToArray()) : "";
         }
 
         public async Task<IActionResult> GetSpacesForKey(int keyId)

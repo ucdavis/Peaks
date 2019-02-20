@@ -7,7 +7,7 @@ interface IProps {
 }
 
 export default class SpacesDetailContainer extends React.Component<IProps, {}> {
-    public render() {
+    public render() {        
         return (
             <div>
                 <div>
