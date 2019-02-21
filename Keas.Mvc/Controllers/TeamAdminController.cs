@@ -491,22 +491,7 @@ namespace Keas.Mvc.Controllers
                                     serial.Number = r.SerialNumber.Trim();
                                     serial.Name = r.SerialNumber.Trim();
                                     serial.Key = key;
-                                    switch (r.Status)
-                                    {
-                                        case "Active":
-                                            serial.Status = "Active";
-                                            break;
-                                        case "Lost":
-                                            serial.Status = "Lost";
-                                            break;
-                                        case "Destroyed":
-                                            serial.Status = "Destroyed";
-                                            break;
-                                        default:
-                                            result.Messages.Add("Key status defaulted to Active.");
-                                            serial.Status = "Active";
-                                            break;
-                                    }
+                                    serial.Status = SetStatus(r.Status, result);
 
                                     serial.TeamId = team.Id;
 
@@ -761,5 +746,20 @@ namespace Keas.Mvc.Controllers
 
         }
 
+        private static string SetStatus(string status, KeyImportResults result)
+        {
+            switch (status)
+            {
+                case "Active":
+                    return("Active");
+                case "Lost":
+                    return("Lost");
+                case "Destroyed":
+                    return("Destroyed");
+                default:
+                    result.Messages.Add("Key status defaulted to Active.");
+                    return("Active");
+            }
+        }
     }
 }
