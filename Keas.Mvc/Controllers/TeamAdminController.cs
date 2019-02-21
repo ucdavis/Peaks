@@ -754,7 +754,7 @@ namespace Keas.Mvc.Controllers
 
         public IActionResult UploadEquipment()
         {
-            var model = new List<KeyImportResults>();
+             var model = new List<KeyImportResults>();
             return View(model);
 
         }
