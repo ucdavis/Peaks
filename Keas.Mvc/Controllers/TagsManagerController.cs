@@ -42,11 +42,6 @@ namespace Keas.Mvc.Controllers
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
             if (ModelState.IsValid)
             {
-                if (newTag.Name.Contains(","))
-                {
-                    ModelState.AddModelError("Name", "The tag may not contain a comma");
-                }
-
                 if (!string.IsNullOrWhiteSpace(newTag.Name))
                 {
                     if (await _context.Tags.AnyAsync(a => a.TeamId == team.Id && a.Name.Equals(newTag.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
@@ -92,11 +87,6 @@ namespace Keas.Mvc.Controllers
 
             if (ModelState.IsValid)
             {
-                if (updatedTag.Name.Contains(","))
-                {
-                    ModelState.AddModelError("Name", "The tag may not contain a comma");
-                }
-
                 if (!string.IsNullOrWhiteSpace(updatedTag.Name))
                 {
                     if (await _context.Tags.AnyAsync(a => a.Id != id && a.Team.Slug == Team && a.Name.Equals(updatedTag.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
