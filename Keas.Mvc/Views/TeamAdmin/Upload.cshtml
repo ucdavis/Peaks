@@ -1,164 +1,30 @@
-@using Keas.Core.Extensions
-@model List<KeyImportResults>
 
 @{
-    ViewData["Title"] = "Upload CSV Keys File";
+    ViewData["Title"] = "Upload CSV";
 }
-<div class="row justify-content-between">
-    <div class="col-md-9">
-        <div class="card">
-            <div class="card-header-primary">
-                <div class="card-head">
-                    <h2>Upload a CSV File for Key import</h2>
-                </div>
-            </div>
-            <div class="card-content">
-                <form asp-action="Upload" method="post" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <fieldset>
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-md-10">Select CSV file to upload:</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <input type="hidden" id="filename" name="filename" value="">
-                                            <input type="file" id="file" name="file" class="form-control" accept=".csv">
-                                            <div class="input-group-btn">
-                                                <input type="submit" value="Upload CSV" class="btn btn-primary">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
+
+
+    <div class="card primary-color">
+        <div class="card-header-primary-thick">
+            <div class="card-head">
+                <h2>Upload Keys</h2>
             </div>
         </div>
-        @if (Model == null || Model.Count <= 0)
-        {
-            <div class="card">
-                <div class="card-header-primary">
-                    <div class="card-head">
-                        <h2>Instructions/Example</h2>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
-                    <p><b>KeyName, KeyCode, SerialNumber, KerbUser, DateIssued, DateDue, Status</b></p>
-                    <p>Example <a href="@Url.Content("~/files/csv_example.csv")">CSV file.</a></p>
-                    <dl>
-                        <dt>KeyName</dt>
-                        <dd>Description of key (e.g. Example Hall exterior doors). If the same KeyCode appears later in the document, only the first KeyName will be used.</dd>
-                        <dt>KeyCode</dt>
-                        <dd>Number for this key. First part of number on key</dd>
-                        <dt>SerialNumber</dt>
-                        <dd>Identifier for this key within given KeyCode. Usually the second part of number on key. If serial is blank, the key will be created without any serials.</dd>
-                        <dt>KerbUser</dt>
-                        <dd>Kerberos ID of the person this serial is assigned to. May be left blank. If no ID provided, no assignment will be created</dd>
-                        <dt>DateIssue</dt>
-                        <dd>Date this serial was issued to the person</dd>
-                        <dt>DateDue</dt>
-                        <dd>Date this key should be returned</dd>
-                        <dt>Status</dt>
-                        <dd>Status of this serial. Valid entries are "Active", "Lost", "Destroyed". If blank, serial will be set to "Active"</dd>
-                    </dl>
-                </div>
-            </div>
-        }
-    </div>
-    <div class="col-md-3">
-        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-    </div>
-    @if (Model != null && Model.Count > 0)
-    {
-        <div style="padding-top: 15px">
-            <div class="card">
-                <div class="card-header-primary">
-                    <div class="card-head">
-                        <h2>Import Results</h2>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <table id="results" class="table dataTable">
-                        <thead>
-                            <tr>
-                                <th rowspan="2">Row</th>
-                                <th rowspan="2">Success</th>
-     
-                                <th colspan="7">CSV Imported Values</th>
-                                <th rowspan="2">Messages</th>
-                                <th rowspan="2">Errors</th>
-                            </tr>
-                            <tr>
-                                <th>KeyName</th>
-                                <th>KeyCode</th>
-                                <th>SerialNumber</th>
-                                <th>KerbUser</th>
-                                <th>DateIssued</th>
-                                <th>DateDue</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                var style = string.Empty;
-                                if (!item.Success)
-                                { style = "background-color: lightcoral"; }
-                                <tr style="@style">
-                                    <td>@item.LineNumber</td>
-                                    <td>
-                                        @item.Success.ToYesNoString()
-                                    </td>
-                                    <td style="word-wrap: break-word; word-break: break-all; white-space: normal;">
-                                        @Html.DisplayFor(a => item.Import.KeyName)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(a => item.Import.KeyCode)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(a => item.Import.SerialNumber)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(a => item.Import.KerbUser)
-                                    </td>
-                                    <td>
-                                        @item.Import.DateIssued.Format("d")
-                                    </td>
-                                    <td>
-                                        @item.Import.DateDue.Format("d")
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(a => item.Import.Status)
-                                    </td>
-
-                                    <th>
-                                        @string.Join(", ", item.Messages)
-                                    </th>
-                                    <th>
-                                        @string.Join(", ", item.ErrorMessage)
-                                    </th>
-                                </tr>
-                            }
-
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="card-content">
+            <a href="UploadKeys" class="btn btn-link">Upload Keys from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
         </div>
-    }
+    </div>
+
+
+<div class="card people-color">
+    <div class="card-header-people">
+        <div class="card-head">
+            <h2>Upload Equipment</h2>
+        </div>
+    </div>
+    <div class="card-content">
+        <a href="UploadEquipment" class="btn btn-link">Upload Equipment from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+    </div>
 </div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    @{ await Html.RenderPartialAsync("_ImportResultsScriptPartial");}
-}
-
-@section Styles {
-    @await Html.PartialAsync("_ImportResultsStylePartial")
-}
 

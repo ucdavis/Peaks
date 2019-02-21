@@ -393,13 +393,19 @@ namespace Keas.Mvc.Controllers
         }
 
         public IActionResult Upload()
+        {            
+            return View();
+        }
+
+        public IActionResult UploadKeys()
         {
-            var model = new List<KeyImportResults>();
+             var model = new List<KeyImportResults>();
             return View(model);
+
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upload(IFormFile file)
+        public async Task<IActionResult> UploadKeys(IFormFile file)
         {
             var resultsView = new List<KeyImportResults>();
 
@@ -743,6 +749,13 @@ namespace Keas.Mvc.Controllers
                 ErrorMessage = $"{errorCount} rows not imported due to errors.";
             }
             return View(resultsView);
+
+        }
+
+        public IActionResult UploadEquipment()
+        {
+            var model = new List<KeyImportResults>();
+            return View(model);
 
         }
 
