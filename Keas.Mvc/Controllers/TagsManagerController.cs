@@ -39,10 +39,27 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<ActionResult> Create( Tag newTag)
         {
+            var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
             if (ModelState.IsValid)
             {
-                var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
+                if (newTag.Name.Contains(","))
+                {
+                    ModelState.AddModelError("Name", "The tag may not contain a comma");
+                }
+
+                if (!string.IsNullOrWhiteSpace(newTag.Name))
+                {
+                    if (await _context.Tags.AnyAsync(a => a.TeamId == team.Id && a.Name.Equals(newTag.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
+                    {
+                        ModelState.AddModelError("Name", "This tag already exists (case insensitive)");
+                    }
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
                 newTag.Team = team;
+                newTag.Name = newTag.Name.Trim();
                 _context.Tags.Add(newTag);
                 await _context.SaveChangesAsync();
                 Message = "Tag created.";
@@ -72,19 +89,34 @@ namespace Keas.Mvc.Controllers
                 return NotFound();
             }
             var tagToUpdate = await _context.Tags.SingleAsync(t => t.Id == id && t.Team.Slug==Team);
-            if (await TryUpdateModelAsync<Tag>(tagToUpdate, "", t => t.Name))
+
+            if (ModelState.IsValid)
             {
-                try
+                if (updatedTag.Name.Contains(","))
                 {
-                    await _context.SaveChangesAsync();
-                    Message = "Tag updated.";
-                    return RedirectToAction(nameof(Index));
+                    ModelState.AddModelError("Name", "The tag may not contain a comma");
                 }
-                catch
+
+                if (!string.IsNullOrWhiteSpace(updatedTag.Name))
                 {
-                    ModelState.AddModelError("", "Unable to save changes.");
+                    if (await _context.Tags.AnyAsync(a => a.Id != id && a.Team.Slug == Team && a.Name.Equals(updatedTag.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
+                    {
+                        ModelState.AddModelError("Name", "This tag already exists (case insensitive)");
+                    }
                 }
             }
+
+            if (ModelState.IsValid)
+            {
+                tagToUpdate.Name = updatedTag.Name.Trim();
+                await _context.SaveChangesAsync();
+                Message = "Tag updated.";
+            }
+            else
+            {
+                ErrorMessage = "Tag not updated.";
+            }
+
             return View(updatedTag);
         }
         
