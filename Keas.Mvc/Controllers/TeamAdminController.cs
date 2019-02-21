@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
@@ -14,6 +15,7 @@ using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using System.Text;
 using Keas.Mvc.Extensions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Keas.Mvc.Controllers
 {
@@ -371,28 +373,55 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction("Index");
         }
 
+        private string GetModelErrors(ModelStateDictionary modelState)
+        {
+            var resultsList = new List<string>();
+            foreach(var result in modelState.Values)
+            {
+                foreach(var errs in result.Errors)
+                {
+                    resultsList.Add(errs.ErrorMessage);
+                }
+            }
+
+            var rtValue = "";
+            foreach(var s in resultsList)
+            {
+                rtValue = rtValue + "\n" + s;
+            }
+            return rtValue;
+        }
+
         public IActionResult Upload()
         {
-            return View();
+            var model = new List<KeyImportResults>();
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadCSV(IFormFile file)
+        public async Task<IActionResult> Upload(IFormFile file)
         {
+            var resultsView = new List<KeyImportResults>();
+
+            var userIdentity = User.Identity.Name;
+            var userName = User.GetNameClaim();
+
             var keyCount = 0;
             var serialCount = 0;
             var peopleCount = 0;
             var assignmentCount = 0;
-            var reactivatedCount = 0;
+            var errorCount = 0;
+            //var reactivatedCount = 0; Not used
             var rowNumber = 1;
             bool import = true;
-            StringBuilder warning = new StringBuilder();
+            bool somethingSaved = false;
 
             if (file == null || file.Length == 0)
             {
                 Message = "File not selected";
                 return RedirectToAction("Upload");
             }
+
             // Add counts
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
             using (var reader = new StreamReader(file.OpenReadStream()))
@@ -403,148 +432,334 @@ namespace Keas.Mvc.Controllers
                 var records = csv.EnumerateRecords(record);
                 foreach (var r in records)
                 {
-                    rowNumber += 1;
-                    if (!string.IsNullOrWhiteSpace(r.KeyCode) && !r.KeyCode.Contains("AEXMPLE"))
-                    {
-                        var key = await _context.Keys.SingleOrDefaultAsync(k => k.Team.Slug == Team && k.Code.Equals(r.KeyCode.Trim(), StringComparison.OrdinalIgnoreCase));
-                        if (key == null)
-                        {
-                            key = new Key();
-                            key.Code = r.KeyCode.ToUpper().Trim();
-                            key.TeamId = team.Id;
-                            key.Name = r.KeyName.Trim();
+                    var recKeyCount = 0;
+                    var recSerialCount = 0;
+                    var recPeopleCount = 0;
+                    var recAssignmentCount = 0;
 
-                            TryValidateModel(key);
-                            if (ModelState.IsValid)
+                    using (var transaction = await _context.Database.BeginTransactionAsync())
+                    {
+                        somethingSaved = false;
+                        rowNumber += 1;
+                        var result = new KeyImportResults(r)
+                        {
+                            LineNumber = rowNumber,
+                            Success = true
+                        };
+                        ModelState.Clear();
+
+                        if (!string.IsNullOrWhiteSpace(r.KeyCode) && !r.KeyCode.Contains("AEXMPLE"))
+                        {
+                            var key = await _context.Keys.SingleOrDefaultAsync(k =>
+                                k.Team.Slug == Team && k.Active &&
+                                k.Code.Equals(r.KeyCode.Trim(), StringComparison.OrdinalIgnoreCase));
+                            if (key == null)
                             {
-                                _context.Keys.Add(key);
-                                keyCount += 1;
+                                key = new Key();
+                                key.Code = r.KeyCode.ToUpper().Trim();
+                                key.TeamId = team.Id;
+                                key.Name = r.KeyName.Trim();
+                                key.Tags = "Imported";
+
+                                ModelState.Clear();
+                                TryValidateModel(key);
+                                if (ModelState.IsValid)
+                                {
+                                    _context.Keys.Add(key);
+                                    recKeyCount += 1;
+                                    result.Messages.Add("Key Added.");
+                                }
+                                else
+                                {
+                                    result.Success = false;
+                                    result.ErrorMessage.Add($"Invalid Key values Error(s): {GetModelErrors(ModelState)} ");
+                                }
                             }
                             else
                             {
-                                warning.Append(String.Format("Could not save key in line {0} | ", rowNumber));
+                                result.Messages.Add("Key Code already exists.");
                             }
-                        }
 
-                        if (!string.IsNullOrWhiteSpace(r.SerialNumber))
+                            if (!string.IsNullOrWhiteSpace(r.SerialNumber))
+                            {
+                                var serial = await _context.KeySerials.SingleOrDefaultAsync(s =>
+                                    s.KeyId == key.Id && s.Active && s.Number.Equals(r.SerialNumber.Trim(),
+                                        StringComparison.OrdinalIgnoreCase));
+                                if (serial == null)
+                                {
+                                    serial = new KeySerial();
+                                    serial.Number = r.SerialNumber.Trim();
+                                    serial.Name = r.SerialNumber.Trim();
+                                    serial.Key = key;
+                                    serial.Status = SetStatus(r.Status, result);
+
+                                    serial.TeamId = team.Id;
+
+                                    ModelState.Clear();
+                                    //TryValidateModel(serial); This seems really slow with a large load. Trying manually checking
+                                    if (string.IsNullOrWhiteSpace(serial.Name))
+                                    {
+                                        ModelState.AddModelError("KeySerial", "Name/Serial Number is required");
+                                    }
+                                    else
+                                    {
+                                        if (serial.Name.Length > 64)
+                                        {
+                                            ModelState.AddModelError("KeySerial", "Name/Serial Number has max 64 characters");
+                                        }
+                                    }
+                                    if (ModelState.IsValid && result.Success)
+                                    {
+                                        _context.KeySerials.Add(serial);
+                                        recSerialCount += 1;
+                                        result.Messages.Add("Serial Added.");
+                                    }
+                                    else
+                                    {
+                                        result.Success = false;
+                                        result.ErrorMessage.Add($"Invalid Serial values Error(s): {GetModelErrors(ModelState)} ");
+                                    }
+
+                                }
+                                else
+                                {
+                                    result.Messages.Add("Serial Number already exists.");
+                                }
+
+                                //r.Status should never be null or empty at this point, but it doesn't really matter.
+                                if (!string.IsNullOrWhiteSpace(r.KerbUser) &&
+                                    (r.Status == "Active" || string.IsNullOrWhiteSpace(r.Status)))
+                                {
+                                    Person person = null;
+                                    try
+                                    {
+                                        var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id);
+                                        recPeopleCount += personResult.peopleCount;
+                                        person = personResult.Person;
+                                    }
+                                    catch (Exception)
+                                    {
+                                        person = null;
+                                        result.Success = false;
+                                        result.ErrorMessage.Add($"!!!!!!!!!!!!!THERE IS A PROBLEM WITH KerbUser {r.KerbUser} PLEASE CONTACT PEAKS HELP with this User ID.!!!!!!!!!!!!!!!");
+                                    }
+
+
+                                    if (person == null)
+                                    {
+                                        result.Success = false;
+                                        result.ErrorMessage.Add($"KerbUser not found.");
+                                    }
+                                    else
+                                    {
+                                        ModelState.Clear();
+                                        var assignment =
+                                            await _context.KeySerialAssignments.SingleOrDefaultAsync(a =>
+                                                a.KeySerialId == serial.Id);
+                                        import = true;
+                                        if (assignment == null)
+                                        {
+
+                                            assignment = new KeySerialAssignment();
+                                            if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
+                                            {
+                                                assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                            }
+                                            else
+                                            {
+                                                ModelState.AddModelError("DateIssued",
+                                                    "DateIssued value not supplied or not in the past.");
+                                                import = false;
+                                            }
+
+                                            if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
+                                            {
+                                                assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();
+                                            }
+                                            else
+                                            {
+                                                ModelState.AddModelError("DateDue",
+                                                    "DateDue value not supplied or not in the future.");
+                                                import = false;
+                                            }
+
+                                            assignment.PersonId = person.Id;
+                                            assignment.KeySerialId = serial.Id;
+                                            assignment.RequestedById = userIdentity;
+                                            assignment.RequestedByName = userName;
+                                            serial.KeySerialAssignment = assignment;
+
+
+                                            TryValidateModel(assignment);
+                                            if (ModelState.IsValid && import && result.Success)
+                                            {
+                                                _context.KeySerialAssignments.Add(assignment);
+                                                await _context.SaveChangesAsync();
+                                                somethingSaved = true;
+                                                serial.KeySerialAssignment = assignment;
+                                                serial.KeySerialAssignmentId = assignment.Id;
+                                                recAssignmentCount += 1;
+                                            }
+                                            else
+                                            {
+                                                result.Success = false;
+                                                result.ErrorMessage.Add($"Invalid Assignment values Error(s): {GetModelErrors(ModelState)} ");
+                                                //Clear out values on error, otherwise it can throw a foreign key exception the next time through for the same person
+                                                assignment = new KeySerialAssignment();
+                                                serial.KeySerialAssignment = null;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
+                                            {
+                                                assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                            }
+                                            else
+                                            {
+                                                ModelState.AddModelError("DateIssued",
+                                                    "DateIssued value not supplied or not in the past.");
+                                                import = false;
+                                            }
+
+                                            if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
+                                            {
+                                                assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();
+                                            }
+                                            else
+                                            {
+                                                ModelState.AddModelError("DateDue", "DateDue value not supplied or not in the future.");
+                                                import = false;
+                                            }
+
+                                            if (import)
+                                            {
+                                                assignment.PersonId = person.Id;
+                                                assignment.KeySerialId = serial.Id;
+                                                assignment.RequestedById = userIdentity;
+                                                assignment.RequestedByName = userName;
+                                            }
+                                            else
+                                            {
+                                                result.ErrorMessage.Add($"Assignment not updated, error(s): {GetModelErrors(ModelState)}");
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    if (!string.IsNullOrWhiteSpace(r.KerbUser))
+                                    {
+                                        result.Messages.Add("Supplied kerbUser to assign not used as Serial was not Active.");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                result.Messages.Add("No Serial Number supplied");
+                            }
+
+                            try
+                            {
+                                await _context.SaveChangesAsync();
+                            }
+                            catch (Exception e)
+                            {
+                                //For dubugging
+                                Console.WriteLine(e);
+                                throw;
+                            }
+                            
+                            somethingSaved = true;
+                        }
+                        else
                         {
-                            var serial = await _context.KeySerials.SingleOrDefaultAsync(s => s.KeyId == key.Id && s.Number.Equals(r.SerialNumber.Trim(), StringComparison.OrdinalIgnoreCase));
-                            if (serial == null)
-                            {
-                                serial = new KeySerial();
-                                serial.Number = r.SerialNumber.Trim();
-                                serial.Name = r.SerialNumber.Trim();
-                                serial.Key = key;
-                                switch (r.Status)
-                                {
-                                    case "Lost":
-                                        serial.Status = "Lost";
-                                        break;
-                                    case "Destroyed":
-                                        serial.Status = "Destroyed";
-                                        break;
-                                    default:
-                                        serial.Status = "Active";
-                                        break;
-                                }
-                                serial.TeamId = team.Id;
+                            result.Success = false;
+                            result.ErrorMessage.Add("Key Code missing or Key Code contains AEXAMPLE. Line Ignored");
+                        }
 
-                                TryValidateModel(serial);
-                                if (ModelState.IsValid)
-                                {
-                                    _context.KeySerials.Add(serial);
-                                    serialCount += 1;
-                                }
-                                else
-                                {
-                                    warning.Append(String.Format("Could not save serial in line {0} | ", rowNumber));
-                                }
+                        if (result.Success)
+                        {
+                            try
+                            {
+                                transaction.Commit();
+                                keyCount += recKeyCount;
+                                serialCount += recSerialCount;
+                                peopleCount += recPeopleCount;
+                                assignmentCount += recAssignmentCount;
 
                             }
-
-                            if (!string.IsNullOrWhiteSpace(r.KerbUser) && (r.Status == "Active" || string.IsNullOrWhiteSpace(r.Status)))
+                            catch (Exception e)
                             {
-                                var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id);
-                                peopleCount += personResult.peopleCount;
-                                var person = personResult.Person;
+                                result.Success = false;
+                                result.ErrorMessage.Add("There was a problem saving this record.");
+                                errorCount += 1;
+                            }
 
-                                var assignment = await _context.KeySerialAssignments.SingleOrDefaultAsync(a => a.KeySerialId == serial.Id);
-                                import = true;
-                                if (assignment == null)
+                        }
+                        else
+                        {
+                            if (somethingSaved)
+                            {
+                                errorCount += 1;
+                                transaction.Rollback();
+                                if (!string.IsNullOrWhiteSpace(r.KerbUser))
                                 {
-                                    assignment = new KeySerialAssignment();
-                                    if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
-                                    {
-                                        assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
-                                    }
-                                    else
-                                    {
-                                        import = false;
-                                    }
-                                    if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
-                                    {
-                                        assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();
-                                    }
-                                    else
-                                    {
-                                        import = false;
-                                    }
-                                    assignment.PersonId = person.Id;
-                                    assignment.KeySerialId = serial.Id;
-                                    assignment.RequestedById = User.Identity.Name;
-                                    assignment.RequestedByName = User.GetNameClaim();
-                                    serial.KeySerialAssignment = assignment;
+                                    var local = _context.Set<User>()
+                                        .Local
+                                        .FirstOrDefault(entry => entry.Id.Equals(r.KerbUser));
 
-                                    TryValidateModel(assignment);
-                                    if (ModelState.IsValid && import)
+                                    // check if local is not null 
+                                    if (local != null) // I'm using a extension method
                                     {
-                                        _context.KeySerialAssignments.Add(assignment);
-                                         await _context.SaveChangesAsync();
-                                        serial.KeySerialAssignment = assignment;
-                                        serial.KeySerialAssignmentId = assignment.Id;                
-                                        assignmentCount += 1;
+                                        // detach
+                                        _context.Entry(local).State = EntityState.Detached;
                                     }
-                                    else
+
+                                    var localPerson = _context.Set<Person>().Local
+                                        .FirstOrDefault(entry => entry.UserId.Equals(r.KerbUser));
+                                    if (localPerson != null) // I'm using a extension method
                                     {
-                                        warning.Append(String.Format("Could not save assignment in line {0} | ", rowNumber));
+                                        // detach
+                                        _context.Entry(localPerson).State = EntityState.Detached;
                                     }
-                                }
-                                else
-                                {
-                                    if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
-                                    {
-                                        assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
-                                    }
-                                    else
-                                    {
-                                        import = false;
-                                    }
-                                    if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
-                                    {
-                                        assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();
-                                    }
-                                    else
-                                    {
-                                        import = false;
-                                    }
-                                    if (import)
-                                    {
-                                        assignment.PersonId = person.Id;
-                                        assignment.KeySerialId = serial.Id;
-                                        assignment.RequestedById = User.Identity.Name;
-                                        assignment.RequestedByName = User.GetNameClaim();                                    
-                                    }
+
                                 }
                             }
                         }
-                        await _context.SaveChangesAsync();
+
+                        if (!result.Success)
+                        {
+                            result.Messages = new List<string>();
+                        }
+                        resultsView.Add(result);
                     }
                 }
             }
-            Message = string.Format("Successfully loaded {0} new keys, {1} new keySerials, {2} new and {3} reactivated team members, and {4} new assignments recorded. {5}", keyCount, serialCount, peopleCount, reactivatedCount, assignmentCount, warning.ToString());
-            return RedirectToAction("Index");
+
+            Message = $"Successfully loaded {keyCount} new keys, {serialCount} new keySerials, {peopleCount} new or reactivated team members, and {assignmentCount} new assignments recorded.";
+            if (errorCount > 0)
+            {
+                ErrorMessage = $"{errorCount} rows not imported due to errors.";
+            }
+            return View(resultsView);
 
         }
 
+        private static string SetStatus(string status, KeyImportResults result)
+        {
+            switch (status)
+            {
+                case "Active":
+                    return("Active");
+                case "Lost":
+                    return("Lost");
+                case "Destroyed":
+                    return("Destroyed");
+                default:
+                    result.Messages.Add("Key status defaulted to Active.");
+                    return("Active");
+            }
+        }
     }
 }
