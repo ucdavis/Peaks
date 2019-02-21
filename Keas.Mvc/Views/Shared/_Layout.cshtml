@@ -127,6 +127,14 @@
       </div>
     </div>
     </nav>
+    @if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"] as string))
+    {
+        <div class="container">
+            <div class="alert alert-danger">
+                <button type="button" class="close" data-dismiss="alert">×</button> @TempData["ErrorMessage"]
+            </div>
+        </div>
+    }
     @if (!string.IsNullOrWhiteSpace(TempData["Message"] as string))
     {
         <div class="container">
@@ -135,6 +143,7 @@
             </div>
         </div>
     }
+
 
     <main role="main" class="main-content-wrapper container">
         @RenderBody()
