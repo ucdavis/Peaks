@@ -4,13 +4,13 @@
     ViewData["Title"] = "Tags";
 }
 <div class="row justify-content-between">
-    <div class="col-md-9">
+    <div class="col-md-8">
 <div class="card">
   <div class="card-header-primary">
     <div class="card-head">
       <div class="row justify-content-between">
         <h2>Tags</h2>
-        <a class="btn btn-link" asp-action="Create"><i class="fas fa-plus fa-sm" aria-hidden="true" /></i> Create New</a>  
+        <a class="btn btn-link" asp-action="Create"><i class="fas fa-plus fa-sm" aria-hidden="true" /></i> Create New</a>
       </div>
 
 
@@ -45,11 +45,9 @@
 
 </div>
 </div>
-<div class="col-md-3">
+<div class="col-md-4">
 
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}
 
   </div>
 </div>
-
-

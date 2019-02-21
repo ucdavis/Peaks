@@ -2,7 +2,7 @@
     ViewData["Title"] = "Upload CSV Keys File";
 }
 <div class="row justify-content-between">
-  <div class="col-md-9">
+  <div class="col-md-8">
   <div class="card">
     <div class="card-header-primary">
       <div class="card-head">
@@ -11,29 +11,29 @@
     </div>
     <div class="card-content">
       <form asp-action="UploadCSV" method="post" enctype="multipart/form-data">
-          <div asp-validation-summary="ModelOnly" class="text-danger"></div>          
+          <div asp-validation-summary="ModelOnly" class="text-danger"></div>
          <fieldset>
         <div class="form-horizontal">
             <div class="form-group">
               <div class="row">
                 <div class="col-md-10">Select CSV file to upload:</div>
               </div>
-                <div class="row">                  
+                <div class="row">
                 <div class="col-md-10">
                     <div class="input-group">
                         <input type="hidden" id="filename" name="filename" value="">
-                        <input type="file" id="file" name="file" class="form-control" accept=".csv">                        
+                        <input type="file" id="file" name="file" class="form-control" accept=".csv">
                         <div class="input-group-btn">
                             <input type="submit" value="Upload CSV" class="btn btn-primary">
                         </div>
                     </div>
                 </div>
                 </div>
-            </div>                        
+            </div>
         </div>
-    </fieldset>    
+    </fieldset>
       </form>
-    </div>    
+    </div>
   </div>
   <div class="card">
     <div class="card-header-primary">
@@ -65,7 +65,7 @@
     </div>
   </div>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-4">
 
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}
 
