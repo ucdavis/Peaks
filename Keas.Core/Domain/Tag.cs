@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Keas.Core.Domain
 {
@@ -7,10 +7,10 @@ namespace Keas.Core.Domain
 
         [Key]
         public int Id { get; set; }
-
-        // TODO: make this a unique field
+        
         [StringLength(128)]
         [Required]
+        [RegularExpression("[\\w- ]+", ErrorMessage = "Only Letters, numbers, spaces, and - allowed")]
         public string Name { get; set; }
 
 

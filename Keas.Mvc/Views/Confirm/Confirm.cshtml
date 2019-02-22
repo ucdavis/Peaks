@@ -39,15 +39,15 @@
                     <tr>
                         <td>@item.Key.Code</td>
                         <td>@item.Number</td>
-                        <td>@item.Key.Name</td>   
-                        <td>@item.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>                                             
-                        <td align="right"><a href="@Url.Action("AcceptKey", new {serialId = item.Id})" class="btn btn-link">Confirm</a></td>
+                        <td>@item.Key.Name</td>
+                        <td>@item.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>
+                        <td align="right"><a href="@Url.Action("AcceptKey", new {serialId = item.Id})" class="btn btn-link">Confirm <i class="fas fa-check"></i></a></td>
                     </tr>
                 }
             </tbody>
         </table>
     </div>
-    
+
 </div>
   <div class="card equipment-color">
     <div class="card-header-equipment">
@@ -81,13 +81,13 @@
                     {
                         <td>&nbsp;</td>
                     }
-                    <td align="right"><a href="@Url.Action("AcceptEquipment", new {equipmentId = item.Id})" class="btn btn-link">Confirm</a></td>
+                    <td align="right"><a href="@Url.Action("AcceptEquipment", new {equipmentId = item.Id})" class="btn btn-link">Confirm <i class="fas fa-check"></i></a></td>
                 </tr>
             }
             </tbody>
         </table>
       </div>
-      
+
     </div>
 
 <div class="card spaces-color">
@@ -117,13 +117,13 @@
                 {
                     <td>&nbsp;</td>
                 }
-                <td align="right"><a href="@Url.Action("AcceptWorkstation", new {workstationId = item.Id})" class="btn btn-link">Confirm</a></td>
+                <td align="right"><a href="@Url.Action("AcceptWorkstation", new {workstationId = item.Id})" class="btn btn-link">Confirm <i class="fas fa-check"></i></a></td>
             </tr>
         }
         </tbody>
     </table>
   </div>
- 
+
 </div>
 </div>
 
