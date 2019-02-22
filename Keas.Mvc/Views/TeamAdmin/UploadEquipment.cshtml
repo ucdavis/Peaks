@@ -48,23 +48,29 @@
                 </div>
                 <div class="card-content">
                     <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
-                    <p><b>KeyName, KeyCode, SerialNumber, KerbUser, DateIssued, DateDue, Status</b></p>
-                    <p>Example <a href="@Url.Content("~/files/csv_example.csv")">CSV file.</a></p>
+                    <p><b>EquipmentName, SerialNumber, Make, Model, KerbUser, DateIssued, DateDue, Tag, Key1,Value1, Key2, Value2, Key3, Value3, Key4, Value4, Key5, Value5, Key6, Value6</b></p>
+                    <p>Example <a href="@Url.Content("~/files/csv_equipment_example.csv")">CSV file.</a></p>
                     <dl>
-                        <dt>KeyName</dt>
-                        <dd>Description of key (e.g. Example Hall exterior doors). If the same KeyCode appears later in the document, only the first KeyName will be used.</dd>
-                        <dt>KeyCode</dt>
-                        <dd>Number for this key. First part of number on key</dd>
+                        <dt>EquipmentName</dt>
+                        <dd>Description of Equipment item. Because name is not required to be unique, a new item will be created for each line.</dd>
                         <dt>SerialNumber</dt>
-                        <dd>Identifier for this key within given KeyCode. Usually the second part of number on key. If serial is blank, the key will be created without any serials.</dd>
+                        <dd>Serial number for this item.</dd>
+                        <dt>Make</dt>
+                        <dd>Make/manufacturer for this item.</dd>
+                        <dt>Model</dt>
+                        <dd>Model for this item.</dd>
                         <dt>KerbUser</dt>
                         <dd>Kerberos ID of the person this serial is assigned to. May be left blank. If no ID provided, no assignment will be created</dd>
-                        <dt>DateIssue</dt>
-                        <dd>Date this serial was issued to the person</dd>
+                        <dt>DateIssued</dt>
+                        <dd>Date this item was issued to the person. If missing, system will use import date.</dd>
                         <dt>DateDue</dt>
-                        <dd>Date this key should be returned</dd>
-                        <dt>Status</dt>
-                        <dd>Status of this serial. Valid entries are "Active", "Lost", "Destroyed". If blank, serial will be set to "Active"</dd>
+                        <dd>Date this item should be returned</dd>
+                        <dt>Tag</dt> 
+                        <dd>List of tags for this item. If more than one tag, add each separated by comma, with the entire set surrounded by quotation marks. Tags must already be added to team or this row will not import correctly. All imported items will have "Imported" added as a tag. If you wish to search by this tag, please add it to your team's tags.</dd>                     
+                        <dt>Key(1-6)</dt>
+                        <dd>Attribute key to be added to this item. You may add up to 6 attributes.</dd>
+                        <dt>Value(1-6)</dt>
+                        <dd>Attribute value to be added to this item.</dd>
                     </dl>
                 </div>
             </div>
