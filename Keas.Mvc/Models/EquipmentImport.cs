@@ -57,7 +57,23 @@ namespace Keas.Mvc.Models
                 DateIssued = import.DateIssued,
                 KerbUser = import.KerbUser,
                 EquipmentName = import.EquipmentName,
-                SerialNumber = import.SerialNumber                
+                SerialNumber = import.SerialNumber,
+                Make = import.Make,
+                Model = import.Model,                
+                Tag = import.Tag,
+                Key1 = import.Key1,
+                Value1 = import.Value1,
+                Key2 = import.Key2,
+                Value2 = import.Value2,
+                Key3 = import.Key3,
+                Value3 = import.Value3,
+                Key4 = import.Key4,
+                Value4 = import.Value4,
+                Key5 = import.Key5,
+                Value5 = import.Value5,
+                Key6 = import.Key6,
+                Value6 = import.Value6,
+
             };
         }
 

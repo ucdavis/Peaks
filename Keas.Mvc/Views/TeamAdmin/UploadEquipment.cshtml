@@ -94,7 +94,6 @@
                             <tr>
                                 <th rowspan="2">Row</th>
                                 <th rowspan="2">Success</th>
-
                                 <th colspan="5">CSV Imported Values</th>
                                 <th rowspan="2">Messages</th>
                                 <th rowspan="2">Errors</th>
@@ -105,6 +104,21 @@
                                 <th>KerbUser</th>
                                 <th>DateIssued</th>
                                 <th>DateDue</th>
+                                <th>Make</th>
+                                <th>Model</th>
+                                <th>Tag(s)</th>
+                                <th>Key 1</th>
+                                <th>Value 1</th>
+                                <th>Key 2</th>
+                                <th>Value 2</th>
+                                <th>Key 3</th>
+                                <th>Value 3</th>
+                                <th>Key 4</th>
+                                <th>Value 4</th>
+                                <th>Key 5</th>
+                                <th>Value 5</th>
+                                <th>Key 6</th>
+                                <th>Value 6</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -139,9 +153,53 @@
                                     <th>
                                         @string.Join(", ", item.ErrorMessage)
                                     </th>
+                                    <th>
+                                        @Html.DisplayFor(a => item.Import.Make)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayFor(a => item.Import.Model)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayFor(a => item.Import.Tag)
+                                    </th>
+                                    <th>
+                                        @item.Import.Key1 
+                                    </th>
+                                    <th>
+                                        @item.Import.Value1
+                                    </th>
+                                     <th>
+                                        @item.Import.Key2 
+                                    </th>
+                                    <th>
+                                         @item.Import.Value2
+                                    </th>
+                                    <th>
+                                        @item.Import.Key3 
+                                    </th>
+                                    <th>
+                                        @item.Import.Value3
+                                    </th>
+                                    <th>
+                                        @item.Import.Key4 
+                                    </th>
+                                    <th>
+                                        @item.Import.Value4
+                                    </th>
+                                    <th>
+                                        @item.Import.Key5 
+                                    </th>
+                                    <th>
+                                        @item.Import.Value5
+                                    </th>
+                                    <th>
+                                        @item.Import.Key6 
+                                    </th>
+                                    <th>
+                                        @item.Import.Value6
+                                    </th>
                                 </tr>
                             }
-
                         </tbody>
                     </table>
                 </div>
@@ -152,7 +210,7 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-    @{ await Html.RenderPartialAsync("_ImportResultsScriptPartial");}
+    @{ await Html.RenderPartialAsync("_ImportEquipmentResultsScriptPartial");}
 }
 
 @section Styles {
