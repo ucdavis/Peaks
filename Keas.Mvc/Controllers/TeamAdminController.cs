@@ -766,6 +766,7 @@ namespace Keas.Mvc.Controllers
 
             var userIdentity = User.Identity.Name;
             var userName = User.GetNameClaim();
+            var equipmentAttribute = new EquipmentAttribute();
 
             var equipmentCount = 0;
             var peopleCount = 0;
@@ -792,6 +793,8 @@ namespace Keas.Mvc.Controllers
                 foreach (var r in records)
                 {
                     var recEquipmentCount = 0;
+                    var recAttributeCount = 0;
+                    var recAttributeAdded = false;
                     var recPeopleCount = 0;
                     var recAssignmentCount = 0;
 
@@ -814,6 +817,8 @@ namespace Keas.Mvc.Controllers
                             equipment.Make = r.Make;
                             equipment.Model = r.Model;
                             equipment.Tags = r.Tag;
+                            equipment.TeamId = team.Id;
+                            equipment.Type = "";      
 
                             ModelState.Clear();
                             TryValidateModel(equipment);
@@ -827,6 +832,36 @@ namespace Keas.Mvc.Controllers
                             {
                                 result.Success = false;
                                 result.ErrorMessage.Add($"Invalid Equipment values Error(s): {GetModelErrors(ModelState)} ");
+                            }
+
+                            if(!string.IsNullOrWhiteSpace(r.Key1))
+                            {
+                                CreateAttribute(equipment, r.Key1, r.Value1, ref result, ref recAttributeCount, ref recAttributeAdded);
+                            }  
+                            if(!string.IsNullOrWhiteSpace(r.Key2))
+                            {
+                                CreateAttribute(equipment, r.Key2, r.Value2, ref result, ref recAttributeCount, ref recAttributeAdded);
+                            }  
+                            if(!string.IsNullOrWhiteSpace(r.Key3))
+                            {
+                                CreateAttribute(equipment, r.Key3, r.Value3, ref result, ref recAttributeCount, ref recAttributeAdded);
+                            }  
+                            if(!string.IsNullOrWhiteSpace(r.Key4))
+                            {
+                                CreateAttribute(equipment, r.Key4, r.Value4, ref result, ref recAttributeCount, ref recAttributeAdded);
+                            }  
+                            if(!string.IsNullOrWhiteSpace(r.Key5))
+                            {
+                                CreateAttribute(equipment, r.Key5, r.Value5, ref result, ref recAttributeCount, ref recAttributeAdded);
+                            }  
+                            if(!string.IsNullOrWhiteSpace(r.Key6))
+                            {
+                                CreateAttribute(equipment, r.Key6, r.Value6, ref result, ref recAttributeCount, ref recAttributeAdded);
+                            }  
+
+                            if(recAttributeAdded)
+                            {
+                                result.Messages.Add($"{recAttributeCount} Attribute(s) Added.");
                             }
 
                             if (!string.IsNullOrWhiteSpace(r.KerbUser))
@@ -993,6 +1028,27 @@ namespace Keas.Mvc.Controllers
                 default:
                     result.Messages.Add("Key status defaulted to Active.");
                     return ("Active");
+            }
+        }
+
+        private void CreateAttribute(Equipment equipment, string key, string value, ref EquipmentImportResults result, ref int recAttributeCount, ref bool recAttributeAdded)
+        {
+            var equipmentAttribute = new EquipmentAttribute();
+            equipmentAttribute.Equipment = equipment;
+            equipmentAttribute.Key = key;
+            equipmentAttribute.Value = value;
+            ModelState.Clear();
+            TryValidateModel(equipmentAttribute);
+            if (ModelState.IsValid)
+            {
+                _context.EquipmentAttributes.Add(equipmentAttribute);
+                recAttributeCount += 1;
+                recAttributeAdded = true;
+            }
+            else
+            {
+                result.Success = false;
+                result.ErrorMessage.Add($"Invalid Equipment Attribute values Error(s): {GetModelErrors(ModelState)} ");
             }
         }
     }

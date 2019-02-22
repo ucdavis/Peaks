@@ -1,5 +1,5 @@
 @using Keas.Core.Extensions
-@model List<KeyImportResults>
+@model List<EquipmentImportResults>
 
 @{
     ViewData["Title"] = "Upload CSV Equipment File";
@@ -101,12 +101,10 @@
                             </tr>
                             <tr>
                                 <th>KeyName</th>
-                                <th>KeyCode</th>
                                 <th>SerialNumber</th>
                                 <th>KerbUser</th>
                                 <th>DateIssued</th>
                                 <th>DateDue</th>
-                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -121,11 +119,8 @@
                                         @item.Success.ToYesNoString()
                                     </td>
                                     <td style="word-wrap: break-word; word-break: break-all; white-space: normal;">
-                                        @Html.DisplayFor(a => item.Import.KeyName)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(a => item.Import.KeyCode)
-                                    </td>
+                                        @Html.DisplayFor(a => item.Import.EquipmentName)
+                                    </td>                                    
                                     <td>
                                         @Html.DisplayFor(a => item.Import.SerialNumber)
                                     </td>
@@ -138,10 +133,6 @@
                                     <td>
                                         @item.Import.DateDue.Format("d")
                                     </td>
-                                    <td>
-                                        @Html.DisplayFor(a => item.Import.Status)
-                                    </td>
-
                                     <th>
                                         @string.Join(", ", item.Messages)
                                     </th>
