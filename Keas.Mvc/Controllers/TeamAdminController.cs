@@ -836,27 +836,27 @@ namespace Keas.Mvc.Controllers
 
                             if(!string.IsNullOrWhiteSpace(r.Key1))
                             {
-                                CreateAttribute(equipment, r.Key1, r.Value1, ref result, ref recAttributeCount, ref recAttributeAdded);
+                                CreateAttribute(equipment, r.Key1, r.Value1, result, ref recAttributeCount, ref recAttributeAdded);
                             }  
                             if(!string.IsNullOrWhiteSpace(r.Key2))
                             {
-                                CreateAttribute(equipment, r.Key2, r.Value2, ref result, ref recAttributeCount, ref recAttributeAdded);
+                                CreateAttribute(equipment, r.Key2, r.Value2, result, ref recAttributeCount, ref recAttributeAdded);
                             }  
                             if(!string.IsNullOrWhiteSpace(r.Key3))
                             {
-                                CreateAttribute(equipment, r.Key3, r.Value3, ref result, ref recAttributeCount, ref recAttributeAdded);
+                                CreateAttribute(equipment, r.Key3, r.Value3, result, ref recAttributeCount, ref recAttributeAdded);
                             }  
                             if(!string.IsNullOrWhiteSpace(r.Key4))
                             {
-                                CreateAttribute(equipment, r.Key4, r.Value4, ref result, ref recAttributeCount, ref recAttributeAdded);
+                                CreateAttribute(equipment, r.Key4, r.Value4, result, ref recAttributeCount, ref recAttributeAdded);
                             }  
                             if(!string.IsNullOrWhiteSpace(r.Key5))
                             {
-                                CreateAttribute(equipment, r.Key5, r.Value5, ref result, ref recAttributeCount, ref recAttributeAdded);
+                                CreateAttribute(equipment, r.Key5, r.Value5, result, ref recAttributeCount, ref recAttributeAdded);
                             }  
                             if(!string.IsNullOrWhiteSpace(r.Key6))
                             {
-                                CreateAttribute(equipment, r.Key6, r.Value6, ref result, ref recAttributeCount, ref recAttributeAdded);
+                                CreateAttribute(equipment, r.Key6, r.Value6, result, ref recAttributeCount, ref recAttributeAdded);
                             }  
 
                             if(recAttributeAdded)
@@ -1031,7 +1031,7 @@ namespace Keas.Mvc.Controllers
             }
         }
 
-        private void CreateAttribute(Equipment equipment, string key, string value, ref EquipmentImportResults result, ref int recAttributeCount, ref bool recAttributeAdded)
+        private void CreateAttribute(Equipment equipment, string key, string value, EquipmentImportResults result, ref int recAttributeCount, ref bool recAttributeAdded)
         {
             var equipmentAttribute = new EquipmentAttribute();
             equipmentAttribute.Equipment = equipment;
