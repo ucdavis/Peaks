@@ -28,7 +28,7 @@ namespace Keas.Mvc.Controllers
         private readonly IIdentityService _identityService;
         private readonly IUserService _userService;
         private readonly IFinancialService _financialService;
-        
+
 
         public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService)
         {
@@ -376,16 +376,16 @@ namespace Keas.Mvc.Controllers
         private string GetModelErrors(ModelStateDictionary modelState)
         {
             var resultsList = new List<string>();
-            foreach(var result in modelState.Values)
+            foreach (var result in modelState.Values)
             {
-                foreach(var errs in result.Errors)
+                foreach (var errs in result.Errors)
                 {
                     resultsList.Add(errs.ErrorMessage);
                 }
             }
 
             var rtValue = "";
-            foreach(var s in resultsList)
+            foreach (var s in resultsList)
             {
                 rtValue = rtValue + "\n" + s;
             }
@@ -393,13 +393,13 @@ namespace Keas.Mvc.Controllers
         }
 
         public IActionResult Upload()
-        {            
+        {
             return View();
         }
 
         public IActionResult UploadKeys()
         {
-             var model = new List<KeyImportResults>();
+            var model = new List<KeyImportResults>();
             return View(model);
 
         }
@@ -675,7 +675,7 @@ namespace Keas.Mvc.Controllers
                                 Console.WriteLine(e);
                                 throw;
                             }
-                            
+
                             somethingSaved = true;
                         }
                         else
@@ -754,8 +754,229 @@ namespace Keas.Mvc.Controllers
 
         public IActionResult UploadEquipment()
         {
-             var model = new List<KeyImportResults>();
+            var model = new List<EquipmentImportResults>();
             return View(model);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadEquipment(IFormFile file)
+        {
+            var resultsView = new List<EquipmentImportResults>();
+
+            var userIdentity = User.Identity.Name;
+            var userName = User.GetNameClaim();
+
+            var equipmentCount = 0;
+            var peopleCount = 0;
+            var assignmentCount = 0;
+            var errorCount = 0;
+            var rowNumber = 1;
+            bool import = true;
+            bool somethingSaved = false;
+
+            if (file == null || file.Length == 0)
+            {
+                Message = "File not selected";
+                return RedirectToAction("Upload");
+            }
+
+            // Add counts
+            var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            using (var csv = new CsvReader(reader))
+            {
+                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
+                var record = new EquipmentImport();
+                var records = csv.EnumerateRecords(record);
+                foreach (var r in records)
+                {
+                    var recEquipmentCount = 0;
+                    var recPeopleCount = 0;
+                    var recAssignmentCount = 0;
+
+                    using (var transaction = await _context.Database.BeginTransactionAsync())
+                    {
+                        somethingSaved = false;
+                        rowNumber += 1;
+                        var result = new EquipmentImportResults(r)
+                        {
+                            LineNumber = rowNumber,
+                            Success = true
+                        };
+                        ModelState.Clear();
+
+                        if (!string.IsNullOrWhiteSpace(r.EquipmentName) && !r.Make.Contains("AEXMPLE"))
+                        {
+                            var equipment = new Equipment();
+                            equipment.Name = r.EquipmentName;
+                            equipment.SerialNumber = r.SerialNumber;
+                            equipment.Make = r.Make;
+                            equipment.Model = r.Model;
+                            equipment.Tags = r.Tag;
+
+                            ModelState.Clear();
+                            TryValidateModel(equipment);
+                            if (ModelState.IsValid)
+                            {
+                                _context.Equipment.Add(equipment);
+                                recEquipmentCount += 1;
+                                result.Messages.Add("Equipment Added.");
+                            }
+                            else
+                            {
+                                result.Success = false;
+                                result.ErrorMessage.Add($"Invalid Equipment values Error(s): {GetModelErrors(ModelState)} ");
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(r.KerbUser))
+                            {
+                                Person person = null;
+                                try
+                                {
+                                    var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id);
+                                    recPeopleCount += personResult.peopleCount;
+                                    person = personResult.Person;
+                                }
+                                catch (Exception)
+                                {
+                                    person = null;
+                                    result.Success = false;
+                                    result.ErrorMessage.Add($"!!!!!!!!!!!!!THERE IS A PROBLEM WITH KerbUser {r.KerbUser} PLEASE CONTACT PEAKS HELP with this User ID.!!!!!!!!!!!!!!!");
+                                }
+
+                                if (person == null)
+                                {
+                                    result.Success = false;
+                                    result.ErrorMessage.Add($"KerbUser not found.");
+                                }
+                                else
+                                {
+                                    ModelState.Clear();
+                                    var assignment = new EquipmentAssignment();
+                                    assignment.RequestedAt = r.DateIssued.HasValue && r.DateIssued < DateTime.Now ? r.DateIssued.Value.ToUniversalTime() : DateTime.Now.ToUniversalTime();
+                                    if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
+                                    {
+                                        assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();
+                                    }
+                                    else
+                                    {
+                                        ModelState.AddModelError("DateDue", "DateDue value not supplied or not in the future.");
+                                        import = false;
+                                    }
+                                    assignment.PersonId = person.Id;
+                                    assignment.RequestedById = userIdentity;
+                                    assignment.RequestedByName = userName;
+                                    equipment.Assignment = assignment;
+
+                                    TryValidateModel(assignment);
+                                    if (ModelState.IsValid && import && result.Success)
+                                    {
+                                        _context.EquipmentAssignments.Add(assignment);
+                                        await _context.SaveChangesAsync();
+                                        somethingSaved = true;
+                                        equipment.Assignment = assignment;
+                                        equipment.EquipmentAssignmentId = assignment.Id;
+                                        recAssignmentCount += 1;
+                                    }
+                                    else
+                                    {
+                                        result.Success = false;
+                                        result.ErrorMessage.Add($"Invalid Assignment values Error(s): {GetModelErrors(ModelState)} ");
+                                        //Clear out values on error, otherwise it can throw a foreign key exception the next time through for the same person
+                                        assignment = new EquipmentAssignment();
+                                        equipment.Assignment = null;
+                                    }
+
+                                }
+
+                            }
+                            else
+                            {
+                                result.Messages.Add("No Name");
+                            }
+
+                            try
+                            {
+                                await _context.SaveChangesAsync();
+                            }
+                            catch (Exception e)
+                            {
+                                //For dubugging
+                                Console.WriteLine(e);
+                                throw;
+                            }
+                            somethingSaved = true;
+                        }
+                        else
+                        {
+                            result.Success = false;
+                            result.ErrorMessage.Add("Equipment Name not provided or Make contains AEXAMPLE. Line Ignored");
+                        }
+
+                        if (result.Success)
+                        {
+                            try
+                            {
+                                transaction.Commit();
+                                equipmentCount += recEquipmentCount;
+                                peopleCount += recPeopleCount;
+                                assignmentCount += recAssignmentCount;
+                            }
+                            catch (Exception e)
+                            {
+                                result.Success = false;
+                                result.ErrorMessage.Add("There was a problem saving this record.");
+                                errorCount += 1;
+                            }
+
+                        }
+                        else
+                        {
+                            if (somethingSaved)
+                            {
+                                errorCount += 1;
+                                transaction.Rollback();
+                                if (!string.IsNullOrWhiteSpace(r.KerbUser))
+                                {
+                                    var local = _context.Set<User>()
+                                        .Local
+                                        .FirstOrDefault(entry => entry.Id.Equals(r.KerbUser));
+
+                                    // check if local is not null 
+                                    if (local != null) // I'm using a extension method
+                                    {
+                                        // detach
+                                        _context.Entry(local).State = EntityState.Detached;
+                                    }
+
+                                    var localPerson = _context.Set<Person>().Local
+                                        .FirstOrDefault(entry => entry.UserId.Equals(r.KerbUser));
+                                    if (localPerson != null) // I'm using a extension method
+                                    {
+                                        // detach
+                                        _context.Entry(localPerson).State = EntityState.Detached;
+                                    }
+
+                                }
+                            }
+                        }
+
+                        if (!result.Success)
+                        {
+                            result.Messages = new List<string>();
+                        }
+                        resultsView.Add(result);
+                    }
+                }
+            }
+
+            Message = $"Successfully loaded {equipmentCount} new items, {peopleCount} new or reactivated team members, and {assignmentCount} new assignments recorded.";
+            if (errorCount > 0)
+            {
+                ErrorMessage = $"{errorCount} rows not imported due to errors.";
+            }
+            return View(resultsView);
 
         }
 
@@ -764,14 +985,14 @@ namespace Keas.Mvc.Controllers
             switch (status)
             {
                 case "Active":
-                    return("Active");
+                    return ("Active");
                 case "Lost":
-                    return("Lost");
+                    return ("Lost");
                 case "Destroyed":
-                    return("Destroyed");
+                    return ("Destroyed");
                 default:
                     result.Messages.Add("Key status defaulted to Active.");
-                    return("Active");
+                    return ("Active");
             }
         }
     }
