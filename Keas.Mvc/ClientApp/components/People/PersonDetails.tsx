@@ -47,6 +47,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                   <div className="card-header-people">
                     <div className="card-head row justify-content-between">
                     <h2>{this.props.selectedPersonInfo.person.name}</h2>
+                    {canEdit &&
                     <div className="row justify-content-between">
                       <EditPerson
                           onEdit={this.props.onEdit}
@@ -70,7 +71,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                               </Button>
                           </a>
                       </div>
-                    </div>
+                    </div>}
                   </div>
 
                     </div>

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Keas.Core.Domain;
@@ -42,6 +42,7 @@ namespace Test.TestsDatabase
             }));
             expectedFields.Add(new NameAndType("Name", "System.String", new List<string>
             {
+                "[System.ComponentModel.DataAnnotations.RegularExpressionAttribute(\"[\\w- ]+\", ErrorMessage = \"Only Letters, numbers, spaces, and - allowed\")]",
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)128)]",
             }));

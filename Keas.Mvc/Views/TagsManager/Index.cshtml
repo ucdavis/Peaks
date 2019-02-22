@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Keas.Core.Domain.Tag>
+@model IEnumerable<Keas.Core.Domain.Tag>
 
 @{
     ViewData["Title"] = "Tags";
@@ -10,7 +10,7 @@
     <div class="card-head">
       <div class="row justify-content-between">
         <h2>Tags</h2>
-        <a class="btn btn-link" asp-action="Create"><i class="fas fa-plus fa-sm" aria-hidden="true" /></i> Create New</a>
+        <a class="btn btn-link" asp-action="Create"><i class="fas fa-plus fa-sm" aria-hidden="true" /></i> Create New</a>  
       </div>
 
 
@@ -51,3 +51,28 @@
 
   </div>
 </div>
+
+
+@section Styles
+{
+    @{ await Html.RenderPartialAsync("_ReportStylePartial");}
+}
+
+@section Scripts
+{
+    @{ await Html.RenderPartialAsync("_ReportScriptsPartial");}
+    <script type="text/javascript">
+        $(function () {
+            $(".table").dataTable({                
+                "columnDefs": [
+                    {
+                        targets: -1,
+                        className: 'dt-body-right',
+                        sortable: false,
+                    },
+
+                ]
+            });
+        });
+    </script>
+}
