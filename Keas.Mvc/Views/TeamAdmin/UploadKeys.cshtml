@@ -5,7 +5,7 @@
     ViewData["Title"] = "Upload CSV Keys File";
 }
 <div class="row justify-content-between">
-    <div class="col-md-9">
+    <div class="col-md-8">
         <div class="card">
             <div class="card-header-primary">
                 <div class="card-head">
@@ -70,7 +70,7 @@
             </div>
         }
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}
     </div>
     @if (Model != null && Model.Count > 0)
@@ -88,7 +88,7 @@
                             <tr>
                                 <th rowspan="2">Row</th>
                                 <th rowspan="2">Success</th>
-     
+
                                 <th colspan="7">CSV Imported Values</th>
                                 <th rowspan="2">Messages</th>
                                 <th rowspan="2">Errors</th>

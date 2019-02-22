@@ -5,7 +5,7 @@
     ViewData["Title"] = "Upload CSV Equipment File";
 }
 <div class="row justify-content-between">
-    <div class="col-md-9">
+    <div class="col-md-8">
         <div class="card">
             <div class="card-header-primary">
                 <div class="card-head">
@@ -65,8 +65,8 @@
                         <dd>Date this item was issued to the person. If missing, system will use import date.</dd>
                         <dt>DateDue</dt>
                         <dd>Date this item should be returned</dd>
-                        <dt>Tag</dt> 
-                        <dd>List of tags for this item. If more than one tag, add each separated by comma, with the entire set surrounded by quotation marks. Tags must already be added to team or this row will not import correctly. All imported items will have "Imported" added as a tag. If you wish to search by this tag, please add it to your team's tags.</dd>                     
+                        <dt>Tag</dt>
+                        <dd>List of tags for this item. If more than one tag, add each separated by comma, with the entire set surrounded by quotation marks. Tags must already be added to team or this row will not import correctly. All imported items will have "Imported" added as a tag. If you wish to search by this tag, please add it to your team's tags.</dd>
                         <dt>Key(1-6)</dt>
                         <dd>Attribute key to be added to this item. You may add up to 6 attributes.</dd>
                         <dt>Value(1-6)</dt>
@@ -76,7 +76,7 @@
             </div>
         }
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}
     </div>
     @if (Model != null && Model.Count > 0)
@@ -94,7 +94,7 @@
                             <tr>
                                 <th rowspan="2">Row</th>
                                 <th rowspan="2">Success</th>
-     
+
                                 <th colspan="7">CSV Imported Values</th>
                                 <th rowspan="2">Messages</th>
                                 <th rowspan="2">Errors</th>
@@ -120,7 +120,7 @@
                                     </td>
                                     <td style="word-wrap: break-word; word-break: break-all; white-space: normal;">
                                         @Html.DisplayFor(a => item.Import.EquipmentName)
-                                    </td>                                    
+                                    </td>
                                     <td>
                                         @Html.DisplayFor(a => item.Import.SerialNumber)
                                     </td>
