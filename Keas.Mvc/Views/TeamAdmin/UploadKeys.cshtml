@@ -52,10 +52,10 @@
                     <p>Example <a href="@Url.Content("~/files/csv_key_example.csv")">CSV file.</a></p>
                     <dl>
                         <dt>KeyName</dt>
-                        <dd>Description of key (e.g. Example Hall exterior doors). If the same KeyCode appears later in the document, only the first KeyName will be used.</dd>
+                        <dd>Required - Description of key (e.g. Example Hall exterior doors). If the same KeyCode appears later in the document, only the first KeyName will be used.</dd>
                         <dt>KeyCode</dt>
-                        <dd>Number for this key. First part of number on key</dd>
-                        <dt>SerialNumber</dt>
+                        <dd>Required - Number for this key. First part of number on key</dd>
+                        <dt>Required - SerialNumber</dt>
                         <dd>Identifier for this key within given KeyCode. Usually the second part of number on key. If serial is blank, the key will be created without any serials.</dd>
                         <dt>KerbUser</dt>
                         <dd>Kerberos ID of the person this serial is assigned to. May be left blank. If no ID provided, no assignment will be created</dd>
