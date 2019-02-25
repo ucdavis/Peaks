@@ -816,7 +816,7 @@ namespace Keas.Mvc.Controllers
                             equipment.SerialNumber = r.SerialNumber;
                             equipment.Make = r.Make;
                             equipment.Model = r.Model;
-                            equipment.Tags = r.Tag;
+                            equipment.Tags = string.IsNullOrWhiteSpace(r.Tag) ? "Imported" : $"{r.Tag}, Imported";
                             equipment.TeamId = team.Id;
                             equipment.Type = "";      
 
