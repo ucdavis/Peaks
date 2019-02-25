@@ -889,6 +889,7 @@ namespace Keas.Mvc.Controllers
                                 {
                                     ModelState.Clear();
                                     var assignment = new EquipmentAssignment();
+                                    import = true;
                                     assignment.RequestedAt = r.DateIssued.HasValue && r.DateIssued < DateTime.Now ? r.DateIssued.Value.ToUniversalTime() : DateTime.Now.ToUniversalTime();
                                     if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
                                     {
