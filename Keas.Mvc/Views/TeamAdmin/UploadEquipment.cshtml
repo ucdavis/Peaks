@@ -211,7 +211,24 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
      @{await Html.RenderPartialAsync("_ImportJS");}
-    @{ await Html.RenderPartialAsync("_ImportEquipmentResultsScriptPartial");}
+     <script type="text/javascript">
+        $(function () {
+            $("#results").dataTable({
+                "dom": 'lBfrtip',
+                "buttons": [
+                    { extend: 'copyHtml5' },
+                    { extend: 'excelHtml5' },
+                    { extend: 'csvHtml5' },
+                    { extend: 'print'},
+                ],
+                "columnDefs": [
+                    { "width": "10%;", "targets": [2] },
+                    { "type": "date", "targets": [5, 6] },
+                    { "targets" : [ 9, 10,11,12,13,14,15,16,17,18,19,20,21,22,23], "visible" : false}
+                ]
+            });
+        });
+    </script>
 }
 
 @section Styles {

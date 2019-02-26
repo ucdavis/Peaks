@@ -156,7 +156,23 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
      @{await Html.RenderPartialAsync("_ImportJS");}
-    @{ await Html.RenderPartialAsync("_ImportResultsScriptPartial");}
+    <script type="text/javascript">
+        $(function () {
+            $("#results").dataTable({
+                "dom": 'lBfrtip',
+                "buttons": [
+                    { extend: 'copyHtml5' },
+                    { extend: 'excelHtml5' },
+                    { extend: 'csvHtml5' },
+                    { extend: 'print'},
+                ],
+                "columnDefs": [
+                    { "width": "10%;", "targets": [2] },
+                    { "type": "date", "targets": [6, 7] },
+                ]
+            });
+        });
+    </script>
 }
 
 @section Styles {
