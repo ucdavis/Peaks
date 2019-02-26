@@ -454,7 +454,7 @@ namespace Keas.Mvc.Controllers
                         };
                         ModelState.Clear();
 
-                        if (!string.IsNullOrWhiteSpace(r.KeyCode) && !r.KeyCode.Contains("AEXMPLE"))
+                        if (!string.IsNullOrWhiteSpace(r.KeyCode))
                         {
                             var key = await _context.Keys.SingleOrDefaultAsync(k =>
                                 k.Team.Slug == Team && k.Active &&
@@ -681,7 +681,7 @@ namespace Keas.Mvc.Controllers
                         else
                         {
                             result.Success = false;
-                            result.ErrorMessage.Add("Key Code missing or Key Code contains AEXAMPLE. Line Ignored");
+                            result.ErrorMessage.Add("Key Code missing. Line Ignored");
                         }
 
                         if (result.Success)
@@ -943,7 +943,7 @@ namespace Keas.Mvc.Controllers
         private Equipment CreateEquipment(EquipmentImport r, Team team, EquipmentImportResults result, ref int recEquipmentCount)
         {
             var equipment = new Equipment();
-            if (!string.IsNullOrWhiteSpace(r.EquipmentName) && !r.Make.Contains("AEXMPLE"))
+            if (!string.IsNullOrWhiteSpace(r.EquipmentName))
             {                
                 equipment.Name = r.EquipmentName;
                 equipment.SerialNumber = r.SerialNumber;
@@ -971,7 +971,7 @@ namespace Keas.Mvc.Controllers
             else
             {
                 result.Success = false;
-                result.ErrorMessage.Add("Equipment Name not provided or Make contains AEXAMPLE. Line Ignored");
+                result.ErrorMessage.Add("Equipment Name not provided. Line Ignored");
             }
             return equipment;
         }
