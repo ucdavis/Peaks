@@ -1048,6 +1048,10 @@ namespace Keas.Mvc.Controllers
         private async Task<int> AddEquipmentAssignment(EquipmentImport r, Person person, String userIdentity, String userName, Equipment equipment, EquipmentImportResults result)
         {
             int recAssignmentCount = 0;
+            if(person == null)
+            {
+                return recAssignmentCount;
+            }
             ModelState.Clear();
             var assignment = new EquipmentAssignment();
             assignment.RequestedAt = r.DateIssued.HasValue && r.DateIssued < DateTime.Now ? r.DateIssued.Value.ToUniversalTime() : DateTime.Now.ToUniversalTime();
