@@ -1,135 +1,147 @@
-﻿@model Keas.Mvc.Models.ConfirmListModel
+@model Keas.Mvc.Models.ConfirmListModel
 
 @{
     ViewData["Title"] = "Confirm Assignments";
 }
 <div class="card">
-  <div class="card-header-primary">
-    <div class="row justify-content-between">
-      <div class="card-head">
-        <h2>Confirm Assignments</h2>
+    <div class="card-header-primary">
+        <div class="row justify-content-between">
+            <div class="card-head">
+                <h2>Confirm Assignments</h2>
 
-      </div>
-    <div class="card-head">
-          <a href="@Url.Action("AcceptAll")" class="btn btn-success">Confirm all pending</a>
-    </div>
-    </div>
-  </div>
-
-  <div class="card-content">
-    <div class="card keys-color">
-    <div class="card-header-keys">
-      <div class="card-head">
-        <h2><i class="fas fa-key fa-xs"></i> Keys</h2>
-      </div>
-    </div><div class="card-content">
-        <table class="table">
-            <thead>
-                <tr>
-                  <th>Code</th>
-                  <th>Serial</th>
-                  <th>Item</th>
-                  <th>Expiration</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.KeySerials)
-                {
-                    <tr>
-                        <td>@item.Key.Code</td>
-                        <td>@item.Number</td>
-                        <td>@item.Key.Name</td>
-                        <td>@item.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>
-                        <td align="right"><a href="@Url.Action("AcceptKey", new {serialId = item.Id})" class="btn btn-link">Confirm <i class="fas fa-check"></i></a></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+            </div>
+            <div class="card-head">
+                <a href="@Url.Action("AcceptAll")" class="btn btn-success">Confirm all pending</a>
+            </div>
+        </div>
     </div>
 
-</div>
-  <div class="card equipment-color">
-    <div class="card-header-equipment">
-      <div class="card-head">
-        <h2><i class="fas fa-hdd fa-xs"></i> Equipment</h2></div>
-      </div><div class="card-content">
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Item</th>
-                <th>Serial #</th>
-                <th>Make</th>
-                <th>Model</th>
-                <th>Room</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.Equipment)
-            {
-                <tr>
-                    <td>@item.Name</td>
-                    <td>@item.SerialNumber</td>
-                    <td>@item.Make</td>
-                    <td>@item.Model</td>
-                    @if (@item.Space != null)
-                    {
-                        <td>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
-                    }
-                    else
-                    {
-                        <td>&nbsp;</td>
-                    }
-                    <td align="right"><a href="@Url.Action("AcceptEquipment", new {equipmentId = item.Id})" class="btn btn-link">Confirm <i class="fas fa-check"></i></a></td>
-                </tr>
-            }
-            </tbody>
-        </table>
-      </div>
-
-    </div>
-
-<div class="card spaces-color">
-  <div class="card-header-spaces">
-    <div class="card-head">
-      <h2><i class="fas fa-briefcase fa-xs"></i> Workstation</h2>
-    </div>
-  </div><div class="card-content">
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Type</th>
-            <th>Room</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var item in Model.Workstations)
+    <div class="card-content">
+        @if (Model.KeySerials.Any())
         {
-            <tr>
-                <td>@item.Type</td>
-                @if (@item.Space != null)
-                {
-                    <td>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
-                }
-                else
-                {
-                    <td>&nbsp;</td>
-                }
-                <td align="right"><a href="@Url.Action("AcceptWorkstation", new {workstationId = item.Id})" class="btn btn-link">Confirm <i class="fas fa-check"></i></a></td>
-            </tr>
+            <div class="card keys-color">
+                <div class="card-header-keys">
+                    <div class="card-head">
+                        <h2>
+                            <i class="fas fa-key fa-xs"></i> Keys
+                        </h2>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Serial</th>
+                                <th>Item</th>
+                                <th>Expiration</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.KeySerials)
+                            {
+                                <tr>
+                                    <td>@item.Key.Code</td>
+                                    <td>@item.Number</td>
+                                    <td>@item.Key.Name</td>
+                                    <td>@item.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>
+                                    <td align="right"><a href="@Url.Action("AcceptKey", new {serialId = item.Id})" class="btn btn-link">Confirm <i class="fas fa-check"></i></a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         }
-        </tbody>
-    </table>
-  </div>
 
-</div>
-</div>
+        @if (Model.Equipment.Any())
+        {
+            <div class="card equipment-color">
+                <div class="card-header-equipment">
+                    <div class="card-head">
+                        <h2>
+                            <i class="fas fa-hdd fa-xs"></i> Equipment
+                        </h2>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Serial #</th>
+                                <th>Make</th>
+                                <th>Model</th>
+                                <th>Room</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Equipment)
+                            {
+                                <tr>
+                                    <td>@item.Name</td>
+                                    <td>@item.SerialNumber</td>
+                                    <td>@item.Make</td>
+                                    <td>@item.Model</td>
+                                    @if (@item.Space != null)
+                                    {
+                                        <td>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
+                                    }
+                                    else
+                                    {
+                                        <td>&nbsp;</td>
+                                    }
+                                    <td align="right"><a href="@Url.Action("AcceptEquipment", new {equipmentId = item.Id})" class="btn btn-link">Confirm <i class="fas fa-check"></i></a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
 
+        @if (Model.Workstations.Any())
+        {
+            <div class="card spaces-color">
+                <div class="card-header-spaces">
+                    <div class="card-head">
+                        <h2>
+                            <i class="fas fa-briefcase fa-xs"></i> Workstation
+                        </h2>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Room</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Workstations)
+                            {
+                                <tr>
+                                    <td>@item.Type</td>
+                                    @if (@item.Space != null)
+                                    {
+                                        <td>@item.Space.RoomName (@item.Space.RoomNumber @item.Space.BldgName)</td>
+                                    }
+                                    else
+                                    {
+                                        <td>&nbsp;</td>
+                                    }
+                                    <td align="right"><a href="@Url.Action("AcceptWorkstation", new {workstationId = item.Id})" class="btn btn-link">Confirm <i class="fas fa-check"></i></a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
-
-  </div>
-
-
+            </div>
+        }
+    </div>
 </div>
