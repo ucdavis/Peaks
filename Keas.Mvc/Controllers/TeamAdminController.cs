@@ -944,13 +944,7 @@ namespace Keas.Mvc.Controllers
         {
             var equipment = new Equipment();
             if (!string.IsNullOrWhiteSpace(r.EquipmentName) && !r.Make.Contains("AEXMPLE"))
-            {
-                if (r.EquipmentName.Length > 64)
-                {
-                    result.Success = false;
-                    result.ErrorMessage.Add($"Invalid Equipment Name: exceeds 64 characters");
-                    return equipment;
-                }
+            {                
                 equipment.Name = r.EquipmentName;
                 equipment.SerialNumber = r.SerialNumber;
                 equipment.Make = r.Make;
