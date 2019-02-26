@@ -21,6 +21,8 @@ namespace Keas.Core.Domain
         [StringLength(32)]
         public string Group { get; set; }
 
+        public string Notes { get; set; }
+
         // Comma Separated List of Search Tags
         public string Tags { get; set; }
 

@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Equipment] (
+CREATE TABLE [dbo].[Equipment] (
     [Id]                    INT            IDENTITY (1, 1) NOT NULL,
     [Active]                BIT            NOT NULL,
     [EquipmentAssignmentId] INT            NULL,
@@ -11,6 +11,7 @@
     [Tags]                  NVARCHAR (MAX) NULL,
     [TeamId]                INT            NOT NULL,
     [Type]                  NVARCHAR (MAX) NULL,
+    [Notes] NVARCHAR(MAX) NULL, 
     CONSTRAINT [PK_Equipment] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_Equipment_EquipmentAssignments_EquipmentAssignmentId] FOREIGN KEY ([EquipmentAssignmentId]) REFERENCES [dbo].[EquipmentAssignments] ([Id]),
     CONSTRAINT [FK_Equipment_Spaces_SpaceId] FOREIGN KEY ([SpaceId]) REFERENCES [dbo].[Spaces] ([Id]),
