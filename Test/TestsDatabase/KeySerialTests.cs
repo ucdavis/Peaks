@@ -55,6 +55,7 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]"
             }));            
+            expectedFields.Add(new NameAndType("Notes", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Number", "System.String", new List<string>())); 
             expectedFields.Add(new NameAndType("Status", "System.String", new List<string>())); 
             expectedFields.Add(new NameAndType("Tags", "System.String", new List<string>())); 
