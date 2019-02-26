@@ -1035,11 +1035,7 @@ namespace Keas.Mvc.Controllers
                     result.Success = false;
                     result.ErrorMessage.Add($"KerbUser not found.");
                 }
-            }
-            else
-            {
-                result.Messages.Add("No Name");
-            }
+            }          
 
             return (recPeopleCount, person);
 
