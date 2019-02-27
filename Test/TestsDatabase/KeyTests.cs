@@ -56,6 +56,7 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
             }));
+            expectedFields.Add(new NameAndType("Notes", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Serials", "System.Collections.Generic.List`1[Keas.Core.Domain.KeySerial]", new List<string>()));
             expectedFields.Add(new NameAndType("Tags", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Team", "Keas.Core.Domain.Team", new List<string>()));

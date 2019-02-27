@@ -6,6 +6,7 @@ CREATE TABLE [dbo].[Keys] (
     [Name]   NVARCHAR (64)  NOT NULL,
     [Tags]   NVARCHAR (MAX) NULL,
     [TeamId] INT            NOT NULL,
+    [Notes] NVARCHAR(MAX) NULL, 
     CONSTRAINT [PK_Keys] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_Keys_Teams_TeamId] FOREIGN KEY ([TeamId]) REFERENCES [dbo].[Teams] ([Id]) ON DELETE CASCADE
 );

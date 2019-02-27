@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Workstations] (
+CREATE TABLE [dbo].[Workstations] (
     [Id]                      INT            IDENTITY (1, 1) NOT NULL,
     [Active]                  BIT            NOT NULL,
     [Group]                   NVARCHAR (32)  NULL,
@@ -8,6 +8,7 @@
     [TeamId]                  INT            NOT NULL,
     [Type]                    NVARCHAR (MAX) NULL,
     [WorkstationAssignmentId] INT            NULL,
+    [Notes] NVARCHAR(MAX) NULL, 
     CONSTRAINT [PK_Workstations] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_Workstations_Spaces_SpaceId] FOREIGN KEY ([SpaceId]) REFERENCES [dbo].[Spaces] ([Id]) ON DELETE CASCADE,
     CONSTRAINT [FK_Workstations_Teams_TeamId] FOREIGN KEY ([TeamId]) REFERENCES [dbo].[Teams] ([Id]) ON DELETE CASCADE,

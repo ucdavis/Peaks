@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Keas.Core.Domain;
@@ -50,6 +50,7 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
             }));
+            expectedFields.Add(new NameAndType("Notes", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Tags", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Team", "Keas.Core.Domain.Team", new List<string>()));
             expectedFields.Add(new NameAndType("TeamId", "System.Int32", new List<string>()));

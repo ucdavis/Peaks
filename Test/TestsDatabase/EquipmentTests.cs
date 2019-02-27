@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Keas.Core.Domain;
@@ -55,6 +55,7 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
             }));
+            expectedFields.Add(new NameAndType("Notes", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("SerialNumber", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Space", "Keas.Core.Domain.Space", new List<string>()));
             expectedFields.Add(new NameAndType("SpaceId", "System.Nullable`1[System.Int32]", new List<string>()));
