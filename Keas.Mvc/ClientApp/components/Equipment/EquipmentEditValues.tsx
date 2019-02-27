@@ -84,6 +84,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             }
                         />
                     </div>
+                    {this.props.selectedEquipment.type !== "Card" && (
                     <div className="form-group">
                         <label>Make</label>
                         <input
@@ -98,6 +99,8 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             onChange={e => this.props.changeProperty("make", e.target.value)}
                         />
                     </div>
+                    )}
+                    {this.props.selectedEquipment.type !== "Card" && (
                     <div className="form-group">
                         <label>Model</label>
                         <input
@@ -112,6 +115,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             onChange={e => this.props.changeProperty("model", e.target.value)}
                         />
                     </div>
+                    )}
                     <EquipmentAttributes
                         updateAttributes={this.props.updateAttributes}
                         disableEdit={this.props.disableEditing}
