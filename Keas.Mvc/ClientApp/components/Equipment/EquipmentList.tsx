@@ -38,7 +38,7 @@ export default class EquipmentList extends React.Component<IProps, {}> {
                         <tr>
                             <th />
                             <th>Serial</th>
-                            <th>Number</th>
+                            <th>Item</th>
                             <th>Assigned To</th>
                             <th>Expiration</th>
                             <th className="list-actions">Actions</th>
