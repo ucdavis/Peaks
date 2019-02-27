@@ -18,6 +18,7 @@ interface IProps {
 
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
     public render() {
+        const typeValue = this.props.selectedEquipment.type ? this.props.selectedEquipment.type : "Default";
         return (
             <div>
                 {this.props.disableEditing && this.props.openEditModal && (
@@ -48,23 +49,20 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     </FormGroup>
                     <div className="form-group">
                         <label>Type</label>
-                        <input
-                            type="text"
+                        <select
                             className="form-control"
+                            value={typeValue}
+                            onChange={e =>this.props.changeProperty("type", e.target.value)}
                             disabled={this.props.disableEditing}
-                            autoFocus={
-                                !this.props.disableEditing &&
-                                this.props.selectedEquipment.type !== ""
-                            }
-                            value={
-                                this.props.selectedEquipment.type
-                                    ? this.props.selectedEquipment.type
-                                    : ""
-                            }
-                            onChange={e =>
-                                this.props.changeProperty("type", e.target.value)
-                            }
-                        />
+                        >
+                            <option value="Default">Default</option>
+                            <option value="Computer">Computer</option>
+                            <option value="Device">Device</option>
+                            <option value="Card">Card</option>
+                            <option value="Industrial">Industrial</option>
+                            <option value="Other">Other</option>
+                        </select>
+
                     </div>
                     <div className="form-group">
                         <label>Serial Number</label>
