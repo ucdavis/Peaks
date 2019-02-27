@@ -137,8 +137,7 @@ namespace Keas.Mvc.Services
                 return null;
             }
 
-            var dupeCheck = ucdKerbResult.ResponseData.Results;
-            if (dupeCheck.Length != 1)
+            if (ucdKerbResult.ResponseData.Results.Length != 1)
             {
                 var iamIds = ucdKerbResult.ResponseData.Results.Select(a => a.IamId).Distinct().ToArray();
                 var userIDs = ucdKerbResult.ResponseData.Results.Select(a => a.UserId).Distinct().ToArray();
