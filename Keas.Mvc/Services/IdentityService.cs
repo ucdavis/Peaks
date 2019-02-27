@@ -1,18 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Ietws;
 using Keas.Core.Domain;
 using Keas.Mvc.Models;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Keas.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using ietws.PPSDepartment;
-using Microsoft.EntityFrameworkCore.Design;
 
 
 namespace Keas.Mvc.Services
@@ -104,8 +101,8 @@ namespace Keas.Mvc.Services
             var clientws = new IetClient(_authSettings.IamKey);
             // get IAM from email
             var iamResult = await clientws.Contacts.Search(ContactSearchField.email, email);
-            var iamId = iamResult.ResponseData.Results.Length > 0 ? iamResult.ResponseData.Results[0].IamId : String.Empty;
-            if (String.IsNullOrWhiteSpace(iamId))
+            var iamId = iamResult.ResponseData.Results.Length > 0 ? iamResult.ResponseData.Results[0].IamId : string.Empty;
+            if (string.IsNullOrWhiteSpace(iamId))
             {
                 return null;
             }
