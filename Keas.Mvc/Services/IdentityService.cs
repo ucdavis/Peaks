@@ -143,7 +143,7 @@ namespace Keas.Mvc.Services
                 var userIDs = ucdKerbResult.ResponseData.Results.Select(a => a.UserId).Distinct().ToArray();
                 if (iamIds.Length != 1 && userIDs.Length != 1)
                 {
-                    throw new Exception($"IAM issue with non unique values for {userIDs}");
+                    throw new Exception($"IAM issue with non unique values for kerbs: {string.Join(',',userIDs)} IAM: {string.Join(',',iamIds)}");
                 }
             }
 
