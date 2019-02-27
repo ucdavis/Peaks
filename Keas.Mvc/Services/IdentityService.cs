@@ -12,6 +12,7 @@ using Keas.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using ietws.PPSDepartment;
+using Microsoft.EntityFrameworkCore.Design;
 
 
 namespace Keas.Mvc.Services
@@ -136,7 +137,18 @@ namespace Keas.Mvc.Services
                 return null;
             }
 
-            var ucdKerbPerson = ucdKerbResult.ResponseData.Results.Single();
+            var dupeCheck = ucdKerbResult.ResponseData.Results;
+            if (dupeCheck.Length != 1)
+            {
+                var iamIds = ucdKerbResult.ResponseData.Results.Select(a => a.IamId).Distinct().ToArray();
+                var userIDs = ucdKerbResult.ResponseData.Results.Select(a => a.UserId).Distinct().ToArray();
+                if (iamIds.Length != 1 && userIDs.Length != 1)
+                {
+                    throw new Exception($"IAM issue with non unique values for {userIDs}");
+                }
+            }
+
+            var ucdKerbPerson = ucdKerbResult.ResponseData.Results.First();
 
             // find their email
             var ucdContactResult = await clientws.Contacts.Get(ucdKerbPerson.IamId);
