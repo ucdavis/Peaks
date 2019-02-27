@@ -65,7 +65,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
 
                     </div>
                     <div className="form-group">
-                        <label>Serial Number</label>
+                        <label>Serial Number / Identifier</label>
                         <input
                             type="text"
                             className="form-control"
