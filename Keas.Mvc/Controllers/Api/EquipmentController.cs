@@ -165,6 +165,7 @@ namespace Keas.Mvc.Controllers.Api
                 eq.Name = updatedEquipment.Name;
                 eq.SerialNumber = updatedEquipment.SerialNumber;
                 eq.Tags = updatedEquipment.Tags;
+                eq.Type = updatedEquipment.Type;
                 
                 eq.Attributes.Clear();
                 updatedEquipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));

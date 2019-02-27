@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { Button, FormFeedback, FormGroup, Input, Label } from "reactstrap";
 import { IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
 import SearchSpaces from "../Spaces/SearchSpaces";
@@ -46,6 +46,26 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         />
                         <FormFeedback>Item name is required</FormFeedback>
                     </FormGroup>
+                    <div className="form-group">
+                        <label>Type</label>
+                        <input
+                            type="text"
+                            className="form-control"
+                            disabled={this.props.disableEditing}
+                            autoFocus={
+                                !this.props.disableEditing &&
+                                this.props.selectedEquipment.type !== ""
+                            }
+                            value={
+                                this.props.selectedEquipment.type
+                                    ? this.props.selectedEquipment.type
+                                    : ""
+                            }
+                            onChange={e =>
+                                this.props.changeProperty("type", e.target.value)
+                            }
+                        />
+                    </div>
                     <div className="form-group">
                         <label>Serial Number</label>
                         <input
