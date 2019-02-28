@@ -38,6 +38,12 @@ export default class KeyDetailContainer extends React.Component<IProps, {}> {
                         {selectedKeyInfo.key.tags}
                     </p>
                 )}
+                {selectedKeyInfo.key.notes && (
+                    <p>
+                        <i className="fas fa-comment-alt mr-2" aria-hidden="true" />
+                        {selectedKeyInfo.key.notes}
+                    </p>
+                )}
                 <div className="mb-3">
                     <Button
                         color="link"

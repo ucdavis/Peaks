@@ -93,6 +93,7 @@ export interface IKey {
   teamId: number;
   name: string;
   code: string;
+  notes: string;
   tags: string;
   serials?: IKeySerial[];
   keyXSpaces?: IKeySpaceAssociation[];

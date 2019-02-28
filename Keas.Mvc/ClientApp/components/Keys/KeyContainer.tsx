@@ -225,6 +225,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         const request = {
             code: key.code,
             name: key.name,
+            notes: key.notes,
             tags: key.tags
         };
 
@@ -289,6 +290,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         const request = {
             code: key.code,
             name: key.name,
+            notes: key.notes,
             tags: key.tags
         };
 
