@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { Button, FormFeedback, FormGroup, Input, Label } from "reactstrap";
 import { IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
 import SearchSpaces from "../Spaces/SearchSpaces";
@@ -92,6 +92,17 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                                     : ""
                             }
                             onChange={e => this.props.changeProperty("model", e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Notes</label>
+                        <textarea
+                            className="form-control"
+                            disabled={this.props.disableEditing}
+                            value={
+                                this.props.selectedEquipment.notes ? this.props.selectedEquipment.notes : ""
+                            }
+                            onChange={e => this.props.changeProperty("notes", e.target.value)}
                         />
                     </div>
                     <EquipmentAttributes

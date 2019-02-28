@@ -151,6 +151,7 @@ export interface IEquipment {
   tags: string; 
   teamId: number;
   type: string;
+  notes: string;
   attributes: IEquipmentAttribute[];
 }
 
