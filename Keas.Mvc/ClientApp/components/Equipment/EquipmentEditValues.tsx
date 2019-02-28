@@ -84,7 +84,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             }
                         />
                     </div>
-                    {this.props.selectedEquipment.type !== "Card" && (
+                    {this._shouldShowForType(this.props.selectedEquipment.type, "Make") && (
                     <div className="form-group">
                         <label>Make</label>
                         <input
@@ -100,7 +100,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         />
                     </div>
                     )}
-                    {this.props.selectedEquipment.type !== "Card" && (
+                    {this._shouldShowForType(this.props.selectedEquipment.type, "Model") && (
                     <div className="form-group">
                         <label>Model</label>
                         <input
@@ -176,5 +176,19 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
 
     private _selectSpace = (space: ISpace) => {
         this.props.changeProperty("space", space);
+    };
+
+    private _shouldShowForType(type: string, prop: string) {
+        if (prop !== "Card") {
+            return true;
+        }
+        if (type === "Make") {
+            return false;
+        }
+        if (type === "Model") {
+            return false;
+        }
+
+        return true;
     };
 }
