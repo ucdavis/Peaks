@@ -127,6 +127,7 @@ export interface IAccess {
   id: number;
   teamId: number;
   name: string;
+  notes: string;
   tags: string;
   assignments: IAccessAssignment[];
 }
