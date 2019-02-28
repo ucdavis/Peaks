@@ -113,11 +113,6 @@ namespace Keas.Mvc.Controllers.Api
                     equipment.Space = space;
                 }
 
-                if (equipment.Type.Equals("Card", StringComparison.OrdinalIgnoreCase))
-                {
-                    equipment.Make = string.Empty;
-                    equipment.Model = string.Empty;
-                }
                 _context.Equipment.Add(equipment);
                 await _eventService.TrackCreateEquipment(equipment);
                 await _context.SaveChangesAsync();
@@ -172,12 +167,6 @@ namespace Keas.Mvc.Controllers.Api
                 eq.SerialNumber = updatedEquipment.SerialNumber;
                 eq.Tags = updatedEquipment.Tags;
                 eq.Type = updatedEquipment.Type;
-
-                if(updatedEquipment.Type.Equals("Card", StringComparison.OrdinalIgnoreCase))
-                {
-                    eq.Make = string.Empty;
-                    eq.Model = string.Empty;
-                }
                 
                 eq.Attributes.Clear();
                 updatedEquipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
