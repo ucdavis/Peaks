@@ -211,6 +211,7 @@ export interface IWorkstation {
   name: string;
   space: ISpace;
   tags: string;
+  notes: string;
   teamId: number;
   assignment?: IWorkstationAssignment;
 }

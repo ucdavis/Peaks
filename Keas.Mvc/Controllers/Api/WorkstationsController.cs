@@ -204,6 +204,7 @@ namespace Keas.Mvc.Controllers.Api
                     
                 w.Name = workstation.Name;
                 w.Tags = workstation.Tags;
+                w.Notes = workstation.Notes;
 
                 await _context.SaveChangesAsync();
                 return Json(w);
