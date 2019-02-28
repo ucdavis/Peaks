@@ -77,7 +77,17 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                             />
                         </FormGroup>
                     )}
-
+                    <div className="form-group">
+                        <label>Notes</label>
+                        <textarea
+                            className="form-control"
+                            disabled={this.props.disableEditing}
+                            value={
+                                this.props.selectedWorkstation.notes ? this.props.selectedWorkstation.notes : ""
+                            }
+                            onChange={e => this.props.changeProperty("notes", e.target.value)}
+                        />
+                    </div>
                     <div className="form-group">
                         <label>Tags</label>
                         <SearchTags
@@ -89,17 +99,6 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                                     : []
                             }
                             onSelect={e => this.props.changeProperty("tags", e.join(","))}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>Notes</label>
-                        <textarea
-                            className="form-control"
-                            disabled={this.props.disableEditing}
-                            value={
-                                this.props.selectedWorkstation.notes ? this.props.selectedWorkstation.notes : ""
-                            }
-                            onChange={e => this.props.changeProperty("notes", e.target.value)}
                         />
                     </div>
                 </div>
