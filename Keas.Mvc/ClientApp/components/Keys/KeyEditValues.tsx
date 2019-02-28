@@ -54,9 +54,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                     <textarea
                         className="form-control"
                         disabled={this.props.disableEditing}
-                        value={
-                            this.props.selectedKey.notes ? this.props.selectedKey.notes : ""
-                        }
+                        value={this.props.selectedKey.notes || ""}
                         onChange={e => this.props.changeProperty("notes", e.target.value)}
                     />
                 </div>

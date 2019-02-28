@@ -80,9 +80,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                     <textarea
                         className="form-control"
                         disabled={this.props.disableEditing}
-                        value={
-                            this.props.selectedAccess.notes ? this.props.selectedAccess.notes : ""
-                        }
+                        value={this.props.selectedAccess.notes || ""}
                         onChange={e => this.props.changeProperty("notes", e.target.value)}
                     />
                 </div>

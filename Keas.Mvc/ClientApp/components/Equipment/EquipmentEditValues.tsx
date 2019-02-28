@@ -99,9 +99,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         <textarea
                             className="form-control"
                             disabled={this.props.disableEditing}
-                            value={
-                                this.props.selectedEquipment.notes ? this.props.selectedEquipment.notes : ""
-                            }
+                            value={this.props.selectedEquipment.notes || ""}
                             onChange={e => this.props.changeProperty("notes", e.target.value)}
                         />
                     </div>

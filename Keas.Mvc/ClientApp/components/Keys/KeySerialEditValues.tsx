@@ -90,9 +90,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                         <textarea
                             className="form-control"
                             disabled={this.props.disableEditing}
-                            value={
-                                this.props.keySerial.notes ? this.props.keySerial.notes : ""
-                            }
+                            value={this.props.keySerial.notes || ""}
                             onChange={e => this.props.changeProperty("notes", e.target.value)}
                         />
                     </div>

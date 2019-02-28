@@ -82,9 +82,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                         <textarea
                             className="form-control"
                             disabled={this.props.disableEditing}
-                            value={
-                                this.props.selectedWorkstation.notes ? this.props.selectedWorkstation.notes : ""
-                            }
+                            value={this.props.selectedWorkstation.notes || ""}
                             onChange={e => this.props.changeProperty("notes", e.target.value)}
                         />
                     </div>
