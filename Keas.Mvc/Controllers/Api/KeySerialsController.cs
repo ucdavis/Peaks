@@ -141,6 +141,7 @@ namespace Keas.Mvc.Controllers.Api
                 TeamId   = key.TeamId,
                 Name     = model.Number.Trim(),
                 Number   = model.Number.Trim(),
+                Notes    = model.Notes, 
                 Status   = model.Status ?? "Active",
             };
 
@@ -188,6 +189,7 @@ namespace Keas.Mvc.Controllers.Api
             keySerial.Number = model.Number.Trim();
             //TODO: Do we want to update the Name too? When we create it, we make Number and Name the same.
             keySerial.Status = model.Status;
+            keySerial.Notes = model.Notes;
 
             await _context.SaveChangesAsync();
 

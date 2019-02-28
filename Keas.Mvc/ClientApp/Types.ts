@@ -104,6 +104,7 @@ export interface IKeySerial {
   number: string;
   tags: string;
   status: string;
+  notes: string;
   key: IKey;
   keySerialAssignment?: IKeySerialAssignment;
 }

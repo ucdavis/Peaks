@@ -12,5 +12,7 @@ namespace Keas.Mvc.Models.KeySerialViewModels
         public string Number { get; set; }
 
         public string Status { get; set; }
+
+        public string Notes { get; set; }
     }
 }
