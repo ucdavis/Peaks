@@ -179,13 +179,16 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
     };
 
     private _shouldShowForType(type: string, prop: string) {
-        if (prop !== "Card") {
-            return true;
-        }
-        if (type === "Make") {
+        if (prop === "Make") {
+            if (type !== "Card") {
+                return true
+            }
             return false;
         }
-        if (type === "Model") {
+        if (prop === "Model") {
+            if (type !== "Card") {
+                return true
+            }
             return false;
         }
 
