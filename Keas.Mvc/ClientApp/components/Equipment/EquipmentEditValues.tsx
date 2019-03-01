@@ -115,6 +115,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             onChange={e => this.props.changeProperty("model", e.target.value)}
                         />
                     </div>
+                    )}
                     <div className="form-group">
                         <label>Notes</label>
                         <textarea
