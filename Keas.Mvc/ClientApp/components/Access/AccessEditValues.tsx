@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import ReactTable from "react-table";
 import { Button, FormFeedback, FormGroup, Input, Label } from "reactstrap";
 import { IAccess, IAccessAssignment } from "../../Types";
@@ -75,6 +75,15 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                     />
                     <FormFeedback>Item name is required</FormFeedback>
                 </FormGroup>
+                <div className="form-group">
+                    <label>Notes</label>
+                    <textarea
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedAccess.notes || ""}
+                        onChange={e => this.props.changeProperty("notes", e.target.value)}
+                    />
+                </div>
                 <div className="form-group">
                     <label>Tags</label>
                     <SearchTags

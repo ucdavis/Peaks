@@ -1,4 +1,4 @@
-﻿import * as PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 import { Button } from "reactstrap";
@@ -113,6 +113,7 @@ export default class SearchAccess extends React.Component<IProps, IState> {
             assignments: [],
             id: 0,
             name: "",
+            notes: "",
             tags: "",
             teamId: 0
         });

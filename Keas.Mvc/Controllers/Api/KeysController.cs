@@ -68,6 +68,7 @@ namespace Keas.Mvc.Controllers.Api
                     Id = r.Id,
                     Code = r.Code,
                     Name = r.Name,
+                    Notes = r.Notes,
                     TeamId = r.TeamId,
                     Tags = r.Tags
                 },
@@ -131,6 +132,7 @@ namespace Keas.Mvc.Controllers.Api
             {
                 Name = model.Name.Trim(),
                 Code = model.Code.Trim(),
+                Notes = model.Notes,
                 Tags = model.Tags,
             };
 
@@ -171,6 +173,7 @@ namespace Keas.Mvc.Controllers.Api
             key.Code = model.Code.Trim();
             key.Name = model.Name.Trim();
             key.Tags = model.Tags;
+            key.Notes = model.Notes;
 
             await _context.SaveChangesAsync();
             await _eventService.TrackUpdateKey(key);

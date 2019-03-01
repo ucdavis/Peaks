@@ -1,4 +1,4 @@
-﻿import * as PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 import { Button } from "reactstrap";
@@ -145,6 +145,7 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
             name: "",
             space: this.props.space ? this.props.space : null, // if we are on spaces tab, auto to the right space
             tags: "",
+            notes: "",
             teamId: 0
         });
     };

@@ -42,6 +42,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
                 code: "",
                 id: 0,
                 name: "",
+                notes: "",
                 serials: [],
                 tags: "",
                 teamId: 0
@@ -125,6 +126,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
                 code: "",
                 id: 0,
                 name: "",
+                notes: "",
                 serials: [],
                 tags: "",
                 teamId: 0

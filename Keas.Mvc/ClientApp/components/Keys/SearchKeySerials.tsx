@@ -1,4 +1,4 @@
-﻿import * as PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 import { Button } from "reactstrap";
@@ -140,6 +140,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
                 key: this.props.selectedKey,
                 number: selected[0].number,
                 status: "Active",
+                notes: "",
                 tags: ""
             };
             this.props.onSelect(keySerial);
@@ -159,6 +160,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
             key: this.props.selectedKey,
             number: "",
             status: "Active",
+            notes: "",
             tags: ""
         };
         this.props.onSelect(keySerial);

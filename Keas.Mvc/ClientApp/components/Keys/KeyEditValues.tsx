@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { FormFeedback, FormGroup, Input, Label } from "reactstrap";
 import { IKey } from "../../Types";
 import SearchTags from "../Tags/SearchTags";
@@ -49,6 +49,15 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
                     />
                     <FormFeedback>Code is required</FormFeedback>
                 </FormGroup>
+                <div className="form-group">
+                    <label>Notes</label>
+                    <textarea
+                        className="form-control"
+                        disabled={this.props.disableEditing}
+                        value={this.props.selectedKey.notes || ""}
+                        onChange={e => this.props.changeProperty("notes", e.target.value)}
+                    />
+                </div>
                 <div className="form-group">
                     <label>Tags</label>
                     <SearchTags

@@ -85,6 +85,15 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                             <option value="Dog ate">Dog ate</option>
                         </select>
                     </div>
+                    <div className="form-group">
+                        <label>Notes</label>
+                        <textarea
+                            className="form-control"
+                            disabled={this.props.disableEditing}
+                            value={this.props.keySerial.notes || ""}
+                            onChange={e => this.props.changeProperty("notes", e.target.value)}
+                        />
+                    </div>
                 </div>
             </div>
         );

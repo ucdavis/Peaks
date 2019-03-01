@@ -1,4 +1,4 @@
-﻿import * as React from "react";
+import * as React from "react";
 import { Button, FormFeedback, FormGroup, Input, Label } from "reactstrap";
 import { ISpace, IWorkstation } from "../../Types";
 import SearchSpaces from "../Spaces/SearchSpaces";
@@ -77,7 +77,15 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                             />
                         </FormGroup>
                     )}
-
+                    <div className="form-group">
+                        <label>Notes</label>
+                        <textarea
+                            className="form-control"
+                            disabled={this.props.disableEditing}
+                            value={this.props.selectedWorkstation.notes || ""}
+                            onChange={e => this.props.changeProperty("notes", e.target.value)}
+                        />
+                    </div>
                     <div className="form-group">
                         <label>Tags</label>
                         <SearchTags

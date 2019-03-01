@@ -93,6 +93,7 @@ export interface IKey {
   teamId: number;
   name: string;
   code: string;
+  notes: string;
   tags: string;
   serials?: IKeySerial[];
   keyXSpaces?: IKeySpaceAssociation[];
@@ -103,6 +104,7 @@ export interface IKeySerial {
   number: string;
   tags: string;
   status: string;
+  notes: string;
   key: IKey;
   keySerialAssignment?: IKeySerialAssignment;
 }
@@ -127,6 +129,7 @@ export interface IAccess {
   id: number;
   teamId: number;
   name: string;
+  notes: string;
   tags: string;
   assignments: IAccessAssignment[];
 }
@@ -151,6 +154,7 @@ export interface IEquipment {
   tags: string; 
   teamId: number;
   type: string;
+  notes: string;
   attributes: IEquipmentAttribute[];
 }
 
@@ -207,6 +211,7 @@ export interface IWorkstation {
   name: string;
   space: ISpace;
   tags: string;
+  notes: string;
   teamId: number;
   assignment?: IWorkstationAssignment;
 }

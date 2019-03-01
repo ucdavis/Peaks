@@ -155,7 +155,8 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         if (keySerial.id === 0) {
             const request = {
                 keyId: keySerial.key.id,
-                number: keySerial.number
+                number: keySerial.number,
+                notes: keySerial.notes,
             };
 
             const createUrl = `/api/${team.slug}/keyserials/create`;
@@ -268,7 +269,8 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
         const request = {
             number: keySerial.number,
-            status: keySerial.status
+            status: keySerial.status,
+            notes: keySerial.notes,
         };
 
         const updateUrl = `/api/${team.slug}/keyserials/update/${keySerial.id}`;
