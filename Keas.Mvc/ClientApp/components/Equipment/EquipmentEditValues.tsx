@@ -18,6 +18,7 @@ interface IProps {
 
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
     public render() {
+        const typeValue = this.props.selectedEquipment.type || "Default";
         return (
             <div>
                 {this.props.disableEditing && this.props.openEditModal && (
@@ -47,7 +48,24 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         <FormFeedback>Item name is required</FormFeedback>
                     </FormGroup>
                     <div className="form-group">
-                        <label>Serial Number</label>
+                        <label>Type</label>
+                        <select
+                            className="form-control"
+                            value={typeValue}
+                            onChange={e => this.props.changeProperty("type", e.target.value)}
+                            disabled={this.props.disableEditing}
+                        >
+                            <option value="Default">Default</option>
+                            <option value="Computer">Computer</option>
+                            <option value="Device">Device</option>
+                            <option value="Card">Card</option>
+                            <option value="Industrial">Industrial</option>
+                            <option value="Other">Other</option>
+                        </select>
+
+                    </div>
+                    <div className="form-group">
+                        <label>Serial Number / Identifier</label>
                         <input
                             type="text"
                             className="form-control"
@@ -66,6 +84,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             }
                         />
                     </div>
+                    {this._shouldShowForType(this.props.selectedEquipment.type, "Make") && (
                     <div className="form-group">
                         <label>Make</label>
                         <input
@@ -80,6 +99,8 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             onChange={e => this.props.changeProperty("make", e.target.value)}
                         />
                     </div>
+                    )}
+                    {this._shouldShowForType(this.props.selectedEquipment.type, "Model") && (
                     <div className="form-group">
                         <label>Model</label>
                         <input
@@ -163,5 +184,22 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
 
     private _selectSpace = (space: ISpace) => {
         this.props.changeProperty("space", space);
+    };
+
+    private _shouldShowForType(type: string, prop: string) {
+        if (prop === "Make") {
+            if (type !== "Card") {
+                return true;
+            }
+            return false;
+        }
+        if (prop === "Model") {
+            if (type !== "Card") {
+                return true;
+            }
+            return false;
+        }
+
+        return true;
     };
 }

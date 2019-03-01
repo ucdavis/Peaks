@@ -112,6 +112,7 @@ namespace Keas.Mvc.Controllers.Api
                    var space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
                     equipment.Space = space;
                 }
+
                 _context.Equipment.Add(equipment);
                 await _eventService.TrackCreateEquipment(equipment);
                 await _context.SaveChangesAsync();
@@ -166,6 +167,7 @@ namespace Keas.Mvc.Controllers.Api
                 eq.SerialNumber = updatedEquipment.SerialNumber;
                 eq.Tags = updatedEquipment.Tags;
                 eq.Notes = updatedEquipment.Notes;
+                eq.Type = updatedEquipment.Type;
                 
                 eq.Attributes.Clear();
                 updatedEquipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
