@@ -70,6 +70,8 @@
                         <dd>List of tags for this item. If more than one tag, add each separated by comma, with the entire set surrounded by quotation marks. Tags must be added to team in order to filter by them, <a asp-controller="TagsManager" asp-action="Index">Team Tags</a> . All imported items will have "Imported" added as a tag. If you wish to search by this tag, please add it to your team's tags.</dd>
                         <dt>Type</dt>
                         <dd>Optional Equipment type. If not supplied, "Default" will be used. Possible Values: @(string.Join(", ", EquipmentTypes.Types))</dd>
+                        <dt>Notes</dt>
+                        <dd>Optional.</dd>
                         <dt>Key(1-6)</dt>
                         <dd>Attribute key to be added to this item. You may add up to 6 attributes.</dd>
                         <dt>Value(1-6)</dt>
