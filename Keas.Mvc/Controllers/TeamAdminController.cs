@@ -798,7 +798,8 @@ namespace Keas.Mvc.Controllers
                 }
                 catch (HeaderValidationException e)
                 {
-                    ErrorMessage = e.Message;
+                    var firstSentence = e.Message.Split('.');
+                    ErrorMessage = firstSentence.FirstOrDefault() ?? "Error Detected";
                     return View();
                 }
                 
