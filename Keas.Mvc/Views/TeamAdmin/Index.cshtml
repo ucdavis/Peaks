@@ -15,6 +15,19 @@
       <p><b>@Html.DisplayNameFor(model => model.Name)</b></p>
 
       <p>@Html.DisplayFor(model => model.Name)</p>
+       
+      <form asp-action="UpdateEmail">
+        @Html.HiddenFor(a => a.Id)
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <b><label asp-for="BoardingNotificationEmail" class="control-label"></label></b>
+            <input asp-for="BoardingNotificationEmail" class="form-control" />
+            <span asp-validation-for="BoardingNotificationEmail" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Update Email" class="btn btn-primary" />
+        </div>
+      </form>
 
       <p><b>FIS Orgs</b></p>
       @foreach (var org in Model.FISOrgs) {
@@ -34,3 +47,7 @@
 
   </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

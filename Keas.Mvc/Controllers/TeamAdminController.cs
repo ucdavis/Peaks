@@ -48,6 +48,32 @@ namespace Keas.Mvc.Controllers
             return View(team);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateEmail(int id, Team team)
+        {
+            var teamToUpdate = await _context.Teams.SingleAsync(a => a.Id == id && a.Slug == Team);
+
+            if (teamToUpdate.BoardingNotificationEmail != team.BoardingNotificationEmail)
+            {
+                teamToUpdate.BoardingNotificationEmail = team.BoardingNotificationEmail;
+                ModelState.Clear();
+                TryValidateModel(teamToUpdate);
+                if (!ModelState.IsValid)
+                {
+                    ErrorMessage = "Invalid email. Not Updated";
+                    return RedirectToAction("Index");
+                }
+                Message = "Email Updated.";
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                Message = "Email not changed.";
+            }
+            
+            return RedirectToAction("Index");
+        }
+
         public IActionResult AddFISOrg()
         {
             return View();
