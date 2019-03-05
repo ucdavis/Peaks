@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -14,6 +14,7 @@ namespace Keas.Mvc.Models
 
         [StringLength(4)]
         [Required]
+        [Display(Name = "Org Code")]
         public string OrgCode { get; set; }
     }
 }
