@@ -99,6 +99,20 @@ namespace Keas.Mvc.Controllers
             return View();
         }
 
+        public async Task<IActionResult> SearchBuilding(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                ErrorMessage = "Please select a building name or part of a building name to search.";                
+                return View(new List<SpaceSearchModel>());
+            }
+            var model = await _context.Spaces
+                    .Where(a => a.BldgName.ToLower().Contains(id.ToLower()))
+                    .Select(a => new SpaceSearchModel(){BldgName = a.BldgName, DeptName = a.DeptName, ChartNum = a.ChartNum, OrgId = a.OrgId}).Distinct().ToListAsync();
+
+            return View(model);
+        }
+
         public async Task<IActionResult> RemoveFISOrg(int fisorgId)
         {
             var fisOrg = await _context.FISOrgs.Include(t => t.Team).SingleAsync(f => f.Id == fisorgId && f.Team.Slug == Team);

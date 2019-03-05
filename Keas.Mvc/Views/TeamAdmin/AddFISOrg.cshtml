@@ -4,38 +4,40 @@
     ViewData["Title"] = "Add Org Code";
 }
 <div class="row justify-content-between">
-  <div class="col-md-8">
-  <div class="card">
-    <div class="card-header-primary">
-      <div class="card-head">
-  <h2>Add Org Code</h2>
-      </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header-primary">
+                <div class="card-head">
+                    <h2>Add Org Code</h2>
+                </div>
+            </div>
+            <div class="card-content">
+                <form asp-action="AddFISOrg">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Chart" class="control-label"></label>
+                        <input asp-for="Chart" class="form-control" />
+                        <span asp-validation-for="Chart" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="OrgCode" class="control-label"></label>
+                        <input asp-for="OrgCode" class="form-control" />
+                        <span asp-validation-for="OrgCode" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Add Org to Team" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-    <div class="card-content">
-      <form asp-action="AddFISOrg">
-          <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-          <div class="form-group">
-              <label asp-for="Chart" class="control-label"></label>
-              <input asp-for="Chart" class="form-control"/>
-              <span asp-validation-for="Chart" class="text-danger"></span>
-          </div>
-          <div class="form-group">
-              <label asp-for="OrgCode" class="control-label"></label>
-              <input asp-for="OrgCode" class="form-control"/>
-              <span asp-validation-for="OrgCode" class="text-danger"></span>
-          </div>
-          <div class="form-group">
-          <input type="submit" value="Add Org to Team" class="btn btn-primary"/>
-          </div>
-      </form>
-    </div>
-  </div>
-  </div>
-  <div class="col-md-4">
 
+    <div class="col-md-4">
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-
-  </div>
+    </div>
+    <div class="col-md-8">
+        @{ await Html.RenderPartialAsync("_SpaceSearchForm");}
+    </div>
 </div>
 
 
