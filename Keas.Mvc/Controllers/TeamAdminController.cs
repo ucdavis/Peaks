@@ -56,6 +56,11 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AddFISOrg(FISOrgAddModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             model.OrgCode = model.OrgCode.ToUpper();
             var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
             if (team == null)
