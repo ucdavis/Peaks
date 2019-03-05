@@ -31,6 +31,7 @@ namespace Keas.Core.Domain
         /// If has value, notify it when people are added/deleted/activated.
         /// </summary>
         [EmailAddress]
+        [StringLength(maximumLength:256)]
         [Display(Name = "On/Off Boarding Notification Email")]
         public string BoardingNotificationEmail { get; set; }
 
