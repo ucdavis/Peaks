@@ -64,7 +64,17 @@ namespace Keas.Mvc.Controllers
             }
             if (!await _financialService.ValidateFISOrg(model.Chart, model.OrgCode))
             {
-                ModelState.AddModelError("OrgCode", "Chart and OrgCode are not valid");
+                //Ok, it failed, but now lets look in spaces
+                var foundInSpaces = await _context.Spaces.FirstOrDefaultAsync(a =>
+                    a.Active && a.ChartNum == model.Chart && a.OrgId == model.OrgCode);
+                if (foundInSpaces != null)
+                {
+                    ErrorMessage = "Warning, Org is used in spaces, but not currently valid. Adding Anyway :)";
+                }
+                else
+                {
+                    ModelState.AddModelError("OrgCode", "Chart and OrgCode are not valid");
+                }
             }
 
             var FISOrg = new FinancialOrganization { Chart = model.Chart, OrgCode = model.OrgCode, Team = team };
