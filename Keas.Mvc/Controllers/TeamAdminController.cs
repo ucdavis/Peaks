@@ -62,18 +62,23 @@ namespace Keas.Mvc.Controllers
             {
                 return NotFound();
             }
+            var foundInSpaces = await _context.Spaces.FirstOrDefaultAsync(a => a.Active && a.ChartNum == model.Chart && a.OrgId == model.OrgCode);
             if (!await _financialService.ValidateFISOrg(model.Chart, model.OrgCode))
             {
-                //Ok, it failed, but now lets look in spaces
-                var foundInSpaces = await _context.Spaces.FirstOrDefaultAsync(a =>
-                    a.Active && a.ChartNum == model.Chart && a.OrgId == model.OrgCode);
                 if (foundInSpaces != null)
                 {
-                    ErrorMessage = "Warning, Org is used in spaces, but not currently valid. Adding Anyway :)";
+                    ErrorMessage = "Warning, Org is used in spaces, but not currently valid. Adding anyway.";
                 }
                 else
                 {
                     ModelState.AddModelError("OrgCode", "Chart and OrgCode are not valid");
+                }
+            }
+            else
+            {
+                if (foundInSpaces == null)
+                {
+                    ErrorMessage = "Warning, Org is valid, but not used in spaces.";
                 }
             }
 
