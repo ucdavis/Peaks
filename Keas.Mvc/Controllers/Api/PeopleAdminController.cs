@@ -5,6 +5,7 @@ using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
+using Keas.Mvc.Extensions;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,13 @@ namespace Keas.Mvc.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IIdentityService _identityService;
+        private readonly INotificationService _notificationService;
 
-        public PeopleAdminController(ApplicationDbContext context, IIdentityService identityService)
+        public PeopleAdminController(ApplicationDbContext context, IIdentityService identityService, INotificationService notificationService)
         {
             this._context = context;
             this._identityService = identityService;
+            _notificationService = notificationService;
         }
 
         public async Task<IActionResult> Update([FromBody]Person person)
@@ -74,6 +77,8 @@ namespace Keas.Mvc.Controllers.Api
             {
                 var personToUpdate = await _context.People.SingleAsync(a => a.Id == person.Id && a.TeamId == person.TeamId);
                 personToUpdate.Active = false;
+               
+                await _notificationService.PersonUpdated(person, Team, User.GetNameClaim(), User.Identity.Name, BoardingNotification.Actions.Deactivated, String.Empty);
 
                 //Remove any Admin roles for that team
                 var teamPermissionsToDelete = await _context.TeamPermissions.Where(a => a.TeamId == person.TeamId && a.UserId == personToUpdate.UserId).ToArrayAsync();

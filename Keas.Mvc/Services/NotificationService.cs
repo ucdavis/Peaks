@@ -23,6 +23,8 @@ namespace Keas.Mvc.Services
         Task KeySerialAccepted(KeySerial keySerial, History history);
         Task EquipmentAccepted(Equipment equipment, History history);
         Task WorkstationAccepted(Workstation workstation, History history);
+
+        Task PersonUpdated(Person person, string teamSlug, string actorName, string actorId, string action, string notes);
     }
     public class NotificationService : INotificationService
     {
@@ -346,6 +348,25 @@ namespace Keas.Mvc.Services
                 _dbContext.Notifications.Add(notification);
             }
             await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task PersonUpdated(Person person, string teamSlug, string actorName, string actorId, string action, string notes)
+        {
+            var team = await _dbContext.Teams.SingleAsync(a => a.Slug == teamSlug);
+            var boardingNotification = new BoardingNotification
+            {
+                Action = action,
+                ActorName = actorName,
+                ActorId = actorId,
+                NotificationEmail = team.BoardingNotificationEmail,
+                Pending = true,
+                PersonEmail = person.Email,
+                PersonName = person.Name,
+                PersonId = person.Id,
+                TeamId = person.Id,
+                Notes = notes,
+            };
+            await _dbContext.BoardingNotifications.AddAsync(boardingNotification);
         }
     }
 }

@@ -30,6 +30,7 @@ namespace Keas.Core.Data
         public virtual DbSet<TeamPpsDepartment> TeamPpsDepartments { get; set; }
 
         public virtual  DbSet<Notification> Notifications { get; set; }
+        public virtual DbSet<BoardingNotification> BoardingNotifications { get; set; }
 
         public virtual DbSet<Workstation> Workstations { get; set; }
         public virtual DbSet<WorkstationAssignment> WorkstationAssignments { get; set; }
@@ -45,6 +46,7 @@ namespace Keas.Core.Data
         public virtual DbSet<Space> Spaces { get; set; }
 
         public virtual DbSet<Tag> Tags { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

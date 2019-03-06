@@ -7,9 +7,11 @@ CREATE TABLE [dbo].[BoardingNotifications]
     [PersonName] NVARCHAR(256) NOT NULL, 
     [PersonId] INT NULL, 
     [ActionDate] DATETIME2 NOT NULL, 
-    [Actor] NVARCHAR(256) NOT NULL, 
+    [ActorName] NVARCHAR(256) NOT NULL, 
     [Action] NVARCHAR(50) NOT NULL, 
     [TeamId] INT NULL, 
     [NotificationDate] DATETIME2 NULL, 
+    [ActorId] NVARCHAR(50) NOT NULL, 
+    [Notes] NVARCHAR(256) NULL, 
     CONSTRAINT [PK_BoardingNotifications] PRIMARY KEY CLUSTERED ([Id] ASC)
 )
