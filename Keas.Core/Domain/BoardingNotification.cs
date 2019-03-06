@@ -13,6 +13,7 @@ namespace Keas.Core.Domain
 
         public int Id { get; set; }
         public bool Pending { get; set; }
+        
         public string NotificationEmail { get; set; }
 
         public string PersonEmail { get; set; }
@@ -21,10 +22,15 @@ namespace Keas.Core.Domain
 
         public DateTime ActionDate { get; set; }
         public string Actor { get; set; }
+
+        public string Action { get; set; }
         
         public Team Team { get; set; }
         public int? TeamId { get; set; }
         
         public DateTime? NotificationDate { get; set; }
+
+        //Non mapped
+        public bool SendEmail => !string.IsNullOrWhiteSpace(NotificationEmail);
     }
 }
