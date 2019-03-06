@@ -45,7 +45,7 @@ namespace Keas.Core.Domain
         public class Actions
         {
             public const string Added = "Added";
-            public const string Activated = "Activated";
+            public const string Reactivated = "Reactivated";
             public const string Deactivated = "Deactivated";
         }
     }
