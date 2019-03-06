@@ -24,7 +24,7 @@ namespace Keas.Mvc.Services
         Task EquipmentAccepted(Equipment equipment, History history);
         Task WorkstationAccepted(Workstation workstation, History history);
 
-        Task PersonUpdated(Person person, string teamSlug, string actorName, string actorId, string action, string notes);
+        Task PersonUpdated(Person person, Team team, string teamSlug, string actorName, string actorId, string action, string notes);
     }
     public class NotificationService : INotificationService
     {
@@ -350,9 +350,13 @@ namespace Keas.Mvc.Services
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task PersonUpdated(Person person, string teamSlug, string actorName, string actorId, string action, string notes)
+        public async Task PersonUpdated(Person person, Team team, string teamSlug, string actorName, string actorId, string action, string notes)
         {
-            var team = await _dbContext.Teams.SingleAsync(a => a.Slug == teamSlug);
+            if (team == null)
+            {
+                team = await _dbContext.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+
             var boardingNotification = new BoardingNotification
             {
                 Action = action,
@@ -363,7 +367,7 @@ namespace Keas.Mvc.Services
                 PersonEmail = person.Email,
                 PersonName = person.Name,
                 PersonId = person.Id,
-                TeamId = person.Id,
+                TeamId = team.Id,
                 Notes = notes,
             };
             await _dbContext.BoardingNotifications.AddAsync(boardingNotification);

@@ -6,6 +6,7 @@ using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
+using Keas.Mvc.Extensions;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,13 @@ namespace Keas.Mvc.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IIdentityService _identityService;
+        private readonly INotificationService _notificationService;
 
-        public PeopleController(ApplicationDbContext context, IIdentityService identityService)
+        public PeopleController(ApplicationDbContext context, IIdentityService identityService, INotificationService notificationService)
         {
             this._context = context;
             this._identityService = identityService;
+            _notificationService = notificationService;
         }
 
         public async Task<IActionResult> List()
@@ -160,6 +163,9 @@ namespace Keas.Mvc.Controllers.Api
                     }
                     person.Team = team;
                     _context.People.Add(person);
+                    await _context.SaveChangesAsync(); //Need to save so I can get the personId for the notification service below.
+
+                    await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, BoardingNotification.Actions.Added, String.Empty);
                     await _context.SaveChangesAsync();
                     return Json(person);
                 }
@@ -189,6 +195,8 @@ namespace Keas.Mvc.Controllers.Api
                         existingPerson.EndDate = person.EndDate;
                         existingPerson.Category = person.Category;
                         existingPerson.Notes = person.Notes;
+
+                        await _notificationService.PersonUpdated(existingPerson, null, Team, User.GetNameClaim(), User.Identity.Name, BoardingNotification.Actions.Reactivated, String.Empty);
                         await _context.SaveChangesAsync();
                         return Json(existingPerson);
                     }
