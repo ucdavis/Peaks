@@ -82,15 +82,35 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AddFISOrg(FISOrgAddModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             model.OrgCode = model.OrgCode.ToUpper();
             var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
             if (team == null)
             {
                 return NotFound();
             }
+            var foundInSpaces = await _context.Spaces.FirstOrDefaultAsync(a => a.Active && a.ChartNum == model.Chart && a.OrgId == model.OrgCode);
             if (!await _financialService.ValidateFISOrg(model.Chart, model.OrgCode))
             {
-                ModelState.AddModelError("OrgCode", "Chart and OrgCode are not valid");
+                if (foundInSpaces != null)
+                {
+                    ErrorMessage = "Warning, Org is used in spaces, but not currently valid. Adding anyway.";
+                }
+                else
+                {
+                    ModelState.AddModelError("OrgCode", "Chart and OrgCode are not valid");
+                }
+            }
+            else
+            {
+                if (foundInSpaces == null)
+                {
+                    ErrorMessage = "Warning, Org is valid, but not used in spaces.";
+                }
             }
 
             var FISOrg = new FinancialOrganization { Chart = model.Chart, OrgCode = model.OrgCode, Team = team };
@@ -103,6 +123,20 @@ namespace Keas.Mvc.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View();
+        }
+
+        public async Task<IActionResult> SearchBuilding(string id)
+        {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                ErrorMessage = "Please select a building name or part of a building name to search.";                
+                return View(new List<SpaceSearchModel>());
+            }
+            var model = await _context.Spaces
+                    .Where(a => a.BldgName.ToLower().Contains(id.ToLower()))
+                    .Select(a => new SpaceSearchModel(){BldgName = a.BldgName, DeptName = a.DeptName, ChartNum = a.ChartNum, OrgId = a.OrgId}).Distinct().ToListAsync();
+
+            return View(model);
         }
 
         public async Task<IActionResult> RemoveFISOrg(int fisorgId)

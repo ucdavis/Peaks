@@ -1,0 +1,73 @@
+@model System.Collections.Generic.List<Keas.Core.Models.SpaceSearchModel>
+
+@{
+    ViewBag.Title = "Space Search Results";
+}
+
+<div class="row justify-content-between">
+    <div class="col-md-8">
+        @{ await Html.RenderPartialAsync("_SpaceSearchForm");}
+        <div class="card">
+            <div class="card-header-primary">
+                <div class="card-head">
+                    <h2>Space Search Results</h2>
+                </div>
+            </div>
+            <div class="card-content">
+                <table id="table" class="table dataTable">
+                    <thead>
+                        <tr>
+                            <th>Building Name</th>
+                            <th>Department</th>
+                            <th>Org</th>
+                            <th>Add to Team</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.BldgName</td>
+                                <td>@item.DeptName</td>
+                                <td>@item.ChartNum-@item.OrgId</td>
+                                <td>
+                                    <form asp-action="AddFISOrg" asp method="post">
+                                        @Html.Hidden("Chart", item.ChartNum)
+                                        @Html.Hidden("OrgCode", item.OrgId)
+                                        <input type="submit" value="Add" class="btn btn-primary" />
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
+    </div>
+</div>
+
+@section Scripts {
+
+     @{await Html.RenderPartialAsync("_ImportJS");}
+     <script type="text/javascript">
+        $(function () {
+            $("#table").dataTable({                
+                "columnDefs": [
+                    {
+                        targets: -1,
+                        sortable: false,
+                    },
+
+                ]
+            });
+        });
+    </script>
+}
+
+@section Styles
+{
+    @await Html.PartialAsync("_ReportStylePartial")
+}
