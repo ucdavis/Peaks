@@ -436,6 +436,20 @@ namespace Keas.Mvc.Controllers
                 csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
                 var record = new KeyImport();
                 var records = csv.EnumerateRecords(record);
+
+                try
+                {
+                    csv.Read();
+                    csv.ReadHeader();
+                    csv.ValidateHeader(typeof(KeyImport));
+                }
+                catch (HeaderValidationException e)
+                {
+                    var firstSentence = e.Message.Split('.');
+                    ErrorMessage = firstSentence.FirstOrDefault() ?? "Error Detected";
+                    return View();
+                }
+
                 foreach (var r in records)
                 {
                     var recKeyCount = 0;
