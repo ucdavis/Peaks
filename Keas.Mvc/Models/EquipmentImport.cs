@@ -23,6 +23,8 @@ namespace Keas.Mvc.Models
 
         public string Tag { get; set; }
 
+        public string Type { get; set; }
+
         public string Key1 { get; set; }
         public string Value1 { get; set; }
         public string Key2 { get; set; }
@@ -35,6 +37,7 @@ namespace Keas.Mvc.Models
         public string Value5 { get; set; }
         public string Key6 { get; set; }
         public string Value6 { get; set; }
+        public string Notes { get; set; }
 
     }
 
@@ -61,6 +64,7 @@ namespace Keas.Mvc.Models
                 Make = import.Make,
                 Model = import.Model,                
                 Tag = import.Tag,
+                Type = import.Type,
                 Key1 = import.Key1,
                 Value1 = import.Value1,
                 Key2 = import.Key2,
@@ -73,7 +77,7 @@ namespace Keas.Mvc.Models
                 Value5 = import.Value5,
                 Key6 = import.Key6,
                 Value6 = import.Value6,
-
+                Notes = import.Notes,
             };
         }
 
