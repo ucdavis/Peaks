@@ -23,6 +23,7 @@ namespace Test.TestsDatabase
             var expectedFields = new List<NameAndType>();
             expectedFields.Add(new NameAndType("Access", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Access]", new List<string>()));
             expectedFields.Add(new NameAndType("AccessAssignments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.AccessAssignment]", new List<string>()));
+            expectedFields.Add(new NameAndType("BoardingNotifications", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.BoardingNotification]", new List<string>()));
             expectedFields.Add(new NameAndType("ChangeTracker", "Microsoft.EntityFrameworkCore.ChangeTracking.ChangeTracker", new List<string>()));
             expectedFields.Add(new NameAndType("Database", "Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade", new List<string>()));
             expectedFields.Add(new NameAndType("Equipment", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Equipment]", new List<string>()));
@@ -47,7 +48,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Users", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.User]", new List<string>()));
             expectedFields.Add(new NameAndType("WorkstationAssignments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.WorkstationAssignment]", new List<string>()));
             expectedFields.Add(new NameAndType("WorkstationAttributes", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.WorkstationAttribute]", new List<string>()));
-            expectedFields.Add(new NameAndType("Workstations", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Workstation]", new List<string>()));            
+            expectedFields.Add(new NameAndType("Workstations", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Workstation]", new List<string>()));                        
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(ApplicationDbContext));
