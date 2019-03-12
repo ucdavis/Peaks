@@ -45,11 +45,39 @@ namespace Keas.Mvc.Services
                 user = await GetByKerberos(kerb);
                 if (user != null)
                 {
-                    _context.Users.Add(user);
-                    var person = CreatePersonFromUser(user, teamId);
-                    _context.People.Add(person);
-                    await _context.SaveChangesAsync();
-                    return (person, 1);
+                    try
+                    {
+                        _context.Users.Add(user);
+                        var person = CreatePersonFromUser(user, teamId);
+                        _context.People.Add(person);
+                        await _context.SaveChangesAsync();
+                        return (person, 1);
+                    }
+                    catch (Exception e)
+                    {
+                        var xxx = e;
+
+                        var local = _context.Set<User>()
+                            .Local
+                            .FirstOrDefault(entry => entry.Id.Equals(user.Id));
+
+                        // check if local is not null 
+                        if (local != null) // I'm using a extension method
+                        {
+                            // detach
+                            _context.Entry(local).State = EntityState.Detached;
+                        }
+
+                        var localPerson = _context.Set<Person>().Local
+                            .FirstOrDefault(entry => entry.UserId.Equals(user.Id));
+                        if (localPerson != null) // I'm using a extension method
+                        {
+                            // detach
+                            _context.Entry(localPerson).State = EntityState.Detached;
+                        }
+
+                        throw e;
+                    }
                 }
                 else
                 {
@@ -197,8 +225,16 @@ namespace Keas.Mvc.Services
 
                     if (kerbResults.ResponseData.Results.Length > 0 && contactResult.ResponseData.Results.Length > 0)
                     {
-                        var personResult = await GetOrCreatePersonFromKerberos(kerbResults.ResponseData.Results[0].UserId, team.Id);
+                        try
+                        {
+                                                    var personResult = await GetOrCreatePersonFromKerberos(kerbResults.ResponseData.Results[0].UserId, team.Id);
                         newpeople += personResult.peopleCount;
+                        }
+                        catch (Exception e)
+                        {
+                            continue;                            
+                        }
+
                     }
                 }
                 else if (!await _context.People.AnyAsync(p => p.User.Iam == id.IamId && p.Team.Slug == teamslug))
