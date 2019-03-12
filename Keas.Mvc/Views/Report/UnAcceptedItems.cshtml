@@ -81,7 +81,7 @@
                    @Html.DisplayFor(a => item.KeySerialAssignment.RequestedAt) 
                 </td>
                  <td>
-                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "keys", item.KeyId)' >Details</a>
+                    <a href='@string.Format("/{0}/{1}/details/{2}/{3}/details/{4}", TempData["TeamName"], "keys", item.Key.Id, "keyserials", item.KeySerialAssignment.KeySerialId)' >Details</a>
                 </td>
             </tr>
         }

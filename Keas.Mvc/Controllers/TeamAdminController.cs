@@ -496,6 +496,20 @@ namespace Keas.Mvc.Controllers
                 csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
                 var record = new KeyImport();
                 var records = csv.EnumerateRecords(record);
+
+                try
+                {
+                    csv.Read();
+                    csv.ReadHeader();
+                    csv.ValidateHeader(typeof(KeyImport));
+                }
+                catch (HeaderValidationException e)
+                {
+                    var firstSentence = e.Message.Split('.');
+                    ErrorMessage = firstSentence.FirstOrDefault() ?? "Error Detected";
+                    return View();
+                }
+
                 foreach (var r in records)
                 {
                     var recKeyCount = 0;
@@ -850,8 +864,22 @@ namespace Keas.Mvc.Controllers
                 csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
                 var record = new EquipmentImport();
                 var records = csv.EnumerateRecords(record);
+                try
+                {
+                    csv.Read();
+                    csv.ReadHeader();
+                    csv.ValidateHeader(typeof(EquipmentImport));
+                }
+                catch (HeaderValidationException e)
+                {
+                    var firstSentence = e.Message.Split('.');
+                    ErrorMessage = firstSentence.FirstOrDefault() ?? "Error Detected";
+                    return View();
+                }
+                
                 foreach (var r in records)
                 {
+
                     var recEquipmentCount = 0;
                     var recPeopleCount = 0;
                     var recAssignmentCount = 0;
@@ -1011,10 +1039,27 @@ namespace Keas.Mvc.Controllers
                 equipment.Model = r.Model;
                 equipment.Tags = string.IsNullOrWhiteSpace(r.Tag) ? "Imported" : $"{r.Tag},Imported";
                 equipment.TeamId = team.Id;
-                equipment.Type = "";
+                equipment.Notes = r.Notes;
 
                 ModelState.Clear();
                 TryValidateModel(equipment);
+                if (string.IsNullOrWhiteSpace(r.Type))
+                {
+                    equipment.Type = EquipmentTypes.Default;
+                }
+                else
+                {
+                    if (EquipmentTypes.Types.Contains(r.Type.Trim(), StringComparer.OrdinalIgnoreCase))
+                    {
+                        equipment.Type = EquipmentTypes.Types.Single(a => a.Equals(r.Type.Trim(), StringComparison.OrdinalIgnoreCase));
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Type", "Invalid Equipment Type");
+                    }
+                }
+                
+                
                 if (ModelState.IsValid)
                 {
                     _context.Equipment.Add(equipment);
