@@ -13,7 +13,7 @@ namespace Test.TestsModel
         [Fact]
         public void EquipmentTypesListContainsExpectedNumberOfValues()
         {
-            EquipmentTypes.Types.Count.ShouldBe(6);
+            EquipmentTypes.Types.Count.ShouldBe(8);
         }
 
         //1
