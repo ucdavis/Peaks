@@ -65,6 +65,22 @@ namespace Test.TestsModel
             EquipmentTypes.Types.ShouldContain(EquipmentTypes.Other);
         }
 
+         //7
+        [Fact]
+        public void EquipmentTypesContainsLaptop()
+        {
+            EquipmentTypes.Laptop.ShouldBe("Laptop");
+            EquipmentTypes.Types.ShouldContain(EquipmentTypes.Laptop);
+        }
+
+         //8
+        [Fact]
+        public void EquipmentTypesContainsCellphone()
+        {
+            EquipmentTypes.Cellphone.ShouldBe("Cellphone");
+            EquipmentTypes.Types.ShouldContain(EquipmentTypes.Cellphone);
+        }
+
 
     }
 }
