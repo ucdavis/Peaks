@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Ietws;
@@ -47,6 +48,12 @@ namespace Keas.Mvc.Services
                 {
                     try
                     {
+                        var results = new List<ValidationResult>();
+                        var isValid = Validator.TryValidateObject(user, new ValidationContext(user), results);
+                        if (!isValid)
+                        {
+                            return (null, 0);
+                        }
                         _context.Users.Add(user);
                         var person = CreatePersonFromUser(user, teamId);
                         _context.People.Add(person);
