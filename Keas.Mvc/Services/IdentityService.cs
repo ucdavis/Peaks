@@ -219,9 +219,8 @@ namespace Keas.Mvc.Services
                 {
                     // User not found with IamId
                     var kerbResults = await clientws.Kerberos.Search(KerberosSearchField.iamId, id.IamId);
-                    var contactResult = await clientws.Contacts.Get(id.IamId);
 
-                    if (kerbResults.ResponseData.Results.Length > 0 && contactResult.ResponseData.Results.Length > 0)
+                    if (kerbResults.ResponseData.Results.Length > 0 )
                     {
                         var personResult = await GetOrCreatePersonFromKerberos(kerbResults.ResponseData.Results[0].UserId, team.Id);
                         newpeople += personResult.peopleCount;
@@ -229,13 +228,17 @@ namespace Keas.Mvc.Services
                         {
                             if (kerbResults.ResponseData.Results.Length > 0)
                             {
-                                warning.Append($" IAM ID: {id.IamId}, Kerb Id: {kerbResults.ResponseData.Results.First().UserId} failed to save.");
+                                warning.Append($" Kerb Id: {kerbResults.ResponseData.Results.First().UserId} failed to save.");
                             }
                             else
                             {
                                 warning.Append($" IAM ID {id.IamId} failed to save.");
                             }
                         }
+                    }
+                    else
+                    {
+                        warning.Append($" IAM ID {id.IamId} failed to save.");
                     }
                 }
                 else if (!await _context.People.AnyAsync(p => p.User.Iam == id.IamId && p.Team.Slug == teamslug))
