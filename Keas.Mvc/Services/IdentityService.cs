@@ -227,7 +227,14 @@ namespace Keas.Mvc.Services
                         newpeople += personResult.peopleCount;
                         if (personResult.Person == null)
                         {
-                            warning.Append($"IAM ID {id.IamId} failed to save.");
+                            if (kerbResults.ResponseData.Results.Length > 0)
+                            {
+                                warning.Append($" IAM ID: {id.IamId}, Kerb Id: {kerbResults.ResponseData.Results.First().UserId} failed to save.");
+                            }
+                            else
+                            {
+                                warning.Append($" IAM ID {id.IamId} failed to save.");
+                            }
                         }
                     }
                 }
