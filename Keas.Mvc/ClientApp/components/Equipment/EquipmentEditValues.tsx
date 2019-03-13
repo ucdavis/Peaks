@@ -57,6 +57,8 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         >
                             <option value="Default">Default</option>
                             <option value="Computer">Computer</option>
+                            <option value="Laptop">Laptop</option>
+                            <option value="Cellphone">Cellphone</option>
                             <option value="Device">Device</option>
                             <option value="Card">Card</option>
                             <option value="Industrial">Industrial</option>
