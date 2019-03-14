@@ -10,6 +10,7 @@ interface IProps {
     closeModal: () => void;
     openEditModal: (equipment: IEquipment) => void;
     openUpdateModal: (equipment: IEquipment) => void;
+    equipmentTypes: string[];
     selectedEquipment: IEquipment;
 }
 
@@ -39,6 +40,7 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
                             selectedEquipment={equipment}
                             disableEditing={true}
                             openEditModal={this.props.openEditModal}
+                            equipmentTypes={this.props.equipmentTypes}
                         />
                         <EquipmentAssignmentValues
                             selectedEquipment={equipment}

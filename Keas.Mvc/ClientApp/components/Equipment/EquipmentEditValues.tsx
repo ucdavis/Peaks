@@ -8,6 +8,7 @@ import EquipmentAttributes from "./EquipmentAttributes";
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
     commonAttributeKeys?: string[];
+    equipmentTypes: string[];
     disableEditing: boolean;
     selectedEquipment: IEquipment;
     space?: ISpace;
@@ -19,6 +20,9 @@ interface IProps {
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
     public render() {
         const typeValue = this.props.selectedEquipment.type || "Default";
+        const listItems = this.props.equipmentTypes.map((x) =>
+            <option value={x}>{x}</option>
+            );
         return (
             <div>
                 {this.props.disableEditing && this.props.openEditModal && (
@@ -55,14 +59,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             onChange={e => this.props.changeProperty("type", e.target.value)}
                             disabled={this.props.disableEditing}
                         >
-                            <option value="Default">Default</option>
-                            <option value="Computer">Computer</option>
-                            <option value="Laptop">Laptop</option>
-                            <option value="Cellphone">Cellphone</option>
-                            <option value="Device">Device</option>
-                            <option value="Card">Card</option>
-                            <option value="Industrial">Industrial</option>
-                            <option value="Other">Other</option>
+                            {listItems}
                         </select>
 
                     </div>

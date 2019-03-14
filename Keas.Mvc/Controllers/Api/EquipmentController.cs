@@ -72,6 +72,8 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(keys);
         }
+        
+        public ActionResult commonEquipmentTypes() => Json(EquipmentTypes.Types);
 
         public async Task<IActionResult> ListAssigned(int personId)
         {
