@@ -175,6 +175,11 @@ namespace Keas.Mvc.Services
             // find their email
             var ucdContactResult = await clientws.Contacts.Get(ucdKerbPerson.IamId);
 
+            if(ucdContactResult.ResponseData.Results.Length == 0)
+            {
+                return null;
+            }
+
             var ucdContact = ucdContactResult.ResponseData.Results.First();
 
             return new User()
