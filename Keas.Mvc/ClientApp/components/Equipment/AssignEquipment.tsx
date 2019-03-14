@@ -160,7 +160,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                                                 updateAttributes={this._updateAttributes}
                                                 space={this.props.space}
                                                 tags={this.props.tags}
-                                                equipmentTypes={this.props.eq}
+                                                equipmentTypes={this.props.equipmentTypes}
                                             />
                                         </div>
                                     )}
