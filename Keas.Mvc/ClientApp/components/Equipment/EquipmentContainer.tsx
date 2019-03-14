@@ -128,7 +128,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         closeModal={this._closeModals}
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openAssignModal}
-                        equipmentTypes={this.state.equipmentTypes}
                     />
                     <EditEquipment
                         selectedEquipment={detailEquipment}
@@ -148,7 +147,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openAssignModal}
                         modal={activeAsset && action === "revoke"}
-                        equipmentTypes={this.state.equipmentTypes}
                     />
                     <DeleteEquipment
                         selectedEquipment={detailEquipment}
@@ -157,7 +155,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openAssignModal}
                         modal={activeAsset && action === "delete"}
-                        equipmentTypes={this.state.equipmentTypes}
                     />
                 </div>
             </div>

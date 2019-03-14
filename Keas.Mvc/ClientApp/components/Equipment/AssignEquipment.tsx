@@ -186,7 +186,6 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                                             disableEditing={true}
                                             openEditModal={this.props.openEditModal}
                                             tags={this.props.tags}
-                                            equipmentTypes={this.props.equipmentTypes}
                                         />
                                     </div>
                                 )}
