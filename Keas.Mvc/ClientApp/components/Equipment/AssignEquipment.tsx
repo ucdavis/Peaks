@@ -21,6 +21,7 @@ interface IProps {
     space: ISpace;
     tags: string[];
     commonAttributeKeys: string[];
+    equipmentTypes: string[];
 }
 
 interface IState {
@@ -159,6 +160,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                                                 updateAttributes={this._updateAttributes}
                                                 space={this.props.space}
                                                 tags={this.props.tags}
+                                                equipmentTypes={this.props.eq}
                                             />
                                         </div>
                                     )}
@@ -184,6 +186,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                                             disableEditing={true}
                                             openEditModal={this.props.openEditModal}
                                             tags={this.props.tags}
+                                            equipmentTypes={this.props.equipmentTypes}
                                         />
                                     </div>
                                 )}

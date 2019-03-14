@@ -120,6 +120,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         commonAttributeKeys={this.state.commonAttributeKeys}
                         openDetailsModal={this._openDetailsModal}
                         openEditModal={this._openEditModal}
+                        equipmentTypes={this.state.equipmentTypes}
                     />
                     <EquipmentDetails
                         selectedEquipment={detailEquipment}
