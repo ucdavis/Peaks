@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Ietws;
@@ -182,7 +183,7 @@ namespace Keas.Mvc.Services
 
             var ucdContact = ucdContactResult.ResponseData.Results.First();
 
-            return new User()
+            var rtValue = new User()
             {
                 FirstName = ucdKerbPerson.DFirstName,
                 LastName = ucdKerbPerson.DLastName,
@@ -190,6 +191,23 @@ namespace Keas.Mvc.Services
                 Email = ucdContact.Email,
                 Iam = ucdKerbPerson.IamId
             };
+            if (string.IsNullOrWhiteSpace(rtValue.Email))
+            {
+                if (!string.IsNullOrWhiteSpace(ucdKerbPerson.UserId))
+                {
+                    rtValue.Email = $"{ucdKerbPerson.UserId}@ucdavis.edu";
+                }
+            }
+
+            var results = new List<ValidationResult>();
+            var isValid = Validator.TryValidateObject(rtValue, new ValidationContext(rtValue), results);
+            if (!isValid)
+            {
+                return null;
+            }
+
+
+            return rtValue;
         }
 
         public async Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode)
