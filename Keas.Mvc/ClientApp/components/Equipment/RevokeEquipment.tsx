@@ -12,6 +12,7 @@ interface IProps {
     openUpdateModal: (equipment: IEquipment) => void;
     revokeEquipment: (equipment: IEquipment) => void;
     selectedEquipment: IEquipment;
+    equipmentTypes: string[];
 }
 
 interface IState {
@@ -55,6 +56,7 @@ export default class RevokeEquipment extends React.Component<IProps, IState> {
                             selectedEquipment={this.props.selectedEquipment}
                             disableEditing={true}
                             openEditModal={this.props.openEditModal}
+                            equipmentTypes={this.props.equipmentTypes}
                         />
                         <EquipmentAssignmentValues
                             selectedEquipment={this.props.selectedEquipment}

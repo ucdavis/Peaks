@@ -148,6 +148,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openAssignModal}
                         modal={activeAsset && action === "revoke"}
+                        equipmentTypes={this.state.equipmentTypes}
                     />
                     <DeleteEquipment
                         selectedEquipment={detailEquipment}
