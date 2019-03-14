@@ -187,7 +187,7 @@ namespace Keas.Mvc.Services
                 FirstName = ucdKerbPerson.DFirstName,
                 LastName = ucdKerbPerson.DLastName,
                 Id = ucdKerbPerson.UserId,
-                Email = ucdContact.Email,
+                Email = ucdContact.Email ?? (ucdKerbPerson.UserId != null ? $"{ucdKerbPerson.UserId}@ucdavis.edu" : null),
                 Iam = ucdKerbPerson.IamId
             };
         }
