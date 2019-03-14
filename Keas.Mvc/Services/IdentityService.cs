@@ -261,7 +261,22 @@ namespace Keas.Mvc.Services
                     }
                     else
                     {
-                        warning.Append($" IAM ID {id.IamId} failed to save.");
+                        //Try to get name for Iam Id 
+                        var extraName = string.Empty;
+                        try
+                        {
+                            var iamInfoResults = await clientws.People.Get(id.IamId);//  //.Kerberos.Search(KerberosSearchField.iamId, id.IamId);
+                            if (iamInfoResults.ResponseData.Results.Length > 0)
+                            {
+                                extraName = $"({iamInfoResults.ResponseData.Results.First().OFullName}) ";
+                            }
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
+                        warning.Append($" IAM ID {id.IamId} {extraName}failed to save.");
                     }
                 }
                 else if (!await _context.People.AnyAsync(p => p.User.Iam == id.IamId && p.Team.Slug == teamslug))
