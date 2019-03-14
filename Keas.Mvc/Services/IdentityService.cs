@@ -182,14 +182,23 @@ namespace Keas.Mvc.Services
 
             var ucdContact = ucdContactResult.ResponseData.Results.First();
 
-            return new User()
+            var rtValue = new User()
             {
                 FirstName = ucdKerbPerson.DFirstName,
                 LastName = ucdKerbPerson.DLastName,
                 Id = ucdKerbPerson.UserId,
-                Email = ucdContact.Email ?? (ucdKerbPerson.UserId != null ? $"{ucdKerbPerson.UserId}@ucdavis.edu" : null),
+                Email = ucdContact.Email,
                 Iam = ucdKerbPerson.IamId
             };
+            if (string.IsNullOrWhiteSpace(rtValue.Email))
+            {
+                if (!string.IsNullOrWhiteSpace(ucdKerbPerson.UserId))
+                {
+                    rtValue.Email = $"{ucdKerbPerson.UserId}@ucdavis.edu";
+                }
+            }
+
+            return rtValue;
         }
 
         public async Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode)
