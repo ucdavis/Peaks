@@ -74,7 +74,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
         const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
 
-        const equipmentTypeFetchUrl = `/api/${this.context.team.slug}/equipment/EquipmentTypes/`;
+        const equipmentTypeFetchUrl = `/api/${this.context.team.slug}/equipment/ListEquipmentTypes/`;
 
         const equipmentTypes = await this.context.fetch(equipmentTypeFetchUrl);
 
