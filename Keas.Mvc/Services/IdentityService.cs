@@ -271,9 +271,9 @@ namespace Keas.Mvc.Services
                                 extraName = $"({iamInfoResults.ResponseData.Results.First().OFullName}) ";
                             }
                         }
-                        catch (Exception e)
+                        catch
                         {
-
+                            // ignored
                         }
 
                         warning.Append($" IAM ID {id.IamId} {extraName}failed to save.");
