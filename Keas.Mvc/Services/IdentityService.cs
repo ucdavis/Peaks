@@ -19,25 +19,27 @@ namespace Keas.Mvc.Services
     {
         Task<User> GetByEmail(string email);
         Task<User> GetByKerberos(string kerb);
-        Task<string> BulkLoadPeople(string ppsCode, string teamslug);
+        Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId);
         Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode);
 
-        Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId);
+        Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId, Team team, string actorName, string actorId, string notes);
     }
 
     public class IdentityService : IIdentityService
     {
         private readonly AuthSettings _authSettings;
         private readonly ApplicationDbContext _context;
+        private readonly INotificationService _notificationService;
 
 
-        public IdentityService(IOptions<AuthSettings> authSettings, ApplicationDbContext context)
+        public IdentityService(IOptions<AuthSettings> authSettings, ApplicationDbContext context, INotificationService notificationService)
         {
             _authSettings = authSettings.Value;
             _context = context;
+            _notificationService = notificationService;
         }
 
-        public async Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId)
+        public async Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId, Team team, string actorName, string actorId, string notes)
         {
             var user = await _context.Users.Include(u => u.People).IgnoreQueryFilters().Where(u => u.Id == kerb).FirstOrDefaultAsync();
             if (user == null)
@@ -51,6 +53,8 @@ namespace Keas.Mvc.Services
                         _context.Users.Add(user);
                         var person = CreatePersonFromUser(user, teamId);
                         _context.People.Add(person);
+                        await _context.SaveChangesAsync();
+                        await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, BoardingNotification.Actions.Added, notes);
                         await _context.SaveChangesAsync();
                         return (person, 1);
                     }
@@ -75,6 +79,14 @@ namespace Keas.Mvc.Services
                             _context.Entry(localPerson).State = EntityState.Detached;
                         }
 
+                        //No idea if this is correct... YOLO
+                        var localNotification = _context.Set<BoardingNotification>().Local.FirstOrDefault();
+                        if (localNotification != null)
+                        {
+                            //detach
+                            _context.Entry(localNotification).State = EntityState.Detached;
+                        }
+
                         return (null, 0);
                     }
                 }
@@ -94,6 +106,7 @@ namespace Keas.Mvc.Services
                     if (!person.Active)
                     {
                         person.Active = true;
+                        await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, BoardingNotification.Actions.Reactivated, notes);                        
                         await _context.SaveChangesAsync();
                         return (person, 1);
                     }
@@ -104,6 +117,8 @@ namespace Keas.Mvc.Services
                     // Need to create person
                     person = CreatePersonFromUser(user, teamId);
                     _context.People.Add(person);
+                    await _context.SaveChangesAsync();
+                    await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, BoardingNotification.Actions.Added, notes);                        
                     await _context.SaveChangesAsync();
                     return (person, 1);
                 }
@@ -227,8 +242,10 @@ namespace Keas.Mvc.Services
             return results.ResponseData.Results.FirstOrDefault();
         }
 
-        public async Task<string> BulkLoadPeople(string ppsCode, string teamslug)
+        public async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
         {
+            //await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, BoardingNotification.Actions.Added, String.Empty);
+
             int newpeople = 0;
             StringBuilder warning = new StringBuilder();
             var team = await _context.Teams.SingleAsync(t => t.Slug == teamslug);
@@ -245,7 +262,7 @@ namespace Keas.Mvc.Services
 
                     if (kerbResults.ResponseData.Results.Length > 0 )
                     {
-                        var personResult = await GetOrCreatePersonFromKerberos(kerbResults.ResponseData.Results[0].UserId, team.Id);
+                        var personResult = await GetOrCreatePersonFromKerberos(kerbResults.ResponseData.Results[0].UserId, team.Id, team, actorName, actorId, $"Bulk Load from PPS code: {ppsCode}");
                         newpeople += personResult.peopleCount;
                         if (personResult.Person == null)
                         {
