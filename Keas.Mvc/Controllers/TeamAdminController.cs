@@ -214,7 +214,7 @@ namespace Keas.Mvc.Controllers
             }
 
             // Check if already Team Person. Add if not.
-            var person = await _context.People.SingleOrDefaultAsync(p => p.UserId == user.Id && p.TeamId == team.Id);
+            var person = await _context.People.IgnoreQueryFilters().SingleOrDefaultAsync(p => p.UserId == user.Id && p.TeamId == team.Id);
             if (person == null)
             {
                 person = new Person();
@@ -225,6 +225,14 @@ namespace Keas.Mvc.Controllers
                 person.Email = user.Email;
                 _context.People.Add(person);
                 await _context.SaveChangesAsync();
+            }
+            else
+            {
+                if (!person.Active)
+                {
+                    person.Active = true;
+                    await _context.SaveChangesAsync();
+                }
             }
 
             if (role == null)

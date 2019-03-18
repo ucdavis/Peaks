@@ -12,6 +12,7 @@ interface IProps {
     closeModal: () => void;
     openUpdateModal: (equipment: IEquipment) => void;
     commonAttributeKeys: string[];
+    equipmentTypes: string[];
     selectedEquipment: IEquipment;
     space: ISpace;
     tags: string[];
@@ -72,6 +73,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
                             disableEditing={false}
                             updateAttributes={this._updateAttributes}
                             commonAttributeKeys={this.props.commonAttributeKeys}
+                            equipmentTypes={this.props.equipmentTypes}
                             tags={this.props.tags}
                             space={this.props.space}
                         />

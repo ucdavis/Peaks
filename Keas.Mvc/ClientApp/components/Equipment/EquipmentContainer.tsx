@@ -16,6 +16,7 @@ import SearchAttributes from "./SearchAttributes";
 interface IState {
     attributeFilters: string[];
     commonAttributeKeys: string[];
+    equipmentTypes: string[];
     equipment: IEquipment[]; // either equipment assigned to this person, or all team equipment
     loading: boolean;
     tagFilters: string[];
@@ -43,8 +44,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
         this.state = {
             attributeFilters: [],
-            commonAttributeKeys: [],
+            commonAttributeKeys: [],            
             equipment: [],
+            equipmentTypes: [],
             loading: true,
             tagFilters: [],
             tags: []
@@ -71,11 +73,16 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         const attrFetchUrl = `/api/${this.context.team.slug}/equipment/commonAttributeKeys/`;
 
         const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
+
+        const equipmentTypeFetchUrl = `/api/${this.context.team.slug}/equipment/ListEquipmentTypes/`;
+
+        const equipmentTypes = await this.context.fetch(equipmentTypeFetchUrl);
+
         const equipment = await this.context.fetch(equipmentFetchUrl);
 
         const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);
 
-        this.setState({ commonAttributeKeys, equipment, loading: false, tags });
+        this.setState({ commonAttributeKeys, equipmentTypes,  equipment, loading: false, tags });
     }
     public render() {
         if (!PermissionsUtil.canViewEquipment(this.context.permissions)) {
@@ -113,6 +120,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         commonAttributeKeys={this.state.commonAttributeKeys}
                         openDetailsModal={this._openDetailsModal}
                         openEditModal={this._openEditModal}
+                        equipmentTypes={this.state.equipmentTypes}
                     />
                     <EquipmentDetails
                         selectedEquipment={detailEquipment}
@@ -130,6 +138,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         tags={this.state.tags}
                         space={this.props.space}
                         commonAttributeKeys={this.state.commonAttributeKeys}
+                        equipmentTypes={this.state.equipmentTypes}
                     />
                     <RevokeEquipment
                         selectedEquipment={detailEquipment}

@@ -7,6 +7,8 @@ namespace Keas.Core.Models
     {
         public const string Default = "Default";
         public const string Computer = "Computer";
+        public const string Laptop = "Laptop";
+        public const string Cellphone = "Cellphone";
         public const string Device = "Device";
         public const string Card = "Card";
         public const string Industrial = "Industrial";
@@ -17,6 +19,8 @@ namespace Keas.Core.Models
         {
             Default,
             Computer,
+            Laptop,
+            Cellphone,
             Device,
             Card,
             Industrial,
