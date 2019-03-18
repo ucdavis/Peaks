@@ -244,8 +244,6 @@ namespace Keas.Mvc.Services
 
         public async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
         {
-            //await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, PersonNotification.Actions.Added, String.Empty);
-
             int newpeople = 0;
             StringBuilder warning = new StringBuilder();
             var team = await _context.Teams.SingleAsync(t => t.Slug == teamslug);
