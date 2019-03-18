@@ -299,7 +299,27 @@ namespace Keas.Mvc.Services
                 else if (!await _context.People.AnyAsync(p => p.User.Iam == id.IamId && p.Team.Slug == teamslug))
                 {
                     // User exists with IAM ID, but not in this team
-                    SavePerson(team, user);
+                    var deactivaedPerson = await _context.People.IgnoreQueryFilters().FirstOrDefaultAsync(a => a.User.Id == user.Id && a.Team.Id == team.Id && !a.Active);
+                    if (deactivaedPerson != null)
+                    {
+                        deactivaedPerson.Active = true;
+                        await _notificationService.PersonUpdated(deactivaedPerson, team, teamslug, actorName, actorId, BoardingNotification.Actions.Reactivated, $"Bulk Load from PPS code: {ppsCode}");
+                    }
+                    else
+                    {
+                        var newPerson = new Person()
+                        {
+                            User = user,
+                            Team = team,
+                            FirstName = user.FirstName,
+                            LastName = user.LastName,
+                            Email = user.Email
+                        };
+                        _context.People.Add(newPerson);
+                        await _context.SaveChangesAsync();
+                        await _notificationService.PersonUpdated(newPerson, team, teamslug, actorName, actorId, BoardingNotification.Actions.Added, $"Bulk Load from PPS code: {ppsCode}");
+                    }
+
                     newpeople += 1;
                 }
             }
@@ -308,17 +328,5 @@ namespace Keas.Mvc.Services
             return returnMessage;
         }
 
-        private void SavePerson(Team team, User user)
-        {
-            var newPerson = new Person()
-            {
-                User = user,
-                Team = team,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email
-            };
-            _context.People.Add(newPerson);
-        }
     }
 }
