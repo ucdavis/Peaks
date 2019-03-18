@@ -323,7 +323,7 @@ namespace Keas.Mvc.Services
                             Email = user.Email
                         };
                         _context.People.Add(newPerson);
-                        await _context.SaveChangesAsync();
+                        await _context.SaveChangesAsync(); //Need to save person so it has an id for notification below
                         await _notificationService.PersonUpdated(newPerson, team, teamslug, actorName, actorId, BoardingNotification.Actions.Added, $"Bulk Load from PPS code: {ppsCode}");
                     }
 
