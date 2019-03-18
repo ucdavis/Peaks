@@ -296,17 +296,24 @@ namespace Keas.Mvc.Services
                         warning.Append($" IAM ID {id.IamId} {extraName}failed to save.");
                     }
                 }
-                else if (!await _context.People.AnyAsync(p => p.User.Iam == id.IamId && p.Team.Slug == teamslug))
+                else
                 {
-                    // User exists with IAM ID, but not in this team
-                    var deactivaedPerson = await _context.People.IgnoreQueryFilters().FirstOrDefaultAsync(a => a.User.Id == user.Id && a.Team.Id == team.Id && !a.Active);
-                    if (deactivaedPerson != null)
+                    // User exists with IAM ID
+                    var deactivaedPerson = await _context.People.IgnoreQueryFilters().FirstOrDefaultAsync(a => a.User.Id == user.Id && a.Team.Id == team.Id);
+                    if (deactivaedPerson != null && deactivaedPerson.Active)
                     {
+                        //User is in team and active
+                        continue;
+                    }
+                    if (deactivaedPerson != null && !deactivaedPerson.Active)
+                    {
+                        //User is in team, but deactivated
                         deactivaedPerson.Active = true;
                         await _notificationService.PersonUpdated(deactivaedPerson, team, teamslug, actorName, actorId, BoardingNotification.Actions.Reactivated, $"Bulk Load from PPS code: {ppsCode}");
                     }
                     else
                     {
+                        // User is not in team
                         var newPerson = new Person()
                         {
                             User = user,
