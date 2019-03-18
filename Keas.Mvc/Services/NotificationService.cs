@@ -357,7 +357,7 @@ namespace Keas.Mvc.Services
                 team = await _dbContext.Teams.SingleAsync(a => a.Slug == teamSlug);
             }
 
-            var boardingNotification = new BoardingNotification
+            var PersonNotification = new PersonNotification
             {
                 Action = action,
                 ActorName = actorName,
@@ -370,7 +370,7 @@ namespace Keas.Mvc.Services
                 TeamId = team.Id,
                 Notes = notes,
             };
-            await _dbContext.BoardingNotifications.AddAsync(boardingNotification);
+            await _dbContext.PersonNotifications.AddAsync(PersonNotification);
         }
     }
 }

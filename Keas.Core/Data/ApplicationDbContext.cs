@@ -30,7 +30,7 @@ namespace Keas.Core.Data
         public virtual DbSet<TeamPpsDepartment> TeamPpsDepartments { get; set; }
 
         public virtual  DbSet<Notification> Notifications { get; set; }
-        public virtual DbSet<BoardingNotification> BoardingNotifications { get; set; }
+        public virtual DbSet<PersonNotification> PersonNotifications { get; set; }
 
         public virtual DbSet<Workstation> Workstations { get; set; }
         public virtual DbSet<WorkstationAssignment> WorkstationAssignments { get; set; }

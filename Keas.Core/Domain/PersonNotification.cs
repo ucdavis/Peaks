@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Keas.Core.Domain
 {
-    public class BoardingNotification
+    public class PersonNotification
     {
-        public BoardingNotification()
+        public PersonNotification()
         {
             Pending = true;
             ActionDate = DateTime.UtcNow;

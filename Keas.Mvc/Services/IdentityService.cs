@@ -54,7 +54,7 @@ namespace Keas.Mvc.Services
                         var person = CreatePersonFromUser(user, teamId);
                         _context.People.Add(person);
                         await _context.SaveChangesAsync();
-                        await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, BoardingNotification.Actions.Added, notes);
+                        await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Added, notes);
                         await _context.SaveChangesAsync();
                         return (person, 1);
                     }
@@ -80,7 +80,7 @@ namespace Keas.Mvc.Services
                         }
 
                         //No idea if this is correct... YOLO
-                        var localNotification = _context.Set<BoardingNotification>().Local.FirstOrDefault();
+                        var localNotification = _context.Set<PersonNotification>().Local.FirstOrDefault();
                         if (localNotification != null)
                         {
                             //detach
@@ -106,7 +106,7 @@ namespace Keas.Mvc.Services
                     if (!person.Active)
                     {
                         person.Active = true;
-                        await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, BoardingNotification.Actions.Reactivated, notes);                        
+                        await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Reactivated, notes);                        
                         await _context.SaveChangesAsync();
                         return (person, 1);
                     }
@@ -118,7 +118,7 @@ namespace Keas.Mvc.Services
                     person = CreatePersonFromUser(user, teamId);
                     _context.People.Add(person);
                     await _context.SaveChangesAsync();
-                    await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, BoardingNotification.Actions.Added, notes);                        
+                    await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Added, notes);                        
                     await _context.SaveChangesAsync();
                     return (person, 1);
                 }
@@ -244,7 +244,7 @@ namespace Keas.Mvc.Services
 
         public async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
         {
-            //await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, BoardingNotification.Actions.Added, String.Empty);
+            //await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, PersonNotification.Actions.Added, String.Empty);
 
             int newpeople = 0;
             StringBuilder warning = new StringBuilder();
@@ -309,7 +309,7 @@ namespace Keas.Mvc.Services
                     {
                         //User is in team, but deactivated
                         deactivaedPerson.Active = true;
-                        await _notificationService.PersonUpdated(deactivaedPerson, team, teamslug, actorName, actorId, BoardingNotification.Actions.Reactivated, $"Bulk Load from PPS code: {ppsCode}");
+                        await _notificationService.PersonUpdated(deactivaedPerson, team, teamslug, actorName, actorId, PersonNotification.Actions.Reactivated, $"Bulk Load from PPS code: {ppsCode}");
                     }
                     else
                     {
@@ -324,7 +324,7 @@ namespace Keas.Mvc.Services
                         };
                         _context.People.Add(newPerson);
                         await _context.SaveChangesAsync(); //Need to save person so it has an id for notification below
-                        await _notificationService.PersonUpdated(newPerson, team, teamslug, actorName, actorId, BoardingNotification.Actions.Added, $"Bulk Load from PPS code: {ppsCode}");
+                        await _notificationService.PersonUpdated(newPerson, team, teamslug, actorName, actorId, PersonNotification.Actions.Added, $"Bulk Load from PPS code: {ppsCode}");
                     }
 
                     newpeople += 1;

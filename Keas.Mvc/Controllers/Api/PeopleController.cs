@@ -165,7 +165,7 @@ namespace Keas.Mvc.Controllers.Api
                     _context.People.Add(person);
                     await _context.SaveChangesAsync(); //Need to save so I can get the personId for the notification service below.
 
-                    await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, BoardingNotification.Actions.Added, String.Empty);
+                    await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, PersonNotification.Actions.Added, String.Empty);
                     await _context.SaveChangesAsync();
                     return Json(person);
                 }
@@ -196,7 +196,7 @@ namespace Keas.Mvc.Controllers.Api
                         existingPerson.Category = person.Category;
                         existingPerson.Notes = person.Notes;
 
-                        await _notificationService.PersonUpdated(existingPerson, null, Team, User.GetNameClaim(), User.Identity.Name, BoardingNotification.Actions.Reactivated, String.Empty);
+                        await _notificationService.PersonUpdated(existingPerson, null, Team, User.GetNameClaim(), User.Identity.Name, PersonNotification.Actions.Reactivated, String.Empty);
                         await _context.SaveChangesAsync();
                         return Json(existingPerson);
                     }

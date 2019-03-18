@@ -9,11 +9,11 @@ using Xunit.Abstractions;
 namespace Test.TestsDatabase
 {
     [Trait("Category","DatabaseTests")]
-    public class BoardingNotificationTests
+    public class PersonNotificationTests
     {
         private readonly ITestOutputHelper _output;
 
-        public BoardingNotificationTests(ITestOutputHelper output)
+        public PersonNotificationTests(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -24,7 +24,7 @@ namespace Test.TestsDatabase
         public void TestClassAttributes()
         {
             // Arrange
-            var classReflection = new ControllerReflection(_output, typeof(BoardingNotification));
+            var classReflection = new ControllerReflection(_output, typeof(PersonNotification));
             // Act
             // Assert	
             classReflection.ControllerInherits("Object"); 
@@ -74,7 +74,7 @@ namespace Test.TestsDatabase
 
             #endregion Arrange
 
-            AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(BoardingNotification));
+            AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(PersonNotification));
         }
 
         #endregion Reflection of Database

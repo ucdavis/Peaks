@@ -78,7 +78,7 @@ namespace Keas.Mvc.Controllers.Api
                 var personToUpdate = await _context.People.SingleAsync(a => a.Id == person.Id && a.TeamId == person.TeamId);
                 personToUpdate.Active = false;
                
-                await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, BoardingNotification.Actions.Deactivated, String.Empty);
+                await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, PersonNotification.Actions.Deactivated, String.Empty);
 
                 //Remove any Admin roles for that team
                 var teamPermissionsToDelete = await _context.TeamPermissions.Where(a => a.TeamId == person.TeamId && a.UserId == personToUpdate.UserId).ToArrayAsync();

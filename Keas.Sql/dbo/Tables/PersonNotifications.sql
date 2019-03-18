@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[BoardingNotifications]
+CREATE TABLE [dbo].[PersonNotifications]
 (
 	[Id] INT IDENTITY (1, 1) NOT NULL, 
     [Pending] BIT NOT NULL, 
@@ -13,5 +13,5 @@ CREATE TABLE [dbo].[BoardingNotifications]
     [NotificationDate] DATETIME2 NULL, 
     [ActorId] NVARCHAR(50) NOT NULL, 
     [Notes] NVARCHAR(256) NULL, 
-    CONSTRAINT [PK_BoardingNotifications] PRIMARY KEY CLUSTERED ([Id] ASC)
+    CONSTRAINT [PK_PersonNotifications] PRIMARY KEY CLUSTERED ([Id] ASC)
 )
