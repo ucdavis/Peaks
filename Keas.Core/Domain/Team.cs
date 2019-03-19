@@ -32,7 +32,7 @@ namespace Keas.Core.Domain
         /// </summary>
         [EmailAddress]
         [StringLength(maximumLength:256)]
-        [Display(Name = "On/Off Boarding Notification Email")]
+        [Display(Name = "Notification Email")]
         public string BoardingNotificationEmail { get; set; }
 
         public List<Person> People { get; set; }
