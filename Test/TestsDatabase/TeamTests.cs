@@ -39,7 +39,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("ApiCode", "System.Nullable`1[System.Guid]", new List<string>()));
             expectedFields.Add(new NameAndType("BoardingNotificationEmail", "System.String", new List<string>
             {
-                "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"On/Off Boarding Notification Email\")]",
+                "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"Notification Email\")]",
                 "[System.ComponentModel.DataAnnotations.EmailAddressAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)256)]",
             }));  
