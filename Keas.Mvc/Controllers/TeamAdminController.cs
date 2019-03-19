@@ -14,6 +14,7 @@ using System.IO;
 using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using System.Text;
+using Keas.Core.Extensions;
 using Keas.Mvc.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -53,9 +54,9 @@ namespace Keas.Mvc.Controllers
         {
             var teamToUpdate = await _context.Teams.SingleAsync(a => a.Id == id && a.Slug == Team);
 
-            if (teamToUpdate.BoardingNotificationEmail != team.BoardingNotificationEmail)
+            if (teamToUpdate.BoardingNotificationEmail != team.BoardingNotificationEmail.SafeToLower())
             {
-                teamToUpdate.BoardingNotificationEmail = team.BoardingNotificationEmail;
+                teamToUpdate.BoardingNotificationEmail = team.BoardingNotificationEmail.SafeToLower();
                 ModelState.Clear();
                 TryValidateModel(teamToUpdate);
                 if (!ModelState.IsValid)

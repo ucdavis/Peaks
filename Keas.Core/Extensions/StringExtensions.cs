@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Humanizer;
@@ -37,6 +37,16 @@ namespace Keas.Core.Extensions
             }
 
             return phone;
+        }
+
+        public static string SafeToLower(this string value)
+        {
+            if (value == null)
+            {
+                return value;
+            }
+
+            return value.ToLower();
         }
     }
 }
