@@ -48,6 +48,32 @@ namespace Keas.Mvc.Controllers
             return View(team);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateEmail(int id, Team team)
+        {
+            var teamToUpdate = await _context.Teams.SingleAsync(a => a.Id == id && a.Slug == Team);
+
+            if (teamToUpdate.BoardingNotificationEmail != team.BoardingNotificationEmail)
+            {
+                teamToUpdate.BoardingNotificationEmail = team.BoardingNotificationEmail;
+                ModelState.Clear();
+                TryValidateModel(teamToUpdate);
+                if (!ModelState.IsValid)
+                {
+                    ErrorMessage = "Invalid email. Not Updated";
+                    return RedirectToAction("Index");
+                }
+                Message = "Email Updated.";
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                Message = "Email not changed.";
+            }
+            
+            return RedirectToAction("Index");
+        }
+
         public IActionResult AddFISOrg()
         {
             return View();
@@ -298,9 +324,12 @@ namespace Keas.Mvc.Controllers
                 return RedirectToAction("AddPpsDepartment");
             }
 
+            var actorName = User.GetNameClaim();
+            var actorId = User.Identity.Name;
+
             foreach (var teamPpsDepartment in team.PpsDepartments)
             {
-                Message = $"{await _identityService.BulkLoadPeople(teamPpsDepartment.PpsDepartmentCode, Team)} for {teamPpsDepartment.DepartmentName}. {Message}";
+                Message = $"{await _identityService.BulkLoadPeople(teamPpsDepartment.PpsDepartmentCode, Team, actorName, actorId)} for {teamPpsDepartment.DepartmentName}. {Message}";
             }
 
             return RedirectToAction(nameof(Index));
@@ -595,7 +624,7 @@ namespace Keas.Mvc.Controllers
                                     Person person = null;
                                     try
                                     {
-                                        var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id);
+                                        var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id, team, userName, userIdentity, "CSV Import -- Keys");
                                         recPeopleCount += personResult.peopleCount;
                                         person = personResult.Person;
                                     }
@@ -886,7 +915,7 @@ namespace Keas.Mvc.Controllers
 
                         if (result.Success)
                         {
-                            var personResult = await GetCreatePerson(r, team, result);
+                            var personResult = await GetCreatePerson(r, team, result, userName, userIdentity, "CSV Import -- Equipment");
                             recPeopleCount = personResult.recPeopleCount;
                             person = personResult.person;
                         }
@@ -1098,7 +1127,7 @@ namespace Keas.Mvc.Controllers
             }
         }
 
-        private async Task<(int recPeopleCount, Person person)> GetCreatePerson(EquipmentImport r, Team team, EquipmentImportResults result)
+        private async Task<(int recPeopleCount, Person person)> GetCreatePerson(EquipmentImport r, Team team, EquipmentImportResults result, string actorName, string actorId, string notes)
         {
             Person person = null;
             int recPeopleCount = 0;
@@ -1106,7 +1135,7 @@ namespace Keas.Mvc.Controllers
             {
                 try
                 {
-                    var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id);
+                    var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbUser, team.Id, team, actorName, actorId, notes);
                     recPeopleCount += personResult.peopleCount;
                     person = personResult.Person;
                 }

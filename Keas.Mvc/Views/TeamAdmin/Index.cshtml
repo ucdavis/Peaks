@@ -4,29 +4,53 @@
     ViewData["Title"] = "Index";
 }
 <div class="row justify-content-between">
-  <div class="col-md-8">
-  <div class="card">
-    <div class="card-header-primary">
-      <div class="card-head">
-  <h2>@Model.Name</h2>
-      </div>
-    </div>
-    <div class="card-content">
-      <p><b>@Html.DisplayNameFor(model => model.Name)</b></p>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header-primary">
+                <div class="card-head">
+                    <h2>@Model.Name</h2>
+                </div>
+            </div>
+            <div class="card-content">
+                <p><b>@Html.DisplayNameFor(model => model.Name)</b></p>
+                <p>@Html.DisplayFor(model => model.Name)</p>
 
-      <p>@Html.DisplayFor(model => model.Name)</p>
-
-      <p><b>FIS Orgs</b></p>
-      @foreach (var org in Model.FISOrgs) {
-      <p>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><i class="fas fa-trash"></i></a></p>
-      }
-      <p><b>PPS Departments</b></p>
-      @foreach (var ppsDept in Model.PpsDepartments) {
-      <p>@ppsDept.DepartmentName (@ppsDept.PpsDepartmentCode) <a asp-action="RemovePpsDepartment" asp-route-id="@ppsDept.Id"><i class="fas fa-trash"></i></a></p>
-      }
+                <p><b>FIS Orgs</b></p>
+                @foreach (var org in Model.FISOrgs)
+                {
+                    <p>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><i class="fas fa-trash"></i></a></p>
+                }
+                <p><b>PPS Departments</b></p>
+                @foreach (var ppsDept in Model.PpsDepartments)
+                {
+                    <p>@ppsDept.DepartmentName (@ppsDept.PpsDepartmentCode) <a asp-action="RemovePpsDepartment" asp-route-id="@ppsDept.Id"><i class="fas fa-trash"></i></a></p>
+                }
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header-primary">
+                <div class="card-head">
+                    <h2>On/Off Boarding Emails</h2>
+                    <small class="form-text text-muted">This is to notify when people are added, removed, or reactivated for the team.</small>
+                </div>
+            </div>
+            <div class="card-content">
+                <form asp-action="UpdateEmail">
+                    @Html.HiddenFor(a => a.Id)
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <b><label asp-for="BoardingNotificationEmail" class="control-label"></label></b>
+                        <input asp-for="BoardingNotificationEmail" class="form-control" />
+                        <small id="emailHelp" class="form-text text-muted">Leave this blank if you don't want these emails.</small>
+                        <span asp-validation-for="BoardingNotificationEmail" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Update Email" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
-  </div>
   <div class="col-md-4">
 
 
@@ -34,3 +58,7 @@
 
   </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
