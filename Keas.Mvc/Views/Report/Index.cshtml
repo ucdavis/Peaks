@@ -14,7 +14,7 @@
             </div>
         </div>
         <div class="card-content">
-            <a href="Report/ExpiringItems" class="btn btn-link">Expiring Items <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+            <a asp-action="ExpiringItems" class="btn btn-link">Expiring Items <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
         </div>
     </div>
 
@@ -26,7 +26,7 @@
         </div>
     </div>
     <div class="card-content">
-        <a href="Report/SupervisorDirectReports" class="btn btn-link">Direct Reports by Supervisor <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+        <a asp-action="SupervisorDirectReports" class="btn btn-link">Direct Reports by Supervisor <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
     </div>
 </div>
 
@@ -37,7 +37,7 @@
             </div>
         </div>
         <div class="card-content">
-            <a href="Report/UnAcceptedItems" class="btn btn-link">Items Pending Acceptance <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+            <a asp-action="UnAcceptedItems" class="btn btn-link">Items Pending Acceptance <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
         </div>
     </div>
  @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.EquipMasterAccess)).Succeeded)
@@ -49,7 +49,7 @@
             </div>
         </div>
         <div class="card-content">
-            <a href="Report/KeyValues" class="btn btn-link">Key/Value Pairs in Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+            <a asp-action="KeyValues" class="btn btn-link">Key/Value Pairs in Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
         </div>
     </div>
     }  
