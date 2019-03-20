@@ -91,6 +91,8 @@ namespace Keas.Jobs.SendMail
                 }
             }
             _log.Information("Team Expiring Emails Sent {count}", counter);
+
+            emailService.SendPersonNotification().GetAwaiter().GetResult();
             
             _log.Information("Done Email Job");
 

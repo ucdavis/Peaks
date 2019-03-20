@@ -22,6 +22,8 @@ namespace Keas.Core.Services
         Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model);
 
         Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model);
+
+        Task SendPersonNotification();
     }
 
     public class EmailService : IEmailService
@@ -98,6 +100,82 @@ namespace Keas.Core.Services
             // await _dbContext.SaveChangesAsync();
             
 
+        }
+
+        public async Task SendPersonNotification()
+        {
+            if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.Information("Email Sending Disabled");
+                return;
+            }
+
+            var personEmails = await _dbContext.PersonNotifications.Where(a => a.Pending && a.SendEmail).AsNoTracking().Select(a => a.NotificationEmail).Distinct().ToArrayAsync();
+            if (!personEmails.Any())
+            {
+                Log.Information("No Person Notifications to Send");
+                return;
+            }
+
+            var dateSent = DateTime.UtcNow;
+
+            Log.Information($"About to send {personEmails.Length} Person Notification Emails");
+
+            foreach (var personEmail in personEmails)
+            {
+                //Get the notifications to send to this user.                
+                var personNotifications = await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail == personEmail).Include(a => a.Team).OrderBy(a => a.TeamId).ThenBy(a => a.ActionDate).GroupBy(a => a.TeamId).ToListAsync();
+                
+                //Send the Email
+                Log.Information($"Sending person notification email to {personEmail}");
+                
+                var transmission = new Transmission();
+                transmission.Content.Subject = "PEAKS People Notification";
+                transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
+                transmission.Content.Text = "The people in your teams have changed"; //TODO: Point to a report?
+
+                transmission.Recipients = new List<Recipient>()
+                {
+#if DEBUG
+                    new Recipient() {Address = new Address("jsylvestre@ucdavis.edu")},
+#else
+                    new Recipient() { Address = new Address(personEmail) },
+#endif
+                };
+
+                var engine = GetRazorEngine();
+                transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications);
+
+                var client = GetSparkpostClient();
+                try
+                {
+                    var result = await client.Transmissions.Send(transmission);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e.Message);
+                    continue;
+                }
+                
+
+
+                foreach (IGrouping<int?, PersonNotification> notificationGroup in personNotifications)
+                {
+                    foreach (var personNotification in notificationGroup)
+                    {
+                        personNotification.Pending = false;
+                        personNotification.NotificationDate = dateSent;
+                        _dbContext.Update(personNotification);
+                    }
+                }
+
+                Log.Information("Finished person notification email send");
+
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            return;
         }
 
         public async Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model)
