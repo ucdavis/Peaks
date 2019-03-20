@@ -110,7 +110,7 @@ namespace Keas.Core.Services
                 return;
             }
 
-            var personEmails = await _dbContext.PersonNotifications.Where(a => a.Pending && a.SendEmail).Select(a => a.NotificationEmail).Distinct().ToListAsync();
+            var personEmails = await _dbContext.PersonNotifications.Where(a => a.Pending && a.SendEmail).AsNoTracking().Select(a => a.NotificationEmail).Distinct().ToArrayAsync();
             if (!personEmails.Any())
             {
                 Log.Information("No Person Notifications to Send");
@@ -119,7 +119,7 @@ namespace Keas.Core.Services
 
             var dateSent = DateTime.UtcNow;
 
-            Log.Information($"About to send {personEmails.Count} Person Notification Emails");
+            Log.Information($"About to send {personEmails.Length} Person Notification Emails");
 
             foreach (var personEmail in personEmails)
             {
@@ -144,7 +144,7 @@ namespace Keas.Core.Services
                 };
 
                 var engine = GetRazorEngine();
-                transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications.ToList());
+                transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications);
 
                 var client = GetSparkpostClient();
                 try
