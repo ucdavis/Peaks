@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +29,35 @@ namespace Keas.Mvc.Controllers
         public ActionResult Index()
         {
             return View();
+        }
+
+        public async Task<ActionResult> PersonActions(DateTime? startDate, DateTime? endDate)
+        {
+            var team = await _context.Teams.SingleAsync(a => a.Slug == Team);
+            if (startDate.HasValue == false && endDate.HasValue == false)
+            {
+                startDate = DateTime.UtcNow.ToPacificTime().Date.AddMonths(-1);
+            }
+
+            var personNotifications = _context.PersonNotifications.Where(a => a.TeamId == team.Id);
+            if (startDate.HasValue)
+            {
+                personNotifications = personNotifications.Where(a => a.ActionDate >= startDate.Value.Date.ToUniversalTime());
+            }
+
+            if (endDate.HasValue)
+            {
+                personNotifications = personNotifications.Where(a => a.ActionDate <= endDate.Value.Date.AddDays(1).ToUniversalTime()); //Date 12AM + 1 day
+            }
+
+            var model = new ReportPersonNotifyViewModel
+            {
+                StartDate = startDate,
+                EndDate = endDate,
+                PersonNotifications = await personNotifications.ToListAsync()
+            };
+
+            return View(model);
         }
 
         public async Task<ActionResult> ExpiringItems(DateTime? expiresBefore = null, string showType = "All")

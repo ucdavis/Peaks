@@ -1,0 +1,110 @@
+@using Keas.Core.Extensions
+@model Keas.Mvc.Models.ReportPersonNotifyViewModel
+@{
+    ViewData["Title"] = "Person Actions";
+}
+
+
+
+
+    <div class="card">
+      <div class="card-header-primary-thick">
+        <div class="card-head">
+          <h2>Person Actions</h2>
+
+        </div>
+      </div>
+        <div class="card-content">
+            <form asp-action="PersonActions" method="get">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+              <div class="shade">
+
+
+                  <div class="row align-items-end">
+                      <div class="col-sm">
+                        <h3>Filters</h3>
+                          <div class="form-group">
+                              <label asp-for="StartDate" class="control-label"></label>
+                              <input id="start" style="height:34px" asp-for="StartDate" class="form-control datepicker" height="34px" width="276" />
+                              <span asp-validation-for="StartDate" class="text-danger"></span>
+                          </div>
+                      </div>
+                      <div class="col-sm">
+                          <div class="form-group">
+                              <label asp-for="EndDate" class="control-label"></label>
+                              <input id="end" style="height:34px" asp-for="EndDate" class="form-control datepicker" height="34px" width="276" />
+                              <span asp-validation-for="EndDate" class="text-danger"></span>
+                          </div>
+                      </div>                      
+                      <div class="col-sm">
+                          <div class="form-group">
+                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                          </div>
+                      </div>
+                  </div>
+
+              </div>
+                </form>
+<br>
+<br>
+<table id="persons-acted-on" class="table dataTable">
+        <thead>
+        <tr>
+            <th>Person</th>
+            <th>Person Email</th>
+            <th>Actor</th>
+            <th>Date</th>           
+            <th>Action</th>
+            <th>Notes</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.PersonNotifications)
+        {
+            <tr>
+                <td>@item.PersonName</td>
+                <td>@item.PersonEmail</td>
+                <td>@item.ActorName (@item.ActorId)</td>
+                <td>@item.ActionDate.ToPacificTime()</td>               
+                <td>@item.Action</td>
+                <td>@item.Notes</td>
+            </tr>
+        }
+        
+        </tbody>
+    </table>
+
+        </div>
+    </div>
+
+
+
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_CommonReportScripts")
+    
+    
+    <script type="text/javascript">
+        $('#start').datepicker({
+            uiLibrary: 'bootstrap4',
+            format: 'yyyy-mm-dd'
+        });
+        $('#end').datepicker({
+            uiLibrary: 'bootstrap4',
+            format: 'yyyy-mm-dd'
+        });
+        $('.dataTable').DataTable({
+            "columnDefs": [
+                { "type": "date", "targets": [3] },
+            ],
+            "order": [[ 3, "desc" ]]
+        });
+       
+    </script>                          
+}
+
