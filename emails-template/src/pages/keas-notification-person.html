@@ -1,0 +1,76 @@
+<style type="text/css">
+  body,
+  html, 
+  .body {
+    background: #f3f3f3 !important;
+  }
+</style>
+
+<container>
+
+  <spacer size="16"></spacer>
+
+  <row>
+    <columns>
+      <h1>The following people have been added/removed/reactivated from PEAKS.</h1>
+      <p>Thanks for PEAKing at this email. It sPEAKS well of you.</p>
+
+      <spacer size="16"></spacer>
+
+      <h4>Notification Details</h4>
+
+        <table>
+            <thead>
+            <tr>
+                <th><b>Person</b></th>
+                <th><b>Action Date</b></th>
+                <th><b>Actor</b></th>
+                <th><b>Action</b></th>
+                <th><b>Notes</b></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (IGrouping<int?, PersonNotification> notificationGroup in Model)
+            {
+                var teamName = "Not Set";
+                var link = "https://peaks.ucdavis.edu/";
+                if (notificationGroup.Key != null)
+                {
+                    teamName = notificationGroup.First().Team.Name;
+                    link = "https://peaks.ucdavis.edu/" + notificationGroup.First().Team.Slug + "/home/index";
+                }
+                <tr>
+                    <td colspan="5">
+                        <h3>Team: <a href="@link">@teamName</a></h3>
+                        <hr/>
+                    </td>
+                </tr>
+                @foreach (var notification in notificationGroup)
+                {
+                    <tr>
+                        <td>@notification.PersonName (@notification.PersonEmail)</td>
+                        <td>@notification.ActionDate.ToPacificTime().ToString("g")</td>
+                        <td>@notification.ActorName</td>
+                        <td>@notification.Action</td>
+                        <td>@notification.Notes</td>
+                    </tr>
+                }
+
+            }
+            </tbody>
+        </table>
+      <hr/>
+    </columns>
+  </row>
+  <div class="footer text-center">
+    <div>
+      <img src="https://peaks.ucdavis.edu/Images/peaksLogo.png" alt="">
+    </div>
+    <hr/>
+    <div>        
+      <p>         
+        This email was automatically generated please do not reply to it as the mailbox is not monitored. 
+      </p>
+    </div>
+  </div>
+</container>
