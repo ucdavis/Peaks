@@ -104,12 +104,11 @@ namespace Keas.Core.Services
 
         public async Task SendPersonNotification()
         {
-            //TODO: When done testing, uncomment
-            //if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    Log.Information("Email Sending Disabled");
-            //    return;
-            //}
+            if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
+            {
+                Log.Information("Email Sending Disabled");
+                return;
+            }
 
             var personEmails = await _dbContext.PersonNotifications.Where(a => a.Pending && a.SendEmail).Select(a => a.NotificationEmail).Distinct().ToListAsync();
             if (!personEmails.Any())
