@@ -120,11 +120,15 @@ namespace Keas.Core.Services
 
             var dateSent = DateTime.UtcNow;
 
+            Log.Information($"About to send {personEmails.Count} Person Notification Emails");
+
             foreach (var personEmail in personEmails)
             {
-                //Get the notifications to send to this user.
-                var personNotifications = await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail == personEmail).OrderBy(a => a.TeamId).ThenBy(a => a.ActionDate).ToListAsync();
+                //Get the notifications to send to this user.                
+                var personNotifications = await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail == personEmail).Include(a => a.Team).OrderBy(a => a.TeamId).ThenBy(a => a.ActionDate).GroupBy(a => a.TeamId).ToListAsync();
+                
                 //Send the Email
+                Log.Information($"Sending person notification email to {personEmail}");
                 
                 var transmission = new Transmission();
                 transmission.Content.Subject = "PEAKS People Notification";
@@ -140,13 +144,34 @@ namespace Keas.Core.Services
 #endif
                 };
 
-                //Update the pending flag
-                foreach (var personNotification in personNotifications)
+                var engine = GetRazorEngine();
+                transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications.ToList());
+
+                var client = GetSparkpostClient();
+                try
                 {
-                    personNotification.Pending = false;
-                    personNotification.NotificationDate = dateSent;
-                    _dbContext.Update(personNotification);
+                    var result = await client.Transmissions.Send(transmission);
                 }
+                catch (Exception e)
+                {
+                    Log.Error(e.Message);
+                    continue;
+                }
+                
+
+
+                foreach (IGrouping<int?, PersonNotification> notificationGroup in personNotifications)
+                {
+                    foreach (var personNotification in notificationGroup)
+                    {
+                        personNotification.Pending = false;
+                        personNotification.NotificationDate = dateSent;
+                        _dbContext.Update(personNotification);
+                    }
+                }
+
+                Log.Information("Finished person notification email send");
+
             }
 
             await _dbContext.SaveChangesAsync();
