@@ -22,6 +22,8 @@ namespace Keas.Core.Services
         Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model);
 
         Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model);
+
+        Task SendPersonNotification();
     }
 
     public class EmailService : IEmailService
@@ -98,6 +100,58 @@ namespace Keas.Core.Services
             // await _dbContext.SaveChangesAsync();
             
 
+        }
+
+        public async Task SendPersonNotification()
+        {
+            //TODO: When done testing, uncomment
+            //if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    Log.Information("Email Sending Disabled");
+            //    return;
+            //}
+
+            var personEmails = await _dbContext.PersonNotifications.Where(a => a.Pending && a.SendEmail).Select(a => a.NotificationEmail).Distinct().ToListAsync();
+            if (!personEmails.Any())
+            {
+                Log.Information("No Person Notifications to Send");
+                return;
+            }
+
+            var dateSent = DateTime.UtcNow;
+
+            foreach (var personEmail in personEmails)
+            {
+                //Get the notifications to send to this user.
+                var personNotifications = await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail == personEmail).OrderBy(a => a.TeamId).ThenBy(a => a.ActionDate).ToListAsync();
+                //Send the Email
+                
+                var transmission = new Transmission();
+                transmission.Content.Subject = "PEAKS People Notification";
+                transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
+                transmission.Content.Text = "The people in your teams have changed"; //TODO: Point to a report?
+
+                transmission.Recipients = new List<Recipient>()
+                {
+#if DEBUG
+                    new Recipient() {Address = new Address("jsylvestre@ucdavis.edu")},
+#else
+                    new Recipient() { Address = new Address(personEmail) },
+#endif
+                };
+
+                //Update the pending flag
+                foreach (var personNotification in personNotifications)
+                {
+                    personNotification.Pending = false;
+                    personNotification.NotificationDate = dateSent;
+                    _dbContext.Update(personNotification);
+                }
+            }
+
+            await _dbContext.SaveChangesAsync();
+
+            return;
         }
 
         public async Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model)
