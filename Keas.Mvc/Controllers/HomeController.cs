@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -30,6 +30,13 @@ namespace Keas.Mvc.Controllers
         {
             if (Team == null)
             {
+                return RedirectToAction("SelectTeam", "Confirm", new { urlRedirect = "home/index" });
+            }
+
+            var team = _context.Teams.SingleOrDefault(a => a.Slug == Team);
+            if (team == null)
+            {
+                ErrorMessage = "Team Not Found.";
                 return RedirectToAction("SelectTeam", "Confirm", new { urlRedirect = "home/index" });
             }
                       
