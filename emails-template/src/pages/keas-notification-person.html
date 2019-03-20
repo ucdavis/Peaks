@@ -17,19 +17,7 @@
 
       <spacer size="16"></spacer>
 
-      <h4>Notification Details</h4>
-
-        <table>
-            <thead>
-            <tr>
-                <th><b>Person</b></th>
-                <th><b>Action Date</b></th>
-                <th><b>Actor</b></th>
-                <th><b>Action</b></th>
-                <th><b>Notes</b></th>
-            </tr>
-            </thead>
-            <tbody>
+      <h2>Notification Details</h2>
             @foreach (IGrouping<int?, PersonNotification> notificationGroup in Model)
             {
                 var teamName = "Not Set";
@@ -39,27 +27,34 @@
                     teamName = notificationGroup.First().Team.Name;
                     link = "https://peaks.ucdavis.edu/" + notificationGroup.First().Team.Slug + "/home/index";
                 }
-                <tr>
-                    <td colspan="5">
-                        <h3>Team: <a href="@link">@teamName</a></h3>
-                        <hr/>
-                    </td>
-                </tr>
-                foreach (var notification in notificationGroup)
-                {
+                <h3>Team: <a href="@link">@teamName</a></h3>
+                <hr/>
+                <table>
+                    <thead>
                     <tr>
-                        <td>@notification.PersonName (@notification.PersonEmail)</td>
-                        <td>@notification.ActionDate.ToPacificTime().ToString("g")</td>
-                        <td>@notification.ActorName</td>
-                        <td>@notification.Action</td>
-                        <td>@notification.Notes</td>
+                        <th><b>Person</b></th>
+                        <th><b>Action Date</b></th>
+                        <th><b>Actor</b></th>
+                        <th><b>Action</b></th>
+                        <th><b>Notes</b></th>
                     </tr>
-                }
-
+                    </thead>
+                    <tbody>
+                        @foreach (var notification in notificationGroup)
+                        {
+                            <tr>
+                                <td>@notification.PersonName (@notification.PersonEmail)</td>
+                                <td>@notification.ActionDate.ToPacificTime().ToString("g")</td>
+                                <td>@notification.ActorName</td>
+                                <td>@notification.Action</td>
+                                <td>@notification.Notes</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <hr/><br/><br/>
             }
-            </tbody>
-        </table>
-      <hr/>
+      
     </columns>
   </row>
   <div class="footer text-center">
