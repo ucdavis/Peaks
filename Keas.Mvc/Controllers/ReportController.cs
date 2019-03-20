@@ -36,7 +36,7 @@ namespace Keas.Mvc.Controllers
             var team = await _context.Teams.SingleAsync(a => a.Slug == Team);
             if (startDate.HasValue == false && endDate.HasValue == false)
             {
-                startDate = DateTime.UtcNow.ToPacificTime().Date.AddDays(-30);
+                startDate = DateTime.UtcNow.ToPacificTime().Date.AddMonths(-1);
             }
 
             var personNotifications = _context.PersonNotifications.Where(a => a.TeamId == team.Id);
