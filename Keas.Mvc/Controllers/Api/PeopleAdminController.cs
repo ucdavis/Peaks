@@ -71,6 +71,11 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
+            if (User.Identity.Name == person.UserId)
+            {
+                ModelState.AddModelError("User", "Don't delete yourself.");
+                return BadRequest(ModelState);
+            }
 
 
             using (var transaction = _context.Database.BeginTransaction())
