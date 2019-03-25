@@ -298,9 +298,21 @@ namespace Keas.Mvc.Controllers
                 return RedirectToAction(nameof(RemoveRoles), new { userId = userId });
             }
 
+            if (userId == User.Identity.Name)
+            {
+                if (await _context.TeamPermissions.AnyAsync(a =>
+                    a.Team.Slug == Team && a.Role.Name.Equals(Role.Codes.DepartmentalAdmin) &&
+                    roles.Contains(a.RoleId)))
+                {
+                    ErrorMessage =
+                        "You can't remove your own roles if the role being removed is for Departmental Admin access. Please have another Admin remove your permissions if required.";
+                    return RedirectToAction(nameof(RemoveRoles), new { userId = userId });
+                }
+            }
+
             foreach (var role in roles)
             {
-                var teamPermssionToDelete = _context.TeamPermissions.Single(tptd => tptd.RoleId == role && tptd.UserId == userId && tptd.Team.Slug == Team);
+                var teamPermssionToDelete = _context.TeamPermissions.Single(a => a.RoleId == role && a.UserId == userId && a.Team.Slug == Team);
                 _context.TeamPermissions.Remove(teamPermssionToDelete);
             }
             await _context.SaveChangesAsync();
