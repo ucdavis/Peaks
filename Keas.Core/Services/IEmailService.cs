@@ -310,8 +310,7 @@ namespace Keas.Core.Services
             {
                 plural = "items";
             }
-            message.AppendLine("It looks like you are viewing the ugly text version of this email, if you view it in html it will look a lot nicer.");
-            message.AppendLine();
+
             message.AppendLine($"{expiringItems.Person.Name}, you have {count} expiring {plural} in team {expiringItems.Person.Team.Name} in PEAKS.");
             message.AppendLine("Thanks for PEAKing at this email. It sPEAKS well of you.");
             message.AppendLine();
@@ -340,6 +339,23 @@ namespace Keas.Core.Services
 
             message.AppendLine("Not sure who that is? Click Help. To see your team's Admins");
             message.AppendLine($"Help link for this team: {helplink}");
+
+            message.AppendLine();
+            message.AppendLine("This email was automatically generated please do not reply to it as the mailbox is not monitored.");
+            return message.ToString();
+        }
+        private string BuildNotificationTextMessage(List<IGrouping<int?, Notification>> notifications)
+        {
+            var message = new StringBuilder();
+            var userName = notifications.First().First(a => a.User != null).User.Name;
+            var tempCount = notifications.Sum(a => a.Count());
+            var notificationPluralize = "notification";
+            if (tempCount > 1)
+            {
+                notificationPluralize = "notifications";
+            }
+
+
 
             message.AppendLine();
             message.AppendLine("This email was automatically generated please do not reply to it as the mailbox is not monitored.");
@@ -391,7 +407,8 @@ namespace Keas.Core.Services
             var transmission = new Transmission();
             transmission.Content.Subject = "PEAKS Notification";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-            transmission.Content.Text = "You have pending notifications. Please visit https://peaks.ucdavis.edu to review them.";
+            //transmission.Content.Text = "You have pending notifications. Please visit https://peaks.ucdavis.edu to review them.";
+            transmission.Content.Text = BuildNotificationTextMessage(notifications.ToList());
             transmission.Recipients = new List<Recipient>()
             {
 #if DEBUG
