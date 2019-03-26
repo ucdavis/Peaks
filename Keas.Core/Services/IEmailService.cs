@@ -7,6 +7,7 @@ using Keas.Core.Domain;
 using System.Net;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -204,7 +205,7 @@ namespace Keas.Core.Services
             var transmission = new Transmission();
             transmission.Content.Subject = "PEAKS Expiring Items";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-            transmission.Content.Text = "You have asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
+            transmission.Content.Text = BuildExpiringTextMessage(expiringItems);
             transmission.Recipients = new List<Recipient>()
             {
 #if DEBUG
@@ -296,6 +297,53 @@ namespace Keas.Core.Services
             }
 
             await _dbContext.SaveChangesAsync();
+        }
+
+        private string BuildExpiringTextMessage(ExpiringItemsEmailModel expiringItems)
+        {
+            var message = new StringBuilder();
+            var count = expiringItems.KeySerials.Count() + expiringItems.Equipment.Count() + expiringItems.Workstations.Count() + expiringItems.AccessAssignments.Count();
+            var helplink = "https://peaks.ucdavis.edu/" + expiringItems.Person.Team.Slug +"/Help";
+
+            var plural = "item";
+            if (count > 1)
+            {
+                plural = "items";
+            }
+            message.AppendLine("It looks like you are viewing the ugly text version of this email, if you view it in html it will look a lot nicer.");
+            message.AppendLine();
+            message.AppendLine($"{expiringItems.Person.Name}, you have {count} expiring {plural} in team {expiringItems.Person.Team.Name} in PEAKS.");
+            message.AppendLine("Thanks for PEAKing at this email. It sPEAKS well of you.");
+            message.AppendLine();
+            message.AppendLine("Notification Details");
+            message.AppendLine("Type,Item,Date expiring");
+            foreach (var item in expiringItems.AccessAssignments)
+            {
+                message.AppendLine($"Access,{item.Access.Name},{item.ExpiresAt.ToPacificTime():d}");
+            }
+            foreach (var item in expiringItems.KeySerials)
+            {
+                message.AppendLine($"Key,{item.Key.Title},{item.KeySerialAssignment.ExpiresAt.ToPacificTime():d}");
+            }
+            foreach (var item in expiringItems.Equipment)
+            {
+                message.AppendLine($"Equipment,{item.Name},{item.Assignment.ExpiresAt.ToPacificTime():d}");
+            }
+            foreach (var item in expiringItems.Workstations)
+            {
+                message.AppendLine($"Workstation,{item.Name},{item.Assignment.ExpiresAt.ToPacificTime():d}");
+            }
+
+            message.AppendLine();
+            message.AppendLine("Please contact your team's assigned individuals to either update the expiration date or return/check-in the above items.");
+            message.AppendLine();
+
+            message.AppendLine("Not sure who that is? Click Help. To see your team's Admins");
+            message.AppendLine($"Help link for this team: {helplink}");
+
+            message.AppendLine();
+            message.AppendLine("This email was automatically generated please do not reply to it as the mailbox is not monitored.");
+            return message.ToString();
         }
 
         private void SetNextNotification(AssignmentBase assignment)
