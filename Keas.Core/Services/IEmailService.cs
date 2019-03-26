@@ -7,6 +7,7 @@ using Keas.Core.Domain;
 using System.Net;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -204,7 +205,7 @@ namespace Keas.Core.Services
             var transmission = new Transmission();
             transmission.Content.Subject = "PEAKS Expiring Items";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-            transmission.Content.Text = "You have asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
+            transmission.Content.Text = BuildExpiringTextMessage(expiringItems);
             transmission.Recipients = new List<Recipient>()
             {
 #if DEBUG
@@ -298,6 +299,95 @@ namespace Keas.Core.Services
             await _dbContext.SaveChangesAsync();
         }
 
+        private string BuildExpiringTextMessage(ExpiringItemsEmailModel expiringItems)
+        {
+            var message = new StringBuilder();
+            var count = expiringItems.KeySerials.Count() + expiringItems.Equipment.Count() + expiringItems.Workstations.Count() + expiringItems.AccessAssignments.Count();
+            var helplink = "https://peaks.ucdavis.edu/" + expiringItems.Person.Team.Slug +"/Help";
+
+            var plural = "item";
+            if (count > 1)
+            {
+                plural = "items";
+            }
+
+            message.AppendLine($"{expiringItems.Person.Name}, you have {count} expiring {plural} in team {expiringItems.Person.Team.Name} in PEAKS.");
+            message.AppendLine("Thanks for PEAKing at this email. It sPEAKS well of you.");
+            message.AppendLine();
+            message.AppendLine("Notification Details");
+            message.AppendLine("Type, Item, Date expiring");
+            foreach (var item in expiringItems.AccessAssignments)
+            {
+                message.AppendLine($"Access, {item.Access.Name}, {item.ExpiresAt.ToPacificTime():d}");
+            }
+            foreach (var item in expiringItems.KeySerials)
+            {
+                message.AppendLine($"Key, {item.Key.Title}, {item.KeySerialAssignment.ExpiresAt.ToPacificTime():d}");
+            }
+            foreach (var item in expiringItems.Equipment)
+            {
+                message.AppendLine($"Equipment, {item.Name}, {item.Assignment.ExpiresAt.ToPacificTime():d}");
+            }
+            foreach (var item in expiringItems.Workstations)
+            {
+                message.AppendLine($"Workstation, {item.Name}, {item.Assignment.ExpiresAt.ToPacificTime():d}");
+            }
+
+            message.AppendLine();
+            message.AppendLine("Please contact your team's assigned individuals to either update the expiration date or return/check-in the above items.");
+            message.AppendLine();
+
+            message.AppendLine("Not sure who that is? Click Help. To see your team's Admins");
+            message.AppendLine($"Help link for this team: {helplink}");
+
+            message.AppendLine();
+            message.AppendLine("This email was automatically generated please do not reply to it as the mailbox is not monitored.");
+            return message.ToString();
+        }
+        private string BuildNotificationTextMessage(List<IGrouping<int?, Notification>> notifications)
+        {
+            var message = new StringBuilder();
+            var userName = notifications.First().First(a => a.User != null).User.Name;
+            var tempCount = notifications.Sum(a => a.Count());
+            var notificationPluralize = "notification";
+            if (tempCount > 1)
+            {
+                notificationPluralize = "notifications";
+            }
+
+            message.AppendLine($"{userName}, you have {tempCount} new {notificationPluralize} from PEAKS.");
+            message.AppendLine("Thanks for PEAKing at this email. It sPEAKS well of you.");
+            message.AppendLine();
+            message.AppendLine("Notification Details");
+            foreach (IGrouping<int?, Notification> notificationGroup in notifications)
+            {
+                var teamName = "Not Set";
+                var link = "https://peaks.ucdavis.edu/";
+                if (notificationGroup.Key != null)
+                {
+                    teamName = notificationGroup.First().Team.Name;
+                    link = "https://peaks.ucdavis.edu/" + notificationGroup.First().Team.Slug + "/Confirm/Confirm";
+                }
+
+                message.AppendLine($"Team: {teamName}");
+                if (notificationGroup.Any(n => n.NeedsAccept))
+                {
+                    message.AppendLine("One or more items in this team require you to accept them. Please click on the link below to confirm receiving these items.");
+                    message.AppendLine($"Link to confirm: {link}");
+                }
+
+                message.AppendLine("Details, Date Created");
+                foreach (var notification in notificationGroup)
+                {
+                    message.AppendLine($"{notification.Details}, {notification.DateTimeCreated.ToPacificTime():g}");
+                }
+            }
+            
+            message.AppendLine();
+            message.AppendLine("This email was automatically generated please do not reply to it as the mailbox is not monitored.");
+            return message.ToString();
+        }
+
         private void SetNextNotification(AssignmentBase assignment)
         {
             // first notification, push back one week before expiration
@@ -343,7 +433,7 @@ namespace Keas.Core.Services
             var transmission = new Transmission();
             transmission.Content.Subject = "PEAKS Notification";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-            transmission.Content.Text = "You have pending notifications. Please visit https://peaks.ucdavis.edu to review them.";
+            transmission.Content.Text = BuildNotificationTextMessage(notifications.ToList());
             transmission.Recipients = new List<Recipient>()
             {
 #if DEBUG
