@@ -315,22 +315,22 @@ namespace Keas.Core.Services
             message.AppendLine("Thanks for PEAKing at this email. It sPEAKS well of you.");
             message.AppendLine();
             message.AppendLine("Notification Details");
-            message.AppendLine("Type,Item,Date expiring");
+            message.AppendLine("Type, Item, Date expiring");
             foreach (var item in expiringItems.AccessAssignments)
             {
-                message.AppendLine($"Access,{item.Access.Name},{item.ExpiresAt.ToPacificTime():d}");
+                message.AppendLine($"Access, {item.Access.Name}, {item.ExpiresAt.ToPacificTime():d}");
             }
             foreach (var item in expiringItems.KeySerials)
             {
-                message.AppendLine($"Key,{item.Key.Title},{item.KeySerialAssignment.ExpiresAt.ToPacificTime():d}");
+                message.AppendLine($"Key, {item.Key.Title}, {item.KeySerialAssignment.ExpiresAt.ToPacificTime():d}");
             }
             foreach (var item in expiringItems.Equipment)
             {
-                message.AppendLine($"Equipment,{item.Name},{item.Assignment.ExpiresAt.ToPacificTime():d}");
+                message.AppendLine($"Equipment, {item.Name}, {item.Assignment.ExpiresAt.ToPacificTime():d}");
             }
             foreach (var item in expiringItems.Workstations)
             {
-                message.AppendLine($"Workstation,{item.Name},{item.Assignment.ExpiresAt.ToPacificTime():d}");
+                message.AppendLine($"Workstation, {item.Name}, {item.Assignment.ExpiresAt.ToPacificTime():d}");
             }
 
             message.AppendLine();
@@ -355,8 +355,34 @@ namespace Keas.Core.Services
                 notificationPluralize = "notifications";
             }
 
+            message.AppendLine($"{userName}, you have {tempCount} new {notificationPluralize} from PEAKS.");
+            message.AppendLine("Thanks for PEAKing at this email. It sPEAKS well of you.");
+            message.AppendLine();
+            message.AppendLine("Notification Details");
+            foreach (IGrouping<int?, Notification> notificationGroup in notifications)
+            {
+                var teamName = "Not Set";
+                var link = "https://peaks.ucdavis.edu/";
+                if (notificationGroup.Key != null)
+                {
+                    teamName = notificationGroup.First().Team.Name;
+                    link = "https://peaks.ucdavis.edu/" + notificationGroup.First().Team.Slug + "/Confirm/Confirm";
+                }
 
+                message.AppendLine($"Team: {teamName}");
+                if (notificationGroup.Any(n => n.NeedsAccept))
+                {
+                    message.AppendLine("One or more items in this team require you to accept them. Please click on the link below to confirm receiving these items.");
+                    message.AppendLine($"Link to confirm: {link}");
+                }
 
+                message.AppendLine("Details, Date Created");
+                foreach (var notification in notificationGroup)
+                {
+                    message.AppendLine($"{notification.Details}, {notification.DateTimeCreated.ToPacificTime():g}");
+                }
+            }
+            
             message.AppendLine();
             message.AppendLine("This email was automatically generated please do not reply to it as the mailbox is not monitored.");
             return message.ToString();
@@ -407,7 +433,6 @@ namespace Keas.Core.Services
             var transmission = new Transmission();
             transmission.Content.Subject = "PEAKS Notification";
             transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-            //transmission.Content.Text = "You have pending notifications. Please visit https://peaks.ucdavis.edu to review them.";
             transmission.Content.Text = BuildNotificationTextMessage(notifications.ToList());
             transmission.Recipients = new List<Recipient>()
             {
