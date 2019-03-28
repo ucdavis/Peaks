@@ -34,7 +34,7 @@ namespace Keas.Core.Domain
 
         public string GetDescription(string asset, string title, Person actor, string action)
         {            
-            return asset + "(" + title + ") " + action + " to " +  Person.Name + " (" + Person.UserId + ") " + " by " + actor.Name + " (" + actor.UserId + ")";
+            return $"{asset} ({title}) {action} {Person.Name} ({Person.UserId}) by {actor.Name} ({actor.UserId})";
         }
 
     }
