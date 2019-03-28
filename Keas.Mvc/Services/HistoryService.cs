@@ -346,7 +346,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(key.Team.Slug);
             var historyEntry = new History
             {
-                Description = keySerial.Key.GetDescription(nameof(Key), key.Title, person, "Accepted"),
+                Description = keySerial.Key.GetDescription(nameof(Key),  $"{keySerial.Key.Title}-{keySerial.Title}", person, "Accepted"),
                 ActorId = person.UserId,
                 AssetType = "KeySerial",
                 ActionType = "Accepted",
