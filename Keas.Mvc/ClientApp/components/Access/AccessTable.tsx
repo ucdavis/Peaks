@@ -5,6 +5,7 @@ import "react-table/react-table.css";
 import { Button } from "reactstrap";
 import { IAccess } from "../../Types";
 import { DateUtil } from "../../util/dates";
+import { ReactTableExpirationUtil } from "../../util/reactTable";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 interface IProps {
@@ -69,63 +70,18 @@ export default class AccessTable extends React.Component<IProps, {}> {
                         id: "assignedTo"
                     },
                     {
-                        Filter: ({ filter, onChange }) => (
-                            <select
-                                onChange={e => onChange(e.target.value)}
-                                style={{ width: "100%" }}
-                                value={filter ? filter.value : "all"}
-                            >
-                                <option value="all">Show All</option>
-                                <option value="expired">Expired</option>
-                                <option value="unexpired">All Unexpired</option>
-                                <option value="3weeks">Expiring within 3 weeks</option>
-                                <option value="6weeks">Expiring within 6 weeks</option>
-                            </select>
+                        Cell: row => (
+                            <span>{row.value ? DateUtil.formatExpiration(row.value) : ""}</span>
                         ),
+                        Filter: ({ filter, onChange }) =>
+                            ReactTableExpirationUtil.filter(filter, onChange),
                         Header: "Expiration",
                         accessor: x =>
-                            DateUtil.formatFirstExpiration(x.assignments.map(y => y.expiresAt)),
-                        filterMethod: (filter, row) => {
-                            if (filter.value === "all") {
-                                return true;
-                            }
-                            if (filter.value === "expired") {
-                                return (
-                                    row.numAssignments > 0 &&
-                                    moment(row.expiresAt, "MM-DD-YYYY").isSameOrBefore()
-                                );
-                            }
-                            if (filter.value === "unexpired") {
-                                return (
-                                    row.numAssignments > 0 &&
-                                    moment(row.expiresAt, "MM-DD-YYYY").isAfter()
-                                );
-                            }
-                            if (filter.value === "3weeks") {
-                                return (
-                                    row.numAssignments > 0 &&
-                                    moment(row.expiresAt, "MM-DD-YYYY").isAfter() &&
-                                    moment(row.expiresAt, "MM-DD-YYYY").isBefore(
-                                        moment().add(3, "w")
-                                    )
-                                );
-                            }
-                            if (filter.value === "6weeks") {
-                                return (
-                                    row.numAssignments > 0 &&
-                                    moment(row.expiresAt, "MM-DD-YYYY").isAfter() &&
-                                    moment(row.expiresAt, "MM-DD-YYYY").isBefore(
-                                        moment().add(6, "w")
-                                    )
-                                );
-                            }
-                        },
+                            DateUtil.getFirstExpiration(x.assignments.map(y => y.expiresAt)),
+                        filterMethod: (filter, row) =>
+                            ReactTableExpirationUtil.filterMethod(filter, row),
                         id: "expiresAt",
-                        sortMethod: (a, b) => {
-                            return moment(a, "MM-DD-YYYY").isSameOrAfter(moment(b, "MM-DD-YYYY"))
-                                ? 1
-                                : -1;
-                        }
+                        sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
                     },
                     {
                         Cell: this.renderDropdownColumn,
