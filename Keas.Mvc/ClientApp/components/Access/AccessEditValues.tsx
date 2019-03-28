@@ -3,6 +3,7 @@ import ReactTable from "react-table";
 import { Button, FormFeedback, FormGroup, Input, Label } from "reactstrap";
 import { IAccess, IAccessAssignment } from "../../Types";
 import { DateUtil } from "../../util/dates";
+import { ReactTableExpirationUtil } from "../../util/reactTable";
 import SearchTags from "../Tags/SearchTags";
 
 interface IProps {
@@ -18,19 +19,25 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
     public render() {
         const columns = [
             {
-                Header: "First Name",
-                accessor: x => x.person.firstName,
-                id: "personFirstName"
+                Header: "Name",
+                accessor: "person.name",
+                filterMethod: (filter, row) =>
+                    !!row[filter.id] &&
+                    row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
+                filterable: true
             },
             {
-                Header: "Last Name",
-                accessor: x => x.person.lastName,
-                id: "personLastName"
-            },
-            {
-                Header: "Expires at",
-                accessor: x => DateUtil.formatExpiration(x.expiresAt),
-                id: "expiresAt"
+                Cell: row => (
+                    <span>{row.value ? DateUtil.formatExpiration(row.value) : ""}</span>
+                ),
+                Filter: ({ filter, onChange }) =>
+                    ReactTableExpirationUtil.filter(filter, onChange),
+                Header: "Expiration",
+                accessor: "expiresAt",
+                filterMethod: (filter, row) =>
+                    ReactTableExpirationUtil.filterMethod(filter, row),
+                filterable: true,
+                sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
             },
             {
                 Cell: row => (
