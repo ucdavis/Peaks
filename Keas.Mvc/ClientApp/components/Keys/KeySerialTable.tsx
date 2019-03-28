@@ -1,7 +1,7 @@
 import * as React from "react";
 import ReactTable from "react-table";
 import { Button } from "reactstrap";
-import { IKeySerial } from "../../Types";
+import { IKeySerial, IKey } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
@@ -51,28 +51,40 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                         sortable: false
                     },
                     {
-                        Header: "Code",
-                        accessor: "key.code",
-                        className: "word-wrap",
-                        filterMethod: (filter: IFilter, row: IRow) =>
+                        Header: "Key Code and SN",
+                        accessor: (keySerial: IKeySerial) => {
+                            return keySerial.key.code + keySerial.number;
+                        },
+                        filterMethod: (filter: IFilter, row) =>
                             !!row[filter.id] &&
-                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
+                        id: "keyCodeSN"
                     },
                     {
-                        Header: "SN",
-                        accessor: "number",
-                        className: "word-wrap",
-                        filterMethod: (filter: IFilter, row: IRow) =>
-                            !!row[filter.id] &&
-                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
-                    },
-                    {
+                        Filter: ({ filter, onChange }) => (
+                            <select
+                                onChange={e => onChange(e.target.value)}
+                                style={{ width: "100%" }}
+                                value={filter ? filter.value : "all"}
+                            >
+                                <option value="all">Show All</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        ),
                         Header: "Status",
                         accessor: "status",
-                        className: "text-mono word-wrap",
-                        filterMethod: (filter: IFilter, row: IRow) =>
-                            !!row[filter.id] &&
-                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                        filterMethod: (filter: IFilter, row: IKeySerial) => {
+                            if (filter.value === "all") {
+                                return true;
+                            }
+                            if (filter.value === "active") {
+                                return row.status === "Active";
+                            }
+                            if (filter.value === "inactive") {
+                                return row.status !== "Active";
+                            }
+                        }
                     },
                     {
                         Cell: (row: IRow) => {
