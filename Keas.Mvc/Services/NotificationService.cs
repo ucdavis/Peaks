@@ -9,6 +9,7 @@ namespace Keas.Mvc.Services
     public interface INotificationService
     {
         Task KeyCreatedUpdatedInactive(Key key, History history);
+        Task KeySerialCreatedUpdatedInactive(KeySerial keySerial, History history);
         Task EquipmentCreatedUpdatedInactive(Equipment equipment, History history);
         Task AccessCreatedUpdatedInactive(Access access, History history);
         Task KeySerialAssigned(KeySerial keySerial, History history);
@@ -51,6 +52,26 @@ namespace Keas.Mvc.Services
                     History = history,
                     Details = history.Description,
                     TeamId = key.TeamId,
+                };
+                _dbContext.Notifications.Add(notification);
+            }
+            await _dbContext.SaveChangesAsync();
+        }
+
+        // Assume we email all Team KeyMasters & DepartmentalAdmins
+        public async Task KeySerialCreatedUpdatedInactive(KeySerial keySerial, History history)
+        {
+            var roles = await _dbContext.Roles
+                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
+            var users = await _securityService.GetUsersInRoles(roles, keySerial.TeamId);
+            foreach (var user in users)
+            {
+                var notification = new Notification
+                {
+                    UserId = user.Id,
+                    History = history,
+                    Details = history.Description,
+                    TeamId = keySerial.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }
