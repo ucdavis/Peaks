@@ -11,7 +11,7 @@ interface IProps {
     onEdit?: (keySerial: IKeySerial) => void;
 }
 
-export default class KeyList extends React.Component<IProps, {}> {
+export default class KeySerialList extends React.Component<IProps, {}> {
     public render() {
         const { keySerials } = this.props;
         const serials =
