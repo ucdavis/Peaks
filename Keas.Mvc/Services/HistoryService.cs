@@ -144,7 +144,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(keySerial.TeamId);
             var historyEntry = new History
             {
-                Description = keySerial.GetDescription(nameof(Key), $"{keySerial.Key.Title}-{keySerial.Title}", person, "Updated"),
+                Description = keySerial.GetDescription(nameof(KeySerial), $"{keySerial.Key.Title}-{keySerial.Title}", person, "Updated"),
                 ActorId = person.UserId,
                 AssetType = "KeySerial",
                 ActionType = "Updated",
@@ -240,7 +240,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(key.Team.Slug);
             var historyEntry = new History
             {
-                Description = keySerial.KeySerialAssignment.GetDescription(nameof(Key), key.Title, person, "Assigned to"),
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(KeySerial), $"{keySerial.Key.Title}-{keySerial.Title}", person, "Assigned to"),
                 ActorId = person.UserId,
                 AssetType = "KeySerial",
                 ActionType = "Assigned",
@@ -293,7 +293,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(key.TeamId);
             var historyEntry = new History
             {
-                Description = keySerial.KeySerialAssignment.GetDescription(nameof(KeySerial), key.Title, person, "Unassigned from"),
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(KeySerial), $"{keySerial.Key.Title}-{keySerial.Title}", person, "Unassigned from"),
                 ActorId = person.UserId,
                 AssetType = "KeySerial",
                 ActionType = "Unassigned",
