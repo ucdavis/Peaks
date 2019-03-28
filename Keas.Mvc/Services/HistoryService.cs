@@ -562,9 +562,9 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(key.Team.Slug);
             var historyEntry = new History
             {
-                Description = keySerial.KeySerialAssignment.GetDescription(nameof(Key), key.Title, person, "Assignment Updated for"),
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(KeySerial), $"{keySerial.Key.Title}-{keySerial.Title}", person, "Assignment Updated for"),
                 ActorId = person.UserId,
-                AssetType = "Key",
+                AssetType = "KeySerial",
                 ActionType = "AssignmentUpdated",
                 KeySerial = keySerial,
                 TargetId = keySerial.KeySerialAssignment.PersonId
