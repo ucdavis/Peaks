@@ -89,15 +89,20 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                     },
                     {
                         Header: "Assignment",
-                        accessor: (keySerial: IKeySerial) => keySerial.keySerialAssignment ? keySerial.keySerialAssignment.person.name : null,
+                        accessor: (keySerial: IKeySerial) =>
+                            keySerial.keySerialAssignment
+                                ? keySerial.keySerialAssignment.person.name
+                                : null,
                         className: "word-wrap",
                         filterMethod: (filter: IFilter, row: IRow) =>
                             !!row[filter.id] &&
                             row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
-                        id: "assignedTo",
+                        id: "assignedTo"
                     },
                     {
-                        Cell: (row) => <span>{DateUtil.formatExpiration(row.expiresAt)}</span>,
+                        Cell: row => (
+                            <span>{row.value ? DateUtil.formatExpiration(row.value) : ""}</span>
+                        ),
                         Filter: ({ filter, onChange }) => (
                             <select
                                 onChange={e => onChange(e.target.value)}
@@ -113,7 +118,7 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                             </select>
                         ),
                         Header: "Expiration",
-                        accessor: (keySerial: IKeySerial) => keySerial.keySerialAssignment ? keySerial.keySerialAssignment.expiresAt : null,
+                        accessor: "keySerialAssignment.expiresAt",
                         filterMethod: (filter: IFilter, row) => {
                             if (filter.value === "all") {
                                 return true;
@@ -122,37 +127,40 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                                 return !row.expiresAt;
                             }
                             if (filter.value === "expired") {
-                                return (
-                                    !!row.expiresAt &&
-                                    moment(row.expiresAt).isSameOrBefore()
-                                );
+                                return !!row.expiresAt && moment(row.expiresAt).isSameOrBefore();
                             }
                             if (filter.value === "unexpired") {
-                                return (
-                                    !!row.expiresAt &&
-                                    moment(row.expiresAt).isAfter()
-                                );
+                                return !!row.expiresAt && moment(row.expiresAt).isAfter();
                             }
                             if (filter.value === "3weeks") {
                                 return (
                                     !!row.expiresAt &&
                                     moment(row.expiresAt).isAfter() &&
-                                    moment(row.expiresAt).isBefore(
-                                        moment().add(3, "w")
-                                    )
+                                    moment(row.expiresAt).isBefore(moment().add(3, "w"))
                                 );
                             }
                             if (filter.value === "6weeks") {
                                 return (
                                     !!row.expiresAt &&
                                     moment(row.expiresAt).isAfter() &&
-                                    moment(row.expiresAt).isBefore(
-                                        moment().add(6, "w")
-                                    )
+                                    moment(row.expiresAt).isBefore(moment().add(6, "w"))
                                 );
                             }
                         },
-                        id: "expiresAt"
+                        id: "expiresAt",
+                        sortMethod: (a, b) => {
+                            if (!b) {
+                                return -1;
+                            }
+                            if (!a) {
+                                return 1;
+                            }
+                            if (moment(a).isSame(b)) {
+                                return 0;
+                            } else {
+                                return moment(a).isBefore(b) ? -1 : 1;
+                            }
+                        }
                     },
                     {
                         Cell: this.renderDropdownColumn,
@@ -162,6 +170,16 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                         headerClassName: "table-actions",
                         resizable: false,
                         sortable: false
+                    }
+                ]}
+                defaultSorted={[
+                    {
+                        desc: false,
+                        id: "status"
+                    },
+                    {
+                        desc: false,
+                        id: "expiresAt"
                     }
                 ]}
             />
