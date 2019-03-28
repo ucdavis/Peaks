@@ -1,7 +1,8 @@
+import * as moment from "moment";
 import * as React from "react";
 import ReactTable from "react-table";
 import { Button } from "reactstrap";
-import { IKeySerial, IKey } from "../../Types";
+import { IKeySerial } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
@@ -87,32 +88,71 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                         }
                     },
                     {
-                        Cell: (row: IRow) => {
-                            return row.original.keySerialAssignment
-                                ? row.original.keySerialAssignment.person.name
-                                : "";
-                        },
                         Header: "Assignment",
-                        accessor: "keySerial.keySerialAssignment.person.name",
+                        accessor: (keySerial: IKeySerial) => keySerial.keySerialAssignment ? keySerial.keySerialAssignment.person.name : null,
                         className: "word-wrap",
                         filterMethod: (filter: IFilter, row: IRow) =>
                             !!row[filter.id] &&
-                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
+                        id: "assignedTo",
                     },
                     {
-                        Cell: (row: IRow) => {
-                            return row.original.keySerialAssignment
-                                ? DateUtil.formatExpiration(
-                                      row.original.keySerialAssignment.expiresAt
-                                  )
-                                : "";
-                        },
+                        Cell: (row) => <span>{DateUtil.formatExpiration(row.expiresAt)}</span>,
+                        Filter: ({ filter, onChange }) => (
+                            <select
+                                onChange={e => onChange(e.target.value)}
+                                style={{ width: "100%" }}
+                                value={filter ? filter.value : "all"}
+                            >
+                                <option value="all">Show All</option>
+                                <option value="unassigned">Unassigned</option>
+                                <option value="expired">Expired</option>
+                                <option value="unexpired">All Unexpired</option>
+                                <option value="3weeks">Expiring within 3 weeks</option>
+                                <option value="6weeks">Expiring within 6 weeks</option>
+                            </select>
+                        ),
                         Header: "Expiration",
-                        accessor: "keySerial.keySerialAssignment.expiresAt",
-                        className: "word-wrap",
-                        filterMethod: (filter: IFilter, row: IRow) =>
-                            !!row[filter.id] &&
-                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                        accessor: (keySerial: IKeySerial) => keySerial.keySerialAssignment ? keySerial.keySerialAssignment.expiresAt : null,
+                        filterMethod: (filter: IFilter, row) => {
+                            if (filter.value === "all") {
+                                return true;
+                            }
+                            if (filter.value === "unassigned") {
+                                return !row.expiresAt;
+                            }
+                            if (filter.value === "expired") {
+                                return (
+                                    !!row.expiresAt &&
+                                    moment(row.expiresAt).isSameOrBefore()
+                                );
+                            }
+                            if (filter.value === "unexpired") {
+                                return (
+                                    !!row.expiresAt &&
+                                    moment(row.expiresAt).isAfter()
+                                );
+                            }
+                            if (filter.value === "3weeks") {
+                                return (
+                                    !!row.expiresAt &&
+                                    moment(row.expiresAt).isAfter() &&
+                                    moment(row.expiresAt).isBefore(
+                                        moment().add(3, "w")
+                                    )
+                                );
+                            }
+                            if (filter.value === "6weeks") {
+                                return (
+                                    !!row.expiresAt &&
+                                    moment(row.expiresAt).isAfter() &&
+                                    moment(row.expiresAt).isBefore(
+                                        moment().add(6, "w")
+                                    )
+                                );
+                            }
+                        },
+                        id: "expiresAt"
                     },
                     {
                         Cell: this.renderDropdownColumn,
