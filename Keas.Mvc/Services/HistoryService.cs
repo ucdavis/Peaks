@@ -348,7 +348,7 @@ namespace Keas.Mvc.Services
             {
                 Description = keySerial.Key.GetDescription(nameof(Key), key.Title, person, "Accepted"),
                 ActorId = person.UserId,
-                AssetType = "Key",
+                AssetType = "KeySerial",
                 ActionType = "Accepted",
                 Key = keySerial.Key,
                 KeySerial = keySerial,
