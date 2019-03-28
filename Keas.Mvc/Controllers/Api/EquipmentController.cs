@@ -181,9 +181,9 @@ namespace Keas.Mvc.Controllers.Api
                 else
                 {
                     eq.Space = await _context.Spaces.SingleAsync(x => x.Id == updatedEquipment.Space.Id);
-                }
-                await _context.SaveChangesAsync();
+                }                
                 await _eventService.TrackUpdateEquipment(eq);
+                await _context.SaveChangesAsync();
                 return Json(eq);
             }
             return BadRequest(ModelState);
@@ -199,9 +199,9 @@ namespace Keas.Mvc.Controllers.Api
                     .SingleAsync(x => x.Id == equipment.Id);
 
                 _context.EquipmentAssignments.Remove(eq.Assignment);
-                eq.Assignment = null;
+                eq.Assignment = null;               
+                await _eventService.TrackUnAssignEquipment(equipment); 
                 await _context.SaveChangesAsync();
-                await _eventService.TrackUnAssignEquipment(equipment);
                 return Json(null);
             }
             return BadRequest(ModelState);
@@ -231,10 +231,9 @@ namespace Keas.Mvc.Controllers.Api
                     equipment.Assignment = null;
                 }
 
-                equipment.Active = false;
-                await _context.SaveChangesAsync();
+                equipment.Active = false;                
                 await _eventService.TrackEquipmentDeleted(equipment);
-
+                await _context.SaveChangesAsync();
                 transaction.Commit();
                 return Json(null);
             }
