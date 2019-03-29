@@ -54,7 +54,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-            //await _dbContext.SaveChangesAsync();
         }
 
         public async Task EquipmentCreatedUpdatedInactive(Equipment equipment, History history)
@@ -73,7 +72,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-            //await _dbContext.SaveChangesAsync();
         }
 
         public async Task AccessCreatedUpdatedInactive(Access access, History history)
@@ -92,7 +90,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-            //await _dbContext.SaveChangesAsync();
         }
 
         public async Task KeySerialAssigned(KeySerial keySerial, History history)
@@ -116,7 +113,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-           // await _dbContext.SaveChangesAsync();
         }
 
         public async Task KeySerialUnAssigned(KeySerial keySerial, History history)
@@ -135,7 +131,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-           // await _dbContext.SaveChangesAsync();
 
         }
 
@@ -160,7 +155,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-            //await _dbContext.SaveChangesAsync();
         }
 
         public async Task EquipmentUnAssigned(Equipment equipment, History history)
@@ -179,7 +173,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-           // await _dbContext.SaveChangesAsync();
         }
 
         public async Task AccessAssigned(AccessAssignment accessAssignment, History history, string teamName)
@@ -206,7 +199,6 @@ namespace Keas.Mvc.Services
                 }
                 _dbContext.Notifications.Add(notification);
             }
-           // await _dbContext.SaveChangesAsync();
         }
 
         public async Task AccessUnAssigned(AccessAssignment accessAssignment, History history, string teamName)
@@ -229,7 +221,6 @@ namespace Keas.Mvc.Services
                 }
                 _dbContext.Notifications.Add(notification);
             }
-            //await _dbContext.SaveChangesAsync();
         }
 
         public async Task WorkstationCreatedUpdatedInactive(Workstation workstation, History history)
@@ -248,7 +239,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-            //await _dbContext.SaveChangesAsync();
         }
 
         public async Task WorkstationAssigned(Workstation workstation, History history)
@@ -271,7 +261,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-           // await _dbContext.SaveChangesAsync();
         }
 
         public async Task WorkstationUnAssigned(Workstation workstation, History history)
@@ -290,7 +279,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-           // await _dbContext.SaveChangesAsync();
         }
 
         public async Task KeySerialAccepted(KeySerial keySerial, History history)
@@ -309,7 +297,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-            //await _dbContext.SaveChangesAsync();
         }
 
         public async Task EquipmentAccepted(Equipment equipment, History history)
@@ -328,7 +315,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-           // await _dbContext.SaveChangesAsync();
         }
 
         public async Task WorkstationAccepted(Workstation workstation, History history)
@@ -347,7 +333,6 @@ namespace Keas.Mvc.Services
                 };
                 _dbContext.Notifications.Add(notification);
             }
-           // await _dbContext.SaveChangesAsync();
         }
 
         public async Task PersonUpdated(Person person, Team team, string teamSlug, string actorName, string actorId, string action, string notes)
