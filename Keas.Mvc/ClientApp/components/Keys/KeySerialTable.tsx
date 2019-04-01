@@ -1,4 +1,3 @@
-import * as moment from "moment";
 import * as React from "react";
 import ReactTable from "react-table";
 import { Button } from "reactstrap";
@@ -55,7 +54,7 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                     {
                         Header: "Key Code and SN",
                         accessor: (keySerial: IKeySerial) => {
-                            return keySerial.key.code + keySerial.number;
+                            return keySerial.key.code + "-" + keySerial.number;
                         },
                         filterMethod: (filter: IFilter, row) =>
                             !!row[filter.id] &&
