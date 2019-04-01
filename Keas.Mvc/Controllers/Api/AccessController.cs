@@ -69,9 +69,9 @@ namespace Keas.Mvc.Controllers.Api
             // TODO Make sure user has permissions
             if (ModelState.IsValid)
             {
-                _context.Access.Add(access);
-                await _context.SaveChangesAsync();
+                _context.Access.Add(access);                
                 await _eventService.TrackCreateAccess(access);
+                await _context.SaveChangesAsync();
                 return Json(access);
             }
             return BadRequest(ModelState);
@@ -92,9 +92,9 @@ namespace Keas.Mvc.Controllers.Api
                     ExpiresAt = DateTime.Parse(date),
                 };
                 accessAssignment.Person = await _context.People.SingleAsync(p => p.Id == personId);
-                access.Assignments.Add(accessAssignment);
-                await _context.SaveChangesAsync();
+                access.Assignments.Add(accessAssignment);                
                 await _eventService.TrackAssignAccess(accessAssignment, Team);
+                await _context.SaveChangesAsync();
                 return Json(accessAssignment);
             }
             return BadRequest(ModelState);
@@ -108,9 +108,9 @@ namespace Keas.Mvc.Controllers.Api
                     .SingleAsync(x => x.Id == access.Id);
                 a.Name = access.Name;
                 a.Notes = access.Notes;
-                a.Tags = access.Tags;
-                await _context.SaveChangesAsync();
+                a.Tags = access.Tags;                
                 await _eventService.TrackUpdateAccess(a);
+                await _context.SaveChangesAsync();
                 return Json(access);
             }
             return BadRequest(ModelState);
@@ -121,9 +121,9 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                _context.AccessAssignments.Remove(accessAssignment);
-                await _context.SaveChangesAsync();
+                _context.AccessAssignments.Remove(accessAssignment);                
                 await _eventService.TrackUnAssignAccess(accessAssignment, Team);
+                await _context.SaveChangesAsync();
                 return Json(accessAssignment);
             }
             return BadRequest(ModelState);
@@ -154,10 +154,9 @@ namespace Keas.Mvc.Controllers.Api
                     }
                 }
 
-                access.Active = false;                
-                await _context.SaveChangesAsync();
+                access.Active = false;  
                 await _eventService.TrackAccessDeleted(access);
-
+                await _context.SaveChangesAsync();
                 transaction.Commit();
                 return Json(null);
             }

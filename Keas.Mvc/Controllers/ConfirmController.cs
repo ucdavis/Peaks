@@ -59,10 +59,11 @@ namespace Keas.Mvc.Controllers
             keyAssignment.IsConfirmed = true;
             keyAssignment.ConfirmedAt = DateTime.UtcNow;
             _context.Update(keyAssignment);
-            await _context.SaveChangesAsync();
+            
             var serial = await _context.KeySerials.Where(s => s.KeySerialAssignmentId == keyAssignment.Id).Include(s=> s.Key).FirstAsync();
             await _eventService.TrackAcceptKeySerial(serial);
             Message = "Key confirmed.";
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Confirm));
         }
@@ -74,13 +75,13 @@ namespace Keas.Mvc.Controllers
             workstationAssignment.IsConfirmed = true;
             workstationAssignment.ConfirmedAt = DateTime.UtcNow;;
             _context.Update(workstationAssignment);
-            await _context.SaveChangesAsync();
+            
 
             var workstation = await _context.Workstations
                 .Where(w => w.WorkstationAssignmentId == workstationAssignment.Id).FirstAsync();
             await _eventService.TrackAcceptWorkstation(workstation);
             Message = "Workstation confirmed.";
-
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Confirm));
 
         }
@@ -92,12 +93,13 @@ namespace Keas.Mvc.Controllers
             equipmentAssignment.IsConfirmed = true;
             equipmentAssignment.ConfirmedAt = DateTime.UtcNow;
             _context.Update(equipmentAssignment);
-            await _context.SaveChangesAsync();
+           
 
             var equipment = await _context.Equipment.Where(e => e.EquipmentAssignmentId == equipmentAssignment.Id)
                 .FirstAsync();
             await _eventService.TrackAcceptEquipment(equipment);
             Message = "Equipment confirmed.";
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Confirm));
         }

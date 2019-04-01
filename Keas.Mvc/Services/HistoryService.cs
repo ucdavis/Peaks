@@ -72,7 +72,6 @@ namespace Keas.Mvc.Services
                 Key = key
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -104,7 +103,6 @@ namespace Keas.Mvc.Services
                 Access = access
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -120,7 +118,6 @@ namespace Keas.Mvc.Services
                 Equipment = equipment,
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -136,7 +133,6 @@ namespace Keas.Mvc.Services
                 Key = key
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
         public async Task<History> KeySerialUpdated(KeySerial keySerial)
@@ -167,7 +163,6 @@ namespace Keas.Mvc.Services
                 Access = access,
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -183,7 +178,6 @@ namespace Keas.Mvc.Services
                 Equipment = equipment,
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
         public async Task<History> KeyInactivated(Key key)
@@ -198,7 +192,6 @@ namespace Keas.Mvc.Services
                 Key = key
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -214,7 +207,6 @@ namespace Keas.Mvc.Services
                 Access = access
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -230,7 +222,6 @@ namespace Keas.Mvc.Services
                 Equipment = equipment
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -248,7 +239,6 @@ namespace Keas.Mvc.Services
                 TargetId = keySerial.KeySerialAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -266,7 +256,6 @@ namespace Keas.Mvc.Services
                 TargetId = accessAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -283,7 +272,6 @@ namespace Keas.Mvc.Services
                 TargetId = equipment.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -301,7 +289,6 @@ namespace Keas.Mvc.Services
                 TargetId = keySerial.KeySerialAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -319,7 +306,6 @@ namespace Keas.Mvc.Services
                 TargetId = accessAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -336,7 +322,6 @@ namespace Keas.Mvc.Services
                 TargetId = equipment.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -355,7 +340,6 @@ namespace Keas.Mvc.Services
                 TargetId = keySerial.KeySerialAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -372,7 +356,6 @@ namespace Keas.Mvc.Services
                 //TargetId = null //TODO: Get and set? Currently this method isn't being called.
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -389,7 +372,6 @@ namespace Keas.Mvc.Services
                 TargetId = equipment.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -405,7 +387,6 @@ namespace Keas.Mvc.Services
                 Workstation = workstation,
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -421,7 +402,6 @@ namespace Keas.Mvc.Services
                 Workstation = workstation,
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -437,7 +417,6 @@ namespace Keas.Mvc.Services
                 Workstation = workstation
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -454,7 +433,6 @@ namespace Keas.Mvc.Services
                 TargetId = workstation.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -471,7 +449,6 @@ namespace Keas.Mvc.Services
                 TargetId = workstation.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -488,7 +465,6 @@ namespace Keas.Mvc.Services
                 TargetId = workstation.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -504,7 +480,6 @@ namespace Keas.Mvc.Services
                 Key = key
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
         public async Task<History> AccessDeleted(Access access)
@@ -520,7 +495,6 @@ namespace Keas.Mvc.Services
                 Access = access
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
         public async Task<History> EquipmentDeleted(Equipment equipment)
@@ -536,7 +510,6 @@ namespace Keas.Mvc.Services
                 Equipment = equipment,
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
         public async Task<History> WorkstationDeleted(Workstation workstation)
@@ -552,7 +525,6 @@ namespace Keas.Mvc.Services
                 Workstation = workstation,
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -570,7 +542,6 @@ namespace Keas.Mvc.Services
                 TargetId = keySerial.KeySerialAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
         public async Task<History> AccessAssignmentUpdated(AccessAssignment accessAssignment)
@@ -587,7 +558,6 @@ namespace Keas.Mvc.Services
                 TargetId = accessAssignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
         public async Task<History> EquipmentAssignmentUpdated(Equipment equipment)
@@ -603,7 +573,6 @@ namespace Keas.Mvc.Services
                 TargetId = equipment.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
         public async Task<History> WorkstationAssignmentUpdated(Workstation workstation)
@@ -619,7 +588,6 @@ namespace Keas.Mvc.Services
                 TargetId = workstation.Assignment.PersonId
             };
             _context.Histories.Add(historyEntry);
-            await _context.SaveChangesAsync();
             return historyEntry;
         }
     }

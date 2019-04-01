@@ -142,10 +142,9 @@ namespace Keas.Mvc.Controllers.Api
 
             key.Team = team;
 
-            _context.Keys.Add(key);
-            await _context.SaveChangesAsync();
+            _context.Keys.Add(key);           
             await _eventService.TrackCreateKey(key);
-
+            await _context.SaveChangesAsync();
             return Json(key);
         }
 
@@ -174,10 +173,9 @@ namespace Keas.Mvc.Controllers.Api
             key.Name = model.Name.Trim();
             key.Tags = model.Tags;
             key.Notes = model.Notes;
-
-            await _context.SaveChangesAsync();
+           
             await _eventService.TrackUpdateKey(key);
-
+            await _context.SaveChangesAsync();
             return Json(key);
         }
 
@@ -221,8 +219,8 @@ namespace Keas.Mvc.Controllers.Api
                 }
 
                 key.Active = false;
-                await _context.SaveChangesAsync();
                 await _eventService.TrackKeyDeleted(key);
+                await _context.SaveChangesAsync();                
 
                 transaction.Commit();
                 return Json(null);

@@ -185,9 +185,9 @@ namespace Keas.Mvc.Controllers.Api
                     .SingleAsync(w => w.Id == workstation.Id);
 
                 _context.WorkstationAssignments.Remove(workstationToUpdate.Assignment);
-                workstationToUpdate.Assignment = null;
-                await _context.SaveChangesAsync();
+                workstationToUpdate.Assignment = null;                
                 await _eventService.TrackUnAssignWorkstation(workstation);
+                await _context.SaveChangesAsync();
                 return Json(null);
             }
             return BadRequest(ModelState);
@@ -233,9 +233,9 @@ namespace Keas.Mvc.Controllers.Api
                     workstation.Assignment = null;
                 }
 
-                workstation.Active = false;
-                await _context.SaveChangesAsync();
+                workstation.Active = false;                
                 await _eventService.TrackWorkstationDeleted(workstation);
+                await _context.SaveChangesAsync();
 
                 transaction.Commit();
                 return Json(null);
