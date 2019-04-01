@@ -59,9 +59,9 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                         filterMethod: (filter: IFilter, row) =>
                             !!row[filter.id] &&
                             row[filter.id]
-                                .replace("-", "")
+                                .replace(/\-/g, "")
                                 .toLowerCase()
-                                .includes(filter.value.replace("-", "").toLowerCase()),
+                                .includes(filter.value.replace(/\-/g, "").toLowerCase()),
                         id: "keyCodeSN"
                     },
                     {
