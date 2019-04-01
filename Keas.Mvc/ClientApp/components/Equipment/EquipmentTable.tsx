@@ -5,6 +5,7 @@ import "react-table/react-table.css";
 import { Button } from "reactstrap";
 import { IEquipment } from "../../Types";
 import { DateUtil } from "../../util/dates";
+import { ReactTableExpirationUtil } from "../../util/reactTable";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 interface IProps {
@@ -63,61 +64,15 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                             row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
                     },
                     {
-                        Filter: ({ filter, onChange }) => (
-                            <select
-                                onChange={e => onChange(e.target.value)}
-                                style={{ width: "100%" }}
-                                value={filter ? filter.value : "all"}
-                            >
-                                <option value="all">Show All</option>
-                                <option value="unassigned">Unassigned</option>
-                                <option value="expired">Expired</option>
-                                <option value="unexpired">All Unexpired</option>
-                                <option value="3weeks">Expiring within 3 weeks</option>
-                                <option value="6weeks">Expiring within 6 weeks</option>
-                            </select>
+                        Cell: row => (
+                            <span>{row.value ? DateUtil.formatExpiration(row.value) : ""}</span>
                         ),
+                        Filter: ({ filter, onChange }) => ReactTableExpirationUtil.filter(filter, onChange),
                         Header: "Expiration",
-                        accessor: x => DateUtil.formatAssignmentExpiration(x.assignment),
-                        filterMethod: (filter, row) => {
-                            if (filter.value === "all") {
-                                return true;
-                            }
-                            if (filter.value === "unassigned") {
-                                return !row._original.assignment;
-                            }
-                            if (filter.value === "expired") {
-                                return (
-                                    !!row._original.assignment &&
-                                    moment(row._original.assignment.expiresAt).isSameOrBefore()
-                                );
-                            }
-                            if (filter.value === "unexpired") {
-                                return (
-                                    !!row._original.assignment &&
-                                    moment(row._original.assignment.expiresAt).isAfter()
-                                );
-                            }
-                            if (filter.value === "3weeks") {
-                                return (
-                                    !!row._original.assignment &&
-                                    moment(row._original.assignment.expiresAt).isAfter() &&
-                                    moment(row._original.assignment.expiresAt).isBefore(
-                                        moment().add(3, "w")
-                                    )
-                                );
-                            }
-                            if (filter.value === "6weeks") {
-                                return (
-                                    !!row._original.assignment &&
-                                    moment(row._original.assignment.expiresAt).isAfter() &&
-                                    moment(row._original.assignment.expiresAt).isBefore(
-                                        moment().add(6, "w")
-                                    )
-                                );
-                            }
-                        },
-                        id: "assignment.expiresAt"
+                        accessor: "assignment.expiresAt",
+                        filterMethod: (filter, row) => ReactTableExpirationUtil.filterMethod(filter, row),
+                        id: "expiresAt",
+                        sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a,b)
                     },
                     {
                         Cell: this.renderDropdownColumn,

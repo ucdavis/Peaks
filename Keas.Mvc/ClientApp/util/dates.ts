@@ -25,4 +25,12 @@ export class DateUtil {
         const dates = expirations.map(x=> moment(x));
         return moment.min(dates).format("MM/DD/YYYY").toString()
     }
+
+    public static getFirstExpiration(expirations: Date[]) {
+        if(expirations.length === 0) {
+            return "";
+        }
+        const dates = expirations.map(x=> moment(x));
+        return moment.min(dates);
+    }
 }
