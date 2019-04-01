@@ -149,7 +149,7 @@ namespace Keas.Mvc.Controllers.Api
             key.Serials.Add(keySerial);
             await _context.SaveChangesAsync();
             
-            //await _eventService.TrackCreateKeySerial(keySerial);
+            await _eventService.TrackCreateKeySerial(keySerial);
 
             return Json(keySerial);
         }
@@ -193,7 +193,7 @@ namespace Keas.Mvc.Controllers.Api
 
             await _context.SaveChangesAsync();
 
-            //await _eventService.TrackCreateKeySerial(key);
+            await _eventService.TrackUpdateKeySerial(keySerial);
 
             return Json(keySerial);
         }

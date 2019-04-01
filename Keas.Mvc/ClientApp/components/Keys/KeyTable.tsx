@@ -64,8 +64,9 @@ export default class KeyTable extends React.Component<IProps, {}> {
                         Header: "Key Code",
                         accessor: "key.code",
                         filterMethod: (filter: IFilter, row: IRow) =>
-                            !!row[filter.id] &&
-                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                            !!row[filter.id] && filter.value &&
+                            (row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) ||
+                                filter.value.toLowerCase().includes(row[filter.id].toLowerCase()))
                     },
                     {
                         Cell: row => (

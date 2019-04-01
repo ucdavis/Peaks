@@ -9,9 +9,11 @@ namespace Keas.Mvc.Services
     public interface IHistoryService
     {
         Task<History> KeyCreated(Key key);
+        Task<History> KeySerialCreated(KeySerial keySerial);
         Task<History> AccessCreated(Access access);
         Task<History> EquipmentCreated(Equipment equipment);
         Task<History> KeyUpdated(Key key);
+        Task<History> KeySerialUpdated(KeySerial keySerial);
         Task<History> AccessUpdated(Access access);
         Task<History> EquipmentUpdated(Equipment equipment);
         Task<History> KeyInactivated(Key key);
@@ -73,6 +75,22 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
+        public async Task<History> KeySerialCreated(KeySerial keySerial)
+        {
+            var person = await _securityService.GetPerson(keySerial.TeamId);
+            var historyEntry = new History
+            {
+                Description = keySerial.GetDescription(nameof(KeySerial), $"{keySerial.Key.Title}-{keySerial.Title}", person, "Created"),
+                ActorId = person.UserId,
+                AssetType = "KeySerial",
+                ActionType = "Created",
+                KeySerial = keySerial,
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
+            return historyEntry;
+        }
+
         public async Task<History> AccessCreated(Access access)
         {
             var person = await _securityService.GetPerson(access.TeamId);
@@ -115,6 +133,21 @@ namespace Keas.Mvc.Services
                 Key = key
             };
             _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+        public async Task<History> KeySerialUpdated(KeySerial keySerial)
+        {
+            var person = await _securityService.GetPerson(keySerial.TeamId);
+            var historyEntry = new History
+            {
+                Description = keySerial.GetDescription(nameof(KeySerial), $"{keySerial.Key.Title}-{keySerial.Title}", person, "Updated"),
+                ActorId = person.UserId,
+                AssetType = "KeySerial",
+                ActionType = "Updated",
+                KeySerial = keySerial
+            };
+            _context.Histories.Add(historyEntry);
+            await _context.SaveChangesAsync();
             return historyEntry;
         }
 
@@ -198,7 +231,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(key.Team.Slug);
             var historyEntry = new History
             {
-                Description = keySerial.KeySerialAssignment.GetDescription(nameof(Key), key.Title, person, "Assigned to"),
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(KeySerial), $"{keySerial.Key.Title}-{keySerial.Title}", person, "Assigned to"),
                 ActorId = person.UserId,
                 AssetType = "KeySerial",
                 ActionType = "Assigned",
@@ -248,7 +281,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(key.TeamId);
             var historyEntry = new History
             {
-                Description = keySerial.KeySerialAssignment.GetDescription(nameof(KeySerial), key.Title, person, "Unassigned from"),
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(KeySerial), $"{keySerial.Key.Title}-{keySerial.Title}", person, "Unassigned from"),
                 ActorId = person.UserId,
                 AssetType = "KeySerial",
                 ActionType = "Unassigned",
@@ -298,9 +331,9 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(key.Team.Slug);
             var historyEntry = new History
             {
-                Description = keySerial.Key.GetDescription(nameof(Key), key.Title, person, "Accepted"),
+                Description = keySerial.Key.GetDescription(nameof(Key),  $"{keySerial.Key.Title}-{keySerial.Title}", person, "Accepted"),
                 ActorId = person.UserId,
-                AssetType = "Key",
+                AssetType = "KeySerial",
                 ActionType = "Accepted",
                 Key = keySerial.Key,
                 KeySerial = keySerial,
@@ -501,9 +534,9 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(key.Team.Slug);
             var historyEntry = new History
             {
-                Description = keySerial.KeySerialAssignment.GetDescription(nameof(Key), key.Title, person, "Assignment Updated for"),
+                Description = keySerial.KeySerialAssignment.GetDescription(nameof(KeySerial), $"{keySerial.Key.Title}-{keySerial.Title}", person, "Assignment Updated for"),
                 ActorId = person.UserId,
-                AssetType = "Key",
+                AssetType = "KeySerial",
                 ActionType = "AssignmentUpdated",
                 KeySerial = keySerial,
                 TargetId = keySerial.KeySerialAssignment.PersonId

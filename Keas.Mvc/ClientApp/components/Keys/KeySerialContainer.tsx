@@ -7,6 +7,7 @@ import AssignKeySerial from "./AssignKeySerial";
 import EditKeySerial from "./EditKeySerial";
 import KeySerialDetails from "./KeySerialDetails";
 import KeySerialList from "./KeySerialList";
+import KeySerialTable from "./KeySerialTable";
 
 interface IState {
     keySerials: IKeySerial[];
@@ -100,14 +101,26 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                     </div>
                 </div>
                 <div className="card-content">
-                    <KeySerialList
-                        keySerials={this.state.keySerials}
-                        onRevoke={this._revokeKeySerial}
-                        onAssign={this._openAssignModal}
-                        onEdit={this._openEditModal}
-                        onUpdate={this._openUpdateModal}
-                        showDetails={this._openDetailsModal}
-                    />
+                    {this.props.selectedPerson && !this.props.selectedKey && (
+                        <KeySerialList
+                            keySerials={this.state.keySerials}
+                            onRevoke={this._revokeKeySerial}
+                            onAssign={this._openAssignModal}
+                            onEdit={this._openEditModal}
+                            onUpdate={this._openUpdateModal}
+                            showDetails={this._openDetailsModal}
+                        />
+                    )}
+                    {!this.props.selectedPerson && this.props.selectedKey && (
+                        <KeySerialTable
+                            keySerials={this.state.keySerials}
+                            onRevoke={this._revokeKeySerial}
+                            onAssign={this._openAssignModal}
+                            onEdit={this._openEditModal}
+                            onUpdate={this._openUpdateModal}
+                            showDetails={this._openDetailsModal}
+                        />
+                    )}
                     <AssignKeySerial
                         person={this.props.selectedPerson}
                         selectedKey={selectedKey}
@@ -156,7 +169,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             const request = {
                 keyId: keySerial.key.id,
                 number: keySerial.number,
-                notes: keySerial.notes,
+                notes: keySerial.notes
             };
 
             const createUrl = `/api/${team.slug}/keyserials/create`;
@@ -270,7 +283,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         const request = {
             number: keySerial.number,
             status: keySerial.status,
-            notes: keySerial.notes,
+            notes: keySerial.notes
         };
 
         const updateUrl = `/api/${team.slug}/keyserials/update/${keySerial.id}`;
@@ -306,10 +319,12 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
     private _openDetailsModal = (keySerial: IKeySerial) => {
         // if we are on person page, and this serial is not in our state
-        // this happens on the search, when selecting already assigned 
+        // this happens on the search, when selecting already assigned
         if (this.state.keySerials.findIndex(x => x.id === keySerial.id) === -1) {
             this.context.router.history.push(
-                `/${this.context.team.slug}/keys/details/${keySerial.key.id}/keyserials/details/${keySerial.id}`
+                `/${this.context.team.slug}/keys/details/${keySerial.key.id}/keyserials/details/${
+                    keySerial.id
+                }`
             );
         } else {
             this.context.router.history.push(
