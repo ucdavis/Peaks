@@ -1,4 +1,4 @@
-﻿using Keas.Core.Domain;
+using Keas.Core.Domain;
 using System.Threading.Tasks;
 
 namespace Keas.Mvc.Services
@@ -9,6 +9,7 @@ namespace Keas.Mvc.Services
         Task TrackAssignKeySerial(KeySerial keySerial);
         Task TrackUnAssignKeySerial(KeySerial keySerial);
         Task TrackUpdateKey(Key key);
+        Task TrackUpdateKeySerial(KeySerial keySerial);
         Task TrackCreateEquipment(Equipment equipment);
         Task TrackAssignEquipment(Equipment equipment);
         Task TrackUnAssignEquipment(Equipment equipment);
@@ -31,6 +32,7 @@ namespace Keas.Mvc.Services
         Task TrackAccessAssignmentUpdated(AccessAssignment accessAssignment, string teamName);
         Task TrackEquipmentAssignmentUpdated(Equipment equipment);
         Task TrackWorkstationAssignmentUpdated(Workstation workstation);
+        Task TrackCreateKeySerial(KeySerial keySerial);
 
 
 
@@ -53,6 +55,12 @@ namespace Keas.Mvc.Services
             await _notificationService.KeyCreatedUpdatedInactive(key, history);
         }
 
+        public async Task TrackCreateKeySerial(KeySerial keySerial)
+        {
+            var history = await _historyService.KeySerialCreated(keySerial);
+            await _notificationService.KeySerialCreatedUpdatedInactive(keySerial, history);
+        }
+
         public async Task TrackAssignKeySerial(KeySerial keySerial)
         {
             var history = await _historyService.KeySerialAssigned(keySerial);
@@ -70,6 +78,11 @@ namespace Keas.Mvc.Services
         {
             var history = await _historyService.KeyUpdated(key);
             await _notificationService.KeyCreatedUpdatedInactive(key, history);
+        }
+        public async Task TrackUpdateKeySerial(KeySerial keySerial) 
+        {
+            var history = await _historyService.KeySerialUpdated(keySerial);
+            await _notificationService.KeySerialCreatedUpdatedInactive(keySerial, history);
         }
 
         public async Task TrackCreateEquipment(Equipment equipment)
@@ -199,6 +212,7 @@ namespace Keas.Mvc.Services
             var history = await _historyService.WorkstationAssignmentUpdated(workstation);
             await _notificationService.WorkstationAssigned(workstation, history);
         }
+
     }
 }
 
