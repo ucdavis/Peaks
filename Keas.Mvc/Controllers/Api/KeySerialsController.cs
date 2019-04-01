@@ -138,11 +138,12 @@ namespace Keas.Mvc.Controllers.Api
             var keySerial = new KeySerial
             {
                 KeyId    = key.Id,
+                Key      = key,
                 TeamId   = key.TeamId,
                 Name     = model.Number.Trim(),
                 Number   = model.Number.Trim(),
                 Notes    = model.Notes, 
-                Status   = model.Status ?? "Active",
+                Status   = model.Status ?? "Active",                
             };
 
             // add key serial
