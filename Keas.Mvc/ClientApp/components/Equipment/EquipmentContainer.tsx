@@ -47,9 +47,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         this.state = {
             attributeFilters: [],
             commonAttributeKeys: [],            
-            equipment: [],
-            equipmentTypes: [],
+            equipment: [], 
             equipmentTypeFilters: [],
+            equipmentTypes: [],           
             loading: true,
             tagFilters: [],
             tags: []
@@ -213,7 +213,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                             equipmentTypes={this.state.equipmentTypes}
                             selected={this.state.equipmentTypeFilters}
                             onSelect={this._filtersEquipmentType}
-                            disable={false}
+                            disabled={false}
                         />
                     </div>
                     <EquipmentTable
