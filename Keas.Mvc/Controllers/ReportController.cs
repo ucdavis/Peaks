@@ -112,7 +112,7 @@ namespace Keas.Mvc.Controllers
         {
             var worstations = await _reportService.WorkStations(null, Team);
 
-            return Json(worstations);
+            return View(worstations);
         }
     }
 }

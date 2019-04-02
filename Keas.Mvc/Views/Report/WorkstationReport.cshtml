@@ -1,0 +1,50 @@
+@model System.Collections.Generic.IList<Keas.Mvc.Models.ReportModels.WorkstationReportModel>
+
+@{
+    ViewBag.Title = "Workstations";
+
+}
+
+<div class="card">
+    <div class="card-header-primary-thick">
+        <div class="card-head">
+            <h2>Person Actions</h2>
+        </div>
+    </div>
+    <div class="card-content">
+
+        <table id="workstations" class="table dataTable">
+            <thead>
+                <tr>
+                    <th>WS Name</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Notes</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+   @await Html.PartialAsync("_CommonReportScripts")    
+    
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+            "order": [[ 1, "desc" ]]
+        });
+    </script>
+}
+
