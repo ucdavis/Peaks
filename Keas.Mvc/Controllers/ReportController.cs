@@ -19,11 +19,13 @@ namespace Keas.Mvc.Controllers
         private readonly ApplicationDbContext _context;
 
         private readonly ISecurityService _securityService;
+        private readonly IReportService _reportService;
 
-        public ReportController(ApplicationDbContext context, ISecurityService securityService)
+        public ReportController(ApplicationDbContext context, ISecurityService securityService, IReportService reportService)
         {
             this._context = context;
             this._securityService = securityService;
+            _reportService = reportService;
         }
 
         public ActionResult Index()
@@ -104,6 +106,13 @@ namespace Keas.Mvc.Controllers
         {
             var model = await KeyValueReportViewModel.Create(_context, Team);
             return View(model);
+        }
+
+        public async Task<IActionResult> WorkstationReport()
+        {
+            var worstations = await _reportService.WorkStations(null, Team);
+
+            return Json(worstations);
         }
     }
 }
