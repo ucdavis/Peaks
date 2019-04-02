@@ -8,13 +8,15 @@
   <div class="card">
     <div class="card-header-primary">
       <div class="card-head">
-<h2>Bulk load people from PPS appointments</h2>
+<h2>Bulk load people from IAM/PPS appointments</h2>
       </div>
     </div>
     <div class="card-content">
 
               <p>Note, this may take quite some time for very large departments. You can re-run the loader to import new employees. It will add any new people as needed. It will not remove anyone, even if their appointment has ended.
 </p>
+        <p>What is IAM? <a href="https://iam.ucdavis.edu/" target="_blank">Identity and Access Management</a> that we use to get user information.</p>
+        <p><strong>Please be aware</strong>, bulk load is from IAM based on the PPS department code/associations. In certain situations, there are discrepancies between these systems because people are allowed to change their departmental associations in the campus directory and IAM, even though their home department codes have not changed in PPS.</p>
 
           <h2>PPS Departments</h2>
           @foreach (var ppsDept in Model)
