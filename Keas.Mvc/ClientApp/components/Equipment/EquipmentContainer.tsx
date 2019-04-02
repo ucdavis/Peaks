@@ -445,7 +445,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     }
 
     private _checkEquipmentTypeFilters = (equipment: IEquipment, filters: string[]) => {
-            return filters.some(f => (!!equipment && !!equipment.type && equipment.type.includes(f)) || (!!equipment && (equipment.type === null || equipment.type == "") && f.indexOf("Default") > -1));
+            return filters.some(f => (equipment && !!equipment.type && equipment.type.includes(f)) || (equipment && !equipment.type && f.indexOf("Default") > -1));
     };
 
     private _filterTags = (filters: string[]) => {
