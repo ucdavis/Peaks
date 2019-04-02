@@ -192,7 +192,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             }
             if (this.state.equipmentTypeFilters.length > 0) {
                 filteredEquipment = filteredEquipment.filter(x => 
-                    this._checkEquipmentTypeFilters(x this.state.equipmentTypeFilters)
+                    this._checkEquipmentTypeFilters(x, this.state.equipmentTypeFilters)
                 );
             };
             return (
@@ -445,7 +445,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     }
 
     private _checkEquipmentTypeFilters = (equipment: IEquipment, filters: string[]) => {
-            return filters.some(f => !!equipment && !!equipment.type && equipment.type.includes(f));
+            return filters.some(f => (!!equipment && !!equipment.type && equipment.type.includes(f)) || (!!equipment && (equipment.type === null || equipment.type == "") && f.indexOf("Default") > -1));
     };
 
     private _filterTags = (filters: string[]) => {
