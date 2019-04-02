@@ -12,11 +12,13 @@ import EquipmentList from "./EquipmentList";
 import EquipmentTable from "./EquipmentTable";
 import RevokeEquipment from "./RevokeEquipment";
 import SearchAttributes from "./SearchAttributes";
+import SearchEquipmentType from "./SearchEquipmentType";
 
 interface IState {
     attributeFilters: string[];
     commonAttributeKeys: string[];
     equipmentTypes: string[];
+    equipmentTypeFilters: string[];
     equipment: IEquipment[]; // either equipment assigned to this person, or all team equipment
     loading: boolean;
     tagFilters: string[];
@@ -47,6 +49,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             commonAttributeKeys: [],            
             equipment: [],
             equipmentTypes: [],
+            equipmentTypeFilters: [],
             loading: true,
             tagFilters: [],
             tags: []
@@ -200,6 +203,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                             selected={this.state.attributeFilters}
                             onSelect={this._filterAttributes}
                             disabled={false}
+                        />
+                        <SearchEquipmentType
+                            equipmentTypes={this.state.equipmentTypes}
+                            selected={this.state.equipmentTypeFilters}
+                            onSelect={this._filtersEquipmentType}
+                            disable={false}
                         />
                     </div>
                     <EquipmentTable
@@ -425,6 +434,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             );
         }
     };
+
+    private _filterEquipmentType = (filters: string[]) => {
+        this.setState({ equipmentTypeFilters: filters});
+    }
 
     private _filterTags = (filters: string[]) => {
         this.setState({ tagFilters: filters });
