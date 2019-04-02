@@ -190,6 +190,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                     this._checkAttributeFilters(x, this.state.attributeFilters)
                 );
             }
+            if (this.state.equipmentTypeFilters.length > 0) {
+                filteredEquipment = filteredEquipment.filter(x => 
+                    this._checkEquipmentTypeFilters(x this.state.equipmentTypeFilters)
+                );
+            };
             return (
                 <div>
                     <div className="row">
@@ -435,9 +440,13 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         }
     };
 
-    private _filterEquipmentType = (filters: string[]) => {
+    private _filtersEquipmentType = (filters: string[]) => {
         this.setState({ equipmentTypeFilters: filters});
     }
+
+    private _checkEquipmentTypeFilters = (equipment: IEquipment, filters: string[]) => {
+            return filters.some(f => !!equipment && !!equipment.type && equipment.type.includes(f));
+    };
 
     private _filterTags = (filters: string[]) => {
         this.setState({ tagFilters: filters });
