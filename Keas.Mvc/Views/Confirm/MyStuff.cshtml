@@ -135,7 +135,7 @@
         <table class="table">
           <thead>
             <tr>
-              <th>Type</th>
+              <th>Name</th>
               <th>Room</th>
               <th>Expiration</th>
               <th>Accepted?</th>
@@ -144,7 +144,7 @@
           <tbody>
             @foreach (var workstation in Model.Workstations) {
             <tr>
-              <td>@workstation.Type</td>
+              <td>@workstation.Title</td>
               <td>@workstation.Space.RoomNumber @workstation.Space.BldgName</td>
               <td>@workstation.Assignment.ExpiresAt.ToShortDateString()</td>
               <td>@workstation.Assignment.ConfirmedAt.AcceptedWithDate()</td>
