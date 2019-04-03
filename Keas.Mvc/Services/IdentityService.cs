@@ -248,7 +248,7 @@ namespace Keas.Mvc.Services
             StringBuilder warning = new StringBuilder();
             var team = await _context.Teams.SingleAsync(t => t.Slug == teamslug);
             var clientws = new IetClient(_authSettings.IamKey);
-            var iamIds = await clientws.PPSAssociations.GetIamIds(PPSAssociationsSearchField.deptCode, ppsCode);
+            var iamIds = await clientws.PPSAssociations.GetIamIds(PPSAssociationsSearchField.adminDeptCode, ppsCode);
 
             foreach (var id in iamIds.ResponseData.Results)
             {
