@@ -192,7 +192,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             }
             if (this.state.equipmentTypeFilters.length > 0) {
                 filteredEquipment = filteredEquipment.filter(x => 
-                    this._checkEquipmentTypeFilters(x, this.state.equipmentTypeFilters)
+                    this._checkEquipmentTypeFilters(x)
                 );
             };
             return (
@@ -212,7 +212,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         <SearchEquipmentType
                             equipmentTypes={this.state.equipmentTypes}
                             selected={this.state.equipmentTypeFilters}
-                            onSelect={this._filtersEquipmentType}
+                            onSelect={this._filterEquipmentType}
                             disabled={false}
                         />
                     </div>
@@ -440,11 +440,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         }
     };
 
-    private _filtersEquipmentType = (filters: string[]) => {
+    private _filterEquipmentType = (filters: string[]) => {
         this.setState({ equipmentTypeFilters: filters});
     }
 
-    private _checkEquipmentTypeFilters = (equipment: IEquipment, filters: string[]) => {
+    private _checkEquipmentTypeFilters = (equipment: IEquipment) => {
+        var filters = this.state.equipmentTypeFilters;
             return filters.some(f => (equipment && !!equipment.type && equipment.type === f) || (equipment && !equipment.type && f === "Default"));
     };
 
