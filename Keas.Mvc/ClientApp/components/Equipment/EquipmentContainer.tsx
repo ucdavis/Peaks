@@ -12,11 +12,13 @@ import EquipmentList from "./EquipmentList";
 import EquipmentTable from "./EquipmentTable";
 import RevokeEquipment from "./RevokeEquipment";
 import SearchAttributes from "./SearchAttributes";
+import SearchEquipmentType from "./SearchEquipmentType";
 
 interface IState {
     attributeFilters: string[];
     commonAttributeKeys: string[];
     equipmentTypes: string[];
+    equipmentTypeFilters: string[];
     equipment: IEquipment[]; // either equipment assigned to this person, or all team equipment
     loading: boolean;
     tagFilters: string[];
@@ -45,8 +47,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         this.state = {
             attributeFilters: [],
             commonAttributeKeys: [],            
-            equipment: [],
-            equipmentTypes: [],
+            equipment: [], 
+            equipmentTypeFilters: [],
+            equipmentTypes: [],           
             loading: true,
             tagFilters: [],
             tags: []
@@ -187,6 +190,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                     this._checkAttributeFilters(x, this.state.attributeFilters)
                 );
             }
+            if (this.state.equipmentTypeFilters.length > 0) {
+                filteredEquipment = filteredEquipment.filter(x => 
+                    this._checkEquipmentTypeFilters(x)
+                );
+            };
             return (
                 <div>
                     <div className="row">
@@ -199,6 +207,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         <SearchAttributes
                             selected={this.state.attributeFilters}
                             onSelect={this._filterAttributes}
+                            disabled={false}
+                        />
+                        <SearchEquipmentType
+                            equipmentTypes={this.state.equipmentTypes}
+                            selected={this.state.equipmentTypeFilters}
+                            onSelect={this._filterEquipmentType}
                             disabled={false}
                         />
                     </div>
@@ -424,6 +438,15 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 this.props.person ? this.props.person.id : null
             );
         }
+    };
+
+    private _filterEquipmentType = (filters: string[]) => {
+        this.setState({ equipmentTypeFilters: filters});
+    }
+
+    private _checkEquipmentTypeFilters = (equipment: IEquipment) => {
+        var filters = this.state.equipmentTypeFilters;
+            return filters.some(f => (equipment && !!equipment.type && equipment.type === f) || (equipment && !equipment.type && f === "Default"));
     };
 
     private _filterTags = (filters: string[]) => {
