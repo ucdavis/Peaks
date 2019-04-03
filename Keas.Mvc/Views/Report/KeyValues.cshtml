@@ -36,3 +36,17 @@
     </div>
 </div>
 
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_CommonReportScripts")
+    
+    
+    <script type="text/javascript">
+        $('.dataTable').DataTable();
+       
+    </script>                          
+}
+
