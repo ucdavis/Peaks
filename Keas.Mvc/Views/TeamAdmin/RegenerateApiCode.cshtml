@@ -1,23 +1,53 @@
 @model Keas.Core.Domain.Team
-
 @{
     ViewData["Title"] = "Regenerate Api Code";
 }
-
 <div class="row justify-content-between">
     <div class="col-md-8">
-        <div class="card">
-            <div class="card-header-primary">
-                <div class="card-head">
-                    <h2>@Model.Name</h2>
+        <form asp-action="RegenerateApiCode">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="card">
+                <div class="card-header-primary">
+                    <div class="card-head">
+                        @if (Model.ApiCode.HasValue)
+                        {
+                            <h2>Regenerate API Code</h2>
+                            <small class="form-text text-muted">Note, if you change the API code, make sure you update any of your external processes that may be using the old one.</small>
+                            <small class="form-text text-muted">Click Regenerate to change the API code</small>
+                        }
+                        else
+                        {
+                            <h2>Generate</h2>
+                            <small class="form-text text-muted">Click Generate to create a new API code</small>
+                        }
+                    </div>
+                </div>
+                @if (Model.ApiCode.HasValue)
+                {
+                    <div class="card-content">
+                        <p><b>Current API Code:</b></p>
+                        <p>@Html.DisplayFor(model => model.ApiCode)</p>
+                    </div>
+                }
+                <div style="padding: 19px 20px 20px;">
+                    @if (Model.ApiCode.HasValue)
+                    {
+                        <button type="submit" class="btn btn-primary">
+                            <i class="icon-save button-icon"></i>
+                            Regenerate
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-primary">
+                            <i class="icon-save button-icon"></i>
+                            Generate
+                        </button>
+                    }
+                    <a class="btn btn-link" asp-action="Index">Cancel</a>
                 </div>
             </div>
-            <div class="card-content">
-                <p><b>@Html.DisplayNameFor(model => model.ApiCode)</b></p>
-
-                <p>@Html.DisplayFor(model => model.ApiCode)</p>
-            </div>
-        </div>
+        </form>
         <div class="card">
             <div class="card-header-primary">
                 <div class="card-head">
@@ -27,10 +57,9 @@
             @if (Model.ApiCode.HasValue)
             {
                 <div class="card-content">
-                    <p>People Feed:<br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode</p>
-
-                    <p>People with Workstations: <br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode?includeSpace=yes</p>
-                    <p>Workstations: <br/>@Context.Request.Host/@Model.Slug/Feed/WorkstationFeed/@Model.ApiCode</p>
+                    <p>People Feed:<br />@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode</p>
+                    <p>People with Workstations: <br />@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode?includeSpace=yes</p>
+                    <p>Workstations: <br />@Context.Request.Host/@Model.Slug/Feed/WorkstationFeed/@Model.ApiCode</p>
                 </div>
             }
             else
@@ -40,27 +69,9 @@
                 </div>
             }
         </div>
-
-        <form asp-action="RegenerateApiCode">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="card">
-                <div class="well">
-                    <p>Click Confirm to generate a new API code</p>
-                </div>
-                <div style="padding: 19px 20px 20px;">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="icon-save button-icon"></i>
-                        Confirm
-                    </button>
-                    <a class="btn btn-link" asp-action="Index">Cancel</a>
-                </div>
-            </div>
-        </form>
     </div>
     <div class="col-md-4">
 
-
         @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-
     </div>
 </div>
