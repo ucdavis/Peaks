@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
+using Keas.Mvc.Extensions;
 using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,9 +29,10 @@ namespace Keas.Mvc.Controllers
             _reportService = reportService;
         }
 
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
-            return View();
+            var model = await _context.TeamPermissions.Where(a => a.Team.Slug == Team && a.UserId == User.Identity.Name).Select(a => a.Role.Name).ToArrayAsync();
+            return View(model);
         }
 
         public async Task<ActionResult> PersonActions(DateTime? startDate, DateTime? endDate)
