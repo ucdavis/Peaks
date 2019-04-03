@@ -32,7 +32,7 @@ namespace Keas.Mvc.Services
                 team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
             }
 
-            return await _context.Workstations.Include(a => a.Space).Include(a => a.Assignment).ThenInclude(a => a.Person).IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new WorkstationReportModel
+            return await _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new WorkstationReportModel
             {
                 Name = a.Name,
                 Notes = a.Notes,
