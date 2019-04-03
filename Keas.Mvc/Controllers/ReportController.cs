@@ -23,8 +23,8 @@ namespace Keas.Mvc.Controllers
 
         public ReportController(ApplicationDbContext context, ISecurityService securityService, IReportService reportService)
         {
-            this._context = context;
-            this._securityService = securityService;
+            _context = context;
+            _securityService = securityService;
             _reportService = reportService;
         }
 

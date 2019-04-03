@@ -20,7 +20,7 @@ namespace Keas.Mvc.Controllers
 
          public FeedController(ApplicationDbContext context, IReportService reportService)
          {
-             this._context = context;
+             _context = context;
              _reportService = reportService;
          }
         public async Task<IActionResult> TeamFeed(Guid id, string includeSpace)
