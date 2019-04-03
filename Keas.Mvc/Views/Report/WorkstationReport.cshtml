@@ -9,7 +9,7 @@
 <div class="card">
     <div class="card-header-primary-thick">
         <div class="card-head">
-            <h2>Person Actions</h2>
+            <h2>Workstations Report</h2>
         </div>
     </div>
     <div class="card-content">
@@ -21,7 +21,7 @@
                     <th>Active</th>
                     <th>Assigned</th>
                     <th>Tags</th>
-                    <th>Has Notes</th>
+                    <th>Notes?</th>
                     <th>Notes</th>
                     <th>Assigned To</th>
                     <th>Email</th>
@@ -41,14 +41,14 @@
                         <td>@item.Name</td>
                         <th>@item.Active.ToYesNoString()</th>
                         <th>@item.IsAssigned.ToYesNoString()</th>
-                        <td>@item.Tags</td>
+                        <td>@item.Tags.Replace(",",", ")</td>
                         <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
                         <td>@item.Notes</td>
                         @if (item.IsAssigned)
                         {
                             <td>@($"{item.AssignmentModel.FullName} ({item.AssignmentModel.UserId})")</td>
                             <td>@item.AssignmentModel.Email</td>
-                            <td>@item.AssignmentModel.ExpiryDateTime.ToPacificTime()</td>
+                            <td>@item.AssignmentModel.ExpiryDateTime.ToPacificTime().ToShortDateString()</td>
                         }
                         else
                         {
@@ -71,15 +71,25 @@
 
 
 @section Styles {
-    @await Html.PartialAsync("_ReportStylePartial")
+    @await Html.PartialAsync("_ImportResultsStylePartial")
 }
 
 @section Scripts {
-   @await Html.PartialAsync("_CommonReportScripts")    
+   @{await Html.RenderPartialAsync("_ImportJS");}  
     
     <script type="text/javascript">
         $('.dataTable').DataTable({
-            "order": [[ 1, "desc" ]]
+                "dom": 'lBfrtip',
+                "buttons": [
+                    { extend: 'copyHtml5' },
+                    { extend: 'excelHtml5' },
+                    { extend: 'csvHtml5' },
+                    { extend: 'print'},
+                ],
+                "columnDefs": [
+                    { "type": "date", "targets": [8] },
+                    { "targets" : [ 5,7,11,13,14], "visible" : false}
+                ]
         });
     </script>
 }
