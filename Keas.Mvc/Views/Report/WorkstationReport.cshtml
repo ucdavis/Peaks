@@ -1,3 +1,4 @@
+@using Keas.Core.Extensions
 @model System.Collections.Generic.IList<Keas.Mvc.Models.ReportModels.WorkstationReportModel>
 
 @{
@@ -17,7 +18,20 @@
             <thead>
                 <tr>
                     <th>WS Name</th>
+                    <th>Active</th>
+                    <th>Assigned</th>
+                    <th>Tags</th>
+                    <th>Has Notes</th>
                     <th>Notes</th>
+                    <th>Assigned To</th>
+                    <th>Email</th>
+                    <th>Expires</th>
+                    <th>Room Number</th>
+                    <th>Building</th>
+                    <th>Room Name</th>
+                    <th>Floor</th>
+                    <th>Category</th>
+                    <th>Footage</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,7 +39,29 @@
                 {
                     <tr>
                         <td>@item.Name</td>
+                        <th>@item.Active.ToYesNoString()</th>
+                        <th>@item.IsAssigned.ToYesNoString()</th>
+                        <td>@item.Tags</td>
+                        <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
                         <td>@item.Notes</td>
+                        @if (item.IsAssigned)
+                        {
+                            <td>@($"{item.AssignmentModel.FullName} ({item.AssignmentModel.UserId})")</td>
+                            <td>@item.AssignmentModel.Email</td>
+                            <td>@item.AssignmentModel.ExpiryDateTime.ToPacificTime()</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        }
+                        <td>@item.Space.RoomNumber</td>
+                        <td>@item.Space.BldgName</td>
+                        <td>@item.Space.RoomName</td>
+                        <td>@item.Space.FloorName</td>
+                        <td>@item.Space.RoomCategoryName</td>
+                        <td>@item.Space.SqFt</td>
                     </tr>
                 }
             </tbody>
