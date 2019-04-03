@@ -64,15 +64,17 @@
         <a asp-action="PersonActions" class="btn btn-link">Actions taken against people in team <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
     </div>
 </div>
-
-<div class="card spaces-color">
-    <div class="card-header-spaces">
-        <div class="card-head">
-            <h2>Workstations</h2>
-        </div>
-    </div>
-    <div class="card-content">
-        <a asp-action="WorkstationReport" class="btn btn-link">Workstation Information <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-    </div>
-</div>
+ @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.SpaceMasterAccess)).Succeeded)
+ {
+     <div class="card spaces-color">
+         <div class="card-header-spaces">
+             <div class="card-head">
+                 <h2>Workstations</h2>
+             </div>
+         </div>
+         <div class="card-content">
+             <a asp-action="WorkstationReport" class="btn btn-link">Workstation Information <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+         </div>
+     </div>
+ }
 

@@ -108,6 +108,7 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
         public async Task<IActionResult> WorkstationReport()
         {
             var worstations = await _reportService.WorkStations(null, Team);
