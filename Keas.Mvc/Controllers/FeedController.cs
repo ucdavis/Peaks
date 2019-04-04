@@ -63,5 +63,17 @@ namespace Keas.Mvc.Controllers
             return Json(await _reportService.EquipmentList(null, Team));
         }
 
+        public async Task<IActionResult> AccessFeed(Guid id)
+        {
+            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode != null && t.ApiCode == id).AnyAsync();
+
+            if (!validKey)
+            {
+                return Unauthorized();
+            }
+
+            return Json(await _reportService.AccessList(null, Team));
+        }
+
     }
 }
