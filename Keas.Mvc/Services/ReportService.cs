@@ -138,7 +138,7 @@ namespace Keas.Mvc.Services
                     Email = a.Assignment.Person.Email,
                     ExpiryDateTime = a.Assignment.ExpiresAt,
                 },
-                Space = new SpaceReportModel
+                Space = !a.SpaceId.HasValue ? null : new SpaceReportModel
                 {
                     RoomNumber = a.Space.RoomNumber,
                     BldgName = a.Space.BldgName,
