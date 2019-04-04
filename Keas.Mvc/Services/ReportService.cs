@@ -15,6 +15,7 @@ namespace Keas.Mvc.Services
         Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug);
         List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
         Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug);
+        Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug);
     }
 
 
@@ -157,6 +158,33 @@ namespace Keas.Mvc.Services
 
 
             return equipment;
+        }
+
+        public async Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+
+            var access = await _context.Access.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new AccessReportModel
+            {
+                Name = a.Name,
+                Notes = a.Notes,
+                Tags = a.Tags,
+                Active = a.Active,
+                AssignmentCount = a.Assignments.Count,
+                Assignments = a.Assignments.Count <= 0 ? null : a.Assignments.Select(b => new AssignmentReportModel
+                {
+                    PersonId = b.PersonId,
+                    FullName = b.Person.Name,
+                    UserId = b.Person.UserId,
+                    Email = b.Person.Email,
+                    ExpiryDateTime = b.ExpiresAt,
+                }).ToArray(),
+            }).ToListAsync();
+
+            return access;
         }
     }
 }
