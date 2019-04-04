@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Keas.Core.Data;
-using Keas.Mvc.Models;
+using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Keas.Core.Domain;
-using Keas.Mvc.Services;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Keas.Mvc.Controllers
 {

@@ -1,12 +1,10 @@
-using System;
+using Keas.Core.Data;
+using Keas.Core.Domain;
+using Keas.Mvc.Models.ReportModels;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Keas.Core.Data;
-using Keas.Core.Domain;
-using Keas.Mvc.Models;
-using Keas.Mvc.Models.ReportModels;
-using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Services
 {

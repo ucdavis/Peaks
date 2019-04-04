@@ -1,12 +1,6 @@
 using System.Collections.Generic;
-using Keas.Core.Data;
-using Keas.Core.Domain;
-using System.Linq;
-using System.Threading.Tasks;
-using Keas.Mvc.Services;
-using Microsoft.EntityFrameworkCore;
 
-namespace Keas.Mvc.Models
+namespace Keas.Mvc.Models.ReportModels
 {
     public class FeedPeopleModel
     {        
