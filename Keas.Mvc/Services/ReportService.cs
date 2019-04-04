@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Models;
 
 namespace Keas.Mvc.Services
 {
@@ -120,7 +121,7 @@ namespace Keas.Mvc.Services
             var equipment = await _context.Equipment.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new EquipmentReportModel
             {
                 Name = a.Name,
-                Type = a.Type,
+                Type = string.IsNullOrWhiteSpace(a.Type) ? EquipmentTypes.Default : a.Type,
                 SerialNumber = a.SerialNumber,
                 Make = a.Make,
                 Model = a.Model,
