@@ -8,7 +8,7 @@ namespace Keas.Mvc.Models.ReportModels
         public bool Active { get; set; }
         public bool IsAssigned { get; set; } //WorkstationAssignmentId.HasValue()
 
-        public AssignmentReportModel AssignmentModel { get; set; }
+        public AssignmentReportModel Assignment { get; set; }
         public SpaceReportModel Space { get; set; }
 
     }

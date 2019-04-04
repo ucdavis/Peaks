@@ -43,7 +43,7 @@ namespace Keas.Mvc.Services
                 Tags = a.Tags,
                 Active = a.Active,
                 IsAssigned = a.WorkstationAssignmentId.HasValue,                
-                AssignmentModel = !a.WorkstationAssignmentId.HasValue ? null : new AssignmentReportModel
+                Assignment = !a.WorkstationAssignmentId.HasValue ? null : new AssignmentReportModel
                 {
                     PersonId = a.Assignment.PersonId,
                     FullName = a.Assignment.Person.Name,
@@ -132,7 +132,7 @@ namespace Keas.Mvc.Services
                 HasSpace = a.SpaceId.HasValue,
                 IsAssigned = a.EquipmentAssignmentId.HasValue,
                 AttributeCount = a.Attributes.Count,
-                AssignmentModel = !a.EquipmentAssignmentId.HasValue ? null : new AssignmentReportModel
+                Assignment = !a.EquipmentAssignmentId.HasValue ? null : new AssignmentReportModel
                 {
                     PersonId = a.Assignment.PersonId,
                     FullName = a.Assignment.Person.Name,

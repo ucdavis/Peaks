@@ -13,7 +13,7 @@ namespace Keas.Mvc.Models.ReportModels
         public bool HasSpace { get; set; }
         public bool IsAssigned { get; set; }
         public int AttributeCount { get; set; }
-        public AssignmentReportModel AssignmentModel { get; set; }
+        public AssignmentReportModel Assignment { get; set; }
         public SpaceReportModel Space { get; set; }
         public AttributeReportModel[] Attributes { get; set; }
 

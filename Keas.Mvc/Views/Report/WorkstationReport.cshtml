@@ -49,9 +49,9 @@
                         <td>@item.Notes</td>
                         @if (item.IsAssigned)
                         {
-                            <td>@($"{item.AssignmentModel.FullName} ({item.AssignmentModel.UserId})")</td>
-                            <td>@item.AssignmentModel.Email</td>
-                            <td>@item.AssignmentModel.ExpiryDateTime.ToPacificTime().ToShortDateString()</td>
+                            <td>@($"{item.Assignment.FullName} ({item.Assignment.UserId})")</td>
+                            <td>@item.Assignment.Email</td>
+                            <td>@item.Assignment.ExpiryDateTime.ToPacificTime().ToShortDateString()</td>
                         }
                         else
                         {
