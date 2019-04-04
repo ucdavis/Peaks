@@ -1,14 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Keas.Core.Data;
-using Keas.Mvc.Models;
+using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Keas.Core.Domain;
-using Keas.Mvc.Services;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Keas.Mvc.Controllers
 {
@@ -31,13 +28,13 @@ namespace Keas.Mvc.Controllers
                return Unauthorized();
             }   
 
-            if(includeSpace == "yes")
+            if(includeSpace != null && includeSpace.Equals("yes", StringComparison.OrdinalIgnoreCase))
             {
-                var people = GetPeopleFeedIncludeSpace();
+                var people = _reportService.GetPeopleFeedIncludeSpace(Team);
                 return Json(people);
             } else
             {
-                var people = GetPeopleFeed();
+                var people = _reportService.GetPeopleFeed(Team);
                 return Json(people);
             }  
         }
@@ -52,53 +49,7 @@ namespace Keas.Mvc.Controllers
             }
 
             return Json(await _reportService.WorkStations(null, Team));
-        }
-
-        private async Task<List<FeedPeopleModel>> GetPeopleFeed()
-        {
-            var people = await _context.People
-                .Where(x=> x.Team.Slug == Team && x.Active)
-                .Select(p => new FeedPeopleModel
-                {
-                FirstName = p.FirstName,
-                LastName = p.LastName,
-                Name = p.Name,
-                Email = p.Email,
-                UserId = p.UserId,
-                Title = p.Title,
-                TeamPhone = p.TeamPhone,
-                Tags = p.Tags
-                })                              
-                .ToListAsync();
-
-                return people;
-        }
-
-        private List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace()
-        {
-            var people = _context.People
-                .Where(x=> x.Team.Slug == Team && x.Active)
-                .Select(p => new FeedPeopleSpaceModel {
-                FirstName = p.FirstName,
-                LastName = p.LastName,
-                Name = p.Name,
-                Email = p.Email,
-                UserId = p.UserId,
-                Title = p.Title,
-                TeamPhone = p.TeamPhone,
-                Tags = p.Tags,
-                Workstations = ( from w in _context.Workstations where w.Assignment.PersonId == p.Id select w)
-                    .Include(w => w.Space)
-                    .Select(w => new FeedWorkstation {
-                        Name = w.Name,
-                        BldgName = w.Space.BldgName,
-                        RoomNumber = w.Space.RoomNumber
-                    }).ToList()
-                })
-                .ToList();
-
-                return people;
-        }
+        }      
 
     }
 }

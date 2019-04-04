@@ -1,17 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Models.ReportModels;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Keas.Mvc.Services
 {
     public interface IReportService
     {
         Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug);
+        Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug);
+        List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
     }
 
 
@@ -58,6 +59,54 @@ namespace Keas.Mvc.Services
                 },
             }).ToListAsync();
 
+        }
+
+        public async Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug)
+        {
+            var people = await _context.People
+                .Where(x => x.Team.Slug == teamSlug && x.Active)
+                .Select(p => new FeedPeopleModel
+                {
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    Name = p.Name,
+                    Email = p.Email,
+                    UserId = p.UserId,
+                    Title = p.Title,
+                    TeamPhone = p.TeamPhone,
+                    Tags = p.Tags
+                })
+                .ToListAsync();
+
+            return people;
+        }
+
+        public List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug)
+        {
+            var people = _context.People
+                .Where(x => x.Team.Slug == teamSlug && x.Active)
+                .Select(p => new FeedPeopleSpaceModel
+                {
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    Name = p.Name,
+                    Email = p.Email,
+                    UserId = p.UserId,
+                    Title = p.Title,
+                    TeamPhone = p.TeamPhone,
+                    Tags = p.Tags,
+                    Workstations = (from w in _context.Workstations where w.Assignment.PersonId == p.Id select w)
+                        .Include(w => w.Space)
+                        .Select(w => new FeedWorkstation
+                        {
+                            Name = w.Name,
+                            BldgName = w.Space.BldgName,
+                            RoomNumber = w.Space.RoomNumber
+                        }).ToList()
+                })
+                .ToList();
+
+            return people;
         }
     }
 }

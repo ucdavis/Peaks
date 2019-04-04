@@ -1,8 +1,8 @@
-@model Keas.Mvc.Models.SupervisorReportViewModel
+@model Keas.Mvc.Models.ReportModels.SupervisorReportViewModel
 
 <form asp-action="SupervisorDirectReports" method="get">
     <div class="card">
-      <div class="card-header-spaces">
+      <div class="card-header-people">
         <div class="card-head">
           <h2>Supervisor Direct Reports</h2>
         </div>
@@ -10,7 +10,7 @@
 
         <div class="card-content">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="shade spaces-color report-spaces">
+            <div class="shade people-color report-spaces">
                 <div class="row align-items-end">
                     <div class="col-sm">
                         <h3>Filters</h3>

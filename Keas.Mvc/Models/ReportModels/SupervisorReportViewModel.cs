@@ -6,7 +6,7 @@ using Keas.Core.Data;
 using Keas.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Keas.Mvc.Models
+namespace Keas.Mvc.Models.ReportModels
 {
     public class SupervisorReportViewModel
     {
