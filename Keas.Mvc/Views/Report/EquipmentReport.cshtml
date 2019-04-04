@@ -42,6 +42,7 @@
                     <th>Floor</th>
                     <th>Category</th>
                     <th>Footage</th>
+                    <th>Attributes</th>
                 </tr>
             </thead>
             <tbody>
@@ -90,6 +91,7 @@
                             <td></td>
                             <td></td>
                         }
+                        <td>@item.Attributes.Beautiful()</td>
                     </tr>
                 }
             </tbody>
@@ -116,7 +118,7 @@
                 ],
                 "columnDefs": [
                     { "type": "date", "targets": [14] },
-                    { "targets" : [ 8,9,11,13,15,16,17,18,19,20], "visible" : false}
+                    { "targets" : [ 8,9,11,13,15,16,17,18,19,20,21], "visible" : false}
                 ]
         });
     </script>
