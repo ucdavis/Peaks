@@ -115,5 +115,13 @@ namespace Keas.Mvc.Controllers
 
             return View(worstations);
         }
+
+        [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
+        public async Task<IActionResult> EquipmentReport()
+        {
+            var equipmentList = await _reportService.EquipmentList(null, Team);
+
+            return View(equipmentList);
+        }
     }
 }

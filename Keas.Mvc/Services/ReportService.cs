@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Models;
 
 namespace Keas.Mvc.Services
 {
@@ -13,6 +14,8 @@ namespace Keas.Mvc.Services
         Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug);
         Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug);
         List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
+        Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug);
+        Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug);
     }
 
 
@@ -40,7 +43,7 @@ namespace Keas.Mvc.Services
                 Tags = a.Tags,
                 Active = a.Active,
                 IsAssigned = a.WorkstationAssignmentId.HasValue,                
-                AssignmentModel = !a.WorkstationAssignmentId.HasValue ? null : new WorkstationAssignmentReportModel
+                Assignment = !a.WorkstationAssignmentId.HasValue ? null : new AssignmentReportModel
                 {
                     PersonId = a.Assignment.PersonId,
                     FullName = a.Assignment.Person.Name,
@@ -107,6 +110,81 @@ namespace Keas.Mvc.Services
                 .ToList();
 
             return people;
+        }
+
+        public async Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+
+            var equipment = await _context.Equipment.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new EquipmentReportModel
+            {
+                Name = a.Name,
+                Type = string.IsNullOrWhiteSpace(a.Type) ? EquipmentTypes.Default : a.Type,
+                SerialNumber = a.SerialNumber,
+                Make = a.Make,
+                Model = a.Model,
+                Notes = a.Notes,
+                Tags = a.Tags,
+                Active = a.Active,
+                HasSpace = a.SpaceId.HasValue,
+                IsAssigned = a.EquipmentAssignmentId.HasValue,
+                AttributeCount = a.Attributes.Count,
+                Assignment = !a.EquipmentAssignmentId.HasValue ? null : new AssignmentReportModel
+                {
+                    PersonId = a.Assignment.PersonId,
+                    FullName = a.Assignment.Person.Name,
+                    UserId = a.Assignment.Person.UserId,
+                    Email = a.Assignment.Person.Email,
+                    ExpiryDateTime = a.Assignment.ExpiresAt,
+                },
+                Space = !a.SpaceId.HasValue ? null : new SpaceReportModel
+                {
+                    RoomNumber = a.Space.RoomNumber,
+                    BldgName = a.Space.BldgName,
+                    RoomName = a.Space.RoomName,
+                    FloorName = a.Space.FloorName,
+                    RoomCategoryName = a.Space.RoomCategoryName,
+                    SqFt = a.Space.SqFt,
+                },
+                Attributes = a.Attributes.Count <= 0 ? null : a.Attributes.Select(b => new AttributeReportModel
+                {
+                    Key = b.Key,
+                    Value = b.Value,
+                }).ToArray(),
+            }).ToListAsync();
+
+
+            return equipment;
+        }
+
+        public async Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+
+            var access = await _context.Access.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new AccessReportModel
+            {
+                Name = a.Name,
+                Notes = a.Notes,
+                Tags = a.Tags,
+                Active = a.Active,
+                AssignmentCount = a.Assignments.Count,
+                Assignments = a.Assignments.Count <= 0 ? null : a.Assignments.Select(b => new AssignmentReportModel
+                {
+                    PersonId = b.PersonId,
+                    FullName = b.Person.Name,
+                    UserId = b.Person.UserId,
+                    Email = b.Person.Email,
+                    ExpiryDateTime = b.ExpiresAt,
+                }).ToArray(),
+            }).ToListAsync();
+
+            return access;
         }
     }
 }
