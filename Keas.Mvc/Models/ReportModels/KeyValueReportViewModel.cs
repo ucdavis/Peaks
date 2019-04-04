@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using Keas.Core.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace Keas.Mvc.Models
+namespace Keas.Mvc.Models.ReportModels
 {
     public class KeyValueReportViewModel
     {

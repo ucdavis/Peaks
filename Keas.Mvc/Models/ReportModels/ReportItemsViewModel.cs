@@ -1,16 +1,14 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
-using Keas.Core.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Keas.Mvc.Services;
+using Microsoft.EntityFrameworkCore;
 
-namespace Keas.Mvc.Models
+namespace Keas.Mvc.Models.ReportModels
 {
     public class ReportItemsViewModel
     {
