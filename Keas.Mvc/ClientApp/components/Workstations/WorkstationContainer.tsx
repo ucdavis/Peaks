@@ -45,7 +45,8 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     }
 
     public async componentDidMount() {
-        if (!PermissionsUtil.canViewWorkstations(this.context.permissions)) {
+        if(!PermissionsUtil.canViewWorkstations(this.context.permissions))
+        {
             return;
         }
         this.setState({ loading: true });
@@ -122,11 +123,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                     <AssignWorkstation
                         closeModal={this._closeModals}
                         modal={activeAsset && (action === "assign" || action === "create")}
-                        person={
-                            selectedWorkstation && selectedWorkstation.assignment
-                                ? selectedWorkstation.assignment.person
-                                : this.props.person
-                        }
+                        person={this.props.person}
                         selectedWorkstation={selectedWorkstation}
                         tags={this.props.tags}
                         space={this.props.space}
@@ -335,12 +332,10 @@ export default class WorkstationContainer extends React.Component<IProps, IState
 
     private _openDetailsModal = (workstation: IWorkstation) => {
         // if we are on spaces or person page, and this workstation is not in our state
-        // this happens on the search, when selecting already assigned
+        // this happens on the search, when selecting already assigned 
         if (this.state.workstations.findIndex(x => x.id === workstation.id) === -1) {
             this.context.router.history.push(
-                `/${this.context.team.slug}/spaces/details/${
-                    workstation.space.id
-                }/workstations/details/${workstation.id}`
+                `/${this.context.team.slug}/spaces/details/${workstation.space.id}/workstations/details/${workstation.id}`
             );
         } else {
             this.context.router.history.push(
