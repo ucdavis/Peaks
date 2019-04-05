@@ -95,4 +95,19 @@
             </div>
         </div>
     }
+    @if (Model.Contains(Role.Codes.AccessMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
+    {
+        <div class="col-md-6">
+            <div class="card access-color">
+                <div class="card-header-access">
+                    <div class="card-head">
+                        <h2>Access List</h2>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <a asp-action="AccessReport" class="btn btn-link">All Access <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+    }
 </div>

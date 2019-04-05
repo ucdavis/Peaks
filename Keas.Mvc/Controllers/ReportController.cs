@@ -123,5 +123,12 @@ namespace Keas.Mvc.Controllers
 
             return View(equipmentList);
         }
+
+        public async Task<IActionResult> AccessReport()
+        {
+            var accessList = await _reportService.AccessList(null, Team);
+
+            return View(accessList);
+        }
     }
 }
