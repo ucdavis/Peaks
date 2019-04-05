@@ -1,0 +1,102 @@
+@using Keas.Core.Extensions
+@model System.Collections.Generic.IList<Keas.Mvc.Models.ReportModels.AccessReportModel>
+
+@{
+    ViewBag.Title = "Access";
+}
+
+
+<div class="card">
+    <div class="card-header-access">
+        <div class="card-head">
+            <h2>Access Report</h2>
+            <small class="form-text text-muted">To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).</small>
+            <small class="form-text text-muted">If you have filtered the report with the Search feature, only the filtered results will be exported.</small>
+            <small class="form-text text-muted">You can filter the table with the data that isn't displayed on the screen (such as notes).</small>
+        </div>
+    </div>
+    <div class="card-content">
+
+        <table id="access" class="table dataTable">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Active</th>
+                    <th># Assigned</th>
+                    <th>Notes?</th>
+                    <th>Tags</th>
+                    <th>Notes</th>
+                    <th>Assigned To</th>
+                    <th>Email</th>
+                    <th>Expires</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    if (item.AssignmentCount > 0)
+                    {
+                        foreach (var assignment in item.Assignments)
+                        {
+                            <tr>
+                                <td>@item.Name</td>
+                                <th>@item.Active.ToYesNoString()</th>
+                                <th>@item.AssignmentCount</th>
+                                <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
+                                <td>@item.Tags.Replace(",", ", ")</td>
+                                <td>@item.Notes</td>
+                                <td>@($"{assignment.FullName} ({assignment.UserId})")</td>
+                                <td>@assignment.Email</td>
+                                <td>@assignment.ExpiryDateTime.ToPacificTime().ToShortDateString()</td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <th>@item.Active.ToYesNoString()</th>
+                            <th>@item.AssignmentCount</th>
+                            <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
+                            <td>@item.Tags.Replace(",", ", ")</td>     
+                            <td>@item.Notes</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+
+                        </tr>
+                    }
+
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section Styles {
+    @await Html.PartialAsync("_ImportResultsStylePartial")
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ImportJS");}
+
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+            "dom": 'lBfrtip',
+            "buttons": [
+                { extend: 'copyHtml5' },
+                { extend: 'excelHtml5' },
+                { extend: 'csvHtml5' },
+                { extend: 'print' },
+            ],
+            "columnDefs": [
+                { "type": "date", "targets": [8] },
+                { "targets" : [ 5], "visible" : false},
+            ]
+        });
+    </script>
+}
+
+
+
