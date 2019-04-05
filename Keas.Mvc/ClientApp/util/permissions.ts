@@ -16,12 +16,12 @@
     }
    
     public static canViewPeople(r: string[]) {
-        const permissionArray = ['EquipMaster', 'KeyMaster', 'AccessMaster', 'SpaceMaster', 'DepartmentalAdmin', 'Admin'];
+        const permissionArray = ['EquipMaster', 'KeyMaster', 'AccessMaster', 'SpaceMaster', 'DepartmentalAdmin', 'Admin', 'PersonManager'];
         return r.some(a => permissionArray.includes(a));
     }
 
     public static canEditPeople(r: string[]) {
-        const permissionArray = ['DepartmentalAdmin'];
+        const permissionArray = ['DepartmentalAdmin', 'PersonManager'];
         return r.some(a => permissionArray.includes(a));
     }
 
