@@ -66,10 +66,11 @@ namespace Keas.Mvc.Services
 
         public async Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug)
         {
-            var people = await _context.People
-                .Where(x => x.Team.Slug == teamSlug && x.Active)
+            var people = await _context.People.IgnoreQueryFilters().AsNoTracking()
+                .Where(x => x.Team.Slug == teamSlug)
                 .Select(p => new FeedPeopleModel
                 {
+                    Active = p.Active,
                     FirstName = p.FirstName,
                     LastName = p.LastName,
                     Name = p.Name,
@@ -77,7 +78,13 @@ namespace Keas.Mvc.Services
                     UserId = p.UserId,
                     Title = p.Title,
                     TeamPhone = p.TeamPhone,
-                    Tags = p.Tags
+                    HomePhone = p.HomePhone,
+                    Tags = p.Tags,
+                    StartDate = p.StartDate,
+                    EndDate = p.EndDate,
+                    Supervisor = p.Supervisor == null ? null : $"{p.Supervisor.Name} ({p.Supervisor.Email})",
+                    Category = p.Category,
+                    Notes = p.Notes,
                 })
                 .ToListAsync();
 
@@ -86,10 +93,11 @@ namespace Keas.Mvc.Services
 
         public List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug)
         {
-            var people = _context.People
-                .Where(x => x.Team.Slug == teamSlug && x.Active)
+            var people = _context.People.IgnoreQueryFilters().AsNoTracking()
+                .Where(x => x.Team.Slug == teamSlug)
                 .Select(p => new FeedPeopleSpaceModel
                 {
+                    Active = p.Active,
                     FirstName = p.FirstName,
                     LastName = p.LastName,
                     Name = p.Name,
@@ -97,8 +105,14 @@ namespace Keas.Mvc.Services
                     UserId = p.UserId,
                     Title = p.Title,
                     TeamPhone = p.TeamPhone,
+                    HomePhone = p.HomePhone,
                     Tags = p.Tags,
-                    Workstations = (from w in _context.Workstations where w.Assignment.PersonId == p.Id select w)
+                    StartDate = p.StartDate,
+                    EndDate = p.EndDate,
+                    Supervisor = p.Supervisor == null ? null : $"{p.Supervisor.Name} ({p.Supervisor.Email})",
+                    Category = p.Category,
+                    Notes = p.Notes,
+                    Workstations = (from w in _context.Workstations where w.Assignment.PersonId == p.Id && w.Active select w)
                         .Include(w => w.Space)
                         .Select(w => new FeedWorkstation
                         {

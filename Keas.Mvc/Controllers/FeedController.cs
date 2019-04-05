@@ -34,7 +34,7 @@ namespace Keas.Mvc.Controllers
                 return Json(people);
             } else
             {
-                var people = _reportService.GetPeopleFeed(Team);
+                var people = await _reportService.GetPeopleFeed(Team);
                 return Json(people);
             }  
         }
