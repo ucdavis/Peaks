@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers.Api
 {
-   [Authorize(Policy = AccessCodes.Codes.DepartmentAdminAccess)]
+   [Authorize(Policy = AccessCodes.Codes.PersonManagerAccess)]
     public class PeopleAdminController : SuperController
     {
         private readonly ApplicationDbContext _context;
