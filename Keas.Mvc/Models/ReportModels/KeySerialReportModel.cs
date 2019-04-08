@@ -7,6 +7,7 @@ namespace Keas.Mvc.Models.ReportModels
         public string Status { get; set; }
         public string Notes { get; set; }
         public bool Active { get; set; }
+        public bool IsAssigned { get; set; }
         public AssignmentReportModel Assignment { get; set; }
     }
 }
