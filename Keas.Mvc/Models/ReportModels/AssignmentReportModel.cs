@@ -10,5 +10,7 @@ namespace Keas.Mvc.Models.ReportModels
         public string UserId { get; set; }
         public string Email { get; set; }
         public DateTime ExpiryDateTime { get; set; }
+        public bool IsConfirmed { get; set; }
+        public DateTime? ConfirmedAt { get; set; }
     }
 }
