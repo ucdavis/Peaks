@@ -215,7 +215,7 @@ namespace Keas.Mvc.Services
                 team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
             }
 
-            var keys = await _context.Keys.IgnoreQueryFilters().AsNoTracking().Include(a => a.KeyXSpaces).Include(a => a.Serials).ThenInclude(a => a.KeySerialAssignment).ThenInclude(a => a.Person).Where(a => a.TeamId == team.Id).Select(a => new KeyReportModel()
+            var keys = await _context.Keys.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new KeyReportModel()
             {
                 KeyName = a.Name,
                 Notes = a.Notes,
