@@ -29,6 +29,8 @@ namespace Keas.Core.Domain
             public const string AccessMaster = "AccessMaster";
             public const string SpaceMaster = "SpaceMaster";
             public const string Admin = "Admin";
+
+            public const string PersonManager = "PersonManager";
             //public const string EmulationUser = "EmulationUser"; Not working, so don't add!
 
         }

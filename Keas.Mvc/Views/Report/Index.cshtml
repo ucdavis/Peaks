@@ -29,6 +29,8 @@
             </div>
         </div>
     </div>
+    @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin) || Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.SpaceMaster))
+    {
     <div class="col-md-6">
         <div class="card primary-color">
             <div class="card-header-primary-thick">
@@ -41,6 +43,7 @@
             </div>
         </div>
     </div>
+    }
     @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
     {
         <div class="col-md-6">

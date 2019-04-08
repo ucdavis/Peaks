@@ -23,6 +23,7 @@ namespace Keas.Mvc.Helpers
             var accessMaster    = CreateOrFindRole(new Role { Name = "AccessMaster" });
             var spaceMaster     = CreateOrFindRole(new Role { Name = "SpaceMaster" });
             var admin           = CreateOrFindRole(new Role { Name = "Admin", IsAdmin = true });
+            var personManager   = CreateOrFindRole(new Role { Name = "PersonManager"});
 
             // Create All Super Users
             var scott = CreateOrFindUser(new User { Id = "postit", FirstName = "Scott", LastName = "Kirkland", Email = "srkirkland@ucdavis.edu" });

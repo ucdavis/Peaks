@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,7 +39,7 @@ namespace Test.TestsDatabase
         {
             var scType = typeof(Role.Codes);
             var props = scType.GetFields();
-            props.Length.ShouldBe(6);
+            props.Length.ShouldBe(7);
 
             //1
             Role.Codes.AccessMaster.ShouldBe("AccessMaster");
@@ -53,6 +53,8 @@ namespace Test.TestsDatabase
             Role.Codes.KeyMaster.ShouldBe("KeyMaster");
             //6
             Role.Codes.SpaceMaster.ShouldBe("SpaceMaster");
+            //7
+            Role.Codes.PersonManager.ShouldBe("PersonManager");
         }
 
         #endregion Codes Tests
