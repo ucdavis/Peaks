@@ -161,9 +161,10 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                         value={
                             this.props.selectedPerson.category
                                 ? this.props.selectedPerson.category
-                                : "Faculty"
+                                : ""
                         }
                     >
+                        <option value="">-- Not Set --</option>
                         <option value="Faculty">Faculty</option>
                         <option value="Staff">Staff</option>
                         <option value="Admin Staff">Admin Staff</option>
