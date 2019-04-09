@@ -22,57 +22,104 @@
                 <tr>
                     <th>Key Name</th>
                     <th>Code</th>
+                    <th>Serial #</th>
                     <th>Active</th>
+                    <th>Serial Active</th>
+                    <th>Assigned</th>
                     <th># Serials</th>
                     <th># Spaces</th>
                     <th>Notes?</th>
                     <th>Tags</th>
+                    <th>Status</th>
                     <th>Notes</th>
+                    <th>Serial Notes</th>
+                    <th>Assigned To</th>
+                    <th>Email</th>
+                    <th>Expires</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var item in Model)
                 {
-
+                    if (item.KeySerialCount > 0)
                     {
-                        <tr>
-                            <td>@item.KeyName</td>
-                            <td>@item.Code</td>
-                            <th>@item.Active.ToYesNoString()</th>
-                            <th>@item.KeySerialCount</th>
-                            <th>@item.SpacesCount</th>
-                            <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
-                            <td>@item.Tags.Replace(",", ", ")</td>     
-                            <td>@item.Notes</td>
-                        </tr>
+                        foreach (var serial in item.Serials)
+                        {
+                            <tr>
+                                <td>@item.KeyName</td>
+                                <td>@item.Code</td>
+                                <td>@serial.SerialNumber</td>
+                                <th>@item.Active.ToYesNoString()@(item.Active != serial.Active ? "*" : string.Empty)</th>
+                                <th>@serial.Active.ToYesNoString()@(item.Active != serial.Active ? "*" : string.Empty)</th>
+                                <th>@serial.IsAssigned.ToYesNoString()</th>
+                                <th>@item.KeySerialCount</th>
+                                <th>@item.SpacesCount</th>
+                                <td>@((!string.IsNullOrWhiteSpace(item.Notes) || !string.IsNullOrWhiteSpace(serial.Notes)).ToYesNoString())</td>
+                                <td>@item.Tags.Replace(",", ", ")</td>
+                                <td>@serial.Status</td>
+                                <td>@item.Notes</td>
+                                <td>@serial.Notes</td>
+                                @if (serial.IsAssigned)
+                                {
+                                    <td>@($"{serial.Assignment.FullName} ({serial.Assignment.UserId})")</td>
+                                    <td>@serial.Assignment.Email</td>
+                                    <td>@serial.Assignment.ExpiryDateTime.ToPacificTime().ToShortDateString()</td>
+                                }
+                                else
+                                {
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                }
+                            </tr>
+                        }
                     }
-
+                    else
+                    {
+                        <td>@item.KeyName</td>
+                        <td>@item.Code</td>
+                        <td></td>
+                        <th>@item.Active.ToYesNoString()</th>
+                        <th></th>
+                        <th></th>
+                        <th>@item.KeySerialCount</th>
+                        <th>@item.SpacesCount</th>
+                        <td>@(!string.IsNullOrWhiteSpace(item.Notes))</td>
+                        <td>@item.Tags.Replace(",", ", ")</td>
+                        <td></td>
+                        <td>@item.Notes</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                 }
-            </tbody>
-        </table>
+
+            }
+                </tbody>
+            </table>
+        </div>
     </div>
-</div>
 
 
-@section Styles {
-    @await Html.PartialAsync("_ImportResultsStylePartial")
-}
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ImportJS");}
+    @section Styles {
+        @await Html.PartialAsync("_ImportResultsStylePartial")
+    }
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ImportJS");}
 
-    <script type="text/javascript">
-        $('.dataTable').DataTable({
-            "dom": 'lBfrtip',
-            "buttons": [
-                { extend: 'copyHtml5' },
-                { extend: 'excelHtml5' },
-                { extend: 'csvHtml5' },
-                { extend: 'print' },
-            ],
-            "order": [[ 0, "asc" ], [ 1, "asc" ]],
-            "columnDefs": [
-                { "targets" : [ -1], "visible" : false},
+        <script type="text/javascript">
+            $('.dataTable').DataTable({
+                "dom": 'lBfrtip',
+                "buttons": [
+                    { extend: 'copyHtml5' },
+                    { extend: 'excelHtml5' },
+                    { extend: 'csvHtml5' },
+                    { extend: 'print' },
+                ],
+                "order": [[0, "asc"], [1, "asc"], [2, "asc"]],
+                            "columnDefs": [
+                { "targets": [4,7,11,12,14], "visible": false },
             ]
-        });
-    </script>
-}
+            });
+        </script>
+    }
