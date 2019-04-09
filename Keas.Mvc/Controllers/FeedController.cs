@@ -22,7 +22,7 @@ namespace Keas.Mvc.Controllers
          }
         public async Task<IActionResult> TeamFeed(Guid id, string includeSpace)
         {            
-             var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode != null && t.ApiCode == id).AnyAsync();
+             var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
 
             if(!validKey){
                return Unauthorized();
@@ -41,7 +41,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> WorkstationFeed(Guid id)
         {
-            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode != null && t.ApiCode == id).AnyAsync();
+            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
 
             if (!validKey)
             {
@@ -53,7 +53,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> EquipmentFeed(Guid id)
         {
-            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode != null && t.ApiCode == id).AnyAsync();
+            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
 
             if (!validKey)
             {
@@ -65,7 +65,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> AccessFeed(Guid id)
         {
-            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode != null && t.ApiCode == id).AnyAsync();
+            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
 
             if (!validKey)
             {
@@ -73,6 +73,18 @@ namespace Keas.Mvc.Controllers
             }
 
             return Json(await _reportService.AccessList(null, Team));
+        }
+
+        public async Task<IActionResult> KeyFeed(Guid id)
+        {
+            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
+
+            if (!validKey)
+            {
+                return Unauthorized();
+            }
+
+            return Json(await _reportService.Keys(null, Team));
         }
 
     }

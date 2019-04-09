@@ -16,6 +16,7 @@ namespace Keas.Mvc.Services
         List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
         Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug);
         Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug);
+        Task<IList<KeyReportModel>> Keys(Team team, string teamSlug);
     }
 
 
@@ -50,6 +51,8 @@ namespace Keas.Mvc.Services
                     UserId = a.Assignment.Person.UserId,
                     Email = a.Assignment.Person.Email,
                     ExpiryDateTime = a.Assignment.ExpiresAt,
+                    IsConfirmed = a.Assignment.IsConfirmed,
+                    ConfirmedAt = a.Assignment.ConfirmedAt,
                 },
                 Space = new SpaceReportModel
                 {
@@ -153,6 +156,8 @@ namespace Keas.Mvc.Services
                     UserId = a.Assignment.Person.UserId,
                     Email = a.Assignment.Person.Email,
                     ExpiryDateTime = a.Assignment.ExpiresAt,
+                    IsConfirmed = a.Assignment.IsConfirmed,
+                    ConfirmedAt = a.Assignment.ConfirmedAt,
                 },
                 Space = !a.SpaceId.HasValue ? null : new SpaceReportModel
                 {
@@ -195,10 +200,60 @@ namespace Keas.Mvc.Services
                     UserId = b.Person.UserId,
                     Email = b.Person.Email,
                     ExpiryDateTime = b.ExpiresAt,
+                    IsConfirmed = b.IsConfirmed,
+                    ConfirmedAt = b.ConfirmedAt,
                 }).ToArray(),
             }).ToListAsync();
 
             return access;
+        }
+
+        public async Task<IList<KeyReportModel>> Keys(Team team, string teamSlug)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+
+            var keys = await _context.Keys.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new KeyReportModel()
+            {
+                KeyName = a.Name,
+                Notes = a.Notes,
+                Tags = a.Tags,
+                Active = a.Active,
+                KeySerialCount = a.Serials.Count,
+                SpacesCount = a.KeyXSpaces.Count,
+                Serials = a.Serials.Count <= 0 ? null : a.Serials.Select(b => new KeySerialReportModel
+                {
+                    Active = b.Active,
+                    SerialName = b.Name,
+                    SerialNumber = b.Number,
+                    Status = b.Status,
+                    Notes = b.Notes,
+                    IsAssigned = b.KeySerialAssignmentId.HasValue && b.KeySerialAssignment != null,
+                    Assignment = !b.KeySerialAssignmentId.HasValue || b.KeySerialAssignment == null ? null : new AssignmentReportModel
+                    {
+                        PersonId = b.KeySerialAssignment.PersonId,
+                        FullName = b.KeySerialAssignment.Person.Name,
+                        UserId = b.KeySerialAssignment.Person.UserId,
+                        Email = b.KeySerialAssignment.Person.Email,
+                        ExpiryDateTime = b.KeySerialAssignment.ExpiresAt,
+                        IsConfirmed = b.KeySerialAssignment.IsConfirmed,
+                        ConfirmedAt = b.KeySerialAssignment.ConfirmedAt,
+                    },
+                }).ToArray(),
+                Spaces = a.KeyXSpaces.Count <= 0 ? null : a.KeyXSpaces.Select(c => new SpaceReportModel
+                {
+                    RoomNumber = c.Space.RoomNumber,
+                    BldgName = c.Space.BldgName,
+                    RoomName = c.Space.RoomName,
+                    FloorName = c.Space.FloorName,
+                    RoomCategoryName = c.Space.RoomCategoryName,
+                    SqFt = c.Space.SqFt,
+                }).ToArray(),
+            }).ToListAsync();
+
+            return keys;
         }
     }
 }
