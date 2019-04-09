@@ -218,6 +218,7 @@ namespace Keas.Mvc.Services
             var keys = await _context.Keys.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new KeyReportModel()
             {
                 KeyName = a.Name,
+                Code = a.Code,
                 Notes = a.Notes,
                 Tags = a.Tags,
                 Active = a.Active,
