@@ -76,26 +76,28 @@
                     }
                     else
                     {
-                        <td>@item.KeyName</td>
-                        <td>@item.Code</td>
-                        <td></td>
-                        <th>@item.Active.ToYesNoString()</th>
-                        <th></th>
-                        <th></th>
-                        <th>@item.KeySerialCount</th>
-                        <th>@item.SpacesCount</th>
-                        <td>@(!string.IsNullOrWhiteSpace(item.Notes))</td>
-                        <td>@item.Tags.Replace(",", ", ")</td>
-                        <td></td>
-                        <td>@item.Notes</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                }
+                        <tr>
+                            <td>@item.KeyName</td>
+                            <td>@item.Code</td>
+                            <td></td>
+                            <th>@item.Active.ToYesNoString()</th>
+                            <th></th>
+                            <th></th>
+                            <th>@item.KeySerialCount</th>
+                            <th>@item.SpacesCount</th>
+                            <td>@(!string.IsNullOrWhiteSpace(item.Notes))</td>
+                            <td>@item.Tags.Replace(",", ", ")</td>
+                            <td></td>
+                            <td>@item.Notes</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    }
 
-            }
-                </tbody>
+                }
+            </tbody>
             </table>
         </div>
     </div>
