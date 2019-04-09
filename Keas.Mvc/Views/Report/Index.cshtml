@@ -31,18 +31,18 @@
     </div>
     @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin) || Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.SpaceMaster))
     {
-    <div class="col-md-6">
-        <div class="card primary-color">
-            <div class="card-header-primary-thick">
-                <div class="card-head">
-                    <h2>Items Pending Acceptance</h2>
+        <div class="col-md-6">
+            <div class="card primary-color">
+                <div class="card-header-primary-thick">
+                    <div class="card-head">
+                        <h2>Items Pending Acceptance</h2>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <a asp-action="UnAcceptedItems" class="btn btn-link">Items Pending Acceptance <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                 </div>
             </div>
-            <div class="card-content">
-                <a asp-action="UnAcceptedItems" class="btn btn-link">Items Pending Acceptance <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-            </div>
         </div>
-    </div>
     }
     @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
     {
@@ -109,6 +109,23 @@
                 </div>
                 <div class="card-content">
                     <a asp-action="AccessReport" class="btn btn-link">All Access <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </div>
+    }
+    @if (Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
+    {
+        <div class="col-md-6">
+            <div class="card keys-color">
+                <div class="card-header-keys">
+                    <div class="card-head">
+                        <h2>Keys</h2>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <a asp-action="KeyReport" class="btn btn-link">Just Keys <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a><br/>
+                    <a asp-action="KeyWithSerialReport" class="btn btn-link">Keys With Serials <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a><br/>
+                    <a asp-action="KeyWithSpaceReport" class="btn btn-link">Keys With Spaces <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                 </div>
             </div>
         </div>
