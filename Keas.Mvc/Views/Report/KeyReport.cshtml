@@ -1,0 +1,90 @@
+@using Keas.Core.Extensions
+@model System.Collections.Generic.IList<Keas.Mvc.Models.ReportModels.KeyReportModel>
+
+@{
+    ViewBag.Title = "Keys";
+}
+
+
+<div class="card">
+    <div class="card-header-access">
+        <div class="card-head">
+            <h2>Keys Report</h2>
+            <small class="form-text text-muted">To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).</small>
+            <small class="form-text text-muted">If you have filtered the report with the Search feature, only the filtered results will be exported.</small>
+            <small class="form-text text-muted">You can filter the table with the data that isn't displayed on the screen (such as notes).</small>
+        </div>
+    </div>
+    <div class="card-content">
+
+        <table id="access" class="table dataTable">
+            <thead>
+                <tr>
+                    <th>Key Name</th>
+                    <th>Code</th>
+                    <th>Serial #</th>
+                    <th>Active</th>
+                    <th># Assigned</th>
+                    <th>Notes?</th>
+                    <th>Tags</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    if (item.KeySerialCount > 0)
+                    {
+                        foreach (var keySerial in item.Serials)
+                        {
+                            <tr>
+                                <td>@item.KeyName</td>
+                                <td>@item.Code</td>
+                                <td>@keySerial.SerialNumber</td>
+                                <th>@item.Active.ToYesNoString()</th>
+                                <th>@item.KeySerialCount</th>
+                                <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
+                                <td>@item.Tags.Replace(",", ", ")</td>
+                             
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td>@item.KeyName</td>
+                            <td>@item.Code</td>
+                            <td></td>
+                            <th>@item.Active.ToYesNoString()</th>
+                            <th>@item.KeySerialCount</th>
+                            <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
+                            <td>@item.Tags.Replace(",", ", ")</td>     
+
+                        </tr>
+                    }
+
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section Styles {
+    @await Html.PartialAsync("_ImportResultsStylePartial")
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ImportJS");}
+
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+            "dom": 'lBfrtip',
+            "buttons": [
+                { extend: 'copyHtml5' },
+                { extend: 'excelHtml5' },
+                { extend: 'csvHtml5' },
+                { extend: 'print' },
+            ],
+
+        });
+    </script>
+}

@@ -130,5 +130,13 @@ namespace Keas.Mvc.Controllers
 
             return View(accessList);
         }
+
+        [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
+        public async Task<IActionResult> KeyReport()
+        {
+            var keys = await _reportService.Keys(null, Team);
+
+            return View(keys);
+        }
     }
 }
