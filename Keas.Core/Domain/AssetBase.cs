@@ -32,9 +32,14 @@ namespace Keas.Core.Domain
 
         public bool Active { get; set; }
 
-        public string GetDescription(string asset, string title, Person person, string action)
+        public string GetDescription(string asset, string title, Person person, string action, string extraSpaceInfo = null)
         {
-            return $"{asset} ({title}) {action} by {person.Name} ({person.UserId})";
+            var extra = string.Empty;
+            if (!string.IsNullOrWhiteSpace(extraSpaceInfo))
+            {
+                extra = $" ({extraSpaceInfo.Trim()})";
+            }
+            return $"{asset} ({title}{extra}) {action} by {person.Name} ({person.UserId})";
         }
 
         public virtual string Title => Name;

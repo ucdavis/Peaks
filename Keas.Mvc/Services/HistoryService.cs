@@ -380,7 +380,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Created"),
+                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Created", extraSpaceInfo:$"{workstation.Space.RoomNumber} {workstation.Space.BldgName}"),
                 ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Created",
@@ -395,7 +395,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Updated"),
+                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Updated", extraSpaceInfo:$"{workstation.Space.RoomNumber} {workstation.Space.BldgName}"),
                 ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Updated",
@@ -410,7 +410,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Inactivated"),
+                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Inactivated", extraSpaceInfo:$"{workstation.Space.RoomNumber} {workstation.Space.BldgName}"),
                 ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Inactivated",
@@ -425,13 +425,15 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Assigned to"),
+                Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Assigned to", extraSpaceInfo: $"{workstation.Space.RoomNumber} {workstation.Space.BldgName}"),
                 ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Assigned",
                 Workstation = workstation,
                 TargetId = workstation.Assignment.PersonId
             };
+
+            
             _context.Histories.Add(historyEntry);
             return historyEntry;
         }
@@ -441,7 +443,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Unassigned from"),
+                Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Unassigned from", extraSpaceInfo:$"{workstation.Space.RoomNumber} {workstation.Space.BldgName}"),
                 ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Unassigned",
@@ -457,7 +459,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Accepted"),
+                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Accepted", extraSpaceInfo:$"{workstation.Space.RoomNumber} {workstation.Space.BldgName}"),
                 ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Accepted",
@@ -518,7 +520,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Deleted"),
+                Description = workstation.GetDescription(nameof(Workstation), workstation.Title, person, "Deleted", extraSpaceInfo:$"{workstation.Space.RoomNumber} {workstation.Space.BldgName}"),
                 ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "Deleted",
@@ -580,7 +582,7 @@ namespace Keas.Mvc.Services
             var person = await _securityService.GetPerson(workstation.TeamId);
             var historyEntry = new History
             {
-                Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Assignment Updated for"),
+                Description = workstation.Assignment.GetDescription(nameof(Workstation), workstation.Title, person, "Assignment Updated for", extraSpaceInfo:$"{workstation.Space.RoomNumber} {workstation.Space.BldgName}"),
                 ActorId = person.UserId,
                 AssetType = "Workstation",
                 ActionType = "AssignmentUpdated",

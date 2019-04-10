@@ -32,9 +32,14 @@ namespace Keas.Core.Domain
         public DateTime? ConfirmedAt { get; set; }
         public DateTime? NextNotificationDate { get; set; }
 
-        public string GetDescription(string asset, string title, Person actor, string action)
-        {            
-            return $"{asset} ({title}) {action} {Person.Name} ({Person.UserId}) by {actor.Name} ({actor.UserId})";
+        public string GetDescription(string asset, string title, Person actor, string action, string extraSpaceInfo = null)
+        {
+            var extra = string.Empty;
+            if (!string.IsNullOrWhiteSpace(extraSpaceInfo))
+            {
+                extra = $" ({extraSpaceInfo.Trim()})";
+            }
+            return $"{asset} ({title}{extra}) {action} {Person.Name} ({Person.UserId}) by {actor.Name} ({actor.UserId})";
         }
 
     }

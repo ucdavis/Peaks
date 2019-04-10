@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +21,7 @@ namespace Keas.Mvc.Models
             {
                 KeySerials = await context.KeySerials.Include(s=> s.KeySerialAssignment).Where(s=> !s.KeySerialAssignment.IsConfirmed && s.KeySerialAssignment.Person==person).ToListAsync(),
                 Equipment = await context.Equipment.Include(e => e.Assignment).Where(e => !e.Assignment.IsConfirmed && e.Assignment.Person == person).ToListAsync(),
-                Workstations = await context.Workstations.Include(w=> w.Assignment).Where(w=> !w.Assignment.IsConfirmed && w.Assignment.Person==person).ToListAsync()
+                Workstations = await context.Workstations.Include(w=> w.Assignment).Include(a => a.Space).Where(w=> !w.Assignment.IsConfirmed && w.Assignment.Person==person).ToListAsync()
             };
 
             return viewModel;
