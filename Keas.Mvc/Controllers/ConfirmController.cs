@@ -77,7 +77,7 @@ namespace Keas.Mvc.Controllers
             _context.Update(workstationAssignment);
             
 
-            var workstation = await _context.Workstations
+            var workstation = await _context.Workstations.Include(a => a.Space)
                 .Where(w => w.WorkstationAssignmentId == workstationAssignment.Id).FirstAsync();
             await _eventService.TrackAcceptWorkstation(workstation);
             Message = "Workstation confirmed.";
