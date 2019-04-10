@@ -118,7 +118,7 @@ namespace Keas.Mvc.Services
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, keySerial.Key.TeamId);
             var assignedTo = await _dbContext.Users.SingleAsync(u => u.Id == keySerial.KeySerialAssignment.Person.UserId);
-            if (!users.Contains(assignedTo))
+            if (!users.Select(a => a.Id).Contains(assignedTo.Id))
             {
                 users.Add(assignedTo);
             }
@@ -129,7 +129,7 @@ namespace Keas.Mvc.Services
                     UserId = user.Id,
                     History = history,
                     Details = history.Description,
-                    NeedsAccept = user == assignedTo,
+                    NeedsAccept = user.Id == assignedTo.Id,
                     TeamId = keySerial.Key.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
@@ -161,7 +161,7 @@ namespace Keas.Mvc.Services
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, equipment.TeamId);
             var assignedTo = await _dbContext.Users.SingleAsync(u => u.Id == equipment.Assignment.Person.UserId);
-            if (!users.Contains(assignedTo))
+            if (!users.Select(a =>a.Id).Contains(assignedTo.Id))
             {
                 users.Add(assignedTo);
             }
@@ -172,7 +172,7 @@ namespace Keas.Mvc.Services
                     UserId = user.Id,
                     History = history,
                     Details = history.Description,
-                    NeedsAccept = user == assignedTo,
+                    NeedsAccept = user.Id == assignedTo.Id,
                     TeamId = equipment.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
@@ -203,7 +203,7 @@ namespace Keas.Mvc.Services
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.AccessMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, teamName);
             var assignedTo = await _dbContext.Users.SingleAsync(u => u.Id == accessAssignment.Person.UserId);
-            if (!users.Contains(assignedTo))
+            if (!users.Select(a => a.Id).Contains(assignedTo.Id))
             {
                 users.Add(assignedTo);
             }
@@ -270,7 +270,7 @@ namespace Keas.Mvc.Services
                 .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
             var users = await _securityService.GetUsersInRoles(roles, workstation.TeamId);
             var assignedTo = await _dbContext.Users.SingleAsync(u => u.Id == workstation.Assignment.Person.UserId);
-            if (!users.Contains(assignedTo))
+            if (!users.Select(a => a.Id).Contains(assignedTo.Id))
             {
                 users.Add(assignedTo);
             }
