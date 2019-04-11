@@ -857,6 +857,42 @@ namespace Keas.Mvc.Controllers
 
         }
 
+        public async Task<IActionResult> BulkEdit()
+        {
+            var model = new BulkEditModel();
+            model.BulkPersons = await _context.People.Where(a => a.Team.Slug == Team).Select(a => new PersonBulkEdit
+            {
+                Id = a.Id,
+                UserId = a.UserId,
+                FirstName = a.FirstName,
+                LastName = a.LastName,
+                Email = a.Email,
+                Tags = a.Tags,
+                SupervisorName = a.Supervisor ==  null ? null: a.Supervisor.Name,
+            }).ToListAsync();
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BulkEdit(string ids)
+        {
+
+            var model = new BulkEditModel();
+            model.BulkPersons = await _context.People.Where(a => a.Team.Slug == Team).Select(a => new PersonBulkEdit
+            {
+                Id = a.Id,
+                UserId = a.UserId,
+                FirstName = a.FirstName,
+                LastName = a.LastName,
+                Email = a.Email,
+                Tags = a.Tags,
+                SupervisorName = a.Supervisor ==  null ? null: a.Supervisor.Name,
+            }).ToListAsync();
+            Message = $"Ids: {ids}" ;
+            return View(model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UploadEquipment(IFormFile file)
         {

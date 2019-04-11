@@ -1,0 +1,75 @@
+@model BulkEditModel
+
+@{
+    ViewBag.Title = "Person Bulk Edit";
+}
+
+<div class="card">
+    <div class="card-header-people">
+        <div class="card-head">
+            <h2>Bulk Edit</h2>
+        </div>
+        <form id="bulk-edit-form" asp-action="BulkEdit">
+          @Html.Hidden("ids")  
+          <div class="form-group">
+              <input type="submit" value="Updated Selected People" class="btn btn-primary" />
+          </div>
+        </form>
+    </div>
+    <div class="card-content">
+        <table id="people" class="table dataTable">
+            <thead>
+                <tr>
+                    <th>Person</th>
+                    <th>Email</th>
+                    <th>Supervisor</th>
+                    <th>Tags</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.BulkPersons)
+                {
+                    <tr id="@item.Id">
+                        <td>@item.Name</td>
+                        <th>@item.Email</th>
+                        <th>@item.SupervisorName</th>
+                        <td>@(item.Tags != null ? item.Tags.Replace(",",", "): null)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section Styles
+{
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.0/css/select.dataTables.min.css"></link>
+}
+
+@section Scripts
+{
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>
+
+    <script type="text/javascript">
+        var table = $('#people').DataTable({
+            select: {
+                style: 'multi'
+            }
+        });
+
+
+        $("#bulk-edit-form").submit(function(event) {
+            var ids = $.map(table.rows('.selected').ids(),
+                function(item) {
+                    return item;
+                });
+            $("#ids").val(ids);
+            alert("Handler for .submit() called. ");
+
+        });
+    </script>
+}
