@@ -1,3 +1,4 @@
+@using Keas.Core.Models
 @model BulkEditModel
 
 @{
@@ -9,12 +10,22 @@
         <div class="card-head">
             <h2>Bulk Edit</h2>
         </div>
+          <div class="card-content">
+    <div class="row">
+        <div class="col-md-4">
         <form id="bulk-edit-form" asp-action="BulkEdit">
-          @Html.Hidden("ids")  
+          @Html.HiddenFor(a => a.Ids)  
+            
+                            <div class="form-group">
+                    <label class="control-label">Category</label>
+                    <select asp-for="Category" asp-items="@(new SelectList(PersonCategories.BulkEditChoices))"></select>
+                </div>
           <div class="form-group">
               <input type="submit" value="Updated Selected People" class="btn btn-primary" />
           </div>
         </form>
+            </div>
+        </div>
     </div>
     <div class="card-content">
         <table id="people" class="table dataTable">
@@ -24,7 +35,6 @@
                     <th>Email</th>
                     <th>Supervisor</th>
                     <th>Tags</th>
-
                 </tr>
             </thead>
             <tbody>
@@ -62,14 +72,12 @@
         });
 
 
-        $("#bulk-edit-form").submit(function(event) {
+        $("#bulk-edit-form").submit(function() {
             var ids = $.map(table.rows('.selected').ids(),
                 function(item) {
                     return item;
                 });
-            $("#ids").val(ids);
-            alert("Handler for .submit() called. ");
-
+            $("#Ids").val(ids);
         });
     </script>
 }

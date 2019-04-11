@@ -9,6 +9,8 @@ namespace Keas.Mvc.Models
     public class BulkEditModel
     {
         public IList<PersonBulkEdit> BulkPersons { get; set; }
+        public string Category { get; set; }
+        public string Ids { get; set; }
     }
 
     public class PersonBulkEdit

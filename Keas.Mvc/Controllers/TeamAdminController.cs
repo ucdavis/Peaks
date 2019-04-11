@@ -875,10 +875,44 @@ namespace Keas.Mvc.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> BulkEdit(string ids)
+        public async Task<IActionResult> BulkEdit(BulkEditModel model)
         {
+            if (string.IsNullOrWhiteSpace(model.Ids))
+            {
+                ErrorMessage = "Must select at least one person to update.";
+                model.BulkPersons = await _context.People.Where(a => a.Team.Slug == Team).Select(a => new PersonBulkEdit
+                {
+                    Id = a.Id,
+                    UserId = a.UserId,
+                    FirstName = a.FirstName,
+                    LastName = a.LastName,
+                    Email = a.Email,
+                    Tags = a.Tags,
+                    SupervisorName = a.Supervisor == null ? null : a.Supervisor.Name,
+                }).ToListAsync();
+                return View(model);
+            }
 
-            var model = new BulkEditModel();
+            var ids = model.Ids.Split(",").Select(a => int.Parse(a)).ToArray();
+            var persons = await _context.People.Where(a => ids.Contains(a.Id)).ToListAsync();
+            foreach (var person in persons)
+            {
+                if (model.Category != "-- Do Not Update --")
+                {
+                    if (model.Category == "-- Not Set --")
+                    {
+                        person.Category = string.Empty;
+                    }
+                    else if(PersonCategories.Types.Contains(model.Category))
+                    {
+                        person.Category = PersonCategories.Types.Single(a => a.Equals(model.Category.Trim(), StringComparison.OrdinalIgnoreCase));
+                    }
+                }
+
+            }
+            _context.UpdateRange(persons);
+            await _context.SaveChangesAsync();
+            //var model = new BulkEditModel();
             model.BulkPersons = await _context.People.Where(a => a.Team.Slug == Team).Select(a => new PersonBulkEdit
             {
                 Id = a.Id,
@@ -889,7 +923,7 @@ namespace Keas.Mvc.Controllers
                 Tags = a.Tags,
                 SupervisorName = a.Supervisor ==  null ? null: a.Supervisor.Name,
             }).ToListAsync();
-            Message = $"Ids: {ids}" ;
+            Message = $"Ids: {model.Ids} {model.Category}" ;
             return View(model);
         }
 
