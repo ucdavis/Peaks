@@ -868,7 +868,7 @@ namespace Keas.Mvc.Controllers
                 LastName = a.LastName,
                 Email = a.Email,
                 Tags = a.Tags,
-                SupervisorName = a.Supervisor ==  null ? null: a.Supervisor.Name,
+                SupervisorName = a.Supervisor ==  null ? null: $"{a.Supervisor.Name} ({a.Supervisor.Email})",
             }).ToListAsync();
             model.Tags = await _context.Tags.Where(a => a.Team.Slug == Team).Select(a => a.Name).ToListAsync();
 
@@ -889,7 +889,7 @@ namespace Keas.Mvc.Controllers
                     LastName = a.LastName,
                     Email = a.Email,
                     Tags = a.Tags,
-                    SupervisorName = a.Supervisor == null ? null : a.Supervisor.Name,
+                    SupervisorName = a.Supervisor ==  null ? null: $"{a.Supervisor.Name} ({a.Supervisor.Email})",
                 }).ToListAsync();
                 model.Tags = await _context.Tags.Where(a => a.Team.Slug == Team).Select(a => a.Name).ToListAsync();
                 return View(model);
@@ -924,7 +924,7 @@ namespace Keas.Mvc.Controllers
                 LastName = a.LastName,
                 Email = a.Email,
                 Tags = a.Tags,
-                SupervisorName = a.Supervisor ==  null ? null: a.Supervisor.Name,
+                SupervisorName = a.Supervisor ==  null ? null: $"{a.Supervisor.Name} ({a.Supervisor.Email})",
             }).ToListAsync();
             model.Tags = await _context.Tags.Where(a => a.Team.Slug == Team).Select(a => a.Name).ToListAsync();
             Message = $"Ids: {model.Ids} {model.Category}" ;
