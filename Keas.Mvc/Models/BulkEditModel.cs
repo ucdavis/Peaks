@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Models
@@ -10,6 +11,7 @@ namespace Keas.Mvc.Models
     public class BulkEditModel
     {
         public IList<PersonBulkEdit> BulkPersons { get; set; }
+        public IList<string> Tags { get; set; }
         public string Ids { get; set; }
 
 
@@ -28,6 +30,10 @@ namespace Keas.Mvc.Models
         public DateTime? EndDate { get; set; }
         [Display(Name = "Update End Date")]
         public bool UpdateEndDate { get; set; }
+        [Display(Name = "Tags")]
+        public string[] SelectedTags { get; set; }
+        [Display(Name = "Update Tags")]
+        public bool UpdateTags { get; set; }
         
     }
 

@@ -43,6 +43,16 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        
+                        <label asp-for="SelectedTags"></label>
+                        <select asp-for="SelectedTags" asp-items="@(new SelectList(Model.Tags))" class="form-control" multiple></select>
+                        <small class="help-block">Ctrl Click to select multiple Tags</small>
+                        <div class="form-group">
+                            <input asp-for="UpdateTags" />
+                            <label asp-for="UpdateTags"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <input type="submit" value="Updated Selected People" class="btn btn-primary" />
                     </div>
                 </form>
