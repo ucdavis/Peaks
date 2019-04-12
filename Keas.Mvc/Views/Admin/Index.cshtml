@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Keas.Core.Domain.Team>
+@model IEnumerable<Keas.Core.Domain.Team>
 
 @{
     ViewData["Title"] = "Index";
@@ -26,6 +26,7 @@
                   <th>
                       @Html.DisplayNameFor(model => model.Name)
                   </th>
+              <th>@Html.DisplayNameFor(a => a.Slug)</th>
               <th></th>
           </tr>
       </thead>
@@ -38,6 +39,7 @@
               <td>
                   @Html.DisplayFor(modelItem => item.Name)
               </td>
+              <td>@Html.DisplayFor(a => item.Slug)</td>
               <td>
                   @Html.ActionLink("Edit", "Edit", "Team", new { id=item.Id }) •
                   <a href='@string.Format("/{0}/TeamAdmin", item.Slug)' class="card-link">Admin</a>
