@@ -27,7 +27,6 @@ namespace Keas.Core.Models
 
         public static List<string> BulkEditChoices = new List<string>
         {
-            "-- Do Not Update --",
             "-- Not Set --",
             Faculty,
             Staff,
