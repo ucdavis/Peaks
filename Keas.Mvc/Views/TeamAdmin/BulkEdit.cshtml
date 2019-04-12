@@ -43,6 +43,14 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label asp-for="SupervisorEmail"></label>
+                        <input asp-for="SupervisorEmail" class="form-control" />
+                        <div class="form-group">
+                            <input asp-for="UpdateSupervisorEmail" />
+                            <label asp-for="UpdateSupervisorEmail"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         
                         <label asp-for="SelectedTags"></label>
                         <select asp-for="SelectedTags" asp-items="@(new SelectList(Model.Tags))" class="form-control" multiple></select>

@@ -34,6 +34,9 @@ namespace Keas.Mvc.Models
         public string[] SelectedTags { get; set; }
         [Display(Name = "Update Tags")]
         public bool UpdateTags { get; set; }
+        [Display(Name = "Supervisor Email")]
+        public string SupervisorEmail { get; set; }
+        public bool UpdateSupervisorEmail { get; set; }
         
     }
 
