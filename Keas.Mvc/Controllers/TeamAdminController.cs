@@ -880,6 +880,7 @@ namespace Keas.Mvc.Controllers
                 Tags = a.Tags,
                 StartDate = a.StartDate,
                 EndDate = a.EndDate,
+                Category = a.Category,
                 SupervisorName = a.Supervisor == null ? null : $"{a.Supervisor.Name} ({a.Supervisor.Email})",
             }).ToListAsync();
             model.Tags = await _context.Tags.Where(a => a.Team.Slug == Team).Select(a => a.Name).ToListAsync();
@@ -899,7 +900,7 @@ namespace Keas.Mvc.Controllers
                 return View(model);
             }
             var ids = model.Ids.Split(",").Select(a => int.Parse(a)).ToArray();
-            var persons = await _context.People.Where(a => ids.Contains(a.Id)).ToListAsync();
+            var persons = await _context.People.Include(a => a.Supervisor).Where(a => ids.Contains(a.Id)).ToListAsync();
 
             if (model.DeleteUsers)
             {
@@ -981,6 +982,7 @@ namespace Keas.Mvc.Controllers
                     if (model.UpdateSupervisorEmail)
                     {
                         person.Supervisor = supervisor;
+                        
                     }
 
                     if (model.UpdateTags)
