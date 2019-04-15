@@ -56,7 +56,12 @@ namespace Keas.Mvc.Models
 
         public string SupervisorName { get; set; }
         public string Tags { get; set; }
-
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        public DateTime? StartDate { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        public DateTime? EndDate { get; set; }
         [Display(Name = "Name")]
         public string Name
         {

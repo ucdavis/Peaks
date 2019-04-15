@@ -878,6 +878,8 @@ namespace Keas.Mvc.Controllers
                 LastName = a.LastName,
                 Email = a.Email,
                 Tags = a.Tags,
+                StartDate = a.StartDate,
+                EndDate = a.EndDate,
                 SupervisorName = a.Supervisor == null ? null : $"{a.Supervisor.Name} ({a.Supervisor.Email})",
             }).ToListAsync();
             model.Tags = await _context.Tags.Where(a => a.Team.Slug == Team).Select(a => a.Name).ToListAsync();

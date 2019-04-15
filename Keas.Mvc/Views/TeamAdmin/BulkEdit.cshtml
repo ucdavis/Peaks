@@ -88,6 +88,8 @@
                 <tr>
                     <th>Person</th>
                     <th>Email</th>
+                    <th>Start</th>
+                    <th>End</th>
                     <th>Supervisor</th>
                     <th>Tags</th>
                 </tr>
@@ -98,6 +100,8 @@
                     <tr id="@item.Id">
                         <td>@item.Name</td>
                         <th>@item.Email</th>
+                        <th>@Html.DisplayFor(a =>  item.StartDate)</th>
+                        <th>@Html.DisplayFor(a =>  item.EndDate)</th>
                         <th>@item.SupervisorName</th>
                         <td>@(item.Tags != null ? item.Tags.Replace(",", ", ") : null)</td>
                     </tr>
