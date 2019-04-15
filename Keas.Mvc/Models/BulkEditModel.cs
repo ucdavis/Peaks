@@ -37,6 +37,9 @@ namespace Keas.Mvc.Models
         [Display(Name = "Supervisor Email")]
         public string SupervisorEmail { get; set; }
         public bool UpdateSupervisorEmail { get; set; }
+
+        [Display(Name = "Delete Selected Users")]
+        public bool DeleteUsers { get; set; }
         
     }
 

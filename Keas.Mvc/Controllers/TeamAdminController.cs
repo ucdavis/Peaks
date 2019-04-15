@@ -29,14 +29,16 @@ namespace Keas.Mvc.Controllers
         private readonly IIdentityService _identityService;
         private readonly IUserService _userService;
         private readonly IFinancialService _financialService;
+        private readonly INotificationService _notificationService;
 
 
-        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService)
+        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService, INotificationService notificationService)
         {
             _context = context;
             _identityService = identityService;
             _userService = userService;
             _financialService = financialService;
+            _notificationService = notificationService;
         }
 
         public async Task<IActionResult> Index()
@@ -860,6 +862,14 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> BulkEdit()
         {
             var model = new BulkEditModel();
+            await PopulateBulkEdit(model);
+
+
+            return View(model);
+        }
+
+        private async Task PopulateBulkEdit(BulkEditModel model)
+        {
             model.BulkPersons = await _context.People.Where(a => a.Team.Slug == Team).Select(a => new PersonBulkEdit
             {
                 Id = a.Id,
@@ -868,66 +878,82 @@ namespace Keas.Mvc.Controllers
                 LastName = a.LastName,
                 Email = a.Email,
                 Tags = a.Tags,
-                SupervisorName = a.Supervisor ==  null ? null: $"{a.Supervisor.Name} ({a.Supervisor.Email})",
+                SupervisorName = a.Supervisor == null ? null : $"{a.Supervisor.Name} ({a.Supervisor.Email})",
             }).ToListAsync();
             model.Tags = await _context.Tags.Where(a => a.Team.Slug == Team).Select(a => a.Name).ToListAsync();
-
-            return View(model);
+            model.DeleteUsers = false;
         }
 
         [HttpPost]
         public async Task<IActionResult> BulkEdit(BulkEditModel model)
         {
+            var updatedCount = 0;
+            var skippedCount = 0;
+
             if (string.IsNullOrWhiteSpace(model.Ids))
             {
                 ErrorMessage = "Must select at least one person to update.";
-                model.BulkPersons = await _context.People.Where(a => a.Team.Slug == Team).Select(a => new PersonBulkEdit
-                {
-                    Id = a.Id,
-                    UserId = a.UserId,
-                    FirstName = a.FirstName,
-                    LastName = a.LastName,
-                    Email = a.Email,
-                    Tags = a.Tags,
-                    SupervisorName = a.Supervisor ==  null ? null: $"{a.Supervisor.Name} ({a.Supervisor.Email})",
-                }).ToListAsync();
-                model.Tags = await _context.Tags.Where(a => a.Team.Slug == Team).Select(a => a.Name).ToListAsync();
+                await PopulateBulkEdit(model);
                 return View(model);
             }
-
-
             var ids = model.Ids.Split(",").Select(a => int.Parse(a)).ToArray();
             var persons = await _context.People.Where(a => ids.Contains(a.Id)).ToListAsync();
-            foreach (var person in persons)
-            {
-                if (model.Category != "-- Do Not Update --")
-                {
-                    if (model.Category == "-- Not Set --")
-                    {
-                        person.Category = string.Empty;
-                    }
-                    else if(PersonCategories.Types.Contains(model.Category))
-                    {
-                        person.Category = PersonCategories.Types.Single(a => a.Equals(model.Category.Trim(), StringComparison.OrdinalIgnoreCase));
-                    }
-                }
 
+            if (model.DeleteUsers)
+            {
+                foreach (var person in persons)
+                {
+                    if (await _context.AccessAssignments.AnyAsync(a => a.PersonId == person.Id) ||
+                        await _context.KeySerialAssignments.AnyAsync(a => a.PersonId == person.Id) ||
+                        await _context.EquipmentAssignments.AnyAsync(a => a.PersonId == person.Id) ||
+                        await _context.WorkstationAssignments.AnyAsync(a => a.PersonId == person.Id))
+                    {
+                        skippedCount++;
+                        continue;
+                    }
+
+                    if (await _context.TeamPermissions.AnyAsync(a => a.TeamId == person.TeamId && a.UserId == person.UserId))
+                    {
+                        skippedCount++;
+                        continue;
+                    }
+
+                    if (person.UserId == User.Identity.Name)
+                    {
+                        skippedCount++;
+                        continue;
+                    }
+
+                    await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, PersonNotification.Actions.Deactivated, "From Bulk Edit");
+                    updatedCount++;
+                    person.Active = false;
+                }
             }
+            else
+            {
+                foreach (var person in persons)
+                {
+                    if (model.Category != "-- Do Not Update --")
+                    {
+                        if (model.Category == "-- Not Set --")
+                        {
+                            person.Category = string.Empty;
+                        }
+                        else if (PersonCategories.Types.Contains(model.Category))
+                        {
+                            person.Category = PersonCategories.Types.Single(a =>
+                                a.Equals(model.Category.Trim(), StringComparison.OrdinalIgnoreCase));
+                        }
+                    }
+
+                }
+            }
+
             _context.UpdateRange(persons);
             await _context.SaveChangesAsync();
             //var model = new BulkEditModel();
-            model.BulkPersons = await _context.People.Where(a => a.Team.Slug == Team).Select(a => new PersonBulkEdit
-            {
-                Id = a.Id,
-                UserId = a.UserId,
-                FirstName = a.FirstName,
-                LastName = a.LastName,
-                Email = a.Email,
-                Tags = a.Tags,
-                SupervisorName = a.Supervisor ==  null ? null: $"{a.Supervisor.Name} ({a.Supervisor.Email})",
-            }).ToListAsync();
-            model.Tags = await _context.Tags.Where(a => a.Team.Slug == Team).Select(a => a.Name).ToListAsync();
-            Message = $"Ids: {model.Ids} {model.Category}" ;
+            await PopulateBulkEdit(model);
+            Message = $"Ids: {model.Ids} {model.Category} === Updated: {updatedCount} Skipped: {skippedCount}" ;
             return View(model);
         }
 
