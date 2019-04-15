@@ -933,29 +933,75 @@ namespace Keas.Mvc.Controllers
             }
             else
             {
+                Person supervisor = null;
+                if (!model.UpdateCategory && !model.UpdateEndDate && !model.UpdateStartDate && !model.UpdateSupervisorEmail && !model.UpdateTags)
+                {
+                    ErrorMessage = "You have not selected anything to update.";
+                    await PopulateBulkEdit(model);
+                    return View(model);
+                }
+                if (model.UpdateSupervisorEmail)
+                {
+                    if (!string.IsNullOrWhiteSpace(model.SupervisorEmail))
+                    {
+                        supervisor = await _context.People.Where(a => a.Team.Slug == Team && a.Email.Equals(model.SupervisorEmail, StringComparison.OrdinalIgnoreCase)).FirstOrDefaultAsync();
+                        if (supervisor == null)
+                        {
+                            ErrorMessage = "Supervisor not found.";
+                            await PopulateBulkEdit(model);
+                            return View(model);
+                        }
+                    }
+                }
                 foreach (var person in persons)
                 {
-                    if (model.Category != "-- Do Not Update --")
+                    
+                    if (model.UpdateCategory)
                     {
                         if (model.Category == "-- Not Set --")
                         {
                             person.Category = string.Empty;
-                        }
-                        else if (PersonCategories.Types.Contains(model.Category))
+                        }else if (PersonCategories.Types.Contains(model.Category))
                         {
                             person.Category = PersonCategories.Types.Single(a =>
                                 a.Equals(model.Category.Trim(), StringComparison.OrdinalIgnoreCase));
                         }
                     }
 
+                    if (model.UpdateStartDate)
+                    {
+                        person.StartDate = model.StartDate;
+                    }
+
+                    if (model.UpdateEndDate)
+                    {
+                        person.EndDate = model.EndDate;
+                    }
+
+                    if (model.UpdateSupervisorEmail)
+                    {
+                        person.Supervisor = supervisor;
+                    }
+
+                    if (model.UpdateTags)
+                    {
+                        if (model.SelectedTags == null || model.SelectedTags.Length == 0)
+                        {
+                            person.Tags = string.Empty;
+                        }
+                        else
+                        {
+                            person.Tags = string.Join(",", model.SelectedTags);
+                        }
+                    }
+                    updatedCount++;
                 }
             }
 
             _context.UpdateRange(persons);
             await _context.SaveChangesAsync();
-            //var model = new BulkEditModel();
             await PopulateBulkEdit(model);
-            Message = $"Ids: {model.Ids} {model.Category} === Updated: {updatedCount} Skipped: {skippedCount}" ;
+            Message = $"{ids.Length} people selected. Updated: {updatedCount} Skipped: {skippedCount}" ;
             return View(model);
         }
 
