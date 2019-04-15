@@ -130,5 +130,28 @@ namespace Keas.Mvc.Controllers
 
             return View(accessList);
         }
+
+        [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
+        public async Task<IActionResult> KeyReport()
+        {
+            var keys = await _reportService.Keys(null, Team, includeSerials: false, includeSpaces: false);
+
+            return View(keys);
+        }
+
+        [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
+        public async Task<IActionResult> KeyWithSerialReport()
+        {
+            var keys = await _reportService.Keys(null, Team, includeSerials: true, includeSpaces: false);
+
+            return View(keys);
+        }
+        [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
+        public async Task<IActionResult> KeyWithSpaceReport()
+        {
+            var keys = await _reportService.Keys(null, Team, includeSerials: false, includeSpaces: true);
+
+            return View(keys);
+        }
     }
 }

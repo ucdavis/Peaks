@@ -16,7 +16,7 @@ namespace Keas.Mvc.Services
         List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
         Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug);
         Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug);
-        Task<IList<KeyReportModel>> Keys(Team team, string teamSlug);
+        Task<IList<KeyReportModel>> Keys(Team team, string teamSlug, bool includeSerials = true, bool includeSpaces = true);
     }
 
 
@@ -208,7 +208,7 @@ namespace Keas.Mvc.Services
             return access;
         }
 
-        public async Task<IList<KeyReportModel>> Keys(Team team, string teamSlug)
+        public async Task<IList<KeyReportModel>> Keys(Team team, string teamSlug, bool includeSerials = true, bool includeSpaces = true)
         {
             if (team == null)
             {
@@ -224,7 +224,7 @@ namespace Keas.Mvc.Services
                 Active = a.Active,
                 KeySerialCount = a.Serials.Count,
                 SpacesCount = a.KeyXSpaces.Count,
-                Serials = a.Serials.Count <= 0 ? null : a.Serials.Select(b => new KeySerialReportModel
+                Serials = a.Serials.Count <= 0 || !includeSerials ? null : a.Serials.Select(b => new KeySerialReportModel
                 {
                     Active = b.Active,
                     SerialName = b.Name,
@@ -243,7 +243,7 @@ namespace Keas.Mvc.Services
                         ConfirmedAt = b.KeySerialAssignment.ConfirmedAt,
                     },
                 }).ToArray(),
-                Spaces = a.KeyXSpaces.Count <= 0 ? null : a.KeyXSpaces.Select(c => new SpaceReportModel
+                Spaces = a.KeyXSpaces.Count <= 0 || !includeSpaces ? null : a.KeyXSpaces.Select(c => new SpaceReportModel
                 {
                     RoomNumber = c.Space.RoomNumber,
                     BldgName = c.Space.BldgName,
