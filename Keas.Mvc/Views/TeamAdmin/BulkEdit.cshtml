@@ -99,10 +99,10 @@
                 {
                     <tr id="@item.Id">
                         <td>@item.Name</td>
-                        <th>@item.Email</th>
-                        <th>@Html.DisplayFor(a =>  item.StartDate)</th>
-                        <th>@Html.DisplayFor(a =>  item.EndDate)</th>
-                        <th>@item.SupervisorName</th>
+                        <td>@item.Email</td>
+                        <td>@Html.DisplayFor(a =>  item.StartDate)</td>
+                        <td>@Html.DisplayFor(a =>  item.EndDate)</td>
+                        <td>@item.SupervisorName</td>
                         <td>@(item.Tags != null ? item.Tags.Replace(",", ", ") : null)</td>
                     </tr>
                 }
