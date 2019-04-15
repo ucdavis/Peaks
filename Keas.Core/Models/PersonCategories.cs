@@ -25,16 +25,5 @@ namespace Keas.Core.Models
             Volunteer,
         };
 
-        public static List<string> BulkEditChoices = new List<string>
-        {
-            "-- Not Set --",
-            Faculty,
-            Staff,
-            AdminStaff,
-            GradStudent,
-            Undergrad,
-            Visitor,
-            Volunteer,
-        };
     }
 }

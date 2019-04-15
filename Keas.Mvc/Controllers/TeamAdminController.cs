@@ -883,6 +883,9 @@ namespace Keas.Mvc.Controllers
                 Category = a.Category,
                 SupervisorName = a.Supervisor == null ? null : $"{a.Supervisor.Name} ({a.Supervisor.Email})",
             }).ToListAsync();
+            model.CategoryChoices = new List<string>();
+            model.CategoryChoices.Add("-- Not Set --");
+            model.CategoryChoices.AddRange(PersonCategories.Types);
             model.Tags = await _context.Tags.Where(a => a.Team.Slug == Team).Select(a => a.Name).ToListAsync();
             model.DeleteUsers = false;
         }
@@ -959,13 +962,14 @@ namespace Keas.Mvc.Controllers
                     
                     if (model.UpdateCategory)
                     {
-                        if (model.Category == "-- Not Set --")
-                        {
-                            person.Category = string.Empty;
-                        }else if (PersonCategories.Types.Contains(model.Category))
+                        if (PersonCategories.Types.Contains(model.Category))
                         {
                             person.Category = PersonCategories.Types.Single(a =>
                                 a.Equals(model.Category.Trim(), StringComparison.OrdinalIgnoreCase));
+                        }
+                        else
+                        {
+                            person.Category = string.Empty;
                         }
                     }
 

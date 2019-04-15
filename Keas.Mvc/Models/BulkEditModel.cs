@@ -14,6 +14,8 @@ namespace Keas.Mvc.Models
         public IList<string> Tags { get; set; }
         public string Ids { get; set; }
 
+        public List<string> CategoryChoices { get; set; }
+
 
         public string Category { get; set; }
         [Display(Name = "Update Category")]
