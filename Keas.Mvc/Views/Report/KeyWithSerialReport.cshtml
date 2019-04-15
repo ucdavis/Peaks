@@ -49,11 +49,11 @@
                                 <td>@item.KeyName</td>
                                 <td>@item.Code</td>
                                 <td>@serial.SerialNumber</td>
-                                <th>@item.Active.ToYesNoString()@(item.Active != serial.Active ? "*" : string.Empty)</th>
-                                <th>@serial.Active.ToYesNoString()@(item.Active != serial.Active ? "*" : string.Empty)</th>
-                                <th>@serial.IsAssigned.ToYesNoString()</th>
-                                <th>@item.KeySerialCount</th>
-                                <th>@item.SpacesCount</th>
+                                <td>@item.Active.ToYesNoString()@(item.Active != serial.Active ? "*" : string.Empty)</td>
+                                <td>@serial.Active.ToYesNoString()@(item.Active != serial.Active ? "*" : string.Empty)</td>
+                                <td>@serial.IsAssigned.ToYesNoString()</td>
+                                <td>@item.KeySerialCount</td>
+                                <td>@item.SpacesCount</td>
                                 <td>@((!string.IsNullOrWhiteSpace(item.Notes) || !string.IsNullOrWhiteSpace(serial.Notes)).ToYesNoString())</td>
                                 <td>@item.Tags.Replace(",", ", ")</td>
                                 <td>@serial.Status</td>
@@ -80,11 +80,11 @@
                             <td>@item.KeyName</td>
                             <td>@item.Code</td>
                             <td></td>
-                            <th>@item.Active.ToYesNoString()</th>
-                            <th></th>
-                            <th></th>
-                            <th>@item.KeySerialCount</th>
-                            <th>@item.SpacesCount</th>
+                            <td>@item.Active.ToYesNoString()</td>
+                            <td></td>
+                            <td></td>
+                            <td>@item.KeySerialCount</td>
+                            <td>@item.SpacesCount</td>
                             <td>@(!string.IsNullOrWhiteSpace(item.Notes))</td>
                             <td>@item.Tags.Replace(",", ", ")</td>
                             <td></td>
