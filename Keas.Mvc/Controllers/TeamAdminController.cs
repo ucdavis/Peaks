@@ -937,7 +937,7 @@ namespace Keas.Mvc.Controllers
             }
             else
             {
-                Person supervisor = null;
+                int? supervisorId = null;
                 if (!model.UpdateCategory && !model.UpdateEndDate && !model.UpdateStartDate && !model.UpdateSupervisorEmail && !model.UpdateTags)
                 {
                     ErrorMessage = "You have not selected anything to update.";
@@ -948,12 +948,16 @@ namespace Keas.Mvc.Controllers
                 {
                     if (!string.IsNullOrWhiteSpace(model.SupervisorEmail))
                     {
-                        supervisor = await _context.People.Where(a => a.Team.Slug == Team && a.Email.Equals(model.SupervisorEmail, StringComparison.OrdinalIgnoreCase)).FirstOrDefaultAsync();
+                        var supervisor = await _context.People.Where(a => a.Team.Slug == Team && a.Email.Equals(model.SupervisorEmail, StringComparison.OrdinalIgnoreCase)).FirstOrDefaultAsync();
                         if (supervisor == null)
                         {
                             ErrorMessage = "Supervisor not found.";
                             await PopulateBulkEdit(model);
                             return View(model);
+                        }
+                        else
+                        {
+                            supervisorId = supervisor.Id;
                         }
                     }
                 }
@@ -985,15 +989,7 @@ namespace Keas.Mvc.Controllers
 
                     if (model.UpdateSupervisorEmail)
                     {
-                        if (supervisor != null)
-                        {
-                            person.SupervisorId = supervisor.Id;
-                        }
-                        else
-                        {
-                            person.SupervisorId = null;
-                        }   
-                        
+                        person.SupervisorId = supervisorId;
                     }
 
                     if (model.UpdateTags)
