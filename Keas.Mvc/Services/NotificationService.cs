@@ -281,6 +281,7 @@ namespace Keas.Mvc.Services
                     UserId = user.Id,
                     History = history,
                     Details = history.Description,
+                    NeedsAccept = user.Id == assignedTo.Id,
                     TeamId = workstation.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
