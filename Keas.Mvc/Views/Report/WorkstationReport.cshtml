@@ -42,8 +42,8 @@
                 {
                     <tr>
                         <td>@item.Name</td>
-                        <th>@item.Active.ToYesNoString()</th>
-                        <th>@item.IsAssigned.ToYesNoString()</th>
+                        <td>@item.Active.ToYesNoString()</td>
+                        <td>@item.IsAssigned.ToYesNoString()</td>
                         <td>@item.Tags.Replace(",",", ")</td>
                         <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
                         <td>@item.Notes</td>
