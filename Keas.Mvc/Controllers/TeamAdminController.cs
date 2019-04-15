@@ -985,7 +985,14 @@ namespace Keas.Mvc.Controllers
 
                     if (model.UpdateSupervisorEmail)
                     {
-                        person.Supervisor = supervisor;
+                        if (supervisor != null)
+                        {
+                            person.SupervisorId = supervisor.Id;
+                        }
+                        else
+                        {
+                            person.SupervisorId = null;
+                        }   
                         
                     }
 
