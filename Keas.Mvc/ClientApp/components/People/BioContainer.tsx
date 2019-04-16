@@ -37,9 +37,6 @@ export default class BioContainer extends React.Component<IProps, {}> {
                                         {this.props.person.endDate && (
                                             <p className="person-label">End Date</p>
                                         )}
-                                        {this.props.person.supervisor && (
-                                            <p className="person-label">Supervisor</p>
-                                        )}
                                     </div>
                                     <div>
                                         {this.props.person.title && <p>{this.props.person.title}</p>}
@@ -56,9 +53,6 @@ export default class BioContainer extends React.Component<IProps, {}> {
                                             <p>
                                                 {DateUtil.formatExpiration(this.props.person.endDate)}
                                             </p>
-                                        )}
-                                        {this.props.person.supervisor && (
-                                            <p>{this.props.person.supervisor.name}</p>
                                         )}
                                     </div>
                                 </div>
@@ -80,6 +74,9 @@ export default class BioContainer extends React.Component<IProps, {}> {
                                         {this.props.person.teamPhone && (
                                             <p className="person-label">Team</p>
                                         )}
+                                        {this.props.person.supervisor && (
+                                            <p className="person-label">Supervisor</p>
+                                        )}
                                     </div>
                                     <div>
                                         {this.props.person.email && <p>{this.props.person.email}</p>}
@@ -88,6 +85,9 @@ export default class BioContainer extends React.Component<IProps, {}> {
                                         )}
                                         {this.props.person.teamPhone && (
                                             <p>{this.props.person.teamPhone}</p>
+                                        )}
+                                        {this.props.person.supervisor && (
+                                            <p>{this.props.person.supervisor.name}</p>
                                         )}
                                     </div>
                                 </div>
