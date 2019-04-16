@@ -1,7 +1,6 @@
 CREATE TABLE [dbo].[Workstations] (
     [Id]                      INT            IDENTITY (1, 1) NOT NULL,
     [Active]                  BIT            NOT NULL,
-    [Group]                   NVARCHAR (32)  NULL,
     [Name]                    NVARCHAR (64)  NOT NULL,
     [SpaceId]                 INT            NOT NULL,
     [Tags]                    NVARCHAR (100) NULL,

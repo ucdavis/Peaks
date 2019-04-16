@@ -39,10 +39,6 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Active", "System.Boolean", new List<string>()));
             expectedFields.Add(new NameAndType("Assignment", "Keas.Core.Domain.WorkstationAssignment", new List<string>()));
             expectedFields.Add(new NameAndType("Attributes", "System.Collections.Generic.List`1[Keas.Core.Domain.WorkstationAttribute]", new List<string>()));
-            expectedFields.Add(new NameAndType("Group", "System.String", new List<string>
-            {
-                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)32)]",
-            }));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.KeyAttribute()]",

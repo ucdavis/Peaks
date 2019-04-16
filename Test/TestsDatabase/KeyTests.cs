@@ -42,10 +42,6 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
             }));
-            expectedFields.Add(new NameAndType("Group", "System.String", new List<string>
-            {
-                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)32)]",
-            }));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.KeyAttribute()]",
