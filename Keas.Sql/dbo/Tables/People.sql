@@ -1,11 +1,10 @@
-﻿CREATE TABLE [dbo].[People] (
+CREATE TABLE [dbo].[People] (
     [Id]           INT            IDENTITY (1, 1) NOT NULL,
     [Active]       BIT            NOT NULL,
     [Category]     NVARCHAR (MAX) NULL,
     [Email]        NVARCHAR (256) NOT NULL,
     [EndDate]      DATETIME2 (7)  NULL,
     [FirstName]    NVARCHAR (50)  NOT NULL,
-    [Group]        NVARCHAR (MAX) NULL,
     [HomePhone]    NVARCHAR (MAX) NULL,
     [LastName]     NVARCHAR (50)  NOT NULL,
     [Notes]        NVARCHAR (MAX) NULL,

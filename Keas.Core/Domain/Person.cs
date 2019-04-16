@@ -47,8 +47,6 @@ namespace Keas.Core.Domain
         [EmailAddress]
         public string Email { get; set; }
 
-        public string Group { get; set; }
-
         public string Tags { get; set; }
 
         // METADATA
