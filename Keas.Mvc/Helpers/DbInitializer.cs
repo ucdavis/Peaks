@@ -115,7 +115,6 @@ namespace Keas.Mvc.Helpers
             {
                 User = laura,
                 Team = caes,
-                Group = "CRU",
                 Tags = "CRU,Student",
                 FirstName = laura.FirstName,
                 LastName = laura.LastName,
@@ -125,7 +124,6 @@ namespace Keas.Mvc.Helpers
             {
                 User = scott,
                 Team = caes,
-                Group = "CRU",
                 Tags = "CRU",
                 FirstName = scott.FirstName,
                 LastName = scott.LastName,
@@ -135,7 +133,6 @@ namespace Keas.Mvc.Helpers
             {
                 User = james,
                 Team = caes,
-                Group = "CRU",
                 Tags = "CRU",
                 FirstName = james.FirstName,
                 LastName = james.LastName,
@@ -145,7 +142,6 @@ namespace Keas.Mvc.Helpers
             {
                 User = cal,
                 Team = caes,
-                Group = "CRU",
                 Tags = "CRU",
                 FirstName = cal.FirstName,
                 LastName = cal.LastName,
@@ -155,7 +151,6 @@ namespace Keas.Mvc.Helpers
             {
                 User = jason,
                 Team = caes,
-                Group = "CRU",
                 Tags = "CRU",
                 FirstName = jason.FirstName,
                 LastName = jason.LastName,
@@ -166,7 +161,6 @@ namespace Keas.Mvc.Helpers
             {
                 User = james,
                 Team = ps,
-                Group = "IT",
                 FirstName = james.FirstName,
                 LastName = james.LastName,
                 Email = james.Email

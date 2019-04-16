@@ -2,7 +2,6 @@ CREATE TABLE [dbo].[Equipment] (
     [Id]                    INT            IDENTITY (1, 1) NOT NULL,
     [Active]                BIT            NOT NULL,
     [EquipmentAssignmentId] INT            NULL,
-    [Group]                 NVARCHAR (32)  NULL,
     [Make]                  NVARCHAR (MAX) NULL,
     [Model]                 NVARCHAR (MAX) NULL,
     [Name]                  NVARCHAR (64)  NOT NULL,

@@ -52,7 +52,6 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)50)]",
             }));
-            expectedFields.Add(new NameAndType("Group", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("HomePhone", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>()));
             expectedFields.Add(new NameAndType("IsSupervisor", "System.Boolean", new List<string>

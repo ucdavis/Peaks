@@ -40,10 +40,6 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Assignment", "Keas.Core.Domain.EquipmentAssignment", new List<string>()));
             expectedFields.Add(new NameAndType("Attributes", "System.Collections.Generic.List`1[Keas.Core.Domain.EquipmentAttribute]", new List<string>()));
             expectedFields.Add(new NameAndType("EquipmentAssignmentId", "System.Nullable`1[System.Int32]", new List<string>()));
-            expectedFields.Add(new NameAndType("Group", "System.String", new List<string>
-            {
-                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)32)]",
-            }));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.KeyAttribute()]",

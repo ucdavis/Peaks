@@ -48,7 +48,6 @@ namespace Keas.Mvc.Controllers.Api
                     TeamId = r.TeamId,
                     Notes = r.Notes,
                     UserId = r.UserId,
-                    Group = r.Group,
                     Title = r.Title,
                     HomePhone = r.HomePhone,
                     TeamPhone = r.TeamPhone,
