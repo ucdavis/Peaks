@@ -56,6 +56,13 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                             row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
                     },
                     {
+                        Header: "Supervisor",
+                        accessor: "person.supervisor.name",
+                        filterMethod: (filter, row) =>
+                            !!row[filter.id] &&
+                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                    },
+                    {
                         Cell: row => <span>{row.original.keyCount}</span>,
                         Header: "Keys",
                         accessor: "keyCount",
