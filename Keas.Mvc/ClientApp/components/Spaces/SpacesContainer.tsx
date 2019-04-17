@@ -93,7 +93,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                         <div className="card-body">
                             Don't see your spaces? Visit the{" "}
                             <a
-                                href="https://computing.caes.ucdavis.edu/faq/peaks/spaces"
+                                href="https://computing.caes.ucdavis.edu/documentation/peaks/spaces"
                                 target="_blank"
                             >
                                 Space FAQ
