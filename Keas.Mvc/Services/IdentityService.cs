@@ -153,17 +153,24 @@ namespace Keas.Mvc.Services
 
             if (result.ResponseData.Results.Length > 0)
             {
-                var user = new User()
-                {
-                    FirstName = result.ResponseData.Results[0].DFirstName,
-                    LastName = result.ResponseData.Results[0].DLastName,
-                    Id = result.ResponseData.Results[0].UserId,
-                    Email = email,
-                    Iam = iamId
-                };
+                var ucdKerbPerson = result.ResponseData.Results.First();
+                var user = CreateUser(email, ucdKerbPerson, iamId);
                 return user;
             }
             return null;
+        }
+
+        private User CreateUser(string email, KerberosResult ucdKerbPerson, string iamId)
+        {
+            var user = new User()
+            {
+                FirstName = ucdKerbPerson.FirstName,
+                LastName = ucdKerbPerson.LastName,
+                Id = ucdKerbPerson.UserId,
+                Email = email,
+                Iam = iamId
+            };
+            return user;
         }
 
         public async Task<User> GetByKerberos(string kerb)
@@ -197,15 +204,8 @@ namespace Keas.Mvc.Services
             }
 
             var ucdContact = ucdContactResult.ResponseData.Results.First();
+            var rtValue = CreateUser(ucdContact.Email, ucdKerbPerson, ucdKerbPerson.IamId);
 
-            var rtValue = new User()
-            {
-                FirstName = ucdKerbPerson.DFirstName,
-                LastName = ucdKerbPerson.DLastName,
-                Id = ucdKerbPerson.UserId,
-                Email = ucdContact.Email,
-                Iam = ucdKerbPerson.IamId
-            };
             if (string.IsNullOrWhiteSpace(rtValue.Email))
             {
                 if (!string.IsNullOrWhiteSpace(ucdKerbPerson.UserId))
