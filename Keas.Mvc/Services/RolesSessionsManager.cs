@@ -48,6 +48,11 @@ namespace Keas.Mvc.Services
             else
             {
                 roleContainer = JsonConvert.DeserializeObject<RoleContainer>(sessionResult);
+                if (roleContainer.UserId != userId)
+                {
+                    roleContainer = new RoleContainer();
+                    roleContainer.UserId = userId;
+                }
             }
 
             var team = roleContainer.Teams.FirstOrDefault(a => a.TeamName == slug);
