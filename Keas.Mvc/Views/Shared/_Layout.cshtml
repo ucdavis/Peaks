@@ -100,7 +100,9 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
                             </li>
-                        } else {
+                        }
+                        else
+                        {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
                             </li>
@@ -109,24 +111,40 @@
                         if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-controller="TeamAdmin" asp-action="Index">Admin</a>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle nav-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Admin <i class="fas fa-caret-down fa-lg"></i>
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                        <a class="dropdown-item" asp-controller="TeamAdmin" asp-action="Index">Admin Home</a>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="TagsManager">Team Tags</a>
+                                        <a class="dropdown-item" asp-action="AddFISOrg" asp-controller="TeamAdmin">Add New Org Code</a>
+                                        <a class="dropdown-item" asp-action="AddPpsDepartment" asp-controller="TeamAdmin">Add PPS Department</a>
+                                        <a class="dropdown-item" asp-action="BulkLoadPeople" asp-controller="TeamAdmin">Bulk Load People</a>
+                                        <a class="dropdown-item" asp-action="BulkEdit" asp-controller="TeamAdmin">Bulk Edit People</a>
+                                        <a class="dropdown-item" asp-action="Upload" asp-controller="TeamAdmin">CSV Imports</a>
+                                        <a class="dropdown-item" asp-action="RoledMembers" asp-controller="TeamAdmin">Admin roles</a>
+                                        <a class="dropdown-item" asp-action="Index" asp-controller="Report">Reports</a>
+                                        <a class="dropdown-item" asp-action="RegenerateApiCode" asp-controller="TeamAdmin">API Code</a>
+                                    </div>
+                                </div>
                             </li>
                         }
-                
-                      <li class="nav-item">
-                          <a class="nav-link" asp-controller="Help" asp-action="Index">Help</a>
-                      </li>
-                  }
-            </ul>
-          <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
-              <span>Welcome @User.GetNameClaim()</span>
-              <form class="flexer" asp-area="" asp-controller="Account" asp-action="Logout2" method="post" id="logoutForm">
-                <button type="submit" class="btn btn-link btn-border" style="margin-left: 8px;">Sign out</button>
-              </form>
-          </div>
-      </div>
-    </div>
-    </nav>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Help" asp-action="Index">Help</a>
+                        </li>
+                    }
+                </ul>
+                    <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
+                        <span>Welcome @User.GetNameClaim()</span>
+                        <form class="flexer" asp-area="" asp-controller="Account" asp-action="Logout2" method="post" id="logoutForm">
+                            <button type="submit" class="btn btn-link btn-border" style="margin-left: 8px;">Sign out</button>
+                        </form>
+                    </div>
+                    </div>
+                    </div>
+                </nav>
     @if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"] as string))
     {
         <div class="container">
@@ -158,7 +176,7 @@
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-                <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
                 integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
                 crossorigin="anonymous">
         </script>
