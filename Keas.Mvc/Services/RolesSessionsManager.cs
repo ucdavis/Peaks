@@ -6,6 +6,7 @@ using Keas.Core.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace Keas.Mvc.Services
 {
@@ -47,9 +48,19 @@ namespace Keas.Mvc.Services
             }
             else
             {
-                roleContainer = JsonConvert.DeserializeObject<RoleContainer>(sessionResult);
+                try
+                {
+                    roleContainer = JsonConvert.DeserializeObject<RoleContainer>(sessionResult);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e.Message);
+                    roleContainer = new RoleContainer();
+                }
+                
                 if (roleContainer.UserId != userId)
                 {
+                    _contextAccessor.HttpContext.Session.Remove(RolesSessionKey);
                     roleContainer = new RoleContainer();
                     roleContainer.UserId = userId;
                 }
@@ -62,7 +73,9 @@ namespace Keas.Mvc.Services
                 team = new Team
                 {
                     TeamName = slug, 
-                    TeamRoles = await _dbContext.TeamPermissions.Where(a => a.Team.Slug == slug && a.UserId == userId).Select(a => a.Role.Name).ToArrayAsync(),
+                    TeamRoles = await _dbContext.TeamPermissions
+                        .Where(a => a.Team.Slug == slug && a.UserId == userId)
+                        .Select(a => a.Role.Name).ToArrayAsync(),
                 };
                 roleContainer.Teams.Add(team);
                 
@@ -72,6 +85,8 @@ namespace Keas.Mvc.Services
 
             return team.TeamRoles;
         }
+
+        
 
         public class RoleContainer
         {
