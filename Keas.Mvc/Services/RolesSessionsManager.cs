@@ -35,6 +35,13 @@ namespace Keas.Mvc.Services
         /// <returns></returns>
         public async Task<string[]> GetTeamRoleNames(string slug)
         {
+            var roleContainer = await GetRoleContainer(slug);
+            
+            return roleContainer.Teams.First(a => a.TeamName == slug).TeamRoles;
+        }
+
+        private async Task<RoleContainer> GetRoleContainer(string slug)
+        {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
 
             var sessionResult = _contextAccessor.HttpContext.Session.GetString(RolesSessionKey);
@@ -57,7 +64,7 @@ namespace Keas.Mvc.Services
                     Log.Error(e.Message);
                     roleContainer = new RoleContainer();
                 }
-                
+
                 if (roleContainer.UserId != userId)
                 {
                     _contextAccessor.HttpContext.Session.Remove(RolesSessionKey);
@@ -72,21 +79,19 @@ namespace Keas.Mvc.Services
             {
                 team = new Team
                 {
-                    TeamName = slug, 
+                    TeamName = slug,
                     TeamRoles = await _dbContext.TeamPermissions
                         .Where(a => a.Team.Slug == slug && a.UserId == userId)
                         .Select(a => a.Role.Name).ToArrayAsync(),
                 };
                 roleContainer.Teams.Add(team);
-                
+
                 _contextAccessor.HttpContext.Session.SetString(RolesSessionKey, JsonConvert.SerializeObject(roleContainer));
             }
 
-
-            return team.TeamRoles;
+            return roleContainer;
         }
 
-        
 
         public class RoleContainer
         {
