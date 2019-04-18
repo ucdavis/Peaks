@@ -49,13 +49,14 @@ namespace Keas.Mvc.Services
 
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ApplicationDbContext _dbContext;
-        private readonly ISessionManagementService _sessionManagementService;
+        private readonly IRolesSessionsManager _rolesSessionsManager;
 
-        public SecurityService(IHttpContextAccessor contextAccessor, ApplicationDbContext dbContext, ISessionManagementService sessionManagementService)
+
+        public SecurityService(IHttpContextAccessor contextAccessor, ApplicationDbContext dbContext, IRolesSessionsManager rolesSessionsManager)
         {
             _contextAccessor = contextAccessor;
             _dbContext = dbContext;
-            _sessionManagementService = sessionManagementService;
+            _rolesSessionsManager = rolesSessionsManager;
         }
 
         public async Task<bool> IsInRoles(List<Role> roles, string teamSlug)
@@ -84,8 +85,8 @@ namespace Keas.Mvc.Services
 
         public async Task<bool> IsInRoles(string[] roles, string teamSlug, string userId)
         {
-            var roleNames = await _sessionManagementService.GetTeamRoleNames(teamSlug);
-            return roleNames.Intersect(roles).Any();
+            var roleNames = await _rolesSessionsManager.GetTeamRoleNames(teamSlug);
+            return roles.Intersect(roleNames).Any();
             //return await _dbContext.TeamPermissions
             //        .AsNoTracking().
             //        AnyAsync(p => p.UserId == userId && p.Team.Slug == teamSlug && roles.Contains(p.Role.Name));
