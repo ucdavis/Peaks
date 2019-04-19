@@ -13,6 +13,7 @@ namespace Keas.Mvc.Services
     public interface IRolesSessionsManager
     {
         Task<string[]> GetTeamRoleNames(string slug);
+        Task<string[]> GetTeamOrAdminRoleNames(string slug);
         Task<string[]> GetSystemRoleNames();
     }
 
@@ -40,6 +41,18 @@ namespace Keas.Mvc.Services
             roleContainer = await GetTeams(slug, roleContainer);
             
             return roleContainer.Teams.First(a => a.TeamName == slug).TeamRoles;
+        }
+
+        public async Task<string[]> GetTeamOrAdminRoleNames(string slug)
+        {
+            var roleContainer = GetRoleContainer();
+            roleContainer = await GetTeams(slug, roleContainer);
+            roleContainer = await GetSystemRoles(roleContainer);
+
+            var rolesNames = roleContainer.Teams.First(a => a.TeamName == slug).TeamRoles;
+
+
+            return rolesNames.Union(roleContainer.SystemRoles.TeamRoles).Distinct().ToArray();
         }
 
         public async Task<string[]> GetSystemRoleNames()

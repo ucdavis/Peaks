@@ -36,13 +36,11 @@ namespace Keas.Mvc.Services
 
         Task<List<TeamPermission>> GetUserRolesInTeam(Team team);
 
-        Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team);
-
-        Task<List<Role>> GetUserRolesInTeamOrAdmin(string teamSlug);
+        Task<string[]> GetUserRoleNamesInTeamOrAdmin(string teamSlug);
 
         Task<bool> IsInTeamOrAdmin(string teamslug);
 
-        bool IsRoleOrDAInList(List<Role> list, string roleName);
+        bool IsRoleNameOrDAInArray(string[] roles, string roleName);
     }
     public class SecurityService : ISecurityService
     {
@@ -87,9 +85,6 @@ namespace Keas.Mvc.Services
         {
             var roleNames = await _rolesSessionsManager.GetTeamRoleNames(teamSlug);
             return roles.Intersect(roleNames).Any();
-            //return await _dbContext.TeamPermissions
-            //        .AsNoTracking().
-            //        AnyAsync(p => p.UserId == userId && p.Team.Slug == teamSlug && roles.Contains(p.Role.Name));
         }
 
         public async Task<bool> IsInRoles(List<Role> roles, string teamSlug, User user)
@@ -127,9 +122,6 @@ namespace Keas.Mvc.Services
         {
             var systemRoleNames = await _rolesSessionsManager.GetSystemRoleNames();
             return roles.Intersect(systemRoleNames).Any();
-            //return await _dbContext.SystemPermissions
-            //    .AsNoTracking()
-            //    .AnyAsync(a => a.UserId == userId && roles.Contains(a.Role.Name));
         }
 
         public async Task<bool> IsInRole(string roleCode, string teamSlug)
@@ -234,45 +226,9 @@ namespace Keas.Mvc.Services
             return userPermissions;
         }
 
-
-        public async Task<List<Role>> GetUserRolesInTeamOrAdmin(Team team)
+        public async Task<string[]> GetUserRoleNamesInTeamOrAdmin(string teamSlug)
         {
-            var userId = _contextAccessor.HttpContext.User.Identity.Name;
-
-            var userPermissions = await _dbContext.TeamPermissions
-                .Where(x => x.TeamId == team.Id && x.User.Id == userId)
-                .Select(tp => tp.Role)
-                .AsNoTracking()
-                .ToListAsync();
-
-            var admin = await _dbContext.SystemPermissions
-                .Where(sp => sp.User.Id == userId)
-                .Select(sp => sp.Role)
-                .AsNoTracking()
-                .ToListAsync();
-
-            userPermissions.AddRange(admin);
-            return userPermissions;
-        }
-
-        public async Task<List<Role>> GetUserRolesInTeamOrAdmin(string teamSlug)
-        {
-            var userId = _contextAccessor.HttpContext.User.Identity.Name;
-
-            var userPermissions = await _dbContext.TeamPermissions
-                .Where(x => x.Team.Slug == teamSlug && x.User.Id == userId)
-                .Select(tp => tp.Role)
-                .AsNoTracking()
-                .ToListAsync();
-
-            var admin = await _dbContext.SystemPermissions
-                .Where(sp => sp.User.Id == userId)
-                .Select(sp => sp.Role)
-                .AsNoTracking()
-                .ToListAsync();
-
-            userPermissions.AddRange(admin);
-            return userPermissions;
+            return await _rolesSessionsManager.GetTeamOrAdminRoleNames(teamSlug);
         }
 
         public async Task<bool> IsInTeamOrAdmin(string teamslug)
@@ -282,21 +238,19 @@ namespace Keas.Mvc.Services
             {
                 return true;
             }
-            var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            return await _dbContext.SystemPermissions
-                .AsNoTracking()
-                .AnyAsync(sp => sp.User.Id == userId);
+
+            var systemRoles = await _rolesSessionsManager.GetSystemRoleNames();
+            return systemRoles.Length > 0;
         }
 
-        public bool IsRoleOrDAInList(List<Role> list, string roleName)
+        public bool IsRoleNameOrDAInArray(string[] roles, string roleName)
         {
-            if(list.Where(r => r.Name == Role.Codes.DepartmentalAdmin).Any() || list.Where(r => r.Name == roleName).Any())
+            if (roles.Contains(Role.Codes.DepartmentalAdmin) || roles.Contains(roleName))
             {
                 return true;
-            } else 
-            {
-                return false;
             }
+
+            return false;
         }
     }
 }
