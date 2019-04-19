@@ -3,10 +3,8 @@
     ViewData["Title"] = "Upload CSV";
 }
 
-<div class="row justify-content-between">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header-primary">
+        <div class="card keys-color">
+            <div class="card-header-keys">
                 <div class="card-head">
                     <h2>Upload Keys</h2>
                 </div>
@@ -15,8 +13,8 @@
                 <a href="UploadKeys" class="btn btn-link">Upload Keys from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
             </div>
         </div>
-        <div class="card">
-            <div class="card-header-primary">
+        <div class="card equipment-color">
+            <div class="card-header-equipment">
                 <div class="card-head">
                     <h2>Upload Equipment</h2>
                 </div>
@@ -25,10 +23,6 @@
                 <a href="UploadEquipment" class="btn btn-link">Upload Equipment from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
             </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-    </div>
-</div>
+
 
 

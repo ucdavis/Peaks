@@ -3,8 +3,6 @@
 @{
         ViewData["Title"] = "Role Assigned Members ";
     }
-    <div class="row justify-content-between">
-      <div class="col-md-8">
       <div class="card">
         <div class="card-header-primary">
           <div class="card-head row justify-content-between">
@@ -50,10 +48,3 @@
           </table>
         </div>
       </div>
-      </div>
-      <div class="col-md-4">
-
-            @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-
-      </div>
-    </div>
