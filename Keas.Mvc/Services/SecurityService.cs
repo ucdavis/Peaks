@@ -125,9 +125,11 @@ namespace Keas.Mvc.Services
 
         public async Task<bool> IsInAdminRoles(string[] roles, string userId)
         {
-            return await _dbContext.SystemPermissions
-                .AsNoTracking()
-                .AnyAsync(a => a.UserId == userId && roles.Contains(a.Role.Name));
+            var systemRoleNames = await _rolesSessionsManager.GetSystemRoleNames();
+            return roles.Intersect(systemRoleNames).Any();
+            //return await _dbContext.SystemPermissions
+            //    .AsNoTracking()
+            //    .AnyAsync(a => a.UserId == userId && roles.Contains(a.Role.Name));
         }
 
         public async Task<bool> IsInRole(string roleCode, string teamSlug)
