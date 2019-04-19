@@ -97,7 +97,7 @@ namespace Keas.Mvc.Services
                     TeamName = "System",
                     TeamRoles = await _dbContext.SystemPermissions
                         .AsNoTracking()
-                        .Where(a => a.UserId == userId).Select(a => a.Role.Name).ToArrayAsync(),
+                        .Where(a => a.UserId == userId).Select(a => a.Role.Name).Distinct().ToArrayAsync(),
                 };
                 roleContainer.SystemRoles = systemRole;
                 _contextAccessor.HttpContext.Session.SetString(RolesSessionKey, JsonConvert.SerializeObject(roleContainer));
