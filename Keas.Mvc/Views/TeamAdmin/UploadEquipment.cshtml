@@ -5,15 +5,13 @@
 @{
     ViewData["Title"] = "Upload CSV Equipment File";
 }
-<div class="row justify-content-between">
-    <div class="col-md-8">
         <div class="card">
-            <div class="card-header-primary">
+            <div class="card-header-equipment">
                 <div class="card-head">
                     <h2>Upload a CSV File for Equipment import</h2>
                 </div>
             </div>
-            <div class="card-content">
+            <div class="card-content col-lg-6">
                 <form asp-action="UploadEquipment" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <fieldset>
@@ -28,7 +26,7 @@
                                             <input type="hidden" id="filename" name="filename" value="">
                                             <input type="file" id="file" name="file" class="form-control" accept=".csv">
                                             <div class="input-group-btn">
-                                                <input type="submit" value="Upload CSV" class="btn btn-primary">
+                                                <input type="submit" value="Upload CSV" class="btn btn-primary" style="margin-left: 5px;">
                                             </div>
                                         </div>
                                     </div>
@@ -42,7 +40,7 @@
         @if (Model == null || Model.Count <= 0)
         {
             <div class="card">
-                <div class="card-header-primary">
+                <div class="card-header-equipment">
                     <div class="card-head">
                         <h2>Instructions/Example</h2>
                     </div>
@@ -80,15 +78,12 @@
                 </div>
             </div>
         }
-    </div>
-    <div class="col-md-4">
-        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-    </div>
+  
     @if (Model != null && Model.Count > 0)
     {
         <div style="padding-top: 15px">
             <div class="card">
-                <div class="card-header-primary">
+                <div class="card-header-equipment">
                     <div class="card-head">
                         <h2>Import Results</h2>
                     </div>
@@ -215,7 +210,7 @@
             </div>
         </div>
     }
-</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

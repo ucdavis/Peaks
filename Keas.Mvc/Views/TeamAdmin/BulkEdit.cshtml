@@ -5,80 +5,74 @@
     ViewBag.Title = "Person Bulk Edit";
 }
 
-<div class="row justify-content-between">
-    <div class="col-md-8">
-        <div class="card people-color">
-            <div class="card-header-people">
-                <div class="card-head">
-                    <h2>Bulk Edit</h2>
-                </div>
-            </div>
-            <div class="card-content">
-
-                <form id="bulk-edit-form" asp-action="BulkEdit">
-                    @Html.HiddenFor(a => a.Ids)
-
-                    <div class="form-group">
-                        <label asp-for="DeleteUsers" class="control-label"></label>
-                        <input asp-for="DeleteUsers" class="form-control form-control-lg" />
-                    </div>
-                    <div id="showHide">
-                        <div class="form-group">
-                            <label class="control-label">Category</label>
-                            <select asp-for="Category" asp-items="@(new SelectList(Model.CategoryChoices))" class="form-control"></select>
-                            <div class="form-group">
-                                <input asp-for="UpdateCategory" />
-                                <label asp-for="UpdateCategory"></label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="StartDate"></label>
-                            <input asp-for="StartDate" class="form-control datepicker" />
-                            <div class="form-group">
-                                <input asp-for="UpdateStartDate" />
-                                <label asp-for="UpdateStartDate"></label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="EndDate"></label>
-                            <input asp-for="EndDate" class="form-control datepicker" />
-                            <div class="form-group">
-                                <input asp-for="UpdateEndDate" />
-                                <label asp-for="UpdateEndDate"></label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="SupervisorEmail"></label>
-                            <input asp-for="SupervisorEmail" class="form-control" />
-                            <div class="form-group">
-                                <input asp-for="UpdateSupervisorEmail" />
-                                <label asp-for="UpdateSupervisorEmail"></label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-
-                            <label asp-for="SelectedTags"></label>
-                            <select asp-for="SelectedTags" asp-items="@(new SelectList(Model.Tags))" class="form-control" multiple></select>
-                            <small class="help-block">Ctrl Click to select multiple Tags</small>
-                            <div class="form-group">
-                                <input asp-for="UpdateTags" />
-                                <label asp-for="UpdateTags"></label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Updated Selected People" class="btn btn-primary" />
-                    </div>
-                </form>
-
-
-            </div>
+<div class="card people-color">
+    <div class="card-header-people">
+        <div class="card-head">
+            <h2>Bulk Edit</h2>
         </div>
     </div>
-    <div class="col-md-4">
-        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
+    <div class="card-content">
+        <div class="col-lg-4">
+            <form id="bulk-edit-form" asp-action="BulkEdit">
+                @Html.HiddenFor(a => a.Ids)
+
+                <div class="form-group">
+                    <label asp-for="DeleteUsers" class="control-label"></label>
+                    <input asp-for="DeleteUsers" class="form-control form-control-lg" />
+                </div>
+                <div id="showHide">
+                    <div class="form-group">
+                        <label class="control-label">Category</label>
+                        <select asp-for="Category" asp-items="@(new SelectList(Model.CategoryChoices))" class="form-control"></select>
+                        <div class="form-group">
+                            <input asp-for="UpdateCategory" />
+                            <label asp-for="UpdateCategory"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="StartDate"></label>
+                        <input asp-for="StartDate" class="form-control datepicker" />
+                        <div class="form-group">
+                            <input asp-for="UpdateStartDate" />
+                            <label asp-for="UpdateStartDate"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EndDate"></label>
+                        <input asp-for="EndDate" class="form-control datepicker" />
+                        <div class="form-group">
+                            <input asp-for="UpdateEndDate" />
+                            <label asp-for="UpdateEndDate"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SupervisorEmail"></label>
+                        <input asp-for="SupervisorEmail" class="form-control" />
+                        <div class="form-group">
+                            <input asp-for="UpdateSupervisorEmail" />
+                            <label asp-for="UpdateSupervisorEmail"></label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+
+                        <label asp-for="SelectedTags"></label>
+                        <select asp-for="SelectedTags" asp-items="@(new SelectList(Model.Tags))" class="form-control" multiple></select>
+                        <small class="help-block">Ctrl Click to select multiple Tags</small>
+                        <div class="form-group">
+                            <input asp-for="UpdateTags" />
+                            <label asp-for="UpdateTags"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Updated Selected People" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
+
 <div class="card people-color">
     <div class="card-header-people">
         <div class="card-head">

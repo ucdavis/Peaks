@@ -1,41 +1,30 @@
 @model Keas.Mvc.Models.BulkLoadViewModel
-
 @{
     ViewData["Title"] = "Add PPS Department to Team";
 }
-<div class="row justify-content-between">
-  <div class="col-md-8">
-  <div class="card">
+<div class="card">
     <div class="card-header-primary">
-      <div class="card-head">
-<h2>Add PPS Department to Team</h2>
-      </div>
+        <div class="card-head">
+            <h2>Add PPS Department to Team</h2>
+        </div>
     </div>
-    <div class="card-content">
-      <form asp-action="AddPpsDepartment">
-          <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-          <div class="form-group">
-              <label asp-for="PPSDeptCode" class="control-label"></label>
-              <input asp-for="PPSDeptCode" class="form-control"/>
-              <span asp-validation-for="PPSDeptCode" class="text-danger"></span>
-          </div>
-          <div class="form-group">
-          <input id="submitbtn" type="submit" value="Add to Team" class="btn btn-primary"/>
-          </div>
-      </form>
+    <div class="card-content col-lg-4">
+        <form asp-action="AddPpsDepartment">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="PPSDeptCode" class="control-label"></label>
+                <input asp-for="PPSDeptCode" class="form-control" />
+                <span asp-validation-for="PPSDeptCode" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input id="submitbtn" type="submit" value="Add to Team" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
-  </div>
-  </div>
-  <div class="col-md-4">
-
-        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-
-  </div>
 </div>
 
 
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-
 }
