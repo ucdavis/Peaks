@@ -2,8 +2,7 @@
 @{
     ViewData["Title"] = "Regenerate Api Code";
 }
-<div class="row justify-content-between">
-    <div class="col-md-8">
+
         <form asp-action="RegenerateApiCode">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="card">
@@ -72,9 +71,3 @@
                 </div>
             }
         </div>
-    </div>
-    <div class="col-md-4">
-
-        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-    </div>
-</div>

@@ -3,15 +3,14 @@
 @{
     ViewData["Title"] = "Add Member to Role";
 }
-<div class="row justify-content-between">
-  <div class="col-md-8">
+
   <div class="card">
     <div class="card-header-primary">
       <div class="card-head">
 <h2>Add Member to Role</h2>
       </div>
     </div>
-    <div class="card-content">
+    <div class="card-content col-lg-4">
       <form asp-action="AddMemberRole">
           <div asp-validation-summary="ModelOnly" class="text-danger"></div>
           <div class="form-group">
@@ -30,13 +29,7 @@
       </form>
     </div>
   </div>
-  </div>
-  <div class="col-md-4">
 
-        @{await Html.RenderPartialAsync("_TeamAdminMenu");}
-
-  </div>
-</div>
 
 
 @section Scripts {
