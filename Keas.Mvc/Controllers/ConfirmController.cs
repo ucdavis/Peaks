@@ -16,18 +16,21 @@ namespace Keas.Mvc.Controllers
         private readonly ISecurityService _securityService;
         private readonly IEventService _eventService;
         private readonly IRolesSessionsManager _rolesSessionsManager;
+        private readonly ITeamSessionManager _teamSessionManager;
 
-        public ConfirmController(ApplicationDbContext context, ISecurityService _securityService, IEventService _eventService, IRolesSessionsManager rolesSessionsManager)
+        public ConfirmController(ApplicationDbContext context, ISecurityService _securityService, IEventService _eventService, IRolesSessionsManager rolesSessionsManager, ITeamSessionManager teamSessionManager)
         {
             _context = context;
             this._securityService = _securityService;
             this._eventService = _eventService;
             _rolesSessionsManager = rolesSessionsManager;
+            _teamSessionManager = teamSessionManager;
         }
 
         public IActionResult RefreshPermissions()
         {
             _rolesSessionsManager.ClearSessionRoles();
+            _teamSessionManager.ClearSessionRoles();
             return RedirectToAction("SelectTeam");
         }
 
@@ -167,7 +170,11 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(MyStuff));
         }
 
-        public async Task<IActionResult> SelectTeam(string urlRedirect) {
+        public async Task<IActionResult> SelectTeam(string urlRedirect)
+        {
+            var xxx = _teamSessionManager.GetMyTeams();
+
+
             var user = await _securityService.GetUser();
             if (user == null) 
             {

@@ -13,10 +13,12 @@ namespace Keas.Mvc.Controllers
     public class AccountController : Controller
     {
         private readonly IRolesSessionsManager _rolesSessionsManager;
+        private readonly ITeamSessionManager _teamSessionManager;
         private readonly AuthSettings _AuthSettings;
-        public AccountController(IOptions<AuthSettings> authSettings, IRolesSessionsManager rolesSessionsManager)
+        public AccountController(IOptions<AuthSettings> authSettings, IRolesSessionsManager rolesSessionsManager, ITeamSessionManager teamSessionManager)
         {
             _rolesSessionsManager = rolesSessionsManager;
+            _teamSessionManager = teamSessionManager;
             _AuthSettings = authSettings.Value;
         }
         public IActionResult AccessDenied()
@@ -42,6 +44,7 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> Logout2() //There is a logout above, maybe used for emulation.
         {
             _rolesSessionsManager.ClearSessionRoles();
+            _teamSessionManager.ClearSessionRoles();
             await HttpContext.SignOutAsync();           
             return Redirect($"{_AuthSettings.CasBaseUrl}logout");
         }
