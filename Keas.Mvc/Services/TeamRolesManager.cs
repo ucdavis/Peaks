@@ -10,7 +10,7 @@ using Serilog;
 
 namespace Keas.Mvc.Services
 {
-    public interface IRolesSessionsManager
+    public interface ITeamRolesManager
     {
         Task<string[]> GetTeamRoleNames(string slug);
         Task<string[]> GetTeamOrAdminRoleNames(string slug);
@@ -19,14 +19,14 @@ namespace Keas.Mvc.Services
 
     }
 
-    public class RolesSessionsManager : IRolesSessionsManager
+    public class TeamRolesManager : ITeamRolesManager
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ApplicationDbContext _dbContext;
         private const string RolesSessionKey = "TeamRolesSessionKey";
 
 
-        public RolesSessionsManager(IHttpContextAccessor contextAccessor, ApplicationDbContext dbContext)
+        public TeamRolesManager(IHttpContextAccessor contextAccessor, ApplicationDbContext dbContext)
         {
             _contextAccessor = contextAccessor;
             _dbContext = dbContext;
