@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using AspNetCore.Security.CAS;
 using Keas.Mvc.Models;
+using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,11 @@ namespace Keas.Mvc.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly IRolesSessionsManager _rolesSessionsManager;
         private readonly AuthSettings _AuthSettings;
-        public AccountController(IOptions<AuthSettings> authSettings)
+        public AccountController(IOptions<AuthSettings> authSettings, IRolesSessionsManager rolesSessionsManager)
         {
+            _rolesSessionsManager = rolesSessionsManager;
             _AuthSettings = authSettings.Value;
         }
         public IActionResult AccessDenied()
@@ -38,6 +41,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Logout2() //There is a logout above, maybe used for emulation.
         {
+            _rolesSessionsManager.ClearSessionRoles();
             await HttpContext.SignOutAsync();           
             return Redirect($"{_AuthSettings.CasBaseUrl}logout");
         }
