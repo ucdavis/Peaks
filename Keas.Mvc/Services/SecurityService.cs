@@ -14,13 +14,7 @@ namespace Keas.Mvc.Services
     {
         Task<bool> IsInRole(string roleCode, string teamSlug);
 
-        Task<bool> IsInRoles(List<Role> roles, string teamSlug);
-
-        Task<bool> IsInAdminRoles(List<Role> roles, User user);
-
         Task<bool> IsInAdminRoles(string[] roles, string userId);
-
-        Task<bool> IsInRoles(List<Role> roles, string teamSlug, User user);
 
         Task<bool> IsInRoles(string[] roles, string teamSlug, string userId);
 
@@ -57,66 +51,12 @@ namespace Keas.Mvc.Services
             _rolesSessionsManager = rolesSessionsManager;
         }
 
-        public async Task<bool> IsInRoles(List<Role> roles, string teamSlug)
-        {
-            var user = await GetUser();
-
-            var team = await _dbContext.Teams
-                .AsNoTracking()
-                .SingleAsync(t => t.Slug == teamSlug);
-
-            var roleIds = roles.Select(a => a.Id).ToArray();
-
-            var inRole = await _dbContext.TeamPermissions
-                .AsNoTracking()
-                .AnyAsync(a => a.Team == team && a.UserId == user.Id && roleIds.Contains(a.RoleId));
-
-            if (inRole)
-            {
-                return true;
-            }
-
-            return await _dbContext.SystemPermissions
-                .AsNoTracking()
-                .AnyAsync(a => a.UserId == user.Id && roleIds.Contains(a.RoleId));
-        }
-
         public async Task<bool> IsInRoles(string[] roles, string teamSlug, string userId)
         {
             var roleNames = await _rolesSessionsManager.GetTeamRoleNames(teamSlug);
             return roles.Intersect(roleNames).Any();
         }
 
-        public async Task<bool> IsInRoles(List<Role> roles, string teamSlug, User user)
-        {
-            var team = await _dbContext.Teams
-                .AsNoTracking()
-                .SingleAsync(t => t.Slug == teamSlug);
-
-            var roleIds = roles.Select(a => a.Id).ToArray();
-
-            var inRole = await _dbContext.TeamPermissions
-                .AsNoTracking()
-                .AnyAsync(a => a.Team == team && a.UserId == user.Id && roleIds.Contains(a.RoleId));
-
-            if (inRole)
-            {
-                return true;
-            }
-
-            return await _dbContext.SystemPermissions
-                .AsNoTracking()
-                .AnyAsync(a => a.UserId == user.Id && roleIds.Contains(a.RoleId));
-        }
-
-        public async Task<bool> IsInAdminRoles(List<Role> roles, User user)
-        {
-            var roleIds = roles.Select(a => a.Id).ToArray();
-
-            return await _dbContext.SystemPermissions
-                .AsNoTracking()
-                .AnyAsync(a => a.UserId == user.Id && roleIds.Contains(a.RoleId));
-        }
 
         public async Task<bool> IsInAdminRoles(string[] roles, string userId)
         {
