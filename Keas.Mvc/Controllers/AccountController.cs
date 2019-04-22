@@ -41,7 +41,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Logout2() //There is a logout above, maybe used for emulation.
         {
-            _teamsManager.ClearTeamSession();
+            _teamsManager.ClearTeams();
             await HttpContext.SignOutAsync();           
             return Redirect($"{_AuthSettings.CasBaseUrl}logout");
         }

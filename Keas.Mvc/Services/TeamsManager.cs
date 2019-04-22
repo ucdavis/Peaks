@@ -16,7 +16,7 @@ namespace Keas.Mvc.Services
         Task<string[]> GetTeamOrAdminRoleNames(string slug);
         Task<string[]> GetSystemRoleNames();
         Task<Dictionary<string, string>> GetMyTeams();
-        void ClearTeamSession();
+        void ClearTeams();
 
     }
 
@@ -43,7 +43,7 @@ namespace Keas.Mvc.Services
             var roleContainer = GetRoleContainer();
             roleContainer = await GetTeams(slug, roleContainer);
             
-            return roleContainer.Teams.First(a => a.TeamName == slug).TeamRoles;
+            return roleContainer.Teams.First(a => a.Name == slug).Roles;
         }
 
         public async Task<string[]> GetTeamOrAdminRoleNames(string slug)
@@ -52,10 +52,10 @@ namespace Keas.Mvc.Services
             roleContainer = await GetTeams(slug, roleContainer);
             roleContainer = await GetSystemRoles(roleContainer);
 
-            var rolesNames = roleContainer.Teams.First(a => a.TeamName == slug).TeamRoles;
+            var rolesNames = roleContainer.Teams.First(a => a.Name == slug).Roles;
 
 
-            return rolesNames.Union(roleContainer.SystemRoles.TeamRoles).Distinct().ToArray();
+            return rolesNames.Union(roleContainer.SystemRoles.Roles).Distinct().ToArray();
         }
 
         public async Task<string[]> GetSystemRoleNames()
@@ -63,10 +63,10 @@ namespace Keas.Mvc.Services
             var roleContainer = GetRoleContainer();
             roleContainer = await GetSystemRoles(roleContainer);
 
-            return roleContainer.SystemRoles.TeamRoles;
+            return roleContainer.SystemRoles.Roles;
         }
 
-        public void ClearTeamSession()
+        public void ClearTeams()
         {
             _contextAccessor.HttpContext.Session.Remove(RolesSessionKey);
         }
@@ -136,8 +136,8 @@ namespace Keas.Mvc.Services
             {
                 systemRole = new Team
                 {
-                    TeamName = "System",
-                    TeamRoles = await _dbContext.SystemPermissions
+                    Name = "System",
+                    Roles = await _dbContext.SystemPermissions
                         .Where(a => a.UserId == userId).Select(a => a.Role.Name).Distinct().ToArrayAsync(),
                 };
                 roleContainer.SystemRoles = systemRole;
@@ -149,14 +149,14 @@ namespace Keas.Mvc.Services
         private async Task<RoleContainer> GetTeams(string slug, RoleContainer roleContainer)
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
-            var team = roleContainer.Teams.FirstOrDefault(a => a.TeamName == slug);
+            var team = roleContainer.Teams.FirstOrDefault(a => a.Name == slug);
 
             if (team == null)
             {
                 team = new Team
                 {
-                    TeamName = slug,
-                    TeamRoles = await _dbContext.TeamPermissions
+                    Name = slug,
+                    Roles = await _dbContext.TeamPermissions
                         .Where(a => a.Team.Slug == slug && a.UserId == userId)
                         .Select(a => a.Role.Name).ToArrayAsync(),
                 };
@@ -184,8 +184,8 @@ namespace Keas.Mvc.Services
 
         public class Team
         {
-            public string TeamName { get; set; }
-            public string[] TeamRoles { get; set; }
+            public string Name { get; set; }
+            public string[] Roles { get; set; }
         }
 
     }

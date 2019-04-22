@@ -28,7 +28,7 @@ namespace Keas.Mvc.Controllers
 
         public IActionResult RefreshPermissions()
         {
-            _teamsManager.ClearTeamSession();
+            _teamsManager.ClearTeams();
             return RedirectToAction("SelectTeam");
         }
 
