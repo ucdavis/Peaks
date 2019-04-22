@@ -28,7 +28,6 @@ namespace Keas.Mvc.Services
 
         Task<List<User>> GetUsersInRoles(List<Role> roles, string teamSlug);
 
-        Task<List<TeamPermission>> GetUserRolesInTeam(Team team);
 
         Task<string[]> GetUserRoleNamesInTeamOrAdmin(string teamSlug);
 
@@ -66,35 +65,9 @@ namespace Keas.Mvc.Services
 
         public async Task<bool> IsInRole(string roleCode, string teamSlug)
         {
-            var role = await _dbContext.Roles
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Name == roleCode);
+            var roleNames = await _rolesSessionsManager.GetTeamRoleNames(teamSlug);
+            return roleNames.Contains(roleCode);
 
-            if (role == null)
-            {
-                throw new ArgumentException("Role not found");
-            }
-
-            var team = await _dbContext.Teams
-                .Include(t => t.TeamPermissions)
-                    .ThenInclude(tp => tp.User)
-                .Include(t => t.TeamPermissions)
-                    .ThenInclude(tp => tp.Role)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Slug == teamSlug);
-
-            if (team == null)
-            {
-                throw new ArgumentException("Team not found");
-            }
-
-            return await IsInRole(role, team);
-        }
-
-        private async Task<bool> IsInRole(Role role, Team team)
-        {
-            var user = await GetUser();
-            return team.TeamPermissions.Any(a => a.UserId == user.Id && a.RoleId == role.Id);
         }
 
         public async Task<User> GetUser()
@@ -152,18 +125,6 @@ namespace Keas.Mvc.Services
                 .ToListAsync();
 
             return users;
-        }
-
-        public async Task<List<TeamPermission>> GetUserRolesInTeam(Team team)
-        {
-            var userId = _contextAccessor.HttpContext.User.Identity.Name;
-
-            var userPermissions = await _dbContext.TeamPermissions
-                .Where(x => x.TeamId == team.Id && x.User.Id == userId)
-                .AsNoTracking()
-                .ToListAsync();
-
-            return userPermissions;
         }
 
         public async Task<string[]> GetUserRoleNamesInTeamOrAdmin(string teamSlug)
