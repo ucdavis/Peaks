@@ -15,23 +15,20 @@ namespace Keas.Mvc.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ISecurityService _securityService;
         private readonly IEventService _eventService;
-        private readonly ITeamRolesManager _teamRolesManager;
-        private readonly ITeamSessionManager _teamSessionManager;
+        private readonly ITeamsManager _teamsManager;
 
 
-        public ConfirmController(ApplicationDbContext context, ISecurityService _securityService, IEventService _eventService, ITeamRolesManager teamRolesManager, ITeamSessionManager teamSessionManager)
+        public ConfirmController(ApplicationDbContext context, ISecurityService _securityService, IEventService _eventService, ITeamsManager teamsManager)
         {
             _context = context;
             this._securityService = _securityService;
             this._eventService = _eventService;
-            _teamRolesManager = teamRolesManager;
-            _teamSessionManager = teamSessionManager;
+            _teamsManager = teamsManager;
         }
 
         public IActionResult RefreshPermissions()
         {
-            _teamRolesManager.ClearSessionRoles();
-            _teamSessionManager.ClearSessionRoles();
+            _teamsManager.ClearTeamSession();
             return RedirectToAction("SelectTeam");
         }
 
