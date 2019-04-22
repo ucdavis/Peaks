@@ -1,7 +1,9 @@
-@using Keas.Core.Models
+﻿@using Keas.Core.Models
+@using Keas.Mvc.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.Extensions.Configuration
 @inject IAuthorizationService AuthorizationService
+@inject ITeamsManager TeamsManager
 @inject IConfiguration Configuration
 <!DOCTYPE html>
 <html>
@@ -64,6 +66,11 @@
 
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @foreach (var teamItem in await TeamsManager.GetMyTeams())
+                            {
+                                <a class="dropdown-item" href='@string.Format("/{0}/home/index", teamItem.Key)' class="team-link">@teamItem.Value</a>
+                            }
+                            <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh Permissions</a>

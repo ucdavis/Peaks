@@ -10,23 +10,24 @@ using Serilog;
 
 namespace Keas.Mvc.Services
 {
-    public interface ITeamRolesManager
+    public interface ITeamsManager
     {
         Task<string[]> GetTeamRoleNames(string slug);
         Task<string[]> GetTeamOrAdminRoleNames(string slug);
         Task<string[]> GetSystemRoleNames();
-        void ClearSessionRoles();
+        Task<Dictionary<string, string>> GetMyTeams();
+        void ClearTeamSession();
 
     }
 
-    public class TeamRolesManager : ITeamRolesManager
+    public class TeamsManager : ITeamsManager
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ApplicationDbContext _dbContext;
         private const string RolesSessionKey = "TeamRolesSessionKey";
 
 
-        public TeamRolesManager(IHttpContextAccessor contextAccessor, ApplicationDbContext dbContext)
+        public TeamsManager(IHttpContextAccessor contextAccessor, ApplicationDbContext dbContext)
         {
             _contextAccessor = contextAccessor;
             _dbContext = dbContext;
@@ -65,9 +66,30 @@ namespace Keas.Mvc.Services
             return roleContainer.SystemRoles.TeamRoles;
         }
 
-        public void ClearSessionRoles()
+        public void ClearTeamSession()
         {
             _contextAccessor.HttpContext.Session.Remove(RolesSessionKey);
+        }
+
+        public async Task<Dictionary<string, string>> GetMyTeams()
+        {
+            var roleContainer = GetRoleContainer();
+            roleContainer = await GetTeamDictionary(roleContainer);
+            return roleContainer.TeamDictionary;
+
+        }
+
+        private async Task<RoleContainer> GetTeamDictionary(RoleContainer roleContainer)
+        {
+            var userId = _contextAccessor.HttpContext.User.Identity.Name;
+            if (roleContainer.TeamDictionary == null)
+            {
+                roleContainer.TeamDictionary = await _dbContext.People.Where(p => p.User.Id == userId).AsNoTracking()
+                    .Select(a => new {a.Team.Slug, a.Team.Name}).ToDictionaryAsync(a => a.Slug, a => a.Name);
+                _contextAccessor.HttpContext.Session.SetString(RolesSessionKey, JsonConvert.SerializeObject(roleContainer));
+            }
+
+            return roleContainer;
         }
 
         private RoleContainer GetRoleContainer()
@@ -157,6 +179,7 @@ namespace Keas.Mvc.Services
             public List<Team> Teams { get; set; }
 
             public Team SystemRoles { get; set; }
+            public Dictionary<string, string> TeamDictionary { get; set; }
         }
 
         public class Team

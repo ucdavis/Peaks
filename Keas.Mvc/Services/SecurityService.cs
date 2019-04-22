@@ -40,32 +40,32 @@ namespace Keas.Mvc.Services
 
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ApplicationDbContext _dbContext;
-        private readonly ITeamRolesManager _teamRolesManager;
+        private readonly ITeamsManager _teamsManager;
 
 
-        public SecurityService(IHttpContextAccessor contextAccessor, ApplicationDbContext dbContext, ITeamRolesManager teamRolesManager)
+        public SecurityService(IHttpContextAccessor contextAccessor, ApplicationDbContext dbContext, ITeamsManager teamsManager)
         {
             _contextAccessor = contextAccessor;
             _dbContext = dbContext;
-            _teamRolesManager = teamRolesManager;
+            _teamsManager = teamsManager;
         }
 
         public async Task<bool> IsInRoles(string[] roles, string teamSlug, string userId)
         {
-            var roleNames = await _teamRolesManager.GetTeamRoleNames(teamSlug);
+            var roleNames = await _teamsManager.GetTeamRoleNames(teamSlug);
             return roles.Intersect(roleNames).Any();
         }
 
 
         public async Task<bool> IsInAdminRoles(string[] roles, string userId)
         {
-            var systemRoleNames = await _teamRolesManager.GetSystemRoleNames();
+            var systemRoleNames = await _teamsManager.GetSystemRoleNames();
             return roles.Intersect(systemRoleNames).Any();
         }
 
         public async Task<bool> IsInRole(string roleCode, string teamSlug)
         {
-            var roleNames = await _teamRolesManager.GetTeamRoleNames(teamSlug);
+            var roleNames = await _teamsManager.GetTeamRoleNames(teamSlug);
             return roleNames.Contains(roleCode);
 
         }
@@ -129,7 +129,7 @@ namespace Keas.Mvc.Services
 
         public async Task<string[]> GetUserRoleNamesInTeamOrAdmin(string teamSlug)
         {
-            return await _teamRolesManager.GetTeamOrAdminRoleNames(teamSlug);
+            return await _teamsManager.GetTeamOrAdminRoleNames(teamSlug);
         }
 
         public async Task<bool> IsInTeamOrAdmin(string teamslug)
@@ -140,7 +140,7 @@ namespace Keas.Mvc.Services
                 return true;
             }
 
-            var systemRoles = await _teamRolesManager.GetSystemRoleNames();
+            var systemRoles = await _teamsManager.GetSystemRoleNames();
             return systemRoles.Length > 0;
         }
 

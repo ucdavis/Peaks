@@ -158,7 +158,7 @@ namespace Keas.Mvc
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFinancialService, FinancialService>();
             services.AddScoped<IReportService, ReportService>();
-            services.AddScoped<ITeamRolesManager, TeamRolesManager>();
+            services.AddScoped<ITeamsManager, TeamsManager>();
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
