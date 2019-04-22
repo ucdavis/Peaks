@@ -1,4 +1,4 @@
-﻿@using Keas.Core.Models
+@using Keas.Core.Models
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.Extensions.Configuration
 @inject IAuthorizationService AuthorizationService
@@ -64,7 +64,9 @@
 
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
+                            <a class="dropdown-item" href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh Permissions</a>
                         </div>
                     </div>
                 </div>

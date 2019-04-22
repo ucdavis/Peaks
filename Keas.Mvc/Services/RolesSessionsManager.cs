@@ -15,6 +15,8 @@ namespace Keas.Mvc.Services
         Task<string[]> GetTeamRoleNames(string slug);
         Task<string[]> GetTeamOrAdminRoleNames(string slug);
         Task<string[]> GetSystemRoleNames();
+        void ClearSessionRoles();
+
     }
 
     public class RolesSessionsManager : IRolesSessionsManager
@@ -61,6 +63,11 @@ namespace Keas.Mvc.Services
             roleContainer = await GetSystemRoles(roleContainer);
 
             return roleContainer.SystemRoles.TeamRoles;
+        }
+
+        public void ClearSessionRoles()
+        {
+            _contextAccessor.HttpContext.Session.Remove(RolesSessionKey);
         }
 
         private RoleContainer GetRoleContainer()
