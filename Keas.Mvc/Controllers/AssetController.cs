@@ -32,9 +32,7 @@ namespace Keas.Mvc.Controllers
                 return NotFound();
             }
 
-            var permissions = await _securityService.GetUserRolesInTeamOrAdmin(team);
-
-            var permissionNames = permissions.Select(p => p.Name).ToArray();
+            var permissionNames = await _securityService.GetUserRoleNamesInTeamOrAdmin(team.Slug);
  
             var model = new AssetModel { Team = team, Permissions = permissionNames };
 

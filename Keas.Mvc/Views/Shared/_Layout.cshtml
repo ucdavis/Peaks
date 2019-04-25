@@ -1,7 +1,9 @@
-﻿@using Keas.Core.Models
+@using Keas.Core.Models
+@using Keas.Mvc.Services
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.Extensions.Configuration
 @inject IAuthorizationService AuthorizationService
+@inject ITeamsManager TeamsManager
 @inject IConfiguration Configuration
 <!DOCTYPE html>
 <html>
@@ -64,7 +66,14 @@
 
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
+                            @foreach (var teamItem in await TeamsManager.GetMyTeams())
+                            {
+                                <a class="dropdown-item" href='@string.Format("/{0}/home/index", teamItem.Key)' class="team-link">@teamItem.Value</a>
+                            }
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh Permissions</a>
                         </div>
                     </div>
                 </div>
@@ -108,7 +117,7 @@
                             </li>
                         }
 
-                        if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
+                        if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded || (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.PersonManagerAccess)).Succeeded)
                         {
                             <li class="nav-item">
                                 <div class="dropdown">
@@ -116,16 +125,27 @@
                                         Admin <i class="fas fa-caret-down fa-lg"></i>
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                        <a class="dropdown-item" asp-controller="TeamAdmin" asp-action="Index">Admin Home</a>
-                                        <a class="dropdown-item" asp-action="Index" asp-controller="TagsManager">Team Tags</a>
-                                        <a class="dropdown-item" asp-action="AddFISOrg" asp-controller="TeamAdmin">Add New Org Code</a>
-                                        <a class="dropdown-item" asp-action="AddPpsDepartment" asp-controller="TeamAdmin">Add PPS Department</a>
-                                        <a class="dropdown-item" asp-action="BulkLoadPeople" asp-controller="TeamAdmin">Bulk Load People</a>
-                                        <a class="dropdown-item" asp-action="BulkEdit" asp-controller="TeamAdmin">Bulk Edit People</a>
-                                        <a class="dropdown-item" asp-action="Upload" asp-controller="TeamAdmin">CSV Imports</a>
-                                        <a class="dropdown-item" asp-action="RoledMembers" asp-controller="TeamAdmin">Admin roles</a>
-                                        <a class="dropdown-item" asp-action="Index" asp-controller="Report">Reports</a>
-                                        <a class="dropdown-item" asp-action="RegenerateApiCode" asp-controller="TeamAdmin">API Code</a>
+                                        @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
+                                        {
+                                            <a class="dropdown-item" asp-controller="TeamAdmin" asp-action="Index">Admin Home</a>
+                                            <a class="dropdown-item" asp-action="RoledMembers" asp-controller="TeamAdmin">Team Permissions</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" asp-action="Index" asp-controller="TagsManager">Team Tags</a>
+                                            <a class="dropdown-item" asp-action="AddFISOrg" asp-controller="TeamAdmin">Add New Org Code</a>
+                                            <a class="dropdown-item" asp-action="AddPpsDepartment" asp-controller="TeamAdmin">Add PPS Department</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" asp-action="BulkLoadPeople" asp-controller="TeamAdmin">Bulk Load People</a>
+                                            <a class="dropdown-item" asp-action="BulkEdit" asp-controller="PersonAdmin">Bulk Edit People</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" asp-action="Upload" asp-controller="TeamAdmin">CSV Imports</a>                                            
+                                            <a class="dropdown-item" asp-action="Index" asp-controller="Report">Reports</a>
+                                            <a class="dropdown-item" asp-action="RegenerateApiCode" asp-controller="TeamAdmin">API Code</a>
+                                        }
+                                        else
+                                        {
+                                            <a class="dropdown-item" asp-action="BulkEdit" asp-controller="PersonAdmin">Bulk Edit People</a>
+                                            <a class="dropdown-item" asp-action="Index" asp-controller="Report">Reports</a>
+                                        }
                                     </div>
                                 </div>
                             </li>

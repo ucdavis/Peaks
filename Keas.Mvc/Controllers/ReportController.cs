@@ -68,7 +68,7 @@ namespace Keas.Mvc.Controllers
             {
                 expiresBefore = DateTime.Now.AddDays(30);
             }
-            var userRoles = await _securityService.GetUserRolesInTeamOrAdmin(Team);
+            var userRoles = await _securityService.GetUserRoleNamesInTeamOrAdmin(Team);
             var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showType, userRoles, _securityService);
             return View(model);
         }
@@ -96,7 +96,7 @@ namespace Keas.Mvc.Controllers
        
         public async Task<IActionResult> UnAcceptedItems(string showType = "All")
         {
-            var userRoles = await _securityService.GetUserRolesInTeamOrAdmin(Team);
+            var userRoles = await _securityService.GetUserRoleNamesInTeamOrAdmin(Team);
             var model = await ReportItemsViewModel.CreateUnaccepted(_context, Team, showType, userRoles, _securityService);
             return View(model);
 

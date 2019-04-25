@@ -60,6 +60,12 @@ namespace Keas.Mvc
             services.AddScoped<IIdentityService, IdentityService>();
             services.AddScoped<ISecurityService, SecurityService>();
 
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromHours(1);
+            });
+
 
             // setup entity framework
             if (Configuration.GetSection("Dev:UseSql").Value == "Yes")
@@ -152,6 +158,7 @@ namespace Keas.Mvc
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IFinancialService, FinancialService>();
             services.AddScoped<IReportService, ReportService>();
+            services.AddScoped<ITeamsManager, TeamsManager>();
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
@@ -192,6 +199,8 @@ namespace Keas.Mvc
             app.UseStaticFiles();
 
             app.UseAuthentication();
+
+            app.UseSession();
 
             app.UseMvc(routes =>
             {
