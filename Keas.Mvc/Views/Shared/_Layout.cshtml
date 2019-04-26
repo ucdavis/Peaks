@@ -150,6 +150,23 @@
                                 </div>
                             </li>
                         }
+                        else
+                        {
+                            if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.SystemAdminAccess)).Succeeded)
+                            {
+                                <li class="nav-item">
+                                    <div class="dropdown">
+                                        <a class="dropdown-toggle nav-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Admin <i class="fas fa-caret-down fa-lg"></i>
+                                        </a>
+                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                            <a class="dropdown-item" asp-controller="TeamAdmin" asp-action="Index">Admin Home</a>
+                                            <a class="dropdown-item" asp-action="RoledMembers" asp-controller="TeamAdmin">Team Permissions</a>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        }
 
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Help" asp-action="Index">Help</a>
