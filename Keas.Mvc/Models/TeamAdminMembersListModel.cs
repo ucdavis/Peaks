@@ -37,6 +37,7 @@ namespace Keas.Mvc.Models
                     viewModel.UserRoles.Add(new UserRole(teamPermission));
                 }
             }
+            viewModel.UserRoles = viewModel.UserRoles.OrderBy(u => u.User.LastName).ThenBy(u => u.User.FirstName).ToList();
             return viewModel;
         }
 
