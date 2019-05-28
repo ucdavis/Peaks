@@ -47,7 +47,7 @@ namespace Keas.Jobs.SendMail
                 }
             }
             _log.Information("Notifications Sent {counter}", counter);
-            _log.Information("Staring Expiry Notifications");
+            _log.Information("Starting Expiry Notifications");
 
             // Email persons with expiring items
             counter = 0;
