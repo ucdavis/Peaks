@@ -311,7 +311,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     };
 
     private _revokeEquipment = async (equipment: IEquipment) => {
-        if (!confirm("Are you should you want to revoke item?")) {
+        if (!confirm("Are you sure you want to revoke item?")) {
             return false;
         }
         // call API to actually revoke
@@ -348,7 +348,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     };
 
     private _deleteEquipment = async (equipment: IEquipment) => {
-        if (!confirm("Are you should you want to delete item?")) {
+        if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
         const deleted: IEquipment = await this.context.fetch(

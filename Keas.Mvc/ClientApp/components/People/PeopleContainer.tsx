@@ -228,7 +228,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
             return;
         }
 
-        if (!confirm("Are you should you want to delete person?")) {
+        if (!confirm("Are you sure you want to delete person?")) {
             return false;
         }
 

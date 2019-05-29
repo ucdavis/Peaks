@@ -240,7 +240,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     };
 
     private _revokeAccess = async (accessAssignment: IAccessAssignment) => {
-        if (!confirm("Are you should you want to revoke access?")) {
+        if (!confirm("Are you sure you want to revoke access?")) {
             return false;
         }
         // call API to actually revoke
@@ -280,7 +280,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     };
 
     private _deleteAccess = async (access: IAccess) => {
-        if (!confirm("Are you should you want to delete item?")) {
+        if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
         const deleted: IAccess = await this.context.fetch(
