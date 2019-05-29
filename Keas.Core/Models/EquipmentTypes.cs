@@ -12,6 +12,7 @@ namespace Keas.Core.Models
         public const string Device = "Device";
         public const string Card = "Card";
         public const string Industrial = "Industrial";
+        public const string Software = "Software";
         public const string Other = "Other";
 
 
@@ -24,6 +25,7 @@ namespace Keas.Core.Models
             Device,
             Card,
             Industrial,
+            Software,
             Other,
         };
     }
