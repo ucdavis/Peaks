@@ -321,7 +321,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     };
 
     private _deleteKey = async (key: IKey) => {
-        if (!confirm("Are you should you want to delete item?")) {
+        if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
         const deleted: IKey = await this.context.fetch(

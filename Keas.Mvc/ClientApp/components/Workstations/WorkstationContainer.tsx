@@ -226,7 +226,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     };
 
     private _revokeWorkstation = async (workstation: IWorkstation) => {
-        if (!confirm("Are you should you want to revoke workstation?")) {
+        if (!confirm("Are you sure you want to revoke workstation?")) {
             return false;
         }
         // call API to actually revoke
@@ -263,7 +263,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
     };
 
     private _deleteWorkstation = async (workstation: IWorkstation) => {
-        if (!confirm("Are you should you want to delete item?")) {
+        if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
         const deleted: IWorkstation = await this.context.fetch(
