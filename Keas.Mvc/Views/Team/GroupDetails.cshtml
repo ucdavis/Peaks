@@ -45,7 +45,7 @@
                     <td>@Html.DisplayFor(a => item.User.Email)</td>
                     <td>
                         <form asp-controller="Team" asp-action="RemoveGroupie" asp-route-id="@item.Id" asp-route-groupId="@item.GroupId">
-                            <input type="submit" value="Remove" class="btn btn-primary" />
+                            <input type="submit" value="Remove" class="btn btn-link" />
                         </form>
                     </td>
                 </tr>
