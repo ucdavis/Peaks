@@ -187,5 +187,19 @@ namespace Keas.Mvc.Controllers
             Message = "User " + user.Name + " has been added.";
             return RedirectToAction("GroupDetails", "Team", new { id = model.Group.Id });
         }
+
+        public async Task<IActionResult> RemoveGroupie(int id, int groupId)
+        {
+            var group = await _context.Groups.Include(a => a.GroupPermissions).SingleAsync(a => a.Id == groupId);
+            var groupPermission = group.GroupPermissions.Single(a => a.Id == id);
+
+            _context.GroupPermissions.Remove(groupPermission);
+
+            await _context.SaveChangesAsync();
+
+            Message = "User Removed";
+            return RedirectToAction("GroupDetails", new {id = groupId});
+
+        }
     }
 }
