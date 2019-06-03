@@ -1,0 +1,56 @@
+@model Keas.Core.Domain.Group
+
+@{
+    ViewBag.Title = $"Group Details: {Model.Name}";
+}
+
+
+
+<div class="card">
+    <div class="card-header-primary">
+        <div class="card-head">
+            <div class="row justify-content-between">
+                <h2>Group Users</h2>
+                <div>
+                    <a class="btn btn-link" asp-action="AddGroupUser" asp-controller="Team" asp-route-id="@Model.Id">Add User to group</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card-content">
+        <table class="table dataTable" id="users-table">
+            <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    User Id
+                </th>
+                <th>Email</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.GroupPermissions) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.User.Id)
+                    </td>
+                    <td>@Html.DisplayFor(a => item.User.Email)</td>
+                    <td>
+                        TODO Remove user
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+

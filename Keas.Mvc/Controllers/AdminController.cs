@@ -28,7 +28,10 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var model = await _context.Teams.ToListAsync();
+            var model = new TeamsAndGroupsModel();
+            model.Teams = await _context.Teams.ToListAsync();
+            model.Groups = await _context.Groups.ToListAsync();
+
             return View(model);
         }
 
