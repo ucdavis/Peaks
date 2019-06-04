@@ -11,7 +11,7 @@ namespace Keas.Core.Domain
         public int Id { get; set; }
 
         [Required]
-        public Group Key { get; set; }
+        public Group Group { get; set; }
         public int GroupId { get; set; }
 
         [Required]
