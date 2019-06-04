@@ -135,7 +135,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> GroupDetails(int id)
         {
-            var group = await _context.Groups.Include(a => a.GroupPermissions).ThenInclude(a => a.User).Include(a => a.Teams).AsNoTracking().SingleAsync(a => a.Id == id);
+            var group = await _context.Groups.Include(a => a.GroupPermissions).ThenInclude(a => a.User).Include(a => a.Teams).ThenInclude(a => a.Team).AsNoTracking().SingleAsync(a => a.Id == id);
 
             return View(group);
         }
@@ -200,6 +200,37 @@ namespace Keas.Mvc.Controllers
             Message = "User Removed";
             return RedirectToAction("GroupDetails", new {id = groupId});
 
+        }
+
+        public async Task<IActionResult> AddGroupTeam(int id)
+        {
+            var model = new GroupTeamPostModel{GroupId = id};
+            model.GroupName = (await _context.Groups.SingleAsync(a => a.Id == id)).Name;
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddGroupTeam(GroupTeamPostModel model)
+        {
+            var group = await _context.Groups.Include(a => a.Teams).SingleAsync(a => a.Id == model.GroupId);
+            if (group.Teams.Any(a => a.Team.Slug.Equals(model.TeamSlug, StringComparison.OrdinalIgnoreCase)))
+            {
+                ErrorMessage = "Team already Added";
+                return RedirectToAction("GroupDetails", new {id = model.GroupId});
+            }
+
+            var team = await _context.Teams.SingleOrDefaultAsync(a => a.Slug.Equals(model.TeamSlug, StringComparison.OrdinalIgnoreCase));
+            if (team == null)
+            {
+                ErrorMessage = "Team not found.";
+                return View(model);
+            }
+            var groupTeam = new GroupXTeam{GroupId = model.GroupId, TeamId = team.Id};
+            await _context.GroupXTeams.AddAsync(groupTeam);
+            await _context.SaveChangesAsync();
+
+            Message = $"Team {team.Name} ({team.Slug}) added.";
+            return RedirectToAction("GroupDetails", new {id = model.GroupId});
         }
     }
 }
