@@ -212,7 +212,7 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> AddGroupTeam(GroupTeamPostModel model)
         {
-            var group = await _context.Groups.Include(a => a.Teams).SingleAsync(a => a.Id == model.GroupId);
+            var group = await _context.Groups.Include(a => a.Teams).ThenInclude(a => a.Team).AsNoTracking().SingleAsync(a => a.Id == model.GroupId);
             if (group.Teams.Any(a => a.Team.Slug.Equals(model.TeamSlug, StringComparison.OrdinalIgnoreCase)))
             {
                 ErrorMessage = "Team already Added";
@@ -231,6 +231,20 @@ namespace Keas.Mvc.Controllers
 
             Message = $"Team {team.Name} ({team.Slug}) added.";
             return RedirectToAction("GroupDetails", new {id = model.GroupId});
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveGroupTeam(int id, int groupId)
+        {
+            var group = await _context.Groups.Include(a => a.Teams).SingleAsync(a => a.Id == groupId);
+            var groupTeam = group.Teams.Single(a => a.Id == id);
+
+            _context.GroupXTeams.Remove(groupTeam);
+
+            await _context.SaveChangesAsync();
+
+            Message = "Team Removed";
+            return RedirectToAction("GroupDetails", new { id = groupId });
         }
     }
 }

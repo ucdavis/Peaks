@@ -101,7 +101,6 @@
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Team.Slug)
                                 </td>
-                                <td></td>
                                 <td>
                                     <form asp-controller="Team" asp-action="RemoveGroupTeam" asp-route-id="@item.Id" asp-route-groupId="@item.GroupId">
                                         <input type="submit" value="Remove" class="btn btn-link" />
@@ -117,3 +116,23 @@
 
     </div>
 </div>
+
+@section Scripts {
+    @await Html.PartialAsync("_CommonReportScripts")
+    
+    
+    <script type="text/javascript">
+
+        $('.table').DataTable({
+            "columnDefs": [
+                { "orderable": false, "targets": -1}
+            ]
+        });
+       
+    </script>
+
+}
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
