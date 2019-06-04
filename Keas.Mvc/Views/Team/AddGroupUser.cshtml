@@ -1,0 +1,35 @@
+@model GroupUserPostModel
+
+@{
+    ViewBag.Title = $"Add User to {Model.Group.Name}";
+}
+
+<div class="card">
+    <div class="card-header-primary">
+        <div class="card-head">
+            <h2>@ViewBag.Title</h2>
+        </div>
+    </div>
+    <div class="card-content col-lg-4">
+        <form asp-action="AddGroupUser">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @Html.HiddenFor(a => a.Group.Id)
+            <div class="form-group">
+                <label asp-for="UserEmail" class="control-label"></label>
+                <input asp-for="UserEmail" class="form-control"/>
+                <span asp-validation-for="UserEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Assign User to Group" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+

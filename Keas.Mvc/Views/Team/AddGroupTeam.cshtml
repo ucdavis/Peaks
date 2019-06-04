@@ -1,0 +1,34 @@
+@model Keas.Core.Models.GroupTeamPostModel
+
+@{
+    ViewBag.Title = $"Add Team to {Model.GroupName}";
+}
+
+<div class="card">
+    <div class="card-header-primary">
+        <div class="card-head">
+            <h2>@ViewBag.Title</h2>
+        </div>
+    </div>
+    <div class="card-content col-lg-4">
+        <form asp-action="AddGroupTeam">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @Html.HiddenFor(a => a.GroupId)
+            <div class="form-group">
+                <label asp-for="TeamSlug" class="control-label"></label>
+                <input asp-for="TeamSlug" class="form-control"/>
+                <span asp-validation-for="TeamSlug" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Assign Team to Group" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
