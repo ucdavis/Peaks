@@ -13,7 +13,7 @@ namespace Test.TestsModel
         [Fact]
         public void EquipmentTypesListContainsExpectedNumberOfValues()
         {
-            EquipmentTypes.Types.Count.ShouldBe(9);
+            EquipmentTypes.Types.Count.ShouldBe(11);
         }
 
         //1
@@ -87,6 +87,22 @@ namespace Test.TestsModel
         {
             EquipmentTypes.Software.ShouldBe("Software");
             EquipmentTypes.Types.ShouldContain(EquipmentTypes.Software);
+        }
+
+        //10
+        [Fact]
+        public void EquipmentTypesContainsDesktop()
+        {
+            EquipmentTypes.Desktop.ShouldBe("Desktop");
+            EquipmentTypes.Types.ShouldContain(EquipmentTypes.Desktop);
+        }
+
+        //11
+        [Fact]
+        public void EquipmentTypesContainsServer()
+        {
+            EquipmentTypes.Server.ShouldBe("Server");
+            EquipmentTypes.Types.ShouldContain(EquipmentTypes.Server);
         }
     }
 }
