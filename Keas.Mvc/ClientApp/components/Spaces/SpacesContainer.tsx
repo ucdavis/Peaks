@@ -80,7 +80,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         const activeWorkstationAsset = assetType === "workstations";
         const selectedId = parseInt(spaceId, 10);
         const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
-        const shouldRenderTableView = !spaceAction && !activeWorkstationAsset;
+        const shouldRenderTableView = !spaceAction && !activeWorkstationAsset && !!this.props.selectedKeyInfo;
 
         return (
             <div className="card spaces-color">
