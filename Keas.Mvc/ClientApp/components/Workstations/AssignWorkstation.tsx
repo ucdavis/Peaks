@@ -85,7 +85,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     className="spaces-color"
                 >
                     <div className="modal-header row justify-content-between">
-                        <h2>Assign Workstation</h2>
+                        <h2>{this.props.selectedWorkstation || this.props.person ? "Assign Workstation" : "Add Workstation"}</h2>
                         <Button color="link" onClick={this._closeModal}>
                             <i className="fas fa-times fa-lg" />
                         </Button>

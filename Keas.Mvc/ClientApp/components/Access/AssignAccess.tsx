@@ -73,7 +73,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     className="access-color"
                 >
                     <div className="modal-header row justify-content-between">
-                        <h2>Assign Access</h2>
+                        <h2>{this.props.selectedAccess || this.props.person ? "Assign Access" : "Add Access"}</h2>
                         <Button color="link" onClick={this._closeModal}>
                             <i className="fas fa-times fa-lg" />
                         </Button>

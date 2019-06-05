@@ -100,7 +100,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
         return (
             <Modal isOpen={isModalOpen} toggle={this._closeModal} size="lg" className="keys-color">
                 <div className="modal-header row justify-content-between">
-                    <h2>Assign Key Serial</h2>
+                    <h2>{this.props.selectedKeySerial || this.props.person ? "Assign Key Serial" : "Add Key Serial"}</h2>
                     <Button color="link" onClick={this._closeModal}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
