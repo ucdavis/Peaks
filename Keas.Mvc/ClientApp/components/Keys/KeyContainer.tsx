@@ -93,26 +93,36 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         return (
             <div className="card keys-color">
                 <div className="card-header-keys">
-                    <div className="card-head">
+                    <div className="card-head row justify-content-between">
                         <h2>
                             <i className="fas fa-key fa-xs" /> Keys
                         </h2>
+                        {!space && (
+                            <CreateKey
+                                onCreate={this._createKey}
+                                onOpenModal={this._openCreateModal}
+                                closeModal={this._closeModals}
+                                modal={keyAction === "create"}
+                                searchableTags={tags}
+                                checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValid}
+                            />
+                        )}
+                        {!!space && (
+                            <AssociateSpace
+                                selectedKeyInfo={selectedKeyInfo}
+                                selectedSpace={space}
+                                onAssign={this._associateSpace}
+                                isModalOpen={action === "associate"}
+                                openModal={this._openAssociate}
+                                closeModal={this._closeModals}
+                                searchableTags={tags}
+                            />
+                        )}
                     </div>
                 </div>
                 <div className="card-content">
                     {keyAction !== "details" && this._renderTableOrListView()}
                     {keyAction === "details" && this._renderDetailsView()}
-
-                    {!space && (
-                        <CreateKey
-                            onCreate={this._createKey}
-                            onOpenModal={this._openCreateModal}
-                            closeModal={this._closeModals}
-                            modal={keyAction === "create"}
-                            searchableTags={tags}
-                            checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValid}
-                        />
-                    )}
                     <EditKey
                         onEdit={this._editKey}
                         closeModal={this._closeModals}
@@ -127,17 +137,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         closeModal={this._closeModals}
                         modal={keyAction === "delete"}
                     />
-                    {!!space && (
-                        <AssociateSpace
-                            selectedKeyInfo={selectedKeyInfo}
-                            selectedSpace={space}
-                            onAssign={this._associateSpace}
-                            isModalOpen={action === "associate"}
-                            openModal={this._openAssociate}
-                            closeModal={this._closeModals}
-                            searchableTags={tags}
-                        />
-                    )}
                 </div>
             </div>
         );

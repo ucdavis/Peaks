@@ -46,10 +46,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
         this.state = {
             attributeFilters: [],
-            commonAttributeKeys: [],            
-            equipment: [], 
+            commonAttributeKeys: [],
+            equipment: [],
             equipmentTypeFilters: [],
-            equipmentTypes: [],           
+            equipmentTypes: [],
             loading: true,
             tagFilters: [],
             tags: []
@@ -77,7 +77,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
         const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
 
-        const equipmentTypeFetchUrl = `/api/${this.context.team.slug}/equipment/ListEquipmentTypes/`;
+        const equipmentTypeFetchUrl = `/api/${
+            this.context.team.slug
+        }/equipment/ListEquipmentTypes/`;
 
         const equipmentTypes = await this.context.fetch(equipmentTypeFetchUrl);
 
@@ -85,7 +87,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
         const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);
 
-        this.setState({ commonAttributeKeys, equipmentTypes,  equipment, loading: false, tags });
+        this.setState({ commonAttributeKeys, equipmentTypes, equipment, loading: false, tags });
     }
     public render() {
         if (!PermissionsUtil.canViewEquipment(this.context.permissions)) {
@@ -103,28 +105,28 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         return (
             <div className="card equipment-color">
                 <div className="card-header-equipment">
-                    <div className="card-head">
+                    <div className="card-head row justify-content-between">
                         <h2>
                             <i className="fas fa-hdd fa-xs" /> Equipment
                         </h2>
+                        <AssignEquipment
+                            onCreate={this._createAndMaybeAssignEquipment}
+                            modal={activeAsset && (action === "create" || action === "assign")}
+                            onAddNew={this._openCreateModal}
+                            closeModal={this._closeModals}
+                            selectedEquipment={detailEquipment}
+                            person={this.props.person}
+                            space={this.props.space}
+                            tags={this.state.tags}
+                            commonAttributeKeys={this.state.commonAttributeKeys}
+                            openDetailsModal={this._openDetailsModal}
+                            openEditModal={this._openEditModal}
+                            equipmentTypes={this.state.equipmentTypes}
+                        />
                     </div>
                 </div>
                 <div className="card-content">
                     {this._renderTableOrList()}
-                    <AssignEquipment
-                        onCreate={this._createAndMaybeAssignEquipment}
-                        modal={activeAsset && (action === "create" || action === "assign")}
-                        onAddNew={this._openCreateModal}
-                        closeModal={this._closeModals}
-                        selectedEquipment={detailEquipment}
-                        person={this.props.person}
-                        space={this.props.space}
-                        tags={this.state.tags}
-                        commonAttributeKeys={this.state.commonAttributeKeys}
-                        openDetailsModal={this._openDetailsModal}
-                        openEditModal={this._openEditModal}
-                        equipmentTypes={this.state.equipmentTypes}
-                    />
                     <EquipmentDetails
                         selectedEquipment={detailEquipment}
                         modal={activeAsset && action === "details" && !!detailEquipment}
@@ -191,10 +193,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 );
             }
             if (this.state.equipmentTypeFilters.length > 0) {
-                filteredEquipment = filteredEquipment.filter(x => 
+                filteredEquipment = filteredEquipment.filter(x =>
                     this._checkEquipmentTypeFilters(x)
                 );
-            };
+            }
             return (
                 <div>
                     <div className="row">
@@ -441,12 +443,16 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     };
 
     private _filterEquipmentType = (filters: string[]) => {
-        this.setState({ equipmentTypeFilters: filters});
-    }
+        this.setState({ equipmentTypeFilters: filters });
+    };
 
     private _checkEquipmentTypeFilters = (equipment: IEquipment) => {
         var filters = this.state.equipmentTypeFilters;
-            return filters.some(f => (equipment && !!equipment.type && equipment.type === f) || (equipment && !equipment.type && f === "Default"));
+        return filters.some(
+            f =>
+                (equipment && !!equipment.type && equipment.type === f) ||
+                (equipment && !equipment.type && f === "Default")
+        );
     };
 
     private _filterTags = (filters: string[]) => {

@@ -85,10 +85,13 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         return (
             <div className="card spaces-color">
                 <div className="card-header-spaces">
-                    <div className="card-head">
+                    <div className="card-head row justify-content-between">
                         <h2>
                             <i className="fas fa-briefcase fa-xs" /> Workstations
                         </h2>
+                        <Button color="link" onClick={() => this._openCreateModal()}>
+                            <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add Workstation
+                        </Button>
                     </div>
                 </div>
                 <div className="card-content">
@@ -100,24 +103,6 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                         onCreate={this._openCreateModal}
                         onDelete={this._deleteWorkstation}
                         onRevoke={this._openRevokeModal}
-                    />
-                    <Button color="link" onClick={() => this._openCreateModal()}>
-                        <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add Workstation
-                    </Button>
-                    <WorkstationDetails
-                        closeModal={this._closeModals}
-                        modal={activeAsset && action === "details"}
-                        selectedWorkstation={selectedWorkstation}
-                        openEditModal={this._openEditModal}
-                        openUpdateModal={this._openAssignModal}
-                    />
-                    <EditWorkstation
-                        closeModal={this._closeModals}
-                        tags={this.props.tags}
-                        modal={activeAsset && action === "edit"}
-                        selectedWorkstation={selectedWorkstation}
-                        onEdit={this._editWorkstation}
-                        openUpdateModal={this._openAssignModal}
                     />
                     <AssignWorkstation
                         closeModal={this._closeModals}
@@ -134,6 +119,21 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                         openEditModal={this._openEditModal}
                         openDetailsModal={this._openDetailsModal}
                         onAddNew={this._openCreateModal}
+                    />
+                    <WorkstationDetails
+                        closeModal={this._closeModals}
+                        modal={activeAsset && action === "details"}
+                        selectedWorkstation={selectedWorkstation}
+                        openEditModal={this._openEditModal}
+                        openUpdateModal={this._openAssignModal}
+                    />
+                    <EditWorkstation
+                        closeModal={this._closeModals}
+                        tags={this.props.tags}
+                        modal={activeAsset && action === "edit"}
+                        selectedWorkstation={selectedWorkstation}
+                        onEdit={this._editWorkstation}
+                        openUpdateModal={this._openAssignModal}
                     />
                     <RevokeWorkstation
                         closeModal={this._closeModals}

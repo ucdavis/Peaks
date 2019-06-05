@@ -74,24 +74,24 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         return (
             <div className="card access-color">
                 <div className="card-header-access">
-                    <div className="card-head">
+                    <div className="card-head row justify-content-between">
                         <h2>
                             <i className="fas fa-address-card fa-xs" /> Access
                         </h2>
+                        <AssignAccess
+                            onAddNew={this._openCreateModal}
+                            onCreate={this._createAndMaybeAssignAccess}
+                            modal={activeAsset && (action === "create" || action === "assign")}
+                            closeModal={this._closeModals}
+                            selectedAccess={detailAccess}
+                            person={this.props.person}
+                            tags={this.state.tags}
+                            openEditModal={this._openEditModal}
+                        />
                     </div>
                 </div>
                 <div className="card-content">
                     {this._renderTableOrList()}
-                    <AssignAccess
-                        onAddNew={this._openCreateModal}
-                        onCreate={this._createAndMaybeAssignAccess}
-                        modal={activeAsset && (action === "create" || action === "assign")}
-                        closeModal={this._closeModals}
-                        selectedAccess={detailAccess}
-                        person={this.props.person}
-                        tags={this.state.tags}
-                        openEditModal={this._openEditModal}
-                    />
                     <AccessDetails
                         selectedAccess={detailAccess}
                         modal={activeAsset && action === "details" && !!detailAccess}
