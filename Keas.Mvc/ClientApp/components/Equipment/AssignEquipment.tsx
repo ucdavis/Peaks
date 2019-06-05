@@ -89,7 +89,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     className="equipment-color"
                 >
                     <div className="modal-header row justify-content-between">
-                        <h2>Assign Equipment</h2>
+                        <h2>{this.props.selectedEquipment || this.props.person ? "Assign Equipment" : "Create Equipment"}</h2>
                         <Button color="link" onClick={this._closeModal}>
                             <i className="fas fa-times fa-lg" />
                         </Button>
