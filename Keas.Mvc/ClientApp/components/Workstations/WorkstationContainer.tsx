@@ -85,10 +85,13 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         return (
             <div className="card spaces-color">
                 <div className="card-header-spaces">
-                    <div className="card-head">
+                    <div className="card-head row justify-content-between">
                         <h2>
                             <i className="fas fa-briefcase fa-xs" /> Workstations
                         </h2>
+                        <Button color="link" onClick={() => this._openCreateModal()}>
+                            <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add Workstation
+                        </Button>
                     </div>
                 </div>
                 <div className="card-content">
@@ -118,22 +121,6 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                         selectedWorkstation={selectedWorkstation}
                         onEdit={this._editWorkstation}
                         openUpdateModal={this._openAssignModal}
-                    />
-                    <AssignWorkstation
-                        closeModal={this._closeModals}
-                        modal={activeAsset && (action === "assign" || action === "create")}
-                        person={
-                            selectedWorkstation && selectedWorkstation.assignment
-                                ? selectedWorkstation.assignment.person
-                                : this.props.person
-                        }
-                        selectedWorkstation={selectedWorkstation}
-                        tags={this.props.tags}
-                        space={this.props.space}
-                        onCreate={this._createAndMaybeAssignWorkstation}
-                        openEditModal={this._openEditModal}
-                        openDetailsModal={this._openDetailsModal}
-                        onAddNew={this._openCreateModal}
                     />
                     <RevokeWorkstation
                         closeModal={this._closeModals}

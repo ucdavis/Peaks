@@ -80,14 +80,25 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         const activeWorkstationAsset = assetType === "workstations";
         const selectedId = parseInt(spaceId, 10);
         const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
+        const shouldRenderTableView = !spaceAction && !activeWorkstationAsset;
 
         return (
             <div className="card spaces-color">
                 <div className="card-header-spaces">
-                    <div className="card-head">
+                    <div className="card-head row justify-content-between">
                         <h2>
                             <i className="fas fa-building fa-xs" /> Spaces
                         </h2>
+                        {shouldRenderTableView &&
+                            <AssociateSpace
+                                selectedKeyInfo={this.props.selectedKeyInfo}
+                                onAssign={this._associateSpace}
+                                openModal={() => this._openAssociateModal(null)}
+                                closeModal={this._closeModals}
+                                isModalOpen={action === "associate"}
+                                searchableTags={this.state.tags}
+                            />
+                        }
                     </div>
                     {this.state.spaces.length === 0 && (
                         <div className="card-body">
@@ -153,8 +164,6 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
     private _renderTableList = () => {
         const { selectedKeyInfo } = this.props;
-        const { tags } = this.state;
-        const { action } = this.context.router.route.match.params;
 
         // flatten the space info for simple space
         const spaces = this.state.spaces.map(s => s.space);
@@ -166,14 +175,6 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                     spaces={spaces}
                     showDetails={this._openDetails}
                     onDisassociate={this._disassociateSpace}
-                />
-                <AssociateSpace
-                    selectedKeyInfo={selectedKeyInfo}
-                    onAssign={this._associateSpace}
-                    openModal={() => this._openAssociateModal(null)}
-                    closeModal={this._closeModals}
-                    isModalOpen={action === "associate"}
-                    searchableTags={tags}
                 />
             </div>
         );

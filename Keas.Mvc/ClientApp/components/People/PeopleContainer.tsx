@@ -57,14 +57,21 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         const { personAction, assetType, personId } = this.context.router.route.match.params;
         const selectedId = parseInt(personId, 10);
         const detailPerson = this.state.people.find(e => e.id === selectedId);
-
         return (
             <div className="card people-color">
                 <div className="card-header-people">
-                    <div className="card-head">
+                    <div className="card-head row justify-content-between">
                         <h2>
                             <i className="fas fa-users fa-xs" /> People
                         </h2>
+                        <CreatePerson
+                            onCreate={this._createPerson}
+                            modal={personAction === "create"}
+                            onAddNew={this._openCreateModal}
+                            closeModal={this._goBack}
+                            tags={this.state.tags}
+                            userIds={this.state.people.map(x => x.person.userId)}
+                        />
                     </div>
                 </div>
                 <div className="card-content">
@@ -99,14 +106,6 @@ export default class PeopleContainer extends React.Component<{}, IState> {
                     showDetails={this._openDetailsModal}
                     filtered={this.state.tableFilters}
                     updateFilters={this._updateTableFilters}
-                />
-                <CreatePerson
-                    onCreate={this._createPerson}
-                    modal={createModal}
-                    onAddNew={this._openCreateModal}
-                    closeModal={this._goBack}
-                    tags={this.state.tags}
-                    userIds={this.state.people.map(x => x.person.userId)}
                 />
             </div>
         );

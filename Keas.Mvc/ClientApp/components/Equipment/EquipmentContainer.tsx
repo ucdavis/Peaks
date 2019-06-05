@@ -126,6 +126,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                     </div>
                 </div>
                 <div className="card-content">
+                    {this._renderTableOrList()}
                     <EquipmentDetails
                         selectedEquipment={detailEquipment}
                         modal={activeAsset && action === "details" && !!detailEquipment}
@@ -160,7 +161,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         openUpdateModal={this._openAssignModal}
                         modal={activeAsset && action === "delete"}
                     />
-                    {this._renderTableOrList()}
                 </div>
             </div>
         );

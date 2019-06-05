@@ -94,10 +94,24 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         return (
             <div className="card keys-color">
                 <div className="card-header-keys">
-                    <div className="card-head">
+                    <div className="card-head row justify-content-between">
                         <h2>
                             <i className="fas fa-key fa-xs" /> Key Serials
                         </h2>
+                        <AssignKeySerial
+                            person={this.props.selectedPerson}
+                            selectedKey={selectedKey}
+                            selectedKeySerial={selectedKeySerial}
+                            onCreate={this._createAndMaybeAssignKey}
+                            isModalOpen={
+                                activeAsset &&
+                                (action === "create" || action === "assign" || action === "update")
+                            }
+                            onOpenModal={this._openCreateModal}
+                            closeModal={this._closeModals}
+                            openEditModal={this._openEditModal}
+                            openDetailsModal={this._openDetailsModal}
+                        />
                     </div>
                 </div>
                 <div className="card-content">
@@ -121,20 +135,6 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                             showDetails={this._openDetailsModal}
                         />
                     )}
-                    <AssignKeySerial
-                        person={this.props.selectedPerson}
-                        selectedKey={selectedKey}
-                        selectedKeySerial={selectedKeySerial}
-                        onCreate={this._createAndMaybeAssignKey}
-                        isModalOpen={
-                            activeAsset &&
-                            (action === "create" || action === "assign" || action === "update")
-                        }
-                        onOpenModal={this._openCreateModal}
-                        closeModal={this._closeModals}
-                        openEditModal={this._openEditModal}
-                        openDetailsModal={this._openDetailsModal}
-                    />
                     <KeySerialDetails
                         selectedKeySerial={selectedKeySerial}
                         isModalOpen={activeAsset && action === "details" && !!selectedKeySerial}
