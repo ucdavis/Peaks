@@ -169,6 +169,7 @@ namespace Keas.Mvc.Controllers
         }
 
         public async Task<IActionResult> SelectTeam(string urlRedirect) {
+            var model = new TeamsAndGroupsModel();
             var user = await _securityService.GetUser();
             if (user == null) 
             {
@@ -177,19 +178,27 @@ namespace Keas.Mvc.Controllers
             var people = await _context.People.Where(p => p.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
             var teamAdmins = await _context.TeamPermissions.Where(tp => tp.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
             var teams = people.Union(teamAdmins, new TeamComparer());
-            if(teams.Count() == 0){
+
+            var groupPermissions = await _context.GroupPermissions.Include(a => a.Group).ThenInclude(a => a.Teams).ThenInclude(a => a.Team).AsNoTracking().Where(a => a.UserId == user.Id).ToListAsync();
+
+            if(teams.Count() == 0 && groupPermissions.Count == 0){
                 return Redirect("/Home/NoAccess/");
             }
-            if (teams.Count() == 1) {
+            if (teams.Count() == 1 && groupPermissions.Count == 0) {
                 if(!string.IsNullOrWhiteSpace(urlRedirect)){
                     return Redirect("/" + teams.First().Slug + "/" + urlRedirect);
                 } else {
                     return Redirect("/" + teams.First().Slug + "/Confirm/MyStuff");
                 }
             }
-            
+
+            //var groupTeams = groupPermissions.SelectMany(a => a.Group.Teams).Select(a => a.Team).Distinct();
+            var groups = groupPermissions.Select(a => a.Group).Distinct();
+            model.Teams = teams.ToList();
+            model.Groups = groups.ToList();
+
             ViewBag.urlRedirect = urlRedirect == null ? "Confirm/Mystuff/" : urlRedirect;
-            return View(teams);
+            return View(model);
         }
     }
 }
