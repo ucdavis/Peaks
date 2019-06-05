@@ -36,7 +36,7 @@ namespace Keas.Mvc.Controllers
         {
             //Log.Information("Emulation attempted for {username}", username);
 
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.UserEmail || u.Id == model.UserEmail);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email.Equals(model.UserEmail.Trim(), StringComparison.OrdinalIgnoreCase) || u.Id.Equals(model.UserEmail.Trim(), StringComparison.OrdinalIgnoreCase));
             if (user == null)
             {
                 return View(model);
