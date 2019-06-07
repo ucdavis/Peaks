@@ -188,7 +188,7 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction("GroupDetails", "Team", new { id = model.Group.Id });
         }
 
-        public async Task<IActionResult> RemoveGroupie(int id, int groupId)
+        public async Task<IActionResult> RemoveGroupUser(int id, int groupId)
         {
             var group = await _context.Groups.Include(a => a.GroupPermissions).SingleAsync(a => a.Id == groupId);
             var groupPermission = group.GroupPermissions.Single(a => a.Id == id);
