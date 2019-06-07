@@ -35,8 +35,9 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> Emulate(EmulateUserViewModel model)
         {
             //Log.Information("Emulation attempted for {username}", username);
+            var lookupVal = model.UserEmail.Trim();
 
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email == model.UserEmail || u.Id == model.UserEmail);
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Email.Equals(lookupVal, StringComparison.OrdinalIgnoreCase) || u.Id.Equals(lookupVal, StringComparison.OrdinalIgnoreCase));
             if (user == null)
             {
                 return View(model);
