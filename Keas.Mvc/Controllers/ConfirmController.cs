@@ -179,7 +179,7 @@ namespace Keas.Mvc.Controllers
             var teamAdmins = await _context.TeamPermissions.Where(tp => tp.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
             var teams = people.Union(teamAdmins, new TeamComparer());
 
-            var groupPermissions = await _context.GroupPermissions.Include(a => a.Group).ThenInclude(a => a.Teams).ThenInclude(a => a.Team).AsNoTracking().Where(a => a.UserId == user.Id).ToListAsync();
+            var groupPermissions = await _context.GroupPermissions.Include(a => a.Group).AsNoTracking().Where(a => a.UserId == user.Id).ToListAsync();
 
             if(teams.Count() == 0 && groupPermissions.Count == 0){
                 return Redirect("/Home/NoAccess/");
