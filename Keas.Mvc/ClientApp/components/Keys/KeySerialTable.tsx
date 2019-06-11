@@ -5,6 +5,7 @@ import { IKeySerial } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import { ReactTableExpirationUtil } from "../../util/reactTable";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
+import { ReactTableUtil } from "../../util/tableUtil";
 
 interface IProps {
     keySerials: IKeySerial[];
@@ -32,8 +33,8 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
             <ReactTable
                 data={keySerials}
                 filterable={true}
-                defaultPageSize={localStorage.getItem('PeaksDefaultPageSize') || 20}
-                onPageSizeChange={(pageSize) => { localStorage.setItem('PeaksDefaultPageSize', pageSize); }}
+                defaultPageSize={ReactTableUtil.getPageSize()}
+                onPageSizeChange={(pageSize) => { ReactTableUtil.setPageSize(pageSize) }}
                 minRows={1}
                 columns={[
                     {

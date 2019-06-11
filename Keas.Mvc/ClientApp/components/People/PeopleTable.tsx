@@ -3,6 +3,7 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Button } from "reactstrap";
 import { IPerson, IPersonInfo } from "../../Types";
+import { ReactTableUtil } from "../../util/tableUtil";
 
 interface IProps {
     filtered: any[];
@@ -22,8 +23,8 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 filterable={true}
                 filtered={this.props.filtered}
                 onFilteredChange={filtered => this.props.updateFilters(filtered)}
-                defaultPageSize={localStorage.getItem('PeaksDefaultPageSize') || 20}
-                onPageSizeChange={(pageSize) => { localStorage.setItem('PeaksDefaultPageSize', pageSize); }}
+                defaultPageSize={ReactTableUtil.getPageSize() }
+                onPageSizeChange={(pageSize) => { ReactTableUtil.setPageSize(pageSize)} }
                 minRows={1}
                 columns={[
                     {
