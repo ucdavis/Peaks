@@ -1,8 +1,9 @@
-﻿import * as React from "react";
+import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Button, UncontrolledTooltip } from "reactstrap";
 import { ISpace, ISpaceInfo } from "../../Types";
+import { ReactTableUtil} from "../../util/tableUtil";
 
 interface IProps {
     filtered: any[];
@@ -27,6 +28,8 @@ export default class SpacesTable extends React.Component<IProps, {}> {
                 minRows={1}
                 filtered={this.props.filtered}
                 onFilteredChange={filtered => this.props.updateFilters(filtered)}
+                defaultPageSize={ReactTableUtil.getPageSize()}
+                onPageSizeChange={(pageSize) => { ReactTableUtil.setPageSize(pageSize) }}
                 columns={[
                     {
                         Cell: row => (

@@ -4,6 +4,7 @@ import "react-table/react-table.css";
 import { Button, UncontrolledTooltip } from "reactstrap";
 import { IKey, IKeyInfo } from "../../Types";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
+import { ReactTableUtil} from "../../util/tableUtil";
 
 interface IProps {
     showDetails?: (key: IKey) => void;
@@ -31,6 +32,8 @@ export default class KeyTable extends React.Component<IProps, {}> {
             <ReactTable
                 data={keysInfo}
                 filterable={true}
+                defaultPageSize={ReactTableUtil.getPageSize()}
+                onPageSizeChange={(pageSize) => { ReactTableUtil.setPageSize(pageSize) }}
                 minRows={1}
                 filtered={filters}
                 onFilteredChange={this.props.onFiltersChange}
