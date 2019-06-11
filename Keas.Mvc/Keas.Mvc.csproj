@@ -7,9 +7,6 @@
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>  
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="ClientApp\util\tableUtil.ts" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AspNetCore.Security.CAS" Version="2.0.1" />
     <PackageReference Include="CsvHelper" Version="12.1.2" />
     <PackageReference Include="Dapper" Version="1.50.5" />
@@ -35,9 +32,6 @@
   <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="wwwroot\js\" />
-  </ItemGroup>
-  <ItemGroup>
-    <TypeScriptCompile Include="ClientApp\util\tableUtil.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="Views\Shared\_ImportResultsStylePartial.cshtml">
