@@ -103,6 +103,9 @@
     <Build Include="dbo\Tables\KeySerials.sql" />
     <Build Include="dbo\Tables\TeamPpsDepartments.sql" />
     <Build Include="dbo\Tables\PersonNotifications.sql" />
+    <Build Include="dbo\Tables\Groups.sql" />
+    <Build Include="dbo\Tables\GroupPermissions.sql" />
+    <Build Include="dbo\Tables\GroupXTeams.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Compare\ProjectToSqlExpress.scmp" />

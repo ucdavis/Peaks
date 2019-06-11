@@ -226,6 +226,13 @@ namespace Keas.Mvc
                 );
 
                 routes.MapRoute(
+                    name: "GroupRoutes",
+                    template: "{controller}/{action=Index}/{id?}",
+                    defaults: null,
+                    constraints: new {controller = "(group)"}
+                );
+
+                routes.MapRoute(
                     name: "TeamRoutes",
                     template: "{teamName}/{controller=Home}/{action=Index}/{id?}");
 

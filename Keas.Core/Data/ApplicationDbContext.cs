@@ -46,6 +46,10 @@ namespace Keas.Core.Data
         public virtual DbSet<Space> Spaces { get; set; }
 
         public virtual DbSet<Tag> Tags { get; set; }
+
+        public virtual DbSet<Group> Groups { get; set; }
+        public virtual DbSet<GroupPermission> GroupPermissions { get; set; }
+        public virtual DbSet<GroupXTeam> GroupXTeams { get; set; }
         
 
         protected override void OnModelCreating(ModelBuilder builder)

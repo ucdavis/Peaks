@@ -1,53 +1,126 @@
-@model IEnumerable<Keas.Core.Domain.Team>
+@model TeamsAndGroupsModel
 
 @{
     ViewData["Title"] = "Index";
 }
 <div class="card">
-  <div class="card-header-primary">
-    <div class="card-head">
-      <div class="row justify-content-between">
-        <h2>Index</h2>
-        <div>
-            <a class="btn btn-link" asp-action="Create" asp-controller="Team">Create New Team</a> • <a class="btn btn-link" asp-action="RoledMembers">View Admins</a>
+    <div class="card-header-primary">
+        <div class="card-head">
+            <div class="row justify-content-between">
+                <h2>Team Index</h2>
+                <div>
+                    <a class="btn btn-link" asp-action="Create" asp-controller="Team">Create New Team</a> • <a class="btn btn-link" asp-action="RoledMembers">View Admins</a>
+                </div>
+            </div>
+
         </div>
     </div>
 
+    <div class="card-content">
+        <table class="table dataTable" id="teams-table">
+            <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Teams.First().Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Teams.First().Name)
+                </th>
+                <th>@Html.DisplayNameFor(a => a.Teams.First().Slug)</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Teams) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>@Html.DisplayFor(a => item.Slug)</td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", "Team", new { id=item.Id }) •
+                        <a href='@string.Format("/{0}/TeamAdmin/RoledMembers", item.Slug)' class="card-link">Admin Roles</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
     </div>
-  </div>
-
-<div class="card-content">
-  <table class="table">
-      <thead>
-          <tr>
-                  <th>
-                      @Html.DisplayNameFor(model => model.Id)
-                  </th>
-                  <th>
-                      @Html.DisplayNameFor(model => model.Name)
-                  </th>
-              <th>@Html.DisplayNameFor(a => a.Slug)</th>
-              <th></th>
-          </tr>
-      </thead>
-      <tbody>
-  @foreach (var item in Model) {
-          <tr>
-              <td>
-                  @Html.DisplayFor(modelItem => item.Id)
-              </td>
-              <td>
-                  @Html.DisplayFor(modelItem => item.Name)
-              </td>
-              <td>@Html.DisplayFor(a => item.Slug)</td>
-              <td>
-                  @Html.ActionLink("Edit", "Edit", "Team", new { id=item.Id }) •
-                  <a href='@string.Format("/{0}/TeamAdmin/RoledMembers", item.Slug)' class="card-link">Admin Roles</a>
-              </td>
-          </tr>
-  }
-      </tbody>
-  </table>
-</div>
 
 </div>
+
+<div class="card">
+    <div class="card-header-primary">
+        <div class="card-head">
+            <div class="row justify-content-between">
+                <h2>Group Index</h2>
+                <div>
+                    <a class="btn btn-link" asp-action="CreateGroup" asp-controller="Team">Create New Group</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card-content">
+        <table class="table dataTable" id="groups-table">
+            <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Groups.FirstOrDefault().Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Groups.FirstOrDefault().Name)
+                </th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Groups) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Id)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Details", "GroupDetails", "Team", new {id=item.Id})
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_CommonReportScripts")
+    
+    
+    <script type="text/javascript">
+
+        $('#teams-table').DataTable({
+            "columnDefs": [
+                { "type": "bool", "targets": [3] },
+                { "orderable": false, "targets": -1}
+            ]
+        });
+
+        $('#groups-table').DataTable({
+            "columnDefs": [
+                { "orderable": false, "targets": -1}
+            ]
+        });
+       
+    </script>
+
+}
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}

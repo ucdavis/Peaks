@@ -29,6 +29,9 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("EquipmentAssignments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.EquipmentAssignment]", new List<string>()));
             expectedFields.Add(new NameAndType("EquipmentAttributes", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.EquipmentAttribute]", new List<string>()));
             expectedFields.Add(new NameAndType("FISOrgs", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.FinancialOrganization]", new List<string>()));
+            expectedFields.Add(new NameAndType("GroupPermissions", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.GroupPermission]", new List<string>()));
+            expectedFields.Add(new NameAndType("Groups", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Group]", new List<string>()));
+            expectedFields.Add(new NameAndType("GroupXTeams", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.GroupXTeam]", new List<string>()));
             expectedFields.Add(new NameAndType("Histories", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.History]", new List<string>()));
             expectedFields.Add(new NameAndType("Keys", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Key]", new List<string>()));
             expectedFields.Add(new NameAndType("KeySerialAssignments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.KeySerialAssignment]", new List<string>()));
@@ -48,7 +51,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Users", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.User]", new List<string>()));
             expectedFields.Add(new NameAndType("WorkstationAssignments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.WorkstationAssignment]", new List<string>()));
             expectedFields.Add(new NameAndType("WorkstationAttributes", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.WorkstationAttribute]", new List<string>()));
-            expectedFields.Add(new NameAndType("Workstations", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Workstation]", new List<string>()));                        
+            expectedFields.Add(new NameAndType("Workstations", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Workstation]", new List<string>()));
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(ApplicationDbContext));
