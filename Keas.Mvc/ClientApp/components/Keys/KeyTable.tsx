@@ -31,6 +31,8 @@ export default class KeyTable extends React.Component<IProps, {}> {
             <ReactTable
                 data={keysInfo}
                 filterable={true}
+                defaultPageSize={localStorage.getItem('PeaksDefaultPageSize') || 20}
+                onPageSizeChange={(pageSize) => { localStorage.setItem('PeaksDefaultPageSize', pageSize); }}
                 minRows={1}
                 filtered={filters}
                 onFilteredChange={this.props.onFiltersChange}

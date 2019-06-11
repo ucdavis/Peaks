@@ -23,6 +23,8 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
             <ReactTable
                 data={this.props.equipment}
                 filterable={true}
+                defaultPageSize={localStorage.getItem('PeaksDefaultPageSize') || 20}
+                onPageSizeChange={(pageSize) => { localStorage.setItem('PeaksDefaultPageSize', pageSize); }}
                 minRows={1}
                 columns={[
                     {

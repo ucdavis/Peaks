@@ -32,6 +32,8 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
             <ReactTable
                 data={keySerials}
                 filterable={true}
+                defaultPageSize={localStorage.getItem('PeaksDefaultPageSize') || 20}
+                onPageSizeChange={(pageSize) => { localStorage.setItem('PeaksDefaultPageSize', pageSize); }}
                 minRows={1}
                 columns={[
                     {

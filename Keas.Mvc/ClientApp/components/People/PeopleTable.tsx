@@ -22,6 +22,8 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 filterable={true}
                 filtered={this.props.filtered}
                 onFilteredChange={filtered => this.props.updateFilters(filtered)}
+                defaultPageSize={localStorage.getItem('PeaksDefaultPageSize') || 20}
+                onPageSizeChange={(pageSize) => { localStorage.setItem('PeaksDefaultPageSize', pageSize); }}
                 minRows={1}
                 columns={[
                     {
