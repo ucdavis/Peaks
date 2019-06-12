@@ -13,7 +13,7 @@
   <row>
     <columns>
       <h1>The following people have been added/removed/reactivated from PEAKS.</h1>
-      <p>Thanks for PEAKing at this email. It sPEAKS well of you.</p>
+      <p>Thanks for PEAKing at this email.</p>
 
       <spacer size="16"></spacer>
 
@@ -27,7 +27,7 @@
                     teamName = notificationGroup.First().Team.Name;
                     link = "https://peaks.ucdavis.edu/" + notificationGroup.First().Team.Slug + "/home/index";
                 }
-                <h3>Team: <a href="@link">@teamName</a></h3>
+                <h3>Team: <a href="@link" style="text-decoration: underline">@teamName</a></h3>
                 <hr/>
                 <table>
                     <thead>
@@ -64,7 +64,7 @@
     <hr/>
     <div>        
       <p>         
-        This email was automatically generated please do not reply to it as the mailbox is not monitored. 
+          This email was automatically generated. Please do not reply to it, as the mailbox is not monitored. 
       </p>
     </div>
   </div>
