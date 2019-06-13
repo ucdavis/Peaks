@@ -216,6 +216,12 @@ namespace Keas.Mvc.Controllers
                 }
             }
 
+            if (user == null)
+            {
+                ModelState.AddModelError("UserEmail", "User Not found.");
+                return View(viewModel);
+            }
+
             // Check if already Team Person. Add if not.
             var person = await _context.People.IgnoreQueryFilters().SingleOrDefaultAsync(p => p.UserId == user.Id && p.TeamId == team.Id);
             if (person == null)
