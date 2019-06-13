@@ -31,6 +31,11 @@ namespace Keas.Mvc.Services
        }
 
        public async Task<User> CreateUser(User userSearch){
+
+           if (userSearch == null)
+           {
+               return null;
+           }
             var newUser = new User
                 {
                     Id = userSearch.Id,
