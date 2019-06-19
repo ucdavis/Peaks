@@ -64,6 +64,9 @@ namespace Keas.Mvc.Models
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime? EndDate { get; set; }
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        public DateTime? AddedDate { get; set; }
         [Display(Name = "Name")]
         public string Name
         {

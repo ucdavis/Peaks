@@ -35,7 +35,7 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
-                [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> BulkEdit(BulkEditModel model)
         {
             var updatedCount = 0;
@@ -161,7 +161,7 @@ namespace Keas.Mvc.Controllers
 
         private async Task PopulateBulkEdit(BulkEditModel model)
         {
-            model.BulkPersons = await _context.People.Where(a => a.Team.Slug == Team).Select(a => new PersonBulkEdit
+            model.BulkPersons = await _context.ExtendedPersonViews.Where(a => a.Slug == Team).Select(a => new PersonBulkEdit
             {
                 Id = a.Id,
                 UserId = a.UserId,
@@ -172,7 +172,8 @@ namespace Keas.Mvc.Controllers
                 StartDate = a.StartDate,
                 EndDate = a.EndDate,
                 Category = a.Category,
-                SupervisorName = a.Supervisor == null ? null : $"{a.Supervisor.Name} ({a.Supervisor.Email})",
+                SupervisorName = a.SupervisorId == null ? null : $"{a.S_FirstName} {a.S_LastName} ({a.S_Email})",
+                AddedDate = a.LastAddDate,
             }).ToListAsync();
             model.CategoryChoices = new List<string>();
             model.CategoryChoices.Add("-- Not Set --");

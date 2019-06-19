@@ -50,6 +50,8 @@ namespace Keas.Core.Data
         public virtual DbSet<Group> Groups { get; set; }
         public virtual DbSet<GroupPermission> GroupPermissions { get; set; }
         public virtual DbSet<GroupXTeam> GroupXTeams { get; set; }
+
+        public virtual DbSet<ExtendedPersonView> ExtendedPersonViews { get; set; }
         
 
         protected override void OnModelCreating(ModelBuilder builder)
