@@ -86,7 +86,8 @@ export default class KeyTable extends React.Component<IProps, {}> {
                                 <option value="all">Show All</option>
                                 <option value="unassigned">Unassigned</option>
                                 <option value="assigned">Assigned</option>
-                                <option value="any">Any</option>
+                                <option value="has-serial">Has Serial</option>
+                                <option value="no-serial">No Serial</option>
                             </select>
                         ),
                         Header: header => (
@@ -117,8 +118,11 @@ export default class KeyTable extends React.Component<IProps, {}> {
                             if (filter.value === "assigned") {
                                 return row.serialsCount.serialsInUse > 0;
                             }
-                            if (filter.value === "any") {
+                            if (filter.value === "has-serial") {
                                 return row.serialsCount.serialsTotal > 0;
+                            }
+                            if (filter.value === "no-serial") {
+                                return row.serialsCount.serialsTotal === 0;
                             }
                         },
                         headerClassName: "table-10p",
