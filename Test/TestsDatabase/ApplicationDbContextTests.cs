@@ -28,6 +28,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Equipment", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Equipment]", new List<string>()));
             expectedFields.Add(new NameAndType("EquipmentAssignments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.EquipmentAssignment]", new List<string>()));
             expectedFields.Add(new NameAndType("EquipmentAttributes", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.EquipmentAttribute]", new List<string>()));
+            expectedFields.Add(new NameAndType("ExtendedPersonViews", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.ExtendedPersonView]", new List<string>()));
             expectedFields.Add(new NameAndType("FISOrgs", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.FinancialOrganization]", new List<string>()));
             expectedFields.Add(new NameAndType("GroupPermissions", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.GroupPermission]", new List<string>()));
             expectedFields.Add(new NameAndType("Groups", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Group]", new List<string>()));
