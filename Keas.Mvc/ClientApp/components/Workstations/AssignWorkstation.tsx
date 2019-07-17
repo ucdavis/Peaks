@@ -86,7 +86,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                 >
                     <div className="modal-header row justify-content-between">
                         <h2>{this.props.selectedWorkstation || this.props.person ? "Assign Workstation" : "Add Workstation"}</h2>
-                        <Button color="link" onClick={this._closeModal}>
+                        <Button color="link" onClick={this._closeModal_using_icon}>
                             <i className="fas fa-times fa-lg" />
                         </Button>
                     </div>
@@ -216,6 +216,23 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _closeModal = () => {
+        if (!confirm("Please confirm you want to close!")){
+            return;
+        }
+        this.setState({
+            date: moment()
+                .add(3, "y")
+                .startOf("day"),
+            error: "",
+            person: null,
+            submitting: false,
+            validState: false,
+            workstation: null
+        });
+        this.props.closeModal();
+    };
+
+    private _closeModal_using_icon = () => {
         this.setState({
             date: moment()
                 .add(3, "y")

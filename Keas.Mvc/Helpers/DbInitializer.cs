@@ -32,7 +32,8 @@ namespace Keas.Mvc.Helpers
             var cal   = CreateOrFindUser(new User { Id = "cydoval", FirstName = "Cal", LastName = "Doval", Email = "cydoval@ucdavis.edu" });
             var jason = CreateOrFindUser(new User { Id = "jsylvest", FirstName = "Jason", LastName = "Sylvestre", Email = "jsylvestre@ucdavis.edu" });
             var john  = CreateOrFindUser(new User {Id = "jpknoll", FirstName = "John", LastName = "Knoll", Email = "jpknoll@ucdavis.edu"});
-
+            var nabil = CreateOrFindUser(new User { Id = "nfurmoli", FirstName = "Nabil", LastName = "Furmoli", Email = "anfurmoli@ucdavis.edu" });
+            
             // Create All Admin Assignments
             CreateSystemPermission(new SystemPermission { Role = admin, User = james });
             CreateSystemPermission(new SystemPermission { Role = admin, User = laura });
@@ -40,6 +41,7 @@ namespace Keas.Mvc.Helpers
             CreateSystemPermission(new SystemPermission { Role = admin, User = cal });
             CreateSystemPermission(new SystemPermission { Role = admin, User = jason });
             CreateSystemPermission(new SystemPermission { Role = admin, User = john });
+            CreateSystemPermission(new SystemPermission { Role = admin, User = nabil });
 
             _context.SaveChanges();
         }
