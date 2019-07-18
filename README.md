@@ -2,11 +2,12 @@
 
 [![forthebadge](http://forthebadge.com/images/badges/uses-html.svg)](http://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/contains-technical-debt.svg)](https://forthebadge.com)
-# Keas
+# PEAKS (formally Keas)
 
-**K**eys
+**P**eople
 **E**quipment
 **A**ccess
+**K**eys
 **S**pace
 
 # Build + Run
