@@ -75,7 +75,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
             >
                 <div className="modal-header row justify-content-between">
                     <h2>Create Key</h2>
-                    <Button color="link" onClick={this._closeModal_using_icon}>
+                    <Button color="link" onClick={this._closeModalUsingIcon}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
                 </div>
@@ -140,7 +140,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
         this.props.closeModal();
     };
 
-    private _closeModal_using_icon = () => {
+    private _closeModalUsingIcon = () => {
         this.setState({
             error: "",
             key: {

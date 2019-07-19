@@ -63,7 +63,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
                         Edit Serial {this.props.selectedKeySerial.key.code}{" "}
                         {this.props.selectedKeySerial.number}
                     </h2>
-                    <Button color="link" onClick={this._closeModal_using_icon}>
+                    <Button color="link" onClick={this._closeModalUsingIcon}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
                 </div>
@@ -122,7 +122,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
         this.props.closeModal();
     };
 
-    private _closeModal_using_icon = () => {
+    private _closeModalUsingIcon = () => {
         this.setState({
             error: "",
             keySerial: null,

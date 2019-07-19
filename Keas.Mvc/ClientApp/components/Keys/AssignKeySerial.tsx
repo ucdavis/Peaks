@@ -101,7 +101,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
             <Modal isOpen={isModalOpen} toggle={this._closeModal} size="lg" className="keys-color">
                 <div className="modal-header row justify-content-between">
                     <h2>{this.props.selectedKeySerial || this.props.person ? "Assign Key Serial" : "Add Key Serial"}</h2>
-                    <Button color="link" onClick={this._closeModal_using_icon}>
+                    <Button color="link" onClick={this._closeModalUsingIcon}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
                 </div>
@@ -272,7 +272,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
         this.props.closeModal();
     };
 
-    private _closeModal_using_icon = () => {
+    private _closeModalUsingIcon = () => {
         this.setState({
             date: moment()
                 .add(3, "y")
