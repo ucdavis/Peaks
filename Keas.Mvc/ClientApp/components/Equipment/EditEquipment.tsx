@@ -57,11 +57,11 @@ export default class EditEquipment extends React.Component<IProps, IState> {
                 isOpen={this.props.modal}
                 toggle={this._closeModal}
                 size="lg"
-                className="equipment-color"
+                className="equipment-color" 
             >
                 <div className="modal-header row justify-content-between">
                     <h2>Edit Equipment</h2>
-                    <Button color="link" onClick={this._closeModal}>
+                    <Button color="link" onClick={this._closeModalUsingIcon}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
                 </div>
@@ -111,6 +111,19 @@ export default class EditEquipment extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _closeModal = () => {
+        if (!confirm("Please confirm you want to close!")){
+            return;
+        }
+        this.setState({
+            equipment: null,
+            error: "",
+            submitting: false,
+            validState: false
+        });
+        this.props.closeModal();
+    };
+
+    private _closeModalUsingIcon = () => {
         this.setState({
             equipment: null,
             error: "",

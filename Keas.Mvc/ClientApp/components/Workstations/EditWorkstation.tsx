@@ -57,7 +57,7 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
             >
                 <div className="modal-header row justify-content-between">
                     <h2>Edit Workstation</h2>
-                    <Button color="link" onClick={this._closeModal}>
+                    <Button color="link" onClick={this._closeModalUsingIcon}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
                 </div>
@@ -106,6 +106,19 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _closeModal = () => {
+        if (!confirm("Please confirm you want to close!")){
+            return;
+        }
+        this.setState({
+            error: "",
+            submitting: false,
+            validState: false,
+            workstation: null
+        });
+        this.props.closeModal();
+    };
+
+    private _closeModalUsingIcon = () => {
         this.setState({
             error: "",
             submitting: false,
