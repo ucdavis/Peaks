@@ -98,7 +98,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
         const { person, keySerial } = this.state;
 
         return (
-            <Modal isOpen={isModalOpen} toggle={this._closeModal} size="lg" className="keys-color">
+            <Modal isOpen={isModalOpen} toggle={this._confirmClose} size="lg" className="keys-color">
                 <div className="modal-header row justify-content-between">
                     <h2>{this.props.selectedKeySerial || this.props.person ? "Assign Key Serial" : "Add Key Serial"}</h2>
                     <Button color="link" onClick={this._closeModalUsingIcon}>
@@ -254,10 +254,15 @@ export default class AssignKey extends React.Component<IProps, IState> {
     };
 
     // clear everything out on close
-    private _closeModal = () => {
+    private _confirmClose = () => {
         if (!confirm("Please confirm you want to close!")){
             return;
         }
+
+        this._closeModal();
+    }
+
+    private _closeModal = () => {
         this.setState({
             date: moment()
                 .add(3, "y")

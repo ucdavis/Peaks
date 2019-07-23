@@ -84,7 +84,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                 </Button>
                 <Modal
                     isOpen={this.props.modal}
-                    toggle={this._closeModal}
+                    toggle={this._confirmClose}
                     size="lg"
                     className="equipment-color"
                 >
@@ -233,10 +233,15 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     };
 
     // clear everything out on close
-    private _closeModal = () => {
-        if(!confirm("Please confirm you want to close!")) {
+    private _confirmClose = () => {
+        if (!confirm("Please confirm you want to close!")){
             return;
         }
+
+        this._closeModal();
+    };
+
+    private _closeModal = () => {
         this.setState({
             date: moment()
                 .add(3, "y")
