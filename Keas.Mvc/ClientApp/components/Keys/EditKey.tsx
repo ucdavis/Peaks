@@ -61,13 +61,13 @@ export default class EditKey extends React.Component<IProps, IState> {
         return (
             <Modal
                 isOpen={this.props.modal}
-                toggle={this._closeModal}
+                toggle={this._confirmClose}
                 size="lg"
                 className="keys-color"
             >
                 <div className="modal-header row justify-content-between">
                     <h2>Edit Key</h2>
-                    <Button color="link" onClick={this._closeModalUsingIcon}>
+                    <Button color="link" onClick={this._closeModal}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
                 </div>
@@ -110,20 +110,15 @@ export default class EditKey extends React.Component<IProps, IState> {
     };
 
     // clear everything out on close
-    private _closeModal = () => {
+    private _confirmClose = () => {
         if (!confirm("Please confirm you want to close!")){
             return;
         }
-        this.setState({
-            error: "",
-            key: null,
-            submitting: false,
-            validState: false
-        });
-        this.props.closeModal();
-    };
 
-    private _closeModalUsingIcon = () => {
+        this._closeModal();
+    }
+
+    private _closeModal = () => {
         this.setState({
             error: "",
             key: null,
