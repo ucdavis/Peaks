@@ -63,7 +63,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
                         Edit Serial {this.props.selectedKeySerial.key.code}{" "}
                         {this.props.selectedKeySerial.number}
                     </h2>
-                    <Button color="link" onClick={this._closeModalUsingIcon}>
+                    <Button color="link" onClick={this._closeModal}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
                 </div>
@@ -127,15 +127,6 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
         this.props.closeModal();
     };
 
-    private _closeModalUsingIcon = () => {
-        this.setState({
-            error: "",
-            keySerial: null,
-            submitting: false,
-            validState: false
-        });
-        this.props.closeModal();
-    };
     // assign the selected key even if we have to create it
     private _editSelected = async () => {
         if (!this.state.validState || this.state.submitting) {

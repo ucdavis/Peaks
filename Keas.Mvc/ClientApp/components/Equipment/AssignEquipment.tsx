@@ -90,7 +90,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                 >
                     <div className="modal-header row justify-content-between">
                         <h2>{this.props.selectedEquipment || this.props.person ? "Assign Equipment" : "Add Equipment"}</h2>
-                        <Button color="link" onClick={this._closeModalUsingIcon}>
+                        <Button color="link" onClick={this._closeModal}>
                             <i className="fas fa-times fa-lg" />
                         </Button>
                     </div>
@@ -254,21 +254,6 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         });
         this.props.closeModal();
     };
-
-    private _closeModalUsingIcon = () => {
-        this.setState({
-            date: moment()
-                .add(3, "y")
-                .startOf("day"),
-            equipment: null,
-            error: "",
-            person: null,
-            submitting: false,
-            validState: false
-        });
-        this.props.closeModal();
-    };
-
 
     // assign the selected equipment even if we have to create it
     private _assignSelected = async () => {

@@ -57,7 +57,7 @@ export default class EditAccess extends React.Component<IProps, IState> {
             >
                 <div className="modal-header row justify-content-between">
                     <h2>Edit Access</h2>
-                    <Button color="link" onClick={this._closeModalUsingIcon}>
+                    <Button color="link" onClick={this._closeModal}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
                 </div>
@@ -110,16 +110,6 @@ export default class EditAccess extends React.Component<IProps, IState> {
     };
 
     private _closeModal = () => {
-        this.setState({
-            access: null,
-            error: "",
-            submitting: false,
-            validState: false
-        });
-        this.props.closeModal();
-    };
-
-    private _closeModalUsingIcon = () => {
         this.setState({
             access: null,
             error: "",
