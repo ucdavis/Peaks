@@ -172,8 +172,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
 
     private _validateState = () => {
         const { key } = this.state;
-
-        let valid = this._formRef.current.checkValidity();
+        let valid = this._formRef.current && this._formRef.current.checkValidity();
         let error = "";
 
         if (!key) {
