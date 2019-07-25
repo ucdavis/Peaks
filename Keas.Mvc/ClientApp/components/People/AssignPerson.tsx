@@ -91,7 +91,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
                 </div>
                 <div>
                     <Link to={`/${this.context.team.slug}/people/create`}>
-                        <Button color="link">
+                        <Button color="link" type="button">
                             <i className="fas fa-search fas-sm" aria-hidden="true" /> Can't find who
                             you're looking for?
                         </Button>
