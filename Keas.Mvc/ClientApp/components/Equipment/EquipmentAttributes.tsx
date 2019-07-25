@@ -6,13 +6,13 @@ import EquipmentAttribute from "./EquipmentAttribute";
 interface IProps {
     commonKeys: string[];
     disableEdit: boolean;
-    equipment: IEquipment;
+    attributes: IEquipmentAttribute[];
     updateAttributes: (attribute: IEquipmentAttribute[]) => void;
 }
 
 export default class EquipmentAttributes extends React.Component<IProps, {}> {
     public render() {
-        const attributeList = this.props.equipment.attributes.map((attr, i) => (
+        const attributeList = this.props.attributes.map((attr, i) => (
             <EquipmentAttribute
                 key={`attr-${i}`}
                 disabledEdit={this.props.disableEdit}
@@ -58,7 +58,7 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
 
     private _onAddAttribute = () => {
         const attributes = [
-            ...this.props.equipment.attributes,
+            ...this.props.attributes,
             {
                 equipmentId: 0,
                 key: "",
@@ -69,7 +69,7 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
     };
 
     private _onEditAttribute = (i: number, prop: string, val: string) => {
-        const attributes = this.props.equipment.attributes;
+        const attributes = [...this.props.attributes];
         attributes[i] = {
             ...attributes[i],
             [prop]: val
@@ -78,7 +78,7 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
     };
 
     private _onRemoveAttribute = (i: number) => {
-        const attributes = this.props.equipment.attributes;
+        const attributes = [...this.props.attributes];
         attributes.splice(i, 1);
 
         this.props.updateAttributes(attributes);

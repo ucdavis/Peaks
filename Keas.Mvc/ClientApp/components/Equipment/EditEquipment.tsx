@@ -34,7 +34,12 @@ export default class EditEquipment extends React.Component<IProps, IState> {
     constructor(props) {
         super(props);
         this.state = {
-            equipment: this.props.selectedEquipment,
+            equipment: this.props.selectedEquipment
+                ? {
+                      ...this.props.selectedEquipment,
+                      attributes: [...this.props.selectedEquipment.attributes]
+                  }
+                : null,
             error: "",
             submitting: false,
             validState: false

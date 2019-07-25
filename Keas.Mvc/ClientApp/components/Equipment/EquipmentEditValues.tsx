@@ -128,7 +128,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     <EquipmentAttributes
                         updateAttributes={this.props.updateAttributes}
                         disableEdit={this.props.disableEditing}
-                        equipment={this.props.selectedEquipment}
+                        attributes={this.props.selectedEquipment.attributes}
                         commonKeys={this.props.commonAttributeKeys}
                     />
 
