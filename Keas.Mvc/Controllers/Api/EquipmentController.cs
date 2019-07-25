@@ -36,6 +36,7 @@ namespace Keas.Mvc.Controllers.Api
                 from eq in _context.Equipment
                 .Where(x => x.Team.Slug == Team && x.Active &&
                 (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
+                .Include(x => x.Attributes)
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
                 .AsNoTracking()
