@@ -37,7 +37,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
             equipment: this.props.selectedEquipment
                 ? {
                       ...this.props.selectedEquipment,
-                      attributes: { ...this.props.selectedEquipment.attributes }
+                      attributes: [...this.props.selectedEquipment.attributes]
                   }
                 : null,
             error: "",
