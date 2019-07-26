@@ -39,6 +39,10 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Active", "System.Boolean", new List<string>()));
             expectedFields.Add(new NameAndType("Assignment", "Keas.Core.Domain.EquipmentAssignment", new List<string>()));
             expectedFields.Add(new NameAndType("Attributes", "System.Collections.Generic.List`1[Keas.Core.Domain.EquipmentAttribute]", new List<string>()));
+            expectedFields.Add(new NameAndType("AvailabilityLevel", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)2)]",
+            }));
             expectedFields.Add(new NameAndType("EquipmentAssignmentId", "System.Nullable`1[System.Int32]", new List<string>()));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>
             {
@@ -52,6 +56,10 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
             }));
             expectedFields.Add(new NameAndType("Notes", "System.String", new List<string>()));
+            expectedFields.Add(new NameAndType("ProtectionLevel", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)2)]",
+            }));
             expectedFields.Add(new NameAndType("SerialNumber", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Space", "Keas.Core.Domain.Space", new List<string>()));
             expectedFields.Add(new NameAndType("SpaceId", "System.Nullable`1[System.Int32]", new List<string>()));
