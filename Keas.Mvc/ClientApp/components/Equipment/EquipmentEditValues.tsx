@@ -98,6 +98,20 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             <option value="P4">P4 - High</option>
                         </select>
                     </div>
+                    <div className="form-group">
+                        <label>Availability Level</label>
+                        <select
+                            className="form-control"
+                            value={this.props.selectedEquipment.is3AvailabilityLevel}
+                            onChange={e => this.props.changeProperty("is3AvailabilityLevel", e.target.value)}
+                            disabled={this.props.disableEditing}
+                        >
+                            <option value="A1">A1 - Minimal</option>
+                            <option value="A2">A2 - Low</option>
+                            <option value="A3">A3 - Moderate</option>
+                            <option value="A4">A4 - High</option>
+                        </select>
+                    </div>
                     {this._shouldShowForType(this.props.selectedEquipment.type, "Make") && (
                         <div className="form-group">
                             <label>Make</label>

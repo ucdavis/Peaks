@@ -155,6 +155,7 @@ export interface IEquipment {
   teamId: number;
   type: string;
   is3ProtectionLevel: string;
+  is3AvailabilityLevel: string;
   notes: string;
   attributes: IEquipmentAttribute[];
 }
