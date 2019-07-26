@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
@@ -16,6 +17,12 @@ namespace Keas.Core.Domain
 
         public string Make { get; set; }
         public string Model { get; set; }
+
+        [StringLength(2)]
+        public string Is3ProtectionLevel { get; set; }
+
+        [StringLength(2)]
+        public string Is3AvailabilityLevel { get; set; }
 
         public Space Space { get; set; }
         public int? SpaceId { get; set; }
