@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
 using System.IO;
+using System.Runtime.CompilerServices;
 using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using System.Text;
@@ -893,7 +894,7 @@ namespace Keas.Mvc.Controllers
             using (var reader = new StreamReader(file.OpenReadStream()))
             using (var csv = new CsvReader(reader))
             {
-                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
+                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty);
                 var record = new EquipmentImport();
                 var records = csv.EnumerateRecords(record);
                 try
@@ -1061,7 +1062,11 @@ namespace Keas.Mvc.Controllers
         }
 
         private Equipment CreateEquipment(EquipmentImport r, Team team, EquipmentImportResults result, ref int recEquipmentCount)
-        {
+        { 
+            var typesWithPartectionAndAvailability = new string[] { "Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device" };
+            var protectionLevels = new string[] {"P1", "P2", "P3", "P4"};
+            var availabilityLevels = new string[] { "A1", "A2", "A3", "A4" };
+
             var equipment = new Equipment();
             if (!string.IsNullOrWhiteSpace(r.EquipmentName))
             {                
@@ -1088,6 +1093,26 @@ namespace Keas.Mvc.Controllers
                     else
                     {
                         ModelState.AddModelError("Type", "Invalid Equipment Type");
+                    }
+                }
+
+                if (typesWithPartectionAndAvailability.Contains(equipment.Type))
+                {
+                    if (!string.IsNullOrWhiteSpace(r.ProtectionLevel) && protectionLevels.Contains(r.ProtectionLevel.Trim(), StringComparer.OrdinalIgnoreCase))
+                    {
+                        equipment.ProtectionLevel = protectionLevels.Single(a => a.Equals(r.ProtectionLevel.Trim(), StringComparison.OrdinalIgnoreCase));
+                    }
+                    else
+                    {
+                        equipment.ProtectionLevel = "P1";
+                    }
+                    if (!string.IsNullOrWhiteSpace(r.AvailabilityLevel) && availabilityLevels.Contains(r.AvailabilityLevel.Trim(), StringComparer.OrdinalIgnoreCase))
+                    {
+                        equipment.AvailabilityLevel = availabilityLevels.Single(a => a.Equals(r.AvailabilityLevel.Trim(), StringComparison.OrdinalIgnoreCase));
+                    }
+                    else
+                    {
+                        equipment.AvailabilityLevel = "A1";
                     }
                 }
                 
