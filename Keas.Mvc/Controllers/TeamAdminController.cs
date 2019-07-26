@@ -1104,7 +1104,9 @@ namespace Keas.Mvc.Controllers
                     }
                     else
                     {
-                        equipment.ProtectionLevel = "P1";
+                        result.Success = false;
+                        result.ErrorMessage.Add("Invalid Protection Level Value.");
+                        return equipment;
                     }
                     if (!string.IsNullOrWhiteSpace(r.AvailabilityLevel) && availabilityLevels.Contains(r.AvailabilityLevel.Trim(), StringComparer.OrdinalIgnoreCase))
                     {
@@ -1112,7 +1114,9 @@ namespace Keas.Mvc.Controllers
                     }
                     else
                     {
-                        equipment.AvailabilityLevel = "A1";
+                        result.Success = false;
+                        result.ErrorMessage.Add("Invalid Availability Level Value.");
+                        return equipment;
                     }
                 }
                 
