@@ -84,34 +84,39 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             }
                         />
                     </div>
-                    <div className="form-group">
-                        <label>Protection Level</label>
-                        <select
-                            className="form-control"
-                            value={this.props.selectedEquipment.is3ProtectionLevel}
-                            onChange={e => this.props.changeProperty("is3ProtectionLevel", e.target.value)}
-                            disabled={this.props.disableEditing}
-                        >
-                            <option value="P1">P1 - Minimal</option>
-                            <option value="P2">P2 - Low</option>
-                            <option value="P3">P3 - Moderate</option>
-                            <option value="P4">P4 - High</option>
-                        </select>
-                    </div>
-                    <div className="form-group">
-                        <label>Availability Level</label>
-                        <select
-                            className="form-control"
-                            value={this.props.selectedEquipment.is3AvailabilityLevel}
-                            onChange={e => this.props.changeProperty("is3AvailabilityLevel", e.target.value)}
-                            disabled={this.props.disableEditing}
-                        >
-                            <option value="A1">A1 - Minimal</option>
-                            <option value="A2">A2 - Low</option>
-                            <option value="A3">A3 - Moderate</option>
-                            <option value="A4">A4 - High</option>
-                        </select>
-                    </div>
+                    {this._shouldShowForType(this.props.selectedEquipment.type, "IS3") &&
+                        <div>
+                            <div className="form-group">
+                                <label>Protection Level</label>
+                                <select
+                                    className="form-control"
+                                    value={this.props.selectedEquipment.is3ProtectionLevel}
+                                    onChange={e => this.props.changeProperty("is3ProtectionLevel", e.target.value)}
+                                    disabled={this.props.disableEditing}
+                                >
+                                    <option value="P1">P1 - Minimal</option>
+                                    <option value="P2">P2 - Low</option>
+                                    <option value="P3">P3 - Moderate</option>
+                                    <option value="P4">P4 - High</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Availability Level</label>
+                                <select
+                                    className="form-control"
+                                    value={this.props.selectedEquipment.is3AvailabilityLevel}
+                                    onChange={e => this.props.changeProperty("is3AvailabilityLevel", e.target.value)}
+                                    disabled={this.props.disableEditing}
+                                >
+                                    <option value="A1">A1 - Minimal</option>
+                                    <option value="A2">A2 - Low</option>
+                                    <option value="A3">A3 - Moderate</option>
+                                    <option value="A4">A4 - High</option>
+                                </select>
+                            </div>
+                        </div>
+                    }
+
                     {this._shouldShowForType(this.props.selectedEquipment.type, "Make") && (
                         <div className="form-group">
                             <label>Make</label>
@@ -224,6 +229,13 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
         }
         if (prop === "Model") {
             if (type !== "Card" && type !== "Software") {
+                return true;
+            }
+            return false;
+        }
+        if (prop === "IS3") {
+            let Is3Types = ["Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device"];
+            if (Is3Types.indexOf(type) > -1) {
                 return true;
             }
             return false;
