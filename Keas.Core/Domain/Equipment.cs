@@ -19,10 +19,10 @@ namespace Keas.Core.Domain
         public string Model { get; set; }
 
         [StringLength(2)]
-        public string Is3ProtectionLevel { get; set; }
+        public string ProtectionLevel { get; set; }
 
         [StringLength(2)]
-        public string Is3AvailabilityLevel { get; set; }
+        public string AvailabilityLevel { get; set; }
 
         public Space Space { get; set; }
         public int? SpaceId { get; set; }

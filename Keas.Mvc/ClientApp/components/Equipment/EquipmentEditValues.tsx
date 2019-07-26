@@ -84,14 +84,14 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             }
                         />
                     </div>
-                    {this._shouldShowForType(this.props.selectedEquipment.type, "IS3") &&
+                    {this._shouldShowForType(this.props.selectedEquipment.type, "ProtectionAndAvailability") &&
                         <div>
                             <div className="form-group">
                                 <label>Protection Level</label>
                                 <select
                                     className="form-control"
-                                    value={this.props.selectedEquipment.is3ProtectionLevel}
-                                    onChange={e => this.props.changeProperty("is3ProtectionLevel", e.target.value)}
+                                    value={this.props.selectedEquipment.protectionLevel}
+                                    onChange={e => this.props.changeProperty("protectionLevel", e.target.value)}
                                     disabled={this.props.disableEditing}
                                 >
                                     <option value="P1">P1 - Minimal</option>
@@ -104,8 +104,8 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                                 <label>Availability Level</label>
                                 <select
                                     className="form-control"
-                                    value={this.props.selectedEquipment.is3AvailabilityLevel}
-                                    onChange={e => this.props.changeProperty("is3AvailabilityLevel", e.target.value)}
+                                    value={this.props.selectedEquipment.availabilityLevel}
+                                    onChange={e => this.props.changeProperty("availabilityLevel", e.target.value)}
                                     disabled={this.props.disableEditing}
                                 >
                                     <option value="A1">A1 - Minimal</option>
@@ -233,9 +233,9 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
             }
             return false;
         }
-        if (prop === "IS3") {
-            let Is3Types = ["Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device"];
-            if (Is3Types.indexOf(type) > -1) {
+        if (prop === "ProtectionAndAvailability") {
+            let Types = ["Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device"];
+            if (Types.indexOf(type) > -1) {
                 return true;
             }
             return false;
