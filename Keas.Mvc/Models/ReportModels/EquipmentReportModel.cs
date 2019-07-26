@@ -4,6 +4,8 @@ namespace Keas.Mvc.Models.ReportModels
     {
         public string Name { get; set; }
         public string Type { get; set; }
+        public string ProtectionLevel { get; set; }
+        public string AvailabilityLevel { get; set; }
         public string SerialNumber { get; set; }
         public string Make { get; set; }
         public string Model { get; set; }

@@ -140,6 +140,8 @@ namespace Keas.Mvc.Services
             {
                 Name = a.Name,
                 Type = string.IsNullOrWhiteSpace(a.Type) ? EquipmentTypes.Default : a.Type,
+                ProtectionLevel = a.ProtectionLevel,
+                AvailabilityLevel = a.AvailabilityLevel,
                 SerialNumber = a.SerialNumber,
                 Make = a.Make,
                 Model = a.Model,
