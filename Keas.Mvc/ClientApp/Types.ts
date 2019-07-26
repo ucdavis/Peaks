@@ -154,6 +154,7 @@ export interface IEquipment {
   tags: string; 
   teamId: number;
   type: string;
+  is3ProtectionLevel: string;
   notes: string;
   attributes: IEquipmentAttribute[];
 }
