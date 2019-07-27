@@ -1102,7 +1102,7 @@ namespace Keas.Mvc.Controllers
                     {
                         equipment.ProtectionLevel = protectionLevels.Single(a => a.Equals(r.ProtectionLevel.Trim(), StringComparison.OrdinalIgnoreCase));
                     }
-                    else
+                    else 
                     {
                         result.Success = false;
                         result.ErrorMessage.Add("Invalid Protection Level Value.");
