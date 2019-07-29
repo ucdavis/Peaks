@@ -171,6 +171,8 @@ namespace Keas.Mvc.Controllers.Api
                 eq.Tags = updatedEquipment.Tags;
                 eq.Notes = updatedEquipment.Notes;
                 eq.Type = updatedEquipment.Type;
+                eq.ProtectionLevel = updatedEquipment.ProtectionLevel;
+                eq.AvailabilityLevel = updatedEquipment.AvailabilityLevel;
                 
                 eq.Attributes.Clear();
                 updatedEquipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));

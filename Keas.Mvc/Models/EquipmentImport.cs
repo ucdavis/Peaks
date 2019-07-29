@@ -25,6 +25,9 @@ namespace Keas.Mvc.Models
 
         public string Type { get; set; }
 
+        public string ProtectionLevel { get; set; }
+        public string AvailabilityLevel { get; set; }
+
         public string Key1 { get; set; }
         public string Value1 { get; set; }
         public string Key2 { get; set; }
@@ -65,6 +68,8 @@ namespace Keas.Mvc.Models
                 Model = import.Model,                
                 Tag = import.Tag,
                 Type = import.Type,
+                ProtectionLevel = import.ProtectionLevel,
+                AvailabilityLevel = import.AvailabilityLevel,
                 Key1 = import.Key1,
                 Value1 = import.Value1,
                 Key2 = import.Key2,

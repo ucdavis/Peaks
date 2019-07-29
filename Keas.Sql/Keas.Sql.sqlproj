@@ -62,6 +62,7 @@
     <Folder Include="Compare" />
     <Folder Include="dbo\Views\" />
     <Folder Include="dbo\Stored Procedures\" />
+    <Folder Include="Scripts" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="dbo\Tables\Workstations.sql" />
@@ -111,5 +112,6 @@
   <ItemGroup>
     <None Include="Compare\ProjectToSqlExpress.scmp" />
     <None Include="Compare\ProjectToTestDb.scmp" />
+    <None Include="Scripts\PopulateIs3Fields.sql" />
   </ItemGroup>
 </Project>

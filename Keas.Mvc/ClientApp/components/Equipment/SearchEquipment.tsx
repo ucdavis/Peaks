@@ -133,7 +133,9 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
             space: this.props.space ? this.props.space : null, // if we are on spaces tab, auto to the right space
             tags: "",
             teamId: 0,
-            type: ""
+            type: "",
+            protectionLevel: "",
+            availabilityLevel: "",
         });
     };
 }
