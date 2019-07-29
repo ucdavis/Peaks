@@ -23,6 +23,10 @@ interface IState {
     loading: boolean;
     tagFilters: string[];
     tags: string[];
+    equipmentProtectionLevels: string[];
+    equipmentProtectionFilters: string[];
+    equipmentAvailabilityLevels: string[];
+    equipmentAvailabilityFilters: string[];
 }
 
 interface IProps {
@@ -52,7 +56,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             equipmentTypes: [],
             loading: true,
             tagFilters: [],
-            tags: []
+            tags: [],
+            equipmentProtectionLevels: ["P1", "P2", "P3", "P4"],
+            equipmentProtectionFilters: [],
+            equipmentAvailabilityLevels: ["A1", "A2", "A3", "A4"],
+            equipmentAvailabilityFilters: [],
         };
     }
     public async componentDidMount() {
@@ -197,6 +205,16 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                     this._checkEquipmentTypeFilters(x)
                 );
             }
+            if (this.state.equipmentProtectionFilters.length > 0) {
+                filteredEquipment = filteredEquipment.filter(x => 
+                    this._checkEquipmentProtectionFilters(x)
+                );
+            } 
+            if (this.state.equipmentAvailabilityFilters.length > 0) {
+                filteredEquipment = filteredEquipment.filter(x =>
+                    this._checkEquipmentAvailabilityFilters(x)
+                );
+            }
             return (
                 <div>
                     <div className="row">
@@ -216,6 +234,21 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                             selected={this.state.equipmentTypeFilters}
                             onSelect={this._filterEquipmentType}
                             disabled={false}
+                            placeHolder="Search for Equipment Types"
+                        />
+                        <SearchEquipmentType
+                            equipmentTypes={this.state.equipmentProtectionLevels}
+                            selected={this.state.equipmentProtectionFilters}
+                            onSelect={this._filterEquipmentProtection}
+                            disabled={false}
+                            placeHolder="Search Protection Level"
+                        />
+                        <SearchEquipmentType
+                            equipmentTypes={this.state.equipmentAvailabilityLevels}
+                            selected={this.state.equipmentAvailabilityFilters}
+                            onSelect={this._filterEquipmentAvailability}
+                            disabled={false}
+                            placeHolder="Search Availability Level"
                         />
                     </div>
                     <EquipmentTable
@@ -446,12 +479,35 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         this.setState({ equipmentTypeFilters: filters });
     };
 
+    private _filterEquipmentProtection = (filters: string[]) => {
+        this.setState({ equipmentProtectionFilters: filters});
+    };
+    private _filterEquipmentAvailability = (filters: string[]) => {
+        this.setState({ equipmentAvailabilityFilters: filters });
+    };
+
     private _checkEquipmentTypeFilters = (equipment: IEquipment) => {
         var filters = this.state.equipmentTypeFilters;
         return filters.some(
             f =>
                 (equipment && !!equipment.type && equipment.type === f) ||
                 (equipment && !equipment.type && f === "Default")
+        );
+    };
+    
+    private _checkEquipmentProtectionFilters = (equipment: IEquipment) => {
+        var filters = this.state.equipmentProtectionFilters;
+        return filters.some(
+            f =>
+            (equipment && !!equipment.protectionLevel && equipment.protectionLevel === f)
+        );
+    };
+
+    private _checkEquipmentAvailabilityFilters = (equipment: IEquipment) => {
+        var filters = this.state.equipmentAvailabilityFilters;
+        return filters.some(
+            f =>
+            (equipment && !!equipment.availabilityLevel && equipment.availabilityLevel === f)
         );
     };
 

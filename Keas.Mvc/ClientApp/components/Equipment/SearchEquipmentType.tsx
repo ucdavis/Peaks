@@ -7,6 +7,7 @@ interface IProps {
     disabled: boolean;
     selected: string[];
     equipmentTypes: string[];
+    placeHolder: string;
 }
 
 export default class SearchEquipmentType extends React.Component<IProps, {}> {
@@ -24,7 +25,7 @@ export default class SearchEquipmentType extends React.Component<IProps, {}> {
                     selected={this.props.selected}
                     highlightOnlyResult={true}
                     selectHintOnEnter={true}
-                    placeholder="Search for Equipment Types"
+                    placeholder={this.props.placeHolder}
                 />
             </div>
         );
