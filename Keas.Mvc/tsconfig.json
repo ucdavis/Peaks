@@ -2,18 +2,13 @@
   "compilerOptions": {
     "baseUrl": ".",
     "module": "es2015",
+    "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "target": "es2016",
     "jsx": "react",
     "sourceMap": true,
     "skipDefaultLibCheck": true,
-    "typings": [
-      "node",
-      "webpack-env"
-    ]
+    "typings": ["node", "webpack-env"]
   },
-  "exclude": [
-      "bin",
-      "node_modules"
-  ]
+  "exclude": ["bin", "node_modules"]
 }
