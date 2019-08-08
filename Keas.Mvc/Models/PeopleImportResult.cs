@@ -23,7 +23,7 @@ namespace Keas.Mvc.Models
         public string Title { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
-        public string HomePhone { get; set; } //Look at formatting in Person.cs
+        public string HomePhone { get; set; } //Look at formatting in Person.cs .
         public string TeamPhone { get; set; }
 
         public string Category { get; set; }
