@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using CsvHelper.Configuration;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Models;
@@ -182,6 +183,7 @@ namespace Keas.Mvc.Controllers
             using (var csv = new CsvReader(reader))
             {
                 csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty);
+                csv.Configuration.TrimOptions = TrimOptions.Trim;
                 var record = new PeopleImport();
                 var records = csv.EnumerateRecords(record);
 
