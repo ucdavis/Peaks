@@ -99,8 +99,6 @@
                                 <th rowspan="2">Row</th>
                                 <th rowspan="2">Success</th>
                                 <th colspan="5">CSV Imported Values</th>
-                                <th rowspan="2">Messages</th>
-                                <th rowspan="2">Errors</th>
                             </tr>
                             <tr>
                                 <th>KerbId</th>
@@ -116,6 +114,8 @@
                                 <th>Category</th>
                                 <th>Tag(s)</th>
                                 <th>Notes</th>
+                                <th>Messages</th>
+                                <th>Errors</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -200,7 +200,7 @@
                 "columnDefs": [
                     { "width": "10%;", "targets": [2] },
                     { "type": "date", "targets": [9, 10] },
-
+                    { "targets" : [ 7,8,9,10,11,12,13,14], "visible" : false}
                 ]
             });
         });
