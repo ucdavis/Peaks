@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="card-content">
-                <a href="UploadKeys" class="btn btn-link">Upload Keys from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                <a asp-action="UploadKeys" class="btn btn-link">Upload Keys from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
             </div>
         </div>
         <div class="card equipment-color">
@@ -20,7 +20,17 @@
                 </div>
             </div>
             <div class="card-content">
-                <a href="UploadEquipment" class="btn btn-link">Upload Equipment from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                <a asp-controller="TeamAdmin" asp-action="UploadEquipment" class="btn btn-link">Upload Equipment from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+            </div>
+        </div>
+        <div class="card people-color">
+            <div class="card-header-people">
+                <div class="card-head">
+                    <h2>Upload People</h2>
+                </div>
+            </div>
+            <div class="card-content">
+                <a asp-controller="PersonAdmin" asp-action="UploadPeople" class="btn btn-link">Load people from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
             </div>
         </div>
 

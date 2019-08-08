@@ -159,6 +159,12 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        public IActionResult UploadPeople()
+        {
+            var model = new List<PeopleImportResult>();
+            return View();
+        }
+
         private async Task PopulateBulkEdit(BulkEditModel model)
         {
             model.BulkPersons = await _context.ExtendedPersonViews.Where(a => a.Slug == Team).Select(a => new PersonBulkEdit
