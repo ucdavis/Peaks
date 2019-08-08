@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Models;
@@ -9,8 +12,10 @@ using Keas.Mvc.Extensions;
 using Keas.Mvc.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ValidationException = CsvHelper.ValidationException;
 
 namespace Keas.Mvc.Controllers
 {
@@ -163,6 +168,81 @@ namespace Keas.Mvc.Controllers
         {
             var model = new List<PeopleImportResult>();
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadPeople(IFormFile file)
+        {
+            var resultsView = new List<PeopleImportResult>();
+
+            var userIdentity = User.Identity.Name;
+            var userName = User.GetNameClaim();
+            var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            using (var csv = new CsvReader(reader))
+            {
+                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty);
+                var record = new PeopleImport();
+                var records = csv.EnumerateRecords(record);
+
+                try
+                {
+                    csv.Read();
+                    csv.ReadHeader();
+                    csv.ValidateHeader(typeof(PeopleImport));
+                }
+                catch (HeaderValidationException e)
+                {
+                    var firstSentence = e.Message.Split('.');
+                    ErrorMessage = firstSentence.FirstOrDefault() ?? "Error Detected";
+                    return View();
+                }
+
+                foreach (var r in records)
+                {
+                    var importResult = new PeopleImportResult(r);
+                    importResult.LineNumber = csv.Context.Row;
+                    importResult.Success = true;
+
+                    if (string.IsNullOrWhiteSpace(r.OverrideEmail))
+                    {
+                        r.OverrideEmail = null; //Need this or the validation of the email will be triggered for an empty string
+                    }
+
+                    try
+                    {
+                        //validate
+                        ICollection<ValidationResult> valResults = new List<ValidationResult>();
+                        var context = new ValidationContext(r);
+                        Validator.TryValidateObject(r, context, valResults, true); //Need to validate all properties
+                        if (valResults.Count > 0)
+                        {
+                            foreach (var validationResult in valResults)
+                            {
+                                importResult.ErrorMessage.Add(validationResult.ErrorMessage);
+                            }
+                        }
+                    }
+                    catch (ValidationException e)
+                    {
+                        importResult.ErrorMessage.Add("Validation Exception for this row.");
+                    }
+
+                    if (importResult.ErrorMessage.Count > 0)
+                    {
+                        importResult.Success = false;
+                    }
+                    else
+                    {
+
+                    }
+
+
+                    resultsView.Add(importResult);
+                }
+            }
+
+            return View(resultsView);
         }
 
         private async Task PopulateBulkEdit(BulkEditModel model)
