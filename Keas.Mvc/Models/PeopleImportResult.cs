@@ -48,19 +48,23 @@ namespace Keas.Mvc.Models
 
         public PeopleImportResult(PeopleImport import)
         {
-            PeopleImport.KerbId            = import.KerbId;
-            PeopleImport.OverrideFirstName = import.OverrideFirstName;
-            PeopleImport.OverrideLastName  = import.OverrideLastName;
-            PeopleImport.OverrideEmail     = import.OverrideEmail;
-            PeopleImport.SupervisorKerbId  = import.SupervisorKerbId;
-            PeopleImport.StartDate         = import.StartDate;
-            PeopleImport.EndDate           = import.EndDate;
-            PeopleImport.HomePhone         = import.HomePhone;
-            PeopleImport.TeamPhone         = import.TeamPhone;
-            PeopleImport.Category          = import.Category;
-            PeopleImport.Tags              = import.Tags;
-            PeopleImport.Notes             = import.Notes;
- 
+            Messages = new List<string>();
+            ErrorMessage = new List<string>();
+            PeopleImport = new PeopleImport
+            {
+                KerbId            = import.KerbId,
+                OverrideFirstName = import.OverrideFirstName,
+                OverrideLastName  = import.OverrideLastName,
+                OverrideEmail     = import.OverrideEmail,
+                SupervisorKerbId  = import.SupervisorKerbId,
+                StartDate         = import.StartDate,
+                EndDate           = import.EndDate,
+                HomePhone         = import.HomePhone,
+                TeamPhone         = import.TeamPhone,
+                Category          = import.Category,
+                Tags              = import.Tags,
+                Notes             = import.Notes,
+            };
         }
 
     }

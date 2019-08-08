@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="card-content col-lg-6">
-                <form asp-action="UploadEquipment" method="post" enctype="multipart/form-data">
+                <form asp-action="UploadPeople" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <fieldset>
                         <div class="form-horizontal">
@@ -47,9 +47,9 @@
                 </div>
                 <div class="card-content">
                     <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
-                    <p><b>EquipmentName<span class="space">,</span>SerialNumber<span class="space">,</span>Make<span class="space">,</span>Model<span class="space">,</span>KerbUser<span class="space">,</span>DateIssued<span class="space">,</span>DateDue<span class="space">,</span>Tag<span class="space">,</span>Type<span class="space">,</span>ProtectionLevel<span class="space">,</span>AvailabilityLevel<span class="space">,</span>Notes<span class="space">,</span>Key1<span class="space">,</span>Value1<span class="space">,</span>Key2<span class="space">,</span>Value2<span class="space">,</span>Key3<span class="space">,</span>Value3<span class="space">,</span>Key4<span class="space">,</span>Value4<span class="space">,</span>Key5<span class="space">,</span>Value5<span class="space">,</span>Key6<span class="space">,</span>Value6</b></p>
+                    <p><b>KerbId,OverrideFirstName,OverrideLastName,OverrideEmail,SupervisorKerbId,Title,StartDate,EndDate,HomePhone,TeamPhone,Category,Tags,Notes</b></p>
                     <p>Text above copies properly. If you type the list out, omit the space after the commas.</p> 
-                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_equipment_example.csv")" class="btn btn-outline-info btn-lg" role="button"><i class="fa fa-download"></i> CSV file.</a></p>
+                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_people_example.csv")" class="btn btn-outline-info btn-lg" role="button"><i class="fa fa-download"></i> CSV file.</a></p>
                     <dl>
                         <dt>EquipmentName</dt>
                         <dd>Required - Description of Equipment item. Because name is not required to be unique, a new item will be created for each line. Maximum 64 characters long.</dd>
