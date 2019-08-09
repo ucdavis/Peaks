@@ -25,11 +25,13 @@ namespace Keas.Mvc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly INotificationService _notificationService;
+        private readonly IIdentityService _identityService;
 
-        public PersonAdminController(ApplicationDbContext context,INotificationService notificationService)
+        public PersonAdminController(ApplicationDbContext context,INotificationService notificationService, IIdentityService identityService)
         {
             _context = context;
             _notificationService = notificationService;
+            _identityService = identityService;
         }
 
         public async Task<IActionResult> BulkEdit()
@@ -236,7 +238,36 @@ namespace Keas.Mvc.Controllers
                     }
                     else
                     {
+                        if (await _context.People.AnyAsync(a => a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id))
+                        {
+                            importResult.Messages.Add($"KerbId {r.KerbId} Already active in team, no changes made.");
+                            importResult.Success = false;
+                        }
+                    }
 
+
+                    if(importResult.Success)
+                    {
+                        Person person = null;
+                        try
+                        {
+                            var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbId, team.Id, team, userName, userIdentity, null);
+                            person = personResult.Person;
+
+                            PopulatePerson(r, person, importResult);
+                        }
+                        catch (Exception)
+                        {
+                            person = null;
+                            importResult.Success = false;
+                            importResult.ErrorMessage.Add($"!!!!!!!!!!!!!THERE IS A PROBLEM WITH KerbUser {r.KerbId} PLEASE CONTACT PEAKS HELP with this User ID.!!!!!!!!!!!!!!!");
+                        }
+
+                        if (person == null)
+                        {
+                            importResult.Success = false;
+                            importResult.ErrorMessage.Add($"KerbId not found.");
+                        }
                     }
 
 
@@ -245,6 +276,54 @@ namespace Keas.Mvc.Controllers
             }
 
             return View(resultsView);
+        }
+
+        private static void PopulatePerson(PeopleImport r, Person person, PeopleImportResult importResult)
+        {
+            if (!string.IsNullOrWhiteSpace(r.OverrideFirstName))
+            {
+                person.FirstName = r.OverrideFirstName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.OverrideLastName))
+            {
+                person.LastName = r.OverrideLastName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.OverrideEmail))
+            {
+                person.Email = r.OverrideEmail;
+            }
+
+            if (r.StartDate.HasValue)
+            {
+                person.StartDate = r.StartDate.Value;
+            }
+            if (r.EndDate.HasValue)
+            {
+                person.EndDate = r.EndDate.Value;
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.Category))
+            {
+                if (PersonCategories.Types.Contains(r.Category.Trim(), StringComparer.OrdinalIgnoreCase))
+                {
+                    person.Category = PersonCategories.Types.Single(a => a.Equals(r.Category.Trim(), StringComparison.OrdinalIgnoreCase));
+                }
+                else
+                {
+                    importResult.Messages.Add("Warning, supplied category not found. Value not set.");
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.HomePhone))
+            {
+                person.HomePhone = r.HomePhone;
+            }
+            if (!string.IsNullOrWhiteSpace(r.TeamPhone))
+            {
+                person.TeamPhone = r.TeamPhone;
+            }
         }
 
         private async Task PopulateBulkEdit(BulkEditModel model)
