@@ -255,6 +255,8 @@ namespace Keas.Mvc.Controllers
                             person = personResult.Person;
 
                             PopulatePerson(r, person, importResult);
+
+                            await _context.SaveChangesAsync();
                         }
                         catch (Exception)
                         {
@@ -278,7 +280,7 @@ namespace Keas.Mvc.Controllers
             return View(resultsView);
         }
 
-        private static void PopulatePerson(PeopleImport r, Person person, PeopleImportResult importResult)
+        private async void PopulatePerson(PeopleImport r, Person person, PeopleImportResult importResult)
         {
             if (!string.IsNullOrWhiteSpace(r.OverrideFirstName))
             {
@@ -299,6 +301,7 @@ namespace Keas.Mvc.Controllers
             {
                 person.StartDate = r.StartDate.Value;
             }
+
             if (r.EndDate.HasValue)
             {
                 person.EndDate = r.EndDate.Value;
@@ -308,7 +311,8 @@ namespace Keas.Mvc.Controllers
             {
                 if (PersonCategories.Types.Contains(r.Category.Trim(), StringComparer.OrdinalIgnoreCase))
                 {
-                    person.Category = PersonCategories.Types.Single(a => a.Equals(r.Category.Trim(), StringComparison.OrdinalIgnoreCase));
+                    person.Category = PersonCategories.Types.Single(a =>
+                        a.Equals(r.Category.Trim(), StringComparison.OrdinalIgnoreCase));
                 }
                 else
                 {
@@ -316,14 +320,64 @@ namespace Keas.Mvc.Controllers
                 }
             }
 
+            if (!string.IsNullOrWhiteSpace(r.SupervisorKerbId))
+            {
+                var superGuy = await _context.People.FirstOrDefaultAsync(a => a.UserId.Equals(r.SupervisorKerbId));
+                if (superGuy == null)
+                {
+                    importResult.Messages.Add("Supplied SuperviorId not found in team.");
+                }
+                else
+                {
+                    person.Supervisor = superGuy;
+                    person.SupervisorId = superGuy.Id;
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.Title))
+            {
+                person.Title = r.Title;
+            }
+            
             if (!string.IsNullOrWhiteSpace(r.HomePhone))
             {
-                person.HomePhone = r.HomePhone;
+                try
+                {
+                    person.HomePhone = r.HomePhone;
+                }
+                catch (Exception)
+                {
+
+                }
+
+                if (string.IsNullOrWhiteSpace(person.HomePhone))
+                {
+                    importResult.Messages.Add("Supplied Home Phone is not a valid phone number format. Value not set.");
+                }
             }
             if (!string.IsNullOrWhiteSpace(r.TeamPhone))
             {
-                person.TeamPhone = r.TeamPhone;
+                try
+                {
+                    person.TeamPhone = r.TeamPhone;
+                }
+                catch (Exception)
+                {
+
+                }
+
+                if (string.IsNullOrWhiteSpace(person.TeamPhone))
+                {
+                    importResult.Messages.Add("Supplied Team Phone is not a valid phone number format. Value not set.");
+                }
             }
+
+            if (!string.IsNullOrWhiteSpace(r.Notes))
+            {
+                person.Notes = r.Notes;
+            }
+            
+            person.Tags = string.IsNullOrWhiteSpace(r.Tags) ? "Imported" : $"{r.Tags},Imported";
         }
 
         private async Task PopulateBulkEdit(BulkEditModel model)
