@@ -177,6 +177,11 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> UploadPeople(IFormFile file)
         {
             var resultsView = new List<PeopleImportResult>();
+            if (file == null || file.Length <= 0)
+            {
+                ErrorMessage = "No file, or an empty file selected.";
+                return View();
+            }
 
             var userIdentity = User.Identity.Name;
             var userName = User.GetNameClaim();
@@ -201,6 +206,7 @@ namespace Keas.Mvc.Controllers
                     ErrorMessage = firstSentence.FirstOrDefault() ?? "Error Detected";
                     return View();
                 }
+
 
                 var counter = 1;
                 try  //Or, I could make the start and end dates strings and then try to parse them into dates
@@ -291,6 +297,11 @@ namespace Keas.Mvc.Controllers
                     ErrorMessage = "Import halted.";
                 }
                 
+            }
+
+            if (resultsView.Count <= 0)
+            {
+                ErrorMessage = "No rows in file";
             }
 
             return View(resultsView);
