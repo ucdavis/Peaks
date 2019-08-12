@@ -202,79 +202,95 @@ namespace Keas.Mvc.Controllers
                     return View();
                 }
 
-                foreach (var r in records)
+                var counter = 1;
+                try  //Or, I could make the start and end dates strings and then try to parse them into dates
                 {
-                    var importResult = new PeopleImportResult(r);
-                    importResult.LineNumber = csv.Context.Row;
-                    importResult.Success = true;
-
-                    if (string.IsNullOrWhiteSpace(r.OverrideEmail))
+                    foreach (var r in records)
                     {
-                        r.OverrideEmail = null; //Need this or the validation of the email will be triggered for an empty string
-                    }
+                        counter++;
+                        var importResult = new PeopleImportResult(r);
+                        importResult.LineNumber = csv.Context.Row;
+                        importResult.Success = true;
 
-                    try
-                    {
-                        //validate
-                        ICollection<ValidationResult> valResults = new List<ValidationResult>();
-                        var context = new ValidationContext(r);
-                        Validator.TryValidateObject(r, context, valResults, true); //Need to validate all properties
-                        if (valResults.Count > 0)
+                        if (string.IsNullOrWhiteSpace(r.OverrideEmail))
                         {
-                            foreach (var validationResult in valResults)
-                            {
-                                importResult.ErrorMessage.Add(validationResult.ErrorMessage);
-                            }
+                            r.OverrideEmail = null; //Need this or the validation of the email will be triggered for an empty string
                         }
-                    }
-                    catch (ValidationException e)
-                    {
-                        importResult.ErrorMessage.Add("Validation Exception for this row.");
-                    }
 
-                    if (importResult.ErrorMessage.Count > 0)
-                    {
-                        importResult.Success = false;
-                    }
-                    else
-                    {
-                        if (await _context.People.AnyAsync(a => a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id))
-                        {
-                            importResult.Messages.Add($"KerbId {r.KerbId} Already active in team, no changes made.");
-                            importResult.Success = false;
-                        }
-                    }
-
-
-                    if(importResult.Success)
-                    {
-                        Person person = null;
                         try
                         {
-                            var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbId, team.Id, team, userName, userIdentity, null);
-                            person = personResult.Person;
-
-                            await PopulatePerson(r, person, importResult, team);
-
-                            await _context.SaveChangesAsync();
+                            //validate
+                            ICollection<ValidationResult> valResults = new List<ValidationResult>();
+                            var context = new ValidationContext(r);
+                            Validator.TryValidateObject(r, context, valResults, true); //Need to validate all properties
+                            if (valResults.Count > 0)
+                            {
+                                foreach (var validationResult in valResults)
+                                {
+                                    importResult.ErrorMessage.Add(validationResult.ErrorMessage);
+                                }
+                            }
                         }
-                        catch (Exception)
+                        catch (ValidationException e)
                         {
-                            person = null;
-                            importResult.Success = false;
-                            importResult.ErrorMessage.Add($"!!!!!!!!!!!!!THERE IS A PROBLEM WITH KerbUser {r.KerbId} PLEASE CONTACT PEAKS HELP with this User ID.!!!!!!!!!!!!!!!");
+                            importResult.ErrorMessage.Add("Validation Exception for this row.");
                         }
 
-                        if (person == null)
+                        if (importResult.ErrorMessage.Count > 0)
                         {
                             importResult.Success = false;
-                            importResult.ErrorMessage.Add($"KerbId not found.");
                         }
+                        else
+                        {
+                            if (await _context.People.AnyAsync(a => a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id))
+                            {
+                                importResult.Messages.Add($"KerbId {r.KerbId} Already active in team, no changes made.");
+                                importResult.Success = false;
+                            }
+                        }
+
+
+                        if (importResult.Success)
+                        {
+                            Person person = null;
+                            try
+                            {
+                                var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbId, team.Id, team, userName, userIdentity, null);
+                                person = personResult.Person;
+
+                                await PopulatePerson(r, person, importResult, team);
+
+                                await _context.SaveChangesAsync();
+                            }
+                            catch (Exception)
+                            {
+                                person = null;
+                                importResult.Success = false;
+                                importResult.ErrorMessage.Add($"!!!!!!!!!!!!!THERE IS A PROBLEM WITH KerbUser {r.KerbId} PLEASE CONTACT PEAKS HELP with this User ID.!!!!!!!!!!!!!!!");
+                            }
+
+                            if (person == null)
+                            {
+                                importResult.Success = false;
+                                importResult.ErrorMessage.Add($"KerbId not found.");
+                            }
+                        }
+
+
+                        resultsView.Add(importResult);
                     }
-
-
-                    resultsView.Add(importResult);
                 }
+                catch (Exception e)
+                {
+                    counter++;
+                    var importResult = new PeopleImportResult(new PeopleImport());
+                    importResult.Success = false;
+                    importResult.LineNumber = counter;
+                    importResult.ErrorMessage.Add("There is a problem with this row preventing it from being imported. Maybe an invalid date format. Import Halted.");
+                    resultsView.Add(importResult);
+                    ErrorMessage = "Import halted.";
+                }
+                
             }
 
             return View(resultsView);
