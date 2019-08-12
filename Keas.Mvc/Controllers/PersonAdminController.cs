@@ -254,7 +254,7 @@ namespace Keas.Mvc.Controllers
                             var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbId, team.Id, team, userName, userIdentity, null);
                             person = personResult.Person;
 
-                            PopulatePerson(r, person, importResult);
+                            await PopulatePerson(r, person, importResult, team);
 
                             await _context.SaveChangesAsync();
                         }
@@ -280,7 +280,7 @@ namespace Keas.Mvc.Controllers
             return View(resultsView);
         }
 
-        private async void PopulatePerson(PeopleImport r, Person person, PeopleImportResult importResult)
+        private async Task PopulatePerson(PeopleImport r, Person person, PeopleImportResult importResult, Team team)
         {
             if (!string.IsNullOrWhiteSpace(r.OverrideFirstName))
             {
@@ -322,16 +322,24 @@ namespace Keas.Mvc.Controllers
 
             if (!string.IsNullOrWhiteSpace(r.SupervisorKerbId))
             {
-                var superGuy = await _context.People.FirstOrDefaultAsync(a => a.UserId.Equals(r.SupervisorKerbId));
-                if (superGuy == null)
+                try
                 {
-                    importResult.Messages.Add("Supplied SuperviorId not found in team.");
+                    var superGuy = await _context.People.FirstOrDefaultAsync(a => a.UserId.Equals(r.SupervisorKerbId.Trim().ToLower()) && a.TeamId == team.Id);
+                    if (superGuy == null)
+                    {
+                        importResult.Messages.Add("Supplied SuperviorId not found in team.");
+                    }
+                    else
+                    {
+                        person.Supervisor = superGuy;
+                        _context.Attach(person.Supervisor);
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    person.Supervisor = superGuy;
-                    person.SupervisorId = superGuy.Id;
+                    importResult.Messages.Add("An error happened trying to set the supervisor. Value not set.");
                 }
+
             }
 
             if (!string.IsNullOrWhiteSpace(r.Title))
@@ -378,6 +386,8 @@ namespace Keas.Mvc.Controllers
             }
             
             person.Tags = string.IsNullOrWhiteSpace(r.Tags) ? "Imported" : $"{r.Tags},Imported";
+
+            return;
         }
 
         private async Task PopulateBulkEdit(BulkEditModel model)
