@@ -1063,7 +1063,7 @@ namespace Keas.Mvc.Controllers
 
         private Equipment CreateEquipment(EquipmentImport r, Team team, EquipmentImportResults result, ref int recEquipmentCount)
         { 
-            var typesWithPartectionAndAvailability = new string[] { "Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device" };
+            var typesWithProtectionAndAvailability = new string[] { "Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device" };
             var protectionLevels = new string[] {"P1", "P2", "P3", "P4"};
             var availabilityLevels = new string[] { "A1", "A2", "A3", "A4" };
 
@@ -1096,7 +1096,7 @@ namespace Keas.Mvc.Controllers
                     }
                 }
 
-                if (typesWithPartectionAndAvailability.Contains(equipment.Type))
+                if (typesWithProtectionAndAvailability.Contains(equipment.Type))
                 {
                     if (!string.IsNullOrWhiteSpace(r.ProtectionLevel) && protectionLevels.Contains(r.ProtectionLevel.Trim(), StringComparer.OrdinalIgnoreCase))
                     {

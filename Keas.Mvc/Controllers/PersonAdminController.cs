@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Models;
@@ -9,8 +13,10 @@ using Keas.Mvc.Extensions;
 using Keas.Mvc.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ValidationException = CsvHelper.ValidationException;
 
 namespace Keas.Mvc.Controllers
 {
@@ -19,11 +25,13 @@ namespace Keas.Mvc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly INotificationService _notificationService;
+        private readonly IIdentityService _identityService;
 
-        public PersonAdminController(ApplicationDbContext context,INotificationService notificationService)
+        public PersonAdminController(ApplicationDbContext context,INotificationService notificationService, IIdentityService identityService)
         {
             _context = context;
             _notificationService = notificationService;
+            _identityService = identityService;
         }
 
         public async Task<IActionResult> BulkEdit()
@@ -157,6 +165,256 @@ namespace Keas.Mvc.Controllers
             await PopulateBulkEdit(model);
             Message = $"{ids.Length} people selected. Updated: {updatedCount} Skipped: {skippedCount}" ;
             return View(model);
+        }
+
+        public IActionResult UploadPeople()
+        {
+            var model = new List<PeopleImportResult>();
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UploadPeople(IFormFile file)
+        {
+            var resultsView = new List<PeopleImportResult>();
+            if (file == null || file.Length <= 0)
+            {
+                ErrorMessage = "No file, or an empty file selected.";
+                return View();
+            }
+
+            var userIdentity = User.Identity.Name;
+            var userName = User.GetNameClaim();
+            var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            using (var csv = new CsvReader(reader))
+            {
+                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty);
+                csv.Configuration.TrimOptions = TrimOptions.Trim;
+                var record = new PeopleImport();
+                var records = csv.EnumerateRecords(record);
+
+                try
+                {
+                    csv.Read();
+                    csv.ReadHeader();
+                    csv.ValidateHeader(typeof(PeopleImport));
+                }
+                catch (HeaderValidationException e)
+                {
+                    var firstSentence = e.Message.Split('.');
+                    ErrorMessage = firstSentence.FirstOrDefault() ?? "Error Detected";
+                    return View();
+                }
+
+
+                var counter = 1;
+                try  //Or, I could make the start and end dates strings and then try to parse them into dates
+                {
+                    foreach (var r in records)
+                    {
+                        counter++;
+                        var importResult = new PeopleImportResult(r);
+                        importResult.LineNumber = csv.Context.Row;
+                        importResult.Success = true;
+
+                        if (string.IsNullOrWhiteSpace(r.OverrideEmail))
+                        {
+                            r.OverrideEmail = null; //Need this or the validation of the email will be triggered for an empty string
+                        }
+
+                        try
+                        {
+                            //validate
+                            ICollection<ValidationResult> valResults = new List<ValidationResult>();
+                            var context = new ValidationContext(r);
+                            Validator.TryValidateObject(r, context, valResults, true); //Need to validate all properties
+                            if (valResults.Count > 0)
+                            {
+                                foreach (var validationResult in valResults)
+                                {
+                                    importResult.ErrorMessage.Add(validationResult.ErrorMessage);
+                                }
+                            }
+                        }
+                        catch (ValidationException e)
+                        {
+                            importResult.ErrorMessage.Add("Validation Exception for this row.");
+                        }
+
+                        if (importResult.ErrorMessage.Count > 0)
+                        {
+                            importResult.Success = false;
+                        }
+                        else
+                        {
+                            if (await _context.People.AnyAsync(a => a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id))
+                            {
+                                importResult.Messages.Add($"KerbId {r.KerbId} Already active in team, no changes made.");
+                                importResult.Success = false;
+                            }
+                        }
+
+
+                        if (importResult.Success)
+                        {
+                            Person person = null;
+                            try
+                            {
+                                var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbId, team.Id, team, userName, userIdentity, "CSV People Import");
+                                person = personResult.Person;
+
+                                await PopulatePerson(r, person, importResult, team);
+
+                                await _context.SaveChangesAsync();
+                            }
+                            catch (Exception)
+                            {
+                                person = null;
+                                importResult.Success = false;
+                                importResult.ErrorMessage.Add($"!!!!!!!!!!!!!THERE IS A PROBLEM WITH KerbUser {r.KerbId} PLEASE CONTACT PEAKS HELP with this User ID.!!!!!!!!!!!!!!!");
+                            }
+
+                            if (person == null)
+                            {
+                                importResult.Success = false;
+                                importResult.ErrorMessage.Add($"KerbId not found.");
+                            }
+                        }
+
+
+                        resultsView.Add(importResult);
+                    }
+                }
+                catch (Exception e)
+                {
+                    counter++;
+                    var importResult = new PeopleImportResult(new PeopleImport());
+                    importResult.Success = false;
+                    importResult.LineNumber = counter;
+                    importResult.ErrorMessage.Add("There is a problem with this row preventing it from being imported. Maybe an invalid date format. Import Halted.");
+                    resultsView.Add(importResult);
+                    ErrorMessage = "Import halted.";
+                }
+                
+            }
+
+            if (resultsView.Count <= 0)
+            {
+                ErrorMessage = "No rows in file";
+            }
+
+            return View(resultsView);
+        }
+
+        private async Task PopulatePerson(PeopleImport r, Person person, PeopleImportResult importResult, Team team)
+        {
+            if (!string.IsNullOrWhiteSpace(r.OverrideFirstName))
+            {
+                person.FirstName = r.OverrideFirstName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.OverrideLastName))
+            {
+                person.LastName = r.OverrideLastName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.OverrideEmail))
+            {
+                person.Email = r.OverrideEmail;
+            }
+
+            if (r.StartDate.HasValue)
+            {
+                person.StartDate = r.StartDate.Value;
+            }
+
+            if (r.EndDate.HasValue)
+            {
+                person.EndDate = r.EndDate.Value;
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.Category))
+            {
+                if (PersonCategories.Types.Contains(r.Category.Trim(), StringComparer.OrdinalIgnoreCase))
+                {
+                    person.Category = PersonCategories.Types.Single(a =>
+                        a.Equals(r.Category.Trim(), StringComparison.OrdinalIgnoreCase));
+                }
+                else
+                {
+                    importResult.Messages.Add("Warning, supplied category not found. Value not set.");
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.SupervisorKerbId))
+            {
+                try
+                {
+                    var superGuy = await _context.People.FirstOrDefaultAsync(a => a.UserId.Equals(r.SupervisorKerbId.Trim().ToLower()) && a.TeamId == team.Id);
+                    if (superGuy == null)
+                    {
+                        importResult.Messages.Add("Supplied SuperviorId not found in team.");
+                    }
+                    else
+                    {
+                        person.Supervisor = superGuy;
+                        _context.Attach(person.Supervisor);
+                    }
+                }
+                catch (Exception e)
+                {
+                    importResult.Messages.Add("An error happened trying to set the supervisor. Value not set.");
+                }
+
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.Title))
+            {
+                person.Title = r.Title;
+            }
+            
+            if (!string.IsNullOrWhiteSpace(r.HomePhone))
+            {
+                try
+                {
+                    person.HomePhone = r.HomePhone;
+                }
+                catch (Exception)
+                {
+
+                }
+
+                if (string.IsNullOrWhiteSpace(person.HomePhone))
+                {
+                    importResult.Messages.Add("Supplied Home Phone is not a valid phone number format. Value not set.");
+                }
+            }
+            if (!string.IsNullOrWhiteSpace(r.TeamPhone))
+            {
+                try
+                {
+                    person.TeamPhone = r.TeamPhone;
+                }
+                catch (Exception)
+                {
+
+                }
+
+                if (string.IsNullOrWhiteSpace(person.TeamPhone))
+                {
+                    importResult.Messages.Add("Supplied Team Phone is not a valid phone number format. Value not set.");
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.Notes))
+            {
+                person.Notes = r.Notes;
+            }
+            
+            person.Tags = string.IsNullOrWhiteSpace(r.Tags) ? "Imported" : $"{r.Tags},Imported";
+
+            return;
         }
 
         private async Task PopulateBulkEdit(BulkEditModel model)

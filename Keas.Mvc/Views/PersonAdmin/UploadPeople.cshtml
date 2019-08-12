@@ -1,0 +1,213 @@
+@using Keas.Core.Extensions
+@using Keas.Core.Models
+@model List<PeopleImportResult>
+
+@{
+    ViewData["Title"] = "Upload CSV People File";
+}
+        <div class="card">
+            <div class="card-header-equipment">
+                <div class="card-head">
+                    <h2>Upload a CSV File for Equipment import</h2>
+                </div>
+            </div>
+            <div class="card-content col-lg-6">
+                <form asp-action="UploadPeople" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <fieldset>
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-10">Select CSV file to upload:</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="input-group">
+                                            <input type="hidden" id="filename" name="filename" value="">
+                                            <input type="file" id="file" name="file" class="form-control"  accept=".csv">
+                                            <div class="input-group-btn">
+                                                <input type="submit" value="Upload CSV" class="btn btn-primary" style="margin-left: 5px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        @if (Model == null || Model.Count <= 0)
+        {
+            <div class="card">
+                <div class="card-header-equipment">
+                    <div class="card-head">
+                        <h2>Instructions/Example</h2>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
+                    <p><b>KerbId<span class="space"><span class="space">,</span></span>OverrideFirstName<span class="space">,</span>OverrideLastName<span class="space">,</span>OverrideEmail<span class="space">,</span>SupervisorKerbId<span class="space">,</span>Title<span class="space">,</span>StartDate<span class="space">,</span>EndDate<span class="space">,</span>HomePhone<span class="space">,</span>TeamPhone<span class="space">,</span>Category<span class="space">,</span>Tags<span class="space">,</span>Notes</b></p>
+                    <p>Text above copies properly. If you type the list out, omit the space after the commas.</p> 
+                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_people_example.csv")" class="btn btn-outline-info btn-lg" role="button"><i class="fa fa-download"></i> CSV file.</a></p>
+                    <p>Note! Only the KerbId field is required, all other fields may be blank.</p>
+                    <dl>
+                        <dt>KerbId</dt>
+                        <dd>Required - User's Kerb (login) ID.</dd>
+                        <dt>OverrideFirstName</dt>
+                        <dd>Override the First Name returned from the Campus lookup. Leave blank to accept the campus value.</dd>
+                        <dt>OverrideLastName</dt>
+                        <dd>Override the Last Name returned from the Campus lookup. Leave blank to accept the campus value.</dd>
+                        <dt>OverrideEmail</dt>
+                        <dd>Override the email returned from the Campus lookup. Leave blank to accept the campus value.</dd>
+                        <dt>SupervisorKerbId</dt>
+                        <dd>Supervisor's Kerb (login) ID. Supervisor must exist in people asset for team. Leave blank to not set.</dd>
+                        <dt>Title</dt>
+                        <dd>Person's Title</dd>
+                        <dt>StartDate</dt>
+                        <dd>Start Date of the person. If supplied, must be in mm/dd/yyyy format. </dd>
+                        <dt>EndDate</dt>
+                        <dd>Expected End date of person. If supplied, must be in mm/dd/yyyy format. </dd>
+                        <dt>HomePhone</dt>
+                        <dd>We recommend not to populate this value.</dd>
+                        <dt>TeamPhone</dt>
+                        <dd>Team Phone number (Probably the work number) Hey, I didn't come up with this label. It was one of the other developers.</dd>
+                        <dt>Category</dt>
+                        <dd>Optional Person Category type. If not supplied, "-- Not Set --" will be used. Possible Values: @(string.Join(", ", PersonCategories.Types))</dd>
+                        <dt>Tag</dt>
+                        <dd>List of tags for this item. If more than one tag, add each separated by comma, with the entire set surrounded by quotation marks. Tags must be added to team in order to filter by them, <a asp-controller="TagsManager" asp-action="Index">Team Tags</a> . All imported items will have "Imported" added as a tag. If you wish to search by this tag, please add it to your team's tags.</dd>                        
+                        <dt>Notes</dt>
+                        <dd>Notes.</dd>
+                    </dl>
+                </div>
+            </div>
+        }
+  
+    @if (Model != null && Model.Count > 0)
+    {
+        <div style="padding-top: 15px">
+            <div class="card">
+                <div class="card-header-equipment">
+                    <div class="card-head">
+                        <h2>Import Results</h2>
+                    </div>
+                </div>
+                <div class="card-content">
+                    <table id="results" class="table dataTable">
+                        <thead>
+                            <tr>
+                                <th rowspan="2">Row</th>
+                                <th rowspan="2">Success</th>
+                                <th colspan="5">CSV Imported Values</th>
+                            </tr>
+                            <tr>
+                                <th>KerbId</th>
+                                <th>Override FirstName</th>
+                                <th>Override LastName</th>
+                                <th>Override Email</th>
+                                <th>Supervisor KerbId</th>
+                                <th>Title</th>
+                                <th>StartDate</th>
+                                <th>EndDate</th>
+                                <th>HomePhone</th>
+                                <th>TeamPhone</th>
+                                <th>Category</th>
+                                <th>Tag(s)</th>
+                                <th>Notes</th>
+                                <th>Messages</th>
+                                <th>Errors</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var style = string.Empty;
+                                if (!item.Success)
+                                { style = "background-color: lightcoral"; }
+                                <tr style="@style">
+                                    <td>@item.LineNumber</td>
+                                    <td>
+                                        @item.Success.ToYesNoString()
+                                    </td>
+                                    <td style="word-wrap: break-word; word-break: break-all; white-space: normal;">
+                                        @Html.DisplayFor(a => item.PeopleImport.KerbId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.PeopleImport.OverrideFirstName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.PeopleImport.OverrideLastName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.PeopleImport.OverrideEmail)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.PeopleImport.SupervisorKerbId)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.PeopleImport.Title)
+                                    </td>
+                                    <td>
+                                        @item.PeopleImport.StartDate.Format("d")
+                                    </td>
+                                    <td>
+                                        @item.PeopleImport.EndDate.Format("d")
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.PeopleImport.HomePhone)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.PeopleImport.TeamPhone)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.PeopleImport.Category)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.PeopleImport.Tags)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(a => item.PeopleImport.Notes)
+                                    </td>
+                                    <td>
+                                        @string.Join(", ", item.Messages)
+                                    </td>
+                                    <td>
+                                        @string.Join(", ", item.ErrorMessage)
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+     @{await Html.RenderPartialAsync("_ImportJS");}
+     <script type="text/javascript">
+        $(function () {
+            $("#results").dataTable({
+                "dom": 'lBfrtip',
+                "buttons": [
+                    { extend: 'copyHtml5' },
+                    { extend: 'excelHtml5' },
+                    { extend: 'csvHtml5' },
+                    { extend: 'print'},
+                ],
+                "columnDefs": [
+                    { "width": "10%;", "targets": [2] },
+                    { "type": "date", "targets": [9, 10] },
+                    { "targets" : [ 7,8,9,10,11,12,13,14], "visible" : false}
+                ]
+            });
+        });
+    </script>
+}
+
+@section Styles {
+    @await Html.PartialAsync("_ImportResultsStylePartial")
+}
+
