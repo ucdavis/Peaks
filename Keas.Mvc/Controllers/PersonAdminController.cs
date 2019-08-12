@@ -255,7 +255,7 @@ namespace Keas.Mvc.Controllers
                             Person person = null;
                             try
                             {
-                                var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbId, team.Id, team, userName, userIdentity, null);
+                                var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbId, team.Id, team, userName, userIdentity, "CSV People Import");
                                 person = personResult.Person;
 
                                 await PopulatePerson(r, person, importResult, team);
