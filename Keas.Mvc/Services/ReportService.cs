@@ -142,6 +142,7 @@ namespace Keas.Mvc.Services
                 Type = string.IsNullOrWhiteSpace(a.Type) ? EquipmentTypes.Default : a.Type,
                 ProtectionLevel = a.ProtectionLevel,
                 AvailabilityLevel = a.AvailabilityLevel,
+                BigfixId = a.BigfixId,
                 SerialNumber = a.SerialNumber,
                 Make = a.Make,
                 Model = a.Model,

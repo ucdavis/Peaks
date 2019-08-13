@@ -149,6 +149,23 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             />
                         </div>
                     )}
+                    {this._shouldShowForType(this.props.selectedEquipment.type, "BigfixId") && (
+                        <div className="form-group">
+                            <label>Bigfix Id</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                disabled={this.props.disableEditing}
+                                value={
+                                    this.props.selectedEquipment.bigfixId
+                                        ? this.props.selectedEquipment.bigfixId
+                                        : ""
+                                }
+                                maxlength="16"
+                                onChange={e => this.props.changeProperty("bigfixId", e.target.value)}
+                            />
+                        </div>
+                    )}
                     <div className="form-group">
                         <label>Notes</label>
                         <textarea
@@ -235,6 +252,14 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
         }
         if (prop === "ProtectionAndAvailability") {
             let Types = ["Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device"];
+            if (Types.indexOf(type) > -1) {
+                return true;
+            }
+            return false;
+        }
+
+        if (prop === "BigfixId") {
+            let Types = ["Computer", "Desktop", "Laptop", "Server"];
             if (Types.indexOf(type) > -1) {
                 return true;
             }

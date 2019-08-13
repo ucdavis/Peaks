@@ -13,6 +13,7 @@ CREATE TABLE [dbo].[Equipment] (
     [Notes]					NVARCHAR(MAX)  NULL, 
     [ProtectionLevel]		NVARCHAR(2)	   NULL, 
     [AvailabilityLevel]		NVARCHAR(2)    NULL, 
+    [BigfixId]				NVARCHAR(16)   NULL, 
     CONSTRAINT [PK_Equipment] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_Equipment_EquipmentAssignments_EquipmentAssignmentId] FOREIGN KEY ([EquipmentAssignmentId]) REFERENCES [dbo].[EquipmentAssignments] ([Id]),
     CONSTRAINT [FK_Equipment_Spaces_SpaceId] FOREIGN KEY ([SpaceId]) REFERENCES [dbo].[Spaces] ([Id]),
