@@ -87,7 +87,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     {this._shouldShowForType(this.props.selectedEquipment.type, "ProtectionAndAvailability") &&
                         <div>
                             <div className="form-group">
-                                <label>Protection Level</label>
+                            <label>Protection Level</label> <span> </span> <a href="https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html" target="_blank"><i className="fas fa-info-circle"></i></a>
                                 <select
                                     className="form-control"
                                     value={this.props.selectedEquipment.protectionLevel}
@@ -101,7 +101,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                                 </select>
                             </div>
                             <div className="form-group">
-                                <label>Availability Level</label>
+                            <label>Availability Level</label>  <span> </span> <a href="https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html" target="_blank"><i className="fas fa-info-circle"></i></a>
                                 <select
                                     className="form-control"
                                     value={this.props.selectedEquipment.availabilityLevel}
