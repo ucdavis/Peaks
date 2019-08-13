@@ -55,6 +55,7 @@ namespace Keas.Mvc
         {
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
+            services.Configure<BigfixSettings>(Configuration.GetSection("Bigfix"));
 
             // setup services
             services.AddScoped<IIdentityService, IdentityService>();
@@ -159,6 +160,7 @@ namespace Keas.Mvc
             services.AddScoped<IFinancialService, FinancialService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ITeamsManager, TeamsManager>();
+            services.AddScoped<IBigfixService, BigfixService>();
             services.AddMvc().AddJsonOptions(options => {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             });
