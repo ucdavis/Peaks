@@ -11,7 +11,7 @@ namespace Keas.Mvc.Services
 {
     public interface IBigfixService
     {
-        Task Test();
+        Task<string> Test();
     }
 
     public class BigfixService : IBigfixService
@@ -23,14 +23,14 @@ namespace Keas.Mvc.Services
             _bigfixSettings = bigfixSettings.Value;
         }
 
-        public async Task Test()
+        public async Task<string> Test()
         {
             var bf = new BigfixClient(_bigfixSettings.UserName, _bigfixSettings.Password);
 
             var results = await bf.Computers.Get("1677559868");
 
             var os = results.OS;
-
+            return os;
         }
     }
 }

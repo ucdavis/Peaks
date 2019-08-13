@@ -19,6 +19,7 @@ using Keas.Core.Extensions;
 using Keas.Mvc.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
+
 namespace Keas.Mvc.Controllers
 {
     [Authorize(Policy = AccessCodes.Codes.DepartmentOrSystemAdminAccess)]
@@ -31,15 +32,17 @@ namespace Keas.Mvc.Controllers
         private readonly IUserService _userService;
         private readonly IFinancialService _financialService;
         private readonly INotificationService _notificationService;
+        private readonly IBigfixService _bigfixService;
 
 
-        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService, INotificationService notificationService)
+        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService, INotificationService notificationService, IBigfixService bigfixService)
         {
             _context = context;
             _identityService = identityService;
             _userService = userService;
             _financialService = financialService;
             _notificationService = notificationService;
+            _bigfixService = bigfixService;
         }
 
         public async Task<IActionResult> Index()
@@ -50,6 +53,13 @@ namespace Keas.Mvc.Controllers
                 .SingleOrDefaultAsync(x => x.Slug == Team);
 
             return View(team);
+        }
+
+        public async Task<IActionResult> TestBigfix()
+        {
+            
+            var os = await _bigfixService.Test();
+            return Content(os);
         }
 
         [HttpPost]
