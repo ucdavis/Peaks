@@ -129,7 +129,8 @@ namespace Keas.Mvc.Controllers.Api
                 LastName = user.LastName.SafeHumanizeTitle(),
                 Email = user.Email,
                 UserId = user.Id,
-                User = user
+                User = user,
+                Title = await _identityService.GetTitle(user.Iam)
             };
             return Json(person);
         }
@@ -194,6 +195,7 @@ namespace Keas.Mvc.Controllers.Api
                         existingPerson.EndDate = person.EndDate;
                         existingPerson.Category = person.Category;
                         existingPerson.Notes = person.Notes;
+                        existingPerson.Title = person.Title; //This was missing?
 
                         await _notificationService.PersonUpdated(existingPerson, null, Team, User.GetNameClaim(), User.Identity.Name, PersonNotification.Actions.Reactivated, String.Empty);
                         await _context.SaveChangesAsync();

@@ -369,9 +369,9 @@ namespace Keas.Mvc.Controllers
 
             }
 
-            if (!string.IsNullOrWhiteSpace(r.Title))
+            if (!string.IsNullOrWhiteSpace(r.OverrideTitle))
             {
-                person.Title = r.Title;
+                person.Title = r.OverrideTitle;
             }
             
             if (!string.IsNullOrWhiteSpace(r.HomePhone))

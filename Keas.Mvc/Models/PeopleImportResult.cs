@@ -20,7 +20,7 @@ namespace Keas.Mvc.Models
         public string OverrideEmail { get; set; }
 
         public string SupervisorKerbId { get; set; }
-        public string Title { get; set; }
+        public string OverrideTitle { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public string HomePhone { get; set; } //Look at formatting in Person.cs .
@@ -64,6 +64,7 @@ namespace Keas.Mvc.Models
                 Category          = import.Category,
                 Tags              = import.Tags,
                 Notes             = import.Notes,
+                OverrideTitle     = import.OverrideTitle
             };
         }
 
