@@ -156,11 +156,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                                 type="text"
                                 className="form-control"
                                 disabled={this.props.disableEditing}
-                                value={
-                                    this.props.selectedEquipment.bigfixId
-                                        ? this.props.selectedEquipment.bigfixId
-                                        : ""
-                                }
+                                value={this.props.selectedEquipment.bigfixId || ""}
                                 maxLength={16} 
                                 onChange={e => this.props.changeProperty("bigfixId", e.target.value)}
                             />
