@@ -33,6 +33,19 @@ namespace Keas.Core.Models
             Other,
         };
 
+        public static List<string> MakeAndModelTypes = new List<string>
+        {
+            Default,
+            Computer,
+            Desktop,
+            Laptop,
+            Server,
+            Cellphone,
+            Device,
+            Industrial,
+            Other,
+        };
+
         public static List<string> Is3Types = new List<string>
         {
             Computer,
