@@ -116,6 +116,8 @@ namespace Keas.Mvc.Controllers.Api
                     equipment.Space = space;
                 }
 
+                UpdateTypeSpecificFields(equipment);
+
                 _context.Equipment.Add(equipment);
                 await _eventService.TrackCreateEquipment(equipment);
                 await _context.SaveChangesAsync();
@@ -163,7 +165,10 @@ namespace Keas.Mvc.Controllers.Api
                 var eq = await _context.Equipment.Where(x => x.Team.Slug == Team)
                     .Include(x => x.Space).Include(x => x.Attributes)
                     .SingleAsync(x => x.Id == updatedEquipment.Id);
-                    
+
+                UpdateTypeSpecificFields(updatedEquipment);
+
+
                 eq.Make = updatedEquipment.Make;
                 eq.Model = updatedEquipment.Model;
                 eq.Name = updatedEquipment.Name;
@@ -174,6 +179,8 @@ namespace Keas.Mvc.Controllers.Api
                 eq.ProtectionLevel = updatedEquipment.ProtectionLevel;
                 eq.AvailabilityLevel = updatedEquipment.AvailabilityLevel;
                 eq.SystemManagementId = updatedEquipment.SystemManagementId;
+
+
 
                 eq.Attributes.Clear();
                 updatedEquipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
@@ -191,6 +198,32 @@ namespace Keas.Mvc.Controllers.Api
                 return Json(eq);
             }
             return BadRequest(ModelState);
+        }
+
+        private static void UpdateTypeSpecificFields(Equipment updatedEquipment)
+        {
+            if (!EquipmentTypes.Is3Types.Contains(updatedEquipment.Type))
+            {
+                updatedEquipment.ProtectionLevel = null;
+                updatedEquipment.AvailabilityLevel = null;
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(updatedEquipment.ProtectionLevel))
+                {
+                    updatedEquipment.ProtectionLevel = "P1";
+                }
+
+                if (string.IsNullOrWhiteSpace(updatedEquipment.AvailabilityLevel))
+                {
+                    updatedEquipment.AvailabilityLevel = "A1";
+                }
+            }
+
+            if (!EquipmentTypes.BigfixTypes.Contains(updatedEquipment.Type))
+            {
+                updatedEquipment.SystemManagementId = null;
+            }
         }
 
         public async Task<IActionResult> Revoke([FromBody]Equipment equipment)
