@@ -161,7 +161,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                                         ? this.props.selectedEquipment.bigfixId
                                         : ""
                                 }
-                                maxlength="16"
+                                maxLength="16"
                                 onChange={e => this.props.changeProperty("bigfixId", e.target.value)}
                             />
                         </div>
