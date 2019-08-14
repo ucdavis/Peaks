@@ -243,6 +243,7 @@ namespace Keas.Mvc.Controllers
                 person.FirstName = user.FirstName;
                 person.LastName = user.LastName;
                 person.Email = user.Email;
+                person.Title = await _identityService.GetTitle(user.Iam);
                 _context.People.Add(person);
                 await _context.SaveChangesAsync();
             }

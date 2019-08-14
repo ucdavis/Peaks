@@ -23,6 +23,7 @@ namespace Keas.Mvc.Services
         Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode);
 
         Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId, Team team, string actorName, string actorId, string notes);
+        Task<string> GetTitle(string iamId);
     }
 
     public class IdentityService : IIdentityService
@@ -51,7 +52,7 @@ namespace Keas.Mvc.Services
                     try
                     {
                         _context.Users.Add(user);
-                        var person = CreatePersonFromUser(user, teamId);
+                        var person = await CreatePersonFromUser(user, teamId);
                         _context.People.Add(person);
                         await _context.SaveChangesAsync();
                         await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Added, notes);
@@ -115,7 +116,7 @@ namespace Keas.Mvc.Services
                 else
                 {
                     // Need to create person
-                    person = CreatePersonFromUser(user, teamId);
+                    person = await CreatePersonFromUser(user, teamId);
                     _context.People.Add(person);
                     await _context.SaveChangesAsync();
                     await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Added, notes);                        
@@ -125,7 +126,7 @@ namespace Keas.Mvc.Services
             }
         }
 
-        private Person CreatePersonFromUser(User user, int teamId)
+        private async Task<Person> CreatePersonFromUser(User user, int teamId)
         {
             var person = new Person();
             person.User = user;
@@ -134,6 +135,7 @@ namespace Keas.Mvc.Services
             person.Email = user.Email;
             person.Active = true;
             person.TeamId = teamId;
+            person.Title = await GetTitle(user.Iam);
             return person;
 
         }
@@ -242,6 +244,20 @@ namespace Keas.Mvc.Services
             return results.ResponseData.Results.FirstOrDefault();
         }
 
+        public async Task<string> GetTitle(string iamId)
+        {
+            var title = string.Empty;
+            var clientws = new IetClient(_authSettings.IamKey);
+            var result = await clientws.PPSAssociations.Search(PPSAssociationsSearchField.iamId, iamId);
+            if (result.ResponseData.Results.Length > 0)
+            {
+
+                title = result.ResponseData.Results.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.titleOfficialName))?.titleOfficialName;
+            }
+
+            return title;
+        }
+
         public async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
         {
             int newpeople = 0;
@@ -318,7 +334,8 @@ namespace Keas.Mvc.Services
                             Team = team,
                             FirstName = user.FirstName,
                             LastName = user.LastName,
-                            Email = user.Email
+                            Email = user.Email,
+                            Title = await GetTitle(user.Iam)
                         };
                         _context.People.Add(newPerson);
                         await _context.SaveChangesAsync(); //Need to save person so it has an id for notification below

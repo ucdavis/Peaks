@@ -47,9 +47,9 @@
                 </div>
                 <div class="card-content">
                     <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
-                    <p><b>KerbId<span class="space"><span class="space">,</span></span>OverrideFirstName<span class="space">,</span>OverrideLastName<span class="space">,</span>OverrideEmail<span class="space">,</span>SupervisorKerbId<span class="space">,</span>Title<span class="space">,</span>StartDate<span class="space">,</span>EndDate<span class="space">,</span>HomePhone<span class="space">,</span>TeamPhone<span class="space">,</span>Category<span class="space">,</span>Tags<span class="space">,</span>Notes</b></p>
+                    <p><b>KerbId<span class="space"><span class="space">,</span></span>OverrideFirstName<span class="space">,</span>OverrideLastName<span class="space">,</span>OverrideEmail<span class="space">,</span>SupervisorKerbId<span class="space">,</span>OverrideTitle<span class="space">,</span>StartDate<span class="space">,</span>EndDate<span class="space">,</span>HomePhone<span class="space">,</span>TeamPhone<span class="space">,</span>Category<span class="space">,</span>Tags<span class="space">,</span>Notes</b></p>
                     <p>Text above copies properly. If you type the list out, omit the space after the commas.</p> 
-                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_people_example.csv")" class="btn btn-outline-info btn-lg" role="button"><i class="fa fa-download"></i> CSV file.</a></p>
+                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_people_example2.csv")" class="btn btn-outline-info btn-lg" role="button"><i class="fa fa-download"></i> CSV file.</a></p>
                     <p>Note! Only the KerbId field is required, all other fields may be blank.</p>
                     <dl>
                         <dt>KerbId</dt>
@@ -62,8 +62,8 @@
                         <dd>Override the email returned from the Campus lookup. Leave blank to accept the campus value.</dd>
                         <dt>SupervisorKerbId</dt>
                         <dd>Supervisor's Kerb (login) ID. Supervisor must exist in people asset for team. Leave blank to not set.</dd>
-                        <dt>Title</dt>
-                        <dd>Person's Title</dd>
+                        <dt>OverrideTitle</dt>
+                        <dd>Override Person's Title</dd>
                         <dt>StartDate</dt>
                         <dd>Start Date of the person. If supplied, must be in mm/dd/yyyy format. </dd>
                         <dt>EndDate</dt>
@@ -106,7 +106,7 @@
                                 <th>Override LastName</th>
                                 <th>Override Email</th>
                                 <th>Supervisor KerbId</th>
-                                <th>Title</th>
+                                <th>Override Title</th>
                                 <th>StartDate</th>
                                 <th>EndDate</th>
                                 <th>HomePhone</th>
@@ -145,7 +145,7 @@
                                         @Html.DisplayFor(a => item.PeopleImport.SupervisorKerbId)
                                     </td>
                                     <td>
-                                        @Html.DisplayFor(a => item.PeopleImport.Title)
+                                        @Html.DisplayFor(a => item.PeopleImport.OverrideTitle)
                                     </td>
                                     <td>
                                         @item.PeopleImport.StartDate.Format("d")
