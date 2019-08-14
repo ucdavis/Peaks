@@ -8,7 +8,7 @@
     "jsx": "react",
     "sourceMap": true,
     "skipDefaultLibCheck": true,
-    "types": ["node", "webpack-env"]
+    "types": ["jasmine", "node", "webpack-env"]
   },
   "exclude": ["bin", "node_modules"]
 }
