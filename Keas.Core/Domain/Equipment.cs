@@ -25,7 +25,7 @@ namespace Keas.Core.Domain
         public string AvailabilityLevel { get; set; }
 
         [StringLength(16)]
-        public string BigfixId { get; set; }
+        public string SystemManagementId { get; set; }
 
         public Space Space { get; set; }
         public int? SpaceId { get; set; }

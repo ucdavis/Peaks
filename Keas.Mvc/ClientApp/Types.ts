@@ -156,7 +156,7 @@ export interface IEquipment {
   type: string;
   protectionLevel: string;
   availabilityLevel: string;
-  bigfixId: string;
+  systemManagementId: string;
   notes: string;
   attributes: IEquipmentAttribute[];
 }

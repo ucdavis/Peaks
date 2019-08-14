@@ -136,7 +136,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
             type: "",
             protectionLevel: "",
             availabilityLevel: "",
-            bigfixId: "",
+            systemManagementId: "",
         });
     };
 }

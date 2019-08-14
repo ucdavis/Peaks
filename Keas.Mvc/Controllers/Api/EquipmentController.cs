@@ -173,7 +173,7 @@ namespace Keas.Mvc.Controllers.Api
                 eq.Type = updatedEquipment.Type;
                 eq.ProtectionLevel = updatedEquipment.ProtectionLevel;
                 eq.AvailabilityLevel = updatedEquipment.AvailabilityLevel;
-                eq.BigfixId = updatedEquipment.BigfixId;
+                eq.SystemManagementId = updatedEquipment.SystemManagementId;
 
                 eq.Attributes.Clear();
                 updatedEquipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));

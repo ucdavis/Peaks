@@ -149,16 +149,16 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             />
                         </div>
                     )}
-                    {this._shouldShowForType(this.props.selectedEquipment.type, "BigfixId") && (
+                    {this._shouldShowForType(this.props.selectedEquipment.type, "SystemManagementId") && (
                         <div className="form-group">
                             <label>Bigfix Id</label>
                             <input
                                 type="text"
                                 className="form-control"
                                 disabled={this.props.disableEditing}
-                                value={this.props.selectedEquipment.bigfixId || ""}
+                                value={this.props.selectedEquipment.systemManagementId || ""}
                                 maxLength={16} 
-                                onChange={e => this.props.changeProperty("bigfixId", e.target.value)}
+                                onChange={e => this.props.changeProperty("systemManagementId", e.target.value)}
                             />
                         </div>
                     )}
@@ -254,7 +254,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
             return false;
         }
 
-        if (prop === "BigfixId") {
+        if (prop === "SystemManagementId") {
             let Types = ["Computer", "Desktop", "Laptop", "Server"];
             if (Types.indexOf(type) > -1) {
                 return true;
