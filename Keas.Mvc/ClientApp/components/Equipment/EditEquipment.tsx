@@ -75,6 +75,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
                         <EquipmentEditValues
                             selectedEquipment={this.state.equipment}
                             changeProperty={this._changeProperty}
+                            changeType={this._changeType}
                             disableEditing={false}
                             updateAttributes={this._updateAttributes}
                             commonAttributeKeys={this.props.commonAttributeKeys}
@@ -114,6 +115,32 @@ export default class EditEquipment extends React.Component<IProps, IState> {
         );
     };
 
+    private _changeType = (value: string) => {
+        const Types = ["Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device"];
+        let pl = this.state.protectionLevel;
+        let al = this.state.availabilityLevel;
+        if (Types.indexOf(value) > -1) {
+            if (!pl) {
+                pl = "P1";
+            }
+            if (!al) {
+                al = "A1";
+            }
+        }
+
+        this.setState(
+            {
+                equipment: {
+                    ...this.state.equipment,
+                    "type": value,
+                    "protectionLevel": pl,
+                    "availabilityLevel": al
+                }
+            },
+            this._validateState
+        );
+
+    }
     // clear everything out on close
     private _confirmClose = () => {
         if (!confirm("Please confirm you want to close!")){

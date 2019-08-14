@@ -7,6 +7,7 @@ import EquipmentAttributes from "./EquipmentAttributes";
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
+    changeType?: (value: string) => void;
     commonAttributeKeys?: string[];
     equipmentTypes?: string[];
     disableEditing: boolean;
@@ -57,7 +58,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         <select
                             className="form-control"
                             value={typeValue}
-                            onChange={e => this.props.changeProperty("type", e.target.value)}
+                            onChange={e => this.props.changeType(e.target.value)}
                             disabled={this.props.disableEditing}
                         >
                             {listItems}

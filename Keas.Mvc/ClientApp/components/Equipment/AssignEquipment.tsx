@@ -156,6 +156,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                                                 selectedEquipment={this.state.equipment}
                                                 commonAttributeKeys={this.props.commonAttributeKeys}
                                                 changeProperty={this._changeProperty}
+                                                changeType={this._changeType}
                                                 disableEditing={false}
                                                 updateAttributes={this._updateAttributes}
                                                 space={this.props.space}
@@ -219,6 +220,35 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
             this._validateState
         );
     };
+
+    private _changeType = (value: string) => {
+
+        const Types = ["Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device"];
+        let pl = this.state.protectionLevel;
+        let al = this.state.availabilityLevel;
+        if (Types.indexOf(value) > -1) {
+            if (!pl) {
+                pl = "P1";
+            }
+            if (!al) {
+                al = "A1";
+            }
+        }
+
+        this.setState(
+            {
+                equipment: {
+                    ...this.state.equipment,
+                    "type": value,
+                    "protectionLevel": pl,
+                    "availabilityLevel": al
+                }
+            },
+            this._validateState
+        );
+        
+
+    }
 
     private _updateAttributes = (attributes: IEquipmentAttribute[]) => {
         this.setState(
