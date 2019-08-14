@@ -202,7 +202,7 @@ namespace Keas.Mvc.Controllers.Api
 
         private static void UpdateTypeSpecificFields(Equipment updatedEquipment)
         {
-            if (!EquipmentTypes.Is3Types.Contains(updatedEquipment.Type))
+            if (!EquipmentTypes.Is3Types.Contains(updatedEquipment.Type, StringComparer.OrdinalIgnoreCase))
             {
                 updatedEquipment.ProtectionLevel = null;
                 updatedEquipment.AvailabilityLevel = null;
@@ -220,7 +220,7 @@ namespace Keas.Mvc.Controllers.Api
                 }
             }
 
-            if (!EquipmentTypes.BigfixTypes.Contains(updatedEquipment.Type))
+            if (!EquipmentTypes.BigfixTypes.Contains(updatedEquipment.Type, StringComparer.OrdinalIgnoreCase))
             {
                 updatedEquipment.SystemManagementId = null;
             }
