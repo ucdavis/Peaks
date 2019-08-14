@@ -43,6 +43,10 @@ namespace Test.TestsDatabase
             {
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)2)]",
             }));
+            expectedFields.Add(new NameAndType("BigfixId", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)16)]",
+            }));
             expectedFields.Add(new NameAndType("EquipmentAssignmentId", "System.Nullable`1[System.Int32]", new List<string>()));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>
             {
