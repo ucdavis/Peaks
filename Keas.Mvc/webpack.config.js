@@ -20,19 +20,7 @@ module.exports = env => {
             },
             entry: {
                 root: ["stacktrace-js", "log4javascript", "./ClientApp/root.tsx"],
-                asset: "./ClientApp/pages/assets/boot.tsx",
-                vendor: [
-                    "event-source-polyfill",
-                    "isomorphic-fetch",
-                    "moment",
-                    "react",
-                    "react-bootstrap-typeahead",
-                    "react-datepicker",
-                    "react-dom",
-                    "react-router-dom",
-                    "react-table",
-                    "reactstrap"
-                ]
+                asset: "./ClientApp/pages/assets/boot.tsx"
             },
             target: "web",
             resolve: {

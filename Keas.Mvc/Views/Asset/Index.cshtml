@@ -7,12 +7,6 @@
 
 @Html.AntiForgeryToken()
 
-@section  Styles {
-    <environment names="Staging,Production">
-        <link rel="stylesheet" href="~/dist/asset.css" asp-append-version="true" />
-    </environment>
-}
-
 @section Scripts {
     <script>
         window.App = {};
@@ -21,7 +15,6 @@
         window.App.antiForgeryToken = document.getElementsByName('__RequestVerificationToken')[0].value;
     </script>
 
-    <script src="~/dist/vendor.js" asp-append-version="true"></script>
     <script src="~/dist/asset.js" asp-append-version="true"></script>
     
 }
