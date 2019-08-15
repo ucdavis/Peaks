@@ -1,0 +1,2 @@
+EquipmentName,SerialNumber,Make,Model,KerbUser,DateIssued,DateDue,Tag,Type,ProtectionLevel,AvailabilityLevel,BigfixId,Notes,Key1,Value1,Key2,Value2,Key3,Value3,Key4,Value4,Key5,Value5,Key6,Value6,Key7,Value7,Key8,Value8,Key9,Value9,Key10,Value10,Key11,Value11,Key12,Value12,GenericKeyValues
+Example Equipment. Delete this line.,1234,AEXMPLE,Optiplex 5050,xxxx,2/21/2019,12/15/2032,"Staff,Admin",Default,,,,,Type,Desktop,Warranty,10/9/2019,Replacement Year,2020,Notes,Admin staff computer,,,,,,,,,,,,,,,,,"My sample Key=MySample,Another=sample"

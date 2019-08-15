@@ -47,6 +47,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Index()
         {
+
             var team = await _context.Teams
                 .Include(o => o.FISOrgs)
                 .Include(i => i.PpsDepartments)
@@ -1073,8 +1074,7 @@ namespace Keas.Mvc.Controllers
         }
 
         private Equipment CreateEquipment(EquipmentImport r, Team team, EquipmentImportResults result, ref int recEquipmentCount)
-        { 
-            var typesWithProtectionAndAvailability = new string[] { "Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device" };
+        {
             var protectionLevels = new string[] {"P1", "P2", "P3", "P4"};
             var availabilityLevels = new string[] { "A1", "A2", "A3", "A4" };
 
@@ -1088,6 +1088,7 @@ namespace Keas.Mvc.Controllers
                 equipment.Tags = string.IsNullOrWhiteSpace(r.Tag) ? "Imported" : $"{r.Tag},Imported";
                 equipment.TeamId = team.Id;
                 equipment.Notes = r.Notes;
+                equipment.SystemManagementId = r.BigfixId;
 
                 ModelState.Clear();
                 TryValidateModel(equipment);
@@ -1107,7 +1108,7 @@ namespace Keas.Mvc.Controllers
                     }
                 }
 
-                if (typesWithProtectionAndAvailability.Contains(equipment.Type))
+                if (EquipmentTypes.Is3Types.Contains(equipment.Type, StringComparer.OrdinalIgnoreCase))
                 {
                     if (!string.IsNullOrWhiteSpace(r.ProtectionLevel) && protectionLevels.Contains(r.ProtectionLevel.Trim(), StringComparer.OrdinalIgnoreCase))
                     {
@@ -1180,6 +1181,48 @@ namespace Keas.Mvc.Controllers
             if (!string.IsNullOrWhiteSpace(r.Key6) && result.Success)
             {
                 CreateAttribute(equipment, r.Key6, r.Value6, result, ref recAttributeCount, ref recAttributeAdded);
+            }
+            if (!string.IsNullOrWhiteSpace(r.Key7) && result.Success)
+            {
+                CreateAttribute(equipment, r.Key7, r.Value7, result, ref recAttributeCount, ref recAttributeAdded);
+            }
+            if (!string.IsNullOrWhiteSpace(r.Key8) && result.Success)
+            {
+                CreateAttribute(equipment, r.Key8, r.Value8, result, ref recAttributeCount, ref recAttributeAdded);
+            }
+            if (!string.IsNullOrWhiteSpace(r.Key9) && result.Success)
+            {
+                CreateAttribute(equipment, r.Key9, r.Value9, result, ref recAttributeCount, ref recAttributeAdded);
+            }
+            if (!string.IsNullOrWhiteSpace(r.Key10) && result.Success)
+            {
+                CreateAttribute(equipment, r.Key10, r.Value10, result, ref recAttributeCount, ref recAttributeAdded);
+            }
+            if (!string.IsNullOrWhiteSpace(r.Key11) && result.Success)
+            {
+                CreateAttribute(equipment, r.Key11, r.Value11, result, ref recAttributeCount, ref recAttributeAdded);
+            }
+            if (!string.IsNullOrWhiteSpace(r.Key12) && result.Success)
+            {
+                CreateAttribute(equipment, r.Key12, r.Value12, result, ref recAttributeCount, ref recAttributeAdded);
+            }
+
+            if (!string.IsNullOrWhiteSpace(r.GenericKeyValues) && result.Success)
+            {
+                var pairs = r.GenericKeyValues.Split(',');
+                foreach (var pair in pairs)
+                {
+                    var kv = pair.Split("=");
+                    if (kv.Length != 2)
+                    {
+                        result.Messages.Add($"Error Parsing GenericKeyValues: {pair}");
+                    }
+                    else
+                    {
+                        CreateAttribute(equipment, kv[0], kv[1], result, ref recAttributeCount, ref recAttributeAdded);
+                    }
+                }
+                
             }
 
             if (recAttributeAdded)
