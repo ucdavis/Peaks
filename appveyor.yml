@@ -26,7 +26,7 @@ before_build:
 - ps: |
     appveyor-retry dotnet restore
 
-    # rm .\Keas.Mvc\package-lock.json
+    rm .\Keas.Mvc\package-lock.json
 
     $path = (Get-Item .\Keas.Mvc\Keas.Mvc.csproj).FullName
     $csproj = [xml](Get-Content $path)
