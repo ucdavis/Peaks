@@ -1,8 +1,8 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/aaq4h64crg106u5m/branch/master?svg=true)](https://ci.appveyor.com/project/UCNETAdmin/keas/branch/master)
+[![Build Status](https://dev.azure.com/ucdavis/Peaks/_apis/build/status/ucdavis.Peaks?branchName=master)](https://dev.azure.com/ucdavis/Peaks/_build/latest?definitionId=12&branchName=master)
 
 [![forthebadge](http://forthebadge.com/images/badges/uses-html.svg)](http://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/contains-technical-debt.svg)](https://forthebadge.com)
-# PEAKS (formally Keas)
+# PEAKS (formerly Keas)
 
 **P**eople
 **E**quipment
