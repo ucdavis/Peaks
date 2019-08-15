@@ -90,7 +90,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             <label>Protection Level</label> <span> </span> <a href="https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html" target="_blank"><i className="fas fa-info-circle"></i></a>
                                 <select
                                     className="form-control"
-                                    value={this.props.selectedEquipment.protectionLevel}
+                                    value={this.props.selectedEquipment.protectionLevel || ""}
                                     onChange={e => this.props.changeProperty("protectionLevel", e.target.value)}
                                     disabled={this.props.disableEditing}
                                 >
@@ -104,7 +104,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             <label>Availability Level</label>  <span> </span> <a href="https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html" target="_blank"><i className="fas fa-info-circle"></i></a>
                                 <select
                                     className="form-control"
-                                    value={this.props.selectedEquipment.availabilityLevel}
+                                    value={this.props.selectedEquipment.availabilityLevel || ""}
                                     onChange={e => this.props.changeProperty("availabilityLevel", e.target.value)}
                                     disabled={this.props.disableEditing}
                                 >
