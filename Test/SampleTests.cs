@@ -13,7 +13,8 @@ namespace Test
             Assert.Equal(4, 2 + 2);
         }
 
-        [Fact(Skip = "Test skipped because it is a test of the fail")]
+        [Fact]
+        // [Fact(Skip = "Test skipped because it is a test of the fail")]
         public void BadMath()
         {
             Assert.Equal(4, 1 + 1);
