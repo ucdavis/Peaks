@@ -1075,9 +1075,6 @@ namespace Keas.Mvc.Controllers
 
         private Equipment CreateEquipment(EquipmentImport r, Team team, EquipmentImportResults result, ref int recEquipmentCount)
         {
-            var protectionLevels = new string[] {"P1", "P2", "P3", "P4"};
-            var availabilityLevels = new string[] { "A1", "A2", "A3", "A4" };
-
             var equipment = new Equipment();
             if (!string.IsNullOrWhiteSpace(r.EquipmentName))
             {                
@@ -1110,9 +1107,9 @@ namespace Keas.Mvc.Controllers
 
                 if (EquipmentTypes.Is3Types.Contains(equipment.Type, StringComparer.OrdinalIgnoreCase))
                 {
-                    if (!string.IsNullOrWhiteSpace(r.ProtectionLevel) && protectionLevels.Contains(r.ProtectionLevel.Trim(), StringComparer.OrdinalIgnoreCase))
+                    if (!string.IsNullOrWhiteSpace(r.ProtectionLevel) && EquipmentProtectionLevels.Levels.Contains(r.ProtectionLevel.Trim(), StringComparer.OrdinalIgnoreCase))
                     {
-                        equipment.ProtectionLevel = protectionLevels.Single(a => a.Equals(r.ProtectionLevel.Trim(), StringComparison.OrdinalIgnoreCase));
+                        equipment.ProtectionLevel = EquipmentProtectionLevels.Levels.Single(a => a.Equals(r.ProtectionLevel.Trim(), StringComparison.OrdinalIgnoreCase));
                     }
                     else 
                     {
@@ -1120,9 +1117,9 @@ namespace Keas.Mvc.Controllers
                         result.ErrorMessage.Add("Invalid Protection Level Value.");
                         return equipment;
                     }
-                    if (!string.IsNullOrWhiteSpace(r.AvailabilityLevel) && availabilityLevels.Contains(r.AvailabilityLevel.Trim(), StringComparer.OrdinalIgnoreCase))
+                    if (!string.IsNullOrWhiteSpace(r.AvailabilityLevel) && EquipmentAvailabilityLevels.Levels.Contains(r.AvailabilityLevel.Trim(), StringComparer.OrdinalIgnoreCase))
                     {
-                        equipment.AvailabilityLevel = availabilityLevels.Single(a => a.Equals(r.AvailabilityLevel.Trim(), StringComparison.OrdinalIgnoreCase));
+                        equipment.AvailabilityLevel = EquipmentAvailabilityLevels.Levels.Single(a => a.Equals(r.AvailabilityLevel.Trim(), StringComparison.OrdinalIgnoreCase));
                     }
                     else
                     {
