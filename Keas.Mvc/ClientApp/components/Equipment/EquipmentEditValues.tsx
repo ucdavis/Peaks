@@ -157,7 +157,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                                 className="form-control"
                                 disabled={this.props.disableEditing}
                                 value={this.props.selectedEquipment.systemManagementId || ""}
-                                maxLength={16} 
+                                maxlength={16} 
                                 onChange={e => this.props.changeProperty("systemManagementId", e.target.value)}
                             />
                         </div>
