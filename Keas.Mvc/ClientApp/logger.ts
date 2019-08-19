@@ -8,7 +8,7 @@ import {
 } from "log4javascript";
 import * as StackTrace from "stacktrace-js"
 
-declare const __DEV__: boolean;
+const __DEV__: boolean = false;
 
 const logger = getLogger();
 

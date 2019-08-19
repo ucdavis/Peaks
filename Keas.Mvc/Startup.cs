@@ -185,8 +185,8 @@ namespace Keas.Mvc
                 app.UseDatabaseErrorPage();
                 app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
                 {
-                    //HotModuleReplacement = true,
-                    //ReactHotModuleReplacement = true
+                    HotModuleReplacement = true,
+                    ReactHotModuleReplacement = true
                 });
             }
             else
