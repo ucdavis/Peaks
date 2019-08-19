@@ -1,0 +1,58 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+# trigger:
+# - master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Build Keas.Mvc'
+  inputs:
+    command: 'build'
+    projects: './Keas.Mvc/Keas.Mvc.csproj'
+    arguments: '--configuration $(BuildConfiguration)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run Server Tests'
+  inputs:
+    command: 'test'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Keas.Mvc'
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    zipAfterPublish: false
+    modifyOutputPath: false
+    projects: './Keas.Mvc/Keas.Mvc.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/ --no-build --no-restore'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Keas.Jobs.SendMail'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    zipAfterPublish: false
+    projects: './Keas.Jobs.SendMail/Keas.Jobs.SendMail.csproj'
+    arguments: '--configuration $(BuildConfiguration) --runtime win-x64 --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'

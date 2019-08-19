@@ -47,9 +47,10 @@
                 </div>
                 <div class="card-content">
                     <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
-                    <p><b>EquipmentName<span class="space">,</span>SerialNumber<span class="space">,</span>Make<span class="space">,</span>Model<span class="space">,</span>KerbUser<span class="space">,</span>DateIssued<span class="space">,</span>DateDue<span class="space">,</span>Tag<span class="space">,</span>Type<span class="space">,</span>ProtectionLevel<span class="space">,</span>AvailabilityLevel<span class="space">,</span>Notes<span class="space">,</span>Key1<span class="space">,</span>Value1<span class="space">,</span>Key2<span class="space">,</span>Value2<span class="space">,</span>Key3<span class="space">,</span>Value3<span class="space">,</span>Key4<span class="space">,</span>Value4<span class="space">,</span>Key5<span class="space">,</span>Value5<span class="space">,</span>Key6<span class="space">,</span>Value6</b></p>
+                    <p><b>EquipmentName<span class="space">,</span>SerialNumber<span class="space">,</span>Make<span class="space">,</span>Model<span class="space">,</span>KerbUser<span class="space">,</span>DateIssued<span class="space">,</span>DateDue<span class="space">,</span>Tag<span class="space">,</span>Type<span class="space">,</span>ProtectionLevel<span class="space">,</span>AvailabilityLevel<span class="space">,</span>BigfixId<span class="space">,</span>Notes<span class="space">,</span>Key1<span class="space">,</span>Value1<span class="space">,</span>Key2<span class="space">,</span>Value2<span class="space">,</span>Key3<span class="space">,</span>Value3<span class="space">,</span>Key4<span class="space">,</span>Value4<span class="space">,</span>Key5<span class="space">,</span>Value5<span class="space">,</span>Key6<span class="space">,</span>Value6<span class="space">,</span>Key7<span class="space">,</span>Value7<span class="space">,</span>Key8<span class="space">,</span>Value8<span class="space">,</span>Key9<span class="space">,</span>Value9<span class="space">,</span>Key10<span class="space">,</span>Value10<span class="space">,</span>Key11<span class="space">,</span>Value11<span class="space">,</span>Key12<span class="space">,</span>Value12<span class="space">,</span>GenericKeyValues</b></p>
                     <p>Text above copies properly. If you type the list out, omit the space after the commas.</p> 
-                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_equipment_example.csv")" class="btn btn-outline-info btn-lg" role="button"><i class="fa fa-download"></i> CSV file.</a></p>
+                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_equipment_exampleV2.csv")" class="btn btn-outline-info btn-lg" role="button"><i class="fa fa-download"></i> CSV file.</a></p>
+                    <p><i class="fa fa-star" style="color: red"></i> Indicates new fields, Aug 2019</p>
                     <dl>
                         <dt>EquipmentName</dt>
                         <dd>Required - Description of Equipment item. Because name is not required to be unique, a new item will be created for each line. Maximum 64 characters long.</dd>
@@ -73,12 +74,16 @@
                         <dd>Conditionally Optional Equipment Protection Level. If not supplied and Required, "P1" will be used. Possible Values: P1, P2, P3, P4</dd>
                         <dt>AvailabilityLevel</dt>
                         <dd>Conditionally Optional Equipment Availability Level. If not supplied and Required, "A1" will be used. Possible Values: A1, A2, A3, A4</dd>
+                        <dt>BigfixId <i class="fa fa-star" style="color: red"></i></dt>
+                        <dd>Optional for "computer" types which may have a BigfixId. Max 16 characters.</dd>
                         <dt>Notes</dt>
                         <dd>Optional.</dd>
-                        <dt>Key(1-6)</dt>
-                        <dd>Attribute key to be added to this item. You may add up to 6 attributes.</dd>
-                        <dt>Value(1-6)</dt>
+                        <dt>Key(1-12) <i class="fa fa-star" style="color: red"></i></dt>
+                        <dd>Attribute key to be added to this item. You may add up to 12 attributes.</dd>
+                        <dt>Value(1-12) <i class="fa fa-star" style="color: red"></i></dt>
                         <dd>Attribute value to be added to this item.</dd>
+                        <dt>GenericKeyValues <i class="fa fa-star" style="color: red"></i></dt>
+                        <dd>Generic Key Value pairs should be in the format key=value,key=value, etc.  See example.</dd>
                     </dl>
                 </div>
             </div>
@@ -115,6 +120,7 @@
                                 <th>Type</th>
                                 <th>ProtectionLevel</th>
                                 <th>AvailabilityLevel</th>
+                                <th>BigfixId</th>
                                 <th>Notes</th>
                                 <th>Key 1</th>
                                 <th>Value 1</th>
@@ -128,6 +134,19 @@
                                 <th>Value 5</th>
                                 <th>Key 6</th>
                                 <th>Value 6</th>
+                                <th>Key 7</th>
+                                <th>Value 7</th>
+                                <th>Key 8</th>
+                                <th>Value 8</th>
+                                <th>Key 9</th>
+                                <th>Value 9</th>
+                                <th>Key 10</th>
+                                <th>Value 10</th>
+                                <th>Key 11</th>
+                                <th>Value 11</th>
+                                <th>Key 12</th>
+                                <th>Value 12</th>
+                                <th>GenericKeyValues</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -174,6 +193,7 @@
                                     <td>@Html.DisplayFor(a => item.Import.Type)</td>
                                     <td>@Html.DisplayFor(a => item.Import.ProtectionLevel)</td>
                                     <td>@Html.DisplayFor(a => item.Import.AvailabilityLevel)</td>
+                                    <td>@Html.DisplayFor(a => item.Import.BigfixId)</td>
                                     <td>@Html.DisplayFor(a => item.Import.Notes)</td>
                                     <td>
                                         @item.Import.Key1 
@@ -211,6 +231,43 @@
                                     <td>
                                         @item.Import.Value6
                                     </td>
+                                    <td>
+                                        @item.Import.Key7 
+                                    </td>
+                                    <td>
+                                        @item.Import.Value7
+                                    </td>
+                                    <td>
+                                        @item.Import.Key8 
+                                    </td>
+                                    <td>
+                                        @item.Import.Value8
+                                    </td>
+                                    <td>
+                                        @item.Import.Key9 
+                                    </td>
+                                    <td>
+                                        @item.Import.Value9
+                                    </td>
+                                    <td>
+                                        @item.Import.Key10 
+                                    </td>
+                                    <td>
+                                        @item.Import.Value10
+                                    </td>
+                                    <td>
+                                        @item.Import.Key11 
+                                    </td>
+                                    <td>
+                                        @item.Import.Value11
+                                    </td>
+                                    <td>
+                                        @item.Import.Key12 
+                                    </td>
+                                    <td>
+                                        @item.Import.Value12
+                                    </td>
+                                    <td>@item.Import.GenericKeyValues</td>
                                 </tr>
                             }
                         </tbody>
@@ -237,7 +294,7 @@
                 "columnDefs": [
                     { "width": "10%;", "targets": [2] },
                     { "type": "date", "targets": [5, 6] },
-                    { "targets" : [ 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27], "visible" : false}
+                    { "targets" : [ 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41], "visible" : false}
                 ]
             });
         });

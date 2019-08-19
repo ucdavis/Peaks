@@ -63,6 +63,10 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("SerialNumber", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Space", "Keas.Core.Domain.Space", new List<string>()));
             expectedFields.Add(new NameAndType("SpaceId", "System.Nullable`1[System.Int32]", new List<string>()));
+            expectedFields.Add(new NameAndType("SystemManagementId", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)16)]",
+            }));
             expectedFields.Add(new NameAndType("Tags", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Team", "Keas.Core.Domain.Team", new List<string>()));
             expectedFields.Add(new NameAndType("TeamId", "System.Int32", new List<string>()));
