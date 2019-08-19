@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>93abda06-2870-4006-81e8-1eecba3d977c</UserSecretsId>
@@ -33,6 +33,10 @@
   <ItemGroup>
     <Folder Include="Data\" />
     <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Keas.Jobs.SendMail.csproj" />
+    <None Include="Keas.Jobs.SendMail.csproj.user" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="Views\Shared\_ImportResultsStylePartial.cshtml">
