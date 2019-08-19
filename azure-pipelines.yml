@@ -33,12 +33,27 @@ steps:
   inputs:
     command: 'test'
 
+# TODO: can probably norestore build
+#    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory) --no-build --no-restore'
+
 - task: DotNetCoreCLI@2
-  displayName: Publish
+  displayName: 'Publish Keas.Mvc'
   inputs:
-    command: publish
-    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory) --no-build --no-restore'
+    command: 'publish'
+    publishWebProjects: true
+    zipAfterPublish: false
     modifyOutputPath: false
+    projects: './Keas.Mvc/Keas.Mvc.csproj'
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Publish Keas.Jobs.SendMail'
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    zipAfterPublish: false
+    projects: './Keas.Jobs.SendMail/Keas.Jobs.SendMail.csproj'
+    arguments: '--configuration $(BuildConfiguration) --runtime win-x64 --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
