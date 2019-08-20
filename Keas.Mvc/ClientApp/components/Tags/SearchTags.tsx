@@ -14,6 +14,7 @@ export default class SearchTags extends React.Component<IProps, {}> {
         return (
             <div>
                 <Typeahead
+                    id="searchTags" // for accessibility
                     options={this.props.disabled ? [] : this.props.tags}
                     disabled={this.props.disabled}
                     multiple={true}

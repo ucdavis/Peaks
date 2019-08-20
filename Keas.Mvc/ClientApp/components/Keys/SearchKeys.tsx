@@ -44,6 +44,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
 
         return (
             <AsyncTypeahead
+                id="searchKeys" // for accessibility
                 defaultSelected={defaultKeyInfo ? [defaultKeyInfo] : []}
                 isLoading={isSearchLoading}
                 minLength={2}

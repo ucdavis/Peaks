@@ -62,6 +62,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
                 <label>Pick a key serial to assign</label>
                 <div>
                     <AsyncTypeahead
+                        id="searchKeySerials" // for accessibility
                         isInvalid={!this.props.selectedKey || !this.props.selectedKeySerial}
                         isLoading={isSearchLoading}
                         minLength={1}
@@ -114,7 +115,9 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
         this.setState({ isSearchLoading: true });
 
         const searchUrl = this.props.selectedKey
-            ? `/api/${team.slug}/keySerials/searchInKey?keyId=${this.props.selectedKey.id}&q=${query}`
+            ? `/api/${team.slug}/keySerials/searchInKey?keyId=${
+                  this.props.selectedKey.id
+              }&q=${query}`
             : `/api/${team.slug}/keySerials/search?q=${query}`;
 
         const results = await this.context.fetch(searchUrl);

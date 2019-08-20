@@ -46,6 +46,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
             <div>
                 <div>
                     <AsyncTypeahead
+                        id="searchPeople" // for accessibility
                         isInvalid={this.props.isRequired && !this.props.person}
                         disabled={this.props.disabled}
                         isLoading={this.state.isSearchLoading}

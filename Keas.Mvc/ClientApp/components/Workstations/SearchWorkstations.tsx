@@ -52,6 +52,7 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
                 <label>Pick a workstation to assign</label>
                 <div>
                     <AsyncTypeahead
+                        id="searchWorkstations" // for accessibility
                         isLoading={this.state.isSearchLoading}
                         minLength={3}
                         placeholder="Search for workstation by name or room"
@@ -65,22 +66,14 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
                                         {option.name}
                                     </Highlighter>
                                 </div>
-                                <div>
-                                    {!!option.assignment ? "Assigned" : "Unassigned"}
-                                </div>
+                                <div>{!!option.assignment ? "Assigned" : "Unassigned"}</div>
                                 <div>
                                     <small>
                                         Space:
-                                        <Highlighter
-                                            key="space.roomNumber"
-                                            search={props.text}
-                                        >
+                                        <Highlighter key="space.roomNumber" search={props.text}>
                                             {option.space.roomNumber}
                                         </Highlighter>
-                                        <Highlighter
-                                            key="space.bldgName"
-                                            search={props.text}
-                                        >
+                                        <Highlighter key="space.bldgName" search={props.text}>
                                             {option.space.bldgName}
                                         </Highlighter>
                                     </small>

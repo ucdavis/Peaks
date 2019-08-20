@@ -13,6 +13,7 @@ export default class SearchAttributes extends React.Component<IProps, {}> {
         return (
             <div>
                 <Typeahead
+                    id="searchAttributes" // for accessibility
                     options={[]}
                     disabled={this.props.disabled}
                     multiple={true}

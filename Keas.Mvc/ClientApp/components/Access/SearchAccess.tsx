@@ -41,6 +41,7 @@ export default class SearchAccess extends React.Component<IProps, IState> {
                 <label>Pick an access to assign</label>
                 <div>
                     <AsyncTypeahead
+                        id="searchAccesses" // for accessibility
                         isLoading={this.state.isSearchLoading}
                         minLength={3}
                         placeholder="Search for access by name or by serial number"

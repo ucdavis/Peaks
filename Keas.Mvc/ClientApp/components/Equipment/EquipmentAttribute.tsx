@@ -54,7 +54,7 @@ export default class EquipmentAttribute extends React.Component<IProps, {}> {
                 : "form-control";
         return (
             <Typeahead
-                labelKey="key"
+                id={`attribute-${this.props.index}`} // for accessibility
                 allowNew={true}
                 disabled={this.props.disabledEdit}
                 options={this.props.commonKeys}
