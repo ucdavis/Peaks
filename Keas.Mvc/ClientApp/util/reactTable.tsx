@@ -1,4 +1,4 @@
-import { addYears, isAfter, isBefore, isSameDay, startOfDay } from "date-fns";
+import { addWeeks, isAfter, isBefore, isSameDay, startOfDay } from "date-fns";
 import * as React from "react";
 
 export class ReactTableExpirationUtil {
@@ -19,14 +19,14 @@ export class ReactTableExpirationUtil {
             return (
                 !!row.expiresAt &&
                 isAfter(new Date(row.expiresAt), new Date()) &&
-                isBefore(new Date(row.expiresAt), addYears(startOfDay(new Date()), 3))
+                isBefore(new Date(row.expiresAt), addWeeks(startOfDay(new Date()), 3))
             );
         }
         if (filter.value === "6weeks") {
             return (
                 !!row.expiresAt &&
                 isAfter(new Date(row.expiresAt), new Date()) &&
-                isBefore(new Date(row.expiresAt), addYears(startOfDay(new Date()), 6))
+                isBefore(new Date(row.expiresAt), addWeeks(startOfDay(new Date()), 6))
             );
         }
     }
