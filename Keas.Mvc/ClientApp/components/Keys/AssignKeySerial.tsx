@@ -1,14 +1,13 @@
-import * as moment from "moment";
+import { addYears, format, isBefore, startOfDay } from "date-fns";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from "react-date-picker";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
-import { AppContext, IKey, IKeySerial, IPerson, IKeyInfo } from "../../Types";
+import { AppContext, IKey, IKeyInfo, IKeySerial, IPerson } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
-import SearchKeySerial from "./SearchKeySerials";
 import KeySerialEditValues from "./KeySerialEditValues";
 import SearchKeys from "./SearchKeys";
+import SearchKeySerial from "./SearchKeySerials";
 
 interface IProps {
     person?: IPerson;
@@ -23,7 +22,7 @@ interface IProps {
 }
 
 interface IState {
-    date: any;
+    date: Date;
     error: string;
     keySerial: IKeySerial;
     person: IPerson;
@@ -45,10 +44,8 @@ export default class AssignKey extends React.Component<IProps, IState> {
         const assignment = props.selectedKeySerial && props.selectedKeySerial.keySerialAssignment;
 
         const date = !!assignment
-            ? moment(assignment.expiresAt)
-            : moment()
-                  .add(3, "y")
-                  .startOf("day");
+            ? new Date(assignment.expiresAt)
+            : addYears(startOfDay(new Date()), 3);
 
         const person = !!assignment ? assignment.person : props.person;
 
@@ -76,7 +73,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
             nextProps.selectedKeySerial && nextProps.selectedKeySerial.keySerialAssignment;
         if (!!assignment) {
             this.setState({
-                date: moment(assignment.expiresAt),
+                date: new Date(assignment.expiresAt),
                 person: assignment.person
             });
         }
@@ -98,9 +95,18 @@ export default class AssignKey extends React.Component<IProps, IState> {
         const { person, keySerial } = this.state;
 
         return (
-            <Modal isOpen={isModalOpen} toggle={this._confirmClose} size="lg" className="keys-color">
+            <Modal
+                isOpen={isModalOpen}
+                toggle={this._confirmClose}
+                size="lg"
+                className="keys-color"
+            >
                 <div className="modal-header row justify-content-between">
-                    <h2>{this.props.selectedKeySerial || this.props.person ? "Assign Key Serial" : "Add Key Serial"}</h2>
+                    <h2>
+                        {this.props.selectedKeySerial || this.props.person
+                            ? "Assign Key Serial"
+                            : "Add Key Serial"}
+                    </h2>
                     <Button color="link" onClick={this._closeModal}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
@@ -127,13 +133,8 @@ export default class AssignKey extends React.Component<IProps, IState> {
                                 <div className="form-group">
                                     <label>Set the expiration date</label>
                                     <DatePicker
-                                        selected={this.state.date}
+                                        value={this.state.date}
                                         onChange={this._onChangeDate}
-                                        onChangeRaw={this._onChangeDateRaw}
-                                        className="form-control"
-                                        showMonthDropdown={true}
-                                        showYearDropdown={true}
-                                        dropdownMode="select"
                                     />
                                 </div>
                             )}
@@ -255,18 +256,16 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _confirmClose = () => {
-        if (!confirm("Please confirm you want to close!")){
+        if (!confirm("Please confirm you want to close!")) {
             return;
         }
 
         this._closeModal();
-    }
+    };
 
     private _closeModal = () => {
         this.setState({
-            date: moment()
-                .add(3, "y")
-                .startOf("day"),
+            date: addYears(startOfDay(new Date()), 3),
             error: "",
             keySerial: null,
             person: null,
@@ -286,7 +285,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
         this.setState({ submitting: true });
         const person = this.props.person ? this.props.person : this.state.person;
 
-        await this.props.onCreate(person, this.state.keySerial, this.state.date.format());
+        await this.props.onCreate(person, this.state.keySerial, format(this.state.date, "P"));
 
         this._closeModal();
     };
@@ -331,19 +330,9 @@ export default class AssignKey extends React.Component<IProps, IState> {
             valid = false;
         } else if (!this.state.date) {
             valid = false;
-        } else if (moment().isSameOrAfter(this.state.date)) {
+        } else if (!isBefore(new Date(), new Date(this.state.date))) {
             valid = false;
         }
         this.setState({ validState: valid });
-    };
-
-    private _onChangeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const m = moment(value, "MM/DD/YYYY", true);
-        if (m.isValid()) {
-            this._onChangeDate(m);
-        } else {
-            this.setState({ date: null, error: "Please enter a valid date" });
-        }
     };
 }
