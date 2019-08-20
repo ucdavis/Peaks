@@ -2,7 +2,6 @@ import { addYears, format, isBefore, startOfDay } from "date-fns";
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import DatePicker from "react-date-picker";
-import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
 import { AppContext, IAccess, IPerson } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
