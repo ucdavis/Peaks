@@ -315,6 +315,6 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     };
 
     private _changeDate = (newDate: Date) => {
-        this.setState({ date: startOfDay(newDate), error: "" }, this._validateState);
+        this.setState({ date: startOfDay(new Date(newDate)), error: "" }, this._validateState);
     };
 }
