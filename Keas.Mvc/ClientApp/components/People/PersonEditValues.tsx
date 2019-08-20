@@ -110,6 +110,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
 
                 <div className="form-group">
                     <label>Start Date</label>
+                    <br />
                     <DatePicker
                         value={
                             this.props.selectedPerson && this.props.selectedPerson.startDate
@@ -117,11 +118,14 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                                 : null
                         }
                         onChange={this._changeStartDate}
+                        format="MM/dd/yyyy"
+                        clearIcon={null}
                     />
                 </div>
 
                 <div className="form-group">
                     <label>End Date</label>
+                    <br />
                     <DatePicker
                         value={
                             this.props.selectedPerson && this.props.selectedPerson.endDate
@@ -129,6 +133,8 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                                 : null
                         }
                         onChange={this._changeEndDate}
+                        format="MM/dd/yyyy"
+                        clearIcon={null}
                     />
                 </div>
 

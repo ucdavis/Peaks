@@ -155,7 +155,11 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                 {(!!this.state.person || !!this.props.person) && (
                                     <div className="form-group">
                                         <label>Set the expiration date</label>
+                                        <br />
                                         <DatePicker
+                                            format="MM/dd/yyyy"
+                                            required={true}
+                                            clearIcon={null}
                                             value={this.state.date}
                                             onChange={this._changeDate}
                                         />
