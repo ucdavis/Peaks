@@ -169,26 +169,27 @@ namespace Keas.Mvc.Controllers
 
         public IActionResult UploadPeople()
         {
-            var model = new List<PeopleImportResult>();
-            return View();
+            var model = new PeopleImportModel
+            {
+                UpdateExistingUsers = false, ImportResult = new List<PeopleImportResult>()
+            };
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadPeople(IFormFile file, string updateExisting)
+        public async Task<IActionResult> UploadPeople(PeopleImportModel model)
         {
-            var allowUpdate = updateExisting != null && updateExisting.Equals("true", StringComparison.OrdinalIgnoreCase);
-
             var resultsView = new List<PeopleImportResult>();
-            if (file == null || file.Length <= 0)
+            if (model.File == null || model.File.Length <= 0)
             {
                 ErrorMessage = "No file, or an empty file selected.";
-                return View();
+                return View(model);
             }
 
             var userIdentity = User.Identity.Name;
             var userName = User.GetNameClaim();
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
-            using (var reader = new StreamReader(file.OpenReadStream()))
+            using (var reader = new StreamReader(model.File.OpenReadStream()))
             using (var csv = new CsvReader(reader))
             {
                 csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty);
@@ -206,7 +207,7 @@ namespace Keas.Mvc.Controllers
                 {
                     var firstSentence = e.Message.Split('.');
                     ErrorMessage = firstSentence.FirstOrDefault() ?? "Error Detected";
-                    return View();
+                    return View(model);
                 }
 
 
@@ -250,7 +251,7 @@ namespace Keas.Mvc.Controllers
                         }
                         else
                         {
-                            if (!allowUpdate && await _context.People.AnyAsync(a => a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id))
+                            if (!model.UpdateExistingUsers && await _context.People.AnyAsync(a => a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id))
                             {
                                 importResult.Messages.Add($"KerbId {r.KerbId} Already active in team, no changes made.");
                                 importResult.Success = false;
@@ -261,7 +262,7 @@ namespace Keas.Mvc.Controllers
                         if (importResult.Success)
                         {
                             Person person = null;
-                            if (allowUpdate)
+                            if (model.UpdateExistingUsers)
                             {
                                 person = await _context.People.FirstOrDefaultAsync(a =>a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id);
                             }
@@ -313,7 +314,9 @@ namespace Keas.Mvc.Controllers
                 ErrorMessage = "No rows in file";
             }
 
-            return View(resultsView);
+            model.ImportResult = resultsView;
+
+            return View(model);
         }
 
         private async Task PopulatePerson(PeopleImport r, Person person, PeopleImportResult importResult, Team team)

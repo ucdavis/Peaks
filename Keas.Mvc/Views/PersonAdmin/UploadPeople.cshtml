@@ -1,6 +1,6 @@
 @using Keas.Core.Extensions
 @using Keas.Core.Models
-@model List<PeopleImportResult>
+@model PeopleImportModel
 
 @{
     ViewData["Title"] = "Upload CSV People File";
@@ -19,8 +19,8 @@
                         <div class="form-horizontal">
                             <div class="form-group">
                                 <div class="row">
-                                <label class="control-label">Update Existing Users Too:</label>
-                                    <input name="UpdateExisting" type="checkbox" class="form-control form-control-lg" value="true"/>
+                                    <label asp-for="UpdateExistingUsers" class="control-label">Update Existing Users Too:</label>
+                                    <input asp-for="UpdateExistingUsers" class="form-control form-control-lg" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -44,7 +44,7 @@
                 </form>
             </div>
         </div>
-        @if (Model == null || Model.Count <= 0)
+        @if (Model.ImportResult == null || Model.ImportResult.Count <= 0)
         {
             <div class="card">
                 <div class="card-header-people">
@@ -90,7 +90,7 @@
             </div>
         }
   
-    @if (Model != null && Model.Count > 0)
+    @if (Model.ImportResult != null && Model.ImportResult.Count > 0)
     {
         <div style="padding-top: 15px">
             <div class="card">
@@ -126,7 +126,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in Model)
+                            @foreach (var item in Model.ImportResult)
                             {
                                 var style = string.Empty;
                                 if (!item.Success)

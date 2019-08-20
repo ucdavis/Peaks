@@ -1,9 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace Keas.Mvc.Models
 {
+    public class PeopleImportModel
+    {
+        public bool UpdateExistingUsers { get; set; }
+        public List<PeopleImportResult> ImportResult { get; set; }
+
+        public IFormFile File { get; set; }
+    }
+
+
     public class PeopleImport
     {
         [Required]
