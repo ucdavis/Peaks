@@ -306,7 +306,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         return valid;
     };
 
-    private _changeDate = newDate => {
-        this.setState({ date: newDate.startOf("day"), error: "" }, this._validateState);
+    private _changeDate = (newDate: Date) => {
+        this.setState({ date: startOfDay(newDate), error: "" }, this._validateState);
     };
 }

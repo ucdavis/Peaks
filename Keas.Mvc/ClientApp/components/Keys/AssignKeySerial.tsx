@@ -134,7 +134,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                                     <label>Set the expiration date</label>
                                     <DatePicker
                                         value={this.state.date}
-                                        onChange={this._onChangeDate}
+                                        onChange={this._changeDate}
                                     />
                                 </div>
                             )}
@@ -316,8 +316,8 @@ export default class AssignKey extends React.Component<IProps, IState> {
         this.setState({ person }, this._validateState);
     };
 
-    private _onChangeDate = newDate => {
-        this.setState({ date: newDate.startOf("day"), error: "" }, this._validateState);
+    private _changeDate = (newDate: Date) => {
+        this.setState({ date: startOfDay(newDate), error: "" }, this._validateState);
     };
 
     private _validateState = () => {

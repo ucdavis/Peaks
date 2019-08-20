@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { startOfDay } from "date-fns";
 import * as React from "react";
 import DatePicker from "react-date-picker";
 import { IPerson, ISpace } from "../../Types";
@@ -191,11 +191,11 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
         );
     }
 
-    private _changeStartDate = (date: any) => {
-        this.props.changeProperty("startDate", date.startOf("day"));
+    private _changeStartDate = (date: Date) => {
+        this.props.changeProperty("startDate", startOfDay(date));
     };
 
     private _changeEndDate = (date: any) => {
-        this.props.changeProperty("endDate", date.startOf("day"));
+        this.props.changeProperty("endDate", startOfDay(date));
     };
 }
