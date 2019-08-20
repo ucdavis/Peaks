@@ -6,14 +6,14 @@ export class DateUtil {
         if (expiration === null) {
             return "";
         }
-        return format(new Date(expiration), "MM/DD/YYYY");
+        return format(new Date(expiration), "MM/dd/yyyy");
     }
 
     public static formatAssignmentExpiration(assignment: IHasExpiration) {
         if (!assignment || !assignment.expiresAt) {
             return "";
         }
-        return format(new Date(assignment.expiresAt), "MM/DD/YYYY");
+        return format(new Date(assignment.expiresAt), "MM/dd/yyyy");
     }
 
     public static formatFirstExpiration(expirations: Date[]) {
@@ -21,7 +21,7 @@ export class DateUtil {
             return "";
         }
         const dates = expirations.map(x => new Date(x));
-        return format(min(dates), "MM/DD/YYYY");
+        return format(min(dates), "MM/dd/yyyy");
     }
 
     public static getFirstExpiration(expirations: Date[]) {
