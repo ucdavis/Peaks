@@ -174,8 +174,10 @@ namespace Keas.Mvc.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadPeople(IFormFile file)
+        public async Task<IActionResult> UploadPeople(IFormFile file, string updateExisting)
         {
+            var allowUpdate = updateExisting != null && updateExisting.Equals("true", StringComparison.OrdinalIgnoreCase);
+
             var resultsView = new List<PeopleImportResult>();
             if (file == null || file.Length <= 0)
             {
@@ -248,7 +250,7 @@ namespace Keas.Mvc.Controllers
                         }
                         else
                         {
-                            if (await _context.People.AnyAsync(a => a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id))
+                            if (!allowUpdate && await _context.People.AnyAsync(a => a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id))
                             {
                                 importResult.Messages.Add($"KerbId {r.KerbId} Already active in team, no changes made.");
                                 importResult.Success = false;
@@ -259,10 +261,17 @@ namespace Keas.Mvc.Controllers
                         if (importResult.Success)
                         {
                             Person person = null;
+                            if (allowUpdate)
+                            {
+                                person = await _context.People.FirstOrDefaultAsync(a =>a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id);
+                            }
                             try
                             {
-                                var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbId, team.Id, team, userName, userIdentity, "CSV People Import");
-                                person = personResult.Person;
+                                if (person == null)
+                                {
+                                    var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbId,team.Id, team, userName, userIdentity, "CSV People Import");
+                                    person = personResult.Person;
+                                }
 
                                 await PopulatePerson(r, person, importResult, team);
 

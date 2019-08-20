@@ -15,7 +15,14 @@
                 <form asp-action="UploadPeople" method="post" enctype="multipart/form-data">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                     <fieldset>
+
                         <div class="form-horizontal">
+                            <div class="form-group">
+                                <div class="row">
+                                <label class="control-label">Update Existing Users:</label>
+                                    <input name="UpdateExisting" type="checkbox" class="form-control form-control-lg" value="true"/>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-10">Select CSV file to upload:</div>
@@ -24,7 +31,7 @@
                                     <div class="col-md-10">
                                         <div class="input-group">
                                             <input type="hidden" id="filename" name="filename" value="">
-                                            <input type="file" id="file" name="file" class="form-control"  accept=".csv">
+                                            <input type="file" id="file" name="file" class="form-control" accept=".csv">
                                             <div class="input-group-btn">
                                                 <input type="submit" value="Upload CSV" class="btn btn-primary" style="margin-left: 5px;">
                                             </div>
