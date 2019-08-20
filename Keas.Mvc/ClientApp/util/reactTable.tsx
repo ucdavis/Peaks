@@ -1,4 +1,4 @@
-import * as moment from "moment";
+import { isAfter, isBefore, startOfDay, addYears, isSameDay } from "date-fns";
 import * as React from "react";
 
 export class ReactTableExpirationUtil {
@@ -10,23 +10,23 @@ export class ReactTableExpirationUtil {
             return !row.expiresAt;
         }
         if (filter.value === "expired") {
-            return !!row.expiresAt && moment(row.expiresAt).isSameOrBefore();
+            return !!row.expiresAt && !isAfter(new Date(row.expiresAt), new Date());
         }
         if (filter.value === "unexpired") {
-            return !!row.expiresAt && moment(row.expiresAt).isAfter();
+            return !!row.expiresAt && isAfter(new Date(row.expiresAt), new Date());
         }
         if (filter.value === "3weeks") {
             return (
                 !!row.expiresAt &&
-                moment(row.expiresAt).isAfter() &&
-                moment(row.expiresAt).isBefore(moment().add(3, "w"))
+                isAfter(new Date(row.expiresAt), new Date()) &&
+                isBefore(new Date(row.expiresAt), addYears(startOfDay(new Date()), 3))
             );
         }
         if (filter.value === "6weeks") {
             return (
                 !!row.expiresAt &&
-                moment(row.expiresAt).isAfter() &&
-                moment(row.expiresAt).isBefore(moment().add(6, "w"))
+                isAfter(new Date(row.expiresAt), new Date()) &&
+                isBefore(new Date(row.expiresAt), addYears(startOfDay(new Date()), 6))
             );
         }
     }
@@ -55,10 +55,10 @@ export class ReactTableExpirationUtil {
         if (!a) {
             return 1;
         }
-        if (moment(a).isSame(b)) {
+        if (isSameDay(new Date(a), new Date(b))) {
             return 0;
         } else {
-            return moment(a).isBefore(b) ? -1 : 1;
+            return isBefore(new Date(a), new Date(b)) ? -1 : 1;
         }
     }
 }
