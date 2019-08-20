@@ -1,7 +1,6 @@
-import * as moment from "moment";
+import { format } from "date-fns";
 import * as React from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from "react-date-picker";
 import { IPerson, ISpace } from "../../Types";
 import SearchTags from "../Tags/SearchTags";
 import AssignPerson from "./AssignPerson";
@@ -112,34 +111,24 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                 <div className="form-group">
                     <label>Start Date</label>
                     <DatePicker
-                        selected={
+                        value={
                             this.props.selectedPerson && this.props.selectedPerson.startDate
-                                ? moment(this.props.selectedPerson.startDate)
+                                ? new Date(this.props.selectedPerson.startDate)
                                 : null
                         }
                         onChange={this._changeStartDate}
-                        onChangeRaw={this._changeStartDateRaw}
-                        className="form-control"
-                        showMonthDropdown={true}
-                        showYearDropdown={true}
-                        dropdownMode="select"
                     />
                 </div>
 
                 <div className="form-group">
                     <label>End Date</label>
                     <DatePicker
-                        selected={
+                        value={
                             this.props.selectedPerson && this.props.selectedPerson.endDate
-                                ? moment(this.props.selectedPerson.endDate)
+                                ? new Date(this.props.selectedPerson.endDate)
                                 : null
                         }
                         onChange={this._changeEndDate}
-                        onChangeRaw={this._changeEndDateRaw}
-                        className="form-control"
-                        showMonthDropdown={true}
-                        showYearDropdown={true}
-                        dropdownMode="select"
                     />
                 </div>
 
@@ -180,9 +169,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
                     <textarea
                         className="form-control"
                         disabled={this.props.disableEditing}
-                        value={
-                            this.props.selectedPerson.notes || ""
-                        }
+                        value={this.props.selectedPerson.notes || ""}
                         onChange={e => this.props.changeProperty("notes", e.target.value)}
                     />
                 </div>
@@ -210,25 +197,5 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
 
     private _changeEndDate = (date: any) => {
         this.props.changeProperty("endDate", date.startOf("day"));
-    };
-
-    private _changeStartDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const m = moment(value, "MM/DD/YYYY", true);
-        if (m.isValid()) {
-            this._changeStartDate(m);
-        } else {
-            this.setState({ date: null, error: "Please enter a valid date" });
-        }
-    };
-
-    private _changeEndDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const m = moment(value, "MM/DD/YYYY", true);
-        if (m.isValid()) {
-            this._changeStartDate(m);
-        } else {
-            this.setState({ date: null, error: "Please enter a valid date" });
-        }
     };
 }
