@@ -1,6 +1,5 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
 import { AppContext, IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
 import EquipmentAssignmentValues from "./EquipmentAssignmentValues";
@@ -62,7 +61,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
                 isOpen={this.props.modal}
                 toggle={this._confirmClose}
                 size="lg"
-                className="equipment-color" 
+                className="equipment-color"
             >
                 <div className="modal-header row justify-content-between">
                     <h2>Edit Equipment</h2>
@@ -116,12 +115,12 @@ export default class EditEquipment extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _confirmClose = () => {
-        if (!confirm("Please confirm you want to close!")){
+        if (!confirm("Please confirm you want to close!")) {
             return;
         }
 
         this._closeModal();
-    }
+    };
 
     private _closeModal = () => {
         this.setState({
