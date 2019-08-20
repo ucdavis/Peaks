@@ -1,7 +1,7 @@
-import * as moment from "moment";
+import { addYears, format, isBefore, startOfDay } from "date-fns";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import DatePicker from "react-datepicker";
+import DatePicker from "react-date-picker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
 import { AppContext, IAccess, IPerson } from "../../Types";
@@ -22,7 +22,7 @@ interface IProps {
 
 interface IState {
     access: IAccess;
-    date: any;
+    date: Date;
     error: string;
     person: IPerson;
     submitting: boolean;
@@ -39,9 +39,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         super(props);
         this.state = {
             access: this.props.selectedAccess,
-            date: moment()
-                .add(3, "y")
-                .startOf("day"),
+            date: addYears(startOfDay(new Date()), 3),
             error: "",
             person: null,
             submitting: false,
@@ -73,7 +71,11 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     className="access-color"
                 >
                     <div className="modal-header row justify-content-between">
-                        <h2>{this.props.selectedAccess || this.props.person ? "Assign Access" : "Add Access"}</h2>
+                        <h2>
+                            {this.props.selectedAccess || this.props.person
+                                ? "Assign Access"
+                                : "Add Access"}
+                        </h2>
                         <Button color="link" onClick={this._closeModal}>
                             <i className="fas fa-times fa-lg" />
                         </Button>
@@ -87,7 +89,9 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                         disabled={!!this.props.person}
                                         person={this.props.person || this.state.person}
                                         onSelect={this._onSelectPerson}
-                                        isRequired={this.state.access && this.state.access.teamId !== 0}
+                                        isRequired={
+                                            this.state.access && this.state.access.teamId !== 0
+                                        }
                                     />
                                 </div>
                                 {!this.state.access && (
@@ -153,13 +157,8 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                                     <div className="form-group">
                                         <label>Set the expiration date</label>
                                         <DatePicker
-                                            selected={this.state.date}
+                                            value={this.state.date}
                                             onChange={this._changeDate}
-                                            onChangeRaw={this._changeDateRaw}
-                                            className="form-control"
-                                            showMonthDropdown={true}
-                                            showYearDropdown={true}
-                                            dropdownMode="select"
                                         />
                                     </div>
                                 )}
@@ -196,7 +195,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _confirmClose = () => {
-        if (!confirm("Please confirm you want to close!")){
+        if (!confirm("Please confirm you want to close!")) {
             return;
         }
 
@@ -206,9 +205,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     private _closeModal = () => {
         this.setState({
             access: null,
-            date: moment()
-                .add(3, "y")
-                .startOf("day"),
+            date: addYears(startOfDay(new Date()), 3),
             error: "",
             person: null,
             submitting: false,
@@ -226,7 +223,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         this.setState({ submitting: true });
         const person = this.props.person ? this.props.person : this.state.person;
 
-        await this.props.onCreate(this.state.access, this.state.date.format(), person);
+        await this.props.onCreate(this.state.access, format(this.state.date, "P"), person);
 
         this._closeModal();
     };
@@ -285,7 +282,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
             valid = false;
         } else if (
             (!!this.state.person || !!this.props.person) &&
-            (!this.state.date || moment().isSameOrAfter(this.state.date))
+            (!this.state.date || !isBefore(new Date(), new Date(this.state.date)))
         ) {
             valid = false;
         }
@@ -312,15 +309,5 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
     private _changeDate = newDate => {
         this.setState({ date: newDate.startOf("day"), error: "" }, this._validateState);
-    };
-
-    private _changeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const m = moment(value, "MM/DD/YYYY", true);
-        if (m.isValid()) {
-            this._changeDate(m);
-        } else {
-            this.setState({ date: null, error: "Please enter a valid date", validState: false });
-        }
     };
 }
