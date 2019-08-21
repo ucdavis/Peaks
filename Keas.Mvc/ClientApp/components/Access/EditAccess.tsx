@@ -1,6 +1,5 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
 import { AppContext, IAccess, IAccessAssignment, IPerson } from "../../Types";
 import AccessEditValues from "./AccessEditValues";
@@ -102,7 +101,7 @@ export default class EditAccess extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _confirmClose = () => {
-        if (!confirm("Please confirm you want to close!")){
+        if (!confirm("Please confirm you want to close!")) {
             return;
         }
 

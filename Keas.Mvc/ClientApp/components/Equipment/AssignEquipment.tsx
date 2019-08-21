@@ -1,8 +1,7 @@
-import * as moment from "moment";
+import { addYears, format, isBefore, startOfDay } from "date-fns";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+import DatePicker from "react-date-picker";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
 import { AppContext, IEquipment, IEquipmentAttribute, IPerson, ISpace } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
@@ -25,7 +24,7 @@ interface IProps {
 }
 
 interface IState {
-    date: any;
+    date: Date;
     equipment: IEquipment;
     error: string;
     person: IPerson;
@@ -44,10 +43,8 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         this.state = {
             date:
                 !!this.props.selectedEquipment && !!this.props.selectedEquipment.assignment
-                    ? moment(this.props.selectedEquipment.assignment.expiresAt)
-                    : moment()
-                          .add(3, "y")
-                          .startOf("day"),
+                    ? new Date(this.props.selectedEquipment.assignment.expiresAt)
+                    : addYears(startOfDay(new Date()), 3),
             equipment: this.props.selectedEquipment,
             error: "",
             person:
@@ -70,7 +67,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         }
         if (!!nextProps.selectedEquipment && !!nextProps.selectedEquipment.assignment) {
             this.setState({
-                date: moment(nextProps.selectedEquipment.assignment.expiresAt),
+                date: new Date(nextProps.selectedEquipment.assignment.expiresAt),
                 person: nextProps.selectedEquipment.assignment.person
             });
         }
@@ -89,7 +86,11 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     className="equipment-color"
                 >
                     <div className="modal-header row justify-content-between">
-                        <h2>{this.props.selectedEquipment || this.props.person ? "Assign Equipment" : "Add Equipment"}</h2>
+                        <h2>
+                            {this.props.selectedEquipment || this.props.person
+                                ? "Assign Equipment"
+                                : "Add Equipment"}
+                        </h2>
                         <Button color="link" onClick={this._closeModal}>
                             <i className="fas fa-times fa-lg" />
                         </Button>
@@ -102,7 +103,10 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                                     <AssignPerson
                                         person={this.state.person}
                                         onSelect={this._onSelectPerson}
-                                        isRequired={this.state.equipment && this.state.equipment.teamId !== 0}
+                                        isRequired={
+                                            this.state.equipment &&
+                                            this.state.equipment.teamId !== 0
+                                        }
                                         disabled={
                                             !!this.props.person ||
                                             (!!this.props.selectedEquipment &&
@@ -113,14 +117,13 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                                 {(!!this.state.person || !!this.props.person) && (
                                     <div className="form-group">
                                         <label>Set the expiration date</label>
+                                        <br />
                                         <DatePicker
-                                            selected={this.state.date}
+                                            format="MM/dd/yyyy"
+                                            required={true}
+                                            clearIcon={null}
+                                            value={this.state.date}
                                             onChange={this._changeDate}
-                                            onChangeRaw={this._changeDateRaw}
-                                            className="form-control"
-                                            showMonthDropdown={true}
-                                            showYearDropdown={true}
-                                            dropdownMode="select"
                                         />
                                     </div>
                                 )}
@@ -234,7 +237,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _confirmClose = () => {
-        if (!confirm("Please confirm you want to close!")){
+        if (!confirm("Please confirm you want to close!")) {
             return;
         }
 
@@ -243,9 +246,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
     private _closeModal = () => {
         this.setState({
-            date: moment()
-                .add(3, "y")
-                .startOf("day"),
+            date: addYears(startOfDay(new Date()), 3),
             equipment: null,
             error: "",
             person: null,
@@ -265,7 +266,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         const person = this.props.person ? this.props.person : this.state.person;
         const equipment = this.state.equipment;
         equipment.attributes = equipment.attributes.filter(x => !!x.key);
-        await this.props.onCreate(person, equipment, this.state.date.format());
+        await this.props.onCreate(person, equipment, format(this.state.date, "MM/dd/yyyy"));
 
         this._closeModal();
     };
@@ -307,23 +308,13 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
             valid = false;
         } else if (!this.state.date) {
             valid = false;
-        } else if (moment().isSameOrAfter(this.state.date)) {
+        } else if (!isBefore(new Date(), new Date(this.state.date))) {
             valid = false;
         }
         this.setState({ validState: valid });
     };
 
-    private _changeDate = newDate => {
-        this.setState({ date: newDate.startOf("day"), error: "" }, this._validateState);
-    };
-
-    private _changeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const m = moment(value, "MM/DD/YYYY", true);
-        if (m.isValid()) {
-            this._changeDate(m);
-        } else {
-            this.setState({ date: null, error: "Please enter a valid date" });
-        }
+    private _changeDate = (newDate: Date) => {
+        this.setState({ date: startOfDay(new Date(newDate)), error: "" }, this._validateState);
     };
 }

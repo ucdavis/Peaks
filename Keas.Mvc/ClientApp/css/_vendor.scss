@@ -1,45 +1,49 @@
-.col-sm-9, .col-sm-3 {
-  padding-left:0px;
-  padding-right:0px;
+.col-sm-9,
+.col-sm-3 {
+  padding-left: 0px;
+  padding-right: 0px;
 }
 .card {
   overflow: inherit;
   .col-md-4 {
-    padding-left:0px;
+    padding-left: 0px;
   }
 }
-.ReactTable .rt-thead .rt-resizable-header, .table-actions {
-  font-weight:600;
+.ReactTable .rt-thead .rt-resizable-header,
+.table-actions {
+  font-weight: 600;
 }
 .navbar-expand-md .navbar-nav .nav-link {
-  padding-left:1.5rem;
-  padding-right:1.5rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
 }
-.btn.disabled, .btn:disabled {
-  opacity:.25;
+.btn.disabled,
+.btn:disabled {
+  opacity: 0.25;
 }
-.rbt-input-main, .rbt-input-hint {
-  height:42px;
+.rbt-input-main,
+.rbt-input-hint {
+  height: 42px;
 }
 .ReactTable .-pagination {
-  box-shadow:none !important;
-  border-top:1px solid $borders !important;
+  box-shadow: none !important;
+  border-top: 1px solid $borders !important;
 }
 .rbt {
-  margin-right:1.6rem;
-  min-width:300px;
-  max-width:500px;
-  margin-bottom:1.6rem;
+  margin-right: 1.6rem;
+  min-width: 300px;
+  max-width: 500px;
+  margin-bottom: 1.6rem;
 }
 .container-fluid {
   padding: 0;
 }
 .row {
-  margin-left:0px;
-  margin-right:0px;
+  margin-left: 0px;
+  margin-right: 0px;
 }
 .dropdown-menu {
-  font-size:1.6rem;
+  font-size: 1.6rem;
 }
 table.dataTable thead .sorting:after,
 table.dataTable thead .sorting:before,
@@ -79,61 +83,71 @@ select.form-control-sm:not([size]):not([multiple]) {
 }
 // hide input type number arrows
 
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 
-input[type=number]::-webkit-inner-spin-button,
-input[type=number]::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 .word-wrap {
- white-space: pre-line !important;
- word-wrap: break-word;
+  white-space: pre-line !important;
+  word-wrap: break-word;
 }
 
-.ReactTable .rt-tbody, .ReactTable .rt-table {
-    overflow: visible !important;
+.ReactTable .rt-tbody,
+.ReactTable .rt-table {
+  overflow: visible !important;
 } /* for the actions dropdown menu */
 
 .table-actions {
-    overflow: visible !important;
-    display: flex;
-    flex: 1 1 7% !important;
+  overflow: visible !important;
+  display: flex;
+  flex: 1 1 7% !important;
 } /* this makes only the actions cell able to overflow */
 
 .table-10p {
-    display: flex;
-    flex: 1 1 10% !important;
+  display: flex;
+  flex: 1 1 10% !important;
 }
 
 th.list-actions {
-    width: 10%;
+  width: 10%;
 }
 .ReactTable .rt-thead.-header {
-  box-shadow:none !important;
-  border-bottom:1px solid $borders;
+  box-shadow: none !important;
+  border-bottom: 1px solid $borders;
 }
 .modal-body {
-  padding:1.5rem;
+  padding: 1.5rem;
 }
 .modal-header {
-  padding:1.5rem;
-  padding-bottom:0.6rem;
+  padding: 1.5rem;
+  padding-bottom: 0.6rem;
 }
 .modal-footer {
-  padding:1.5rem;
+  padding: 1.5rem;
 }
-.modal-title{
-  font-size:2rem;
+.modal-title {
+  font-size: 2rem;
 }
-.gj-datepicker-bootstrap [role=right-icon] button .gj-icon, .gj-datepicker-bootstrap [role=right-icon] button .material-icons {
-  top:8px!important;
+.gj-datepicker-bootstrap [role="right-icon"] button .gj-icon,
+.gj-datepicker-bootstrap [role="right-icon"] button .material-icons {
+  top: 8px !important;
+}
+
+.react-date-picker__calendar--open {
+  top: unset !important;
+  bottom: unset !important;
+  left: 100% !important;
+  right: unset !important;
 }
 
 .disabled {
-  div, span {
+  div,
+  span {
     color: $tertiary-font !important;
   }
 }
