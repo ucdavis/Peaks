@@ -56,12 +56,19 @@ namespace Keas.Mvc.Controllers
             return View(team);
         }
 
-        public async Task<IActionResult> TestBigfix()
+        public async Task<IActionResult> TestBigfix(string id)
         {
-            
-            var os = await _bigfixService.Test();
-            return Content(os);
+            if (id != null && id.Equals("os", StringComparison.OrdinalIgnoreCase))
+            {
+                var os = await _bigfixService.TestOs();
+                return Content(os);
+            }
+            else
+            {
+                return Content(await _bigfixService.TestLookupComputer());
+            }
         }
+
 
         [HttpPost]
         public async Task<IActionResult> UpdateEmail(int id, Team team)

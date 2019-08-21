@@ -11,7 +11,8 @@ namespace Keas.Mvc.Services
 {
     public interface IBigfixService
     {
-        Task<string> Test();
+        Task<string> TestOs();
+        Task<string> TestLookupComputer();
     }
 
     public class BigfixService : IBigfixService
@@ -23,14 +24,29 @@ namespace Keas.Mvc.Services
             _bigfixSettings = bigfixSettings.Value;
         }
 
-        public async Task<string> Test()
+        public async Task<string> TestOs()
         {
             var bf = new BigfixClient(_bigfixSettings.UserName, _bigfixSettings.Password);
 
+            //var query = bf.Queries.Common.GetComputerByName("CAES-7TW1H12");
+
+            //var results = await bf.Queries.SearchWithGroupedResults(query);
+            //return results.;
             var results = await bf.Computers.Get("1677559868");
 
-            var os = results.OS;
+            var os = results.Get(ComputerProperty.OS);
             return os;
+        }
+
+        public async Task<string> TestLookupComputer()
+        {
+            var bf = new BigfixClient(_bigfixSettings.UserName, _bigfixSettings.Password);
+
+            var query = bf.Queries.Common.GetComputerByName("CAES-7TW1H12");
+
+            var results = await bf.Queries.SearchWithGroupedResults(query);
+
+            return $"BF Id {results.AllAnswers[0].Value} -- Comouter Name {results.AllAnswers[1].Value}";
         }
     }
 }
