@@ -42,7 +42,7 @@ namespace Keas.Mvc.Services
 
             var results = await bf.Queries.SearchWithGroupedResults(query);
 
-            return $"BF Id {results.AllAnswers[0].Value} -- Comouter Name {results.AllAnswers[1].Value}";
+            return $"BF Id {results.AllAnswers[0].Value} -- Computer Name {results.AllAnswers[1].Value}";
         }
     }
 }
