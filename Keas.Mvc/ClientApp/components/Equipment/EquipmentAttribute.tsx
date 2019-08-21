@@ -58,7 +58,7 @@ export default class EquipmentAttribute extends React.Component<IProps, {}> {
                 allowNew={true}
                 disabled={this.props.disabledEdit}
                 options={this.props.commonKeys}
-                defaultInputValue={this.props.attribute.key ? this.props.attribute.key : ""}
+                selected={this.props.attribute.key ? [this.props.attribute.key] : []}
                 onChange={(selected: any) => {
                     if (selected && selected.length === 1) {
                         if (!!selected[0].label) {
