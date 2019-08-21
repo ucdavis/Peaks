@@ -1,4 +1,3 @@
-import * as moment from "moment";
 import * as React from "react";
 import ReactTable from "react-table";
 import "react-table/react-table.css";
@@ -6,8 +5,8 @@ import { Button } from "reactstrap";
 import { IAccess } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import { ReactTableExpirationUtil } from "../../util/reactTable";
-import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 import { ReactTableUtil } from "../../util/tableUtil";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 interface IProps {
     accesses: IAccess[];
@@ -25,7 +24,9 @@ export default class AccessTable extends React.Component<IProps, {}> {
                 data={this.props.accesses}
                 filterable={true}
                 defaultPageSize={ReactTableUtil.getPageSize()}
-                onPageSizeChange={(pageSize) => { ReactTableUtil.setPageSize(pageSize) }}
+                onPageSizeChange={pageSize => {
+                    ReactTableUtil.setPageSize(pageSize);
+                }}
                 minRows={1}
                 columns={[
                     {

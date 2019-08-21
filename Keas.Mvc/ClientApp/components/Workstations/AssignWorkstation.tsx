@@ -1,14 +1,12 @@
-import * as moment from "moment";
+import { addYears, format, isBefore, startOfDay } from "date-fns";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import DatePicker from "react-datepicker";
+import DatePicker from "react-date-picker";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
 import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
 import AssignPerson from "../People/AssignPerson";
 import SearchWorkstations from "./SearchWorkstations";
 import WorkstationEditValues from "./WorkstationEditValues";
-
-import "react-datepicker/dist/react-datepicker.css";
 
 interface IProps {
     onCreate: (person: IPerson, workstation: IWorkstation, date: any) => void;
@@ -24,7 +22,7 @@ interface IProps {
 }
 
 interface IState {
-    date: any;
+    date: Date;
     workstation: IWorkstation;
     error: string;
     person: IPerson;
@@ -44,10 +42,8 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         this.state = {
             date:
                 !!this.props.selectedWorkstation && !!this.props.selectedWorkstation.assignment
-                    ? moment(this.props.selectedWorkstation.assignment.expiresAt)
-                    : moment()
-                          .add(3, "y")
-                          .startOf("day"),
+                    ? new Date(this.props.selectedWorkstation.assignment.expiresAt)
+                    : addYears(startOfDay(new Date()), 3),
             error: "",
             person:
                 !!this.props.selectedWorkstation && !!this.props.selectedWorkstation.assignment
@@ -69,7 +65,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
             this.setState({ person: nextProps.person });
         } else if (!!nextProps.selectedWorkstation && !!nextProps.selectedWorkstation.assignment) {
             this.setState({
-                date: moment(nextProps.selectedWorkstation.assignment.expiresAt),
+                date: new Date(nextProps.selectedWorkstation.assignment.expiresAt),
                 person: nextProps.selectedWorkstation.assignment.person
             });
         }
@@ -85,7 +81,11 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     className="spaces-color"
                 >
                     <div className="modal-header row justify-content-between">
-                        <h2>{this.props.selectedWorkstation || this.props.person ? "Assign Workstation" : "Add Workstation"}</h2>
+                        <h2>
+                            {this.props.selectedWorkstation || this.props.person
+                                ? "Assign Workstation"
+                                : "Add Workstation"}
+                        </h2>
                         <Button color="link" onClick={this._closeModal}>
                             <i className="fas fa-times fa-lg" />
                         </Button>
@@ -113,14 +113,13 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                                 {(!!this.state.person || !!this.props.person) && (
                                     <div className="form-group">
                                         <label>Set the expiration date</label>
+                                        <br />
                                         <DatePicker
-                                            selected={this.state.date}
+                                            format="MM/dd/yyyy"
+                                            required={true}
+                                            clearIcon={null}
+                                            value={this.state.date}
                                             onChange={this._changeDate}
-                                            onChangeRaw={this._changeDateRaw}
-                                            className="form-control"
-                                            showMonthDropdown={true}
-                                            showYearDropdown={true}
-                                            dropdownMode="select"
                                         />
                                     </div>
                                 )}
@@ -216,18 +215,16 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _confirmClose = () => {
-        if (!confirm("Please confirm you want to close!")){
+        if (!confirm("Please confirm you want to close!")) {
             return;
         }
 
         this._closeModal();
-    }
+    };
 
     private _closeModal = () => {
         this.setState({
-            date: moment()
-                .add(3, "y")
-                .startOf("day"),
+            date: addYears(startOfDay(new Date()), 3),
             error: "",
             person: null,
             submitting: false,
@@ -247,7 +244,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         const person = this.props.person ? this.props.person : this.state.person;
         const workstation = this.state.workstation;
 
-        await this.props.onCreate(person, workstation, this.state.date.format());
+        await this.props.onCreate(person, workstation, format(this.state.date, "MM/dd/yyyy"));
 
         this._closeModal();
     };
@@ -290,23 +287,13 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
             valid = false;
         } else if (!this.state.date) {
             valid = false;
-        } else if (moment().isSameOrAfter(this.state.date)) {
+        } else if (!isBefore(new Date(), new Date(this.state.date))) {
             valid = false;
         }
         this.setState({ validState: valid });
     };
 
-    private _changeDate = newDate => {
-        this.setState({ date: newDate.startOf("day"), error: "" }, this._validateState);
-    };
-
-    private _changeDateRaw = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        const m = moment(value, "MM/DD/YYYY", true);
-        if (m.isValid()) {
-            this._changeDate(m);
-        } else {
-            this.setState({ date: null, error: "Please enter a valid date" }, this._validateState);
-        }
+    private _changeDate = (newDate: Date) => {
+        this.setState({ date: startOfDay(new Date(newDate)), error: "" }, this._validateState);
     };
 }

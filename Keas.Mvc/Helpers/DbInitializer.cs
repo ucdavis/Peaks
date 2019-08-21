@@ -31,7 +31,6 @@ namespace Keas.Mvc.Helpers
             var laura = CreateOrFindUser(new User { Id = "holstege", FirstName = "Laura", LastName = "Holstege", Email = "laholstege@ucdavis.edu" });
             var cal   = CreateOrFindUser(new User { Id = "cydoval", FirstName = "Cal", LastName = "Doval", Email = "cydoval@ucdavis.edu" });
             var jason = CreateOrFindUser(new User { Id = "jsylvest", FirstName = "Jason", LastName = "Sylvestre", Email = "jsylvestre@ucdavis.edu" });
-            var john  = CreateOrFindUser(new User {Id = "jpknoll", FirstName = "John", LastName = "Knoll", Email = "jpknoll@ucdavis.edu"});
             var nabil = CreateOrFindUser(new User { Id = "nfurmoli", FirstName = "Nabil", LastName = "Furmoli", Email = "anfurmoli@ucdavis.edu" });
             
             // Create All Admin Assignments
@@ -40,7 +39,6 @@ namespace Keas.Mvc.Helpers
             CreateSystemPermission(new SystemPermission { Role = admin, User = scott });
             CreateSystemPermission(new SystemPermission { Role = admin, User = cal });
             CreateSystemPermission(new SystemPermission { Role = admin, User = jason });
-            CreateSystemPermission(new SystemPermission { Role = admin, User = john });
             CreateSystemPermission(new SystemPermission { Role = admin, User = nabil });
 
             _context.SaveChanges();
@@ -93,7 +91,6 @@ namespace Keas.Mvc.Helpers
             var james = _context.Users.Find("jscub");
             var cal   = _context.Users.Find("cydoval");
             var jason = _context.Users.Find("jsylvest");
-            var john = _context.Users.Find("jpknoll");
 
             var departmentAdmin = _context.Roles.Single(r => r.Name == "DepartmentalAdmin");
 
@@ -110,7 +107,6 @@ namespace Keas.Mvc.Helpers
             _context.TeamPermissions.Add(new TeamPermission { Team = caes, Role = departmentAdmin, User = james });
             _context.TeamPermissions.Add(new TeamPermission { Team = caes, Role = departmentAdmin, User = cal });
             _context.TeamPermissions.Add(new TeamPermission { Team = caes, Role = departmentAdmin, User = jason });
-            _context.TeamPermissions.Add(new TeamPermission { Team = caes, Role = departmentAdmin, User = john });
 
             // people
             var lauraCaes = new Person

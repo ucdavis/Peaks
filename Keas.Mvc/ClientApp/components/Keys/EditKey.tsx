@@ -1,6 +1,5 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import "react-datepicker/dist/react-datepicker.css";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
 import { AppContext, IKey } from "../../Types";
 import KeyEditValues from "./KeyEditValues";
@@ -111,12 +110,12 @@ export default class EditKey extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _confirmClose = () => {
-        if (!confirm("Please confirm you want to close!")){
+        if (!confirm("Please confirm you want to close!")) {
             return;
         }
 
         this._closeModal();
-    }
+    };
 
     private _closeModal = () => {
         this.setState({
@@ -155,7 +154,7 @@ export default class EditKey extends React.Component<IProps, IState> {
             error = "The name you have chosen is too long";
         } else if (!this.props.checkIfKeyCodeIsValid(key.code, key.id)) {
             valid = false;
-            error = "The code you have chosen is already in use."
+            error = "The code you have chosen is already in use.";
         }
 
         this.setState({ validState: valid, error });
