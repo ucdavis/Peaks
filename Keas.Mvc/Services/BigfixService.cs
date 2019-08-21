@@ -28,10 +28,6 @@ namespace Keas.Mvc.Services
         {
             var bf = new BigfixClient(_bigfixSettings.UserName, _bigfixSettings.Password);
 
-            //var query = bf.Queries.Common.GetComputerByName("CAES-7TW1H12");
-
-            //var results = await bf.Queries.SearchWithGroupedResults(query);
-            //return results.;
             var results = await bf.Computers.Get("1677559868");
 
             var os = results.Get(ComputerProperty.OS);
@@ -42,7 +38,7 @@ namespace Keas.Mvc.Services
         {
             var bf = new BigfixClient(_bigfixSettings.UserName, _bigfixSettings.Password);
 
-            var query = bf.Queries.Common.GetComputerByName("CAES-7TW1H12");
+            var query = bf.Queries.Common.GroupedQueries.GetComputerByNameEquals("CAES-7TW1H12");
 
             var results = await bf.Queries.SearchWithGroupedResults(query);
 
