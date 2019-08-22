@@ -33,8 +33,5 @@ namespace Keas.Mvc.Controllers
 
         public override void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context) => TempData[TempDataTeamNameKey] = Team;
 
-
-
-
     }
 }

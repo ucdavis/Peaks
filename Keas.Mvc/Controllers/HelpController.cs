@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Mvc.Services;
@@ -23,6 +25,8 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Index()
         {
+            ViewBag.Version = GetVersion();
+
             var person = await _securityService.GetPerson(Team);
             if(person == null){
                  Message = "You are not yet added to the system.";
@@ -32,6 +36,11 @@ namespace Keas.Mvc.Controllers
             var team = await _context.Teams.Where(a => a.Slug == Team).Include(a => a.TeamPermissions).ThenInclude(a => a.User).Include(a => a.TeamPermissions).ThenInclude(a => a.Role).SingleAsync();
 
             return View(team);
+        }
+
+        private string GetVersion()
+        {
+            return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
         }
     }
 }
