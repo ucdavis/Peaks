@@ -38,6 +38,7 @@ export default class SearchSpaces extends React.Component<IProps, IState> {
 
         return (
             <AsyncTypeahead
+                id="searchSpaces" // for accessibility
                 isInvalid={this.props.isRequired && !this.props.defaultSpace}
                 clearButton={true}
                 isLoading={this.state.isSearchLoading}

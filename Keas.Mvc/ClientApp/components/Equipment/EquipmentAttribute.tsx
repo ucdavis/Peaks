@@ -54,16 +54,16 @@ export default class EquipmentAttribute extends React.Component<IProps, {}> {
                 : "form-control";
         return (
             <Typeahead
-                labelKey="key"
+                id={`attribute-${this.props.index}`} // for accessibility
                 allowNew={true}
                 disabled={this.props.disabledEdit}
                 options={this.props.commonKeys}
-                defaultInputValue={this.props.attribute.key ? this.props.attribute.key : ""}
-                onChange={selected => {
+                selected={this.props.attribute.key ? [this.props.attribute.key] : []}
+                onChange={(selected: any) => {
                     if (selected && selected.length === 1) {
-                        if (!!selected[0].key) {
+                        if (!!selected[0].label) {
                             // if user selects new from dropdown, it is an object
-                            this.props.changeProperty(this.props.index, "key", selected[0].key);
+                            this.props.changeProperty(this.props.index, "key", selected[0].label);
                         } else {
                             // otherwise, it's a string
                             this.props.changeProperty(this.props.index, "key", selected[0]);

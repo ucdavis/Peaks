@@ -15,6 +15,7 @@ export default class SearchEquipmentType extends React.Component<IProps, {}> {
         return (
             <div>
                 <Typeahead
+                    id="searchEquipmentType" // for accessibility
                     options={this.props.disabled ? [] : this.props.equipmentTypes}
                     disabled={this.props.disabled}
                     multiple={true}

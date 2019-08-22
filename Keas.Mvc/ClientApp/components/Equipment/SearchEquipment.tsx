@@ -43,6 +43,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                 <label>Pick an equipment to assign</label>
                 <div>
                     <AsyncTypeahead
+                        id="searchEquipment" // for accessibility
                         isLoading={this.state.isSearchLoading}
                         minLength={3}
                         placeholder="Search for equipment by name or by serial number"
@@ -136,7 +137,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
             type: "",
             protectionLevel: "",
             availabilityLevel: "",
-            systemManagementId: "",
+            systemManagementId: ""
         });
     };
 }
