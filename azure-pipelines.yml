@@ -6,7 +6,7 @@
 # trigger:
 # - master
 
-name: 1.1.$(date:yyyyMMdd).$(rev:r)
+name: 1.1.$(Date:yyMM).$(build.buildId)
 
 pool:
   vmImage: 'windows-latest'
