@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -13,6 +15,7 @@ namespace Keas.Mvc.Controllers
         private const string TempDataMessageKey = "Message";
         private const string TempDataErrorMessageKey = "ErrorMessage";
         private const string TempDataTeamNameKey = "TeamName";
+        private const string TempDataVersion = "Version";
        
         public string Message
         {
@@ -31,9 +34,16 @@ namespace Keas.Mvc.Controllers
             set => TempData[TempDataTeamNameKey] = value;
         }
 
-        public override void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context) => TempData[TempDataTeamNameKey] = Team;
+        public override void OnActionExecuted(Microsoft.AspNetCore.Mvc.Filters.ActionExecutedContext context)
+        {
+            TempData[TempDataTeamNameKey] = Team;
+            TempData[TempDataVersion] = GetVersion();
+        }
 
-
+        private string GetVersion()
+        {
+            return FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
+        }
 
 
     }

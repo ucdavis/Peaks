@@ -190,7 +190,13 @@
     </main>
 
     <footer>
-        <p>Copyright &copy; <span id="copywrite-year"></span> The Regents of the University of California, Davis campus. All rights reserved.</p>
+        <p>
+            Copyright &copy; <span id="copywrite-year"></span> The Regents of the University of California, Davis campus. All rights reserved.
+            @if (!string.IsNullOrWhiteSpace(TempData["Version"] as string))
+            {
+                <span> Version: @TempData["Version"]</span>
+            }
+        </p>
     </footer>
 
     <script src="~/dist/vendor.js" asp-append-version="true"></script>
