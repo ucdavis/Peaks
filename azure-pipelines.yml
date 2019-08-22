@@ -28,7 +28,7 @@ steps:
   inputs:
     command: 'build'
     projects: './Keas.Mvc/Keas.Mvc.csproj'
-    arguments: '--configuration $(BuildConfiguration) --version-suffix $(build.buildNumber)'
+    arguments: '--configuration $(BuildConfiguration) /property:Version=$(build.buildNumber)'
 
 - task: DotNetCoreCLI@2
   displayName: 'Run Server Tests'
