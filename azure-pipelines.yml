@@ -6,6 +6,8 @@
 # trigger:
 # - master
 
+name: 1.1.$(date:yyyyMMdd)$(rev:r)
+
 pool:
   vmImage: 'windows-latest'
 
@@ -26,7 +28,7 @@ steps:
   inputs:
     command: 'build'
     projects: './Keas.Mvc/Keas.Mvc.csproj'
-    arguments: '--configuration $(BuildConfiguration)'
+    arguments: '--configuration $(BuildConfiguration) --version-suffix $(build.buildNumber)'
 
 - task: DotNetCoreCLI@2
   displayName: 'Run Server Tests'
