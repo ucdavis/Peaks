@@ -52,6 +52,7 @@ namespace Keas.Core.Data
         public virtual DbSet<GroupXTeam> GroupXTeams { get; set; }
 
         public virtual DbSet<ExtendedPersonView> ExtendedPersonViews { get; set; }
+        public virtual DbSet<AttributeKey> AttributeKeys { get; set; }
         
 
         protected override void OnModelCreating(ModelBuilder builder)
