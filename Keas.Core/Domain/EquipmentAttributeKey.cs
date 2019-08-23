@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace Keas.Core.Domain
 {
-    public class AttributeKey {
+    public class EquipmentAttributeKey {
         public int Id { get; set; }
         public Team Team { get; set; }
         public int? TeamId { get; set; }

@@ -108,7 +108,7 @@
     <Build Include="dbo\Tables\GroupPermissions.sql" />
     <Build Include="dbo\Tables\GroupXTeams.sql" />
     <Build Include="dbo\Views\vExtendedPersonViews.sql" />
-    <Build Include="dbo\Tables\AttributeKeys.sql" />
+    <Build Include="dbo\Tables\EquipmentAttributeKeys.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Compare\ProjectToSqlExpress.scmp" />
