@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Helpers
 {
@@ -40,6 +41,18 @@ namespace Keas.Mvc.Helpers
             CreateSystemPermission(new SystemPermission { Role = admin, User = cal });
             CreateSystemPermission(new SystemPermission { Role = admin, User = jason });
             CreateSystemPermission(new SystemPermission { Role = admin, User = nabil });
+
+            CreateGlobalAttributeKey(new AttributeKey { Key = "Service Tag"                 , Description = "Service Tag"                             , TeamId = null});
+            CreateGlobalAttributeKey(new AttributeKey { Key = "Hostname"                    , Description = "Hostname"                                , TeamId = null });
+            CreateGlobalAttributeKey(new AttributeKey { Key = "IP Address"                  , Description = "IP Address"                              , TeamId = null });
+            CreateGlobalAttributeKey(new AttributeKey { Key = "Mac Address"                 , Description = "Mac Address"                             , TeamId = null });
+            CreateGlobalAttributeKey(new AttributeKey { Key = "OS"                          , Description = "Operating System"                        , TeamId = null });
+            CreateGlobalAttributeKey(new AttributeKey { Key = "Owner"                       , Description = "The person responsible for the equipment", TeamId = null }); //Maybe we will add this as a field?
+            CreateGlobalAttributeKey(new AttributeKey { Key = "Phone Number"                , Description = "Phone Number"                            , TeamId = null });
+            CreateGlobalAttributeKey(new AttributeKey { Key = "PrePurchasing Request Number", Description = "PrePurchasing Request Number"            , TeamId = null });
+            CreateGlobalAttributeKey(new AttributeKey { Key = "Warranty Expiration Date"    , Description = "Warranty Expiration Date"                , TeamId = null });
+            CreateGlobalAttributeKey(new AttributeKey { Key = "Purchase Date"               , Description = "Date was purchased"                      , TeamId = null });
+            CreateGlobalAttributeKey(new AttributeKey { Key = "External Link"               , Description = "URL to more info"                        , TeamId = null });
 
             _context.SaveChanges();
         }
@@ -81,6 +94,17 @@ namespace Keas.Mvc.Helpers
             }
 
             _context.SystemPermissions.Add(permission);
+        }
+
+        private void CreateGlobalAttributeKey(AttributeKey attributeKey)
+        {
+            if ( _context.AttributeKeys.Any(a =>
+                a.Key.Equals(attributeKey.Key, StringComparison.OrdinalIgnoreCase)))
+            {
+                return;
+            }
+
+            _context.AttributeKeys.Add(attributeKey);
         }
 
         public void CreateSampleData()
