@@ -35,6 +35,18 @@
   max-width: 500px;
   margin-bottom: 1.6rem;
 }
+.table tbody+tbody {
+  border-top:none;
+}
+table {
+  .rbt {
+    margin-bottom:0;
+  }
+  .rbt-input-main,
+  .rbt-input-hint {
+    height: inherit;
+  }
+}
 .container-fluid {
   padding: 0;
 }

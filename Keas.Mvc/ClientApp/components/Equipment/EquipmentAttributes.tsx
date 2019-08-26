@@ -45,7 +45,7 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
                                         onClick={this._onAddAttribute}
                                     >
                                         <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add
-                                        New
+                                        New Attribute
                                     </Button>
                                 </td>
                             </tr>
