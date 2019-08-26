@@ -21,6 +21,7 @@
                     <th>
                         Values
                     </th>
+                    <th>In Lookup List?</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +30,7 @@
                     <tr>
                         <td>@pair.Key</td>
                         <td>@pair.ValuesList</td>
+                        <td>@pair.FoundInEquipmentAttributeKeys.ToYesNoString()</td>
                     </tr>
                 }
             </tbody>
