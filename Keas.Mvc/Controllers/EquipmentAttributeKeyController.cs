@@ -22,19 +22,19 @@ namespace Keas.Mvc.Controllers
             _context = context;
         }
 
-        public async Task<ActionResult> Index()
+        public async Task<IActionResult> Index()
         {
             var model = await _context.EquipmentAttributeKeys.Where(a => a.TeamId == null || a.Team.Slug == Team).ToListAsync();
             return View(model);
         }
 
-        public ActionResult Create()
+        public IActionResult Create()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(EquipmentAttributeKey model)
+        public async Task<IActionResult> Create(EquipmentAttributeKey model)
         {
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
 
@@ -55,8 +55,13 @@ namespace Keas.Mvc.Controllers
 
             if (ModelState.IsValid)
             {
+                if (team == null)
+                {
+                    throw new Exception("This should never happen.");
+                }
                 model.Team = team;
                 model.Key = model.Key.Trim();
+                model.Description = model.Description.Trim();
                 _context.EquipmentAttributeKeys.Add(model);
                 await _context.SaveChangesAsync();
                 Message = "Equipment Attribute Key created.";
@@ -64,6 +69,59 @@ namespace Keas.Mvc.Controllers
             }
             Message = "An error occurred. Equipment Attribute Key could not be created.";
             return View();
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            var eka = await _context.EquipmentAttributeKeys.SingleAsync(a => a.TeamId != null && a.Team.Slug == Team && a.Id == id);
+            if (eka == null)
+            {
+                return NotFound();
+            }
+            return View(eka);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, EquipmentAttributeKey model)
+        {
+            if (id != model.Id)
+            {
+                return NotFound();
+            }
+
+            var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
+            var eka = await _context.EquipmentAttributeKeys.SingleAsync(a => a.TeamId != null && a.Team.Slug == Team && a.Id == id);
+
+            if (ModelState.IsValid)
+            {
+                if (await _context.EquipmentAttributeKeys.AnyAsync(a => a.TeamId == null && a.Key.Equals(model.Key.Trim(), StringComparison.OrdinalIgnoreCase)))
+                {
+                    ModelState.AddModelError("Key", "This Key already exists as a global key.");
+                }
+                else
+                {
+                    if (await _context.EquipmentAttributeKeys.AnyAsync(a => a.TeamId == team.Id && a.Id != id && a.Key.Equals(model.Key.Trim(), StringComparison.OrdinalIgnoreCase)))
+                    {
+                        ModelState.AddModelError("Key", "This Key already exists.");
+                    }
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                eka.Key = model.Key.Trim();
+                eka.Description = model.Description.Trim();
+                await _context.SaveChangesAsync();
+                Message = "Equipment Attribute Key updated.";
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ErrorMessage = "Equipment Attribute Key not updated.";
+            }
+
+            return View(model);
         }
     }
 }

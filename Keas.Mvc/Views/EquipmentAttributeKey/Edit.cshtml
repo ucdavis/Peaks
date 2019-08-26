@@ -1,7 +1,7 @@
 @model Keas.Core.Domain.EquipmentAttributeKey
 
 @{
-    ViewData["Title"] = "Create Team Equipment Attribute Key";
+    ViewBag.Title = "Edit Equipment Attribute Key";
 }
 
 
@@ -9,23 +9,27 @@
     <div class="card-header-equipment">
         <div class="card-head">
             <div class="row justify-content-between">
-                <h2>Create Equipment Attribute Key</h2>
-                <a class="btn btn-link" asp-action="Index"><i class="fas fa-arrow-left fa-xs"></i> Back to List</a>
+                <h2>Edit Equipment Attribute Key</h2>
+                <a class="btn btn-link " asp-action="Index"><i class="fas fa-arrow-left fa-xs"></i> Back to List</a>
             </div>
+            <p>Note! Editing does not update the values in your Equipment.</p>
         </div>
+
     </div>
     <div class="card-content">
         <div class="row">
             <div class="col-md-4">
-                <form asp-action="Create">
+                <form asp-action="Edit">
+                    <input type="hidden" asp-for="Id" />
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                     @Html.Partial("_EquipmentAttributeKeyForm")
+                    @Html.Partial("_EquipmentAttributeKeyForm")
                     <div class="form-group">
-                        <input type="submit" value="Create" class="btn btn-primary" />
+                        <input type="submit" value="Save" class="btn btn-primary"/>
                     </div>
                 </form>
             </div>
         </div>
+
     </div>
 </div>
 
