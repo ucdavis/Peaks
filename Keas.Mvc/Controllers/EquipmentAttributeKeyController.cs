@@ -123,5 +123,33 @@ namespace Keas.Mvc.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            var eka = await _context.EquipmentAttributeKeys.SingleAsync(a => a.TeamId != null && a.Team.Slug == Team && a.Id == id);
+            if (eka == null)
+            {
+                return NotFound();
+            }
+            return View(eka);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id, EquipmentAttributeKey ekaToDelete)
+        {
+            if (id != ekaToDelete.Id)
+            {
+                return NotFound();
+            }
+
+            var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
+            var eka = await _context.EquipmentAttributeKeys.SingleAsync(a => a.TeamId != null && a.Team.Slug == Team && a.Id == id);
+
+            _context.Remove(eka);
+
+            await _context.SaveChangesAsync();
+            Message = "Equipment Attribute Key deleted.";
+            return RedirectToAction("Index");
+        }
     }
 }
