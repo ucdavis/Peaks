@@ -21,11 +21,11 @@ namespace Keas.Mvc.Models.ReportModels
 
             foreach(var key in attributes.Select(a => a.Key).Distinct())
             {
-                var list = attributes.Where(a => a.Key == key).Select(a => a.Value).Distinct().ToList();
+                var count = attributes.Count(a => a.Key == key);
                 var keyvalue = new KeyValues(){
                     Key = key,
                     FoundInEquipmentAttributeKeys = eav.Contains(key),
-                    values = list
+                    Count = count
                 };
                 pairs.Add(keyvalue);
             }
@@ -45,12 +45,8 @@ namespace Keas.Mvc.Models.ReportModels
 
         public bool FoundInEquipmentAttributeKeys { get; set; }
 
-        public List<string> values { get; set; }
+        public int Count { get; set; }
        
 
-        public string ValuesList
-        {
-            get { return string.Join(", ", values.OrderBy(x => values).ToArray()); }
-        }
     }
 }
