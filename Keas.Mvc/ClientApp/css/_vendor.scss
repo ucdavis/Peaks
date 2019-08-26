@@ -35,6 +35,18 @@
   max-width: 500px;
   margin-bottom: 1.6rem;
 }
+.table tbody+tbody {
+  border-top:none;
+}
+table {
+  .rbt {
+    margin-bottom:0;
+  }
+  .rbt-input-main,
+  .rbt-input-hint {
+    height: inherit;
+  }
+}
 .container-fluid {
   padding: 0;
 }
@@ -121,14 +133,14 @@ th.list-actions {
   border-bottom: 1px solid $borders;
 }
 .modal-body {
-  padding: 1.5rem;
+  padding: 2.4rem;
 }
 .modal-header {
-  padding: 1.5rem;
+  padding: 2.4rem;
   padding-bottom: 0.6rem;
 }
 .modal-footer {
-  padding: 1.5rem;
+  padding: 2.4rem;
 }
 .modal-title {
   font-size: 2rem;

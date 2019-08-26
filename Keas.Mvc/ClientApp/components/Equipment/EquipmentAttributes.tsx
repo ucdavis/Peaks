@@ -25,8 +25,8 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
         ));
         return (
             <div>
-                <label>Atrributes</label>
-                <table className="table table-borderless">
+                <label>Attributes</label>
+                <table className="table">
                     <thead>
                         <tr>
                             <td>Key</td>
@@ -45,7 +45,7 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
                                         onClick={this._onAddAttribute}
                                     >
                                         <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add
-                                        New
+                                        New Attribute
                                     </Button>
                                 </td>
                             </tr>
