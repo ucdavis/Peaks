@@ -21,7 +21,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             return null;
         }
         return (
-            <div>
+            <div className="wrapperasset">
                 <div className="form-group">
                     <label>First Name</label>
                     <input
