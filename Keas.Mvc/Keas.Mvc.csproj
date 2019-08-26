@@ -32,6 +32,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\" />
+    <Folder Include="Pages\" />
     <Folder Include="wwwroot\js\" />
   </ItemGroup>
   <ItemGroup>

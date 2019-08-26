@@ -1,0 +1,114 @@
+@model System.Collections.Generic.List<Keas.Core.Domain.EquipmentAttributeKey>
+
+@{
+    ViewData["Title"] = "Equipment Attribute Keys";
+}
+
+
+<div class="card">
+    <div class="card-header-equipment">
+        <div class="card-head">
+            <div class="row justify-content-between">
+                <h2>Global Equipment Attribute Keys</h2>
+                @*<a class="btn btn-link" asp-action="Create"><i class="fas fa-plus fa-sm" aria-hidden="true" /></i> Create New</a>*@  
+            </div>
+
+
+        </div>
+
+    </div>
+    <div class="card-content">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model[0].Key)
+                </th>
+                <th>@Html.DisplayNameFor(model => model[0].Description)</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Where(a => a.TeamId == null)) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Key)
+                    </td>
+                    <td>
+                        @Html.DisplayFor( modelItem => item.Description)
+                    </td>
+                    <td></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="card">
+    <div class="card-header-equipment">
+        <div class="card-head">
+            <div class="row justify-content-between">
+                <h2>Team Equipment Attribute Keys</h2>
+                <a class="btn btn-link" asp-action="Create"><i class="fas fa-plus fa-sm" aria-hidden="true" /></i> Create New</a>  
+            </div>
+
+
+        </div>
+
+    </div>
+    <div class="card-content">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model[0].Key)
+                </th>
+                <th>@Html.DisplayNameFor(model => model[0].Description)</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Where(a => a.TeamId != null)) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Key)
+                    </td>
+                    <td>
+                        @Html.DisplayFor( modelItem => item.Description)
+                    </td>
+                    <td></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+@section Styles
+{
+    @{ await Html.RenderPartialAsync("_ReportStylePartial");}
+}
+
+@section Scripts
+{
+    @{ await Html.RenderPartialAsync("_ReportScriptsPartial");}
+    <script type="text/javascript">
+        $(function () {
+            $(".table").dataTable({                
+                "columnDefs": [
+                    {
+                        targets: -1,
+                        className: 'dt-body-right',
+                        sortable: false,
+                    },
+
+                ]
+            });
+        });
+    </script>
+}
