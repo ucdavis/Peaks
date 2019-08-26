@@ -25,8 +25,8 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
         ));
         return (
             <div>
-                <label>Atrributes</label>
-                <table className="table table-borderless">
+                <label>Attributes</label>
+                <table className="table">
                     <thead>
                         <tr>
                             <td>Key</td>

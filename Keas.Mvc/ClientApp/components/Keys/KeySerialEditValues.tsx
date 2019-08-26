@@ -17,7 +17,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
     };
 
     public context: AppContext;
-    
+
     public render() {
         const { keySerial } = this.props;
 
@@ -29,9 +29,12 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
         return (
             <div>
                 {this.props.disableEditing && this.props.openEditModal && (
+                  <div className="row justify-content-between">
+                    <h3>Key Details</h3>
                     <Button color="link" onClick={() => this.props.openEditModal(keySerial)}>
                         <i className="fas fa-edit fa-xs" /> Edit Serial
                     </Button>
+                  </div>
                 )}
                 <div className="wrapperasset">
                     <div className="form-group">
