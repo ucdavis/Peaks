@@ -45,11 +45,11 @@ namespace Keas.Mvc.Helpers
             CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Service Tag"                 , Description = "Service Tag"                             , TeamId = null});
             CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Hostname"                    , Description = "Hostname"                                , TeamId = null });
             CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "IP Address"                  , Description = "IP Address"                              , TeamId = null });
-            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Mac Address"                 , Description = "Mac Address"                             , TeamId = null });
-            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "OS"                          , Description = "Operating System"                        , TeamId = null });
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "MAC Address"                 , Description = "Media Access Control Address"            , TeamId = null });
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Operating System"            , Description = "Operating System"                        , TeamId = null });
             CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Owner"                       , Description = "The person responsible for the equipment", TeamId = null }); //Maybe we will add this as a field?
             CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Phone Number"                , Description = "Phone Number"                            , TeamId = null });
-            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "PrePurchasing Request Number", Description = "PrePurchasing Request Number"            , TeamId = null });
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Purchase Identifier"         , Description = "External Order Identifier"               , TeamId = null });
             CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Warranty Expiration Date"    , Description = "Warranty Expiration Date"                , TeamId = null });
             CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Purchase Date"               , Description = "Date was purchased"                      , TeamId = null });
             CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "External Link"               , Description = "URL to more info"                        , TeamId = null });
