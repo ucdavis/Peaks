@@ -19,7 +19,7 @@ interface IProps {
 
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
     public render() {
-        const typeValue = this.props.selectedEquipment.type || "Default";       
+        const typeValue = this.props.selectedEquipment.type || "Default";
         const listItems = !!this.props.equipmentTypes ? this.props.equipmentTypes.map((x) =>
             <option value={x} key={x}>{x}</option>
         ) :
@@ -27,12 +27,15 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
         return (
             <div>
                 {this.props.disableEditing && this.props.openEditModal && (
+                  <div className="row justify-content-between">
+                    <h3>Equipment Details</h3>
                     <Button
                         color="link"
                         onClick={() => this.props.openEditModal(this.props.selectedEquipment)}
                     >
                         <i className="fas fa-edit fa-xs" /> Edit Equipment
                     </Button>
+                  </div>
                 )}
 
                 <div className="wrapperasset">
@@ -157,7 +160,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                                 className="form-control"
                                 disabled={this.props.disableEditing}
                                 value={this.props.selectedEquipment.systemManagementId || ""}
-                                maxLength={16} 
+                                maxLength={16}
                                 onChange={e => this.props.changeProperty("systemManagementId", e.target.value)}
                             />
                         </div>

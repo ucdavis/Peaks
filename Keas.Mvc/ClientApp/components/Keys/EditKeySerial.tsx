@@ -74,7 +74,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
                                 changeProperty={this._changeProperty}
                                 disableEditing={false}
                             />
-                            <br />
+                          
                             <KeySerialAssignmentValues
                                 selectedKeySerial={this.props.selectedKeySerial}
                                 openUpdateModal={this.props.openUpdateModal}

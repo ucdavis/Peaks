@@ -59,12 +59,15 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
         return (
             <div>
                 {this.props.disableEditing && this.props.openEditModal && (
+                  <div className="row justify-content-between">
+                    <h3>Access Details</h3>
                     <Button
                         color="link"
                         onClick={() => this.props.openEditModal(this.props.selectedAccess)}
                     >
                         <i className="fas fa-edit fa-xs" /> Edit Access
                     </Button>
+                  </div>
                 )}
                 <div className="wrapperasset">
                     <FormGroup>
