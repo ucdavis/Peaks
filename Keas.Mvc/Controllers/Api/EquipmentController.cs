@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
+using Keas.Mvc.Models;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -17,11 +18,13 @@ namespace Keas.Mvc.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
+        private readonly IBigfixService _bigfixService;
 
-        public EquipmentController(ApplicationDbContext context, IEventService eventService)
+        public EquipmentController(ApplicationDbContext context, IEventService eventService, IBigfixService bigfixService)
         {
             this._context = context;
             _eventService = eventService;
+            this._bigfixService = bigfixService;
         }
 
         public string GetTeam()
@@ -286,6 +289,10 @@ namespace Keas.Mvc.Controllers.Api
                 .AsNoTracking().ToListAsync();
 
             return Json(history);
+        }
+
+        public async Task<BigFixComputerProperties> GetComputer(string id) {
+            return await this._bigfixService.GetComputer(id);
         }
     }
 }

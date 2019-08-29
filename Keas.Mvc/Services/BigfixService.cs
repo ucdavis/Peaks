@@ -12,6 +12,7 @@ namespace Keas.Mvc.Services
     {
         Task<string> TestOs();
         Task<string> TestLookupComputer();
+        Task<BigFixComputerProperties> GetComputer(string id);
     }
 
     public class BigfixService : IBigfixService
