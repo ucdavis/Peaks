@@ -249,7 +249,7 @@ namespace Keas.Mvc.Services
             var title = string.Empty;
             var clientws = new IetClient(_authSettings.IamKey);
             var result = await clientws.PPSAssociations.Search(PPSAssociationsSearchField.iamId, iamId);
-            if (result.ResponseData.Results.Length > 0)
+            if (result != null && result.ResponseData != null && result.ResponseData.Results != null && result.ResponseData.Results.Length > 0)
             {
 
                 title = result.ResponseData.Results.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.titleOfficialName))?.titleOfficialName;
