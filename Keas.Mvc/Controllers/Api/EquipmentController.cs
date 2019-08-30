@@ -64,16 +64,9 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> CommonAttributeKeys() 
         {
-            //var keys = await _context.EquipmentAttributes
-            //.Where(x => x.Equipment.Team.Slug == Team)
-            //.GroupBy(x => x.Key)
-            //.Take(5)
-            //.OrderByDescending(x => x.Count())
-            //.Select(x => x.Key).AsNoTracking().ToListAsync();
-
             var keys = await _context.EquipmentAttributeKeys
                 .Where(a => a.TeamId == null || a.Team.Slug == Team)
-                .OrderBy(a => a.TeamId).ThenBy(a => a.Key)
+                .OrderBy(a => a.Key)
                 .Select(a => a.Key).AsNoTracking().ToListAsync();
 
             return Json(keys);
