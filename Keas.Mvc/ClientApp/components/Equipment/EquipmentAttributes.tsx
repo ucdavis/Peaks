@@ -25,7 +25,7 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
         ));
         return (
             <div>
-                <label>Attributes</label>
+                <label>Attributes</label> <span> </span> <a href="https://computing.caes.ucdavis.edu/documentation/peaks/equipment-attribute-keys" target="_blank"><i className="fas fa-info-circle"></i></a>
                 <table className="table">
                     <thead>
                         <tr>
