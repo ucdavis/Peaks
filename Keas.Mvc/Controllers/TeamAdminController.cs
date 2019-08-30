@@ -910,6 +910,9 @@ namespace Keas.Mvc.Controllers
 
             // Add counts
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
+            //Load up the available keys so we get once.
+            var teamKeys = await _context.EquipmentAttributeKeys.Where(a => a.TeamId == null || a.TeamId == team.Id).ToListAsync();
+
             using (var reader = new StreamReader(file.OpenReadStream()))
             using (var csv = new CsvReader(reader))
             {
@@ -951,7 +954,7 @@ namespace Keas.Mvc.Controllers
                         var equipment = CreateEquipment(r, team, result, ref recEquipmentCount);
                         if (result.Success)
                         {
-                            AddEquipmentAttributes(r, equipment, result);
+                            AddEquipmentAttributes(r, equipment, result, teamKeys);
                         }
 
                         if (result.Success)
@@ -1059,11 +1062,25 @@ namespace Keas.Mvc.Controllers
             }
         }
 
-        private void CreateAttribute(Equipment equipment, string key, string value, EquipmentImportResults result, ref int recAttributeCount, ref bool recAttributeAdded)
+        private void CreateAttribute(Equipment equipment, string key, string value, EquipmentImportResults result, ref int recAttributeCount, ref bool recAttributeAdded, List<EquipmentAttributeKey> teamKeys)
         {
             var equipmentAttribute = new EquipmentAttribute();
             equipmentAttribute.Equipment = equipment;
-            equipmentAttribute.Key = key;
+            var foundKey = teamKeys.FirstOrDefault(a => a.Key.Equals(key.Trim(), StringComparison.OrdinalIgnoreCase));
+            if (foundKey != null)
+            {
+                equipmentAttribute.Key = foundKey.Key;
+                if (foundKey.Key != key)
+                {
+                    result.Messages.Add($"Warning, Key: {key} was adjusted to: {foundKey.Key}.");
+                }
+            }
+            else
+            {
+                equipmentAttribute.Key = key;
+                result.Messages.Add($"Warning, Key: {key} not found in valid choices.");
+            }
+            
             equipmentAttribute.Value = value;
             ModelState.Clear();
             TryValidateModel(equipmentAttribute);
@@ -1158,57 +1175,57 @@ namespace Keas.Mvc.Controllers
             return equipment;
         }
 
-        private void AddEquipmentAttributes(EquipmentImport r, Equipment equipment, EquipmentImportResults result)
+        private void AddEquipmentAttributes(EquipmentImport r, Equipment equipment, EquipmentImportResults result, List<EquipmentAttributeKey> teamKeys)
         {
             var recAttributeCount = 0;
             var recAttributeAdded = false;
             if (!string.IsNullOrWhiteSpace(r.Key1) && result.Success)
             {
-                CreateAttribute(equipment, r.Key1, r.Value1, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key1, r.Value1, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
             if (!string.IsNullOrWhiteSpace(r.Key2) && result.Success)
             {
-                CreateAttribute(equipment, r.Key2, r.Value2, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key2, r.Value2, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
             if (!string.IsNullOrWhiteSpace(r.Key3) && result.Success)
             {
-                CreateAttribute(equipment, r.Key3, r.Value3, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key3, r.Value3, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
             if (!string.IsNullOrWhiteSpace(r.Key4) && result.Success)
             {
-                CreateAttribute(equipment, r.Key4, r.Value4, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key4, r.Value4, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
             if (!string.IsNullOrWhiteSpace(r.Key5) && result.Success)
             {
-                CreateAttribute(equipment, r.Key5, r.Value5, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key5, r.Value5, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
             if (!string.IsNullOrWhiteSpace(r.Key6) && result.Success)
             {
-                CreateAttribute(equipment, r.Key6, r.Value6, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key6, r.Value6, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
             if (!string.IsNullOrWhiteSpace(r.Key7) && result.Success)
             {
-                CreateAttribute(equipment, r.Key7, r.Value7, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key7, r.Value7, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
             if (!string.IsNullOrWhiteSpace(r.Key8) && result.Success)
             {
-                CreateAttribute(equipment, r.Key8, r.Value8, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key8, r.Value8, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
             if (!string.IsNullOrWhiteSpace(r.Key9) && result.Success)
             {
-                CreateAttribute(equipment, r.Key9, r.Value9, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key9, r.Value9, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
             if (!string.IsNullOrWhiteSpace(r.Key10) && result.Success)
             {
-                CreateAttribute(equipment, r.Key10, r.Value10, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key10, r.Value10, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
             if (!string.IsNullOrWhiteSpace(r.Key11) && result.Success)
             {
-                CreateAttribute(equipment, r.Key11, r.Value11, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key11, r.Value11, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
             if (!string.IsNullOrWhiteSpace(r.Key12) && result.Success)
             {
-                CreateAttribute(equipment, r.Key12, r.Value12, result, ref recAttributeCount, ref recAttributeAdded);
+                CreateAttribute(equipment, r.Key12, r.Value12, result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
             }
 
             if (!string.IsNullOrWhiteSpace(r.GenericKeyValues) && result.Success)
@@ -1223,7 +1240,7 @@ namespace Keas.Mvc.Controllers
                     }
                     else
                     {
-                        CreateAttribute(equipment, kv[0], kv[1], result, ref recAttributeCount, ref recAttributeAdded);
+                        CreateAttribute(equipment, kv[0], kv[1], result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
                     }
                 }
                 
