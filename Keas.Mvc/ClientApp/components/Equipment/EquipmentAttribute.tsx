@@ -69,7 +69,6 @@ export default class EquipmentAttribute extends React.Component<IProps, {}> {
                     }
 
                 }}
-                emptyLabel='Attribute key not found. Your DA can add.'
                 inputProps={{
                     className: style
                 }}
