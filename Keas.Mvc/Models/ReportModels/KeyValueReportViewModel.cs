@@ -17,14 +17,14 @@ namespace Keas.Mvc.Models.ReportModels
             var pairs = new List<KeyValues>();
             var attributes = await context.EquipmentAttributes.Where(a => a.Equipment.Team.Slug == teamSlug).ToListAsync();
 
-            var eav = await context.EquipmentAttributeKeys.Where(a => a.TeamId == null || a.Team.Slug == teamSlug).Select(a => a.Key).ToArrayAsync();
+            var equimentAttributeKeys = await context.EquipmentAttributeKeys.Where(a => a.TeamId == null || a.Team.Slug == teamSlug).Select(a => a.Key).ToArrayAsync();
 
             foreach(var key in attributes.Select(a => a.Key).Distinct())
             {
                 var count = attributes.Count(a => a.Key == key);
                 var keyvalue = new KeyValues(){
                     Key = key,
-                    FoundInEquipmentAttributeKeys = eav.Contains(key),
+                    FoundInEquipmentAttributeKeys = equimentAttributeKeys.Contains(key),
                     Count = count
                 };
                 pairs.Add(keyvalue);
