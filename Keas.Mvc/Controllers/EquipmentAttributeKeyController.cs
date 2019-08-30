@@ -135,9 +135,9 @@ namespace Keas.Mvc.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(int id, EquipmentAttributeKey ekaToDelete)
+        public async Task<IActionResult> Delete(int id, EquipmentAttributeKey eakToDelete)
         {
-            if (id != ekaToDelete.Id)
+            if (id != eakToDelete.Id)
             {
                 return NotFound();
             }
