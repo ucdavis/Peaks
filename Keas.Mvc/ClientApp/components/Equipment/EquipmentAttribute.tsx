@@ -63,9 +63,7 @@ export default class EquipmentAttribute extends React.Component<IProps, {}> {
                     if (selected && selected.length === 1) {
                         this.props.changeProperty(this.props.index, "key", selected[0]);
                     } else {
-                        if (!selected || selected && selected.length === 0) {
-                            this.props.changeProperty(this.props.index, "key", null);
-                        }
+                        this.props.changeProperty(this.props.index, "key", null);
                     }
 
                 }}
