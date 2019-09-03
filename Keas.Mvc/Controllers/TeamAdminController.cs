@@ -592,7 +592,7 @@ namespace Keas.Mvc.Controllers
                                 key.Code = r.KeyCode.ToUpper().Trim();
                                 key.TeamId = team.Id;
                                 key.Name = r.KeyName.Trim();
-                                key.Tags = "Imported";
+                                key.Tags = string.IsNullOrWhiteSpace(r.KeyTags) ? "Imported" : $"{r.KeyTags},Imported";
                                 key.Notes = r.KeyNotes.Trim();
 
                                 ModelState.Clear();
@@ -615,6 +615,11 @@ namespace Keas.Mvc.Controllers
                                 if (!string.IsNullOrWhiteSpace(r.KeyNotes))
                                 {
                                     result.Messages.Add("Key notes not changed.");
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(r.KeyTags))
+                                {
+                                    result.Messages.Add("Key tags not changed.");
                                 }
                             }
 

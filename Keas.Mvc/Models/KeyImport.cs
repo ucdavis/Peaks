@@ -14,6 +14,7 @@ namespace Keas.Mvc.Models
         public string KeyCode { get; set; }
 
         public string KeyNotes { get; set; }
+        public string KeyTags { get; set; }
 
         [Required]
         public string SerialNumber { get; set; }
@@ -49,6 +50,7 @@ namespace Keas.Mvc.Models
                 KerbUser = import.KerbUser,
                 KeyCode = import.KeyCode,
                 KeyNotes = import.KeyNotes,
+                KeyTags = import.KeyTags,
                 SerialNumber = import.SerialNumber,
                 KeyName = import.KeyName,
                 Status = import.Status,
