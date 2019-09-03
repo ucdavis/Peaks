@@ -593,6 +593,7 @@ namespace Keas.Mvc.Controllers
                                 key.TeamId = team.Id;
                                 key.Name = r.KeyName.Trim();
                                 key.Tags = "Imported";
+                                key.Notes = r.KeyNotes.Trim();
 
                                 ModelState.Clear();
                                 TryValidateModel(key);
@@ -611,6 +612,10 @@ namespace Keas.Mvc.Controllers
                             else
                             {
                                 result.Messages.Add("Key Code already exists.");
+                                if (!string.IsNullOrWhiteSpace(r.KeyNotes))
+                                {
+                                    result.Messages.Add("Key notes not changed.");
+                                }
                             }
 
                             if (!string.IsNullOrWhiteSpace(r.SerialNumber))
@@ -625,6 +630,7 @@ namespace Keas.Mvc.Controllers
                                     serial.Name = r.SerialNumber.Trim();
                                     serial.Key = key;
                                     serial.Status = SetStatus(r.Status, result);
+                                    serial.Notes = r.SerialNotes.Trim();
 
                                     serial.TeamId = team.Id;
 

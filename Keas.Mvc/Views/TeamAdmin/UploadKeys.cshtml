@@ -48,16 +48,19 @@
                 </div>
                 <div class="card-content">
                     <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
-                    <p><b>KeyName<span class="space">,</span>KeyCode<span class="space">,</span>SerialNumber<span class="space">,</span>KerbUser<span class="space">,</span>DateIssued<span class="space">,</span>DateDue<span class="space">,</span>Status</b></p>
+                    <p><b>KeyName<span class="space">,</span>KeyCode<span class="space">,</span>KeyNotes<span class="space">,</span>SerialNumber<span class="space">,</span>KerbUser<span class="space">,</span>DateIssued<span class="space">,</span>DateDue<span class="space">,</span>Status<span class="space">,</span>SerialNotes</b></p>
                     <p>Text above copies properly. If you type the list out, omit the space after the commas.</p>
-                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_key_example.csv")" class="btn btn-outline-info btn-lg" role="button"><i class="fa fa-download"></i> CSV file.</a></p>
+                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_key_exampleV2.csv")" class="btn btn-outline-info btn-lg" role="button"><i class="fa fa-download"></i> CSV file.</a></p>
+                    <p><i class="fa fa-star" style="color: red"></i> Indicates new fields, Sept 2019</p>
                     <dl>
                         <dt>KeyName</dt>
                         <dd>Required - Description of key (e.g. Example Hall exterior doors). If the same KeyCode appears later in the document, only the first KeyName will be used.</dd>
                         <dt>KeyCode</dt>
                         <dd>Required - Number for this key. First part of number on key</dd>
-                        <dt>Required - SerialNumber</dt>
-                        <dd>Identifier for this key within given KeyCode. Usually the second part of number on key. If serial is blank, the key will be created without any serials.</dd>
+                        <dt>KeyNotes <i class="fa fa-star" style="color: red"></i></dt>
+                        <dd>Optional - Notes about the Key Pattern. IMPORTANT! this will only be set if the key doesn't exist yet.</dd>
+                        <dt>SerialNumber</dt>
+                        <dd>Required - Identifier for this key within given KeyCode. Usually the second part of number on key. If serial is blank, the key will be created without any serials.</dd>
                         <dt>KerbUser</dt>
                         <dd>Kerberos ID of the person this serial is assigned to. May be left blank. If no ID provided, no assignment will be created</dd>
                         <dt>DateIssue</dt>
@@ -65,7 +68,9 @@
                         <dt>DateDue</dt>
                         <dd>Date this key should be returned</dd>
                         <dt>Status</dt>
-                        <dd>Status of this serial. Valid entries are: @(string.Join(", ", KeySerialStatusModel.StatusList)). If blank, serial will be set to "Active"</dd>
+                        <dd>Status of this serial. Valid entries are: @(string.Join(", ", KeySerialStatusModel.StatusList)) <i class="fa fa-star" style="color: red"></i>. If blank, serial will be set to "Active"</dd>
+                        <dt>SerialNotes <i class="fa fa-star" style="color: red"></i></dt>
+                        <dd>Optional - Notes about the physical key.</dd>
                     </dl>
                 </div>
             </div>
@@ -87,18 +92,20 @@
                                 <th rowspan="2">Row</th>
                                 <th rowspan="2">Success</th>
 
-                                <th colspan="7">CSV Imported Values</th>
+                                <th colspan="9">CSV Imported Values</th>
                                 <th rowspan="2">Messages</th>
                                 <th rowspan="2">Errors</th>
                             </tr>
                             <tr>
                                 <th>KeyName</th>
                                 <th>KeyCode</th>
+                                <th>KeyNotes</th>
                                 <th>SerialNumber</th>
                                 <th>KerbUser</th>
                                 <th>DateIssued</th>
                                 <th>DateDue</th>
                                 <th>Status</th>
+                                <th>SerialNotes</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -118,6 +125,9 @@
                                     <td>
                                         @Html.DisplayFor(a => item.Import.KeyCode)
                                     </td>
+                                    <td style="word-wrap: break-word; word-break: break-all; white-space: normal;">
+                                        @Html.DisplayFor(a => item.Import.KeyNotes)
+                                    </td>
                                     <td>
                                         @Html.DisplayFor(a => item.Import.SerialNumber)
                                     </td>
@@ -133,7 +143,9 @@
                                     <td>
                                         @Html.DisplayFor(a => item.Import.Status)
                                     </td>
-
+                                    <td style="word-wrap: break-word; word-break: break-all; white-space: normal;">
+                                        @Html.DisplayFor(a => item.Import.SerialNotes)
+                                    </td>
                                     <td>
                                         @string.Join(", ", item.Messages)
                                     </td>
@@ -166,7 +178,7 @@
                 ],
                 "columnDefs": [
                     { "width": "10%;", "targets": [2] },
-                    { "type": "date", "targets": [6, 7] },
+                    { "type": "date", "targets": [7, 8] },
                 ]
             });
         });
