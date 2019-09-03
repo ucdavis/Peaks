@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Helpers
 {
@@ -40,6 +41,18 @@ namespace Keas.Mvc.Helpers
             CreateSystemPermission(new SystemPermission { Role = admin, User = cal });
             CreateSystemPermission(new SystemPermission { Role = admin, User = jason });
             CreateSystemPermission(new SystemPermission { Role = admin, User = nabil });
+
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Service Tag"                 , Description = "Service Tag"                             , TeamId = null});
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Hostname"                    , Description = "Hostname"                                , TeamId = null });
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "IP Address"                  , Description = "IP Address"                              , TeamId = null });
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "MAC Address"                 , Description = "Media Access Control Address"            , TeamId = null });
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Operating System"            , Description = "Operating System"                        , TeamId = null });
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Owner"                       , Description = "The person responsible for the equipment", TeamId = null }); //Maybe we will add this as a field?
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Phone Number"                , Description = "Phone Number"                            , TeamId = null });
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Purchase Identifier"         , Description = "External Order Identifier"               , TeamId = null });
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Warranty Expiration Date"    , Description = "Warranty Expiration Date"                , TeamId = null });
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "Purchase Date"               , Description = "Date was purchased"                      , TeamId = null });
+            CreateGlobalAttributeKey(new EquipmentAttributeKey { Key = "External Link"               , Description = "URL to more info"                        , TeamId = null });
 
             _context.SaveChanges();
         }
@@ -81,6 +94,17 @@ namespace Keas.Mvc.Helpers
             }
 
             _context.SystemPermissions.Add(permission);
+        }
+
+        private void CreateGlobalAttributeKey(EquipmentAttributeKey attributeKey)
+        {
+            if ( _context.EquipmentAttributeKeys.Any(a =>
+                a.Key.Equals(attributeKey.Key, StringComparison.OrdinalIgnoreCase)))
+            {
+                return;
+            }
+
+            _context.EquipmentAttributeKeys.Add(attributeKey);
         }
 
         public void CreateSampleData()

@@ -1,0 +1,36 @@
+@model Keas.Core.Domain.EquipmentAttributeKey
+
+@{
+    ViewData["Title"] = "Create Team Equipment Attribute Key";
+}
+
+
+<div class="card">
+    <div class="card-header-equipment">
+        <div class="card-head">
+            <div class="row justify-content-between">
+                <h2>Create Equipment Attribute Key</h2>
+                <a class="btn btn-link" asp-action="Index"><i class="fas fa-arrow-left fa-xs"></i> Back to List</a>
+            </div>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                     @Html.Partial("_EquipmentAttributeKeyForm")
+                    <div class="form-group">
+                        <input type="submit" value="Create" class="btn btn-primary" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
