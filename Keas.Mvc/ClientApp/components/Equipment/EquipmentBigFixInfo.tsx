@@ -62,7 +62,7 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
                     </Button>
                 </div>
 
-                <ModalBody>{this.renderModalBody()}</ModalBody>
+                <ModalBody className="d-flex justify-content-center">{this.renderModalBody()}</ModalBody>
             </Modal>
         );
     };
