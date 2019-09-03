@@ -77,6 +77,7 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                                 <option value="all">Show All</option>
                                 <option value="active">Active</option>
                                 <option value="inactive">Inactive</option>
+                                <option value="special">Special</option>
                             </select>
                         ),
                         Header: "Status",
@@ -90,6 +91,9 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                             }
                             if (filter.value === "inactive") {
                                 return row.status !== "Active";
+                            }
+                            if (filter.value === "special") {
+                                return row.status === "Special";
                             }
                         }
                     },

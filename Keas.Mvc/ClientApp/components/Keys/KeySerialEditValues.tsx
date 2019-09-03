@@ -85,7 +85,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                             <option value="Active">Active</option>
                             <option value="Lost">Lost</option>
                             <option value="Destroyed">Destroyed</option>
-                            <option value="Destroyed">Special</option>
+                            <option value="Special">Special</option>
                             <option value="Dog ate">Dog ate</option>
                         </select>
                     </div>
