@@ -49,16 +49,20 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
 
     private renderBigFixModal = () => {
         return (
-            <Modal isOpen={this.state.bigfixModal} toggle={this.toggle}>
-                <ModalHeader toggle={this.toggle}>Computer Details</ModalHeader>
-                <ModalBody className="d-flex justify-content-center">
-                    {this.renderModalBody()}
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="secondary" onClick={this.toggle}>
-                        Cancel
+            <Modal
+                isOpen={this.state.bigfixModal}
+                toggle={this.toggle}
+                size="lg"
+                className="equipment-color"
+            >
+                <div className="modal-header row justify-content-between">
+                    <h2>Computer Details</h2>
+                    <Button color="link" onClick={this.toggle}>
+                        <i className="fas fa-times fa-lg" />
                     </Button>
-                </ModalFooter>
+                </div>
+
+                <ModalBody>{this.renderModalBody()}</ModalBody>
             </Modal>
         );
     };
