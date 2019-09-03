@@ -16,6 +16,7 @@ using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using System.Text;
 using Keas.Core.Extensions;
+using Keas.Core.Resources;
 using Keas.Mvc.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -1045,17 +1046,14 @@ namespace Keas.Mvc.Controllers
 
         private static string SetStatus(string status, KeyImportResults result)
         {
-            switch (status)
+            if (!string.IsNullOrWhiteSpace(status) && KeySerialStatusModel.StatusList.Contains(status.Trim(), StringComparer.OrdinalIgnoreCase))
             {
-                case "Active":
-                    return ("Active");
-                case "Lost":
-                    return ("Lost");
-                case "Destroyed":
-                    return ("Destroyed");
-                default:
-                    result.Messages.Add("Key status defaulted to Active.");
-                    return ("Active");
+                return KeySerialStatusModel.StatusList.Single(a => a.Equals(status.Trim(), StringComparison.OrdinalIgnoreCase));
+            }
+            else
+            {
+                result.Messages.Add("Key status defaulted to Active.");
+                return ("Active");
             }
         }
 
