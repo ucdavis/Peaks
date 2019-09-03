@@ -10,7 +10,7 @@ namespace Keas.Core.Domain
         public KeySerial()
         {
             Active = true;
-            Status = KeySerialStatuses.Active;
+            Status = KeySerialStatusModel.Active;
         }
 
         public string Number { get; set; }

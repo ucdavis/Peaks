@@ -16,6 +16,7 @@ using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using System.Text;
 using Keas.Core.Extensions;
+using Keas.Core.Resources;
 using Keas.Mvc.Extensions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -591,7 +592,8 @@ namespace Keas.Mvc.Controllers
                                 key.Code = r.KeyCode.ToUpper().Trim();
                                 key.TeamId = team.Id;
                                 key.Name = r.KeyName.Trim();
-                                key.Tags = "Imported";
+                                key.Tags = string.IsNullOrWhiteSpace(r.KeyTags) ? "Imported" : $"{r.KeyTags},Imported";
+                                key.Notes = r.KeyNotes.Trim();
 
                                 ModelState.Clear();
                                 TryValidateModel(key);
@@ -610,6 +612,15 @@ namespace Keas.Mvc.Controllers
                             else
                             {
                                 result.Messages.Add("Key Code already exists.");
+                                if (!string.IsNullOrWhiteSpace(r.KeyNotes))
+                                {
+                                    result.Messages.Add("Key notes not changed.");
+                                }
+
+                                if (!string.IsNullOrWhiteSpace(r.KeyTags))
+                                {
+                                    result.Messages.Add("Key tags not changed.");
+                                }
                             }
 
                             if (!string.IsNullOrWhiteSpace(r.SerialNumber))
@@ -624,6 +635,7 @@ namespace Keas.Mvc.Controllers
                                     serial.Name = r.SerialNumber.Trim();
                                     serial.Key = key;
                                     serial.Status = SetStatus(r.Status, result);
+                                    serial.Notes = r.SerialNotes.Trim();
 
                                     serial.TeamId = team.Id;
 
@@ -1048,17 +1060,14 @@ namespace Keas.Mvc.Controllers
 
         private static string SetStatus(string status, KeyImportResults result)
         {
-            switch (status)
+            if (!string.IsNullOrWhiteSpace(status) && KeySerialStatusModel.StatusList.Contains(status.Trim(), StringComparer.OrdinalIgnoreCase))
             {
-                case "Active":
-                    return ("Active");
-                case "Lost":
-                    return ("Lost");
-                case "Destroyed":
-                    return ("Destroyed");
-                default:
-                    result.Messages.Add("Key status defaulted to Active.");
-                    return ("Active");
+                return KeySerialStatusModel.StatusList.Single(a => a.Equals(status.Trim(), StringComparison.OrdinalIgnoreCase));
+            }
+            else
+            {
+                result.Messages.Add("Key status defaulted to Active.");
+                return ("Active");
             }
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Remotion.Linq.Parsing.ExpressionVisitors.MemberBindings;
 
 namespace Keas.Mvc.Models
 {
@@ -12,6 +13,9 @@ namespace Keas.Mvc.Models
         [Required]
         public string KeyCode { get; set; }
 
+        public string KeyNotes { get; set; }
+        public string KeyTags { get; set; }
+
         [Required]
         public string SerialNumber { get; set; }
 
@@ -22,6 +26,7 @@ namespace Keas.Mvc.Models
         public DateTime? DateDue { get; set; }
 
         public string Status { get; set; }
+        public string SerialNotes { get; set; }
 
     }
 
@@ -44,9 +49,12 @@ namespace Keas.Mvc.Models
                 DateIssued = import.DateIssued,
                 KerbUser = import.KerbUser,
                 KeyCode = import.KeyCode,
+                KeyNotes = import.KeyNotes,
+                KeyTags = import.KeyTags,
                 SerialNumber = import.SerialNumber,
                 KeyName = import.KeyName,
-                Status = import.Status
+                Status = import.Status,
+                SerialNotes = import.SerialNotes,
             };
         }
 
