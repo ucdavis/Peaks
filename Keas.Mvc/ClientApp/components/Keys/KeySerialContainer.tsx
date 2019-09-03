@@ -169,6 +169,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             const request = {
                 keyId: keySerial.key.id,
                 number: keySerial.number,
+                status: keySerial.status,
                 notes: keySerial.notes
             };
 
