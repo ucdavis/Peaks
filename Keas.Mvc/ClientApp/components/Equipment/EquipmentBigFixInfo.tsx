@@ -1,6 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Table } from "reactstrap";
+import { Button, Modal, ModalBody, Table } from "reactstrap";
 
 interface IProps {
     bigfixId: string;
@@ -23,9 +23,9 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
     public state = { bigfixModal: false, computerInfo: {}, isFetched: false };
 
     public modalToggle = () => {
-        this.setState({
-            bigfixModal: !this.state.bigfixModal
-        });
+        this.setState(prevState => ({
+            bigfixModal: !prevState.bigfixModal
+        }));
     };
 
     public render() {
@@ -62,7 +62,9 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
                     </Button>
                 </div>
 
-                <ModalBody className="d-flex justify-content-center">{this.renderModalBody()}</ModalBody>
+                <ModalBody className="d-flex justify-content-center">
+                    {this.renderModalBody()}
+                </ModalBody>
             </Modal>
         );
     };
