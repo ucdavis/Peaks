@@ -22,7 +22,7 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
 
     public state = { bigfixModal: false, computerInfo: {}, isFetched: false };
 
-    public toggle = () => {
+    public modalToggle = () => {
         this.setState({
             bigfixModal: !this.state.bigfixModal
         });
@@ -35,7 +35,7 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
                     Bigfix Id
                     <a
                         onClick={() => {
-                            this.toggle();
+                            this.modalToggle();
                             this.getBigFixComputerInfo(this.props.bigfixId || "");
                         }}
                     >
@@ -51,13 +51,13 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
         return (
             <Modal
                 isOpen={this.state.bigfixModal}
-                toggle={this.toggle}
+                toggle={this.modalToggle}
                 size="lg"
                 className="equipment-color"
             >
                 <div className="modal-header row justify-content-between">
                     <h2>Computer Details</h2>
-                    <Button color="link" onClick={this.toggle}>
+                    <Button color="link" onClick={this.modalToggle}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
                 </div>
