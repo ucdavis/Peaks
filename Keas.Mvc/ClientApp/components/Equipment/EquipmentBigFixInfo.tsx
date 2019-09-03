@@ -31,17 +31,16 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
     public render() {
         return (
             <>
-                <label>
-                    Bigfix Id
-                    <a
-                        onClick={() => {
-                            this.modalToggle();
-                            this.getBigFixComputerInfo(this.props.bigfixId || "");
-                        }}
-                    >
-                        <i className=" ml-2 fas fa-info-circle" />
-                    </a>
-                </label>
+                <label> Bigfix Id</label>
+                <a
+                    onClick={() => {
+                        this.modalToggle();
+                        this.getBigFixComputerInfo(this.props.bigfixId || "");
+                    }}
+                >
+                    <i className="fas fa-info-circle ml-2" />
+                </a>
+
                 {this.renderBigFixModal()}
             </>
         );
