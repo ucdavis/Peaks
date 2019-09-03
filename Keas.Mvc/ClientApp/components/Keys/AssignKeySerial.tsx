@@ -19,6 +19,7 @@ interface IProps {
     closeModal: () => void;
     openEditModal: (keySerial: IKeySerial) => void;
     openDetailsModal: (keySerial: IKeySerial) => void;
+    statusList: string[];
 }
 
 interface IState {
@@ -186,6 +187,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                                                 keySerial={this.state.keySerial}
                                                 changeProperty={this._changeProperty}
                                                 disableEditing={false}
+                                                statusList={this.props.statusList}
                                             />
                                         )}
                                     </div>
@@ -207,6 +209,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                                         keySerial={this.state.keySerial}
                                         disableEditing={true}
                                         openEditModal={this.props.openEditModal}
+                                        statusList={this.props.statusList}
                                     />
                                 </div>
                             )}

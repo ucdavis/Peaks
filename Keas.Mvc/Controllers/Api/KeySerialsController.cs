@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
+using Keas.Core.Resources;
 using Keas.Mvc.Models.KeySerialViewModels;
 using Keas.Mvc.Extensions;
 
@@ -306,5 +307,7 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(history);
         }
+
+        public ActionResult ListKeySerialStatus() => Json(KeySerialStatusModel.StatusList);
     }
 }

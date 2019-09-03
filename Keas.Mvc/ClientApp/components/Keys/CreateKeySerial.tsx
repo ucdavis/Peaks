@@ -10,6 +10,7 @@ interface IProps {
     isModalOpen: boolean;
     onOpenModal: () => void;
     closeModal: () => void;
+    statusList: string[];
 }
 
 interface IState {
@@ -68,6 +69,7 @@ export default class CreateKeySerial extends React.Component<IProps, IState> {
                                 keySerial={keySerial}
                                 changeProperty={this._changeProperty}
                                 disableEditing={false}
+                                statusList={this.props.statusList}
                             />
                         </form>
                     </div>

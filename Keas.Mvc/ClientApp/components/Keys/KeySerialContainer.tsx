@@ -11,6 +11,7 @@ import KeySerialTable from "./KeySerialTable";
 
 interface IState {
     keySerials: IKeySerial[];
+    statusList: string[];
     loading: boolean;
 }
 
@@ -47,6 +48,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
         this.state = {
             keySerials: [],
+            statusList: [],
             loading: true
         };
     }
@@ -70,9 +72,13 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             keyFetchUrl = `/api/${this.context.team.slug}/keySerials/list/`;
         }
 
+        const statusListFetchUrl = `/api/${this.context.team.slug}/keySerials/ListKeySerialStatus/`;
+
         const keySerials = await this.context.fetch(keyFetchUrl);
 
-        this.setState({ keySerials, loading: false });
+        const statusList = await this.context.fetch(statusListFetchUrl);
+
+        this.setState({ keySerials, statusList, loading: false });
     }
 
     public render() {
@@ -111,6 +117,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                             closeModal={this._closeModals}
                             openEditModal={this._openEditModal}
                             openDetailsModal={this._openDetailsModal}
+                            statusList={this.state.statusList}
                         />
                     </div>
                 </div>
@@ -148,6 +155,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                         closeModal={this._closeModals}
                         openUpdateModal={this._openUpdateModal}
                         isModalOpen={activeAsset && action === "edit"}
+                        statusList={this.state.statusList}
                     />
                 </div>
             </div>

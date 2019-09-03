@@ -8,6 +8,7 @@ interface IProps {
     disableEditing: boolean;
     changeProperty?: (property: string, value: string) => void;
     openEditModal?: (keySerial: IKeySerial) => void;
+    statusList?: string[];
 }
 
 export default class KeySerialEditValues extends React.Component<IProps, {}> {
@@ -25,6 +26,11 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
         const statusValue = keySerial ? keySerial.status : "Active";
 
         const { personAction } = this.context.router.route.match.params;
+
+        const listItems = !!this.props.statusList ? this.props.statusList.map((x) =>
+                <option value={x} key={x}>{x}</option>
+            ) :
+            <option value={statusValue}>{statusValue}</option>;
 
         return (
             <div>
@@ -82,11 +88,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                             onChange={this.onChangeStatus}
                             disabled={this.props.disableEditing}
                         >
-                            <option value="Active">Active</option>
-                            <option value="Lost">Lost</option>
-                            <option value="Destroyed">Destroyed</option>
-                            <option value="Special">Special</option>
-                            <option value="Dog ate">Dog ate</option>
+                            {listItems}
                         </select>
                     </div>
                     <div className="form-group">
