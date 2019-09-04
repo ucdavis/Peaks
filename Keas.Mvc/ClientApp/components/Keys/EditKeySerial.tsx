@@ -11,6 +11,7 @@ interface IProps {
     closeModal: () => void;
     openUpdateModal: (keySerial: IKeySerial) => void;
     selectedKeySerial: IKeySerial;
+    statusList: string[];
 }
 
 interface IState {
@@ -73,6 +74,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
                                 keySerial={this.state.keySerial}
                                 changeProperty={this._changeProperty}
                                 disableEditing={false}
+                                statusList={this.props.statusList}
                             />
                           
                             <KeySerialAssignmentValues
