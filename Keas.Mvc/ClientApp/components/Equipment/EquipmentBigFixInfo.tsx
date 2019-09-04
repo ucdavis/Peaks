@@ -10,6 +10,7 @@ interface IState {
     bigfixModal: boolean;
     computerInfo: object;
     isFetched: boolean;
+    isValidRequest: boolean;
 }
 
 export default class EquipmentBigFixInfo extends React.Component<IProps, IState> {
@@ -21,8 +22,13 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
     };
 
     constructor(props) {
-        super(props)
-        this.state = { bigfixModal: false, computerInfo: {}, isFetched: false };
+        super(props);
+        this.state = {
+            bigfixModal: false,
+            computerInfo: {},
+            isFetched: false,
+            isValidRequest: true
+        };
     }
 
     public render() {
@@ -83,40 +89,50 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
     };
 
     private _renderComputerInfo = () => {
-        return (
-            <Table>
-                <thead>
-                    <tr>
-                        <th>Key</th>
-                        <th>Value</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {Object.keys(this.state.computerInfo).map(key => {
-                        return (
-                            <tr key={key}>
-                                <td>{key}</td>
-                                <td>{this.state.computerInfo[key]}</td>
-                            </tr>
-                        );
-                    })}
-                </tbody>
-            </Table>
-        );
+        if (this.state.isValidRequest) {
+            return (
+                <Table>
+                    <thead>
+                        <tr>
+                            <th>Key</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Object.keys(this.state.computerInfo).map(key => {
+                            return (
+                                <tr key={key}>
+                                    <td>{key}</td>
+                                    <td>{this.state.computerInfo[key]}</td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </Table>
+            );
+        }
+
+        return <h3>Not a valid Bigfix id, please make sure to enter a valid Bigfix id.</h3>;
     };
 
     private _getBigFixComputerInfo = async (id: string) => {
-        const response = await this.context.fetch(
-            `/api/${this.context.team.slug}/equipment/GetComputer/${id}`,
-            {
-                method: "GET"
-            }
-        );
+        const response = await fetch(`/api/${this.context.team.slug}/equipment/GetComputer/${id}`, {
+            method: "GET"
+        });
 
-        const sortedResult = Object.keys(response)
+        if (!response.ok) {
+            // show the invalid Bigfix-id message.
+            this.setState({
+                isFetched: true,
+                isValidRequest: false
+            });
+        }
+
+        const result = await response.json();
+        const sortedResult = Object.keys(result)
             .sort()
             .reduce((accumulator, currentValue) => {
-                accumulator[currentValue] = response[currentValue];
+                accumulator[currentValue] = result[currentValue];
                 return accumulator;
             }, {});
 
@@ -128,7 +144,8 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
 
     private _modalToggle = () => {
         this.setState(prevState => ({
-            bigfixModal: !prevState.bigfixModal
+            bigfixModal: !prevState.bigfixModal,
+            isFetched: false
         }));
     };
 }
