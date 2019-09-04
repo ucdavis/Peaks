@@ -684,4 +684,8 @@ ol.breadcrumb {
 }
 .bigfix-info {
   cursor:pointer;
+  color:$a-link !important;
+  &:hover {
+    color:$primary-color !important;
+  }
 }
