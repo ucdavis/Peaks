@@ -32,8 +32,18 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
         return (
             <>
                 <label> Bigfix Id</label>
-                <span></span>
-                <a className="bigfix-info" href=""
+                <span />
+                {this.renderInfoIcon()}
+                {this.renderBigFixModal()}
+            </>
+        );
+    }
+
+    private renderInfoIcon = () => {
+        if (this.props.bigfixId) {
+            return (
+                <a
+                    className="bigfix-info"
                     onClick={() => {
                         this.modalToggle();
                         this.getBigFixComputerInfo(this.props.bigfixId || "");
@@ -41,11 +51,9 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
                 >
                     <i className="fas fa-info-circle ml-2" />
                 </a>
-
-                {this.renderBigFixModal()}
-            </>
-        );
-    }
+            );
+        }
+    };
 
     private renderBigFixModal = () => {
         return (
