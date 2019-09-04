@@ -43,19 +43,21 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
     }
 
     private _renderInfoIcon = () => {
-        if (this.props.bigfixId) {
-            return (
-                <a
-                    className="bigfix-info"
-                    onClick={() => {
-                        this._modalToggle();
-                        this._getBigFixComputerInfo(this.props.bigfixId || "");
-                    }}
-                >
-                    <i className="fas fa-info-circle ml-2" />
-                </a>
-            );
+        if (!this.props.bigfixId) {
+            return null;
         }
+
+        return (
+            <a
+                className="bigfix-info"
+                onClick={() => {
+                    this._modalToggle();
+                    this._getBigFixComputerInfo(this.props.bigfixId || "");
+                }}
+            >
+                <i className="fas fa-info-circle ml-2" />
+            </a>
+        );
     };
 
     private _renderBigFixModal = () => {
@@ -112,7 +114,7 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
             );
         }
 
-        return <h3>Not a valid Bigfix id, please make sure to enter a valid Bigfix id.</h3>;
+        return <p>Not a valid Bigfix id, please make sure to enter a valid Bigfix id.</p>;
     };
 
     private _getBigFixComputerInfo = async (id: string) => {
