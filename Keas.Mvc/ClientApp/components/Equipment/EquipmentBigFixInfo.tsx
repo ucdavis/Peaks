@@ -32,7 +32,8 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
         return (
             <>
                 <label> Bigfix Id</label>
-                <a
+                <span></span>
+                <a className="bigfix-info" href=""
                     onClick={() => {
                         this.modalToggle();
                         this.getBigFixComputerInfo(this.props.bigfixId || "");
