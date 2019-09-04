@@ -12,7 +12,7 @@ interface IState {
     isFetched: boolean;
 }
 
-export default class EquipmentDetails extends React.Component<IProps, IState> {
+export default class EquipmentBigFixInfo extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
         permissions: PropTypes.array,
@@ -20,33 +20,30 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
         team: PropTypes.object
     };
 
-    public state = { bigfixModal: false, computerInfo: {}, isFetched: false };
-
-    public modalToggle = () => {
-        this.setState(prevState => ({
-            bigfixModal: !prevState.bigfixModal
-        }));
-    };
+    constructor(props) {
+        super(props)
+        this.state = { bigfixModal: false, computerInfo: {}, isFetched: false };
+    }
 
     public render() {
         return (
             <>
                 <label> Bigfix Id</label>
                 <span />
-                {this.renderInfoIcon()}
-                {this.renderBigFixModal()}
+                {this._renderInfoIcon()}
+                {this._renderBigFixModal()}
             </>
         );
     }
 
-    private renderInfoIcon = () => {
+    private _renderInfoIcon = () => {
         if (this.props.bigfixId) {
             return (
                 <a
                     className="bigfix-info"
                     onClick={() => {
-                        this.modalToggle();
-                        this.getBigFixComputerInfo(this.props.bigfixId || "");
+                        this._modalToggle();
+                        this._getBigFixComputerInfo(this.props.bigfixId || "");
                     }}
                 >
                     <i className="fas fa-info-circle ml-2" />
@@ -55,37 +52,37 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
         }
     };
 
-    private renderBigFixModal = () => {
+    private _renderBigFixModal = () => {
         return (
             <Modal
                 isOpen={this.state.bigfixModal}
-                toggle={this.modalToggle}
+                toggle={this._modalToggle}
                 size="lg"
                 className="equipment-color"
             >
                 <div className="modal-header row justify-content-between">
                     <h2>Computer Details</h2>
-                    <Button color="link" onClick={this.modalToggle}>
+                    <Button color="link" onClick={this._modalToggle}>
                         <i className="fas fa-times fa-lg" />
                     </Button>
                 </div>
 
                 <ModalBody className="d-flex justify-content-center">
-                    {this.renderModalBody()}
+                    {this._renderModalBody()}
                 </ModalBody>
             </Modal>
         );
     };
 
-    private renderModalBody = () => {
+    private _renderModalBody = () => {
         if (this.state.isFetched) {
-            return this.renderComputerInfo();
+            return this._renderComputerInfo();
         } else {
             return <i className="fas fa-3x fa-spinner fa-pulse" />;
         }
     };
 
-    private renderComputerInfo = () => {
+    private _renderComputerInfo = () => {
         return (
             <Table>
                 <thead>
@@ -108,7 +105,7 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
         );
     };
 
-    private getBigFixComputerInfo = async (id: string) => {
+    private _getBigFixComputerInfo = async (id: string) => {
         const response = await this.context.fetch(
             `/api/${this.context.team.slug}/equipment/GetComputer/${id}`,
             {
@@ -127,5 +124,11 @@ export default class EquipmentDetails extends React.Component<IProps, IState> {
             computerInfo: sortedResult,
             isFetched: true
         });
+    };
+
+    private _modalToggle = () => {
+        this.setState(prevState => ({
+            bigfixModal: !prevState.bigfixModal
+        }));
     };
 }
