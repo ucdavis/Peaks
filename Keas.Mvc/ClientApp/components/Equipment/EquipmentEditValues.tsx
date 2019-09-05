@@ -253,7 +253,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
             return false;
         }
         if (prop === "ProtectionAndAvailability") {
-            let Types = ["Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device"];
+            let Types = ["Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device", "Tablet"];
             if (Types.indexOf(type) > -1) {
                 return true;
             }
