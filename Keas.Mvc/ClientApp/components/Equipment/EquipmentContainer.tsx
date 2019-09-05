@@ -60,7 +60,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             equipmentProtectionLevels: ["P1", "P2", "P3", "P4"],
             equipmentProtectionFilters: [],
             equipmentAvailabilityLevels: ["A1", "A2", "A3", "A4"],
-            equipmentAvailabilityFilters: [],
+            equipmentAvailabilityFilters: []
         };
     }
     public async componentDidMount() {
@@ -70,13 +70,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         // are we getting the person's equipment or the team's?
         let equipmentFetchUrl = "";
         if (!!this.props.person) {
-            equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/listassigned?personid=${
-                this.props.person.id
-            }`;
+            equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/listassigned?personid=${this.props.person.id}`;
         } else if (!!this.props.space) {
-            equipmentFetchUrl = `/api/${
-                this.context.team.slug
-            }/equipment/getEquipmentInSpace?spaceId=${this.props.space.id}`;
+            equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/getEquipmentInSpace?spaceId=${this.props.space.id}`;
         } else {
             equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/list/`;
         }
@@ -85,9 +81,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
         const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
 
-        const equipmentTypeFetchUrl = `/api/${
-            this.context.team.slug
-        }/equipment/ListEquipmentTypes/`;
+        const equipmentTypeFetchUrl = `/api/${this.context.team.slug}/equipment/ListEquipmentTypes/`;
 
         const equipmentTypes = await this.context.fetch(equipmentTypeFetchUrl);
 
@@ -141,6 +135,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         closeModal={this._closeModals}
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openAssignModal}
+                        updateSelectedEquipment={this._updateEquipmentFromDetails}
                     />
                     <EditEquipment
                         selectedEquipment={detailEquipment}
@@ -206,10 +201,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 );
             }
             if (this.state.equipmentProtectionFilters.length > 0) {
-                filteredEquipment = filteredEquipment.filter(x => 
+                filteredEquipment = filteredEquipment.filter(x =>
                     this._checkEquipmentProtectionFilters(x)
                 );
-            } 
+            }
             if (this.state.equipmentAvailabilityFilters.length > 0) {
                 filteredEquipment = filteredEquipment.filter(x =>
                     this._checkEquipmentAvailabilityFilters(x)
@@ -290,9 +285,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
         // if we know who to assign it to, do it now
         if (person) {
-            const assignUrl = `/api/${this.context.team.slug}/equipment/assign?equipmentId=${
-                equipment.id
-            }&personId=${person.id}&date=${date}`;
+            const assignUrl = `/api/${this.context.team.slug}/equipment/assign?equipmentId=${equipment.id}&personId=${person.id}&date=${date}`;
 
             if (!equipment.assignment) {
                 // don't count as assigning unless this is a new one
@@ -475,12 +468,27 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         }
     };
 
+    private _updateEquipmentFromDetails = (equipment: IEquipment) => {
+        const index = this.state.equipment.findIndex(x => x.id === equipment.id);
+
+        if (index === -1) {
+            // should always already exist
+            return;
+        }
+
+        // update already existing entry in key
+        const updateEquipment = [...this.state.equipment];
+        updateEquipment[index] = equipment;
+
+        this.setState({ ...this.state, equipment: updateEquipment });
+    };
+
     private _filterEquipmentType = (filters: string[]) => {
         this.setState({ equipmentTypeFilters: filters });
     };
 
     private _filterEquipmentProtection = (filters: string[]) => {
-        this.setState({ equipmentProtectionFilters: filters});
+        this.setState({ equipmentProtectionFilters: filters });
     };
     private _filterEquipmentAvailability = (filters: string[]) => {
         this.setState({ equipmentAvailabilityFilters: filters });
@@ -494,20 +502,18 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 (equipment && !equipment.type && f === "Default")
         );
     };
-    
+
     private _checkEquipmentProtectionFilters = (equipment: IEquipment) => {
         var filters = this.state.equipmentProtectionFilters;
         return filters.some(
-            f =>
-            (equipment && !!equipment.protectionLevel && equipment.protectionLevel === f)
+            f => equipment && !!equipment.protectionLevel && equipment.protectionLevel === f
         );
     };
 
     private _checkEquipmentAvailabilityFilters = (equipment: IEquipment) => {
         var filters = this.state.equipmentAvailabilityFilters;
         return filters.some(
-            f =>
-            (equipment && !!equipment.availabilityLevel && equipment.availabilityLevel === f)
+            f => equipment && !!equipment.availabilityLevel && equipment.availabilityLevel === f
         );
     };
 

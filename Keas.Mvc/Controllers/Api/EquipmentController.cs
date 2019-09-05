@@ -35,15 +35,15 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
-            var equipment = 
+            var equipment =
                 from eq in _context.Equipment
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
+                (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
                 .Include(x => x.Attributes)
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
                 .AsNoTracking()
-                select new 
+                select new
                 {
                     equipment = eq,
                     label = eq.Id + ". " + eq.Name + " " + eq.SerialNumber,
@@ -65,7 +65,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipment);
         }
 
-        public async Task<IActionResult> CommonAttributeKeys() 
+        public async Task<IActionResult> CommonAttributeKeys()
         {
             var keys = await _context.EquipmentAttributeKeys
                 .Where(a => a.TeamId == null || a.Team.Slug == Team)
@@ -74,7 +74,7 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(keys);
         }
-        
+
         public ActionResult ListEquipmentTypes() => Json(EquipmentTypes.Types);
 
         public async Task<IActionResult> ListAssigned(int personId)
@@ -97,13 +97,27 @@ namespace Keas.Mvc.Controllers.Api
             var equipments = await _context.Equipment
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignment)
-                .ThenInclude(x=>x.Person)
+                .ThenInclude(x => x.Person)
                 .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
 
             return Json(equipments);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var equipment = await _context.Equipment
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignment)
+                    .ThenInclude(x => x.Person)
+                .Include(x => x.Space)
+                .Include(x => x.Attributes)
+                .Include(x => x.Team)
+                .SingleAsync(x => x.Id == id);
+
+            return Json(equipment);
         }
 
         public async Task<IActionResult> Create([FromBody]Equipment equipment)
@@ -113,7 +127,7 @@ namespace Keas.Mvc.Controllers.Api
             {
                 if (equipment.Space != null)
                 {
-                   var space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
+                    var space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
                     equipment.Space = space;
                 }
 
@@ -133,14 +147,14 @@ namespace Keas.Mvc.Controllers.Api
             {
                 var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team && x.Active)
                     .Include(x => x.Space).Include(x => x.Assignment).ThenInclude(a => a.Person).SingleAsync(x => x.Id == equipmentId);
-                
-                if(equipment.Assignment != null)
+
+                if (equipment.Assignment != null)
                 {
                     _context.EquipmentAssignments.Update(equipment.Assignment);
                     equipment.Assignment.ExpiresAt = DateTime.Parse(date);
-                    equipment.Assignment.RequestedById =  User.Identity.Name;
+                    equipment.Assignment.RequestedById = User.Identity.Name;
                     equipment.Assignment.RequestedByName = User.GetNameClaim();
-                    await _eventService.TrackEquipmentAssignmentUpdated(equipment); 
+                    await _eventService.TrackEquipmentAssignmentUpdated(equipment);
                 }
                 else
                 {
@@ -151,7 +165,7 @@ namespace Keas.Mvc.Controllers.Api
 
                     _context.EquipmentAssignments.Add(equipment.Assignment);
                     await _eventService.TrackAssignEquipment(equipment);
-                }                
+                }
                 await _context.SaveChangesAsync();
                 return Json(equipment);
             }
@@ -186,14 +200,14 @@ namespace Keas.Mvc.Controllers.Api
                 eq.Attributes.Clear();
                 updatedEquipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
 
-                if(updatedEquipment.Space == null)
+                if (updatedEquipment.Space == null)
                 {
                     eq.Space = null;
                 }
                 else
                 {
                     eq.Space = await _context.Spaces.SingleAsync(x => x.Id == updatedEquipment.Space.Id);
-                }                
+                }
                 await _eventService.TrackUpdateEquipment(eq);
                 await _context.SaveChangesAsync();
                 return Json(eq);
@@ -237,8 +251,8 @@ namespace Keas.Mvc.Controllers.Api
                     .SingleAsync(x => x.Id == equipment.Id);
 
                 _context.EquipmentAssignments.Remove(eq.Assignment);
-                eq.Assignment = null;               
-                await _eventService.TrackUnAssignEquipment(equipment); 
+                eq.Assignment = null;
+                await _eventService.TrackUnAssignEquipment(equipment);
                 await _context.SaveChangesAsync();
                 return Json(null);
             }
@@ -247,29 +261,29 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Delete([FromBody]Equipment equipment)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if(!equipment.Active) 
+            if (!equipment.Active)
             {
                 return BadRequest(ModelState);
             }
 
-            using(var transaction = _context.Database.BeginTransaction())
+            using (var transaction = _context.Database.BeginTransaction())
             {
 
                 _context.Equipment.Update(equipment);
 
-                if(equipment.Assignment != null)
+                if (equipment.Assignment != null)
                 {
                     await _eventService.TrackUnAssignEquipment(equipment); // call before we remove person info
                     _context.EquipmentAssignments.Remove(equipment.Assignment);
                     equipment.Assignment = null;
                 }
 
-                equipment.Active = false;                
+                equipment.Active = false;
                 await _eventService.TrackEquipmentDeleted(equipment);
                 await _context.SaveChangesAsync();
                 transaction.Commit();
@@ -289,7 +303,8 @@ namespace Keas.Mvc.Controllers.Api
             return Json(history);
         }
 
-        public async Task<BigFixComputerProperties> GetComputer(string id) {
+        public async Task<BigFixComputerProperties> GetComputer(string id)
+        {
             return await this._bigfixService.GetComputer(id);
         }
     }
