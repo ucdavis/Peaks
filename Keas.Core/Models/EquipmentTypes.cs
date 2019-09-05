@@ -12,6 +12,8 @@ namespace Keas.Core.Models
         public const string Server = "Server";
         public const string Cellphone = "Cellphone";
         public const string Device = "Device";
+        public const string Tablet = "Tablet";
+        public const string Printer = "Printer";
         public const string Card = "Card";
         public const string Industrial = "Industrial";
         public const string Software = "Software";
@@ -27,6 +29,8 @@ namespace Keas.Core.Models
             Server,
             Cellphone,
             Device,
+            Tablet,
+            Printer,
             Card,
             Industrial,
             Software,
