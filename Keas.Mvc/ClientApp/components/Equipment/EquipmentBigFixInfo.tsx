@@ -1,6 +1,7 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import { Button, Modal, ModalBody, Table } from "reactstrap";
+import EquipmentBigFixSearchId from './EquipmentBigFixSearchId';
 
 interface IProps {
     bigfixId: string;
@@ -44,7 +45,9 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
 
     private _renderInfoIcon = () => {
         if (!this.props.bigfixId) {
-            return null;
+            return(
+                <EquipmentBigFixSearchId/>
+            );
         }
 
         return (
@@ -147,7 +150,8 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
     private _modalToggle = () => {
         this.setState(prevState => ({
             bigfixModal: !prevState.bigfixModal,
-            isFetched: false
+            isFetched: false,
+            isValidRequest: true
         }));
     };
 }
