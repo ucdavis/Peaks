@@ -145,9 +145,11 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
     };
 
     private _modalToggle = () => {
-        this.setState(prevState => ({
+         // reset the states to its initial values.
+         this.setState(prevState => ({
             bigfixModal: !prevState.bigfixModal,
-            isFetched: false
+            isFetched: false,
+            isValidRequest: true
         }));
     };
 }
