@@ -5,6 +5,7 @@ import EquipmentBigFixSearchId from './EquipmentBigFixSearchId';
 
 interface IProps {
     bigfixId: string;
+    addBigFixId: (property: string, id:string) => void
 }
 
 interface IState {
@@ -46,7 +47,7 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
     private _renderInfoIcon = () => {
         if (!this.props.bigfixId) {
             return(
-                <EquipmentBigFixSearchId/>
+                <EquipmentBigFixSearchId addBigFixId={this.props.addBigFixId}/>
             );
         }
 

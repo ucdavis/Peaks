@@ -1,5 +1,7 @@
 import * as PropTypes from "prop-types";
+
 import * as React from "react";
+
 import {
     Button,
     Form,
@@ -9,18 +11,23 @@ import {
     Modal,
     ModalBody,
     ModalFooter,
-    Table,
-    
-   
+    Table
 } from "reactstrap";
+import { IBigFixSearchedName } from "../../Types";
+
+interface IProps {
+    addBigFixId: (property: string, id: string) => void;
+}
 
 interface IState {
+    isFetched: boolean;
     searchModal: boolean;
     selectedFeild: string;
     valueToBeSearched: string;
+    listOfComputers: IBigFixSearchedName[];
 }
 
-export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
+export default class EquipmentBigFixInfo extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
         permissions: PropTypes.array,
@@ -31,6 +38,8 @@ export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
     constructor(props) {
         super(props);
         this.state = {
+            isFetched: false,
+            listOfComputers: [],
             searchModal: false,
             selectedFeild: "Name",
             valueToBeSearched: ""
@@ -78,9 +87,16 @@ export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
                     {this._renderModalBody()}
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" disabled={false} onClick={() => {
-                        this._getComputersBySearch(this.state.selectedFeild, this.state.valueToBeSearched);
-                    }}>
+                    <Button
+                        color="primary"
+                        disabled={false}
+                        onClick={() => {
+                            this._getComputersBySearch(
+                                this.state.selectedFeild,
+                                this.state.valueToBeSearched
+                            );
+                        }}
+                    >
                         Search!
                     </Button>
                 </ModalFooter>
@@ -106,12 +122,14 @@ export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
                     </Input>
                 </FormGroup>
 
-                <FormGroup>{this.renderInputSearch()}</FormGroup>
+                <FormGroup>{this._renderInputSearch()}</FormGroup>
+
+                {this._renderNameTable()}
             </Form>
         );
     };
 
-    private renderInputSearch = () => {
+    private _renderInputSearch = () => {
         if (this.state.selectedFeild === "Name") {
             return (
                 <>
@@ -124,7 +142,7 @@ export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
                         onChange={e => {
                             this.setState({
                                 valueToBeSearched: e.target.value
-                            })
+                            });
                         }}
                     />
                 </>
@@ -143,28 +161,60 @@ export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
         }
     };
 
+    private _renderNameTable = () => {
+        if (!this.state.isFetched) {
+            return null;
+        }
+        return (
+            <Table>
+                <tbody>
+                    {this.state.listOfComputers.map(computer => {
+                        return (
+                            <tr
+                                className="bigfix-info"
+                                onClick={() => this.props.addBigFixId("systemManagementId", computer.id)}
+                                key={computer.id}
+                            >
+                                <td>{computer.name}</td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
+            </Table>
+        );
+    };
+
     private _getComputersBySearch = async (field: string, value: string) => {
-        const response = await fetch(`/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`, {
-            method: "GET"
-        });
+        const response = await fetch(
+            `/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`,
+            {
+                method: "GET"
+            }
+        );
 
         if (!response.ok) {
             // show the invalid Bigfix-id message.
-            
         }
 
         const result = await response.json();
-        debugger;
+        this.setState({
+            isFetched: true,
+            listOfComputers: result
+        });
     };
 
     private _changeSelectedInput = value => {
         this.setState({
+            isFetched: false,
+            listOfComputers: [],
             selectedFeild: value
         });
     };
 
     private _modalToggle = () => {
         this.setState(prevState => ({
+            isFetched: false,
+            listOfComputers: [],
             searchModal: !prevState.searchModal
         }));
     };
