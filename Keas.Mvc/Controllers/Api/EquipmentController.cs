@@ -292,5 +292,19 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<BigFixComputerProperties> GetComputer(string id) {
             return await this._bigfixService.GetComputer(id);
         }
+
+         public async Task<BigfixComputerSearchResult[]> GetComputersBySearch(string field, string value)
+        {
+            if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
+            {
+                return await this._bigfixService.GetComputersByName(value);
+        
+                // call new bigfix name query function
+            } else
+            {
+                // not supported yet
+                return null;
+            }
+        }
     }
 }

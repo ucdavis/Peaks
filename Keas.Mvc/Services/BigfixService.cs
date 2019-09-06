@@ -12,6 +12,7 @@ namespace Keas.Mvc.Services
     {
         Task<string> TestOs();
         Task<string> TestLookupComputer();
+        Task<BigfixComputerSearchResult[]> GetComputersByName(string name);
         Task<BigFixComputerProperties> GetComputer(string id);
     }
 
@@ -46,6 +47,22 @@ namespace Keas.Mvc.Services
                 return $"BF Id {results.AllAnswers[0].Value} -- Computer Name {results.AllAnswers[1].Value}";
             }
         }
+        public async Task<BigfixComputerSearchResult[]> GetComputersByName(string name)
+        {
+           using (var bf = GetClient())
+            {
+                var query = bf.Queries.Common.GroupedQueries.GetComputerByNameEquals(name);
+
+                var results = await bf.Queries.SearchWithGroupedResults(query);
+
+                var searchResults = results.Tuples.Select(t => new BigfixComputerSearchResult {
+                    Id = t.Answers[0].Value,
+                    Name = t.Answers[1].Value
+                }).ToArray();
+
+                return searchResults;
+            }
+        }
 
         public async Task<BigFixComputerProperties> GetComputer(string id)
         {
@@ -55,12 +72,18 @@ namespace Keas.Mvc.Services
 
                 return new BigFixComputerProperties(results);
             }
-        }
 
+        }
 
         private BigfixClient GetClient()
         {
             return new BigfixClient(_bigfixSettings.UserName, _bigfixSettings.Password);
         }
+    }
+
+     public class BigfixComputerSearchResult
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

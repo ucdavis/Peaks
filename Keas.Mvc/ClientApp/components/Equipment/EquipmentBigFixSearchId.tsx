@@ -16,7 +16,7 @@ import {
 
 interface IState {
     searchModal: boolean;
-    selectedInput: string;
+    selectedFeild: string;
     valueToBeSearched: string;
 }
 
@@ -32,7 +32,7 @@ export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
         super(props);
         this.state = {
             searchModal: false,
-            selectedInput: "Name",
+            selectedFeild: "Name",
             valueToBeSearched: ""
         };
     }
@@ -79,10 +79,10 @@ export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
                 </ModalBody>
                 <ModalFooter>
                     <Button color="primary" disabled={false} onClick={() => {
-                        alert(this.state.valueToBeSearched)
+                        this._getComputersBySearch(this.state.selectedFeild, this.state.valueToBeSearched);
                     }}>
                         Search!
-                    </Button>{" "}
+                    </Button>
                 </ModalFooter>
             </Modal>
         );
@@ -98,7 +98,7 @@ export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
                         name="select"
                         id="exampleSelect"
                         onChange={e => this._changeSelectedInput(e.target.value)}
-                        value={this.state.selectedInput}
+                        value={this.state.selectedFeild}
                     >
                         <option value="Name">Name</option>
                         <option value="Id">Id</option>
@@ -112,7 +112,7 @@ export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
     };
 
     private renderInputSearch = () => {
-        if (this.state.selectedInput === "Name") {
+        if (this.state.selectedFeild === "Name") {
             return (
                 <>
                     <label>Name</label>
@@ -129,9 +129,9 @@ export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
                     />
                 </>
             );
-        } else if (this.state.selectedInput === "Id") {
+        } else if (this.state.selectedFeild === "Id") {
             return <Input type="text" name="Id" id="computer Id" placeholder="Enter Computer Id" />;
-        } else if (this.state.selectedInput === "Company") {
+        } else if (this.state.selectedFeild === "Company") {
             return (
                 <Input
                     type="text"
@@ -143,36 +143,23 @@ export default class EquipmentBigFixInfo extends React.Component<{}, IState> {
         }
     };
 
-    // private _getBigFixComputerInfo = async (id: string) => {
-    //     const response = await fetch(`/api/${this.context.team.slug}/equipment/GetComputer/${id}`, {
-    //         method: "GET"
-    //     });
+    private _getComputersBySearch = async (field: string, value: string) => {
+        const response = await fetch(`/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`, {
+            method: "GET"
+        });
 
-    //     if (!response.ok) {
-    //         // show the invalid Bigfix-id message.
-    //         this.setState({
-    //             isFetched: true,
-    //             isValidRequest: false
-    //         });
-    //     }
+        if (!response.ok) {
+            // show the invalid Bigfix-id message.
+            
+        }
 
-    //     const result = await response.json();
-    //     const sortedResult = Object.keys(result)
-    //         .sort()
-    //         .reduce((accumulator, currentValue) => {
-    //             accumulator[currentValue] = result[currentValue];
-    //             return accumulator;
-    //         }, {});
-
-    //     this.setState({
-    //         computerInfo: sortedResult,
-    //         isFetched: true
-    //     });
-    // };
+        const result = await response.json();
+        debugger;
+    };
 
     private _changeSelectedInput = value => {
         this.setState({
-            selectedInput: value
+            selectedFeild: value
         });
     };
 
