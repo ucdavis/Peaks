@@ -158,6 +158,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             <EquipmentBigFixInfo
                                bigfixId={this.props.selectedEquipment.systemManagementId}
                                addBigFixId={this.props.changeProperty}
+                               disableEditing={this.props.disableEditing}
                            />
                             <input
                                 type="text"

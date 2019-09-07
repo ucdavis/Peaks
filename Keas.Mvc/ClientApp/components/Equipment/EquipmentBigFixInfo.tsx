@@ -5,7 +5,8 @@ import EquipmentBigFixSearchId from './EquipmentBigFixSearchId';
 
 interface IProps {
     bigfixId: string;
-    addBigFixId: (property: string, id:string) => void
+    addBigFixId: (property: string, id:string) => void;
+    disableEditing: boolean;
 }
 
 interface IState {
@@ -46,6 +47,10 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
 
     private _renderInfoIcon = () => {
         if (!this.props.bigfixId) {
+
+            if (this.props.disableEditing){
+                return null;
+            }
             return(
                 <EquipmentBigFixSearchId addBigFixId={this.props.addBigFixId}/>
             );
