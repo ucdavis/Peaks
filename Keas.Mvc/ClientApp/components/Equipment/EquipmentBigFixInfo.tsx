@@ -49,7 +49,7 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
         if (!this.props.bigfixId) {
 
             if (this.props.disableEditing){
-                return null;
+                return (<span className="ml-3">( Click Edit Equipment above to search for Bigfix Id )</span>);
             }
             return(
                 <EquipmentBigFixSearchId addBigFixId={this.props.addBigFixId}/>
