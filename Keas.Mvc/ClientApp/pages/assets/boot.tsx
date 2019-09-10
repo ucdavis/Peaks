@@ -26,7 +26,7 @@ function renderApp() {
                 <BrowserRouter children={routes} />
                 <ToastContainer
                     position="top-center"
-                    autoClose={500000}
+                    autoClose={5000}
                     hideProgressBar={false}
                     newestOnTop={false}
                     closeOnClick={true}

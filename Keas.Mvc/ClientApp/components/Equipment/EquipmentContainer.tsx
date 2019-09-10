@@ -134,26 +134,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                     </div>
                 </div>
                 <div className="card-content">
-                    <Button
-                        color="success"
-                        onClick={() =>
-                            toast.success("Success!", {
-                                className: "toast-success"
-                            })
-                        }
-                    >
-                        Success
-                    </Button>
-                    <Button
-                        color="danger"
-                        onClick={() =>
-                            toast.error("Error!", {
-                                className: "toast-error"
-                            })
-                        }
-                    >
-                        Error
-                    </Button>
                     {this._renderTableOrList()}
                     <EquipmentDetails
                         selectedEquipment={detailEquipment}
