@@ -287,7 +287,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 );
                 toast.success("Equipment created successfully!");
             } catch (e) {
-                toast.error("Failed to create equipment.");
+                toast.error("Error creating equipment.");
                 return;
             }
             equipment.attributes = attributes;
@@ -308,7 +308,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 });
                 toast.success("Equipment assigned successfully!");
             } catch (e) {
-                toast.error(e.message);
+                toast.error("Error assigning equipment.");
                 return;
             }
             equipment.attributes = attributes;
@@ -369,7 +369,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             );
             toast.success("Equipment revoked successfully!");
         } catch (e) {
-            toast.error(e.message);
+            toast.error("Error revoking equipment.");
             return;
         }
 
@@ -456,7 +456,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             });
             toast.success("Equipment updated successfully!");
         } catch (e) {
-            toast.error(e);
+            toast.error("Error editing equipment.");
             return;
         }
 
