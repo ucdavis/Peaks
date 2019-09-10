@@ -25,8 +25,8 @@ function renderApp() {
             <App team={team} permissions={permissons} antiForgeryToken={antiForgeryToken}>
                 <BrowserRouter children={routes} />
                 <ToastContainer
-                    position="bottom-right"
-                    autoClose={5000}
+                    position="top-center"
+                    autoClose={500000}
                     hideProgressBar={false}
                     newestOnTop={false}
                     closeOnClick={true}

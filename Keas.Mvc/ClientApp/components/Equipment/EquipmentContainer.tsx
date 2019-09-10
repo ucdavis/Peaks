@@ -134,6 +134,26 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                     </div>
                 </div>
                 <div className="card-content">
+                    <Button
+                        color="success"
+                        onClick={() =>
+                            toast("Success!", {
+                                className: "toast-success"
+                            })
+                        }
+                    >
+                        Success
+                    </Button>
+                    <Button
+                        color="danger"
+                        onClick={() =>
+                            toast("Error!", {
+                                className: "toast-error"
+                            })
+                        }
+                    >
+                        Error
+                    </Button>
                     {this._renderTableOrList()}
                     <EquipmentDetails
                         selectedEquipment={detailEquipment}
@@ -287,7 +307,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 );
                 toast.success("Equipment created successfully!");
             } catch (e) {
-                toast.error(e.message);
+                toast.error("Failed to create equipment.");
                 return;
             }
             equipment.attributes = attributes;
