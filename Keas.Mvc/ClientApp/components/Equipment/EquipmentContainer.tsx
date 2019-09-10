@@ -85,6 +85,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             toast.error("Failed to fetch equipment. Please refresh the page to try again.");
             return;
         }
+        // TODO: move all this into context
         const attrFetchUrl = `/api/${this.context.team.slug}/equipment/commonAttributeKeys/`;
 
         const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
@@ -288,7 +289,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 toast.success("Equipment created successfully!");
             } catch (e) {
                 toast.error("Error creating equipment.");
-                return;
+                throw new Error(); // throw error so modal doesn't close
             }
             equipment.attributes = attributes;
             updateTotalAssetCount = true;
@@ -309,7 +310,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 toast.success("Equipment assigned successfully!");
             } catch (e) {
                 toast.error("Error assigning equipment.");
-                return;
+                throw new Error(); // throw error so modal doesn't close
             }
             equipment.attributes = attributes;
             equipment.assignment.person = person;
@@ -370,7 +371,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             toast.success("Equipment revoked successfully!");
         } catch (e) {
             toast.error("Error revoking equipment.");
-            return;
+            throw new Error(); // throw error so modal doesn't close
         }
 
         // remove from state
@@ -401,6 +402,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
+
         try {
             const deleted: IEquipment = await this.context.fetch(
                 `/api/${this.context.team.slug}/equipment/delete/${equipment.id}`,
@@ -411,7 +413,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             toast.success("Equipment deleted successfully!");
         } catch (e) {
             toast.error("Error deleting equipment.");
-            return;
+            throw new Error(); // throw error so modal doesn't close
         }
 
         // remove from state
@@ -457,7 +459,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             toast.success("Equipment updated successfully!");
         } catch (e) {
             toast.error("Error editing equipment.");
-            return;
+            throw new Error(); // throw error so modal doesn't close
         }
 
         updated.assignment = equipment.assignment;

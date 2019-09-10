@@ -20,7 +20,6 @@ interface IState {
 
 export default class DeleteEquipment extends React.Component<IProps, IState> {
     public static contextTypes = {
-        fetch: PropTypes.func,
         team: PropTypes.object
     };
     public context: AppContext;
@@ -89,7 +88,6 @@ export default class DeleteEquipment extends React.Component<IProps, IState> {
         try {
             await this.props.deleteEquipment(this.props.selectedEquipment);
         } catch (err) {
-            alert("There was an error deleting this equipment, please try again");
             this.setState({ submitting: false });
             return;
         }
