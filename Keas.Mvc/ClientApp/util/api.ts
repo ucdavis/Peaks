@@ -14,7 +14,7 @@ const doFetch = async (
       ["RequestVerificationToken", antiForgeryToken]
     ]
   });
-
+  
   if (!res.ok) {
     alert("Error Detected.")
     throw new Error(res.statusText);

@@ -25,12 +25,12 @@ interface IState {
     isSearching: boolean;
     isValidSearch: boolean;
     searchModal: boolean;
-    selectedFeild: string;
+    selectedField: string;
     valueToBeSearched: string;
     listOfComputers: IBigFixSearchedName[];
 }
 
-export default class EquipmentBigFixInfo extends React.Component<IProps, IState> {
+export default class EquipmentBigFixSearchId extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
         permissions: PropTypes.array,
@@ -46,7 +46,7 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
             isValidSearch: true,
             listOfComputers: [],
             searchModal: false,
-            selectedFeild: "Name",
+            selectedField: "Name",
             valueToBeSearched: ""
         };
     }
@@ -62,14 +62,16 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
 
     private _renderInfoIcon = () => {
         return (
-            <a
-                className="bigfix-info"
+            <Button
+                color="link"
+                className="ml-3 mb-3 pt-0"
                 onClick={() => {
                     this._modalToggle();
                 }}
             >
-                <i className="fas fa-info-circle ml-2" />
-            </a>
+                 <i className="fas fa-search fa-xs mr-2" />
+                Look Up
+            </Button>
         );
     };
 
@@ -100,13 +102,13 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
         return (
             <Form className="w-75">
                 <FormGroup className="mb-5">
-                    <Label for="exampleSelect">Feild</Label>
+                    <Label for="exampleSelect">Field</Label>
                     <Input
                         type="select"
                         name="select"
-                        id="exampleSelect"
+                        id="field-select"
                         onChange={e => this._changeSelectedInput(e.target.value)}
-                        value={this.state.selectedFeild}
+                        value={this.state.selectedField}
                     >
                         <option value="Name">Name</option>
                     </Input>
@@ -123,14 +125,14 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
     };
 
     private _renderInputSearch = () => {
-        if (this.state.selectedFeild === "Name") {
+        if (this.state.selectedField === "Name") {
             return (
                 <>
                     <label>Name</label>
                     <Input
                         type="text"
                         name="name"
-                        id="computer name"
+                        id="computer-name"
                         placeholder="Enter Computer Name"
                         invalid={this.state.valueToBeSearched.length < 1}
                         onChange={e => {
@@ -141,9 +143,9 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
                     />
                 </>
             );
-        } else if (this.state.selectedFeild === "Id") {
+        } else if (this.state.selectedField === "Id") {
             return <Input type="text" name="Id" id="computer Id" placeholder="Enter Computer Id" />;
-        } else if (this.state.selectedFeild === "Company") {
+        } else if (this.state.selectedField === "Company") {
             return (
                 <Input
                     type="text"
@@ -198,66 +200,44 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
             );
         } else {
             return (
-                <Button
-                    color="primary"
-                    disabled={false}
-                    onClick={() => {
-                        this.setState({ isSearching: true, isFetched: false, isValidSearch: true });
-                        this._getComputersBySearch(
-                            this.state.selectedFeild,
-                            this.state.valueToBeSearched
-                        );
-                    }}
-                >
+                <Button color="primary" disabled={false} onClick={this._onSearch}>
                     Search!
                 </Button>
             );
         }
     };
 
+    private _onSearch = () => {
+        this.setState({ isSearching: true, isFetched: false, isValidSearch: true });
+        this._getComputersBySearch(this.state.selectedField, this.state.valueToBeSearched);
+    };
+
     private _getComputersBySearch = async (field: string, value: string) => {
-        const response = await fetch(
-            `/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`,
-            {
-                method: "GET"
-            }
-        );
-
-        if (!response.ok) {
-            // show the invalid name message.
-            this.setState({ isValidSearch: false });
+        let response = null;
+        try {
+            response = await this.context.fetch(
+                `/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`,
+                {
+                    method: "GET"
+                }
+            );
+        } catch (err) {
+            response = null;
         }
-
-        const result = await response.json();
-
         // if length is 0, not a valid search
-        if (result.length === 0) {
+        if (response.length === 0 || response === null) {
             this.setState({
                 isFetched: true,
                 isSearching: false,
                 isValidSearch: false
             });
         } else {
-
-            // if more than five, shrink the array to only 5 names.
-            if (result.length > 5) {
-                const firstFiveNames = [];
-                for (let index = 0; index < 5; index++) {
-                    firstFiveNames.push(result[index]);
-                }
-
-                this.setState({
-                    isFetched: true,
-                    isSearching: false,
-                    listOfComputers: firstFiveNames
-                });
-            } else {
-                this.setState({
-                    isFetched: true,
-                    isSearching: false,
-                    listOfComputers: result
-                });
-            }
+            const firstFiveName = response.slice(0, 5);
+            this.setState({
+                isFetched: true,
+                isSearching: false,
+                listOfComputers: firstFiveName
+            });
         }
     };
 
@@ -265,7 +245,7 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
         this.setState({
             isFetched: false,
             listOfComputers: [],
-            selectedFeild: value
+            selectedField: value
         });
     };
 

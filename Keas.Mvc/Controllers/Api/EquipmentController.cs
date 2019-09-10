@@ -298,12 +298,11 @@ namespace Keas.Mvc.Controllers.Api
             if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
             {
                 return await this._bigfixService.GetComputersByName(value);
-        
-                // call new bigfix name query function
             } else
             {
                 // not supported yet
                 return null;
+
             }
         }
     }
