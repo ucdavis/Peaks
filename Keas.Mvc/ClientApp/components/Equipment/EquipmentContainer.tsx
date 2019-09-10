@@ -382,9 +382,8 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         // call API to actually revoke
         try {
             const removed: IEquipment = await this.context.fetch(
-                `/api/${this.context.team.slug}/equipment/revoke`,
+                `/api/${this.context.team.slug}/equipment/revoke/${equipment.id}`,
                 {
-                    body: JSON.stringify(equipment),
                     method: "POST"
                 }
             );
@@ -424,15 +423,14 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         }
         try {
             const deleted: IEquipment = await this.context.fetch(
-                `/api/${this.context.team.slug}/equipment/delete`,
+                `/api/${this.context.team.slug}/equipment/delete/${equipment.id}`,
                 {
-                    body: JSON.stringify(equipment),
                     method: "POST"
                 }
             );
             toast.success("Equipment deleted successfully!");
         } catch (e) {
-            toast.error(e.message);
+            toast.error("Error deleting equipment.");
             return;
         }
 
