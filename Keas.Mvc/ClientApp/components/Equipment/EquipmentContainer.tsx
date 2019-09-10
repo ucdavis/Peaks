@@ -137,7 +137,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                     <Button
                         color="success"
                         onClick={() =>
-                            toast("Success!", {
+                            toast.success("Success!", {
                                 className: "toast-success"
                             })
                         }
@@ -147,7 +147,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                     <Button
                         color="danger"
                         onClick={() =>
-                            toast("Error!", {
+                            toast.error("Error!", {
                                 className: "toast-error"
                             })
                         }
