@@ -64,12 +64,12 @@ export default class EquipmentBigFixSearchId extends React.Component<IProps, ISt
         return (
             <Button
                 color="link"
-                className="ml-3 mb-3 pt-0"
+                className="ml-1 mb-3 pt-0"
                 onClick={() => {
                     this._modalToggle();
                 }}
             >
-                 <i className="fas fa-search fa-xs mr-2" />
+                <i className="fas fa-search fa-xs mr-2" />
                 Look Up
             </Button>
         );
@@ -135,6 +135,11 @@ export default class EquipmentBigFixSearchId extends React.Component<IProps, ISt
                         id="computer-name"
                         placeholder="Enter Computer Name"
                         invalid={this.state.valueToBeSearched.length < 1}
+                        onKeyPress={e => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                            }
+                        }}
                         onChange={e => {
                             this.setState({
                                 valueToBeSearched: e.target.value
@@ -169,19 +174,21 @@ export default class EquipmentBigFixSearchId extends React.Component<IProps, ISt
                 </p>
             );
         }
+
         return (
             <Table>
                 <tbody>
                     {this.state.listOfComputers.map(computer => {
                         return (
-                            <tr
-                                className="bigfix-info"
-                                onClick={() =>
-                                    this.props.addBigFixId("systemManagementId", computer.id)
-                                }
-                                key={computer.id}
-                            >
-                                <td>{computer.name}</td>
+                            <tr key={computer.id} className="bigfix-info border-bottom">
+                                <Button
+                                    color="link"
+                                    onClick={() =>
+                                        this.props.addBigFixId("systemManagementId", computer.id)
+                                    }
+                                >
+                                    {computer.name}
+                                </Button>
                             </tr>
                         );
                     })}
