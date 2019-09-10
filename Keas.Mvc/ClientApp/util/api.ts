@@ -12,6 +12,8 @@ const doFetch = async (url: string, antiForgeryToken: string, init?: RequestInit
     });
 
     if (!res.ok) {
+        // TODO: remove when all assets have toasts
+        alert("Error detected");
         throw new Error(res.statusText);
     }
 
