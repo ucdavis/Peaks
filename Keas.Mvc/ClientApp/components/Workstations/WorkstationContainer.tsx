@@ -61,6 +61,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             workstations = await this.context.fetch(url);
         } catch (err) {
             toast.error("Error loading workstations. Please refresh and try again.");
+            return;
         }
         this.setState({ workstations, loading: false });
     }
