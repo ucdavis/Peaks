@@ -20,7 +20,6 @@ interface IState {
 
 export default class RevokeEquipment extends React.Component<IProps, IState> {
     public static contextTypes = {
-        fetch: PropTypes.func,
         team: PropTypes.object
     };
     public context: AppContext;
