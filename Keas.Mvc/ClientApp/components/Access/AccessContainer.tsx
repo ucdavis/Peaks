@@ -59,6 +59,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         } catch (err) {
             toast.error("Error loading access list. Please refresh and try again.");
         }
+        // TODO: move tags into context
         const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);
 
         this.setState({ accesses, loading: false, tags });
