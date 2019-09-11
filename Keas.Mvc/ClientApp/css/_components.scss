@@ -689,3 +689,13 @@ ol.breadcrumb {
     color:$primary-color !important;
   }
 }
+.Toastify__toast--success {
+  background-color: $sunny-grass !important;
+}
+.Toastify__toast--error {
+  background-color: $unitrans-red !important;
+}
+.Toastify__toast-body {
+  color: #fff !important;
+  font-family: $sans-bold;
+}

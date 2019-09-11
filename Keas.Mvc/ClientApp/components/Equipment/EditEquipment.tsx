@@ -26,7 +26,6 @@ interface IState {
 
 export default class EditEquipment extends React.Component<IProps, IState> {
     public static contextTypes = {
-        fetch: PropTypes.func,
         team: PropTypes.object
     };
     public context: AppContext;
@@ -151,9 +150,12 @@ export default class EditEquipment extends React.Component<IProps, IState> {
         }
         this.setState({ submitting: true });
         this.state.equipment.attributes = this.state.equipment.attributes.filter(x => !!x.key);
-
-        await this.props.onEdit(this.state.equipment);
-
+        try {
+            await this.props.onEdit(this.state.equipment);
+        } catch (e) {
+            this.setState({ submitting: false });
+            return;
+        }
         this._closeModal();
     };
 

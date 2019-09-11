@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { AppContext, IEquipment, IPerson, ISpace } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
 import Denied from "../Shared/Denied";
@@ -76,7 +77,14 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         } else {
             equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/list/`;
         }
-
+        let equipment: IEquipment[] = null;
+        try {
+            equipment = await this.context.fetch(equipmentFetchUrl);
+        } catch (e) {
+            toast.error("Failed to fetch equipment. Please refresh the page to try again.");
+            return;
+        }
+        // TODO: move all this into context
         const attrFetchUrl = `/api/${this.context.team.slug}/equipment/commonAttributeKeys/`;
 
         const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
@@ -84,8 +92,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         const equipmentTypeFetchUrl = `/api/${this.context.team.slug}/equipment/ListEquipmentTypes/`;
 
         const equipmentTypes = await this.context.fetch(equipmentTypeFetchUrl);
-
-        const equipment = await this.context.fetch(equipmentFetchUrl);
 
         const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);
 
@@ -272,13 +278,19 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         // if we are creating a new equipment
         if (equipment.id === 0) {
             equipment.teamId = this.context.team.id;
-            equipment = await this.context.fetch(
-                `/api/${this.context.team.slug}/equipment/create`,
-                {
-                    body: JSON.stringify(equipment),
-                    method: "POST"
-                }
-            );
+            try {
+                equipment = await this.context.fetch(
+                    `/api/${this.context.team.slug}/equipment/create`,
+                    {
+                        body: JSON.stringify(equipment),
+                        method: "POST"
+                    }
+                );
+                toast.success("Equipment created successfully!");
+            } catch (e) {
+                toast.error("Error creating equipment.");
+                throw new Error(); // throw error so modal doesn't close
+            }
             equipment.attributes = attributes;
             updateTotalAssetCount = true;
         }
@@ -291,9 +303,15 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 // don't count as assigning unless this is a new one
                 updateInUseAssetCount = true;
             }
-            equipment = await this.context.fetch(assignUrl, {
-                method: "POST"
-            });
+            try {
+                equipment = await this.context.fetch(assignUrl, {
+                    method: "POST"
+                });
+                toast.success("Equipment assigned successfully!");
+            } catch (e) {
+                toast.error("Error assigning equipment.");
+                throw new Error(); // throw error so modal doesn't close
+            }
             equipment.attributes = attributes;
             equipment.assignment.person = person;
         }
@@ -343,13 +361,18 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             return false;
         }
         // call API to actually revoke
-        const removed: IEquipment = await this.context.fetch(
-            `/api/${this.context.team.slug}/equipment/revoke`,
-            {
-                body: JSON.stringify(equipment),
-                method: "POST"
-            }
-        );
+        try {
+            const removed: IEquipment = await this.context.fetch(
+                `/api/${this.context.team.slug}/equipment/revoke/${equipment.id}`,
+                {
+                    method: "POST"
+                }
+            );
+            toast.success("Equipment revoked successfully!");
+        } catch (e) {
+            toast.error("Error revoking equipment.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // remove from state
         const index = this.state.equipment.indexOf(equipment);
@@ -379,13 +402,19 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
-        const deleted: IEquipment = await this.context.fetch(
-            `/api/${this.context.team.slug}/equipment/delete`,
-            {
-                body: JSON.stringify(equipment),
-                method: "POST"
-            }
-        );
+
+        try {
+            const deleted: IEquipment = await this.context.fetch(
+                `/api/${this.context.team.slug}/equipment/delete/${equipment.id}`,
+                {
+                    method: "POST"
+                }
+            );
+            toast.success("Equipment deleted successfully!");
+        } catch (e) {
+            toast.error("Error deleting equipment.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // remove from state
         const index = this.state.equipment.indexOf(equipment);
@@ -421,13 +450,18 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             return;
         }
 
-        const updated: IEquipment = await this.context.fetch(
-            `/api/${this.context.team.slug}/equipment/update`,
-            {
+        let updated: IEquipment = null;
+        try {
+            updated = await this.context.fetch(`/api/${this.context.team.slug}/equipment/update`, {
                 body: JSON.stringify(equipment),
                 method: "POST"
-            }
-        );
+            });
+            toast.success("Equipment updated successfully!");
+        } catch (e) {
+            toast.error("Error editing equipment.");
+            throw new Error(); // throw error so modal doesn't close
+        }
+
         updated.assignment = equipment.assignment;
 
         // update already existing entry in key
@@ -495,7 +529,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     };
 
     private _checkEquipmentTypeFilters = (equipment: IEquipment) => {
-        var filters = this.state.equipmentTypeFilters;
+        const filters = this.state.equipmentTypeFilters;
         return filters.some(
             f =>
                 (equipment && !!equipment.type && equipment.type === f) ||
@@ -504,14 +538,14 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
     };
 
     private _checkEquipmentProtectionFilters = (equipment: IEquipment) => {
-        var filters = this.state.equipmentProtectionFilters;
+        const filters = this.state.equipmentProtectionFilters;
         return filters.some(
             f => equipment && !!equipment.protectionLevel && equipment.protectionLevel === f
         );
     };
 
     private _checkEquipmentAvailabilityFilters = (equipment: IEquipment) => {
-        var filters = this.state.equipmentAvailabilityFilters;
+        const filters = this.state.equipmentAvailabilityFilters;
         return filters.some(
             f => equipment && !!equipment.availabilityLevel && equipment.availabilityLevel === f
         );
