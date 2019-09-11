@@ -237,6 +237,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignment).ThenInclude(x => x.Person)
+                .Include(x => x.Team)
                 .SingleAsync(x => x.Id == id);
             if (equipment == null)
             {
@@ -248,7 +249,6 @@ namespace Keas.Mvc.Controllers.Api
             }
 
             _context.EquipmentAssignments.Remove(equipment.Assignment);
-            equipment.Assignment = null;
             await _eventService.TrackUnAssignEquipment(equipment);
             await _context.SaveChangesAsync();
             return Json(null);
@@ -260,6 +260,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignment).ThenInclude(x => x.Person)
+                .Include(x => x.Team)
                 .SingleAsync(x => x.Id == id);
 
             if (equipment == null)

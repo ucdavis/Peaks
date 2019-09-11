@@ -14,7 +14,6 @@ import EquipmentTable from "./EquipmentTable";
 import RevokeEquipment from "./RevokeEquipment";
 import SearchAttributes from "./SearchAttributes";
 import SearchEquipmentType from "./SearchEquipmentType";
-import { Button } from "reactstrap";
 
 interface IState {
     attributeFilters: string[];
