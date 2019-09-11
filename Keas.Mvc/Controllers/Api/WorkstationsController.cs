@@ -200,6 +200,7 @@ namespace Keas.Mvc.Controllers.Api
 
             var workstation = await _context.Workstations.Where(x => x.Team.Slug == Team)
                 .Include(w => w.Assignment).ThenInclude(w => w.Person)
+                .Include(w => w.Space)
                 .SingleAsync(w => w.Id == id);
             if (workstation == null)
             {
