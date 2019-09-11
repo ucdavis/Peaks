@@ -241,9 +241,8 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         // call API to actually revoke
         try {
             const removed: IWorkstation = await this.context.fetch(
-                `/api/${this.context.team.slug}/workstations/revoke`,
+                `/api/${this.context.team.slug}/workstations/revoke/${workstation.id}`,
                 {
-                    body: JSON.stringify(workstation),
                     method: "POST"
                 }
             );
