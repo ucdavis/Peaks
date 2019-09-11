@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { AppContext, IAccess, IAccessAssignment, IPerson, ISpace } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
 import Denied from "../Shared/Denied";
@@ -52,8 +53,12 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         const accessFetchUrl = this.props.person
             ? `/api/${this.context.team.slug}/access/listAssigned?personId=${this.props.person.id}`
             : `/api/${this.context.team.slug}/access/list/`;
-
-        const accesses = await this.context.fetch(accessFetchUrl);
+        let accesses: IAccess[] = null;
+        try {
+            accesses = await this.context.fetch(accessFetchUrl);
+        } catch (err) {
+            toast.error("Error loading access list. Please refresh and try again.");
+        }
         const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);
 
         this.setState({ accesses, loading: false, tags });
@@ -180,20 +185,32 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         // if we are creating a new access
         if (access.id === 0) {
             access.teamId = this.context.team.id;
-            access = await this.context.fetch(`/api/${this.context.team.slug}/access/create`, {
-                body: JSON.stringify(access),
-                method: "POST"
-            });
+            try {
+                access = await this.context.fetch(`/api/${this.context.team.slug}/access/create`, {
+                    body: JSON.stringify(access),
+                    method: "POST"
+                });
+                toast.success("Access created successfully!");
+            } catch (err) {
+                toast.error("Error creating access.");
+                throw new Error(); // throw error so modal doesn't close
+            }
             updateTotalAssetCount = true;
         }
 
         // if we know who to assign it to, do it now
         if (person) {
             const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
-
-            const accessAssignment = await this.context.fetch(assignUrl, {
-                method: "POST"
-            });
+            let accessAssignment: IAccessAssignment = null;
+            try {
+                accessAssignment = await this.context.fetch(assignUrl, {
+                    method: "POST"
+                });
+                toast.success("Access assigned successfully!");
+            } catch (err) {
+                toast.error("Error assigning access.");
+                throw new Error(); // throw error so modal doesn't close
+            }
             // fetching only returns the assignment, so add it to the access in our state with the right person
             accessAssignment.person = person;
             if (!!this.props.person) {
@@ -242,14 +259,20 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         if (!confirm("Are you sure you want to revoke access?")) {
             return false;
         }
-        // call API to actually revoke
-        const removed: IAccess = await this.context.fetch(
-            `/api/${this.context.team.slug}/access/revoke`,
-            {
-                body: JSON.stringify(accessAssignment),
-                method: "POST"
-            }
-        );
+        try {
+            // call API to actually revoke
+            const removed: IAccess = await this.context.fetch(
+                `/api/${this.context.team.slug}/access/revoke`,
+                {
+                    body: JSON.stringify(accessAssignment),
+                    method: "POST"
+                }
+            );
+            toast.success("Access revoked sucessfully!");
+        } catch (err) {
+            toast.error("Error revoking access.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // find index of access in state
         const accessIndex = this.state.accesses.findIndex(x => x.id === accessAssignment.accessId);
@@ -282,13 +305,19 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
-        const deleted: IAccess = await this.context.fetch(
-            `/api/${this.context.team.slug}/access/delete`,
-            {
-                body: JSON.stringify(access),
-                method: "POST"
-            }
-        );
+        try {
+            const deleted: IAccess = await this.context.fetch(
+                `/api/${this.context.team.slug}/access/delete`,
+                {
+                    body: JSON.stringify(access),
+                    method: "POST"
+                }
+            );
+            toast.success("Access deleted successfully!");
+        } catch (err) {
+            toast.error("Error deleting access.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // remove from state
         const index = this.state.accesses.indexOf(access);
@@ -325,13 +354,17 @@ export default class AccessContainer extends React.Component<IProps, IState> {
             return;
         }
 
-        const updated: IAccess = await this.context.fetch(
-            `/api/${this.context.team.slug}/access/update`,
-            {
+        let updated: IAccess = null;
+        try {
+            updated = await this.context.fetch(`/api/${this.context.team.slug}/access/update`, {
                 body: JSON.stringify(access),
                 method: "POST"
-            }
-        );
+            });
+            toast.success("Access edited successfully!");
+        } catch (err) {
+            toast.error("Error editing access.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // update already existing entry in key
         const updateAccesses = [...this.state.accesses];
