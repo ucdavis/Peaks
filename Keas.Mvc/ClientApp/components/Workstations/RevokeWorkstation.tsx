@@ -61,7 +61,7 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
                         <Button
                             color="primary"
                             onClick={this._revokeWorkstation}
-                            disabled={!this.state.submitting}
+                            disabled={this.state.submitting}
                         >
                             Revoke
                         </Button>
