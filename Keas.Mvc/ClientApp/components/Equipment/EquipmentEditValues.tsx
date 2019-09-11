@@ -156,7 +156,9 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     {this._shouldShowForType(this.props.selectedEquipment.type, "SystemManagementId") && (
                         <div className="form-group">
                             <EquipmentBigFixInfo
-                               bigfixId={this.props.selectedEquipment.systemManagementId }
+                               bigfixId={this.props.selectedEquipment.systemManagementId}
+                               addBigFixId={this.props.changeProperty}
+                               disableEditing={this.props.disableEditing}
                            />
                             <input
                                 type="text"

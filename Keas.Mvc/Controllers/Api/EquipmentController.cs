@@ -324,5 +324,18 @@ namespace Keas.Mvc.Controllers.Api
         {
             return await this._bigfixService.GetComputer(id);
         }
+
+         public async Task<BigfixComputerSearchResult[]> GetComputersBySearch(string field, string value)
+        {
+            if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
+            {
+                return await this._bigfixService.GetComputersByName(value);
+            } else
+            {
+                // not supported yet
+                return null;
+
+            }
+        }
     }
 }

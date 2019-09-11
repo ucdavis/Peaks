@@ -1,9 +1,12 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import { Button, Modal, ModalBody, Table } from "reactstrap";
+import EquipmentBigFixSearchId from "./EquipmentBigFixSearchId";
 
 interface IProps {
     bigfixId: string;
+    addBigFixId: (property: string, id: string) => void;
+    disableEditing: boolean;
 }
 
 interface IState {
@@ -34,9 +37,12 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
     public render() {
         return (
             <>
-                <label> Bigfix Id</label>
-                <span />
-                {this._renderInfoIcon()}
+                <div className="d-flex">
+                    <label> Bigfix Id</label>
+                    <span />
+                    {this._renderInfoIcon()}
+                </div>
+
                 {this._renderBigFixModal()}
             </>
         );
@@ -44,7 +50,14 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
 
     private _renderInfoIcon = () => {
         if (!this.props.bigfixId) {
-            return null;
+            if (this.props.disableEditing) {
+                return (
+                    <span className="ml-3">
+                        ( Click Edit Equipment above to search for Bigfix Id )
+                    </span>
+                );
+            }
+            return <EquipmentBigFixSearchId addBigFixId={this.props.addBigFixId} />;
         }
 
         return (

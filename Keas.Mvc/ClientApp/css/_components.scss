@@ -3,20 +3,20 @@
   box-shadow: $box-shadow;
   border-radius: 4px;
   overflow: hidden;
-  margin-bottom:16px;
-  border:none;
+  margin-bottom: 16px;
+  border: none;
 }
 .alert {
-  margin-top:1.6rem;
+  margin-top: 1.6rem;
 }
 .card-content {
-  padding:$card-padding;
-  padding-bottom:2.6rem;
-  padding-top:2.6rem;
+  padding: $card-padding;
+  padding-bottom: 2.6rem;
+  padding-top: 2.6rem;
 }
 .card-head {
-  padding:$card-padding;
-  padding-top:1.8rem;
+  padding: $card-padding;
+  padding-top: 1.8rem;
 }
 .team-link {
   white-space: nowrap;
@@ -25,7 +25,7 @@
   min-width: 200px;
   line-height: 40px;
   padding: 0 20px;
-  box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 1px 3px rgba(0,0,0,.08);
+  box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 1px 3px rgba(0, 0, 0, 0.08);
   background: $secondary-color;
   border-radius: 2px;
   font-size: 1.6rem;
@@ -42,11 +42,10 @@
   &:hover {
     color: #fff !important;
     transform: translateY(-1px);
-    box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 3px 6px rgba(0,0,0,.08);
+    box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 3px 6px rgba(0, 0, 0, 0.08);
     background-color: lighten($primary-color, 5);
     text-decoration: none !important;
   }
-
 }
 .card-gradient-header {
   background: url("/media/gradient-header.svg") center top/cover no-repeat;
@@ -54,53 +53,53 @@
 }
 .card-gradient-header-bleed {
   background: #1e3a5b;
-  background: -moz-linear-gradient(left,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
-  background: -webkit-linear-gradient(left,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
-  background: linear-gradient(to right,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
+  background: -moz-linear-gradient(left, #1e3a5b 0%, #1e3a5b 44%, #dbbc5b 57%, #dbbc5b 100%);
+  background: -webkit-linear-gradient(left, #1e3a5b 0%, #1e3a5b 44%, #dbbc5b 57%, #dbbc5b 100%);
+  background: linear-gradient(to right, #1e3a5b 0%, #1e3a5b 44%, #dbbc5b 57%, #dbbc5b 100%);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr= '$gradient-one',endColorstr='$gradient-two',GradientType=1);
 }
 .card-header-spaces {
-  border-bottom:4px solid $spaces;
+  border-bottom: 4px solid $spaces;
 }
 .card-header-primary {
-  border-bottom:2px solid $borders;
+  border-bottom: 2px solid $borders;
 }
 .card-header-primary-thick {
-    border-bottom: 4px solid $borders;
+  border-bottom: 4px solid $borders;
 }
 .card-header-keys {
-  border-bottom:4px solid $keys;
+  border-bottom: 4px solid $keys;
 }
 .card-header-access {
-  border-bottom:4px solid $access;
+  border-bottom: 4px solid $access;
 }
 .card-header-equipment {
-  border-bottom:4px solid $equipment;
+  border-bottom: 4px solid $equipment;
 }
 .card-header-other {
-  border-bottom:2px solid $blue;
+  border-bottom: 2px solid $blue;
 }
 .card-header-people {
-  border-bottom:4px solid $people;
+  border-bottom: 4px solid $people;
 }
 .card-foot {
-  padding:$card-padding;
-  border-top:1px solid $borders;
+  padding: $card-padding;
+  border-top: 1px solid $borders;
 }
 button {
-  cursor:pointer;
+  cursor: pointer;
 }
 img.img-fluid {
   width: 100%;
 }
 .alert {
-  padding:$card-padding;
+  padding: $card-padding;
   p {
-    margin-bottom:0px;
-    color:$secondary-font;
+    margin-bottom: 0px;
+    color: $secondary-font;
   }
   @include fader;
-  box-shadow:$box-shadow;
+  box-shadow: $box-shadow;
   &:hover {
     transform: translateY(-1px);
   }
@@ -108,7 +107,7 @@ img.img-fluid {
 .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):active,
 .show > .btn-primary.dropdown-toggle {
-  border-color: rgba(255,255,255,.9999) !important;
+  border-color: rgba(255, 255, 255, 0.9999) !important;
   .people-color & {
     background-color: $people;
   }
@@ -123,156 +122,151 @@ img.img-fluid {
   }
   .equipment-color & {
     background-color: $equipment;
-
   }
-
-
-
 }
 .alert-red {
-  background-color:transparentize($unitrans-red,0.35);
+  background-color: transparentize($unitrans-red, 0.35);
   &:hover {
-    background-color:transparentize($unitrans-red,0.15);
-}
+    background-color: transparentize($unitrans-red, 0.15);
+  }
 }
 .alert-yellow {
-  background-color: transparentize($golden-lupine,0.35);
+  background-color: transparentize($golden-lupine, 0.35);
   &:hover {
-    background-color:transparentize($golden-lupine,.15);
-}
+    background-color: transparentize($golden-lupine, 0.15);
+  }
 }
 .alert-green {
-  background-color: transparentize($sunny-grass,0.35);
+  background-color: transparentize($sunny-grass, 0.35);
   &:hover {
-    background-color:transparentize($sunny-grass,.15);
-}
+    background-color: transparentize($sunny-grass, 0.15);
+  }
 }
 .alert-blue {
-  background-color: transparentize($sky-blue,0.35);
+  background-color: transparentize($sky-blue, 0.35);
   &:hover {
-    background-color:transparentize($sky-blue,.15);
-}
+    background-color: transparentize($sky-blue, 0.15);
+  }
 }
 .btn-team {
   background-color: #fff;
-  border:1px solid #c7c8cc;
-  padding:.6rem 1.2rem;
+  border: 1px solid #c7c8cc;
+  padding: 0.6rem 1.2rem;
   border-radius: 3px;
   .teamname {
-    text-align:right;
-    max-width:200px;
-    margin-right:16px;
+    text-align: right;
+    max-width: 200px;
+    margin-right: 16px;
   }
   i {
-    color:#c7c8cc;
+    color: #c7c8cc;
   }
 }
 .dropdown-toggle::after {
-  content:none;
+  content: none;
 }
 .btn {
   &.btn-primary {
     @include main-btn;
-
   }
   &.btn-success {
     @include main-btn;
-    background-color:$access !important;
+    background-color: $access !important;
   }
-&.btn-link {
-  color: $primary-color;
-  font-size: 1.6rem;
-  font-family: $sans-bold;
-  border:none;
-  cursor: pointer;
-  &:hover {
-    color: lighten($primary-color,5);
-    text-decoration: none;
-  }
-  .people-color & {
-    color:$people;
-    border-color:$people;
+  &.btn-link {
+    color: $primary-color;
+    font-size: 1.6rem;
+    font-family: $sans-bold;
+    border: none;
+    cursor: pointer;
     &:hover {
-      color:(darken($people,10));
-      text-decoration:none;
+      color: lighten($primary-color, 5);
+      text-decoration: none;
     }
-  }
+    .people-color & {
+      color: $people;
+      border-color: $people;
+      &:hover {
+        color: (darken($people, 10));
+        text-decoration: none;
+      }
+    }
 
-  .keys-color & {
-    color:$keys;
-    border-color:$keys;
-    &:hover {
-      color:(darken($keys,10));
-      text-decoration:none;
+    .keys-color & {
+      color: $keys;
+      border-color: $keys;
+      &:hover {
+        color: (darken($keys, 10));
+        text-decoration: none;
+      }
     }
-  }
-  .spaces-color & {
-    color:$spaces;
-    border-color:$spaces;
-    &:hover {
-      color:(darken($spaces,10));
-      text-decoration:none;
+    .spaces-color & {
+      color: $spaces;
+      border-color: $spaces;
+      &:hover {
+        color: (darken($spaces, 10));
+        text-decoration: none;
+      }
     }
-  }
-  .access-color & {
-    color:$access;
-    border-color:$access;
-    &:hover {
-      color:(darken($access,10));
-      text-decoration:none;
+    .access-color & {
+      color: $access;
+      border-color: $access;
+      &:hover {
+        color: (darken($access, 10));
+        text-decoration: none;
+      }
     }
-  }
 
-  .equipment-color & {
-    color:$equipment;
-    border-color:$equipment;
-    &:hover {
-      color:(darken($equipment,10));
-      text-decoration:none;
+    .equipment-color & {
+      color: $equipment;
+      border-color: $equipment;
+      &:hover {
+        color: (darken($equipment, 10));
+        text-decoration: none;
+      }
+    }
+    .history-color & {
+      color: $history;
+      border-color: $history;
+      &:hover {
+        color: (darken($history, 10));
+        text-decoration: none;
+      }
     }
   }
-  .history-color & {
-    color:$history;
-    border-color:$history;
-    &:hover {
-      color:(darken($history,10));
-      text-decoration:none;
-    }
-  }
-}
 }
 .btn-border {
-  border:1px solid #C7C8CC !important;
-  color:$secondary-font !important;
+  border: 1px solid #c7c8cc !important;
+  color: $secondary-font !important;
 }
 .people-color {
   .fa-ellipsis-h:before {
-    color:$people;
+    color: $people;
   }
 }
 .access-color {
   .fa-ellipsis-h:before {
-    color:$access;
+    color: $access;
   }
 }
 .keys-color {
   .fa-ellipsis-h:before {
-    color:$keys;
+    color: $keys;
   }
 }
 .spaces-color {
   .fa-ellipsis-h:before {
-    color:$spaces;
+    color: $spaces;
   }
 }
 .equipment-color {
   .fa-ellipsis-h:before {
-    color:$equipment;
+    color: $equipment;
   }
 }
 
 .keys-color .btn-primary {
-  background-color:$keys;
+  background-color: $keys;
   &:active,
   &:focus {
     background-color: darken($keys, 5);
@@ -282,7 +276,7 @@ img.img-fluid {
   }
 }
 .equipment-color .btn-primary {
-  background-color:$equipment;
+  background-color: $equipment;
   &:active,
   &:focus {
     background-color: darken($equipment, 5);
@@ -292,7 +286,7 @@ img.img-fluid {
   }
 }
 .access-color .btn-primary {
-  background-color:$access;
+  background-color: $access;
   &:active,
   &:focus {
     background-color: darken($access, 5);
@@ -302,7 +296,7 @@ img.img-fluid {
   }
 }
 .spaces-color .btn-primary {
-  background-color:$spaces;
+  background-color: $spaces;
   &:active,
   &:focus {
     background-color: darken($spaces, 5);
@@ -312,7 +306,7 @@ img.img-fluid {
   }
 }
 .people-color .btn-primary {
-  background-color:$people;
+  background-color: $people;
   &:active,
   &:focus {
     background-color: darken($people, 5);
@@ -328,31 +322,32 @@ img.img-fluid {
     margin-right: 20px;
   }
 
-  .media-body {}
+  .media-body {
+  }
 }
 .keys-report {
   i {
-    color:$keys;
+    color: $keys;
   }
 }
 .equipment-report {
   i {
-    color:$equipment;
+    color: $equipment;
   }
 }
 .access-report {
   i {
-    color:$access;
+    color: $access;
   }
 }
 .people-report {
   i {
-    color:$people;
+    color: $people;
   }
 }
 .spaces-report {
   i {
-    color:$spaces;
+    color: $spaces;
   }
 }
 ol.breadcrumb {
@@ -387,7 +382,7 @@ ol.breadcrumb {
     color: $secondary-font;
   }
 
-  > li+li:before {
+  > li + li:before {
     color: $tertiary-font;
     content: "/";
   }
@@ -416,10 +411,10 @@ ol.breadcrumb {
 }
 
 .m-r {
-  margin-right:8px;
+  margin-right: 8px;
 }
 .m-l {
-  margin-left:8px
+  margin-left: 8px;
 }
 .m-b {
   margin-bottom: 16px;
@@ -470,7 +465,7 @@ ol.breadcrumb {
 //database
 
 .border-top {
-  border-top: 2px solid rgba(255,255,255,0.95);
+  border-top: 2px solid rgba(255, 255, 255, 0.95);
 }
 
 .border-blue-top {
@@ -565,7 +560,7 @@ ol.breadcrumb {
   color: $a-link;
 }
 .primary-color {
-  color:$primary-color;
+  color: $primary-color;
 }
 .sans-bold {
   font-family: $sans-bold;
@@ -586,24 +581,26 @@ ol.breadcrumb {
   align-items: center;
 }
 .twopointoh {
-  font-size:2rem;
+  font-size: 2rem;
 }
 .onepointeight {
-  font-size:1.8rem;
+  font-size: 1.8rem;
 }
 .card-bot-border {
-  border-bottom:1px solid $borders;
+  border-bottom: 1px solid $borders;
 }
 .table-borderless {
-  td, th {
-    border-top:none !important;
-    padding-left:0px;
+  td,
+  th {
+    border-top: none !important;
+    padding-left: 0px;
   }
   .rbt {
-    margin-bottom:0px;
+    margin-bottom: 0px;
   }
 }
-.ReactTable .rt-thead .rt-th.-sort-asc, .ReactTable .rt-thead .rt-td.-sort-asc {
+.ReactTable .rt-thead .rt-th.-sort-asc,
+.ReactTable .rt-thead .rt-td.-sort-asc {
   .people-color & {
     box-shadow: inset 0 3px 0 0 $people;
   }
@@ -619,9 +616,9 @@ ol.breadcrumb {
   .equipment-color & {
     box-shadow: inset 0 3px 0 0 $equipment;
   }
-
 }
-.ReactTable .rt-thead .rt-th.-sort-desc, .ReactTable .rt-thead .rt-td.-sort-desc {
+.ReactTable .rt-thead .rt-th.-sort-desc,
+.ReactTable .rt-thead .rt-td.-sort-desc {
   .people-color & {
     box-shadow: inset 0 -3px 0 0 $people;
   }
@@ -637,16 +634,14 @@ ol.breadcrumb {
   .equipment-color & {
     box-shadow: inset 0 -3px 0 0 $equipment;
   }
-
-
 }
 .-btn {
-  color:#fff!important;
+  color: #fff !important;
   font-family: $sans-bold;
-  width:66% !important;
-  display:inline !important;
+  width: 66% !important;
+  display: inline !important;
   .people-color & {
-      background-color: lighten($people,5) !important;
+    background-color: lighten($people, 5) !important;
   }
   .keys-color & {
     background-color: $keys !important;
@@ -658,7 +653,7 @@ ol.breadcrumb {
     background-color: $access !important;
   }
   .equipment-color & {
-    background-color: transparentize($equipment,.2) !important;
+    background-color: transparentize($equipment, 0.2) !important;
   }
 }
 .-previous {
@@ -669,25 +664,33 @@ ol.breadcrumb {
 }
 
 .keys-anomaly {
-    color:$keys !important;
-    border-color:$keys;
-    &:hover {
-      color:(darken($keys,10));
-      text-decoration:none;
-    }
-    &.fa-ellipsis-h:before {
-      color:$keys;
-    }
+  color: $keys !important;
+  border-color: $keys;
+  &:hover {
+    color: (darken($keys, 10));
+    text-decoration: none;
+  }
+  &.fa-ellipsis-h:before {
+    color: $keys;
+  }
 }
 #Name-error {
-  color:$unitrans-red;
+  color: $unitrans-red;
 }
 .bigfix-info {
-  cursor:pointer;
-  color:$a-link !important;
+  cursor: pointer;
+  color: $a-link !important;
   &:hover {
-    color:$primary-color !important;
+    color: $primary-color !important;
   }
+}
+
+.border-bottom {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.border-none {
+  border-style: none;
 }
 .Toastify__toast--success {
   background-color: $sunny-grass !important;
