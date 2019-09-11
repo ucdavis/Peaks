@@ -141,6 +141,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         closeModal={this._closeModals}
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openAssignModal}
+                        updateSelectedEquipment={this._updateEquipmentFromDetails}
                     />
                     <EditEquipment
                         selectedEquipment={detailEquipment}
@@ -499,6 +500,21 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 this.props.person ? this.props.person.id : null
             );
         }
+    };
+
+    private _updateEquipmentFromDetails = (equipment: IEquipment) => {
+        const index = this.state.equipment.findIndex(x => x.id === equipment.id);
+
+        if (index === -1) {
+            // should always already exist
+            return;
+        }
+
+        // update already existing entry in key
+        const updateEquipment = [...this.state.equipment];
+        updateEquipment[index] = equipment;
+
+        this.setState({ ...this.state, equipment: updateEquipment });
     };
 
     private _filterEquipmentType = (filters: string[]) => {

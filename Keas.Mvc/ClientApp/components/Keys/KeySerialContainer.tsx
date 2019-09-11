@@ -61,13 +61,9 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         // are we getting the person's key or the team's?
         let keyFetchUrl = "";
         if (!!selectedPerson) {
-            keyFetchUrl = `/api/${this.context.team.slug}/keySerials/getforperson?personid=${
-                selectedPerson.id
-            }`;
+            keyFetchUrl = `/api/${this.context.team.slug}/keySerials/getforperson?personid=${selectedPerson.id}`;
         } else if (!!selectedKey) {
-            keyFetchUrl = `/api/${this.context.team.slug}/keySerials/getforkey?keyid=${
-                selectedKey.id
-            }`;
+            keyFetchUrl = `/api/${this.context.team.slug}/keySerials/getforkey?keyid=${selectedKey.id}`;
         } else {
             keyFetchUrl = `/api/${this.context.team.slug}/keySerials/list/`;
         }
@@ -148,6 +144,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                         closeModal={this._closeModals}
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openUpdateModal}
+                        updateSelectedKeySerial={this._updateKeySerialsFromDetails}
                     />
                     <EditKeySerial
                         selectedKeySerial={selectedKeySerial}
@@ -318,6 +315,21 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         // TODO: handle count changes once keys are related to spaces
     };
 
+    private _updateKeySerialsFromDetails = (keySerial: IKeySerial) => {
+        const index = this.state.keySerials.findIndex(x => x.id === keySerial.id);
+
+        if (index === -1) {
+            // should always already exist
+            return;
+        }
+
+        // update already existing entry in key
+        const updateKeySerials = [...this.state.keySerials];
+        updateKeySerials[index] = keySerial;
+
+        this.setState({ ...this.state, keySerials: updateKeySerials });
+    };
+
     private _openAssignModal = (keySerial: IKeySerial) => {
         this.context.router.history.push(`${this._getBaseUrl()}/keyserials/assign/${keySerial.id}`);
     };
@@ -331,9 +343,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         // this happens on the search, when selecting already assigned
         if (this.state.keySerials.findIndex(x => x.id === keySerial.id) === -1) {
             this.context.router.history.push(
-                `/${this.context.team.slug}/keys/details/${keySerial.key.id}/keyserials/details/${
-                    keySerial.id
-                }`
+                `/${this.context.team.slug}/keys/details/${keySerial.key.id}/keyserials/details/${keySerial.id}`
             );
         } else {
             this.context.router.history.push(

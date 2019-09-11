@@ -28,8 +28,8 @@ namespace Keas.Mvc.Controllers.Api
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
-                .Where(x => x.Team.Slug == Team && x.Active  &&
-                (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
+                .Where(x => x.Team.Slug == Team && x.Active &&
+                (x.Name.StartsWith(q, comparison) || x.Space.BldgName.IndexOf(q, comparison) >= 0 // case-insensitive .Contains
                     || x.Space.RoomNumber.StartsWith(q, comparison)))
                 .Include(x => x.Space)
                 .Include(x => x.Assignment)
@@ -39,13 +39,13 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipment);
         }
 
-        
+
         public async Task<IActionResult> SearchInSpace(int spaceId, string q)
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
-                .Where(x => x.Team.Slug == Team && x.SpaceId == spaceId && x.Active && 
-                (x.Name.StartsWith(q,comparison) || x.Space.BldgName.IndexOf(q,comparison) >= 0 // case-insensitive .Contains
+                .Where(x => x.Team.Slug == Team && x.SpaceId == spaceId && x.Active &&
+                (x.Name.StartsWith(q, comparison) || x.Space.BldgName.IndexOf(q, comparison) >= 0 // case-insensitive .Contains
                     || x.Space.RoomNumber.StartsWith(q, comparison)))
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
@@ -81,7 +81,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var workstationAssignments = await _context.Workstations
-                .Where(w => w.Assignment.PersonId == personId && w.Team.Slug==Team)
+                .Where(w => w.Assignment.PersonId == personId && w.Team.Slug == Team)
                 .Include(w => w.Assignment)
                 .ThenInclude(w => w.Person)
                 .Include(w => w.Space)
@@ -102,6 +102,21 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(w => w.Attributes)
                 .Include(w => w.Team)
                 .AsNoTracking().ToArrayAsync();
+
+            return Json(workstations);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var workstations = await _context.Workstations
+                .Where(w => w.Team.Slug == Team)
+                .Include(w => w.Assignment)
+                    .ThenInclude(w => w.Person)
+                .Include(w => w.Space)
+                .Include(w => w.Attributes)
+                .Include(w => w.Team)
+                .AsNoTracking()
+                .SingleAsync(w => w.Id == id);
 
             return Json(workstations);
         }
@@ -131,13 +146,13 @@ namespace Keas.Mvc.Controllers.Api
             {
                 var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
                     .Include(w => w.Space).Include(t => t.Team).Include(w => w.Assignment).ThenInclude(a => a.Person).SingleAsync(w => w.Id == workstationId);
-                    
+
                 if (workstation.Team.Slug != Team)
                 {
                     Message = "Workstation is not part of this team!";
                     return BadRequest(workstation);
                 }
-                if(workstation.Assignment != null)
+                if (workstation.Assignment != null)
                 {
                     _context.WorkstationAssignments.Update(workstation.Assignment);
                     workstation.Assignment.ExpiresAt = DateTime.Parse(date);
@@ -147,9 +162,9 @@ namespace Keas.Mvc.Controllers.Api
                 }
                 else
                 {
-                    workstation.Assignment = new WorkstationAssignment{PersonId = personId, ExpiresAt = DateTime.Parse(date)};
+                    workstation.Assignment = new WorkstationAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
                     workstation.Assignment.Person =
-                    await _context.People.Include(p=> p.Team).SingleAsync(p => p.Id == personId);
+                    await _context.People.Include(p => p.Team).SingleAsync(p => p.Id == personId);
                     workstation.Assignment.RequestedById = User.Identity.Name;
                     workstation.Assignment.RequestedByName = User.GetNameClaim();
 
@@ -164,10 +179,10 @@ namespace Keas.Mvc.Controllers.Api
                         Message = "Workstation team did not match person's team!";
                         return BadRequest(workstation);
                     }
-                    
+
                     _context.WorkstationAssignments.Add(workstation.Assignment);
                     await _eventService.TrackAssignWorkstation(workstation);
-                }                
+                }
 
                 await _context.SaveChangesAsync();
                 return Json(workstation);
@@ -185,7 +200,7 @@ namespace Keas.Mvc.Controllers.Api
                     .SingleAsync(w => w.Id == workstation.Id);
 
                 _context.WorkstationAssignments.Remove(workstationToUpdate.Assignment);
-                workstationToUpdate.Assignment = null;                
+                workstationToUpdate.Assignment = null;
                 await _eventService.TrackUnAssignWorkstation(workstation);
                 await _context.SaveChangesAsync();
                 return Json(null);
@@ -201,7 +216,7 @@ namespace Keas.Mvc.Controllers.Api
                 var w = await _context.Workstations.Where(x => x.Team.Slug == Team)
                     .Include(x => x.Space)
                     .SingleAsync(x => x.Id == workstation.Id);
-                    
+
                 w.Name = workstation.Name;
                 w.Tags = workstation.Tags;
                 w.Notes = workstation.Notes;
@@ -223,17 +238,17 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Space)
                 .SingleAsync(x => x.Id == id);
 
-            using(var transaction = _context.Database.BeginTransaction())
+            using (var transaction = _context.Database.BeginTransaction())
             {
 
-                if(workstation.Assignment != null)
+                if (workstation.Assignment != null)
                 {
                     await _eventService.TrackUnAssignWorkstation(workstation); // call before we remove person info
                     _context.WorkstationAssignments.Remove(workstation.Assignment);
                     workstation.Assignment = null;
                 }
 
-                workstation.Active = false;                
+                workstation.Active = false;
                 await _eventService.TrackWorkstationDeleted(workstation);
                 await _context.SaveChangesAsync();
 

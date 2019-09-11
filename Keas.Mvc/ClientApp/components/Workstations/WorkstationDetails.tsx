@@ -1,6 +1,7 @@
-﻿import * as React from "react";
+﻿import * as PropTypes from "prop-types";
+import * as React from "react";
 import { Button, Modal, ModalBody } from "reactstrap";
-import { IWorkstation } from "../../Types";
+import { AppContext, IWorkstation } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
 import WorkstationAssignmentValues from "./WorkstationAssignmentValues";
 import WorkstationEditValues from "./WorkstationEditValues";
@@ -11,9 +12,34 @@ interface IProps {
     openEditModal: (workstation: IWorkstation) => void;
     openUpdateModal: (workstation: IWorkstation) => void;
     selectedWorkstation: IWorkstation;
+    updateSelectedWorkstation: (workstation: IWorkstation) => void;
 }
 
 export default class WorkstationDetails extends React.Component<IProps, {}> {
+    public static contextTypes = {
+        fetch: PropTypes.func,
+        team: PropTypes.object
+    };
+    public context: AppContext;
+
+    public componentDidMount() {
+        if (!this.props.selectedWorkstation) {
+            return;
+        }
+        this._fetchDetails(this.props.selectedWorkstation.id);
+    }
+
+    // make sure we change the key we are updating if the parent changes selected key
+    public componentWillReceiveProps(nextProps: IProps) {
+        if (
+            nextProps.selectedWorkstation &&
+            (!this.props.selectedWorkstation ||
+                nextProps.selectedWorkstation.id !== this.props.selectedWorkstation.id)
+        ) {
+            this._fetchDetails(nextProps.selectedWorkstation.id);
+        }
+    }
+
     public render() {
         if (!this.props.selectedWorkstation) {
             return null;
@@ -50,4 +76,10 @@ export default class WorkstationDetails extends React.Component<IProps, {}> {
             </div>
         );
     }
+
+    private _fetchDetails = async (id: number) => {
+        const url = `/api/${this.context.team.slug}/workstations/details/${id}`;
+        const workstation = await this.context.fetch(url);
+        this.props.updateSelectedWorkstation(workstation);
+    };
 }

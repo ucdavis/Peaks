@@ -35,15 +35,15 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
-            var equipment = 
+            var equipment =
                 from eq in _context.Equipment
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
+                (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
                 .Include(x => x.Attributes)
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
                 .AsNoTracking()
-                select new 
+                select new
                 {
                     equipment = eq,
                     label = eq.Id + ". " + eq.Name + " " + eq.SerialNumber,
@@ -65,7 +65,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipment);
         }
 
-        public async Task<IActionResult> CommonAttributeKeys() 
+        public async Task<IActionResult> CommonAttributeKeys()
         {
             var keys = await _context.EquipmentAttributeKeys
                 .Where(a => a.TeamId == null || a.Team.Slug == Team)
@@ -74,7 +74,7 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(keys);
         }
-        
+
         public ActionResult ListEquipmentTypes() => Json(EquipmentTypes.Types);
 
         public async Task<IActionResult> ListAssigned(int personId)
@@ -97,13 +97,28 @@ namespace Keas.Mvc.Controllers.Api
             var equipments = await _context.Equipment
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignment)
-                .ThenInclude(x=>x.Person)
+                .ThenInclude(x => x.Person)
                 .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
 
             return Json(equipments);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var equipment = await _context.Equipment
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignment)
+                    .ThenInclude(x => x.Person)
+                .Include(x => x.Space)
+                .Include(x => x.Attributes)
+                .Include(x => x.Team)
+                .AsNoTracking()
+                .SingleAsync(x => x.Id == id);
+
+            return Json(equipment);
         }
 
         [HttpPost]
@@ -305,7 +320,8 @@ namespace Keas.Mvc.Controllers.Api
             return Json(history);
         }
 
-        public async Task<BigFixComputerProperties> GetComputer(string id) {
+        public async Task<BigFixComputerProperties> GetComputer(string id)
+        {
             return await this._bigfixService.GetComputer(id);
         }
     }

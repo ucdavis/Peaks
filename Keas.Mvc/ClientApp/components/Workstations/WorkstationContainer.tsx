@@ -52,16 +52,12 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         let workstations = [];
         if (!this.props.space && !!this.props.person) {
             workstations = await this.context.fetch(
-                `/api/${this.context.team.slug}/workstations/listAssigned?personId=${
-                    this.props.person.id
-                }`
+                `/api/${this.context.team.slug}/workstations/listAssigned?personId=${this.props.person.id}`
             );
         }
         if (!!this.props.space && !this.props.person) {
             workstations = await this.context.fetch(
-                `/api/${this.context.team.slug}/workstations/getWorkstationsInSpace?spaceId=${
-                    this.props.space.id
-                }`
+                `/api/${this.context.team.slug}/workstations/getWorkstationsInSpace?spaceId=${this.props.space.id}`
             );
         }
         this.setState({ workstations, loading: false });
@@ -126,6 +122,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                         selectedWorkstation={selectedWorkstation}
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openAssignModal}
+                        updateSelectedWorkstation={this._updateWorkstationFromDetails}
                     />
                     <EditWorkstation
                         closeModal={this._closeModals}
@@ -176,9 +173,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
 
         // if we know who to assign it to, do it now
         if (person) {
-            const assignUrl = `/api/${this.context.team.slug}/workstations/assign?workstationId=${
-                workstation.id
-            }&personId=${person.id}&date=${date}`;
+            const assignUrl = `/api/${this.context.team.slug}/workstations/assign?workstationId=${workstation.id}&personId=${person.id}&date=${date}`;
 
             if (!workstation.assignment) {
                 // only count as assigned if this is a new one
@@ -333,14 +328,27 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         }
     };
 
+    private _updateWorkstationFromDetails = (workstation: IWorkstation) => {
+        const index = this.state.workstations.findIndex(x => x.id === workstation.id);
+
+        if (index === -1) {
+            // should always already exist
+            return;
+        }
+
+        // update already existing entry in key
+        const updateWorkstations = [...this.state.workstations];
+        updateWorkstations[index] = workstation;
+
+        this.setState({ ...this.state, workstations: updateWorkstations });
+    };
+
     private _openDetailsModal = (workstation: IWorkstation) => {
         // if we are on spaces or person page, and this workstation is not in our state
         // this happens on the search, when selecting already assigned
         if (this.state.workstations.findIndex(x => x.id === workstation.id) === -1) {
             this.context.router.history.push(
-                `/${this.context.team.slug}/spaces/details/${
-                    workstation.space.id
-                }/workstations/details/${workstation.id}`
+                `/${this.context.team.slug}/spaces/details/${workstation.space.id}/workstations/details/${workstation.id}`
             );
         } else {
             this.context.router.history.push(
