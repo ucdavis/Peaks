@@ -12,7 +12,7 @@ interface IProps {
 }
 
 interface IState {
-    loading: boolean;
+    submitting: boolean;
 }
 
 export default class RevokeWorkstation extends React.Component<IProps, IState> {
@@ -28,7 +28,7 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
-            loading: false
+            submitting: false
         };
     }
 
@@ -36,17 +36,20 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
         if (!this.props.selectedWorkstation || !this.props.selectedWorkstation.assignment) {
             return null;
         }
-        if (this.state.loading) {
-            return <h2>Loading...</h2>;
-        }
         return (
             <div>
-                <Modal isOpen={this.props.modal} toggle={this.props.closeModal} size="lg" className="spaces-color">
+                <Modal
+                    isOpen={this.props.modal}
+                    toggle={this.props.closeModal}
+                    size="lg"
+                    className="spaces-color"
+                >
                     <div className="modal-header row justify-content-between">
-                      <h2>Details for {this.props.selectedWorkstation.name}</h2>
-                      <Button color="link" onClick={this.props.closeModal}>
-                          <i className="fas fa-times fa-lg" />
-                      </Button></div>
+                        <h2>Revoke {this.props.selectedWorkstation.name}</h2>
+                        <Button color="link" onClick={this.props.closeModal}>
+                            <i className="fas fa-times fa-lg" />
+                        </Button>
+                    </div>
                     <ModalBody>
                         <WorkstationEditValues
                             selectedWorkstation={this.props.selectedWorkstation}
@@ -55,7 +58,11 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
                         />
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this._revokeWorkstation}>
+                        <Button
+                            color="primary"
+                            onClick={this._revokeWorkstation}
+                            disabled={!this.state.submitting}
+                        >
                             Revoke
                         </Button>
                     </ModalFooter>
@@ -68,7 +75,14 @@ export default class RevokeWorkstation extends React.Component<IProps, IState> {
         if (!this.props.selectedWorkstation) {
             return null;
         }
-        await this.props.revokeWorkstation(this.props.selectedWorkstation);
+        this.setState({ submitting: true });
+        try {
+            await this.props.revokeWorkstation(this.props.selectedWorkstation);
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
+        this.setState({ submitting: false });
         this.props.closeModal();
     };
 }

@@ -80,7 +80,6 @@ export default class DeleteWorkstation extends React.Component<IProps, IState> {
         try {
             await this.props.deleteWorkstation(this.props.selectedWorkstation);
         } catch (err) {
-            alert("There was an error deleting this workstation, please try again");
             this.setState({ submitting: false });
             return;
         }
