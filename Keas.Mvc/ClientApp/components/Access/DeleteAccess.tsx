@@ -82,7 +82,6 @@ export default class DeleteAccess extends React.Component<IProps, IState> {
         try {
             await this.props.deleteAccess(this.props.selectedAccess);
         } catch (err) {
-            alert("There was an error deleting this access, please try again");
             this.setState({ submitting: false });
             return;
         }
