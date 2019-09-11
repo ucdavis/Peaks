@@ -53,7 +53,7 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(keySerials);
         }
-     public async Task<IActionResult> SearchInKey(int keyId, string q)
+        public async Task<IActionResult> SearchInKey(int keyId, string q)
         {
             // break out the query into terms
             var terms = q.Split(' ');
@@ -110,6 +110,20 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerials);
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var keySerials = await _context.KeySerials
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.KeySerialAssignment)
+                    .ThenInclude(x => x.Person)
+                .Include(x => x.Key)
+                .AsNoTracking()
+                .SingleAsync(x => x.Id == id);
+
+            return Json(keySerials);
+        }
+
+
         public async Task<IActionResult> Create([FromBody] CreateKeySerialViewModel model)
         {
             // TODO Make sure user has permissions
@@ -138,18 +152,18 @@ namespace Keas.Mvc.Controllers.Api
             // create key serial
             var keySerial = new KeySerial
             {
-                KeyId    = key.Id,
-                Key      = key,
-                TeamId   = key.TeamId,
-                Name     = model.Number.Trim(),
-                Number   = model.Number.Trim(),
-                Notes    = model.Notes, 
-                Status   = model.Status ?? "Active",                
+                KeyId = key.Id,
+                Key = key,
+                TeamId = key.TeamId,
+                Name = model.Number.Trim(),
+                Number = model.Number.Trim(),
+                Notes = model.Notes,
+                Status = model.Status ?? "Active",
             };
 
             // add key serial
-            key.Serials.Add(keySerial);          
-            
+            key.Serials.Add(keySerial);
+
             await _eventService.TrackCreateKeySerial(keySerial);
             await _context.SaveChangesAsync();
 
@@ -193,7 +207,7 @@ namespace Keas.Mvc.Controllers.Api
             keySerial.Status = model.Status;
             keySerial.Notes = model.Notes;
 
-            
+
 
             await _eventService.TrackUpdateKeySerial(keySerial);
             await _context.SaveChangesAsync();
@@ -226,27 +240,27 @@ namespace Keas.Mvc.Controllers.Api
             if (serial.KeySerialAssignment != null)
             {
                 serial.KeySerialAssignment.ExpiresAt = model.ExpiresAt;
-                serial.KeySerialAssignment.RequestedById =  User.Identity.Name;
+                serial.KeySerialAssignment.RequestedById = User.Identity.Name;
                 serial.KeySerialAssignment.RequestedByName = User.GetNameClaim();
 
                 _context.KeySerialAssignments.Update(serial.KeySerialAssignment);
                 await _eventService.TrackAssignmentUpdatedKeySerial(serial);
             }
-            else 
+            else
             {
                 var assignment = new KeySerialAssignment
                 {
-                    KeySerial   = serial,
+                    KeySerial = serial,
                     KeySerialId = serial.Id,
-                    Person      = person,
-                    PersonId    = person.Id,
-                    ExpiresAt   = model.ExpiresAt,
+                    Person = person,
+                    PersonId = person.Id,
+                    ExpiresAt = model.ExpiresAt,
                     RequestedById = User.Identity.Name,
                     RequestedByName = User.GetNameClaim()
                 };
 
                 // create, associate, and track
-                
+
                 _context.KeySerialAssignments.Add(assignment);
                 await _context.SaveChangesAsync();
                 serial.KeySerialAssignment = assignment;
@@ -288,7 +302,7 @@ namespace Keas.Mvc.Controllers.Api
             _context.KeySerialAssignments.Remove(assignment);
 
             await _context.SaveChangesAsync();
-            
+
 
             // return unassigned key serial
             return Json(keySerial);

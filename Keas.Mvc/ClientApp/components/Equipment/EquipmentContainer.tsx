@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { AppContext, IEquipment, IPerson, ISpace } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
 import Denied from "../Shared/Denied";
@@ -60,7 +61,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             equipmentProtectionLevels: ["P1", "P2", "P3", "P4"],
             equipmentProtectionFilters: [],
             equipmentAvailabilityLevels: ["A1", "A2", "A3", "A4"],
-            equipmentAvailabilityFilters: [],
+            equipmentAvailabilityFilters: []
         };
     }
     public async componentDidMount() {
@@ -70,28 +71,27 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         // are we getting the person's equipment or the team's?
         let equipmentFetchUrl = "";
         if (!!this.props.person) {
-            equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/listassigned?personid=${
-                this.props.person.id
-            }`;
+            equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/listassigned?personid=${this.props.person.id}`;
         } else if (!!this.props.space) {
-            equipmentFetchUrl = `/api/${
-                this.context.team.slug
-            }/equipment/getEquipmentInSpace?spaceId=${this.props.space.id}`;
+            equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/getEquipmentInSpace?spaceId=${this.props.space.id}`;
         } else {
             equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/list/`;
         }
-
+        let equipment: IEquipment[] = null;
+        try {
+            equipment = await this.context.fetch(equipmentFetchUrl);
+        } catch (e) {
+            toast.error("Failed to fetch equipment. Please refresh the page to try again.");
+            return;
+        }
+        // TODO: move all this into context
         const attrFetchUrl = `/api/${this.context.team.slug}/equipment/commonAttributeKeys/`;
 
         const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
 
-        const equipmentTypeFetchUrl = `/api/${
-            this.context.team.slug
-        }/equipment/ListEquipmentTypes/`;
+        const equipmentTypeFetchUrl = `/api/${this.context.team.slug}/equipment/ListEquipmentTypes/`;
 
         const equipmentTypes = await this.context.fetch(equipmentTypeFetchUrl);
-
-        const equipment = await this.context.fetch(equipmentFetchUrl);
 
         const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);
 
@@ -141,6 +141,7 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                         closeModal={this._closeModals}
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openAssignModal}
+                        updateSelectedEquipment={this._updateEquipmentFromDetails}
                     />
                     <EditEquipment
                         selectedEquipment={detailEquipment}
@@ -206,10 +207,10 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 );
             }
             if (this.state.equipmentProtectionFilters.length > 0) {
-                filteredEquipment = filteredEquipment.filter(x => 
+                filteredEquipment = filteredEquipment.filter(x =>
                     this._checkEquipmentProtectionFilters(x)
                 );
-            } 
+            }
             if (this.state.equipmentAvailabilityFilters.length > 0) {
                 filteredEquipment = filteredEquipment.filter(x =>
                     this._checkEquipmentAvailabilityFilters(x)
@@ -277,30 +278,40 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         // if we are creating a new equipment
         if (equipment.id === 0) {
             equipment.teamId = this.context.team.id;
-            equipment = await this.context.fetch(
-                `/api/${this.context.team.slug}/equipment/create`,
-                {
-                    body: JSON.stringify(equipment),
-                    method: "POST"
-                }
-            );
+            try {
+                equipment = await this.context.fetch(
+                    `/api/${this.context.team.slug}/equipment/create`,
+                    {
+                        body: JSON.stringify(equipment),
+                        method: "POST"
+                    }
+                );
+                toast.success("Equipment created successfully!");
+            } catch (e) {
+                toast.error("Error creating equipment.");
+                throw new Error(); // throw error so modal doesn't close
+            }
             equipment.attributes = attributes;
             updateTotalAssetCount = true;
         }
 
         // if we know who to assign it to, do it now
         if (person) {
-            const assignUrl = `/api/${this.context.team.slug}/equipment/assign?equipmentId=${
-                equipment.id
-            }&personId=${person.id}&date=${date}`;
+            const assignUrl = `/api/${this.context.team.slug}/equipment/assign?equipmentId=${equipment.id}&personId=${person.id}&date=${date}`;
 
             if (!equipment.assignment) {
                 // don't count as assigning unless this is a new one
                 updateInUseAssetCount = true;
             }
-            equipment = await this.context.fetch(assignUrl, {
-                method: "POST"
-            });
+            try {
+                equipment = await this.context.fetch(assignUrl, {
+                    method: "POST"
+                });
+                toast.success("Equipment assigned successfully!");
+            } catch (e) {
+                toast.error("Error assigning equipment.");
+                throw new Error(); // throw error so modal doesn't close
+            }
             equipment.attributes = attributes;
             equipment.assignment.person = person;
         }
@@ -350,13 +361,18 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             return false;
         }
         // call API to actually revoke
-        const removed: IEquipment = await this.context.fetch(
-            `/api/${this.context.team.slug}/equipment/revoke`,
-            {
-                body: JSON.stringify(equipment),
-                method: "POST"
-            }
-        );
+        try {
+            const removed: IEquipment = await this.context.fetch(
+                `/api/${this.context.team.slug}/equipment/revoke/${equipment.id}`,
+                {
+                    method: "POST"
+                }
+            );
+            toast.success("Equipment revoked successfully!");
+        } catch (e) {
+            toast.error("Error revoking equipment.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // remove from state
         const index = this.state.equipment.indexOf(equipment);
@@ -386,13 +402,19 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
-        const deleted: IEquipment = await this.context.fetch(
-            `/api/${this.context.team.slug}/equipment/delete`,
-            {
-                body: JSON.stringify(equipment),
-                method: "POST"
-            }
-        );
+
+        try {
+            const deleted: IEquipment = await this.context.fetch(
+                `/api/${this.context.team.slug}/equipment/delete/${equipment.id}`,
+                {
+                    method: "POST"
+                }
+            );
+            toast.success("Equipment deleted successfully!");
+        } catch (e) {
+            toast.error("Error deleting equipment.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // remove from state
         const index = this.state.equipment.indexOf(equipment);
@@ -428,13 +450,18 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
             return;
         }
 
-        const updated: IEquipment = await this.context.fetch(
-            `/api/${this.context.team.slug}/equipment/update`,
-            {
+        let updated: IEquipment = null;
+        try {
+            updated = await this.context.fetch(`/api/${this.context.team.slug}/equipment/update`, {
                 body: JSON.stringify(equipment),
                 method: "POST"
-            }
-        );
+            });
+            toast.success("Equipment updated successfully!");
+        } catch (e) {
+            toast.error("Error editing equipment.");
+            throw new Error(); // throw error so modal doesn't close
+        }
+
         updated.assignment = equipment.assignment;
 
         // update already existing entry in key
@@ -475,39 +502,52 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         }
     };
 
+    private _updateEquipmentFromDetails = (equipment: IEquipment) => {
+        const index = this.state.equipment.findIndex(x => x.id === equipment.id);
+
+        if (index === -1) {
+            // should always already exist
+            return;
+        }
+
+        // update already existing entry in key
+        const updateEquipment = [...this.state.equipment];
+        updateEquipment[index] = equipment;
+
+        this.setState({ ...this.state, equipment: updateEquipment });
+    };
+
     private _filterEquipmentType = (filters: string[]) => {
         this.setState({ equipmentTypeFilters: filters });
     };
 
     private _filterEquipmentProtection = (filters: string[]) => {
-        this.setState({ equipmentProtectionFilters: filters});
+        this.setState({ equipmentProtectionFilters: filters });
     };
     private _filterEquipmentAvailability = (filters: string[]) => {
         this.setState({ equipmentAvailabilityFilters: filters });
     };
 
     private _checkEquipmentTypeFilters = (equipment: IEquipment) => {
-        var filters = this.state.equipmentTypeFilters;
+        const filters = this.state.equipmentTypeFilters;
         return filters.some(
             f =>
                 (equipment && !!equipment.type && equipment.type === f) ||
                 (equipment && !equipment.type && f === "Default")
         );
     };
-    
+
     private _checkEquipmentProtectionFilters = (equipment: IEquipment) => {
-        var filters = this.state.equipmentProtectionFilters;
+        const filters = this.state.equipmentProtectionFilters;
         return filters.some(
-            f =>
-            (equipment && !!equipment.protectionLevel && equipment.protectionLevel === f)
+            f => equipment && !!equipment.protectionLevel && equipment.protectionLevel === f
         );
     };
 
     private _checkEquipmentAvailabilityFilters = (equipment: IEquipment) => {
-        var filters = this.state.equipmentAvailabilityFilters;
+        const filters = this.state.equipmentAvailabilityFilters;
         return filters.some(
-            f =>
-            (equipment && !!equipment.availabilityLevel && equipment.availabilityLevel === f)
+            f => equipment && !!equipment.availabilityLevel && equipment.availabilityLevel === f
         );
     };
 

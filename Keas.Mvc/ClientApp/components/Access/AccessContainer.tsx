@@ -98,6 +98,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                         closeModal={this._closeModals}
                         openEditModal={this._openEditModal}
                         onRevoke={this._revokeAccess}
+                        updateSelectedAccess={this._updateAccessFromDetails}
                     />
                     <EditAccess
                         onEdit={this._editAccess}
@@ -188,9 +189,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
 
         // if we know who to assign it to, do it now
         if (person) {
-            const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${
-                access.id
-            }&personId=${person.id}&date=${date}`;
+            const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
 
             const accessAssignment = await this.context.fetch(assignUrl, {
                 method: "POST"
@@ -350,6 +349,21 @@ export default class AccessContainer extends React.Component<IProps, IState> {
                 this.props.person ? this.props.person.id : null
             );
         }
+    };
+
+    private _updateAccessFromDetails = (access: IAccess) => {
+        const index = this.state.accesses.findIndex(x => x.id === access.id);
+
+        if (index === -1) {
+            // should always already exist
+            return;
+        }
+
+        // update already existing entry in key
+        const updateAccesses = [...this.state.accesses];
+        updateAccesses[index] = access;
+
+        this.setState({ ...this.state, accesses: updateAccesses });
     };
 
     private _openAssignModal = (access: IAccess) => {

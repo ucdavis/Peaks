@@ -42,8 +42,9 @@ namespace Keas.Mvc.Controllers.Api
             return Json(access);
         }
 
-        public async Task<IActionResult> ListAssigned(int personId) {
-            var assignedAccess = await _context.Access 
+        public async Task<IActionResult> ListAssigned(int personId)
+        {
+            var assignedAccess = await _context.Access
                 .Where(x => x.Active && x.Team.Slug == Team && x.Assignments.Any(y => y.Person.Id == personId))
                 .Include(x => x.Assignments).ThenInclude(x => x.Person)
                 .Include(x => x.Team)
@@ -56,7 +57,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var accessList = await _context.Access
                 .Where(x => x.Team.Slug == Team)
-                .Include(x=> x.Assignments)
+                .Include(x => x.Assignments)
                 .ThenInclude(x => x.Person)
                 .Include(x => x.Team)
                 .AsNoTracking().ToArrayAsync();
@@ -64,12 +65,25 @@ namespace Keas.Mvc.Controllers.Api
             return Json(accessList);
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var access = await _context.Access
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignments)
+                    .ThenInclude(x => x.Person)
+                .Include(x => x.Team)
+                .AsNoTracking()
+                .SingleAsync(x => x.Id == id);
+
+            return Json(access);
+        }
+
         public async Task<IActionResult> Create([FromBody]Access access)
         {
             // TODO Make sure user has permissions
             if (ModelState.IsValid)
             {
-                _context.Access.Add(access);                
+                _context.Access.Add(access);
                 await _eventService.TrackCreateAccess(access);
                 await _context.SaveChangesAsync();
                 return Json(access);
@@ -81,18 +95,19 @@ namespace Keas.Mvc.Controllers.Api
         {
             // TODO Make sure user has permssion, make sure access exists, makes sure access is in this team
             if (ModelState.IsValid)
-            {               
+            {
                 var access = await _context.Access.Where(x => x.Id == accessId && x.Team.Slug == Team)
                     .Include(x => x.Assignments).SingleAsync();
-                var accessAssignment = new AccessAssignment{
+                var accessAssignment = new AccessAssignment
+                {
                     AccessId = accessId,
-                    PersonId = personId, 
+                    PersonId = personId,
                     RequestedById = User.Identity.Name,
                     RequestedByName = User.GetNameClaim(),
                     ExpiresAt = DateTime.Parse(date),
                 };
                 accessAssignment.Person = await _context.People.SingleAsync(p => p.Id == personId);
-                access.Assignments.Add(accessAssignment);                
+                access.Assignments.Add(accessAssignment);
                 await _eventService.TrackAssignAccess(accessAssignment, Team);
                 await _context.SaveChangesAsync();
                 return Json(accessAssignment);
@@ -108,7 +123,7 @@ namespace Keas.Mvc.Controllers.Api
                     .SingleAsync(x => x.Id == access.Id);
                 a.Name = access.Name;
                 a.Notes = access.Notes;
-                a.Tags = access.Tags;                
+                a.Tags = access.Tags;
                 await _eventService.TrackUpdateAccess(a);
                 await _context.SaveChangesAsync();
                 return Json(access);
@@ -121,7 +136,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: check permissions
             if (ModelState.IsValid)
             {
-                _context.AccessAssignments.Remove(accessAssignment);                
+                _context.AccessAssignments.Remove(accessAssignment);
                 await _eventService.TrackUnAssignAccess(accessAssignment, Team);
                 await _context.SaveChangesAsync();
                 return Json(accessAssignment);
@@ -131,30 +146,30 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Delete([FromBody]Access access)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if(!access.Active) 
+            if (!access.Active)
             {
                 return BadRequest(ModelState);
             }
 
-            using(var transaction = _context.Database.BeginTransaction())
+            using (var transaction = _context.Database.BeginTransaction())
             {
                 _context.Access.Update(access);
 
-                if(access.Assignments.Count > 0)
+                if (access.Assignments.Count > 0)
                 {
-                    foreach(var assignment in access.Assignments.ToList()) 
+                    foreach (var assignment in access.Assignments.ToList())
                     {
                         await _eventService.TrackUnAssignAccess(assignment, Team); // call before we remove person info
                         _context.AccessAssignments.Remove(assignment);
                     }
                 }
 
-                access.Active = false;  
+                access.Active = false;
                 await _eventService.TrackAccessDeleted(access);
                 await _context.SaveChangesAsync();
                 transaction.Commit();

@@ -35,15 +35,15 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
-            var equipment = 
+            var equipment =
                 from eq in _context.Equipment
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (x.Name.StartsWith(q,comparison) || x.SerialNumber.StartsWith(q,comparison)))
+                (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
                 .Include(x => x.Attributes)
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
                 .AsNoTracking()
-                select new 
+                select new
                 {
                     equipment = eq,
                     label = eq.Id + ". " + eq.Name + " " + eq.SerialNumber,
@@ -65,7 +65,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipment);
         }
 
-        public async Task<IActionResult> CommonAttributeKeys() 
+        public async Task<IActionResult> CommonAttributeKeys()
         {
             var keys = await _context.EquipmentAttributeKeys
                 .Where(a => a.TeamId == null || a.Team.Slug == Team)
@@ -74,7 +74,7 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(keys);
         }
-        
+
         public ActionResult ListEquipmentTypes() => Json(EquipmentTypes.Types);
 
         public async Task<IActionResult> ListAssigned(int personId)
@@ -97,7 +97,7 @@ namespace Keas.Mvc.Controllers.Api
             var equipments = await _context.Equipment
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignment)
-                .ThenInclude(x=>x.Person)
+                .ThenInclude(x => x.Person)
                 .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
@@ -106,99 +106,119 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipments);
         }
 
-        public async Task<IActionResult> Create([FromBody]Equipment equipment)
+        public async Task<IActionResult> Details(int id)
         {
-            // TODO Make sure user has permissions
-            if (ModelState.IsValid)
-            {
-                if (equipment.Space != null)
-                {
-                   var space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
-                    equipment.Space = space;
-                }
+            var equipment = await _context.Equipment
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignment)
+                    .ThenInclude(x => x.Person)
+                .Include(x => x.Space)
+                .Include(x => x.Attributes)
+                .Include(x => x.Team)
+                .AsNoTracking()
+                .SingleAsync(x => x.Id == id);
 
-                UpdateTypeSpecificFields(equipment);
-
-                _context.Equipment.Add(equipment);
-                await _eventService.TrackCreateEquipment(equipment);
-                await _context.SaveChangesAsync();
-            }
             return Json(equipment);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody]Equipment equipment)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            if (equipment.Id != 0) // if creating new equipment, this should always be 0
+            {
+                return BadRequest();
+            }
+            if (equipment.Space != null)
+            {
+                var space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
+                equipment.Space = space;
+            }
+
+            UpdateTypeSpecificFields(equipment);
+
+            _context.Equipment.Add(equipment);
+            await _eventService.TrackCreateEquipment(equipment);
+            await _context.SaveChangesAsync();
+
+            return Json(equipment);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> Assign(int equipmentId, int personId, string date)
         {
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team && x.Active)
-                    .Include(x => x.Space).Include(x => x.Assignment).ThenInclude(a => a.Person).SingleAsync(x => x.Id == equipmentId);
-                
-                if(equipment.Assignment != null)
-                {
-                    _context.EquipmentAssignments.Update(equipment.Assignment);
-                    equipment.Assignment.ExpiresAt = DateTime.Parse(date);
-                    equipment.Assignment.RequestedById =  User.Identity.Name;
-                    equipment.Assignment.RequestedByName = User.GetNameClaim();
-                    await _eventService.TrackEquipmentAssignmentUpdated(equipment); 
-                }
-                else
-                {
-                    equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
-                    equipment.Assignment.Person = await _context.People.SingleAsync(p => p.Id == personId);
-                    equipment.Assignment.RequestedById = User.Identity.Name;
-                    equipment.Assignment.RequestedByName = User.GetNameClaim();
-
-                    _context.EquipmentAssignments.Add(equipment.Assignment);
-                    await _eventService.TrackAssignEquipment(equipment);
-                }                
-                await _context.SaveChangesAsync();
-                return Json(equipment);
+                return BadRequest(ModelState);
             }
-            return BadRequest(ModelState);
+            var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team && x.Active)
+                .Include(x => x.Space).Include(x => x.Assignment).ThenInclude(a => a.Person).SingleAsync(x => x.Id == equipmentId);
+
+            if (equipment.Assignment != null)
+            {
+                _context.EquipmentAssignments.Update(equipment.Assignment);
+                equipment.Assignment.ExpiresAt = DateTime.Parse(date);
+                equipment.Assignment.RequestedById = User.Identity.Name;
+                equipment.Assignment.RequestedByName = User.GetNameClaim();
+                await _eventService.TrackEquipmentAssignmentUpdated(equipment);
+            }
+            else
+            {
+                equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
+                equipment.Assignment.Person = await _context.People.SingleAsync(p => p.Id == personId);
+                equipment.Assignment.RequestedById = User.Identity.Name;
+                equipment.Assignment.RequestedByName = User.GetNameClaim();
+
+                _context.EquipmentAssignments.Add(equipment.Assignment);
+                await _eventService.TrackAssignEquipment(equipment);
+            }
+            await _context.SaveChangesAsync();
+            return Json(equipment);
+
         }
 
+        [HttpPost]
         public async Task<IActionResult> Update([FromBody]Equipment updatedEquipment)
         {
-            //TODO: check permissions
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var eq = await _context.Equipment.Where(x => x.Team.Slug == Team)
-                    .Include(x => x.Space).Include(x => x.Attributes)
-                    .SingleAsync(x => x.Id == updatedEquipment.Id);
-
-                UpdateTypeSpecificFields(updatedEquipment);
-
-
-                eq.Make = updatedEquipment.Make;
-                eq.Model = updatedEquipment.Model;
-                eq.Name = updatedEquipment.Name;
-                eq.SerialNumber = updatedEquipment.SerialNumber;
-                eq.Tags = updatedEquipment.Tags;
-                eq.Notes = updatedEquipment.Notes;
-                eq.Type = updatedEquipment.Type;
-                eq.ProtectionLevel = updatedEquipment.ProtectionLevel;
-                eq.AvailabilityLevel = updatedEquipment.AvailabilityLevel;
-                eq.SystemManagementId = updatedEquipment.SystemManagementId;
-
-
-
-                eq.Attributes.Clear();
-                updatedEquipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
-
-                if(updatedEquipment.Space == null)
-                {
-                    eq.Space = null;
-                }
-                else
-                {
-                    eq.Space = await _context.Spaces.SingleAsync(x => x.Id == updatedEquipment.Space.Id);
-                }                
-                await _eventService.TrackUpdateEquipment(eq);
-                await _context.SaveChangesAsync();
-                return Json(eq);
+                return BadRequest();
             }
-            return BadRequest(ModelState);
+            var eq = await _context.Equipment.Where(x => x.Team.Slug == Team)
+                .Include(x => x.Space).Include(x => x.Attributes)
+                .SingleAsync(x => x.Id == updatedEquipment.Id);
+
+            UpdateTypeSpecificFields(updatedEquipment);
+
+            eq.Make = updatedEquipment.Make;
+            eq.Model = updatedEquipment.Model;
+            eq.Name = updatedEquipment.Name;
+            eq.SerialNumber = updatedEquipment.SerialNumber;
+            eq.Tags = updatedEquipment.Tags;
+            eq.Notes = updatedEquipment.Notes;
+            eq.Type = updatedEquipment.Type;
+            eq.ProtectionLevel = updatedEquipment.ProtectionLevel;
+            eq.AvailabilityLevel = updatedEquipment.AvailabilityLevel;
+            eq.SystemManagementId = updatedEquipment.SystemManagementId;
+
+            eq.Attributes.Clear();
+            updatedEquipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
+
+            if (updatedEquipment.Space == null)
+            {
+                eq.Space = null;
+            }
+            else
+            {
+                eq.Space = await _context.Spaces.SingleAsync(x => x.Id == updatedEquipment.Space.Id);
+            }
+            await _eventService.TrackUpdateEquipment(eq);
+            await _context.SaveChangesAsync();
+            return Json(eq);
         }
 
         private static void UpdateTypeSpecificFields(Equipment updatedEquipment)
@@ -227,49 +247,60 @@ namespace Keas.Mvc.Controllers.Api
             }
         }
 
-        public async Task<IActionResult> Revoke([FromBody]Equipment equipment)
+        [HttpPost]
+        public async Task<IActionResult> Revoke(int id)
         {
-            //TODO: check permissions
-            if (ModelState.IsValid)
+            var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignment).ThenInclude(x => x.Person)
+                .Include(x => x.Team)
+                .SingleAsync(x => x.Id == id);
+            if (equipment == null)
             {
-                var eq = await _context.Equipment.Where(x => x.Team.Slug == Team)
-                    .Include(x => x.Assignment).ThenInclude(x => x.Person)
-                    .SingleAsync(x => x.Id == equipment.Id);
-
-                _context.EquipmentAssignments.Remove(eq.Assignment);
-                eq.Assignment = null;               
-                await _eventService.TrackUnAssignEquipment(equipment); 
-                await _context.SaveChangesAsync();
-                return Json(null);
+                return NotFound();
             }
-            return BadRequest(ModelState);
+            if (equipment.Assignment == null)
+            {
+                return BadRequest();
+            }
+
+            _context.EquipmentAssignments.Remove(equipment.Assignment);
+            await _eventService.TrackUnAssignEquipment(equipment);
+            await _context.SaveChangesAsync();
+            return Json(null);
+
         }
 
-        public async Task<IActionResult> Delete([FromBody]Equipment equipment)
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
         {
-            if(!ModelState.IsValid)
+            var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignment).ThenInclude(x => x.Person)
+                .Include(x => x.Team)
+                .SingleAsync(x => x.Id == id);
+
+            if (equipment == null)
+            {
+                return NotFound();
+            }
+
+            if (!equipment.Active)
             {
                 return BadRequest(ModelState);
             }
 
-            if(!equipment.Active) 
-            {
-                return BadRequest(ModelState);
-            }
-
-            using(var transaction = _context.Database.BeginTransaction())
+            using (var transaction = _context.Database.BeginTransaction())
             {
 
                 _context.Equipment.Update(equipment);
 
-                if(equipment.Assignment != null)
+                if (equipment.Assignment != null)
                 {
                     await _eventService.TrackUnAssignEquipment(equipment); // call before we remove person info
                     _context.EquipmentAssignments.Remove(equipment.Assignment);
                     equipment.Assignment = null;
                 }
 
-                equipment.Active = false;                
+                equipment.Active = false;
                 await _eventService.TrackEquipmentDeleted(equipment);
                 await _context.SaveChangesAsync();
                 transaction.Commit();
@@ -289,7 +320,8 @@ namespace Keas.Mvc.Controllers.Api
             return Json(history);
         }
 
-        public async Task<BigFixComputerProperties> GetComputer(string id) {
+        public async Task<BigFixComputerProperties> GetComputer(string id)
+        {
             return await this._bigfixService.GetComputer(id);
         }
 
