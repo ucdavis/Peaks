@@ -10,6 +10,7 @@ import RevokeWorkstation from "../Workstations/RevokeWorkstation";
 import WorkstationDetails from "../Workstations/WorkstationDetails";
 import WorkstationList from "./../Workstations/WorkstationList";
 import DeleteWorkstation from "./DeleteWorkstation";
+import { toast } from "react-toastify";
 
 interface IProps {
     assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
@@ -49,20 +50,17 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             return;
         }
         this.setState({ loading: true });
-        let workstations = [];
+        let url = "";
         if (!this.props.space && !!this.props.person) {
-            workstations = await this.context.fetch(
-                `/api/${this.context.team.slug}/workstations/listAssigned?personId=${
-                    this.props.person.id
-                }`
-            );
+            url = `/api/${this.context.team.slug}/workstations/listAssigned?personId=${this.props.person.id}`;
+        } else if (!!this.props.space && !this.props.person) {
+            url = `/api/${this.context.team.slug}/workstations/getWorkstationsInSpace?spaceId=${this.props.space.id}`;
         }
-        if (!!this.props.space && !this.props.person) {
-            workstations = await this.context.fetch(
-                `/api/${this.context.team.slug}/workstations/getWorkstationsInSpace?spaceId=${
-                    this.props.space.id
-                }`
-            );
+        let workstations = [];
+        try {
+            workstations = await this.context.fetch(url);
+        } catch (err) {
+            toast.error("Error loading workstations. Please refresh and try again.");
         }
         this.setState({ workstations, loading: false });
     }
@@ -164,29 +162,39 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         // if we are creating a new workstation
         if (workstation.id === 0) {
             workstation.teamId = this.context.team.id;
-            workstation = await this.context.fetch(
-                `/api/${this.context.team.slug}/workstations/create`,
-                {
-                    body: JSON.stringify(workstation),
-                    method: "POST"
-                }
-            );
+            try {
+                workstation = await this.context.fetch(
+                    `/api/${this.context.team.slug}/workstations/create`,
+                    {
+                        body: JSON.stringify(workstation),
+                        method: "POST"
+                    }
+                );
+                toast.success("Workstation created successfully!");
+            } catch (err) {
+                toast.error("Error creating workstation.");
+                throw new Error(); // throw error so modal doesn't close
+            }
             updateTotalAssetCount = true;
         }
 
         // if we know who to assign it to, do it now
         if (person) {
-            const assignUrl = `/api/${this.context.team.slug}/workstations/assign?workstationId=${
-                workstation.id
-            }&personId=${person.id}&date=${date}`;
+            const assignUrl = `/api/${this.context.team.slug}/workstations/assign?workstationId=${workstation.id}&personId=${person.id}&date=${date}`;
 
             if (!workstation.assignment) {
                 // only count as assigned if this is a new one
                 updateInUseAssetCount = true;
             }
-            workstation = await this.context.fetch(assignUrl, {
-                method: "POST"
-            });
+            try {
+                workstation = await this.context.fetch(assignUrl, {
+                    method: "POST"
+                });
+                toast.success("Workstation assigned successfully!");
+            } catch (err) {
+                toast.error("Error assigning workstation.");
+                throw new Error(); // throw error so modal doesn't close
+            }
             workstation.assignment.person = person;
         }
 
@@ -230,13 +238,19 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             return false;
         }
         // call API to actually revoke
-        const removed: IWorkstation = await this.context.fetch(
-            `/api/${this.context.team.slug}/workstations/revoke`,
-            {
-                body: JSON.stringify(workstation),
-                method: "POST"
-            }
-        );
+        try {
+            const removed: IWorkstation = await this.context.fetch(
+                `/api/${this.context.team.slug}/workstations/revoke`,
+                {
+                    body: JSON.stringify(workstation),
+                    method: "POST"
+                }
+            );
+            toast.success("Successfully revoked workstation!");
+        } catch (err) {
+            toast.error("Error revoking workstation.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // remove from state
         const index = this.state.workstations.indexOf(workstation);
@@ -266,13 +280,18 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
-        const deleted: IWorkstation = await this.context.fetch(
-            `/api/${this.context.team.slug}/workstations/delete/${workstation.id}`,
-            {
-                method: "POST"
-            }
-        );
-
+        try {
+            const deleted: IWorkstation = await this.context.fetch(
+                `/api/${this.context.team.slug}/workstations/delete/${workstation.id}`,
+                {
+                    method: "POST"
+                }
+            );
+            toast.success("Successfully deleted workstation!");
+        } catch (err) {
+            toast.error("Error deleting workstation.");
+            throw new Error(); // throw error so modal doesn't close
+        }
         // remove from state
         const index = this.state.workstations.indexOf(workstation);
         if (index > -1) {
@@ -305,13 +324,20 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             // should always already exist
             return;
         }
-        const updated: IWorkstation = await this.context.fetch(
-            `/api/${this.context.team.slug}/workstations/update`,
-            {
-                body: JSON.stringify(workstation),
-                method: "POST"
-            }
-        );
+        let updated: IWorkstation = null;
+        try {
+            updated = await this.context.fetch(
+                `/api/${this.context.team.slug}/workstations/update`,
+                {
+                    body: JSON.stringify(workstation),
+                    method: "POST"
+                }
+            );
+            toast.success("Workstation updated successfully!");
+        } catch (err) {
+            toast.error("Error editing workstation.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         updated.assignment = workstation.assignment;
 
@@ -338,9 +364,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         // this happens on the search, when selecting already assigned
         if (this.state.workstations.findIndex(x => x.id === workstation.id) === -1) {
             this.context.router.history.push(
-                `/${this.context.team.slug}/spaces/details/${
-                    workstation.space.id
-                }/workstations/details/${workstation.id}`
+                `/${this.context.team.slug}/spaces/details/${workstation.space.id}/workstations/details/${workstation.id}`
             );
         } else {
             this.context.router.history.push(
