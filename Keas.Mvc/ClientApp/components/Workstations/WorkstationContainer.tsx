@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { Button } from "reactstrap";
 import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
@@ -10,7 +11,6 @@ import RevokeWorkstation from "../Workstations/RevokeWorkstation";
 import WorkstationDetails from "../Workstations/WorkstationDetails";
 import WorkstationList from "./../Workstations/WorkstationList";
 import DeleteWorkstation from "./DeleteWorkstation";
-import { toast } from "react-toastify";
 
 interface IProps {
     assetInUseUpdated?: (type: string, spaceId: number, personId: number, count: number) => void;
@@ -124,6 +124,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                         selectedWorkstation={selectedWorkstation}
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openAssignModal}
+                        updateSelectedWorkstation={this._updateWorkstationFromDetails}
                     />
                     <EditWorkstation
                         closeModal={this._closeModals}
@@ -357,6 +358,21 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                 this.props.person ? this.props.person.id : null
             );
         }
+    };
+
+    private _updateWorkstationFromDetails = (workstation: IWorkstation) => {
+        const index = this.state.workstations.findIndex(x => x.id === workstation.id);
+
+        if (index === -1) {
+            // should always already exist
+            return;
+        }
+
+        // update already existing entry in key
+        const updateWorkstations = [...this.state.workstations];
+        updateWorkstations[index] = workstation;
+
+        this.setState({ ...this.state, workstations: updateWorkstations });
     };
 
     private _openDetailsModal = (workstation: IWorkstation) => {

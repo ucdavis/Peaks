@@ -1,6 +1,7 @@
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import { Button, Modal, ModalBody } from "reactstrap";
-import { IKeySerial } from "../../Types";
+import { AppContext, IKeySerial } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
 import KeySerialAssignmentValues from "./KeySerialAssignmentValues";
 import KeySerialEditValues from "./KeySerialEditValues";
@@ -11,9 +12,33 @@ interface IProps {
     openEditModal: (keySerial: IKeySerial) => void;
     openUpdateModal: (keySerial: IKeySerial) => void;
     selectedKeySerial: IKeySerial;
+    updateSelectedKeySerial: (keySerial: IKeySerial) => void;
 }
 
 export default class KeyDetails extends React.Component<IProps, {}> {
+    public static contextTypes = {
+        fetch: PropTypes.func,
+        team: PropTypes.object
+    };
+    public context: AppContext;
+
+    public componentDidMount() {
+        if (!this.props.selectedKeySerial) {
+            return;
+        }
+        this._fetchDetails(this.props.selectedKeySerial.id);
+    }
+
+    // make sure we change the key we are updating if the parent changes selected key
+    public componentWillReceiveProps(nextProps: IProps) {
+        if (
+            nextProps.selectedKeySerial &&
+            (!this.props.selectedKeySerial ||
+                nextProps.selectedKeySerial.id !== this.props.selectedKeySerial.id)
+        ) {
+            this._fetchDetails(nextProps.selectedKeySerial.id);
+        }
+    }
     public render() {
         const { selectedKeySerial } = this.props;
 
@@ -53,4 +78,10 @@ export default class KeyDetails extends React.Component<IProps, {}> {
             </div>
         );
     }
+
+    private _fetchDetails = async (id: number) => {
+        const url = `/api/${this.context.team.slug}/keySerials/details/${id}`;
+        const equipment = await this.context.fetch(url);
+        this.props.updateSelectedKeySerial(equipment);
+    };
 }
