@@ -1,5 +1,6 @@
 ﻿import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { Button, Modal, ModalBody } from "reactstrap";
 import { AppContext, IWorkstation } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
@@ -79,7 +80,13 @@ export default class WorkstationDetails extends React.Component<IProps, {}> {
 
     private _fetchDetails = async (id: number) => {
         const url = `/api/${this.context.team.slug}/workstations/details/${id}`;
-        const workstation = await this.context.fetch(url);
+        let workstation: IWorkstation = null;
+        try {
+            workstation = await this.context.fetch(url);
+        } catch (err) {
+            toast.error("Error fetching workstation details. Please refresh to try again.");
+            return;
+        }
         this.props.updateSelectedWorkstation(workstation);
     };
 }

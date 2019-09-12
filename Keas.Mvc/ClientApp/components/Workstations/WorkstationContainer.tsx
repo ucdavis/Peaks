@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { Button } from "reactstrap";
 import { AppContext, IPerson, ISpace, IWorkstation } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
@@ -49,16 +50,18 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             return;
         }
         this.setState({ loading: true });
-        let workstations = [];
+        let url = "";
         if (!this.props.space && !!this.props.person) {
-            workstations = await this.context.fetch(
-                `/api/${this.context.team.slug}/workstations/listAssigned?personId=${this.props.person.id}`
-            );
+            url = `/api/${this.context.team.slug}/workstations/listAssigned?personId=${this.props.person.id}`;
+        } else if (!!this.props.space && !this.props.person) {
+            url = `/api/${this.context.team.slug}/workstations/getWorkstationsInSpace?spaceId=${this.props.space.id}`;
         }
-        if (!!this.props.space && !this.props.person) {
-            workstations = await this.context.fetch(
-                `/api/${this.context.team.slug}/workstations/getWorkstationsInSpace?spaceId=${this.props.space.id}`
-            );
+        let workstations = [];
+        try {
+            workstations = await this.context.fetch(url);
+        } catch (err) {
+            toast.error("Error loading workstations. Please refresh and try again.");
+            return;
         }
         this.setState({ workstations, loading: false });
     }
@@ -161,13 +164,19 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         // if we are creating a new workstation
         if (workstation.id === 0) {
             workstation.teamId = this.context.team.id;
-            workstation = await this.context.fetch(
-                `/api/${this.context.team.slug}/workstations/create`,
-                {
-                    body: JSON.stringify(workstation),
-                    method: "POST"
-                }
-            );
+            try {
+                workstation = await this.context.fetch(
+                    `/api/${this.context.team.slug}/workstations/create`,
+                    {
+                        body: JSON.stringify(workstation),
+                        method: "POST"
+                    }
+                );
+                toast.success("Workstation created successfully!");
+            } catch (err) {
+                toast.error("Error creating workstation.");
+                throw new Error(); // throw error so modal doesn't close
+            }
             updateTotalAssetCount = true;
         }
 
@@ -179,9 +188,15 @@ export default class WorkstationContainer extends React.Component<IProps, IState
                 // only count as assigned if this is a new one
                 updateInUseAssetCount = true;
             }
-            workstation = await this.context.fetch(assignUrl, {
-                method: "POST"
-            });
+            try {
+                workstation = await this.context.fetch(assignUrl, {
+                    method: "POST"
+                });
+                toast.success("Workstation assigned successfully!");
+            } catch (err) {
+                toast.error("Error assigning workstation.");
+                throw new Error(); // throw error so modal doesn't close
+            }
             workstation.assignment.person = person;
         }
 
@@ -225,13 +240,18 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             return false;
         }
         // call API to actually revoke
-        const removed: IWorkstation = await this.context.fetch(
-            `/api/${this.context.team.slug}/workstations/revoke`,
-            {
-                body: JSON.stringify(workstation),
-                method: "POST"
-            }
-        );
+        try {
+            const removed: IWorkstation = await this.context.fetch(
+                `/api/${this.context.team.slug}/workstations/revoke/${workstation.id}`,
+                {
+                    method: "POST"
+                }
+            );
+            toast.success("Successfully revoked workstation!");
+        } catch (err) {
+            toast.error("Error revoking workstation.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // remove from state
         const index = this.state.workstations.indexOf(workstation);
@@ -261,13 +281,18 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
-        const deleted: IWorkstation = await this.context.fetch(
-            `/api/${this.context.team.slug}/workstations/delete/${workstation.id}`,
-            {
-                method: "POST"
-            }
-        );
-
+        try {
+            const deleted: IWorkstation = await this.context.fetch(
+                `/api/${this.context.team.slug}/workstations/delete/${workstation.id}`,
+                {
+                    method: "POST"
+                }
+            );
+            toast.success("Successfully deleted workstation!");
+        } catch (err) {
+            toast.error("Error deleting workstation.");
+            throw new Error(); // throw error so modal doesn't close
+        }
         // remove from state
         const index = this.state.workstations.indexOf(workstation);
         if (index > -1) {
@@ -300,13 +325,20 @@ export default class WorkstationContainer extends React.Component<IProps, IState
             // should always already exist
             return;
         }
-        const updated: IWorkstation = await this.context.fetch(
-            `/api/${this.context.team.slug}/workstations/update`,
-            {
-                body: JSON.stringify(workstation),
-                method: "POST"
-            }
-        );
+        let updated: IWorkstation = null;
+        try {
+            updated = await this.context.fetch(
+                `/api/${this.context.team.slug}/workstations/update`,
+                {
+                    body: JSON.stringify(workstation),
+                    method: "POST"
+                }
+            );
+            toast.success("Workstation updated successfully!");
+        } catch (err) {
+            toast.error("Error editing workstation.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         updated.assignment = workstation.assignment;
 

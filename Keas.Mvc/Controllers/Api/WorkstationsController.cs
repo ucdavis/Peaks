@@ -121,110 +121,120 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstations);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] Workstation workstation)
         {
             // TODO Make sure user has permission; Protect from overpost
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                if (workstation.Space != null)
-                {
-                    var space = await _context.Spaces.SingleAsync(s => s.RoomKey == workstation.Space.RoomKey);
-                    workstation.Space = space;
-                }
-                _context.Workstations.Add(workstation);
-                await _eventService.TrackCreateWorkstation(workstation);
-                await _context.SaveChangesAsync();
+                return BadRequest();
             }
+            if (workstation.Id != 0) // if creating new equipment, this should always be 0
+            {
+                return BadRequest();
+            }
+            if (workstation.Space != null)
+            {
+                var space = await _context.Spaces.SingleAsync(s => s.RoomKey == workstation.Space.RoomKey);
+                workstation.Space = space;
+            }
+            _context.Workstations.Add(workstation);
+            await _eventService.TrackCreateWorkstation(workstation);
+            await _context.SaveChangesAsync();
+
 
             return Json(workstation);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Assign(int workstationId, int personId, string date)
         {
             // TODO make sure user has permission
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
-                    .Include(w => w.Space).Include(t => t.Team).Include(w => w.Assignment).ThenInclude(a => a.Person).SingleAsync(w => w.Id == workstationId);
+                return BadRequest();
+            }
+            var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
+                .Include(w => w.Space).Include(t => t.Team).Include(w => w.Assignment).ThenInclude(a => a.Person).SingleAsync(w => w.Id == workstationId);
 
-                if (workstation.Team.Slug != Team)
+            if (workstation.Assignment != null)
+            {
+                _context.WorkstationAssignments.Update(workstation.Assignment);
+                workstation.Assignment.ExpiresAt = DateTime.Parse(date);
+                workstation.Assignment.RequestedById = User.Identity.Name;
+                workstation.Assignment.RequestedByName = User.GetNameClaim();
+                await _eventService.TrackWorkstationAssignmentUpdated(workstation);
+            }
+            else
+            {
+                workstation.Assignment = new WorkstationAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
+                workstation.Assignment.Person =
+                await _context.People.Include(p => p.Team).SingleAsync(p => p.Id == personId);
+                workstation.Assignment.RequestedById = User.Identity.Name;
+                workstation.Assignment.RequestedByName = User.GetNameClaim();
+
+                if (workstation.Assignment.Person.Team.Slug != Team)
                 {
-                    Message = "Workstation is not part of this team!";
+                    Message = "User is not part of this team!";
                     return BadRequest(workstation);
                 }
-                if (workstation.Assignment != null)
+
+                if (workstation.TeamId != workstation.Assignment.Person.TeamId)
                 {
-                    _context.WorkstationAssignments.Update(workstation.Assignment);
-                    workstation.Assignment.ExpiresAt = DateTime.Parse(date);
-                    workstation.Assignment.RequestedById = User.Identity.Name;
-                    workstation.Assignment.RequestedByName = User.GetNameClaim();
-                    await _eventService.TrackWorkstationAssignmentUpdated(workstation);
-                }
-                else
-                {
-                    workstation.Assignment = new WorkstationAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
-                    workstation.Assignment.Person =
-                    await _context.People.Include(p => p.Team).SingleAsync(p => p.Id == personId);
-                    workstation.Assignment.RequestedById = User.Identity.Name;
-                    workstation.Assignment.RequestedByName = User.GetNameClaim();
-
-                    if (workstation.Assignment.Person.Team.Slug != Team)
-                    {
-                        Message = "User is not part of this team!";
-                        return BadRequest(workstation);
-                    }
-
-                    if (workstation.TeamId != workstation.Assignment.Person.TeamId)
-                    {
-                        Message = "Workstation team did not match person's team!";
-                        return BadRequest(workstation);
-                    }
-
-                    _context.WorkstationAssignments.Add(workstation.Assignment);
-                    await _eventService.TrackAssignWorkstation(workstation);
+                    Message = "Workstation team did not match person's team!";
+                    return BadRequest(workstation);
                 }
 
-                await _context.SaveChangesAsync();
-                return Json(workstation);
+                _context.WorkstationAssignments.Add(workstation.Assignment);
+                await _eventService.TrackAssignWorkstation(workstation);
             }
-            return BadRequest(ModelState);
+
+            await _context.SaveChangesAsync();
+            return Json(workstation);
         }
 
-        public async Task<IActionResult> Revoke([FromBody] Workstation workstation)
+        [HttpPost]
+        public async Task<IActionResult> Revoke(int id)
         {
             // TODO permission
-            if (ModelState.IsValid)
-            {
-                var workstationToUpdate = await _context.Workstations.Where(x => x.Team.Slug == Team)
-                    .Include(w => w.Assignment).ThenInclude(w => w.Person)
-                    .SingleAsync(w => w.Id == workstation.Id);
 
-                _context.WorkstationAssignments.Remove(workstationToUpdate.Assignment);
-                workstationToUpdate.Assignment = null;
-                await _eventService.TrackUnAssignWorkstation(workstation);
-                await _context.SaveChangesAsync();
-                return Json(null);
+            var workstation = await _context.Workstations.Where(x => x.Team.Slug == Team)
+                .Include(w => w.Assignment).ThenInclude(w => w.Person)
+                .Include(w => w.Space)
+                .SingleAsync(w => w.Id == id);
+            if (workstation == null)
+            {
+                return NotFound();
             }
-            return BadRequest(ModelState);
+            if (workstation.Assignment == null)
+            {
+                return BadRequest();
+            }
+
+            _context.WorkstationAssignments.Remove(workstation.Assignment);
+            await _eventService.TrackUnAssignWorkstation(workstation);
+            await _context.SaveChangesAsync();
+            return Json(null);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Update([FromBody]Workstation workstation)
         {
             //TODO: check permissions
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var w = await _context.Workstations.Where(x => x.Team.Slug == Team)
-                    .Include(x => x.Space)
-                    .SingleAsync(x => x.Id == workstation.Id);
-
-                w.Name = workstation.Name;
-                w.Tags = workstation.Tags;
-                w.Notes = workstation.Notes;
-
-                await _context.SaveChangesAsync();
-                return Json(w);
+                return BadRequest();
             }
-            return BadRequest(ModelState);
+            var w = await _context.Workstations.Where(x => x.Team.Slug == Team)
+                .Include(x => x.Space)
+                .SingleAsync(x => x.Id == workstation.Id);
+
+            w.Name = workstation.Name;
+            w.Tags = workstation.Tags;
+            w.Notes = workstation.Notes;
+
+            await _context.SaveChangesAsync();
+            return Json(w);
         }
 
         [HttpPost]

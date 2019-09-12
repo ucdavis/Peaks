@@ -106,12 +106,12 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _confirmClose = () => {
-        if (!confirm("Please confirm you want to close!")){
+        if (!confirm("Please confirm you want to close!")) {
             return;
         }
 
         this._closeModal();
-    }
+    };
 
     private _closeModal = () => {
         this.setState({
@@ -131,8 +131,12 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
 
         this.setState({ submitting: true });
 
-        await this.props.onEdit(this.state.workstation);
-
+        try {
+            await this.props.onEdit(this.state.workstation);
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
         this._closeModal();
     };
 

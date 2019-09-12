@@ -244,8 +244,12 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         const person = this.props.person ? this.props.person : this.state.person;
         const workstation = this.state.workstation;
 
-        await this.props.onCreate(person, workstation, format(this.state.date, "MM/dd/yyyy"));
-
+        try {
+            await this.props.onCreate(person, workstation, format(this.state.date, "MM/dd/yyyy"));
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
         this._closeModal();
     };
 
