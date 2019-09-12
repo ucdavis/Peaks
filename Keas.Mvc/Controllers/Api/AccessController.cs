@@ -78,83 +78,96 @@ namespace Keas.Mvc.Controllers.Api
             return Json(access);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody]Access access)
         {
-            // TODO Make sure user has permissions
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Access.Add(access);
-                await _eventService.TrackCreateAccess(access);
-                await _context.SaveChangesAsync();
-                return Json(access);
+                return BadRequest();
             }
-            return BadRequest(ModelState);
+
+            if (access.Id != 0) // if creating new accecss, this should always be 0
+            {
+                return BadRequest();
+            }
+
+            _context.Access.Add(access);
+            await _eventService.TrackCreateAccess(access);
+            await _context.SaveChangesAsync();
+            return Json(access);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Assign(int accessId, int personId, string date)
-        {
-            // TODO Make sure user has permssion, make sure access exists, makes sure access is in this team
-            if (ModelState.IsValid)
-            {
-                var access = await _context.Access.Where(x => x.Id == accessId && x.Team.Slug == Team)
-                    .Include(x => x.Assignments).SingleAsync();
-                var accessAssignment = new AccessAssignment
-                {
-                    AccessId = accessId,
-                    PersonId = personId,
-                    RequestedById = User.Identity.Name,
-                    RequestedByName = User.GetNameClaim(),
-                    ExpiresAt = DateTime.Parse(date),
-                };
-                accessAssignment.Person = await _context.People.SingleAsync(p => p.Id == personId);
-                access.Assignments.Add(accessAssignment);
-                await _eventService.TrackAssignAccess(accessAssignment, Team);
-                await _context.SaveChangesAsync();
-                return Json(accessAssignment);
-            }
-            return BadRequest(ModelState);
-        }
-        public async Task<IActionResult> Update([FromBody]Access access)
-        {
-            //TODO: check permissions, make sure SN isn't edited 
-            if (ModelState.IsValid)
-            {
-                var a = await _context.Access.Where(x => x.Team.Slug == Team)
-                    .SingleAsync(x => x.Id == access.Id);
-                a.Name = access.Name;
-                a.Notes = access.Notes;
-                a.Tags = access.Tags;
-                await _eventService.TrackUpdateAccess(a);
-                await _context.SaveChangesAsync();
-                return Json(access);
-            }
-            return BadRequest(ModelState);
-        }
-
-        public async Task<IActionResult> Revoke([FromBody] AccessAssignment accessAssignment)
-        {
-            //TODO: check permissions
-            if (ModelState.IsValid)
-            {
-                _context.AccessAssignments.Remove(accessAssignment);
-                await _eventService.TrackUnAssignAccess(accessAssignment, Team);
-                await _context.SaveChangesAsync();
-                return Json(accessAssignment);
-            }
-            return BadRequest(ModelState);
-        }
-
-        public async Task<IActionResult> Delete([FromBody]Access access)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (!access.Active)
+            var access = await _context.Access.Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignments).SingleAsync(x => x.Id == accessId);
+
+            var accessAssignment = new AccessAssignment
+            {
+                AccessId = accessId,
+                PersonId = personId,
+                RequestedById = User.Identity.Name,
+                RequestedByName = User.GetNameClaim(),
+                ExpiresAt = DateTime.Parse(date),
+            };
+
+            accessAssignment.Person = await _context.People.SingleAsync(p => p.Id == personId);
+            access.Assignments.Add(accessAssignment);
+            await _eventService.TrackAssignAccess(accessAssignment, Team);
+            await _context.SaveChangesAsync();
+            return Json(accessAssignment);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update([FromBody]Access access)
+        {
+            if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            var a = await _context.Access.Where(x => x.Team.Slug == Team)
+                .SingleAsync(x => x.Id == access.Id);
+
+            a.Name = access.Name;
+            a.Notes = access.Notes;
+            a.Tags = access.Tags;
+            await _eventService.TrackUpdateAccess(a);
+            await _context.SaveChangesAsync();
+            return Json(access);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Revoke(int id)
+        {
+            var assignment = await _context.AccessAssignments
+                .Where(x => x.Access.Team.Slug == Team)
+                .Include(x => x.Person)
+                .Include(x => x.Access)
+                .ThenInclude(x => x.Team)
+                .SingleAsync(x => x.Id == id);
+
+            _context.AccessAssignments.Remove(assignment);
+            await _eventService.TrackUnAssignAccess(assignment, Team);
+            await _context.SaveChangesAsync();
+            return Json(null);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var access = await _context.Access
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignments)
+                    .ThenInclude(x => x.Person)
+                .SingleAsync(x => x.Id == id);
 
             using (var transaction = _context.Database.BeginTransaction())
             {
