@@ -1,6 +1,7 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
+import { toast } from "react-toastify";
 import { Button } from "reactstrap";
 import { AppContext, IAccess } from "../../Types";
 
@@ -12,7 +13,7 @@ interface IProps {
 
 interface IState {
     isSearchLoading: boolean;
-    access: IAccess[];
+    accesses: IAccess[];
 }
 
 // Search for existing access then send selection back to parent
@@ -26,7 +27,7 @@ export default class SearchAccess extends React.Component<IProps, IState> {
     constructor(props) {
         super(props);
         this.state = {
-            access: [],
+            accesses: [],
             isSearchLoading: false
         };
     }
@@ -65,22 +66,13 @@ export default class SearchAccess extends React.Component<IProps, IState> {
                                 </div>
                             </div>
                         )}
-                        onSearch={async query => {
-                            this.setState({ isSearchLoading: true });
-                            const access = await this.context.fetch(
-                                `/api/${this.context.team.slug}/access/search?q=${query}`
-                            );
-                            this.setState({
-                                access,
-                                isSearchLoading: false
-                            });
-                        }}
+                        onSearch={this._onSearch}
                         onChange={selected => {
                             if (selected && selected.length === 1) {
                                 this._onSelected(selected[0]);
                             }
                         }}
-                        options={this.state.access}
+                        options={this.state.accesses}
                     />
                 </div>
                 <div>or</div>
@@ -96,6 +88,24 @@ export default class SearchAccess extends React.Component<IProps, IState> {
                 </div>
             </div>
         );
+    };
+
+    private _onSearch = async (query: string) => {
+        this.setState({ isSearchLoading: true });
+        let accesses: IAccess[] = null;
+        try {
+            accesses = await this.context.fetch(
+                `/api/${this.context.team.slug}/access/search?q=${query}`
+            );
+        } catch (err) {
+            toast.error("Error searching accesses.");
+            this.setState({ isSearchLoading: false });
+            return;
+        }
+        this.setState({
+            accesses,
+            isSearchLoading: false
+        });
     };
 
     private _onSelected = (access: IAccess) => {

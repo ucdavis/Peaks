@@ -1,6 +1,7 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
+import { toast } from "react-toastify";
 import { Button } from "reactstrap";
 import { AppContext, IEquipment, IEquipmentLabel, ISpace } from "../../Types";
 
@@ -73,16 +74,7 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                                 </div>
                             </div>
                         )}
-                        onSearch={async query => {
-                            this.setState({ isSearchLoading: true });
-                            const equipment = await this.context.fetch(
-                                `/api/${this.context.team.slug}/equipment/search?q=${query}`
-                            );
-                            this.setState({
-                                equipment,
-                                isSearchLoading: false
-                            });
-                        }}
+                        onSearch={this._onSearch}
                         onChange={selected => {
                             if (selected && selected.length === 1) {
                                 if (!!selected[0].equipment && !!selected[0].equipment.assignment) {
@@ -103,6 +95,24 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                 </div>
             </div>
         );
+    };
+
+    private _onSearch = async (query: string) => {
+        this.setState({ isSearchLoading: true });
+        let equipment: IEquipmentLabel[] = null;
+        try {
+            equipment = await this.context.fetch(
+                `/api/${this.context.team.slug}/equipment/search?q=${query}`
+            );
+        } catch (err) {
+            toast.error("Error searching equipment.");
+            this.setState({ isSearchLoading: false });
+            return;
+        }
+        this.setState({
+            equipment,
+            isSearchLoading: false
+        });
     };
 
     private _onSelected = (equipmentLabel: IEquipmentLabel) => {

@@ -1,6 +1,7 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
+import { toast } from "react-toastify";
 import { AppContext, IKeyInfo } from "../../Types";
 
 interface IProps {
@@ -81,7 +82,14 @@ export default class SearchKeys extends React.Component<IProps, IState> {
 
         this.setState({ isSearchLoading: true });
 
-        const keysInfo = await this.context.fetch(`/api/${team.slug}/keys/search?q=${query}`);
+        let keysInfo: IKeyInfo[] = null;
+        try {
+            keysInfo = await this.context.fetch(`/api/${team.slug}/keys/search?q=${query}`);
+        } catch (err) {
+            toast.error("Error searchhing keys.");
+            this.setState({ isSearchLoading: false });
+            return;
+        }
 
         this.setState({
             isSearchLoading: false,

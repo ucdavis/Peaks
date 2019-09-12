@@ -1,6 +1,7 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
+import { toast } from "react-toastify";
 import { Button } from "reactstrap";
 import { AppContext, IKey, IKeySerial } from "../../Types";
 
@@ -115,16 +116,20 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
         this.setState({ isSearchLoading: true });
 
         const searchUrl = this.props.selectedKey
-            ? `/api/${team.slug}/keySerials/searchInKey?keyId=${
-                  this.props.selectedKey.id
-              }&q=${query}`
+            ? `/api/${team.slug}/keySerials/searchInKey?keyId=${this.props.selectedKey.id}&q=${query}`
             : `/api/${team.slug}/keySerials/search?q=${query}`;
 
-        const results = await this.context.fetch(searchUrl);
-
+        let keySerials: IKeySerial[] = null;
+        try {
+            keySerials = await this.context.fetch(searchUrl);
+        } catch (err) {
+            toast.error("Error searching key serials.");
+            this.setState({ isSearchLoading: false });
+            return;
+        }
         this.setState({
             isSearchLoading: false,
-            keySerials: results
+            keySerials
         });
     };
 

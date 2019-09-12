@@ -1,6 +1,7 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
+import { toast } from "react-toastify";
 import { Button } from "reactstrap";
 import { AppContext, ISpace, IWorkstation } from "../../Types";
 
@@ -42,11 +43,6 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
     }
 
     private _renderSelectWorkstation = () => {
-        const searchUrl = this.props.space
-            ? `/api/${this.context.team.slug}/workstations/searchInSpace?spaceId=${
-                  this.props.space.id
-              }&q=`
-            : `/api/${this.context.team.slug}/workstations/search?q=`;
         return (
             <div>
                 <label>Pick a workstation to assign</label>
@@ -80,14 +76,7 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
                                 </div>
                             </div>
                         )}
-                        onSearch={async query => {
-                            this.setState({ isSearchLoading: true });
-                            const workstations = await this.context.fetch(searchUrl + query);
-                            this.setState({
-                                isSearchLoading: false,
-                                workstations
-                            });
-                        }}
+                        onSearch={this._onSearch}
                         onChange={selected => {
                             if (selected && selected.length === 1) {
                                 if (!!selected[0] && !!selected[0].assignment) {
@@ -111,6 +100,25 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
         );
     };
 
+    private _onSearch = async (query: string) => {
+        const searchUrl = this.props.space
+            ? `/api/${this.context.team.slug}/workstations/searchInSpace?spaceId=${this.props.space.id}&q=`
+            : `/api/${this.context.team.slug}/workstations/search?q=`;
+
+        this.setState({ isSearchLoading: true });
+        let workstations: IWorkstation[] = null;
+        try {
+            workstations = await this.context.fetch(searchUrl + query);
+        } catch (err) {
+            toast.error("Error searching workstations.");
+            this.setState({ isSearchLoading: false });
+            return;
+        }
+        this.setState({
+            isSearchLoading: false,
+            workstations
+        });
+    };
     private _renderExistingWorkstation = () => {
         return (
             <input
