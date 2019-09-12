@@ -292,11 +292,16 @@ export default class AssignKey extends React.Component<IProps, IState> {
         this.setState({ submitting: true });
         const person = this.props.person ? this.props.person : this.state.person;
 
-        await this.props.onCreate(
-            person,
-            this.state.keySerial,
-            format(this.state.date, "MM/dd/yyyy")
-        );
+        try {
+            await this.props.onCreate(
+                person,
+                this.state.keySerial,
+                format(this.state.date, "MM/dd/yyyy")
+            );
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
 
         this._closeModal();
     };

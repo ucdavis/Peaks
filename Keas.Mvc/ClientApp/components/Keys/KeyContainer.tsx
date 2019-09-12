@@ -341,12 +341,18 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
-        const deleted: IKey = await this.context.fetch(
-            `/api/${this.context.team.slug}/keys/delete/${key.id}`,
-            {
-                method: "POST"
-            }
-        );
+        try {
+            const deleted: IKey = await this.context.fetch(
+                `/api/${this.context.team.slug}/keys/delete/${key.id}`,
+                {
+                    method: "POST"
+                }
+            );
+            toast.success("Key deleted successfully!");
+        } catch (err) {
+            toast.error("Error deleting key.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // remove from state
         const index = this.state.keys.findIndex(x => x.id === key.id);

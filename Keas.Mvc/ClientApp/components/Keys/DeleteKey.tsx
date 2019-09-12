@@ -48,7 +48,10 @@ export default class DeleteKey extends React.Component<IProps, IState> {
                     </div>
 
                     <ModalBody>
-                        <KeyEditValues selectedKey={this.props.selectedKeyInfo.key} disableEditing={true} />
+                        <KeyEditValues
+                            selectedKey={this.props.selectedKeyInfo.key}
+                            disableEditing={true}
+                        />
                     </ModalBody>
                     <ModalFooter>
                         <Button
@@ -78,7 +81,6 @@ export default class DeleteKey extends React.Component<IProps, IState> {
         try {
             await this.props.deleteKey(this.props.selectedKeyInfo.key);
         } catch (err) {
-            alert("There was an error deleting this key, please try again");
             this.setState({ submitting: false });
             return;
         }
