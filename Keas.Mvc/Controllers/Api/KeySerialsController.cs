@@ -274,8 +274,6 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Revoke(int id)
         {
-            //TODO: check permissions
-
             // find keyserial
             var keySerial = await _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team)
@@ -283,12 +281,7 @@ namespace Keas.Mvc.Controllers.Api
                 .ThenInclude(s => s.Team)
                 .Include(s => s.KeySerialAssignment)
                 .ThenInclude(s => s.Person)
-                .SingleOrDefaultAsync(x => x.Id == id);
-
-            if (keySerial == null)
-            {
-                return NotFound();
-            }
+                .SingleAsync(x => x.Id == id);
 
             if (keySerial.KeySerialAssignment == null)
             {
