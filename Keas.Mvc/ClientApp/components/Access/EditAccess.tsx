@@ -22,7 +22,6 @@ interface IState {
 
 export default class EditAccess extends React.Component<IProps, IState> {
     public static contextTypes = {
-        fetch: PropTypes.func,
         team: PropTypes.object
     };
     public context: AppContext;
@@ -125,8 +124,12 @@ export default class EditAccess extends React.Component<IProps, IState> {
         }
 
         this.setState({ submitting: true });
-        await this.props.onEdit(this.state.access);
-
+        try {
+            await this.props.onEdit(this.state.access);
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
         this._closeModal();
     };
 

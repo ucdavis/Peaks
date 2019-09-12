@@ -1,5 +1,6 @@
 ﻿import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { Button, Modal, ModalBody } from "reactstrap";
 import { AppContext, IAccess, IAccessAssignment } from "../../Types";
 import AccessEditValues from "./AccessEditValues";
@@ -73,7 +74,13 @@ export default class AccessDetails extends React.Component<IProps, {}> {
 
     private _fetchDetails = async (id: number) => {
         const url = `/api/${this.context.team.slug}/access/details/${id}`;
-        const access = await this.context.fetch(url);
+        let access: IAccess = null;
+        try {
+            access = await this.context.fetch(url);
+        } catch (err) {
+            toast.error("Error loading access details. Please refresh and try again.");
+            return;
+        }
         this.props.updateSelectedAccess(access);
     };
 }

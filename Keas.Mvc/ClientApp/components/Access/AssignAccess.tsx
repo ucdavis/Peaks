@@ -226,8 +226,16 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         this.setState({ submitting: true });
         const person = this.props.person ? this.props.person : this.state.person;
 
-        await this.props.onCreate(this.state.access, format(this.state.date, "MM/dd/yyyy"), person);
-
+        try {
+            await this.props.onCreate(
+                this.state.access,
+                format(this.state.date, "MM/dd/yyyy"),
+                person
+            );
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
         this._closeModal();
     };
 
