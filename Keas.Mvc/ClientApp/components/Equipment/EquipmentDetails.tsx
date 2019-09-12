@@ -1,5 +1,6 @@
 ﻿import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { Button, Modal, ModalBody } from "reactstrap";
 import { AppContext, IEquipment } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
@@ -79,7 +80,13 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
 
     private _fetchDetails = async (id: number) => {
         const url = `/api/${this.context.team.slug}/equipment/details/${id}`;
-        const equipment = await this.context.fetch(url);
+        let equipment: IEquipment = null;
+        try {
+            equipment = await this.context.fetch(url);
+        } catch (err) {
+            toast.error("Error fetching equipment details. Please refresh the page to try again.");
+            return;
+        }
         this.props.updateSelectedEquipment(equipment);
     };
 }
