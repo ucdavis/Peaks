@@ -148,7 +148,11 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
         return (
             <div className="form-group">
                 <label>Pick an key to associate</label>
-                <SearchKeys onSelect={this._onSelectedKeyInfo} onDeselect={this._onDeselected} allowNew={false} />
+                <SearchKeys
+                    onSelect={this._onSelectedKeyInfo}
+                    onDeselect={this._onDeselected}
+                    allowNew={false}
+                />
             </div>
         );
     }
@@ -211,8 +215,12 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
 
         this.setState({ submitting: true });
 
-        await this.props.onAssign(selectedSpace, selectedKeyInfo);
-
+        try {
+            await this.props.onAssign(selectedSpace, selectedKeyInfo);
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
         this._closeModal();
     };
 

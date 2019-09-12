@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { AppContext, IKey, IKeyInfo, IPerson, ISpace } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
 import Denied from "../Shared/Denied";
@@ -65,8 +66,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         } else {
             keyFetchUrl = `/api/${team.slug}/keys/list/`;
         }
-
-        const keys = await this.context.fetch(keyFetchUrl);
+        let keys: IKeyInfo[] = null;
+        try {
+            keys = await this.context.fetch(keyFetchUrl);
+        } catch (err) {
+            toast.error("Failed to fetch keys. Please refresh the page to try again.");
+            return;
+        }
 
         const tags = await this.context.fetch(`/api/${team.slug}/tags/listTags`);
 
@@ -229,10 +235,16 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         };
 
         const createUrl = `/api/${this.context.team.slug}/keys/create`;
-        key = await this.context.fetch(createUrl, {
-            body: JSON.stringify(request),
-            method: "POST"
-        });
+        try {
+            key = await this.context.fetch(createUrl, {
+                body: JSON.stringify(request),
+                method: "POST"
+            });
+            toast.success("Key created successfully!");
+        } catch (err) {
+            toast.error("Error creating key.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         const index = this.state.keys.findIndex(x => x.id === key.id);
         let keyInfo: IKeyInfo = {
@@ -272,11 +284,11 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
     private _checkIfKeyCodeIsValid = (code: string) => {
         return !this.state.keys.some(x => x.key.code === code);
-    }
+    };
 
     private _checkIfKeyCodeIsValidOnEdit = (code: string, id: number) => {
         return !this.state.keys.some(x => x.id !== id && x.key.code === code);
-    }
+    };
 
     private _editKey = async (key: IKey) => {
         const index = this.state.keys.findIndex(x => x.id === key.id);
@@ -294,10 +306,16 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         };
 
         const updateUrl = `/api/${this.context.team.slug}/keys/update/${key.id}`;
-        key = await this.context.fetch(updateUrl, {
-            body: JSON.stringify(request),
-            method: "POST"
-        });
+        try {
+            key = await this.context.fetch(updateUrl, {
+                body: JSON.stringify(request),
+                method: "POST"
+            });
+            toast.success("Key updated successfully!");
+        } catch (err) {
+            toast.error("Error updating key.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // update already existing entry in key
         const updateKey = [...this.state.keys];
@@ -323,12 +341,18 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         if (!confirm("Are you sure you want to delete item?")) {
             return false;
         }
-        const deleted: IKey = await this.context.fetch(
-            `/api/${this.context.team.slug}/keys/delete/${key.id}`,
-            {
-                method: "POST"
-            }
-        );
+        try {
+            const deleted: IKey = await this.context.fetch(
+                `/api/${this.context.team.slug}/keys/delete/${key.id}`,
+                {
+                    method: "POST"
+                }
+            );
+            toast.success("Key deleted successfully!");
+        } catch (err) {
+            toast.error("Error deleting key.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // remove from state
         const index = this.state.keys.findIndex(x => x.id === key.id);
@@ -345,7 +369,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
         // possibly create key
         if (keyInfo.id === 0) {
-            keyInfo = await this._createKey(keyInfo.key);
+            try {
+                keyInfo = await this._createKey(keyInfo.key);
+                toast.success("Key created successfully!");
+            } catch (err) {
+                toast.error("Error creating key.");
+                throw new Error(); // throw error so modal doesn't close
+            }
         }
 
         const request = {
@@ -353,10 +383,16 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         };
 
         const associateUrl = `/api/${team.slug}/keys/associateSpace/${keyInfo.id}`;
-        const association = await this.context.fetch(associateUrl, {
-            body: JSON.stringify(request),
-            method: "POST"
-        });
+        try {
+            const association = await this.context.fetch(associateUrl, {
+                body: JSON.stringify(request),
+                method: "POST"
+            });
+            toast.success("Space associated succesfully!");
+        } catch (err) {
+            toast.error("Error associating space.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // update count here
         keyInfo.spacesCount++;
@@ -395,10 +431,16 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         };
 
         const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${keyInfo.id}`;
-        const result = await this.context.fetch(disassociateUrl, {
-            body: JSON.stringify(request),
-            method: "POST"
-        });
+        try {
+            const result = await this.context.fetch(disassociateUrl, {
+                body: JSON.stringify(request),
+                method: "POST"
+            });
+            toast.success("Space disassociated succesfully!");
+        } catch (err) {
+            toast.error("Error disassociating space.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // update count here
         keyInfo.spacesCount--;

@@ -5,6 +5,7 @@ import { AppContext, IKeySerial } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
 import KeySerialAssignmentValues from "./KeySerialAssignmentValues";
 import KeySerialEditValues from "./KeySerialEditValues";
+import { toast } from "react-toastify";
 
 interface IProps {
     isModalOpen: boolean;
@@ -81,7 +82,12 @@ export default class KeyDetails extends React.Component<IProps, {}> {
 
     private _fetchDetails = async (id: number) => {
         const url = `/api/${this.context.team.slug}/keySerials/details/${id}`;
-        const equipment = await this.context.fetch(url);
-        this.props.updateSelectedKeySerial(equipment);
+        let keySerial: IKeySerial = null;
+        try {
+            keySerial = await this.context.fetch(url);
+        } catch (err) {
+            toast.error("Error fetching key serial details. Please refresh to try again.");
+        }
+        this.props.updateSelectedKeySerial(keySerial);
     };
 }

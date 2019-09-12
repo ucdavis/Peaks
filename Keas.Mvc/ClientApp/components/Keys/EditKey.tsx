@@ -133,8 +133,12 @@ export default class EditKey extends React.Component<IProps, IState> {
         }
 
         this.setState({ submitting: true });
-        await this.props.onEdit(this.state.key);
-
+        try {
+            await this.props.onEdit(this.state.key);
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
         this._closeModal();
     };
 

@@ -151,8 +151,12 @@ export default class CreateKey extends React.Component<IProps, IState> {
         }
 
         this.setState({ submitting: true });
-        await this.props.onCreate(this.state.key);
-
+        try {
+            await this.props.onCreate(this.state.key);
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
         this._closeModal();
     };
 

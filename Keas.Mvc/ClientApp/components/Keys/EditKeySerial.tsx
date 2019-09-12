@@ -76,7 +76,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
                                 disableEditing={false}
                                 statusList={this.props.statusList}
                             />
-                          
+
                             <KeySerialAssignmentValues
                                 selectedKeySerial={this.props.selectedKeySerial}
                                 openUpdateModal={this.props.openUpdateModal}
@@ -135,8 +135,12 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
         }
 
         this.setState({ submitting: true });
-        await this.props.onEdit(this.state.keySerial);
-
+        try {
+            await this.props.onEdit(this.state.keySerial);
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
         this._closeModal();
     };
 

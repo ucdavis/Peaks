@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { AppContext, IKey, IKeySerial, IPerson } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
 import Denied from "../Shared/Denied";
@@ -70,8 +71,13 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
         const statusListFetchUrl = `/api/${this.context.team.slug}/keySerials/ListKeySerialStatus/`;
 
-        const keySerials = await this.context.fetch(keyFetchUrl);
-
+        let keySerials: IKeySerial[] = null;
+        try {
+            keySerials = await this.context.fetch(keyFetchUrl);
+        } catch (err) {
+            toast.error("Failed to fetch key serials. Please refresh the page to try again.");
+            return;
+        }
         const statusList = await this.context.fetch(statusListFetchUrl);
 
         this.setState({ keySerials, statusList, loading: false });
@@ -179,10 +185,16 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             };
 
             const createUrl = `/api/${team.slug}/keyserials/create`;
-            keySerial = await this.context.fetch(createUrl, {
-                body: JSON.stringify(request),
-                method: "POST"
-            });
+            try {
+                keySerial = await this.context.fetch(createUrl, {
+                    body: JSON.stringify(request),
+                    method: "POST"
+                });
+                toast.success("Key serial created successfully!");
+            } catch (err) {
+                toast.error("Error creating key serial.");
+                throw new Error(); // throw error so modal doesn't close
+            }
 
             updateTotalAssetCount = true;
         }
@@ -201,10 +213,16 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             };
 
             const assignUrl = `/api/${team.slug}/keyserials/assign`;
-            keySerial = await this.context.fetch(assignUrl, {
-                body: JSON.stringify(request),
-                method: "POST"
-            });
+            try {
+                keySerial = await this.context.fetch(assignUrl, {
+                    body: JSON.stringify(request),
+                    method: "POST"
+                });
+                toast.success("Key serial assigned successfully!");
+            } catch (err) {
+                toast.error("Error assigning key serial.");
+                throw new Error(); // throw error so modal doesn't close
+            }
 
             keySerial.keySerialAssignment.person = person;
         }
@@ -246,10 +264,15 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
         // call API to actually revoke
         const revokeUrl = `/api/${team.slug}/keyserials/revoke/${keySerial.id}`;
-        keySerial = await this.context.fetch(revokeUrl, {
-            method: "POST"
-        });
-
+        try {
+            keySerial = await this.context.fetch(revokeUrl, {
+                method: "POST"
+            });
+            toast.success("Key serial revoked successfully!");
+        } catch (err) {
+            toast.error("Error revoking key serial.");
+            throw new Error(); // throw error so modal doesn't close
+        }
         // should we remove from state
         const index = this.state.keySerials.findIndex(k => k.id === keySerial.id);
         if (index > -1) {
@@ -293,10 +316,16 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         };
 
         const updateUrl = `/api/${team.slug}/keyserials/update/${keySerial.id}`;
-        keySerial = await this.context.fetch(updateUrl, {
-            body: JSON.stringify(request),
-            method: "POST"
-        });
+        try {
+            keySerial = await this.context.fetch(updateUrl, {
+                body: JSON.stringify(request),
+                method: "POST"
+            });
+            toast.success("Key serial updated successfully!");
+        } catch (err) {
+            toast.error("Error editing key serial.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         // update already existing entry in key
         const updateKeySerials = [...this.state.keySerials];
