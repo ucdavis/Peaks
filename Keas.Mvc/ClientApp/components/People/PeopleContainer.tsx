@@ -249,9 +249,8 @@ export default class PeopleContainer extends React.Component<{}, IState> {
 
         try {
             const deleted: IPerson = await this.context.fetch(
-                `/api/${this.context.team.slug}/peopleAdmin/delete`,
+                `/api/${this.context.team.slug}/peopleAdmin/delete/${person.id}`,
                 {
-                    body: JSON.stringify(person),
                     method: "POST"
                 }
             );
