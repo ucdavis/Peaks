@@ -7,6 +7,7 @@ import SearchTags from "../Tags/SearchTags";
 import CreatePerson from "./CreatePerson";
 import PeopleTable from "./PeopleTable";
 import PersonDetails from "./PersonDetails";
+import { toast } from "react-toastify";
 
 interface IState {
     loading: boolean;
@@ -39,7 +40,13 @@ export default class PeopleContainer extends React.Component<{}, IState> {
         if (!PermissionsUtil.canViewPeople(this.context.permissions)) {
             return;
         }
-        const people = await this.context.fetch(`/api/${this.context.team.slug}/people/list/`);
+        let people: IPersonInfo[] = null;
+        try {
+            people = await this.context.fetch(`/api/${this.context.team.slug}/people/list/`);
+        } catch (err) {
+            toast.error("Error fetching people. Please refresh to try again.");
+            return;
+        }
         const tags = await this.context.fetch(`/api/${this.context.team.slug}/tags/listTags`);
 
         this.setState({ loading: false, people, tags });
@@ -171,13 +178,15 @@ export default class PeopleContainer extends React.Component<{}, IState> {
             return;
         }
         person.teamId = this.context.team.id;
-        // any errors here are caught in CreatePerson
-        person = await this.context.fetch(`/api/${this.context.team.slug}/people/create`, {
-            body: JSON.stringify(person),
-            method: "POST"
-        });
-        if (!person) {
-            return;
+        try {
+            person = await this.context.fetch(`/api/${this.context.team.slug}/people/create`, {
+                body: JSON.stringify(person),
+                method: "POST"
+            });
+            toast.success("Successfully created person!");
+        } catch (err) {
+            toast.error("Error creating person.");
+            throw new Error();
         }
         // since this is a new person, they will not have anything assigned
         const personInfo: IPersonInfo = {
@@ -201,13 +210,20 @@ export default class PeopleContainer extends React.Component<{}, IState> {
             return;
         }
 
-        const updated: IPerson = await this.context.fetch(
-            `/api/${this.context.team.slug}/peopleAdmin/update`,
-            {
-                body: JSON.stringify(person),
-                method: "POST"
-            }
-        );
+        let updated: IPerson = null;
+        try {
+            updated = await this.context.fetch(
+                `/api/${this.context.team.slug}/peopleAdmin/update`,
+                {
+                    body: JSON.stringify(person),
+                    method: "POST"
+                }
+            );
+            toast.success("Sucessfully updated person!");
+        } catch (err) {
+            toast.error("Error editing person.");
+            throw new Error();
+        }
 
         // update already existing entry in key
         const updatePeople = [...this.state.people];
@@ -231,13 +247,19 @@ export default class PeopleContainer extends React.Component<{}, IState> {
             return false;
         }
 
-        const deleted: IPerson = await this.context.fetch(
-            `/api/${this.context.team.slug}/peopleAdmin/delete`,
-            {
-                body: JSON.stringify(person),
-                method: "POST"
-            }
-        );
+        try {
+            const deleted: IPerson = await this.context.fetch(
+                `/api/${this.context.team.slug}/peopleAdmin/delete`,
+                {
+                    body: JSON.stringify(person),
+                    method: "POST"
+                }
+            );
+            toast.success("Successfully deleted person!");
+        } catch (err) {
+            toast.error("Error deleting person.");
+            throw new Error();
+        }
 
         this._goBack();
 
