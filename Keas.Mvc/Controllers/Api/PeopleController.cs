@@ -135,12 +135,13 @@ namespace Keas.Mvc.Controllers.Api
             return Json(person);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] Person person)
         {
             // TODO Make sure user has permission; Protect from overpost
             if (ModelState.IsValid)
             {
-                // if we are not being sent in an already existing, active person
+                // if we are being sent in an already existing, active person
                 if (person.Active && person.Id != 0)
                 {
                     return BadRequest();
