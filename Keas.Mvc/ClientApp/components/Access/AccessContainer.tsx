@@ -263,9 +263,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         try {
             // call API to actually revoke
             const removed: IAccess = await this.context.fetch(
-                `/api/${this.context.team.slug}/access/revoke`,
+                `/api/${this.context.team.slug}/access/revoke/${accessAssignment.id}`,
                 {
-                    body: JSON.stringify(accessAssignment),
                     method: "POST"
                 }
             );
@@ -308,9 +307,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         }
         try {
             const deleted: IAccess = await this.context.fetch(
-                `/api/${this.context.team.slug}/access/delete`,
+                `/api/${this.context.team.slug}/access/delete/${access.id}`,
                 {
-                    body: JSON.stringify(access),
                     method: "POST"
                 }
             );
