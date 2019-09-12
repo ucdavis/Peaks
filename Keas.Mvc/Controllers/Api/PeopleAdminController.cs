@@ -13,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers.Api
 {
-   [Authorize(Policy = AccessCodes.Codes.PersonManagerAccess)]
+    [Authorize(Policy = AccessCodes.Codes.PersonManagerAccess)]
     public class PeopleAdminController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -27,6 +27,7 @@ namespace Keas.Mvc.Controllers.Api
             _notificationService = notificationService;
         }
 
+        [HttpPost]
         public async Task<IActionResult> Update([FromBody]Person person)
         {
             //TODO: check permissions
@@ -59,17 +60,13 @@ namespace Keas.Mvc.Controllers.Api
             return BadRequest(ModelState);
         }
 
-        public async Task<IActionResult> Delete([FromBody]Person person)
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (!person.Active)
-            {
-                return BadRequest(ModelState);
-            }
+            var person = await _context.People
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.User)
+                .SingleAsync(x => x.Id == id);
 
             if (User.Identity.Name == person.UserId)
             {
@@ -82,7 +79,7 @@ namespace Keas.Mvc.Controllers.Api
             {
                 var personToUpdate = await _context.People.SingleAsync(a => a.Id == person.Id && a.TeamId == person.TeamId);
                 personToUpdate.Active = false;
-               
+
                 await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, PersonNotification.Actions.Deactivated, String.Empty);
 
                 //Remove any Admin roles for that team

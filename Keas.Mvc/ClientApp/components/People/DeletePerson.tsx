@@ -95,13 +95,12 @@ export default class DeletePerson extends React.Component<IProps, IState> {
         try {
             await this.props.onDelete(this.props.selectedPersonInfo.person);
         } catch (err) {
-            alert("There was an error deleting this person, please try again");
             this.setState({ submitting: false });
             return;
         }
         // do not need to manage state here since it is unmounted after delete
-        // this.setState({submitting: false});
-        // this._toggleModal();
+        this.setState({ submitting: false });
+        this._toggleModal();
     };
 
     private _toggleModal = () => {
