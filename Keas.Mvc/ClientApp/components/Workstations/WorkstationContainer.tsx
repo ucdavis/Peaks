@@ -360,8 +360,9 @@ export default class WorkstationContainer extends React.Component<IProps, IState
         }
     };
 
-    private _updateWorkstationFromDetails = (workstation: IWorkstation) => {
-        const index = this.state.workstations.findIndex(x => x.id === workstation.id);
+    private _updateWorkstationFromDetails = (workstation: IWorkstation, id?: number) => {
+        const workstationId = workstation ? workstation.id : id;
+        const index = this.state.workstations.findIndex(x => x.id === workstationId);
 
         if (index === -1) {
             // should always already exist
@@ -370,8 +371,11 @@ export default class WorkstationContainer extends React.Component<IProps, IState
 
         // update already existing entry in key
         const updateWorkstations = [...this.state.workstations];
-        updateWorkstations[index] = workstation;
-
+        if (workstation == null) {
+            updateWorkstations.splice(index, 1);
+        } else {
+            updateWorkstations[index] = workstation;
+        }
         this.setState({ ...this.state, workstations: updateWorkstations });
     };
 

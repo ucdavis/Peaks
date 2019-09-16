@@ -13,7 +13,7 @@ interface IProps {
     openEditModal: (workstation: IWorkstation) => void;
     openUpdateModal: (workstation: IWorkstation) => void;
     selectedWorkstation: IWorkstation;
-    updateSelectedWorkstation: (workstation: IWorkstation) => void;
+    updateSelectedWorkstation: (workstation: IWorkstation, id?: number) => void;
 }
 
 export default class WorkstationDetails extends React.Component<IProps, {}> {
@@ -84,8 +84,17 @@ export default class WorkstationDetails extends React.Component<IProps, {}> {
         try {
             workstation = await this.context.fetch(url);
         } catch (err) {
-            toast.error("Error fetching workstation details. Please refresh to try again.");
-            return;
+            if (err.message === "Not Found") {
+                toast.error(
+                    "The workstation you were trying to view could not be found. It may have been deleted."
+                );
+                this.props.updateSelectedWorkstation(null, id);
+                this.props.closeModal();
+            } else {
+                toast.error(
+                    "Error fetching workstation details. Please refresh the page to try again."
+                );
+            }
         }
         this.props.updateSelectedWorkstation(workstation);
     };
