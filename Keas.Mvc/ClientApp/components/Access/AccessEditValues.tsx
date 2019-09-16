@@ -128,7 +128,11 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
         const accessAssignment = this.props.selectedAccess.assignments.filter(
             x => x.personId === personId
         );
-        // TODO: add submitting state
-        await this.props.onRevoke(accessAssignment[0]);
+        try {
+            await this.props.onRevoke(accessAssignment[0]);
+        } catch (err) {
+            // TODO: add submitting state and handle
+            return;
+        }
     };
 }
