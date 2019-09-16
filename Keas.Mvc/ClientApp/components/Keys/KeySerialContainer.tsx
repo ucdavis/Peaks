@@ -15,8 +15,6 @@ interface IState {
     keySerials: IKeySerial[];
     statusList: string[];
     loading: boolean;
-    revoking: boolean;
-    openRevokeModal: boolean;
 }
 
 interface IProps {
@@ -53,11 +51,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         this.state = {
             keySerials: [],
             loading: true,
-            openRevokeModal: false,
-            revoking: false,
-            statusList: [],
-            
-            
+            statusList: [],   
         };
     }
     public async componentDidMount() {
@@ -160,7 +154,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                     />
                     <RevokeKeySerials
                         selectedKeySerial={selectedKeySerial}
-                        isModalOpen={this.state.openRevokeModal}
+                        isModalOpen={activeAsset && action === "revoke" && !!selectedKeySerial}
                         closeModal={this._closeModals}
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openUpdateModal}
@@ -274,15 +268,8 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         }
     };
 
-    private _openRevokeModal = (keySerial: IKeySerial) => {
-        debugger;
-        alert('opeing modal')
-        this.setState({openRevokeModal: true})
-    }
-
     private _revokeKeySerial = async (keySerial: IKeySerial) => {
 
-        alert('hey rvoking')
         const { team } = this.context;
 
         // call API to actually revoke
@@ -403,6 +390,10 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             );
         }
     };
+
+    private _openRevokeModal = (keySerial: IKeySerial) => {
+        this.context.router.history.push(`${this._getBaseUrl()}/keyserials/revoke/${keySerial.id}`);
+    }
 
     private _openEditModal = (keySerial: IKeySerial) => {
         this.context.router.history.push(`${this._getBaseUrl()}/keyserials/edit/${keySerial.id}`);
