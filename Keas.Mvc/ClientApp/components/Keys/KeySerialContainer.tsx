@@ -16,6 +16,7 @@ interface IState {
     statusList: string[];
     loading: boolean;
     revoking: boolean;
+    openRevokeModal: boolean;
 }
 
 interface IProps {
@@ -51,8 +52,8 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
         this.state = {
             keySerials: [],
-            
             loading: true,
+            openRevokeModal: false,
             revoking: false,
             statusList: [],
             
@@ -132,7 +133,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                     {this.props.selectedPerson && !this.props.selectedKey && (
                         <KeySerialList
                             keySerials={this.state.keySerials}
-                            onRevoke={this._revokeKeySerial}
+                            onRevoke={this._openRevokeModal}
                             onAssign={this._openAssignModal}
                             onEdit={this._openEditModal}
                             onUpdate={this._openUpdateModal}
@@ -142,7 +143,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                     {!this.props.selectedPerson && this.props.selectedKey && (
                         <KeySerialTable
                             keySerials={this.state.keySerials}
-                            onRevoke={this._revokeKeySerial}
+                            onRevoke={this._openRevokeModal}
                             onAssign={this._openAssignModal}
                             onEdit={this._openEditModal}
                             onUpdate={this._openUpdateModal}
@@ -159,7 +160,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                     />
                     <RevokeKeySerials
                         selectedKeySerial={selectedKeySerial}
-                        isModalOpen={this.state.revoking}
+                        isModalOpen={this.state.openRevokeModal}
                         closeModal={this._closeModals}
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openUpdateModal}
@@ -273,9 +274,15 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         }
     };
 
+    private _openRevokeModal = (keySerial: IKeySerial) => {
+        debugger;
+        alert('opeing modal')
+        this.setState({openRevokeModal: true})
+    }
+
     private _revokeKeySerial = async (keySerial: IKeySerial) => {
 
-        this.setState({revoking: true})
+        alert('hey rvoking')
         const { team } = this.context;
 
         // call API to actually revoke
