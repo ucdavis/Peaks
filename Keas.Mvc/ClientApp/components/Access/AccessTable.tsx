@@ -47,7 +47,7 @@ export default class AccessTable extends React.Component<IProps, {}> {
                         sortable: false
                     },
                     {
-                        Header: "Item",
+                        Header: "Name",
                         accessor: "name",
                         filterMethod: (filter, row) =>
                             !!row[filter.id] &&

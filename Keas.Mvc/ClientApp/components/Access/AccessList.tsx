@@ -38,7 +38,7 @@ export default class AccessList extends React.Component<IProps, {}> {
                 <thead>
                     <tr>
                         <th />
-                        <th>Item</th>
+                        <th>Name</th>
                         <th>Assigned?</th>
                         <th>Number of Assignments</th>
                         <th>Expiration</th>

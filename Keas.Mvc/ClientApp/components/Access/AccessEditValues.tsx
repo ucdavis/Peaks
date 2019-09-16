@@ -71,7 +71,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                 )}
                 <div className="wrapperasset">
                     <FormGroup>
-                        <Label for="item">Item</Label>
+                        <Label for="name">Name</Label>
                         <Input
                             type="text"
                             className="form-control"
