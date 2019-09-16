@@ -383,8 +383,9 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         }
     };
 
-    private _updateAccessFromDetails = (access: IAccess) => {
-        const index = this.state.accesses.findIndex(x => x.id === access.id);
+    private _updateAccessFromDetails = (access: IAccess, id?: number) => {
+        const accessId = access ? access.id : id;
+        const index = this.state.accesses.findIndex(x => x.id === accessId);
 
         if (index === -1) {
             // should always already exist
@@ -393,8 +394,12 @@ export default class AccessContainer extends React.Component<IProps, IState> {
 
         // update already existing entry in key
         const updateAccesses = [...this.state.accesses];
-        updateAccesses[index] = access;
-
+        // if access has been deleted elsewhere
+        if (access === null) {
+            updateAccesses.splice(index, 1);
+        } else {
+            updateAccesses[index] = access;
+        }
         this.setState({ ...this.state, accesses: updateAccesses });
     };
 
