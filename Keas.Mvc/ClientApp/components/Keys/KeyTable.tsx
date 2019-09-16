@@ -56,7 +56,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
                         sortable: false
                     },
                     {
-                        Header: "Key",
+                        Header: "Key Name",
                         accessor: "key.name",
                         className: "word-wrap",
                         filterMethod: (filter: IFilter, row: IRow) =>

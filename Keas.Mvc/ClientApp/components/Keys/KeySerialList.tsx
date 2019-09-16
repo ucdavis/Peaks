@@ -29,7 +29,7 @@ export default class KeySerialList extends React.Component<IProps, {}> {
                     <tr>
                         <th />
                         <th>Key Code</th>
-                        <th>Key Serial Number</th>
+                        <th>Serial Number</th>
                         <th>Status</th>
                         <th>Assigned To</th>
                         <th>Expiration</th>
