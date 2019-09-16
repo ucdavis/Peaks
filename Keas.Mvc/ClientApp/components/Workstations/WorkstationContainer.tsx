@@ -371,6 +371,7 @@ export default class WorkstationContainer extends React.Component<IProps, IState
 
         // update already existing entry in key
         const updateWorkstations = [...this.state.workstations];
+        // if workstation has been deleted elsewhere
         if (workstation == null) {
             updateWorkstations.splice(index, 1);
         } else {

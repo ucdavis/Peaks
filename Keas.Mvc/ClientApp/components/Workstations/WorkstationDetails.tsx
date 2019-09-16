@@ -95,6 +95,7 @@ export default class WorkstationDetails extends React.Component<IProps, {}> {
                     "Error fetching workstation details. Please refresh the page to try again."
                 );
             }
+            return;
         }
         this.props.updateSelectedWorkstation(workstation);
     };
