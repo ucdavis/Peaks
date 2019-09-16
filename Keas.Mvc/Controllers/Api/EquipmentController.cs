@@ -116,8 +116,12 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
                 .AsNoTracking()
-                .SingleAsync(x => x.Id == id);
+                .SingleOrDefaultAsync(x => x.Id == id);
 
+            if (equipment == null)
+            {
+                return NotFound();
+            }
             return Json(equipment);
         }
 
