@@ -502,8 +502,9 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         }
     };
 
-    private _updateEquipmentFromDetails = (equipment: IEquipment) => {
-        const index = this.state.equipment.findIndex(x => x.id === equipment.id);
+    private _updateEquipmentFromDetails = (equipment: IEquipment, id?: number) => {
+        const equipmentId = equipment ? equipment.id : id;
+        const index = this.state.equipment.findIndex(x => x.id === equipmentId);
 
         if (index === -1) {
             // should always already exist
@@ -512,7 +513,12 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
 
         // update already existing entry in key
         const updateEquipment = [...this.state.equipment];
-        updateEquipment[index] = equipment;
+        // if equipment has been deleted elsewhere
+        if (equipment === null) {
+            updateEquipment.splice(index, 1);
+        } else {
+            updateEquipment[index] = equipment;
+        }
 
         this.setState({ ...this.state, equipment: updateEquipment });
     };

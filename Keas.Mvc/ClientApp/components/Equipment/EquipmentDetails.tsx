@@ -13,7 +13,7 @@ interface IProps {
     openEditModal: (equipment: IEquipment) => void;
     openUpdateModal: (equipment: IEquipment) => void;
     selectedEquipment: IEquipment;
-    updateSelectedEquipment: (equipment: IEquipment) => void;
+    updateSelectedEquipment: (equipment: IEquipment, id?: number) => void;
 }
 
 export default class EquipmentDetails extends React.Component<IProps, {}> {
@@ -84,7 +84,17 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
         try {
             equipment = await this.context.fetch(url);
         } catch (err) {
-            toast.error("Error fetching equipment details. Please refresh the page to try again.");
+            if (err.message === "Not Found") {
+                toast.error(
+                    "The equipment you were trying to view could not be found. It may have been deleted."
+                );
+                this.props.updateSelectedEquipment(null, id);
+                this.props.closeModal();
+            } else {
+                toast.error(
+                    "Error fetching equipment details. Please refresh the page to try again."
+                );
+            }
             return;
         }
         this.props.updateSelectedEquipment(equipment);

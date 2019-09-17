@@ -112,15 +112,20 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Details(int id)
         {
-            var keySerials = await _context.KeySerials
+            var keySerial = await _context.KeySerials
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.KeySerialAssignment)
                     .ThenInclude(x => x.Person)
                 .Include(x => x.Key)
                 .AsNoTracking()
-                .SingleAsync(x => x.Id == id);
+                .SingleOrDefaultAsync(x => x.Id == id);
 
-            return Json(keySerials);
+            if (keySerial == null)
+            {
+                return NotFound();
+            }
+
+            return Json(keySerial);
         }
 
 

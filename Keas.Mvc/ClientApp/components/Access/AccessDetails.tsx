@@ -11,7 +11,7 @@ interface IProps {
     selectedAccess: IAccess;
     onRevoke: (accessAssignment: IAccessAssignment) => void;
     openEditModal: (access: IAccess) => void;
-    updateSelectedAccess: (access: IAccess) => void;
+    updateSelectedAccess: (access: IAccess, id?: number) => void;
 }
 
 export default class AccessDetails extends React.Component<IProps, {}> {
@@ -78,7 +78,15 @@ export default class AccessDetails extends React.Component<IProps, {}> {
         try {
             access = await this.context.fetch(url);
         } catch (err) {
-            toast.error("Error loading access details. Please refresh and try again.");
+            if (err.message === "Not Found") {
+                toast.error(
+                    "The access you were trying to view could not be found. It may have been deleted."
+                );
+                this.props.updateSelectedAccess(null, id);
+                this.props.closeModal();
+            } else {
+                toast.error("Error fetching access details. Please refresh the page to try again.");
+            }
             return;
         }
         this.props.updateSelectedAccess(access);

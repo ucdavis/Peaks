@@ -108,7 +108,7 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Details(int id)
         {
-            var workstations = await _context.Workstations
+            var workstation = await _context.Workstations
                 .Where(w => w.Team.Slug == Team)
                 .Include(w => w.Assignment)
                     .ThenInclude(w => w.Person)
@@ -116,9 +116,14 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(w => w.Attributes)
                 .Include(w => w.Team)
                 .AsNoTracking()
-                .SingleAsync(w => w.Id == id);
+                .SingleOrDefaultAsync(w => w.Id == id);
 
-            return Json(workstations);
+            if (workstation == null)
+            {
+                return NotFound();
+            }
+
+            return Json(workstation);
         }
 
         [HttpPost]

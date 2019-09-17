@@ -1,11 +1,11 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { Button, Modal, ModalBody } from "reactstrap";
 import { AppContext, IKeySerial } from "../../Types";
 import HistoryContainer from "../History/HistoryContainer";
 import KeySerialAssignmentValues from "./KeySerialAssignmentValues";
 import KeySerialEditValues from "./KeySerialEditValues";
-import { toast } from "react-toastify";
 
 interface IProps {
     isModalOpen: boolean;
@@ -13,7 +13,7 @@ interface IProps {
     openEditModal: (keySerial: IKeySerial) => void;
     openUpdateModal: (keySerial: IKeySerial) => void;
     selectedKeySerial: IKeySerial;
-    updateSelectedKeySerial: (keySerial: IKeySerial) => void;
+    updateSelectedKeySerial: (keySerial: IKeySerial, id?: number) => void;
 }
 
 export default class KeyDetails extends React.Component<IProps, {}> {
@@ -86,7 +86,18 @@ export default class KeyDetails extends React.Component<IProps, {}> {
         try {
             keySerial = await this.context.fetch(url);
         } catch (err) {
-            toast.error("Error fetching key serial details. Please refresh to try again.");
+            if (err.message === "Not Found") {
+                toast.error(
+                    "The key serial you were trying to view could not be found. It may have been deleted."
+                );
+                this.props.updateSelectedKeySerial(null, id);
+                this.props.closeModal();
+            } else {
+                toast.error(
+                    "Error fetching key serial details. Please refresh the page to try again."
+                );
+            }
+            return;
         }
         this.props.updateSelectedKeySerial(keySerial);
     };
