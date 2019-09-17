@@ -1,10 +1,8 @@
-import * as PropTypes from "prop-types";
 import * as React from "react";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
-import { AppContext, IKeySerial } from "../../Types";
+import { IKeySerial } from "../../Types";
 import KeySerialAssignmentValues from "./KeySerialAssignmentValues";
 import KeySerialEditValues from "./KeySerialEditValues";
-import { toast } from "react-toastify";
 
 interface IProps {
     isModalOpen: boolean;
@@ -22,36 +20,11 @@ interface IState {
 }
 
 export default class RevokeKeySerials extends React.Component<IProps, IState> {
-    public static contextTypes = {
-        fetch: PropTypes.func,
-        team: PropTypes.object
-    };
-
-    public context: AppContext;
     constructor(props) {
         super(props);
         this.state = {
             submitting: false
         };
-    }
-
-    public componentDidMount() {
-        if (!this.props.selectedKeySerial) {
-            return;
-        }
-        this._fetchDetails(this.props.selectedKeySerial.id);
-    }
-
-    
-    // make sure we change the key we are updating if the parent changes selected key
-    public componentWillReceiveProps(nextProps: IProps) {
-        if (
-            nextProps.selectedKeySerial &&
-            (!this.props.selectedKeySerial ||
-                nextProps.selectedKeySerial.id !== this.props.selectedKeySerial.id)
-        ) {
-            this._fetchDetails(nextProps.selectedKeySerial.id);
-        }
     }
 
     public render() {
@@ -60,7 +33,7 @@ export default class RevokeKeySerials extends React.Component<IProps, IState> {
         if (!selectedKeySerial) {
             return null;
         }
-        debugger;
+
         return (
             <div>
                 <Modal
@@ -103,23 +76,18 @@ export default class RevokeKeySerials extends React.Component<IProps, IState> {
         );
     }
 
-    private _fetchDetails = async (id: number) => {
-        const url = `/api/${this.context.team.slug}/keySerials/details/${id}`;
-        let keySerial: IKeySerial = null;
-        try {
-            keySerial = await this.context.fetch(url);
-        } catch (err) {
-            toast.error("Error fetching key serial details. Please refresh to try again.");
-        }
-        this.props.updateSelectedKeySerial(keySerial);
-    };
-
      private _revokeEquipment = async () => {
         if (!this._isValidToRevoke()) {
             return;
         }
         this.setState({ submitting: true });
-        await this.props.onRevoke(this.props.selectedKeySerial);
+        try {
+            await this.props.onRevoke(this.props.selectedKeySerial);
+
+        } catch (err) {
+            this.setState({submitting: false});
+            return;
+        }
         this.setState({ submitting: false });
         this.props.closeModal();
     };
