@@ -2,6 +2,7 @@ import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Button } from "reactstrap";
 import { AppContext, IPerson } from "../../Types";
 
@@ -69,16 +70,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
                                 </div>
                             </div>
                         )}
-                        onSearch={async query => {
-                            this.setState({ isSearchLoading: true });
-                            const people = await this.context.fetch(
-                                `/api/${this.context.team.slug}/people/searchPeople?q=${query}`
-                            );
-                            this.setState({
-                                isSearchLoading: false,
-                                people
-                            });
-                        }}
+                        onSearch={this._onSearch}
                         onChange={selected => {
                             if (selected && selected.length === 1) {
                                 this.props.onSelect(selected[0]);
@@ -100,5 +92,23 @@ export default class AssignPerson extends React.Component<IProps, IState> {
                 </div>
             </div>
         );
+    };
+
+    private _onSearch = async (query: string) => {
+        this.setState({ isSearchLoading: true });
+        let people: IPerson[] = null;
+        try {
+            people = await this.context.fetch(
+                `/api/${this.context.team.slug}/people/searchPeople?q=${query}`
+            );
+        } catch (err) {
+            toast.error("Error searching people.");
+            this.setState({ isSearchLoading: false });
+            return;
+        }
+        this.setState({
+            isSearchLoading: false,
+            people
+        });
     };
 }

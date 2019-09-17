@@ -150,8 +150,12 @@ export default class EditPerson extends React.Component<IProps, IState> {
         }
 
         this.setState({ submitting: true });
-        await this.props.onEdit(this.state.person);
-
+        try {
+            await this.props.onEdit(this.state.person);
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
         this._closeModal();
     };
 

@@ -1,5 +1,6 @@
 ﻿import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { Button, FormGroup, Input, InputGroup, InputGroupAddon, Label } from "reactstrap";
 import { AppContext, IPerson } from "../../Types";
 
@@ -71,9 +72,7 @@ export default class SearchUsers extends React.Component<IProps, IState> {
             return;
         }
         this.setState({ loading: true });
-        const userFetchUrl = `/api/${this.context.team.slug}/people/searchUsers?searchTerm=${
-            this.state.search
-        }`;
+        const userFetchUrl = `/api/${this.context.team.slug}/people/searchUsers?searchTerm=${this.state.search}`;
 
         let person = null;
         try {
@@ -84,7 +83,9 @@ export default class SearchUsers extends React.Component<IProps, IState> {
                 person = null;
             } else {
                 // on some other error
-                person = undefined;
+                toast.error("Error searching users.");
+                this.setState({ loading: false });
+                return;
             }
         }
         this.props.updatePerson(person);

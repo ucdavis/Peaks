@@ -83,7 +83,12 @@ export default class RevokeEquipment extends React.Component<IProps, IState> {
             return;
         }
         this.setState({ submitting: true });
-        await this.props.revokeEquipment(this.props.selectedEquipment);
+        try {
+            await this.props.revokeEquipment(this.props.selectedEquipment);
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
         this.setState({ submitting: false });
         this.props.closeModal();
     };
