@@ -4,7 +4,7 @@ import { IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
 import SearchSpaces from "../Spaces/SearchSpaces";
 import SearchTags from "../Tags/SearchTags";
 import EquipmentAttributes from "./EquipmentAttributes";
-import EquipmentBigFixInfo from "./EquipmentBigFixInfo"
+import EquipmentBigFix from "./EquipmentBigFix"
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
@@ -155,7 +155,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     )}
                     {this._shouldShowForType(this.props.selectedEquipment.type, "SystemManagementId") && (
                         <div className="form-group">
-                            <EquipmentBigFixInfo
+                            <EquipmentBigFix
                                bigfixId={this.props.selectedEquipment.systemManagementId}
                                addBigFixId={this.props.changeProperty}
                                disableEditing={this.props.disableEditing}
