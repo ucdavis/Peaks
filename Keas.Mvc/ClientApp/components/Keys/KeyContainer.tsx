@@ -8,6 +8,7 @@ import SearchTags from "../Tags/SearchTags";
 import AssociateSpace from "./AssociateSpace";
 import CreateKey from "./CreateKey";
 import DeleteKey from "./DeleteKey";
+import DisassociateSpace from "./DisassociateSpace";
 import EditKey from "./EditKey";
 import KeyDetailContainer from "./KeyDetailContainer";
 import KeyList from "./KeyList";
@@ -30,6 +31,9 @@ interface IState {
 
     tableFilters: any[];
     tagFilters: string[];
+    disassociatingSpace: ISpace;
+    disassociatingKeyInfo: IKeyInfo;
+    confirmDisassociating: boolean;
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
@@ -46,6 +50,9 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
+            confirmDisassociating: false,
+            disassociatingKeyInfo: null,
+            disassociatingSpace: null,
             keys: [],
             loading: true,
             tableFilters: [],
@@ -143,6 +150,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         closeModal={this._closeModals}
                         modal={keyAction === "delete"}
                     />
+                    <DisassociateSpace
+                        selectedKeyInfo={this.state.disassociatingKeyInfo}
+                        selectedSpace={this.state.disassociatingSpace}
+                        onConfirmDisassociate={this._confirmDisassociate}
+                        isModalOpen={action === "disassociate"}
+                        closeModal={this._closeModals}
+                    />
                 </div>
             </div>
         );
@@ -202,7 +216,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                     onEdit={this._openEditModal}
                     showDetails={this._openDetailsModal}
                     onDelete={this._openDeleteModal}
-                    onDisassociate={!!space ? k => this._disassociateSpace(space, k) : null}
+                    onDisassociate={!!space ? k => this._openDisassociate(): null}
                 />
             </div>
         );
@@ -422,7 +436,24 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         }
     };
 
+    private _confirmDisassociate = () => {
+        this.setState({confirmDisassociating: true})
+    }
+
     private _disassociateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
+        // update states
+        this.setState({
+            disassociatingKeyInfo: keyInfo,
+            disassociatingSpace: space
+        })
+        //open modal
+        this._openDisassociate()
+
+        // if not confirmed return
+        if (!this.state.confirmDisassociating){
+            return
+        }
+
         const { team } = this.context;
         const { keys } = this.state;
 
@@ -522,6 +553,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
     private _openAssociate = () => {
         this.context.router.history.push(`${this._getBaseUrl()}/keys/associate`);
+    };
+
+    private _openDisassociate = () => {
+        this.context.router.history.push(`${this._getBaseUrl()}/keys/disassociate`);
     };
 
     private _closeModals = () => {
