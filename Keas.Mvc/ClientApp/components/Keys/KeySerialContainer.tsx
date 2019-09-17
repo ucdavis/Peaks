@@ -354,8 +354,9 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         // TODO: handle count changes once keys are related to spaces
     };
 
-    private _updateKeySerialsFromDetails = (keySerial: IKeySerial) => {
-        const index = this.state.keySerials.findIndex(x => x.id === keySerial.id);
+    private _updateKeySerialsFromDetails = (keySerial: IKeySerial, id?: number) => {
+        const keySerialId = keySerial ? keySerial.id : id;
+        const index = this.state.keySerials.findIndex(x => x.id === keySerialId);
 
         if (index === -1) {
             // should always already exist
@@ -364,7 +365,12 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
         // update already existing entry in key
         const updateKeySerials = [...this.state.keySerials];
-        updateKeySerials[index] = keySerial;
+        // if key serial has been deleted elsewhere
+        if (keySerial === null) {
+            updateKeySerials.splice(index, 1);
+        } else {
+            updateKeySerials[index] = keySerial;
+        }
 
         this.setState({ ...this.state, keySerials: updateKeySerials });
     };

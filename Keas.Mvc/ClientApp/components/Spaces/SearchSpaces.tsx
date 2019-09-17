@@ -1,6 +1,7 @@
 ﻿import * as PropTypes from "prop-types";
 import * as React from "react";
 import { AsyncTypeahead, Highlighter } from "react-bootstrap-typeahead";
+import { toast } from "react-toastify";
 import { AppContext, ISpace } from "../../Types";
 
 interface IProps {
@@ -85,9 +86,16 @@ export default class SearchSpaces extends React.Component<IProps, IState> {
 
     private onSearch = async query => {
         this.setState({ isSearchLoading: true });
-        const spaces = await this.context.fetch(
-            `/api/${this.context.team.slug}/spaces/searchSpaces?q=${query}`
-        );
+        let spaces: ISpace[] = null;
+        try {
+            spaces = await this.context.fetch(
+                `/api/${this.context.team.slug}/spaces/searchSpaces?q=${query}`
+            );
+        } catch (err) {
+            toast.error("Error searching spaces.");
+            this.setState({ isSearchLoading: false });
+            return;
+        }
         this.setState({
             isSearchLoading: false,
             spaces

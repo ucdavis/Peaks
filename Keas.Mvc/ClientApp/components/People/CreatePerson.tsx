@@ -116,12 +116,12 @@ export default class CreatePerson extends React.Component<IProps, IState> {
 
     // clear everything out on close
     private _confirmClose = () => {
-        if (!confirm("Please confirm you want to close!")){
+        if (!confirm("Please confirm you want to close!")) {
             return;
         }
 
         this._closeModal();
-    }
+    };
 
     private _closeModal = () => {
         this.setState({
@@ -138,37 +138,27 @@ export default class CreatePerson extends React.Component<IProps, IState> {
             return;
         }
 
+        this.setState({ submitting: true });
         try {
-            this.setState({ submitting: true });
             await this.props.onCreate(this.state.person);
-            this._closeModal();
         } catch (err) {
             this.setState({
-                moreInfoString:
-                    "There was an error adding this person to your team: " + err.message,
-                person: null,
-                submitting: false,
-                validState: false
+                submitting: false
             });
+            return;
         }
+        this._closeModal();
     };
 
     // once we have selected a user from SearchUser
     private _onSelectPerson = (person: IPerson) => {
         if (person === null) {
             // if there was a 404, person will be null
+            // on other errors, SearchUsers will make a toast
             this.setState(
                 {
-                    moreInfoString: "The user could not be found",
-                    person: null
-                },
-                this._validateState
-            );
-        } else if (person === undefined) {
-            // if there was an error that is not a 404, person will be undef
-            this.setState(
-                {
-                    moreInfoString: "There was an error processing your search",
+                    moreInfoString:
+                        "The user could not be found. Please make sure you are searching the correct kerberos or email.",
                     person: null
                 },
                 this._validateState
@@ -179,7 +169,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
         ) {
             this.setState(
                 {
-                    moreInfoString: "The user you have chosen is already active in this team",
+                    moreInfoString: "The user you have chosen is already active in this team.",
                     person: null
                 },
                 this._validateState
@@ -187,7 +177,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
         } else if (person.active && person.teamId === 0) {
             this.setState(
                 {
-                    moreInfoString: "You are creating a new person",
+                    moreInfoString: "You are creating a new person.",
                     person
                 },
                 this._validateState
@@ -196,7 +186,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
             this.setState(
                 {
                     moreInfoString:
-                        "This person was set to inactive. Continuing will set them to active",
+                        "This person was set to inactive. Continuing will set them to active.",
                     person
                 },
                 this._validateState

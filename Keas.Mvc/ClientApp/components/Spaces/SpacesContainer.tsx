@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { AppContext, IKeyInfo, ISpace, ISpaceInfo } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
 import AssociateSpace from "../Keys/AssociateSpace";
@@ -58,7 +59,13 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             spacesFetchUrl = `/api/${team.slug}/spaces/list`;
         }
 
-        const spaces = await this.context.fetch(spacesFetchUrl);
+        let spaces: ISpaceInfo[] = null;
+        try {
+            spaces = await this.context.fetch(spacesFetchUrl);
+        } catch (err) {
+            toast.error("Error fetching spaces. Please refresh the page to try again.");
+            return;
+        }
         const tags = await this.context.fetch(`/api/${team.slug}/tags/listTags`);
 
         this.setState({ loading: false, spaces, tags });
@@ -299,10 +306,16 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         };
 
         const associateUrl = `/api/${team.slug}/keys/associateSpace/${keyInfo.id}`;
-        const result = await this.context.fetch(associateUrl, {
-            body: JSON.stringify(request),
-            method: "POST"
-        });
+        try {
+            const result = await this.context.fetch(associateUrl, {
+                body: JSON.stringify(request),
+                method: "POST"
+            });
+            toast.success("Successfully associated space!");
+        } catch (err) {
+            toast.error("Error associating space.");
+            throw new Error(); // throw error so modal doesn't close
+        }
 
         const spaceInfo: ISpaceInfo = {
             equipmentCount: 0,
@@ -329,11 +342,16 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         };
 
         const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${keyInfo.id}`;
-        const result = await this.context.fetch(disassociateUrl, {
-            body: JSON.stringify(request),
-            method: "POST"
-        });
-
+        try {
+            const result = await this.context.fetch(disassociateUrl, {
+                body: JSON.stringify(request),
+                method: "POST"
+            });
+            toast.success("Successfully disassociated space!");
+        } catch (err) {
+            toast.error("Error disassociating space.");
+            throw new Error();
+        }
         const updatedSpaces = [...spaces];
         const index = updatedSpaces.findIndex(s => s.space.id === space.id);
         updatedSpaces.splice(index, 1);
