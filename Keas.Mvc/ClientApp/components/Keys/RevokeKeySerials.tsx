@@ -60,7 +60,6 @@ export default class RevokeKeySerials extends React.Component<IProps, IState> {
         if (!selectedKeySerial) {
             return null;
         }
-        debugger;
         return (
             <div>
                 <Modal
