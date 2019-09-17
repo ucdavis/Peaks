@@ -31,9 +31,6 @@ interface IState {
 
     tableFilters: any[];
     tagFilters: string[];
-    disassociatingSpace: ISpace;
-    disassociatingKeyInfo: IKeyInfo;
-    confirmDisassociating: boolean;
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
@@ -50,9 +47,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         super(props);
 
         this.state = {
-            confirmDisassociating: false,
-            disassociatingKeyInfo: null,
-            disassociatingSpace: null,
             keys: [],
             loading: true,
             tableFilters: [],
@@ -97,9 +91,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
         const { space } = this.props;
         const { tags } = this.state;
-        const { keyAction, keyId, action } = this.context.router.route.match.params;
+        const { keyAction, keyId, action, id } = this.context.router.route.match.params;
 
-        const selectedKeyId = parseInt(keyId, 10);
+        // if on key tab, select using keyId. if on spaces, select using id
+        const selectedKeyId = keyId ? parseInt(keyId, 10) : parseInt(id, 10);
         const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
         const selectedKey = selectedKeyInfo ? selectedKeyInfo.key : null;
 
@@ -148,12 +143,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         selectedKeyInfo={selectedKeyInfo}
                         deleteKey={this._deleteKey}
                         closeModal={this._closeModals}
-                        modal={keyAction === "delete"}
+                        modal={keyAction === "delete" || action === "delete"}
                     />
                     <DisassociateSpace
-                        selectedKeyInfo={this.state.disassociatingKeyInfo}
-                        selectedSpace={this.state.disassociatingSpace}
-                        onConfirmDisassociate={this._confirmDisassociate}
+                        selectedKeyInfo={selectedKeyInfo}
+                        selectedSpace={space}
+                        onDisassociate={!!space ? k => this._disassociateSpace(space, k) : null}
                         isModalOpen={action === "disassociate"}
                         closeModal={this._closeModals}
                     />
@@ -216,7 +211,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                     onEdit={this._openEditModal}
                     showDetails={this._openDetailsModal}
                     onDelete={this._openDeleteModal}
-                    onDisassociate={!!space ? k => this._openDisassociate(): null}
+                    onDisassociate={this._openDisassociate}
                 />
             </div>
         );
@@ -436,24 +431,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         }
     };
 
-    private _confirmDisassociate = () => {
-        this.setState({confirmDisassociating: true})
-    }
-
     private _disassociateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
-        // update states
-        this.setState({
-            disassociatingKeyInfo: keyInfo,
-            disassociatingSpace: space
-        })
-        //open modal
-        this._openDisassociate()
-
-        // if not confirmed return
-        if (!this.state.confirmDisassociating){
-            return
-        }
-
+      
         const { team } = this.context;
         const { keys } = this.state;
 
@@ -547,16 +526,16 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         this.context.router.history.push(`/${team.slug}/keys/edit/${key.id}`);
     };
 
-    private _openDeleteModal = (equipment: IKey) => {
-        this.context.router.history.push(`${this._getBaseUrl()}/keys/delete/${equipment.id}`);
+    private _openDeleteModal = (key: IKey) => {
+        this.context.router.history.push(`${this._getBaseUrl()}/keys/delete/${key.id}`);
     };
 
     private _openAssociate = () => {
         this.context.router.history.push(`${this._getBaseUrl()}/keys/associate`);
     };
 
-    private _openDisassociate = () => {
-        this.context.router.history.push(`${this._getBaseUrl()}/keys/disassociate`);
+    private _openDisassociate = (key: IKeyInfo) => {
+        this.context.router.history.push(`${this._getBaseUrl()}/keys/disassociate/${key.id}`);
     };
 
     private _closeModals = () => {

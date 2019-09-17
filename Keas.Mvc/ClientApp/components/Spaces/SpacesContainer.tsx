@@ -174,7 +174,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                     selectedKeyInfo={selectedKeyInfo}
                     spaces={spaces}
                     showDetails={this._openDetails}
-                    onDisassociate={this._disassociateSpace}
+                    onDisassociate={this._openDisassociate}
                 />
             </div>
         );
@@ -327,6 +327,10 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             spaces: updatedSpaces
         });
         this.props.spacesTotalUpdated(this.props.selectedKeyInfo.id, -1);
+    };
+
+    private _openDisassociate = (space: ISpace) => {
+        this.context.router.history.push(`${this._getBaseUrl()}/keys/disassociate/${space.id}`);
     };
 
     private _getBaseUrl = () => {

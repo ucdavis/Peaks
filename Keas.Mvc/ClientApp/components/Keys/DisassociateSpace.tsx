@@ -7,7 +7,7 @@ import KeyEditValues from "./KeyEditValues";
 import SearchKeys from "./SearchKeys";
 
 interface IProps {
-    onConfirmDisassociate: () => void;
+    onDisassociate?: (key: IKeyInfo) => void;
     closeModal: () => void;
 
     isModalOpen: boolean;
@@ -17,40 +17,25 @@ interface IProps {
 
 interface IState {
     error: string;
-    selectedKeyInfo: IKeyInfo;
-    selectedSpace: ISpace;
     submitting: boolean;
     validState: boolean;
 }
 
 export default class DisassociateSpace extends React.Component<IProps, IState> {
-    public static contextTypes = {
-        fetch: PropTypes.func,
-        team: PropTypes.object
-    };
-
-    public context: AppContext;
-
+   
     constructor(props: IProps) {
         super(props);
 
         this.state = {
             error: "",
-            selectedKeyInfo: this.props.selectedKeyInfo,
-            selectedSpace: this.props.selectedSpace,
             submitting: false,
             validState: false
         };
     }
 
-
     public render() {
         const className = this.props.selectedKeyInfo ? "" : "keys-anomaly"; // purple on keys/details
-        return (
-            <div>
-                {this.renderModal()}
-            </div>
-        );
+        return <div>{this.renderModal()}</div>;
     }
 
     private renderModal() {
@@ -73,10 +58,10 @@ export default class DisassociateSpace extends React.Component<IProps, IState> {
                     <Button
                         color="primary"
                         onClick={() => {
-                            this.props.onConfirmDisassociate();
-                            this._closeModal()
+                            this.props.onDisassociate(this.props.selectedKeyInfo);
+                            this._closeModal();
                         }}
-                        disabled={false}
+                        disabled={submitting}
                     >
                         Disassociate
                         {submitting && <i className="fas fa-circle-notch fa-spin ml-2" />}
@@ -86,15 +71,12 @@ export default class DisassociateSpace extends React.Component<IProps, IState> {
         );
     }
 
-
     // default everything out on close
     private _closeModal = () => {
         const { selectedKeyInfo, selectedSpace } = this.props;
 
         this.setState({
             error: "",
-            selectedKeyInfo,
-            selectedSpace,
             submitting: false,
             validState: false
         });
@@ -103,6 +85,4 @@ export default class DisassociateSpace extends React.Component<IProps, IState> {
     };
 
     // assign the selected key even if we have to create it
-    
-
 }
