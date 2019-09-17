@@ -172,6 +172,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     }
 
     private _renderTableList = () => {
+        // this is what is rendered inside of KeyContainer
         const { selectedKeyInfo } = this.props;
 
         // flatten the space info for simple space

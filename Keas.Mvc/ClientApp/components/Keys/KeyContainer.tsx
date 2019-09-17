@@ -145,15 +145,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         closeModal={this._closeModals}
                         modal={keyAction === "delete" || action === "delete"}
                     />
-                    {!!space && (
-                        <DisassociateSpace
-                            selectedKeyInfo={selectedKeyInfo}
-                            selectedSpace={space}
-                            onDisassociate={this._disassociateSpace}
-                            isModalOpen={action === "disassociate"}
-                            closeModal={this._closeModals}
-                        />
-                    )}
                 </div>
             </div>
         );
@@ -204,8 +195,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     }
 
     private _renderListView() {
+        // this is what is rendered inside of space container
         const { space } = this.props;
+        const { keyId, action, id } = this.context.router.route.match.params;
 
+        // if on key tab, select using keyId. if on spaces, select using id
+        const selectedKeyId = keyId ? parseInt(keyId, 10) : parseInt(id, 10);
+        const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
         return (
             <div>
                 <KeyList
@@ -214,6 +210,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                     showDetails={this._openDetailsModal}
                     onDelete={this._openDeleteModal}
                     onDisassociate={this._openDisassociate}
+                />
+                <DisassociateSpace
+                    selectedKeyInfo={selectedKeyInfo}
+                    selectedSpace={space}
+                    onDisassociate={this._disassociateSpace}
+                    isModalOpen={action === "disassociate"}
+                    closeModal={this._closeModals}
                 />
             </div>
         );
