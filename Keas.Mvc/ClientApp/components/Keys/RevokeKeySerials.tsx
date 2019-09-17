@@ -12,7 +12,6 @@ interface IProps {
     onRevoke: (keySerial: IKeySerial) => void;
     selectedKeySerial: IKeySerial;
     updateSelectedKeySerial: (keySerial: IKeySerial) => void;
-
 }
 
 interface IState {
@@ -76,16 +75,15 @@ export default class RevokeKeySerials extends React.Component<IProps, IState> {
         );
     }
 
-     private _revokeEquipment = async () => {
+    private _revokeEquipment = async () => {
         if (!this._isValidToRevoke()) {
             return;
         }
         this.setState({ submitting: true });
         try {
             await this.props.onRevoke(this.props.selectedKeySerial);
-
         } catch (err) {
-            this.setState({submitting: false});
+            this.setState({ submitting: false });
             return;
         }
         this.setState({ submitting: false });
