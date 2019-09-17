@@ -324,9 +324,14 @@ namespace Keas.Mvc.Controllers.Api
             return Json(history);
         }
 
-        public async Task<BigFixComputerProperties> GetComputer(string id)
+        public async Task<IActionResult> GetComputer(string id)
         {
-            return await this._bigfixService.GetComputer(id);
+
+            var result = await this._bigfixService.GetComputer(id);
+            if (result == null) {
+                return NotFound();
+            }
+            return Json(result);
         }
 
          public async Task<BigfixComputerSearchResult[]> GetComputersBySearch(string field, string value)
