@@ -145,13 +145,15 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         closeModal={this._closeModals}
                         modal={keyAction === "delete" || action === "delete"}
                     />
-                    <DisassociateSpace
-                        selectedKeyInfo={selectedKeyInfo}
-                        selectedSpace={space}
-                        onDisassociate={!!space ? k => this._disassociateSpace(space, k) : null}
-                        isModalOpen={action === "disassociate"}
-                        closeModal={this._closeModals}
-                    />
+                    {!!space && (
+                        <DisassociateSpace
+                            selectedKeyInfo={selectedKeyInfo}
+                            selectedSpace={space}
+                            onDisassociate={this._disassociateSpace}
+                            isModalOpen={action === "disassociate"}
+                            closeModal={this._closeModals}
+                        />
+                    )}
                 </div>
             </div>
         );
@@ -431,8 +433,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         }
     };
 
-    private _disassociateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
-      
+    private _disassociateSpace = async (keyInfo: IKeyInfo, space: ISpace) => {
         const { team } = this.context;
         const { keys } = this.state;
 

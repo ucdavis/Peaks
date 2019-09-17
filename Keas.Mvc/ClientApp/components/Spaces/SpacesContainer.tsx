@@ -3,6 +3,7 @@ import * as React from "react";
 import { AppContext, IKeyInfo, ISpace, ISpaceInfo } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
 import AssociateSpace from "../Keys/AssociateSpace";
+import DisassociateSpace from "../Keys/DisassociateSpace";
 import Denied from "../Shared/Denied";
 import SearchTags from "../Tags/SearchTags";
 import SpacesDetails from "./SpacesDetails";
@@ -78,9 +79,10 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             id
         } = this.context.router.route.match.params;
         const activeWorkstationAsset = assetType === "workstations";
-        const selectedId = parseInt(spaceId, 10);
+        const selectedId = spaceId ? parseInt(spaceId, 10) : parseInt(id, 10);
         const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
-        const shouldRenderTableView = !spaceAction && !activeWorkstationAsset && !!this.props.selectedKeyInfo;
+        const shouldRenderTableView =
+            !spaceAction && !activeWorkstationAsset && !!this.props.selectedKeyInfo;
 
         return (
             <div className="card spaces-color">
@@ -89,7 +91,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                         <h2>
                             <i className="fas fa-building fa-xs" /> Spaces
                         </h2>
-                        {shouldRenderTableView &&
+                        {shouldRenderTableView && (
                             <AssociateSpace
                                 selectedKeyInfo={this.props.selectedKeyInfo}
                                 onAssign={this._associateSpace}
@@ -98,7 +100,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                                 isModalOpen={action === "associate"}
                                 searchableTags={this.state.tags}
                             />
-                        }
+                        )}
                     </div>
                     {this.state.spaces.length === 0 && (
                         <div className="card-body">
@@ -167,14 +169,23 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
         // flatten the space info for simple space
         const spaces = this.state.spaces.map(s => s.space);
-
+        const { spaceId, action, id } = this.context.router.route.match.params;
+        const selectedId = spaceId ? parseInt(spaceId, 10) : parseInt(id, 10);
+        const selectedSpace = spaces.find(k => k.id === selectedId);
         return (
             <div>
+                <DisassociateSpace
+                    selectedKeyInfo={this.props.selectedKeyInfo}
+                    selectedSpace={selectedSpace}
+                    onDisassociate={this._disassociateSpace}
+                    isModalOpen={action === "disassociate"}
+                    closeModal={this._closeModals}
+                />
                 <SpacesList
                     selectedKeyInfo={selectedKeyInfo}
                     spaces={spaces}
                     showDetails={this._openDetails}
-                    onDisassociate={this._openDisassociate}
+                    onDisassociate={this._openDisassociateModal}
                 />
             </div>
         );
@@ -210,6 +221,10 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         }
 
         this.context.router.history.push(`${this._getBaseUrl()}/spaces/associate/`);
+    };
+
+    private _openDisassociateModal = (space: ISpace) => {
+        this.context.router.history.push(`${this._getBaseUrl()}/spaces/disassociate/${space.id}`);
     };
 
     private _closeModals = () => {
@@ -305,7 +320,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         this.props.spacesTotalUpdated(this.props.selectedKeyInfo.id, 1);
     };
 
-    private _disassociateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
+    private _disassociateSpace = async (keyInfo: IKeyInfo, space: ISpace) => {
         const { team } = this.context;
         const { spaces } = this.state;
 
@@ -327,10 +342,6 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             spaces: updatedSpaces
         });
         this.props.spacesTotalUpdated(this.props.selectedKeyInfo.id, -1);
-    };
-
-    private _openDisassociate = (space: ISpace) => {
-        this.context.router.history.push(`${this._getBaseUrl()}/keys/disassociate/${space.id}`);
     };
 
     private _getBaseUrl = () => {

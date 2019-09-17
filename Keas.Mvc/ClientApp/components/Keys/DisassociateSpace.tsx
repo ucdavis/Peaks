@@ -1,35 +1,26 @@
-import * as PropTypes from "prop-types";
 import * as React from "react";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
-import { AppContext, IKeyInfo, ISpace } from "../../Types";
-import SearchSpaces from "../Spaces/SearchSpaces";
-import KeyEditValues from "./KeyEditValues";
-import SearchKeys from "./SearchKeys";
+import { IKeyInfo, ISpace } from "../../Types";
 
 interface IProps {
-    onDisassociate?: (key: IKeyInfo) => void;
+    onDisassociate: (key: IKeyInfo, space: ISpace) => void;
     closeModal: () => void;
 
     isModalOpen: boolean;
-    selectedKeyInfo?: IKeyInfo;
-    selectedSpace?: ISpace;
+    selectedKeyInfo: IKeyInfo;
+    selectedSpace: ISpace;
 }
 
 interface IState {
-    error: string;
     submitting: boolean;
-    validState: boolean;
 }
 
 export default class DisassociateSpace extends React.Component<IProps, IState> {
-   
     constructor(props: IProps) {
         super(props);
 
         this.state = {
-            error: "",
-            submitting: false,
-            validState: false
+            submitting: false
         };
     }
 
@@ -40,7 +31,7 @@ export default class DisassociateSpace extends React.Component<IProps, IState> {
 
     private renderModal() {
         const { isModalOpen, selectedKeyInfo, selectedSpace } = this.props;
-        const { validState, submitting } = this.state;
+        const { submitting } = this.state;
 
         return (
             <Modal isOpen={isModalOpen} toggle={this._closeModal} size="lg" className="keys-color">
@@ -50,17 +41,11 @@ export default class DisassociateSpace extends React.Component<IProps, IState> {
                         <i className="fas fa-times fa-lg" />
                     </Button>
                 </div>
-                <ModalBody>
-                    are you sure you want to disassociate .....
-                </ModalBody>
+                <ModalBody>are you sure you want to disassociate .....</ModalBody>
                 <ModalFooter className="justify-content-between">
-                    <span className="text-danger">{this.state.error}</span>
                     <Button
                         color="primary"
-                        onClick={() => {
-                            this.props.onDisassociate(this.props.selectedKeyInfo);
-                            this._closeModal();
-                        }}
+                        onClick={this._disassociateKeyAndSpace}
                         disabled={submitting}
                     >
                         Disassociate
@@ -72,17 +57,21 @@ export default class DisassociateSpace extends React.Component<IProps, IState> {
     }
 
     // default everything out on close
-    private _closeModal = () => {
-        const { selectedKeyInfo, selectedSpace } = this.props;
-
+    private _disassociateKeyAndSpace = async () => {
         this.setState({
-            error: "",
-            submitting: false,
-            validState: false
+            submitting: false
         });
-
-        this.props.closeModal();
+        try {
+            await this.props.onDisassociate(this.props.selectedKeyInfo, this.props.selectedSpace);
+        } catch (err) {
+            this.setState({ submitting: false });
+            return;
+        }
+        this._closeModal();
     };
 
-    // assign the selected key even if we have to create it
+    private _closeModal = () => {
+        this.setState({ submitting: false });
+        this.props.closeModal();
+    };
 }
