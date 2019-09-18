@@ -18,7 +18,7 @@ interface IState {
     submitting: boolean;
 }
 
-export default class RevokeKeySerials extends React.Component<IProps, IState> {
+export default class RevokeKeySerial extends React.Component<IProps, IState> {
     constructor(props) {
         super(props);
         this.state = {
@@ -63,7 +63,7 @@ export default class RevokeKeySerials extends React.Component<IProps, IState> {
                     <ModalFooter>
                         <Button
                             color="primary"
-                            onClick={() => this._revokeEquipment()}
+                            onClick={() => this._revokeKeySerial()}
                             disabled={!this._isValidToRevoke() || this.state.submitting}
                         >
                             Revoke{" "}
@@ -75,7 +75,7 @@ export default class RevokeKeySerials extends React.Component<IProps, IState> {
         );
     }
 
-    private _revokeEquipment = async () => {
+    private _revokeKeySerial = async () => {
         if (!this._isValidToRevoke()) {
             return;
         }
