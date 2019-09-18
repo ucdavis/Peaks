@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import {
     Button,
     Form,
@@ -166,11 +167,7 @@ export default class EquipmentBigFixSearchId extends React.Component<IProps, ISt
         }
 
         if (!this.state.isValidSearch) {
-            return (
-                <p className="text-center text-danger">
-                    No computer found by this name, please try again.
-                </p>
-            );
+            return <p className="text-center text-danger">No data to present.</p>;
         }
 
         return (
@@ -214,36 +211,35 @@ export default class EquipmentBigFixSearchId extends React.Component<IProps, ISt
 
     private _onSearch = () => {
         this.setState({ isSearching: true, isFetched: false, isValidSearch: true });
-        this._getComputersBySearch(this.state.selectedField, this.state.valueToBeSearched);
+        this._getComputersBySearchId(this.state.selectedField, this.state.valueToBeSearched);
     };
 
-    private _getComputersBySearch = async (field: string, value: string) => {
+    private _getComputersBySearchId = async (field: string, value: string) => {
         let response = null;
         try {
             response = await this.context.fetch(
-                `/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`,
-                {
-                    method: "GET"
-                }
+                `/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`
             );
         } catch (err) {
-            response = null;
-        }
-        // if length is 0, not a valid search
-        if (response.length === 0 || response === null) {
+            if (err.message === "Not Found") {
+                toast.error("Not a valid Name, please make sure to enter a valid Name.");
+            } else {
+                toast.error("Error fetching Names. Please refresh the page to try again.");
+            }
             this.setState({
                 isFetched: true,
                 isSearching: false,
                 isValidSearch: false
             });
-        } else {
-            const firstFiveName = response.slice(0, 5);
-            this.setState({
-                isFetched: true,
-                isSearching: false,
-                listOfComputers: firstFiveName
-            });
+            return;
         }
+
+        const firstFiveName = response.slice(0, 5);
+        this.setState({
+            isFetched: true,
+            isSearching: false,
+            listOfComputers: firstFiveName
+        });
     };
 
     private _changeSelectedInput = value => {

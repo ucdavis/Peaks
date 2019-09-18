@@ -333,11 +333,15 @@ namespace Keas.Mvc.Controllers.Api
             return Json(result);
         }
 
-         public async Task<BigfixComputerSearchResult[]> GetComputersBySearch(string field, string value)
+         public async Task<IActionResult> GetComputersBySearch(string field, string value)
         {
             if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
             {
-                return await this._bigfixService.GetComputersByName(value);
+                var result = await this._bigfixService.GetComputersByName(value);
+                if (result.Length == 0) {
+                    return NotFound();
+                }
+                return Json(result);
             } else
             {
                 // not supported yet

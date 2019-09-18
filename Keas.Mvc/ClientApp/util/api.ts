@@ -10,7 +10,7 @@ const doFetch = async (url: string, antiForgeryToken: string, init?: RequestInit
             ["RequestVerificationToken", antiForgeryToken]
         ]
     });
-    debugger
+    
     if (!res.ok) {
         throw new Error(res.statusText);
     }
