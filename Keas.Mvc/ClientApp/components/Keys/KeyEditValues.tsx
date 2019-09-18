@@ -19,7 +19,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
         return (
             <div>
                 <FormGroup>
-                    <Label for="item">Item</Label>
+                    <Label for="Name">Name</Label>
                     <Input
                         type="text"
                         className="form-control"

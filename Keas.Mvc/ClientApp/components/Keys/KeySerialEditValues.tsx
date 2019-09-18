@@ -68,7 +68,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                         <i className="fas fa-link fa-xs" /> View Key Details
                     </Button>}
                     <FormGroup>
-                        <Label for="item">Number</Label>
+                        <Label for="number">Key Serial Number</Label>
                         <Input
                             type="text"
                             className="form-control"
