@@ -5,7 +5,7 @@ import SpacesListItem from "./SpacesListItem";
 interface IProps {
     selectedKeyInfo?: IKeyInfo;
     spaces: ISpace[];
-    onDisassociate?: (space: ISpace, keyInfo: IKeyInfo) => void;
+    onDisassociate?: (space: ISpace) => void;
     showDetails?: (space: ISpace) => void;
     // onAdd?: (space: ISpace) => void;
 }
@@ -43,9 +43,7 @@ export default class SpacesList extends React.Component<IProps, {}> {
             <SpacesListItem
                 key={space.id}
                 space={space}
-                onDisassociate={
-                    !!selectedKeyInfo ? s => this.props.onDisassociate(s, selectedKeyInfo) : null
-                }
+                onDisassociate={this.props.onDisassociate}
                 showDetails={this.props.showDetails}
             />
         );
