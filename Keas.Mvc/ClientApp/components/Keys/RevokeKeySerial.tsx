@@ -91,6 +91,6 @@ export default class RevokeKeySerial extends React.Component<IProps, IState> {
     };
 
     private _isValidToRevoke = () => {
-        return this.props.selectedKeySerial !== null;
+        return !!this.props.selectedKeySerial && !!this.props.selectedKeySerial.keySerialAssignment;
     };
 }
