@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { Button, Modal, ModalBody, Table } from "reactstrap";
 
 interface IProps {
@@ -109,27 +110,34 @@ export default class EquipmentBigFixInfo extends React.Component<IProps, IState>
             );
         }
 
-        return <p>Not a valid Bigfix id, please make sure to enter a valid Bigfix id.</p>;
+        return <p>No data to present</p>;
     };
 
     private _getBigFixComputerInfo = async (id: string) => {
-        const response = await fetch(`/api/${this.context.team.slug}/equipment/GetComputer/${id}`, {
-            method: "GET"
-        });
-
-        if (!response.ok) {
-            // show the invalid Bigfix-id message.
+        let response = null;
+        try {
+            response = await this.context.fetch(
+                `/api/${this.context.team.slug}/equipment/GetComputer/${id}`
+            );
+        } catch (err) {
+            if (err.message === "Not Found") {
+                toast.error("Not a valid Bigfix id, please make sure to enter a valid Bigfix id.");
+            } else {
+                toast.error(
+                    "Error fetching Computer details. Please refresh the page to try again."
+                );
+            }
             this.setState({
                 isFetched: true,
                 isValidRequest: false
             });
+            return;
         }
 
-        const result = await response.json();
-        const sortedResult = Object.keys(result)
+        const sortedResult = Object.keys(response)
             .sort()
             .reduce((accumulator, currentValue) => {
-                accumulator[currentValue] = result[currentValue];
+                accumulator[currentValue] = response[currentValue];
                 return accumulator;
             }, {});
 

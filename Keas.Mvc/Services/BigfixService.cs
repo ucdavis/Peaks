@@ -66,12 +66,19 @@ namespace Keas.Mvc.Services
 
         public async Task<BigFixComputerProperties> GetComputer(string id)
         {
-            using (var bf = GetClient())
-            {
-                var results = await bf.Computers.Get(id);
+            try {
+                using (var bf = GetClient())
+                {
+                    var results = await bf.Computers.Get(id);
 
-                return new BigFixComputerProperties(results);
+                    return new BigFixComputerProperties(results);
+                }
+            } 
+            catch (Exception)
+            {
+                return null;
             }
+            
 
         }
 

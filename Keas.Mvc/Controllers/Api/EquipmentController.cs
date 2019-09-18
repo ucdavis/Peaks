@@ -326,7 +326,6 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> GetComputer(string id)
         {
-
             var result = await this._bigfixService.GetComputer(id);
             if (result == null) {
                 return NotFound();
