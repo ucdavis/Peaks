@@ -7,7 +7,7 @@ import Denied from "../Shared/Denied";
 import AssignKeySerial from "./AssignKeySerial";
 import EditKeySerial from "./EditKeySerial";
 import KeySerialDetails from "./KeySerialDetails";
-import RevokeKeySerials from "./RevokeKeySerials"
+import RevokeKeySerial from "./RevokeKeySerial"
 import KeySerialList from "./KeySerialList";
 import KeySerialTable from "./KeySerialTable";
 
@@ -152,7 +152,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                         openUpdateModal={this._openUpdateModal}
                         updateSelectedKeySerial={this._updateKeySerialsFromDetails}
                     />
-                    <RevokeKeySerials
+                    <RevokeKeySerial
                         selectedKeySerial={selectedKeySerial}
                         isModalOpen={activeAsset && action === "revoke" && !!selectedKeySerial}
                         closeModal={this._closeModals}
