@@ -69,7 +69,7 @@ export default class SearchKeys extends React.Component<IProps, IState> {
                 </div>
                 <div>
                     <small>
-                        Code:
+                        Key Code:
                         <Highlighter search={props.text}>{option.key.code}</Highlighter>
                     </small>
                 </div>

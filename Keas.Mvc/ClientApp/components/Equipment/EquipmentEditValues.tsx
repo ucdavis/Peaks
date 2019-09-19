@@ -41,7 +41,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
 
                 <div className="wrapperasset">
                     <FormGroup>
-                        <Label for="item">Item</Label>
+                        <Label for="Name">Name</Label>
                         <Input
                             type="text"
                             className="form-control"

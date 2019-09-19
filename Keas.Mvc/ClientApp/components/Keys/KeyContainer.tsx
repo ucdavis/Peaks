@@ -8,6 +8,7 @@ import SearchTags from "../Tags/SearchTags";
 import AssociateSpace from "./AssociateSpace";
 import CreateKey from "./CreateKey";
 import DeleteKey from "./DeleteKey";
+import DisassociateSpace from "./DisassociateSpace";
 import EditKey from "./EditKey";
 import KeyDetailContainer from "./KeyDetailContainer";
 import KeyList from "./KeyList";
@@ -90,9 +91,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
         const { space } = this.props;
         const { tags } = this.state;
-        const { keyAction, keyId, action } = this.context.router.route.match.params;
+        const { keyAction, keyId, action, id } = this.context.router.route.match.params;
 
-        const selectedKeyId = parseInt(keyId, 10);
+        // if on key tab, select using keyId. if on spaces, select using id
+        const selectedKeyId = keyId ? parseInt(keyId, 10) : parseInt(id, 10);
         const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
         const selectedKey = selectedKeyInfo ? selectedKeyInfo.key : null;
 
@@ -141,7 +143,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                         selectedKeyInfo={selectedKeyInfo}
                         deleteKey={this._deleteKey}
                         closeModal={this._closeModals}
-                        modal={keyAction === "delete"}
+                        modal={keyAction === "delete" || action === "delete"}
                     />
                 </div>
             </div>
@@ -193,8 +195,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     }
 
     private _renderListView() {
+        // this is what is rendered inside of space container
         const { space } = this.props;
+        const { keyId, action, id } = this.context.router.route.match.params;
 
+        // if on key tab, select using keyId. if on spaces, select using id
+        const selectedKeyId = keyId ? parseInt(keyId, 10) : parseInt(id, 10);
+        const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
         return (
             <div>
                 <KeyList
@@ -202,7 +209,14 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                     onEdit={this._openEditModal}
                     showDetails={this._openDetailsModal}
                     onDelete={this._openDeleteModal}
-                    onDisassociate={!!space ? k => this._disassociateSpace(space, k) : null}
+                    onDisassociate={this._openDisassociate}
+                />
+                <DisassociateSpace
+                    selectedKeyInfo={selectedKeyInfo}
+                    selectedSpace={space}
+                    onDisassociate={this._disassociateSpace}
+                    isModalOpen={action === "disassociate"}
+                    closeModal={this._closeModals}
                 />
             </div>
         );
@@ -422,7 +436,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         }
     };
 
-    private _disassociateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
+    private _disassociateSpace = async (keyInfo: IKeyInfo, space: ISpace) => {
         const { team } = this.context;
         const { keys } = this.state;
 
@@ -516,12 +530,16 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         this.context.router.history.push(`/${team.slug}/keys/edit/${key.id}`);
     };
 
-    private _openDeleteModal = (equipment: IKey) => {
-        this.context.router.history.push(`${this._getBaseUrl()}/keys/delete/${equipment.id}`);
+    private _openDeleteModal = (key: IKey) => {
+        this.context.router.history.push(`${this._getBaseUrl()}/keys/delete/${key.id}`);
     };
 
     private _openAssociate = () => {
         this.context.router.history.push(`${this._getBaseUrl()}/keys/associate`);
+    };
+
+    private _openDisassociate = (key: IKeyInfo) => {
+        this.context.router.history.push(`${this._getBaseUrl()}/keys/disassociate/${key.id}`);
     };
 
     private _closeModals = () => {

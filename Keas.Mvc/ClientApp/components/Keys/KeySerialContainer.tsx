@@ -7,6 +7,7 @@ import Denied from "../Shared/Denied";
 import AssignKeySerial from "./AssignKeySerial";
 import EditKeySerial from "./EditKeySerial";
 import KeySerialDetails from "./KeySerialDetails";
+import RevokeKeySerial from "./RevokeKeySerial"
 import KeySerialList from "./KeySerialList";
 import KeySerialTable from "./KeySerialTable";
 
@@ -49,8 +50,8 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
         this.state = {
             keySerials: [],
-            statusList: [],
-            loading: true
+            loading: true,
+            statusList: [],   
         };
     }
     public async componentDidMount() {
@@ -98,7 +99,6 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         const activeAsset = !assetType || assetType === "keyserials";
         const selectedKeySerialId = parseInt(id, 10);
         const selectedKeySerial = this.state.keySerials.find(s => s.id === selectedKeySerialId);
-
         return (
             <div className="card keys-color">
                 <div className="card-header-keys">
@@ -127,7 +127,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                     {this.props.selectedPerson && !this.props.selectedKey && (
                         <KeySerialList
                             keySerials={this.state.keySerials}
-                            onRevoke={this._revokeKeySerial}
+                            onRevoke={this._openRevokeModal}
                             onAssign={this._openAssignModal}
                             onEdit={this._openEditModal}
                             onUpdate={this._openUpdateModal}
@@ -137,7 +137,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                     {!this.props.selectedPerson && this.props.selectedKey && (
                         <KeySerialTable
                             keySerials={this.state.keySerials}
-                            onRevoke={this._revokeKeySerial}
+                            onRevoke={this._openRevokeModal}
                             onAssign={this._openAssignModal}
                             onEdit={this._openEditModal}
                             onUpdate={this._openUpdateModal}
@@ -151,6 +151,15 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
                         openEditModal={this._openEditModal}
                         openUpdateModal={this._openUpdateModal}
                         updateSelectedKeySerial={this._updateKeySerialsFromDetails}
+                    />
+                    <RevokeKeySerial
+                        selectedKeySerial={selectedKeySerial}
+                        isModalOpen={activeAsset && action === "revoke" && !!selectedKeySerial}
+                        closeModal={this._closeModals}
+                        openEditModal={this._openEditModal}
+                        openUpdateModal={this._openUpdateModal}
+                        updateSelectedKeySerial={this._updateKeySerialsFromDetails}
+                        onRevoke={this._revokeKeySerial}
                     />
                     <EditKeySerial
                         selectedKeySerial={selectedKeySerial}
@@ -260,6 +269,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     };
 
     private _revokeKeySerial = async (keySerial: IKeySerial) => {
+
         const { team } = this.context;
 
         // call API to actually revoke
@@ -386,6 +396,10 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
             );
         }
     };
+
+    private _openRevokeModal = (keySerial: IKeySerial) => {
+        this.context.router.history.push(`${this._getBaseUrl()}/keyserials/revoke/${keySerial.id}`);
+    }
 
     private _openEditModal = (keySerial: IKeySerial) => {
         this.context.router.history.push(`${this._getBaseUrl()}/keyserials/edit/${keySerial.id}`);
