@@ -326,11 +326,15 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> GetComputer(string id)
         {
-            var result = await this._bigfixService.GetComputer(id);
-            if (result == null) {
-                return NotFound();
+            try 
+            {
+                 var result = await this._bigfixService.GetComputer(id);
+                 return Json(result);
             }
-            return Json(result);
+            catch (Exception) 
+            {
+                return NotFound();
+            } 
         }
 
          public async Task<IActionResult> GetComputersBySearch(string field, string value)
