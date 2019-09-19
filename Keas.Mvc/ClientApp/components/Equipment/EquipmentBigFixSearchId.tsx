@@ -167,7 +167,7 @@ export default class EquipmentBigFixSearchId extends React.Component<IProps, ISt
         }
 
         if (!this.state.isValidSearch) {
-            return <p className="text-center text-danger">No data to present.</p>;
+            return <p className="text-center">No data to present.</p>;
         }
 
         return (
