@@ -71,6 +71,8 @@
             <tr>
               <th>Serial Number</th>
               <th>Name</th>
+              <th>Make</th>
+              <th>Model</th>
               <th>Expiration</th>
               <th>Accepted?</th>
             </tr>
@@ -80,6 +82,8 @@
             <tr>
               <td>@equipment.SerialNumber</td>
               <td>@equipment.Name</td>
+              <td>@equipment.Make</td>
+              <td>@equipment.Model</td>
               <td>@equipment.Assignment.ExpiresAt.ToShortDateString()</td>
               <td>@equipment.Assignment.ConfirmedAt.AcceptedWithDate()</td>
             </tr>
