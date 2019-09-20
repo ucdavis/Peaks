@@ -24,14 +24,14 @@ namespace Keas.Core.Extensions
                 return value;
             }
 
-            var phone = "";
             try 
             {
                 var phoneNumberUtil = PhoneNumbers.PhoneNumberUtil.GetInstance ();
                 var phoneNumber = phoneNumberUtil.ParseAndKeepRawInput (value, "US");
-                phone = phoneNumberUtil.Format (phoneNumber, PhoneNumberFormat.NATIONAL);
-                if (!phoneNumberUtil.IsValidNumberForRegion (phoneNumber, "US")) {
-                    if (phoneNumberUtil.IsValidNumber (phoneNumber)) {
+                if (!phoneNumberUtil.IsValidNumberForRegion (phoneNumber, "US"))
+                {
+                    if (phoneNumberUtil.IsValidNumber (phoneNumber)) 
+                    {
                         return phoneNumberUtil.Format (phoneNumber, PhoneNumberFormat.INTERNATIONAL);
                     }
 
@@ -42,8 +42,8 @@ namespace Keas.Core.Extensions
             {
                 return value;
             }
-            
-            return phone;
+
+            return value;
         }
 
         public static string SafeToLower(this string value)
