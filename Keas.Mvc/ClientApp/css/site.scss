@@ -1,14 +1,4 @@
 @charset "utf-8";
 
-
-@import
-       "dependencies",
-       "typography",
-       "layout",
-       "components",
-       "regions",
-       "formfields",
-       "navigation",
-       "vendor",
-       "animations"
-;
+@import "dependencies", "typography", "layout", "components", "regions", "formfields", "navigation",
+  "vendor", "animations";

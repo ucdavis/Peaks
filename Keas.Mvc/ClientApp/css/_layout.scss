@@ -20,22 +20,22 @@ body {
 .container {
   padding: 0;
   width: 98%;
-  max-width:1440px;
-  @include breakpoint (sm) {
+  max-width: 1440px;
+  @include breakpoint(sm) {
     width: 96%;
-    max-width:1440px;
+    max-width: 1440px;
   }
-  @include breakpoint (md) {
+  @include breakpoint(md) {
     width: 92%;
-    max-width:1440px;
+    max-width: 1440px;
   }
   @include breakpoint(lg) {
     width: 90%;
-    max-width:1440px;
+    max-width: 1440px;
   }
   @include breakpoint(xl) {
     width: 80%;
-    max-width:1440px;
+    max-width: 1440px;
   }
 }
 
@@ -47,21 +47,21 @@ body {
   }
 }
 header {
-  background-color:white;
-  padding:8px 0px;
+  background-color: white;
+  padding: 8px 0px;
   .logowrapper {
     margin-left: 10px;
     @include breakpoint(xsm) {
-      text-align:center;
-      margin-left:0px;
-      margin-bottom:8px;
+      text-align: center;
+      margin-left: 0px;
+      margin-bottom: 8px;
     }
   }
   .teamwrapper {
-    text-align:right;
+    text-align: right;
     @include breakpoint(xsm) {
-      text-align:center;
-      margin-top:.8rem;
+      text-align: center;
+      margin-top: 0.8rem;
     }
   }
   // .teamwrapper {
@@ -91,23 +91,23 @@ header {
 }
 h1 {
   .fas {
-    -webkit-text-fill-color:$tertiary-font;
-    fill:$tertiary-font;
+    -webkit-text-fill-color: $tertiary-font;
+    fill: $tertiary-font;
   }
 }
 .head_bleed {
   background: #1e3a5b;
-    background: -moz-linear-gradient(left,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
-    background: -webkit-linear-gradient(left,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
-    background: linear-gradient(to right,#1e3a5b 0%,#1e3a5b 44%,#dbbc5b 57%,#dbbc5b 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$gradient-one',endColorstr='$gradient-two',GradientType=1);
+  background: -moz-linear-gradient(left, #1e3a5b 0%, #1e3a5b 44%, #dbbc5b 57%, #dbbc5b 100%);
+  background: -webkit-linear-gradient(left, #1e3a5b 0%, #1e3a5b 44%, #dbbc5b 57%, #dbbc5b 100%);
+  background: linear-gradient(to right, #1e3a5b 0%, #1e3a5b 44%, #dbbc5b 57%, #dbbc5b 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$gradient-one',endColorstr='$gradient-two',GradientType=1);
 }
 .head_divider {
-    background: url(/media/gunrock_banner_final.svg) center top/cover no-repeat;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height:10px;
+  background: url(/media/gunrock_banner_final.svg) center top/cover no-repeat;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 10px;
 }
 .profile {
   display: flex;
@@ -126,28 +126,28 @@ h1 {
 
   button {
     border: none;
-    background-color: rgba(255,255,255,.001);
+    background-color: rgba(255, 255, 255, 0.001);
   }
 }
 .main-content-wrapper {
-  margin-top:3.2rem;
+  margin-top: 3.2rem;
 }
 
 footer {
   position: absolute;
   bottom: 0;
   display: block;
-  height:45px;
-  @include breakpoint (sm) {
-    margin-left:2%;
+  height: 45px;
+  @include breakpoint(sm) {
+    margin-left: 2%;
   }
-  @include breakpoint (md) {
-    margin-left:4%;
+  @include breakpoint(md) {
+    margin-left: 4%;
   }
   @include breakpoint(lg) {
-    margin-left:5%;
+    margin-left: 5%;
   }
   @include breakpoint(xl) {
-    margin-left:10%;
+    margin-left: 10%;
   }
 }

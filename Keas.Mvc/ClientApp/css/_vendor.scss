@@ -35,12 +35,12 @@
   max-width: 500px;
   margin-bottom: 1.6rem;
 }
-.table tbody+tbody {
-  border-top:none;
+.table tbody + tbody {
+  border-top: none;
 }
 table {
   .rbt {
-    margin-bottom:0;
+    margin-bottom: 0;
   }
   .rbt-input-main,
   .rbt-input-hint {

@@ -1,54 +1,53 @@
 // fonts
 @font-face {
-    font-family: 'proxima-nova-r';
-    src: url('/media/fonts/proximanova-regular-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+  font-family: "proxima-nova-r";
+  src: url("/media/fonts/proximanova-regular-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
 }
 @font-face {
-    font-family: 'proxima-nova-i';
-    src: url('/media/fonts/proximanova-regularit-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+  font-family: "proxima-nova-i";
+  src: url("/media/fonts/proximanova-regularit-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
 }
 @font-face {
-    font-family: 'proxima-nova-b';
-    src: url('/media/fonts/proximanova-bold-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
+  font-family: "proxima-nova-b";
+  src: url("/media/fonts/proximanova-bold-webfont.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
 }
 
-$sans-italic:   "proxima-nova-i",sans-serif;
-$sans-bold:     "proxima-nova-b",sans-serif;
-$sans-reg:      "proxima-nova-r",sans-serif;
+$sans-italic: "proxima-nova-i", sans-serif;
+$sans-bold: "proxima-nova-b", sans-serif;
+$sans-reg: "proxima-nova-r", sans-serif;
 
-$primary-color:     #1D3B5C;
-$secondary-color:   #004987;
-$tertiary-color:    #F4BD00;
+$primary-color: #1d3b5c;
+$secondary-color: #004987;
+$tertiary-color: #f4bd00;
 
+$gold: #daaa00;
+$blue: #004987;
 
+$a-link: transparentize($primary-color, 0.2);
 
-$gold:              #DAAA00;
-$blue:              #004987;
+$primary-font: rgba(31, 31, 31, 0.99); //
+$secondary-font: rgba(31, 31, 31, 0.66); //
+$tertiary-font: rgba(31, 31, 31, 0.4); //
 
-$a-link:            transparentize($primary-color, .2);
+$box-shadow: 0 0 0 1px rgba(49, 49, 93, 0.03), 0 2px 5px 0 rgba(49, 49, 93, 0.1),
+  0 1px 2px 0 rgba(0, 0, 0, 0.08);
 
-$primary-font: rgba(31,31,31,.99); //
-$secondary-font: rgba(31,31,31,.66); //
-$tertiary-font: rgba(31,31,31,.40); //
-
-$box-shadow: 0 0 0 1px rgba(49,49,93,.03), 0 2px 5px 0 rgba(49,49,93,.1), 0 1px 2px 0 rgba(0,0,0,.08);
-
-$bg-color: #F8F9FB; // background
-$borders: #E8E9ED; // border color
+$bg-color: #f8f9fb; // background
+$borders: #e8e9ed; // border color
 
 $nav-active: #fff;
 $nav-secondary: $secondary-font;
 
 $people: #ba0c2f;
-$equipment: #DAAA00;
+$equipment: #daaa00;
 $access: #78be20;
-$keys:  #00b5e2;
+$keys: #00b5e2;
 $spaces: #642667;
 $history: $primary-font;
 // UC Davis Colors
@@ -78,42 +77,40 @@ $card-padding: 0.75rem 1.75rem;
 $card-thick-padding: 3rem;
 
 @mixin breakpoint($point) {
-    @if $point==sm {
-        @media (min-width: 576px) {
-            @content ;
-        }
+  @if $point==sm {
+    @media (min-width: 576px) {
+      @content;
     }
-    @if $point==xsm {
-        @media (max-width: 575px) {
-            @content ;
-        }
+  }
+  @if $point==xsm {
+    @media (max-width: 575px) {
+      @content;
     }
-    @if $point==md {
-        @media (min-width: 768px) {
-            @content ;
-        }
+  }
+  @if $point==md {
+    @media (min-width: 768px) {
+      @content;
     }
-    @if $point==lg {
-        @media (min-width: 992px) {
-            @content ;
-        }
+  }
+  @if $point==lg {
+    @media (min-width: 992px) {
+      @content;
     }
-    @if $point==xl {
-        @media (min-width: 1200px) {
-            @content ;
-        }
+  }
+  @if $point==xl {
+    @media (min-width: 1200px) {
+      @content;
     }
+  }
 }
 
-
-
 @mixin fader {
-  -o-transition:.25s;
-  -ms-transition:.25s;
-  -moz-transition:.25s;
-  -webkit-transition:.25s;
+  -o-transition: 0.25s;
+  -ms-transition: 0.25s;
+  -moz-transition: 0.25s;
+  -webkit-transition: 0.25s;
   /* ...and now for the proper property */
-  transition:.25s;
+  transition: 0.25s;
 }
 @mixin main-btn {
   white-space: nowrap;
@@ -121,7 +118,7 @@ $card-thick-padding: 3rem;
   height: 40px;
   line-height: 40px;
   padding: 0 20px;
-  box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 1px 3px rgba(0,0,0,.08);
+  box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 1px 3px rgba(0, 0, 0, 0.08);
   background: $primary-color;
   border-radius: 2px;
   font-size: 1.6rem;
@@ -138,7 +135,7 @@ $card-thick-padding: 3rem;
   &:hover {
     color: #fff !important;
     transform: translateY(-1px);
-    box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 3px 6px rgba(0,0,0,.08);
+    box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 3px 6px rgba(0, 0, 0, 0.08);
     background-color: lighten($primary-color, 5);
   }
 }
