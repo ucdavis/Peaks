@@ -8,11 +8,9 @@ import AssignEquipment from "./AssignEquipment";
 import DeleteEquipment from "./DeleteEquipment";
 import EditEquipment from "./EditEquipment";
 import EquipmentDetails from "./EquipmentDetails";
-import EquipmentFilters from "./EquipmentTableContainer";
 import EquipmentList from "./EquipmentList";
-import EquipmentTable from "./EquipmentTable";
-import RevokeEquipment from "./RevokeEquipment";
 import EquipmentTableContainer from "./EquipmentTableContainer";
+import RevokeEquipment from "./RevokeEquipment";
 
 interface IState {
     commonAttributeKeys: string[];
