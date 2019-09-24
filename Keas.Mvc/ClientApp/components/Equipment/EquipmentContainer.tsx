@@ -44,11 +44,11 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         this.state = {
             commonAttributeKeys: [],
             equipment: [],
+            equipmentAvailabilityLevels: ["A1", "A2", "A3", "A4"],
+            equipmentProtectionLevels: ["P1", "P2", "P3", "P4"],
             equipmentTypes: [],
             loading: true,
-            tags: [],
-            equipmentProtectionLevels: ["P1", "P2", "P3", "P4"],
-            equipmentAvailabilityLevels: ["A1", "A2", "A3", "A4"]
+            tags: []
         };
     }
     public async componentDidMount() {

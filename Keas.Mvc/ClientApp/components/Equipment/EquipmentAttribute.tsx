@@ -65,7 +65,6 @@ export default class EquipmentAttribute extends React.Component<IProps, {}> {
                     } else {
                         this.props.changeProperty(this.props.index, "key", null);
                     }
-
                 }}
                 inputProps={{
                     className: style

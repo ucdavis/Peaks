@@ -146,9 +146,9 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
             keySerial = {
                 id: 0,
                 key: this.props.selectedKey,
+                notes: "",
                 number: selected[0].number,
                 status: "Active",
-                notes: "",
                 tags: ""
             };
             this.props.onSelect(keySerial);
@@ -166,9 +166,9 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
         const keySerial = {
             id: 0,
             key: this.props.selectedKey,
+            notes: "",
             number: "",
             status: "Active",
-            notes: "",
             tags: ""
         };
         this.props.onSelect(keySerial);

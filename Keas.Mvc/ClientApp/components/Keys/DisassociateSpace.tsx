@@ -2,7 +2,6 @@ import * as React from "react";
 import { Button, Modal, ModalBody, ModalFooter } from "reactstrap";
 import { IKeyInfo, ISpace } from "../../Types";
 import KeyEditValues from "./KeyEditValues";
-import SpacesDetailContainer from "../Spaces/SpaceDetailContainer";
 
 interface IProps {
     onDisassociate: (key: IKeyInfo, space: ISpace) => void;

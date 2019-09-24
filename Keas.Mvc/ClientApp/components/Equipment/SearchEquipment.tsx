@@ -135,19 +135,19 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                     value: ""
                 }
             ],
+            availabilityLevel: "",
             id: 0,
             make: "",
             model: "",
             name: "",
             notes: "",
+            protectionLevel: "",
             serialNumber: "",
             space: this.props.space ? this.props.space : null, // if we are on spaces tab, auto to the right space
+            systemManagementId: "",
             tags: "",
             teamId: 0,
-            type: "",
-            protectionLevel: "",
-            availabilityLevel: "",
-            systemManagementId: ""
+            type: ""
         });
     };
 }

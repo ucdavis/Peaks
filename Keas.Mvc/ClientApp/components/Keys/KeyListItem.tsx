@@ -46,7 +46,7 @@ export default class KeyListItem extends React.Component<IProps, {}> {
                     {keyInfo.serialsTotalCount}
                 </td>
                 <td>
-                    <ListActionsDropdown actions={actions} className="keys-anomaly"/>
+                    <ListActionsDropdown actions={actions} className="keys-anomaly" />
                 </td>
             </tr>
         );

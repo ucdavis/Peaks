@@ -1,5 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
+import { toast } from "react-toastify";
 import { AppContext, IPerson, IPersonInfo } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
 import Denied from "../Shared/Denied";
@@ -7,7 +8,6 @@ import SearchTags from "../Tags/SearchTags";
 import CreatePerson from "./CreatePerson";
 import PeopleTable from "./PeopleTable";
 import PersonDetails from "./PersonDetails";
-import { toast } from "react-toastify";
 
 interface IState {
     loading: boolean;

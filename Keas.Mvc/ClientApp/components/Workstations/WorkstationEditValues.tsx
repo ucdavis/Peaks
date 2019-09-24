@@ -22,15 +22,15 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
         return (
             <div>
                 {this.props.disableEditing && this.props.openEditModal && (
-                  <div className="row justify-content-between">
-                    <h3>Workstation Details</h3>
-                    <Button
-                        color="link"
-                        onClick={() => this.props.openEditModal(this.props.selectedWorkstation)}
-                    >
-                        <i className="fas fa-edit fa-xs" /> Edit Workstation
-                    </Button>
-                  </div>
+                    <div className="row justify-content-between">
+                        <h3>Workstation Details</h3>
+                        <Button
+                            color="link"
+                            onClick={() => this.props.openEditModal(this.props.selectedWorkstation)}
+                        >
+                            <i className="fas fa-edit fa-xs" /> Edit Workstation
+                        </Button>
+                    </div>
                 )}
                 <div className="wrapperasset">
                     <FormGroup>
@@ -49,7 +49,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                         />
                         <FormFeedback>Item name is required</FormFeedback>
                     </FormGroup>
-                    {(this.props.disableSpaceEditing) && (
+                    {this.props.disableSpaceEditing && (
                         <div className="form-group">
                             <label>Room</label>
                             <input
@@ -58,15 +58,13 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
                                 disabled={true}
                                 value={
                                     this.props.selectedWorkstation.space
-                                        ? `${this.props.selectedWorkstation.space.roomNumber} ${
-                                              this.props.selectedWorkstation.space.bldgName
-                                          }`
+                                        ? `${this.props.selectedWorkstation.space.roomNumber} ${this.props.selectedWorkstation.space.bldgName}`
                                         : ""
                                 }
                             />
                         </div>
                     )}
-                    {(!this.props.disableSpaceEditing) && (
+                    {!this.props.disableSpaceEditing && (
                         <FormGroup>
                             <Label for="room">Room</Label>
                             <SearchSpaces

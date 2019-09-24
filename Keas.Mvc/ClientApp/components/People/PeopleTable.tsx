@@ -23,8 +23,10 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 filterable={true}
                 filtered={this.props.filtered}
                 onFilteredChange={filtered => this.props.updateFilters(filtered)}
-                defaultPageSize={ReactTableUtil.getPageSize() }
-                onPageSizeChange={(pageSize) => { ReactTableUtil.setPageSize(pageSize)} }
+                defaultPageSize={ReactTableUtil.getPageSize()}
+                onPageSizeChange={pageSize => {
+                    ReactTableUtil.setPageSize(pageSize);
+                }}
                 minRows={1}
                 columns={[
                     {

@@ -27,20 +27,25 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
 
         const { personAction } = this.context.router.route.match.params;
 
-        const listItems = !!this.props.statusList ? this.props.statusList.map((x) =>
-                <option value={x} key={x}>{x}</option>
-            ) :
-            <option value={statusValue}>{statusValue}</option>;
+        const listItems = !!this.props.statusList ? (
+            this.props.statusList.map(x => (
+                <option value={x} key={x}>
+                    {x}
+                </option>
+            ))
+        ) : (
+            <option value={statusValue}>{statusValue}</option>
+        );
 
         return (
             <div>
                 {this.props.disableEditing && this.props.openEditModal && (
-                  <div className="row justify-content-between">
-                    <h3>Key Details</h3>
-                    <Button color="link" onClick={() => this.props.openEditModal(keySerial)}>
-                        <i className="fas fa-edit fa-xs" /> Edit Serial
-                    </Button>
-                  </div>
+                    <div className="row justify-content-between">
+                        <h3>Key Details</h3>
+                        <Button color="link" onClick={() => this.props.openEditModal(keySerial)}>
+                            <i className="fas fa-edit fa-xs" /> Edit Serial
+                        </Button>
+                    </div>
                 )}
                 <div className="wrapperasset">
                     <div className="form-group">
@@ -63,10 +68,11 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
                             value={this.props.keySerial.key.code}
                         />
                     </div>
-                    {personAction &&
-                    <Button color="link" onClick={() => this._goToKeyDetails()}>
-                        <i className="fas fa-link fa-xs" /> View Key Details
-                    </Button>}
+                    {personAction && (
+                        <Button color="link" onClick={() => this._goToKeyDetails()}>
+                            <i className="fas fa-link fa-xs" /> View Key Details
+                        </Button>
+                    )}
                     <FormGroup>
                         <Label for="number">Key Serial Number</Label>
                         <Input

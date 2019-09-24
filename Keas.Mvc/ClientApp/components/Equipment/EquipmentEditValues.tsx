@@ -4,7 +4,7 @@ import { IEquipment, IEquipmentAttribute, ISpace } from "../../Types";
 import SearchSpaces from "../Spaces/SearchSpaces";
 import SearchTags from "../Tags/SearchTags";
 import EquipmentAttributes from "./EquipmentAttributes";
-import EquipmentBigFixInfo from "./EquipmentBigFixInfo"
+import EquipmentBigFixInfo from "./EquipmentBigFixInfo";
 
 interface IProps {
     changeProperty?: (property: string, value: any) => void;
@@ -21,22 +21,27 @@ interface IProps {
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
     public render() {
         const typeValue = this.props.selectedEquipment.type || "Default";
-        const listItems = !!this.props.equipmentTypes ? this.props.equipmentTypes.map((x) =>
-            <option value={x} key={x}>{x}</option>
-        ) :
-            <option value={typeValue}>{typeValue}</option>;
+        const listItems = !!this.props.equipmentTypes ? (
+            this.props.equipmentTypes.map(x => (
+                <option value={x} key={x}>
+                    {x}
+                </option>
+            ))
+        ) : (
+            <option value={typeValue}>{typeValue}</option>
+        );
         return (
             <div>
                 {this.props.disableEditing && this.props.openEditModal && (
-                  <div className="row justify-content-between">
-                    <h3>Equipment Details</h3>
-                    <Button
-                        color="link"
-                        onClick={() => this.props.openEditModal(this.props.selectedEquipment)}
-                    >
-                        <i className="fas fa-edit fa-xs" /> Edit Equipment
-                    </Button>
-                  </div>
+                    <div className="row justify-content-between">
+                        <h3>Equipment Details</h3>
+                        <Button
+                            color="link"
+                            onClick={() => this.props.openEditModal(this.props.selectedEquipment)}
+                        >
+                            <i className="fas fa-edit fa-xs" /> Edit Equipment
+                        </Button>
+                    </div>
                 )}
 
                 <div className="wrapperasset">
@@ -66,7 +71,6 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                         >
                             {listItems}
                         </select>
-
                     </div>
                     <div className="form-group">
                         <label>Serial Number / Identifier</label>
@@ -88,14 +92,25 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             }
                         />
                     </div>
-                    {this._shouldShowForType(this.props.selectedEquipment.type, "ProtectionAndAvailability") &&
+                    {this._shouldShowForType(
+                        this.props.selectedEquipment.type,
+                        "ProtectionAndAvailability"
+                    ) && (
                         <div>
                             <div className="form-group">
-                            <label>Protection Level</label> <span> </span> <a href="https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html" target="_blank"><i className="fas fa-info-circle"></i></a>
+                                <label>Protection Level</label> <span />{" "}
+                                <a
+                                    href="https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html"
+                                    target="_blank"
+                                >
+                                    <i className="fas fa-info-circle" />
+                                </a>
                                 <select
                                     className="form-control"
                                     value={this.props.selectedEquipment.protectionLevel || ""}
-                                    onChange={e => this.props.changeProperty("protectionLevel", e.target.value)}
+                                    onChange={e =>
+                                        this.props.changeProperty("protectionLevel", e.target.value)
+                                    }
                                     disabled={this.props.disableEditing}
                                 >
                                     <option value="P1">P1 - Minimal</option>
@@ -105,11 +120,22 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                                 </select>
                             </div>
                             <div className="form-group">
-                            <label>Availability Level</label>  <span> </span> <a href="https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html" target="_blank"><i className="fas fa-info-circle"></i></a>
+                                <label>Availability Level</label> <span />{" "}
+                                <a
+                                    href="https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html"
+                                    target="_blank"
+                                >
+                                    <i className="fas fa-info-circle" />
+                                </a>
                                 <select
                                     className="form-control"
                                     value={this.props.selectedEquipment.availabilityLevel || ""}
-                                    onChange={e => this.props.changeProperty("availabilityLevel", e.target.value)}
+                                    onChange={e =>
+                                        this.props.changeProperty(
+                                            "availabilityLevel",
+                                            e.target.value
+                                        )
+                                    }
                                     disabled={this.props.disableEditing}
                                 >
                                     <option value="A1">A1 - Minimal</option>
@@ -119,7 +145,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                                 </select>
                             </div>
                         </div>
-                    }
+                    )}
 
                     {this._shouldShowForType(this.props.selectedEquipment.type, "Make") && (
                         <div className="form-group">
@@ -153,20 +179,25 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                             />
                         </div>
                     )}
-                    {this._shouldShowForType(this.props.selectedEquipment.type, "SystemManagementId") && (
+                    {this._shouldShowForType(
+                        this.props.selectedEquipment.type,
+                        "SystemManagementId"
+                    ) && (
                         <div className="form-group">
                             <EquipmentBigFixInfo
-                               bigfixId={this.props.selectedEquipment.systemManagementId}
-                               addBigFixId={this.props.changeProperty}
-                               disableEditing={this.props.disableEditing}
-                           />
+                                bigfixId={this.props.selectedEquipment.systemManagementId}
+                                addBigFixId={this.props.changeProperty}
+                                disableEditing={this.props.disableEditing}
+                            />
                             <input
                                 type="text"
                                 className="form-control"
                                 disabled={this.props.disableEditing}
                                 value={this.props.selectedEquipment.systemManagementId || ""}
                                 maxLength={16}
-                                onChange={e => this.props.changeProperty("systemManagementId", e.target.value)}
+                                onChange={e =>
+                                    this.props.changeProperty("systemManagementId", e.target.value)
+                                }
                             />
                         </div>
                     )}
@@ -210,9 +241,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                                 disabled={true}
                                 value={
                                     this.props.selectedEquipment.space
-                                        ? `${this.props.selectedEquipment.space.roomNumber} ${
-                                        this.props.selectedEquipment.space.bldgName
-                                        }`
+                                        ? `${this.props.selectedEquipment.space.roomNumber} ${this.props.selectedEquipment.space.bldgName}`
                                         : ""
                                 }
                             />
@@ -255,21 +284,29 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
             return false;
         }
         if (prop === "ProtectionAndAvailability") {
-            let Types = ["Computer", "Desktop", "Laptop", "Server", "Cellphone", "Device", "Tablet"];
-            if (Types.indexOf(type) > -1) {
+            const types = [
+                "Computer",
+                "Desktop",
+                "Laptop",
+                "Server",
+                "Cellphone",
+                "Device",
+                "Tablet"
+            ];
+            if (types.indexOf(type) > -1) {
                 return true;
             }
             return false;
         }
 
         if (prop === "SystemManagementId") {
-            let Types = ["Computer", "Desktop", "Laptop", "Server"];
-            if (Types.indexOf(type) > -1) {
+            const types = ["Computer", "Desktop", "Laptop", "Server"];
+            if (types.indexOf(type) > -1) {
                 return true;
             }
             return false;
         }
 
         return true;
-    };
+    }
 }

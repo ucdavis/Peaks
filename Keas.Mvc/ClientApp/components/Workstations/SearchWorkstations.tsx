@@ -144,9 +144,9 @@ export default class SearchWorkstations extends React.Component<IProps, IState> 
         this.props.onSelect({
             id: 0,
             name: "",
+            notes: "",
             space: this.props.space ? this.props.space : null, // if we are on spaces tab, auto to the right space
             tags: "",
-            notes: "",
             teamId: 0
         });
     };

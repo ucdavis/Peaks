@@ -32,8 +32,7 @@ export default class KeyList extends React.Component<IProps, {}> {
                         <th>Key Name</th>
                         <th>Key Code</th>
                         <th>
-                            Serials{" "}
-                            <i id="serialTooltip" className="fas fa-info-circle" />
+                            Serials <i id="serialTooltip" className="fas fa-info-circle" />
                             <UncontrolledTooltip placement="right" target="serialTooltip">
                                 In Use / Total
                             </UncontrolledTooltip>

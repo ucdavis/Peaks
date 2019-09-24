@@ -15,15 +15,15 @@ export default class WorkstationAssignmentValues extends React.Component<IProps,
         }
         return (
             <div>
-              <div className="row justify-content-between mt-5">
-                <h3>Assignment Details</h3>
-                <Button
-                    color="link"
-                    onClick={() => this.props.openUpdateModal(this.props.selectedWorkstation)}
-                >
-                    <i className="fas fa-edit fa-xs" /> Update Assignment
-                </Button>
-              </div>
+                <div className="row justify-content-between mt-5">
+                    <h3>Assignment Details</h3>
+                    <Button
+                        color="link"
+                        onClick={() => this.props.openUpdateModal(this.props.selectedWorkstation)}
+                    >
+                        <i className="fas fa-edit fa-xs" /> Update Assignment
+                    </Button>
+                </div>
 
                 <div className="wrapperasset">
                     <div className="form-group">

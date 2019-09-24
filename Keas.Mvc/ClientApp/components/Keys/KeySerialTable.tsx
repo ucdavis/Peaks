@@ -4,8 +4,8 @@ import { Button } from "reactstrap";
 import { IKeySerial } from "../../Types";
 import { DateUtil } from "../../util/dates";
 import { ReactTableExpirationUtil } from "../../util/reactTable";
-import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 import { ReactTableUtil } from "../../util/tableUtil";
+import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
 
 interface IProps {
     keySerials: IKeySerial[];
@@ -34,7 +34,9 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                 data={keySerials}
                 filterable={true}
                 defaultPageSize={ReactTableUtil.getPageSize()}
-                onPageSizeChange={(pageSize) => { ReactTableUtil.setPageSize(pageSize) }}
+                onPageSizeChange={pageSize => {
+                    ReactTableUtil.setPageSize(pageSize);
+                }}
                 minRows={1}
                 columns={[
                     {
@@ -113,12 +115,14 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
                         Cell: row => (
                             <span>{row.value ? DateUtil.formatExpiration(row.value) : ""}</span>
                         ),
-                        Filter: ({ filter, onChange }) => ReactTableExpirationUtil.filter(filter, onChange),
+                        Filter: ({ filter, onChange }) =>
+                            ReactTableExpirationUtil.filter(filter, onChange),
                         Header: "Expiration",
                         accessor: "keySerialAssignment.expiresAt",
-                        filterMethod: (filter: IFilter, row) => ReactTableExpirationUtil.filterMethod(filter, row),
+                        filterMethod: (filter: IFilter, row) =>
+                            ReactTableExpirationUtil.filterMethod(filter, row),
                         id: "expiresAt",
-                        sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a,b)
+                        sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
                     },
                     {
                         Cell: this.renderDropdownColumn,

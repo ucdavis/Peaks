@@ -7,9 +7,9 @@ import Denied from "../Shared/Denied";
 import AssignKeySerial from "./AssignKeySerial";
 import EditKeySerial from "./EditKeySerial";
 import KeySerialDetails from "./KeySerialDetails";
-import RevokeKeySerial from "./RevokeKeySerial"
 import KeySerialList from "./KeySerialList";
 import KeySerialTable from "./KeySerialTable";
+import RevokeKeySerial from "./RevokeKeySerial";
 
 interface IState {
     keySerials: IKeySerial[];
@@ -51,7 +51,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         this.state = {
             keySerials: [],
             loading: true,
-            statusList: [],   
+            statusList: []
         };
     }
     public async componentDidMount() {
@@ -188,9 +188,9 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         if (keySerial.id === 0) {
             const request = {
                 keyId: keySerial.key.id,
+                notes: keySerial.notes,
                 number: keySerial.number,
-                status: keySerial.status,
-                notes: keySerial.notes
+                status: keySerial.status
             };
 
             const createUrl = `/api/${team.slug}/keyserials/create`;
@@ -269,7 +269,6 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
     };
 
     private _revokeKeySerial = async (keySerial: IKeySerial) => {
-
         const { team } = this.context;
 
         // call API to actually revoke
@@ -320,9 +319,9 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
         }
 
         const request = {
+            notes: keySerial.notes,
             number: keySerial.number,
-            status: keySerial.status,
-            notes: keySerial.notes
+            status: keySerial.status
         };
 
         const updateUrl = `/api/${team.slug}/keyserials/update/${keySerial.id}`;
@@ -399,7 +398,7 @@ export default class KeySerialContainer extends React.Component<IProps, IState> 
 
     private _openRevokeModal = (keySerial: IKeySerial) => {
         this.context.router.history.push(`${this._getBaseUrl()}/keyserials/revoke/${keySerial.id}`);
-    }
+    };
 
     private _openEditModal = (keySerial: IKeySerial) => {
         this.context.router.history.push(`${this._getBaseUrl()}/keyserials/edit/${keySerial.id}`);
