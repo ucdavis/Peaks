@@ -4,30 +4,22 @@ import { toast } from "react-toastify";
 import { AppContext, IEquipment, IPerson, ISpace } from "../../Types";
 import { PermissionsUtil } from "../../util/permissions";
 import Denied from "../Shared/Denied";
-import SearchTags from "../Tags/SearchTags";
 import AssignEquipment from "./AssignEquipment";
 import DeleteEquipment from "./DeleteEquipment";
 import EditEquipment from "./EditEquipment";
 import EquipmentDetails from "./EquipmentDetails";
 import EquipmentList from "./EquipmentList";
-import EquipmentTable from "./EquipmentTable";
+import EquipmentTableContainer from "./EquipmentTableContainer";
 import RevokeEquipment from "./RevokeEquipment";
-import SearchAttributes from "./SearchAttributes";
-import SearchEquipmentType from "./SearchEquipmentType";
 
 interface IState {
-    attributeFilters: string[];
     commonAttributeKeys: string[];
     equipmentTypes: string[];
-    equipmentTypeFilters: string[];
     equipment: IEquipment[]; // either equipment assigned to this person, or all team equipment
     loading: boolean;
-    tagFilters: string[];
     tags: string[];
     equipmentProtectionLevels: string[];
-    equipmentProtectionFilters: string[];
     equipmentAvailabilityLevels: string[];
-    equipmentAvailabilityFilters: string[];
 }
 
 interface IProps {
@@ -50,18 +42,13 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         super(props);
 
         this.state = {
-            attributeFilters: [],
             commonAttributeKeys: [],
             equipment: [],
-            equipmentTypeFilters: [],
             equipmentTypes: [],
             loading: true,
-            tagFilters: [],
             tags: [],
             equipmentProtectionLevels: ["P1", "P2", "P3", "P4"],
-            equipmentProtectionFilters: [],
-            equipmentAvailabilityLevels: ["A1", "A2", "A3", "A4"],
-            equipmentAvailabilityFilters: []
+            equipmentAvailabilityLevels: ["A1", "A2", "A3", "A4"]
         };
     }
     public async componentDidMount() {
@@ -190,75 +177,19 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
                 </div>
             );
         } else {
-            let filteredEquipment = this.state.equipment;
-            if (this.state.tagFilters.length > 0) {
-                filteredEquipment = filteredEquipment.filter(x =>
-                    this._checkTagFilters(x, this.state.tagFilters)
-                );
-            }
-            if (this.state.attributeFilters.length > 0) {
-                filteredEquipment = filteredEquipment.filter(x =>
-                    this._checkAttributeFilters(x, this.state.attributeFilters)
-                );
-            }
-            if (this.state.equipmentTypeFilters.length > 0) {
-                filteredEquipment = filteredEquipment.filter(x =>
-                    this._checkEquipmentTypeFilters(x)
-                );
-            }
-            if (this.state.equipmentProtectionFilters.length > 0) {
-                filteredEquipment = filteredEquipment.filter(x =>
-                    this._checkEquipmentProtectionFilters(x)
-                );
-            }
-            if (this.state.equipmentAvailabilityFilters.length > 0) {
-                filteredEquipment = filteredEquipment.filter(x =>
-                    this._checkEquipmentAvailabilityFilters(x)
-                );
-            }
             return (
                 <div>
-                    <div className="row">
-                        <SearchTags
-                            tags={this.state.tags}
-                            selected={this.state.tagFilters}
-                            onSelect={this._filterTags}
-                            disabled={false}
-                        />
-                        <SearchAttributes
-                            selected={this.state.attributeFilters}
-                            onSelect={this._filterAttributes}
-                            disabled={false}
-                        />
-                        <SearchEquipmentType
-                            equipmentTypes={this.state.equipmentTypes}
-                            selected={this.state.equipmentTypeFilters}
-                            onSelect={this._filterEquipmentType}
-                            disabled={false}
-                            placeHolder="Search for Equipment Types"
-                        />
-                        <SearchEquipmentType
-                            equipmentTypes={this.state.equipmentProtectionLevels}
-                            selected={this.state.equipmentProtectionFilters}
-                            onSelect={this._filterEquipmentProtection}
-                            disabled={false}
-                            placeHolder="Search Protection Level"
-                        />
-                        <SearchEquipmentType
-                            equipmentTypes={this.state.equipmentAvailabilityLevels}
-                            selected={this.state.equipmentAvailabilityFilters}
-                            onSelect={this._filterEquipmentAvailability}
-                            disabled={false}
-                            placeHolder="Search Availability Level"
-                        />
-                    </div>
-                    <EquipmentTable
-                        equipment={filteredEquipment}
-                        onRevoke={this._openRevokeModal}
-                        onDelete={this._openDeleteModal}
-                        onAdd={this._openAssignModal}
-                        showDetails={this._openDetailsModal}
-                        onEdit={this._openEditModal}
+                    <EquipmentTableContainer
+                        equipment={this.state.equipment}
+                        tags={this.state.tags}
+                        equipmentAvailabilityLevels={this.state.equipmentAvailabilityLevels}
+                        equipmentProtectionLevels={this.state.equipmentProtectionLevels}
+                        equipmentTypes={this.state.equipmentTypes}
+                        openRevokeModal={this._openRevokeModal}
+                        openDeleteModal={this._openDeleteModal}
+                        openAssignModal={this._openAssignModal}
+                        openDetailsModal={this._openDetailsModal}
+                        openEditModal={this._openEditModal}
                     />
                 </div>
             );
@@ -521,69 +452,6 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         }
 
         this.setState({ ...this.state, equipment: updateEquipment });
-    };
-
-    private _filterEquipmentType = (filters: string[]) => {
-        this.setState({ equipmentTypeFilters: filters });
-    };
-
-    private _filterEquipmentProtection = (filters: string[]) => {
-        this.setState({ equipmentProtectionFilters: filters });
-    };
-    private _filterEquipmentAvailability = (filters: string[]) => {
-        this.setState({ equipmentAvailabilityFilters: filters });
-    };
-
-    private _checkEquipmentTypeFilters = (equipment: IEquipment) => {
-        const filters = this.state.equipmentTypeFilters;
-        return filters.some(
-            f =>
-                (equipment && !!equipment.type && equipment.type === f) ||
-                (equipment && !equipment.type && f === "Default")
-        );
-    };
-
-    private _checkEquipmentProtectionFilters = (equipment: IEquipment) => {
-        const filters = this.state.equipmentProtectionFilters;
-        return filters.some(
-            f => equipment && !!equipment.protectionLevel && equipment.protectionLevel === f
-        );
-    };
-
-    private _checkEquipmentAvailabilityFilters = (equipment: IEquipment) => {
-        const filters = this.state.equipmentAvailabilityFilters;
-        return filters.some(
-            f => equipment && !!equipment.availabilityLevel && equipment.availabilityLevel === f
-        );
-    };
-
-    private _filterTags = (filters: string[]) => {
-        this.setState({ tagFilters: filters });
-    };
-
-    private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
-        return filters.every(f => !!equipment && !!equipment.tags && equipment.tags.includes(f));
-    };
-
-    private _filterAttributes = (filters: string[]) => {
-        this.setState({ attributeFilters: filters });
-    };
-
-    private _checkAttributeFilters = (equipment: IEquipment, filters) => {
-        for (const filter of filters) {
-            if (
-                !equipment.attributes ||
-                equipment.attributes.findIndex(
-                    x =>
-                        x.key.toLowerCase() === filter.label.toLowerCase() ||
-                        x.value.toLowerCase() === filter.label.toLowerCase()
-                ) === -1
-            ) {
-                // if we cannot find an index where some of our filter matches the key
-                return false;
-            }
-        }
-        return true;
     };
 
     private _openAssignModal = (equipment: IEquipment) => {
