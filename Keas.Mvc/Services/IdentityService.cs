@@ -55,11 +55,11 @@ namespace Keas.Mvc.Services
                         var person = await CreatePersonFromUser(user, teamId);
                         _context.People.Add(person);
                         await _context.SaveChangesAsync();
-                        await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Added, notes);
+                        await _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Added, notes);
                         await _context.SaveChangesAsync();
                         return (person, 1);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         var local = _context.Set<User>()
                             .Local
@@ -107,7 +107,7 @@ namespace Keas.Mvc.Services
                     if (!person.Active)
                     {
                         person.Active = true;
-                        await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Reactivated, notes);                        
+                        await _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Reactivated, notes);
                         await _context.SaveChangesAsync();
                         return (person, 1);
                     }
@@ -119,7 +119,7 @@ namespace Keas.Mvc.Services
                     person = await CreatePersonFromUser(user, teamId);
                     _context.People.Add(person);
                     await _context.SaveChangesAsync();
-                    await  _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Added, notes);                        
+                    await _notificationService.PersonUpdated(person, team, team.Slug, actorName, actorId, PersonNotification.Actions.Added, notes);
                     await _context.SaveChangesAsync();
                     return (person, 1);
                 }
@@ -200,7 +200,7 @@ namespace Keas.Mvc.Services
             // find their email
             var ucdContactResult = await clientws.Contacts.Get(ucdKerbPerson.IamId);
 
-            if(ucdContactResult.ResponseData.Results.Length == 0)
+            if (ucdContactResult.ResponseData.Results.Length == 0)
             {
                 return null;
             }
@@ -274,7 +274,7 @@ namespace Keas.Mvc.Services
                     // User not found with IamId
                     var kerbResults = await clientws.Kerberos.Search(KerberosSearchField.iamId, id.IamId);
 
-                    if (kerbResults.ResponseData.Results.Length > 0 )
+                    if (kerbResults.ResponseData.Results.Length > 0)
                     {
                         var personResult = await GetOrCreatePersonFromKerberos(kerbResults.ResponseData.Results[0].UserId, team.Id, team, actorName, actorId, $"Bulk Load from PPS code: {ppsCode}");
                         newpeople += personResult.peopleCount;

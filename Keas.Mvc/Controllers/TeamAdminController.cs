@@ -93,7 +93,7 @@ namespace Keas.Mvc.Controllers
             {
                 Message = "Email not changed.";
             }
-            
+
             return RedirectToAction("Index");
         }
 
@@ -152,12 +152,12 @@ namespace Keas.Mvc.Controllers
         {
             if (string.IsNullOrWhiteSpace(id))
             {
-                ErrorMessage = "Please select a building name or part of a building name to search.";                
+                ErrorMessage = "Please select a building name or part of a building name to search.";
                 return View(new List<SpaceSearchModel>());
             }
             var model = await _context.Spaces
                     .Where(a => a.BldgName.ToLower().Contains(id.ToLower()))
-                    .Select(a => new SpaceSearchModel(){BldgName = a.BldgName, DeptName = a.DeptName, ChartNum = a.ChartNum, OrgId = a.OrgId}).Distinct().ToListAsync();
+                    .Select(a => new SpaceSearchModel() { BldgName = a.BldgName, DeptName = a.DeptName, ChartNum = a.ChartNum, OrgId = a.OrgId }).Distinct().ToListAsync();
 
             return View(model);
         }
@@ -833,7 +833,7 @@ namespace Keas.Mvc.Controllers
                                 assignmentCount += recAssignmentCount;
 
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 result.Success = false;
                                 result.ErrorMessage.Add("There was a problem saving this record.");
@@ -911,7 +911,7 @@ namespace Keas.Mvc.Controllers
             var assignmentCount = 0;
             var errorCount = 0;
             var rowNumber = 1;
-            bool import = true;
+            // bool import = true; // never used
             bool somethingSaved = false;
 
             if (file == null || file.Length == 0)
@@ -943,7 +943,7 @@ namespace Keas.Mvc.Controllers
                     ErrorMessage = firstSentence.FirstOrDefault() ?? "Error Detected";
                     return View();
                 }
-                
+
                 foreach (var r in records)
                 {
 
@@ -980,7 +980,7 @@ namespace Keas.Mvc.Controllers
                         {
                             recAssignmentCount = await AddEquipmentAssignment(r, person, userIdentity, userName, equipment, result);
                         }
-                        
+
                         try
                         {
                             await _context.SaveChangesAsync();
@@ -1002,7 +1002,7 @@ namespace Keas.Mvc.Controllers
                                 peopleCount += recPeopleCount;
                                 assignmentCount += recAssignmentCount;
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 result.Success = false;
                                 result.ErrorMessage.Add("There was a problem saving this record.");
@@ -1089,7 +1089,7 @@ namespace Keas.Mvc.Controllers
                 equipmentAttribute.Key = key;
                 result.Messages.Add($"Warning, Key: {key} not found in valid choices.");
             }
-            
+
             equipmentAttribute.Value = value;
             ModelState.Clear();
             TryValidateModel(equipmentAttribute);
@@ -1110,7 +1110,7 @@ namespace Keas.Mvc.Controllers
         {
             var equipment = new Equipment();
             if (!string.IsNullOrWhiteSpace(r.EquipmentName))
-            {                
+            {
                 equipment.Name = r.EquipmentName;
                 equipment.SerialNumber = r.SerialNumber;
                 equipment.Make = r.Make;
@@ -1144,7 +1144,7 @@ namespace Keas.Mvc.Controllers
                     {
                         equipment.ProtectionLevel = EquipmentProtectionLevels.Levels.Single(a => a.Equals(r.ProtectionLevel.Trim(), StringComparison.OrdinalIgnoreCase));
                     }
-                    else 
+                    else
                     {
                         result.Success = false;
                         result.ErrorMessage.Add("Invalid Protection Level Value.");
@@ -1161,8 +1161,8 @@ namespace Keas.Mvc.Controllers
                         return equipment;
                     }
                 }
-                
-                
+
+
                 if (ModelState.IsValid)
                 {
                     _context.Equipment.Add(equipment);
@@ -1252,7 +1252,7 @@ namespace Keas.Mvc.Controllers
                         CreateAttribute(equipment, kv[0], kv[1], result, ref recAttributeCount, ref recAttributeAdded, teamKeys);
                     }
                 }
-                
+
             }
 
             if (recAttributeAdded)
@@ -1285,7 +1285,7 @@ namespace Keas.Mvc.Controllers
                     result.Success = false;
                     result.ErrorMessage.Add($"KerbUser not found.");
                 }
-            }          
+            }
 
             return (recPeopleCount, person);
 
@@ -1294,7 +1294,7 @@ namespace Keas.Mvc.Controllers
         private async Task<int> AddEquipmentAssignment(EquipmentImport r, Person person, String userIdentity, String userName, Equipment equipment, EquipmentImportResults result)
         {
             int recAssignmentCount = 0;
-            if(person == null)
+            if (person == null)
             {
                 return recAssignmentCount;
             }
