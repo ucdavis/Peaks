@@ -8,10 +8,11 @@ import AssignEquipment from "./AssignEquipment";
 import DeleteEquipment from "./DeleteEquipment";
 import EditEquipment from "./EditEquipment";
 import EquipmentDetails from "./EquipmentDetails";
-import EquipmentFilters from "./EquipmentFilters";
+import EquipmentFilters from "./EquipmentTableContainer";
 import EquipmentList from "./EquipmentList";
 import EquipmentTable from "./EquipmentTable";
 import RevokeEquipment from "./RevokeEquipment";
+import EquipmentTableContainer from "./EquipmentTableContainer";
 
 interface IState {
     commonAttributeKeys: string[];
@@ -180,14 +181,17 @@ export default class EquipmentContainer extends React.Component<IProps, IState> 
         } else {
             return (
                 <div>
-                    <EquipmentFilters />
-                    <EquipmentTable
-                        equipment={filteredEquipment}
-                        onRevoke={this._openRevokeModal}
-                        onDelete={this._openDeleteModal}
-                        onAdd={this._openAssignModal}
-                        showDetails={this._openDetailsModal}
-                        onEdit={this._openEditModal}
+                    <EquipmentTableContainer
+                        equipment={this.state.equipment}
+                        tags={this.state.tags}
+                        equipmentAvailabilityLevels={this.state.equipmentAvailabilityLevels}
+                        equipmentProtectionLevels={this.state.equipmentProtectionLevels}
+                        equipmentTypes={this.state.equipmentTypes}
+                        openRevokeModal={this._openRevokeModal}
+                        openDeleteModal={this._openDeleteModal}
+                        openAssignModal={this._openAssignModal}
+                        openDetailsModal={this._openDetailsModal}
+                        openEditModal={this._openEditModal}
                     />
                 </div>
             );

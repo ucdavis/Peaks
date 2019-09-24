@@ -1,8 +1,8 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import { toast } from "react-toastify";
 import { AppContext, IEquipment } from "../../Types";
 import SearchTags from "../Tags/SearchTags";
+import EquipmentTable from "./EquipmentTable";
 import SearchAttributes from "./SearchAttributes";
 import SearchEquipmentType from "./SearchEquipmentType";
 
@@ -12,6 +12,11 @@ interface IProps {
     equipmentProtectionLevels: string[];
     equipmentTypes: string[];
     tags: string[];
+    openRevokeModal?: (equipment: IEquipment) => void;
+    openDeleteModal?: (equipment: IEquipment) => void;
+    openAssignModal?: (equipment: IEquipment) => void;
+    openDetailsModal?: (equipment: IEquipment) => void;
+    openEditModal?: (equipment: IEquipment) => void;
 }
 
 interface IState {
@@ -22,7 +27,7 @@ interface IState {
     tagFilters: string[];
 }
 
-export default class EquipmentFilters extends React.Component<IProps, IState> {
+export default class EquipmentTableContainer extends React.Component<IProps, IState> {
     public static contextTypes = {
         fetch: PropTypes.func,
         team: PropTypes.object
@@ -102,11 +107,11 @@ export default class EquipmentFilters extends React.Component<IProps, IState> {
                 </div>
                 <EquipmentTable
                     equipment={filteredEquipment}
-                    onRevoke={this._openRevokeModal}
-                    onDelete={this._openDeleteModal}
-                    onAdd={this._openAssignModal}
-                    showDetails={this._openDetailsModal}
-                    onEdit={this._openEditModal}
+                    onRevoke={this.props.openRevokeModal}
+                    onDelete={this.props.openDeleteModal}
+                    onAdd={this.props.openAssignModal}
+                    showDetails={this.props.openDetailsModal}
+                    onEdit={this.props.openEditModal}
                 />
             </div>
         );
