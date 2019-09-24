@@ -76,18 +76,30 @@ table.dataTable thead .sorting_desc_disabled:before {
 }
 
 .input-group-sm > .input-group-append > select.btn:not([size]):not([multiple]),
-.input-group-sm > .input-group-append > select.input-group-text:not([size]):not([multiple]),
+.input-group-sm
+  > .input-group-append
+  > select.input-group-text:not([size]):not([multiple]),
 .input-group-sm > .input-group-prepend > select.btn:not([size]):not([multiple]),
-.input-group-sm > .input-group-prepend > select.input-group-text:not([size]):not([multiple]),
+.input-group-sm
+  > .input-group-prepend
+  > select.input-group-text:not([size]):not([multiple]),
 .input-group-sm > select.form-control:not([size]):not([multiple]),
 select.form-control-sm:not([size]):not([multiple]) {
   height: calc(1.8125rem + 10px);
 }
 @-moz-document url-prefix() {
-  .input-group-sm > .input-group-append > select.btn:not([size]):not([multiple]),
-  .input-group-sm > .input-group-append > select.input-group-text:not([size]):not([multiple]),
-  .input-group-sm > .input-group-prepend > select.btn:not([size]):not([multiple]),
-  .input-group-sm > .input-group-prepend > select.input-group-text:not([size]):not([multiple]),
+  .input-group-sm
+    > .input-group-append
+    > select.btn:not([size]):not([multiple]),
+  .input-group-sm
+    > .input-group-append
+    > select.input-group-text:not([size]):not([multiple]),
+  .input-group-sm
+    > .input-group-prepend
+    > select.btn:not([size]):not([multiple]),
+  .input-group-sm
+    > .input-group-prepend
+    > select.input-group-text:not([size]):not([multiple]),
   .input-group-sm > select.form-control:not([size]):not([multiple]),
   select.form-control-sm:not([size]):not([multiple]) {
     height: calc(2.5rem + 10px);
@@ -95,12 +107,12 @@ select.form-control-sm:not([size]):not([multiple]) {
 }
 // hide input type number arrows
 
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
@@ -145,8 +157,8 @@ th.list-actions {
 .modal-title {
   font-size: 2rem;
 }
-.gj-datepicker-bootstrap [role="right-icon"] button .gj-icon,
-.gj-datepicker-bootstrap [role="right-icon"] button .material-icons {
+.gj-datepicker-bootstrap [role='right-icon'] button .gj-icon,
+.gj-datepicker-bootstrap [role='right-icon'] button .material-icons {
   top: 8px !important;
 }
 

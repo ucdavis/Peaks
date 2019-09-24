@@ -97,9 +97,27 @@ h1 {
 }
 .head_bleed {
   background: #1e3a5b;
-  background: -moz-linear-gradient(left, #1e3a5b 0%, #1e3a5b 44%, #dbbc5b 57%, #dbbc5b 100%);
-  background: -webkit-linear-gradient(left, #1e3a5b 0%, #1e3a5b 44%, #dbbc5b 57%, #dbbc5b 100%);
-  background: linear-gradient(to right, #1e3a5b 0%, #1e3a5b 44%, #dbbc5b 57%, #dbbc5b 100%);
+  background: -moz-linear-gradient(
+    left,
+    #1e3a5b 0%,
+    #1e3a5b 44%,
+    #dbbc5b 57%,
+    #dbbc5b 100%
+  );
+  background: -webkit-linear-gradient(
+    left,
+    #1e3a5b 0%,
+    #1e3a5b 44%,
+    #dbbc5b 57%,
+    #dbbc5b 100%
+  );
+  background: linear-gradient(
+    to right,
+    #1e3a5b 0%,
+    #1e3a5b 44%,
+    #dbbc5b 57%,
+    #dbbc5b 100%
+  );
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='$gradient-one',endColorstr='$gradient-two',GradientType=1);
 }
 .head_divider {

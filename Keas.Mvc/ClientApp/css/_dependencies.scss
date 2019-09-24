@@ -1,26 +1,26 @@
 // fonts
 @font-face {
-  font-family: "proxima-nova-r";
-  src: url("/media/fonts/proximanova-regular-webfont.woff") format("woff");
+  font-family: 'proxima-nova-r';
+  src: url('/media/fonts/proximanova-regular-webfont.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
-  font-family: "proxima-nova-i";
-  src: url("/media/fonts/proximanova-regularit-webfont.woff") format("woff");
+  font-family: 'proxima-nova-i';
+  src: url('/media/fonts/proximanova-regularit-webfont.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
-  font-family: "proxima-nova-b";
-  src: url("/media/fonts/proximanova-bold-webfont.woff") format("woff");
+  font-family: 'proxima-nova-b';
+  src: url('/media/fonts/proximanova-bold-webfont.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
-$sans-italic: "proxima-nova-i", sans-serif;
-$sans-bold: "proxima-nova-b", sans-serif;
-$sans-reg: "proxima-nova-r", sans-serif;
+$sans-italic: 'proxima-nova-i', sans-serif;
+$sans-bold: 'proxima-nova-b', sans-serif;
+$sans-reg: 'proxima-nova-r', sans-serif;
 
 $primary-color: #1d3b5c;
 $secondary-color: #004987;
@@ -135,7 +135,8 @@ $card-thick-padding: 3rem;
   &:hover {
     color: #fff !important;
     transform: translateY(-1px);
-    box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 3px 6px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset,
+      0 3px 6px rgba(0, 0, 0, 0.08);
     background-color: lighten($primary-color, 5);
   }
 }
