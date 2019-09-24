@@ -3,8 +3,8 @@ import ReactTable from "react-table";
 import "react-table/react-table.css";
 import { Button, UncontrolledTooltip } from "reactstrap";
 import { IKey, IKeyInfo } from "../../Types";
+import { ReactTableUtil } from "../../util/tableUtil";
 import ListActionsDropdown, { IAction } from "../ListActionsDropdown";
-import { ReactTableUtil} from "../../util/tableUtil";
 
 interface IProps {
     showDetails?: (key: IKey) => void;
@@ -33,7 +33,9 @@ export default class KeyTable extends React.Component<IProps, {}> {
                 data={keysInfo}
                 filterable={true}
                 defaultPageSize={ReactTableUtil.getPageSize()}
-                onPageSizeChange={(pageSize) => { ReactTableUtil.setPageSize(pageSize) }}
+                onPageSizeChange={pageSize => {
+                    ReactTableUtil.setPageSize(pageSize);
+                }}
                 minRows={1}
                 filtered={filters}
                 onFilteredChange={this.props.onFiltersChange}
@@ -67,7 +69,8 @@ export default class KeyTable extends React.Component<IProps, {}> {
                         Header: "Key Code",
                         accessor: "key.code",
                         filterMethod: (filter: IFilter, row: IRow) =>
-                            !!row[filter.id] && filter.value &&
+                            !!row[filter.id] &&
+                            filter.value &&
                             (row[filter.id].toLowerCase().includes(filter.value.toLowerCase()) ||
                                 filter.value.toLowerCase().includes(row[filter.id].toLowerCase()))
                     },
@@ -157,6 +160,12 @@ export default class KeyTable extends React.Component<IProps, {}> {
                         headerClassName: "table-actions",
                         resizable: false,
                         sortable: false
+                    }
+                ]}
+                defaultSorted={[
+                    {
+                        desc: false,
+                        id: "key.name"
                     }
                 ]}
             />
