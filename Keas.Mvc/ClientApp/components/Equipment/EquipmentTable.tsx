@@ -90,6 +90,12 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
                         sortable: false
                     }
                 ]}
+                defaultSorted={[
+                    {
+                        desc: false,
+                        id: "name"
+                    }
+                ]}
             />
         );
     }

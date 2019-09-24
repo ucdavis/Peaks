@@ -97,6 +97,12 @@ export default class AccessTable extends React.Component<IProps, {}> {
                         sortable: false
                     }
                 ]}
+                defaultSorted={[
+                    {
+                        desc: false,
+                        id: "name"
+                    }
+                ]}
             />
         );
     }
