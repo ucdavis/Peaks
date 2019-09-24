@@ -23,8 +23,10 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                 filterable={true}
                 filtered={this.props.filtered}
                 onFilteredChange={filtered => this.props.updateFilters(filtered)}
-                defaultPageSize={ReactTableUtil.getPageSize() }
-                onPageSizeChange={(pageSize) => { ReactTableUtil.setPageSize(pageSize)} }
+                defaultPageSize={ReactTableUtil.getPageSize()}
+                onPageSizeChange={pageSize => {
+                    ReactTableUtil.setPageSize(pageSize);
+                }}
                 minRows={1}
                 columns={[
                     {
@@ -46,10 +48,11 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                     },
                     {
                         Header: "Name",
-                        accessor: "person.name",
+                        accessor: row => row.person.lastName + ", " + row.person.firstName,
                         filterMethod: (filter, row) =>
                             !!row[filter.id] &&
-                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+                            row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
+                        id: "name"
                     },
                     {
                         Header: "Email",
@@ -96,6 +99,12 @@ export default class PeopleTable extends React.Component<IProps, {}> {
                         className: "table-10p",
                         filterable: false,
                         headerClassName: "table-10p"
+                    }
+                ]}
+                defaultSorted={[
+                    {
+                        desc: false,
+                        id: "name"
                     }
                 ]}
             />
