@@ -122,10 +122,15 @@ export default class EquipmentTableContainer extends React.Component<IProps, ISt
         );
     }
 
+    private _filterTags = (filters: string[]) => {
+        this.setState({ tagFilters: filters });
+    };
+    private _filterAttributes = (filters: string[]) => {
+        this.setState({ attributeFilters: filters });
+    };
     private _filterEquipmentType = (filters: string[]) => {
         this.setState({ equipmentTypeFilters: filters });
     };
-
     private _filterEquipmentProtection = (filters: string[]) => {
         this.setState({ equipmentProtectionFilters: filters });
     };
@@ -134,6 +139,27 @@ export default class EquipmentTableContainer extends React.Component<IProps, ISt
     };
     private _filterBigfix = (filters: string[]) => {
         this.setState({ bigfixFilters: filters });
+    };
+
+    private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
+        return filters.every(f => !!equipment && !!equipment.tags && equipment.tags.includes(f));
+    };
+
+    private _checkAttributeFilters = (equipment: IEquipment, filters) => {
+        for (const filter of filters) {
+            if (
+                !equipment.attributes ||
+                equipment.attributes.findIndex(
+                    x =>
+                        x.key.toLowerCase() === filter.label.toLowerCase() ||
+                        x.value.toLowerCase() === filter.label.toLowerCase()
+                ) === -1
+            ) {
+                // if we cannot find an index where some of our filter matches the key
+                return false;
+            }
+        }
+        return true;
     };
 
     private _checkEquipmentTypeFilters = (equipment: IEquipment) => {
@@ -164,34 +190,5 @@ export default class EquipmentTableContainer extends React.Component<IProps, ISt
         return filters.some(
             f => equipment && !!equipment.systemManagementId && equipment.systemManagementId === f
         );
-    };
-
-    private _filterTags = (filters: string[]) => {
-        this.setState({ tagFilters: filters });
-    };
-
-    private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
-        return filters.every(f => !!equipment && !!equipment.tags && equipment.tags.includes(f));
-    };
-
-    private _filterAttributes = (filters: string[]) => {
-        this.setState({ attributeFilters: filters });
-    };
-
-    private _checkAttributeFilters = (equipment: IEquipment, filters) => {
-        for (const filter of filters) {
-            if (
-                !equipment.attributes ||
-                equipment.attributes.findIndex(
-                    x =>
-                        x.key.toLowerCase() === filter.label.toLowerCase() ||
-                        x.value.toLowerCase() === filter.label.toLowerCase()
-                ) === -1
-            ) {
-                // if we cannot find an index where some of our filter matches the key
-                return false;
-            }
-        }
-        return true;
     };
 }
