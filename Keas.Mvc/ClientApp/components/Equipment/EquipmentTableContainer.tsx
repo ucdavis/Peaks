@@ -21,6 +21,7 @@ interface IProps {
 
 interface IState {
     attributeFilters: string[];
+    bigfixFilters: string[];
     equipmentAvailabilityFilters: string[];
     equipmentProtectionFilters: string[];
     equipmentTypeFilters: string[];
@@ -37,6 +38,7 @@ export default class EquipmentTableContainer extends React.Component<IProps, ISt
         super(props);
         this.state = {
             attributeFilters: [],
+            bigfixFilters: [],
             equipmentAvailabilityFilters: [],
             equipmentProtectionFilters: [],
             equipmentTypeFilters: [],
@@ -68,6 +70,9 @@ export default class EquipmentTableContainer extends React.Component<IProps, ISt
             filteredEquipment = filteredEquipment.filter(x =>
                 this._checkEquipmentAvailabilityFilters(x)
             );
+        }
+        if (this.state.bigfixFilters.length > 0) {
+            filteredEquipment = filteredEquipment.filter(x => this._checkBigfixFilters(x));
         }
         return (
             <div>
@@ -127,6 +132,9 @@ export default class EquipmentTableContainer extends React.Component<IProps, ISt
     private _filterEquipmentAvailability = (filters: string[]) => {
         this.setState({ equipmentAvailabilityFilters: filters });
     };
+    private _filterBigfix = (filters: string[]) => {
+        this.setState({ bigfixFilters: filters });
+    };
 
     private _checkEquipmentTypeFilters = (equipment: IEquipment) => {
         const filters = this.state.equipmentTypeFilters;
@@ -148,6 +156,13 @@ export default class EquipmentTableContainer extends React.Component<IProps, ISt
         const filters = this.state.equipmentAvailabilityFilters;
         return filters.some(
             f => equipment && !!equipment.availabilityLevel && equipment.availabilityLevel === f
+        );
+    };
+
+    private _checkBigfixFilters = (equipment: IEquipment) => {
+        const filters = this.state.bigfixFilters;
+        return filters.some(
+            f => equipment && !!equipment.systemManagementId && equipment.systemManagementId === f
         );
     };
 
