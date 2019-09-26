@@ -94,6 +94,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
           toggle={this._confirmClose}
           size='lg'
           className='equipment-color'
+          autoFocus={false}
         >
           <div className='modal-header row justify-content-between'>
             <h2>

@@ -66,6 +66,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         <Modal
           isOpen={this.props.modal}
           toggle={this._confirmClose}
+          autoFocus={false}
           size='lg'
           className='access-color'
         >

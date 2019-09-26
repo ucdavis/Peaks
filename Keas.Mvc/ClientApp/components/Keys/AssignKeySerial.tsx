@@ -101,6 +101,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
       <Modal
         isOpen={isModalOpen}
         toggle={this._confirmClose}
+        autoFocus={false}
         size='lg'
         className='keys-color'
       >
