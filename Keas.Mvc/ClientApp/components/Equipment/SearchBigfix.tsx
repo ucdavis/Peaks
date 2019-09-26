@@ -27,7 +27,7 @@ export default class SearchBigfix extends React.Component<IProps, {}> {
                     }}
                     selected={this.props.selected}
                     selectHintOnEnter={true}
-                    placeholder="Search Bigfix Id"
+                    placeholder="Search for Bigfix Id"
                     allowNew={true}
                     emptyLabel={""}
                     newSelectionPrefix="Search for: "

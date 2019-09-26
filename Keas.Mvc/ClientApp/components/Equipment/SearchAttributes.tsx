@@ -23,7 +23,7 @@ export default class SearchAttributes extends React.Component<IProps, {}> {
                     }}
                     selected={this.props.selected}
                     selectHintOnEnter={true}
-                    placeholder="Search attributes"
+                    placeholder="Search for Attributes"
                     allowNew={true}
                     emptyLabel={""}
                     newSelectionPrefix="Search for: "
