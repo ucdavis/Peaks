@@ -47,6 +47,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
       <div>
         <div>
           <AsyncTypeahead
+            autoFocus={true}
             id='searchPeople' // for accessibility
             isInvalid={this.props.isRequired && !this.props.person}
             disabled={this.props.disabled}
