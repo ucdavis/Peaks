@@ -92,6 +92,12 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
             sortable: false
           }
         ]}
+        defaultSorted={[
+          {
+            desc: false,
+            id: 'name'
+          }
+        ]}
       />
     );
   }
@@ -104,22 +110,22 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
 
     if (!!this.props.onAdd && !hasAssignment) {
       actions.push({
-        title: 'Assign',
-        onClick: () => this.props.onAdd(equipmentEntity)
+        onClick: () => this.props.onAdd(equipmentEntity),
+        title: 'Assign'
       });
     }
 
     if (!!this.props.onRevoke && hasAssignment) {
       actions.push({
-        title: 'Revoke',
-        onClick: () => this.props.onRevoke(equipmentEntity)
+        onClick: () => this.props.onRevoke(equipmentEntity),
+        title: 'Revoke'
       });
     }
 
     if (!!this.props.onDelete) {
       actions.push({
-        title: 'Delete',
-        onClick: () => this.props.onDelete(equipmentEntity)
+        onClick: () => this.props.onDelete(equipmentEntity),
+        title: 'Delete'
       });
     }
 

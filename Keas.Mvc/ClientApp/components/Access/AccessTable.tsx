@@ -101,6 +101,12 @@ export default class AccessTable extends React.Component<IProps, {}> {
             sortable: false
           }
         ]}
+        defaultSorted={[
+          {
+            desc: false,
+            id: 'name'
+          }
+        ]}
       />
     );
   }
@@ -112,15 +118,15 @@ export default class AccessTable extends React.Component<IProps, {}> {
 
     if (!!this.props.onAdd) {
       actions.push({
-        title: 'Assign',
-        onClick: () => this.props.onAdd(accessEntity)
+        onClick: () => this.props.onAdd(accessEntity),
+        title: 'Assign'
       });
     }
 
     if (!!this.props.onDelete) {
       actions.push({
-        title: 'Delete',
-        onClick: () => this.props.onDelete(accessEntity)
+        onClick: () => this.props.onDelete(accessEntity),
+        title: 'Delete'
       });
     }
 

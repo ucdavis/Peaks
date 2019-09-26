@@ -158,6 +158,12 @@ export default class SpacesTable extends React.Component<IProps, {}> {
             }
           }
         ]}
+        defaultSorted={[
+          {
+            desc: false,
+            id: 'room'
+          }
+        ]}
       />
     );
   }

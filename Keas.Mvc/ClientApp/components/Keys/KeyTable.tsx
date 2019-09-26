@@ -167,6 +167,12 @@ export default class KeyTable extends React.Component<IProps, {}> {
             sortable: false
           }
         ]}
+        defaultSorted={[
+          {
+            desc: false,
+            id: 'key.name'
+          }
+        ]}
       />
     );
   }
