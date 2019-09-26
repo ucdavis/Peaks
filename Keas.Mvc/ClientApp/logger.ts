@@ -1,12 +1,12 @@
-import { 
+import {
     AjaxAppender,
     BrowserConsoleAppender,
     getLogger,
     JsonLayout,
     Logger,
-    logLog,
+    logLog
 } from "log4javascript";
-import * as StackTrace from "stacktrace-js"
+import * as StackTrace from "stacktrace-js";
 
 const __DEV__: boolean = false;
 
@@ -31,18 +31,18 @@ ajaxSink.setSendAllOnUnload(true);
 logger.addAppender(ajaxSink);
 
 // add global listener
-window.addEventListener("error", async (event) => {
+window.addEventListener("error", async event => {
     const stack = await StackTrace.fromError(event.error);
-    const message = `${event.message}\r\n${JSON.stringify(stack)}`
+    const message = `${event.message}\r\n${JSON.stringify(stack)}`;
     logger.error(message, event.error);
 });
 
 // add global to window
 export interface ILoggerWindow extends Window {
-    $logger?: Logger
+    $logger?: Logger;
 }
 
-const loggerWindow:ILoggerWindow = window;
+const loggerWindow: ILoggerWindow = window;
 loggerWindow.$logger = logger;
 
 export default logger;

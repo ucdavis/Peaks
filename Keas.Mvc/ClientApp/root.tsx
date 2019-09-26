@@ -1,2 +1,2 @@
-import './css/site.scss';
-import './logger';
+import "./css/site.scss";
+import "./logger";

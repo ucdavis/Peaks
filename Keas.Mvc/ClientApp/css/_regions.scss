@@ -1,52 +1,50 @@
-
 table {
-  font-size:1.6rem;
+  font-size: 1.6rem;
 }
 .ReactTable {
-  margin-bottom:2.4rem;
+  margin-bottom: 2.4rem;
 }
 .shade {
-  background-color:$bg-color;
-  padding:12px;
+  background-color: $bg-color;
+  padding: 12px;
 }
 .wrapperasset {
-  padding-left:16px;
-  border-left:6px solid $borders;
-  margin:0.8rem 0 1.6rem 0;
+  padding-left: 16px;
+  border-left: 6px solid $borders;
+  margin: 0.8rem 0 1.6rem 0;
   .equipment-color & {
-    border-color:transparentize($equipment,.5);
+    border-color: transparentize($equipment, 0.5);
   }
   .keys-color & {
-    border-color:transparentize($keys,.5);
+    border-color: transparentize($keys, 0.5);
   }
   .spaces-color & {
-    border-color:transparentize($spaces,.5);
+    border-color: transparentize($spaces, 0.5);
   }
   .access-color & {
-    border-color:transparentize($access,.5);
+    border-color: transparentize($access, 0.5);
   }
   .people-color & {
-    border-color:transparentize($people,.5);
+    border-color: transparentize($people, 0.5);
   }
 }
 .person-card {
   ul {
-    margin-top:16px;
+    margin-top: 16px;
   }
   .person-col {
-    padding-right:40px;
-    width:66%;
-    margin-top:16px;
+    padding-right: 40px;
+    width: 66%;
+    margin-top: 16px;
     @include breakpoint(md) {
-      width:45%;
+      width: 45%;
     }
     @include breakpoint(lg) {
-      width:29%;
+      width: 29%;
     }
   }
   .notes-deets {
-    margin-top:16px;
-    max-width:619px;
+    margin-top: 16px;
+    max-width: 619px;
   }
-
 }

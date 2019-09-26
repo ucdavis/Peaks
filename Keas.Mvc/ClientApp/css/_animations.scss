@@ -1,13 +1,19 @@
 @keyframes yfliprotate {
-    0% { transform: rotateY(0deg); }
-    50% { transform: rotateY(180deg); }
-    100% { transform: rotateY(0deg); }
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(0deg);
+  }
 }
 
 .y-flip-rotate {
-    // transition: transform 1s;
+  // transition: transform 1s;
 
-    &.flip {
-        animation: yfliprotate 500ms;
-    }
+  &.flip {
+    animation: yfliprotate 500ms;
+  }
 }
