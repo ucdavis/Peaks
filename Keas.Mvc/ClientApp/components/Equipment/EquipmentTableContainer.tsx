@@ -5,6 +5,7 @@ import SearchTags from "../Tags/SearchTags";
 import EquipmentTable from "./EquipmentTable";
 import SearchAttributes from "./SearchAttributes";
 import SearchEquipmentType from "./SearchEquipmentType";
+import SearchBigfix from "./SearchBigfix";
 
 interface IProps {
     equipment: IEquipment[];
@@ -108,6 +109,11 @@ export default class EquipmentTableContainer extends React.Component<IProps, ISt
                         onSelect={this._filterEquipmentAvailability}
                         disabled={false}
                         placeHolder="Search Availability Level"
+                    />
+                    <SearchBigfix
+                        selected={this.state.bigfixFilters}
+                        onSelect={this._filterBigfix}
+                        disabled={false}
                     />
                 </div>
                 <EquipmentTable
