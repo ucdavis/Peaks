@@ -4,6 +4,7 @@ import { AppContext, IEquipment } from '../../Types';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentTable from './EquipmentTable';
 import SearchAttributes from './SearchAttributes';
+import SearchBigfix from './SearchBigfix';
 import SearchEquipmentType from './SearchEquipmentType';
 
 interface IProps {
@@ -21,6 +22,7 @@ interface IProps {
 
 interface IState {
   attributeFilters: string[];
+  bigfixFilters: string[];
   equipmentAvailabilityFilters: string[];
   equipmentProtectionFilters: string[];
   equipmentTypeFilters: string[];
@@ -35,11 +37,13 @@ export default class EquipmentTableContainer extends React.Component<
     fetch: PropTypes.func,
     team: PropTypes.object
   };
+
   public context: AppContext;
   constructor(props) {
     super(props);
     this.state = {
       attributeFilters: [],
+      bigfixFilters: [],
       equipmentAvailabilityFilters: [],
       equipmentProtectionFilters: [],
       equipmentTypeFilters: [],
@@ -72,6 +76,11 @@ export default class EquipmentTableContainer extends React.Component<
     if (this.state.equipmentAvailabilityFilters.length > 0) {
       filteredEquipment = filteredEquipment.filter(x =>
         this._checkEquipmentAvailabilityFilters(x)
+      );
+    }
+    if (this.state.bigfixFilters.length > 0) {
+      filteredEquipment = filteredEquipment.filter(x =>
+        this._checkBigfixFilters(x)
       );
     }
     return (
@@ -109,6 +118,11 @@ export default class EquipmentTableContainer extends React.Component<
             disabled={false}
             placeHolder='Search Availability Level'
           />
+          <SearchBigfix
+            selected={this.state.bigfixFilters}
+            onSelect={this._filterBigfix}
+            disabled={false}
+          />
         </div>
         <EquipmentTable
           equipment={filteredEquipment}
@@ -122,15 +136,46 @@ export default class EquipmentTableContainer extends React.Component<
     );
   }
 
+  private _filterTags = (filters: string[]) => {
+    this.setState({ tagFilters: filters });
+  };
+  private _filterAttributes = (filters: string[]) => {
+    this.setState({ attributeFilters: filters });
+  };
   private _filterEquipmentType = (filters: string[]) => {
     this.setState({ equipmentTypeFilters: filters });
   };
-
   private _filterEquipmentProtection = (filters: string[]) => {
     this.setState({ equipmentProtectionFilters: filters });
   };
   private _filterEquipmentAvailability = (filters: string[]) => {
     this.setState({ equipmentAvailabilityFilters: filters });
+  };
+  private _filterBigfix = (filters: string[]) => {
+    this.setState({ bigfixFilters: filters });
+  };
+
+  private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
+    return filters.every(
+      f => !!equipment && !!equipment.tags && equipment.tags.includes(f)
+    );
+  };
+
+  private _checkAttributeFilters = (equipment: IEquipment, filters) => {
+    for (const filter of filters) {
+      if (
+        !equipment.attributes ||
+        equipment.attributes.findIndex(
+          x =>
+            x.key.toLowerCase() === filter.label.toLowerCase() ||
+            x.value.toLowerCase() === filter.label.toLowerCase()
+        ) === -1
+      ) {
+        // if we cannot find an index where some of our filter matches the key
+        return false;
+      }
+    }
+    return true;
   };
 
   private _checkEquipmentTypeFilters = (equipment: IEquipment) => {
@@ -162,34 +207,13 @@ export default class EquipmentTableContainer extends React.Component<
     );
   };
 
-  private _filterTags = (filters: string[]) => {
-    this.setState({ tagFilters: filters });
-  };
-
-  private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
-    return filters.every(
-      f => !!equipment && !!equipment.tags && equipment.tags.includes(f)
+  private _checkBigfixFilters = (equipment: IEquipment) => {
+    const filters = this.state.bigfixFilters;
+    return filters.some(
+      f =>
+        equipment &&
+        !!equipment.systemManagementId &&
+        equipment.systemManagementId.includes(f)
     );
-  };
-
-  private _filterAttributes = (filters: string[]) => {
-    this.setState({ attributeFilters: filters });
-  };
-
-  private _checkAttributeFilters = (equipment: IEquipment, filters) => {
-    for (const filter of filters) {
-      if (
-        !equipment.attributes ||
-        equipment.attributes.findIndex(
-          x =>
-            x.key.toLowerCase() === filter.label.toLowerCase() ||
-            x.value.toLowerCase() === filter.label.toLowerCase()
-        ) === -1
-      ) {
-        // if we cannot find an index where some of our filter matches the key
-        return false;
-      }
-    }
-    return true;
   };
 }
