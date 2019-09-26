@@ -194,7 +194,10 @@ export default class EquipmentTableContainer extends React.Component<IProps, ISt
     private _checkBigfixFilters = (equipment: IEquipment) => {
         const filters = this.state.bigfixFilters;
         return filters.some(
-            f => equipment && !!equipment.systemManagementId && equipment.systemManagementId === f
+            f =>
+                equipment &&
+                !!equipment.systemManagementId &&
+                equipment.systemManagementId.includes(f)
         );
     };
 }
