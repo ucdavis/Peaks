@@ -23,20 +23,27 @@ namespace Keas.Core.Extensions
             {
                 return value;
             }
-            var phoneNumberUtil = PhoneNumbers.PhoneNumberUtil.GetInstance();
-            var phoneNumber = phoneNumberUtil.ParseAndKeepRawInput(value, "US");
-            var phone = phoneNumberUtil.Format(phoneNumber, PhoneNumberFormat.NATIONAL);
-            if (!phoneNumberUtil.IsValidNumberForRegion(phoneNumber, "US"))
-            {
-                if (phoneNumberUtil.IsValidNumber(phoneNumber))
-                {
-                    return phoneNumberUtil.Format(phoneNumber, PhoneNumberFormat.INTERNATIONAL);
-                }
 
-                return phoneNumber.RawInput;
+            try 
+            {
+                var phoneNumberUtil = PhoneNumbers.PhoneNumberUtil.GetInstance ();
+                var phoneNumber = phoneNumberUtil.ParseAndKeepRawInput (value, "US");
+                if (!phoneNumberUtil.IsValidNumberForRegion (phoneNumber, "US"))
+                {
+                    if (phoneNumberUtil.IsValidNumber (phoneNumber)) 
+                    {
+                        return phoneNumberUtil.Format (phoneNumber, PhoneNumberFormat.INTERNATIONAL);
+                    }
+
+                    return phoneNumber.RawInput;
+                }
+            } 
+            catch (Exception)
+            {
+                return value;
             }
 
-            return phone;
+            return value;
         }
 
         public static string SafeToLower(this string value)

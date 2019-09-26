@@ -13,7 +13,6 @@ using Keas.Mvc.Extensions;
 using Keas.Mvc.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ValidationException = CsvHelper.ValidationException;
@@ -27,7 +26,7 @@ namespace Keas.Mvc.Controllers
         private readonly INotificationService _notificationService;
         private readonly IIdentityService _identityService;
 
-        public PersonAdminController(ApplicationDbContext context,INotificationService notificationService, IIdentityService identityService)
+        public PersonAdminController(ApplicationDbContext context, INotificationService notificationService, IIdentityService identityService)
         {
             _context = context;
             _notificationService = notificationService;
@@ -116,7 +115,7 @@ namespace Keas.Mvc.Controllers
                 }
                 foreach (var person in persons)
                 {
-                    
+
                     if (model.UpdateCategory)
                     {
                         if (PersonCategories.Types.Contains(model.Category))
@@ -163,7 +162,7 @@ namespace Keas.Mvc.Controllers
             _context.UpdateRange(persons);
             await _context.SaveChangesAsync();
             await PopulateBulkEdit(model);
-            Message = $"{ids.Length} people selected. Updated: {updatedCount} Skipped: {skippedCount}" ;
+            Message = $"{ids.Length} people selected. Updated: {updatedCount} Skipped: {skippedCount}";
             return View(model);
         }
 
@@ -171,7 +170,8 @@ namespace Keas.Mvc.Controllers
         {
             var model = new PeopleImportModel
             {
-                UpdateExistingUsers = false, ImportResult = new List<PeopleImportResult>()
+                UpdateExistingUsers = false,
+                ImportResult = new List<PeopleImportResult>()
             };
             return View(model);
         }
@@ -240,7 +240,7 @@ namespace Keas.Mvc.Controllers
                                 }
                             }
                         }
-                        catch (ValidationException e)
+                        catch (ValidationException)
                         {
                             importResult.ErrorMessage.Add("Validation Exception for this row.");
                         }
@@ -264,13 +264,13 @@ namespace Keas.Mvc.Controllers
                             Person person = null;
                             if (model.UpdateExistingUsers)
                             {
-                                person = await _context.People.FirstOrDefaultAsync(a =>a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id);
+                                person = await _context.People.FirstOrDefaultAsync(a => a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id);
                             }
                             try
                             {
                                 if (person == null)
                                 {
-                                    var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbId,team.Id, team, userName, userIdentity, "CSV People Import");
+                                    var personResult = await _identityService.GetOrCreatePersonFromKerberos(r.KerbId, team.Id, team, userName, userIdentity, "CSV People Import");
                                     person = personResult.Person;
                                 }
 
@@ -296,7 +296,7 @@ namespace Keas.Mvc.Controllers
                         resultsView.Add(importResult);
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     counter++;
                     var importResult = new PeopleImportResult(new PeopleImport());
@@ -306,7 +306,7 @@ namespace Keas.Mvc.Controllers
                     resultsView.Add(importResult);
                     ErrorMessage = "Import halted.";
                 }
-                
+
             }
 
             if (resultsView.Count <= 0)
@@ -374,7 +374,7 @@ namespace Keas.Mvc.Controllers
                         _context.Attach(person.Supervisor);
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     importResult.Messages.Add("An error happened trying to set the supervisor. Value not set.");
                 }
@@ -385,7 +385,7 @@ namespace Keas.Mvc.Controllers
             {
                 person.Title = r.OverrideTitle;
             }
-            
+
             if (!string.IsNullOrWhiteSpace(r.HomePhone))
             {
                 try
@@ -423,7 +423,7 @@ namespace Keas.Mvc.Controllers
             {
                 person.Notes = r.Notes;
             }
-            
+
             person.Tags = string.IsNullOrWhiteSpace(r.Tags) ? "Imported" : $"{r.Tags},Imported";
 
             return;

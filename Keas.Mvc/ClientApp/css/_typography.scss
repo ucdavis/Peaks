@@ -1,33 +1,33 @@
 // baseline typography
 html {
-    font-size: 8px;
-    -webkit-font-smoothing: antialiased;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
-    line-height: 1.5;
-    @include breakpoint(sm) {
-      font-size:10px;
-    }
+  font-size: 8px;
+  -webkit-font-smoothing: antialiased;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.004);
+  line-height: 1.5;
+  @include breakpoint(sm) {
+    font-size: 10px;
+  }
 }
 body {
-    font-family: $sans-reg;
+  font-family: $sans-reg;
 }
 a {
-  color:$a-link;
+  color: $a-link;
   &:hover {
-    color:$primary-color;
+    color: $primary-color;
   }
   &.post-link {
-    display:block;
-    margin-bottom:16px;
+    display: block;
+    margin-bottom: 16px;
     &:hover {
-      background-color:$bg-color;
+      background-color: $bg-color;
     }
   }
   footer p & {
-    color:$primary-color;
+    color: $primary-color;
     text-decoration: none;
     &:hover {
-      color:lighten($primary-color,5);
+      color: lighten($primary-color, 5);
     }
   }
 }
@@ -37,7 +37,6 @@ p a {
   &:hover {
     text-decoration: underline;
   }
-
 }
 a.no-underline {
   text-decoration: none;
@@ -45,67 +44,68 @@ a.no-underline {
 a:hover {
   text-decoration: none;
 }
-ul, ol {
+ul,
+ol {
   &.no-list-style {
     list-style-type: none;
-    padding-left:0px;
+    padding-left: 0px;
     li {
-      margin:4px 0px;
+      margin: 4px 0px;
       font-family: $sans-reg;
-      color:$primary-font;
+      color: $primary-font;
     }
-
   }
   &.two-col {
-  columns: 2;
-  -webkit-columns: 2;
-  -moz-columns: 2;
+    columns: 2;
+    -webkit-columns: 2;
+    -moz-columns: 2;
   }
   &.funding-list {
     font-family: $sans-bold;
   }
   font-family: $sans-reg;
   li {
-    font-size:1.6rem;
+    font-size: 1.6rem;
     &.person-label {
-      color:$secondary-font;
+      color: $secondary-font;
     }
   }
 }
 
-p, span, div {
-  font-size:1.6rem;
+p,
+span,
+div {
+  font-size: 1.6rem;
   font-family: $sans-reg;
-  color:$primary-font;
+  color: $primary-font;
   // margin:1.2rem 0rem;
   &.lead {
-    font-size:1.8rem;
-    margin-top:0px;
+    font-size: 1.8rem;
+    margin-top: 0px;
   }
   footer & {
-    color:$secondary-font;
-    font-size:1.4rem;
+    color: $secondary-font;
+    font-size: 1.4rem;
   }
-  &.topic-title  {
+  &.topic-title {
     font-size: 1.8rem;
     font-family: $sans-bold;
-    margin-top:24px;
-    color:$primary-font;
+    margin-top: 24px;
+    color: $primary-font;
   }
   &.discreet {
-    font-size:1.4rem;
-    color:$secondary-font;
+    font-size: 1.4rem;
+    color: $secondary-font;
   }
   &.caption {
     text-align: center;
     margin: 5px 10px;
   }
   &.subtitle {
-    font-size:2rem;
+    font-size: 2rem;
     font-family: $sans-bold;
-    margin-bottom:0px;
+    margin-bottom: 0px;
   }
-
 }
 h1,
 h2,
@@ -113,26 +113,25 @@ h3,
 h4,
 h5,
 h6 {
-    color: $primary-font;
-    font-family:$sans-bold;
-    // margin: 1.6rem 0rem 1rem 0rem;
+  color: $primary-font;
+  font-family: $sans-bold;
+  // margin: 1.6rem 0rem 1rem 0rem;
 }
 h1 {
-  font-size:3.6rem;
+  font-size: 3.6rem;
   header & {
-    margin-bottom:0px;
+    margin-bottom: 0px;
   }
 }
 h2 {
   font-size: 2.6rem;
 }
 h3 {
-  font-size:2.0rem;
-  color:$primary-font;
+  font-size: 2rem;
+  color: $primary-font;
 }
 h4 {
-  font-size:1.4;
+  font-size: 1.4;
   // font-family: $sans-reg;
   text-transform: uppercase;
-
 }
