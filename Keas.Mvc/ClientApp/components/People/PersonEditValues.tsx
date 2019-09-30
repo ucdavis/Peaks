@@ -175,9 +175,11 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
           >
             <option value=''>-- Not Set --</option>
             <option value='Faculty'>Faculty</option>
+            <option value='Research'>Research</option>
             <option value='Staff'>Staff</option>
             <option value='Admin Staff'>Admin Staff</option>
             <option value='Grad Student'>Grad Student</option>
+            <option value='Postdoc'>Postdoc</option>
             <option value='Undergrad'>Undergrad</option>
             <option value='Visitor'>Visitor</option>
             <option value='Volunteer'>Volunteer</option>
