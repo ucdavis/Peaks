@@ -708,6 +708,11 @@ namespace Keas.Mvc.Controllers
                                             if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
                                             {
                                                 assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                                if (assignment.RequestedAt <= new DateTime(1970, 01, 01))
+                                                {
+                                                    //Force to a minimum data
+                                                    assignment.RequestedAt = new DateTime(1970, 01, 01);
+                                                }
                                             }
                                             else
                                             {
@@ -758,6 +763,11 @@ namespace Keas.Mvc.Controllers
                                             if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
                                             {
                                                 assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                                if (assignment.RequestedAt <= new DateTime(1970, 01, 01))
+                                                {
+                                                    //Force to a minimum data
+                                                    assignment.RequestedAt = new DateTime(1970, 01, 01);
+                                                }
                                             }
                                             else
                                             {
@@ -1301,6 +1311,11 @@ namespace Keas.Mvc.Controllers
             ModelState.Clear();
             var assignment = new EquipmentAssignment();
             assignment.RequestedAt = r.DateIssued.HasValue && r.DateIssued < DateTime.Now ? r.DateIssued.Value.ToUniversalTime() : DateTime.Now.ToUniversalTime();
+            if (assignment.RequestedAt <= new DateTime(1970, 01, 01))
+            {
+                //Force to a minimum data
+                assignment.RequestedAt = new DateTime(1970, 01, 01);
+            }
             if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
             {
                 assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();
