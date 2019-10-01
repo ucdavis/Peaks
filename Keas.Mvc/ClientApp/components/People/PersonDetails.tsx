@@ -90,28 +90,31 @@ export default class PersonDetails extends React.Component<IProps, {}> {
           <BioContainer person={this.props.selectedPersonInfo.person} />
         </div>
 
-        {/* <KeySerialContainer
+        <KeySerialContainer
+          {...this.props.router}
           selectedPerson={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
-        /> */}
+        />
         <EquipmentContainer
           {...this.props.router}
           person={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
         />
-        {/* <AccessContainer
+        <AccessContainer
+          {...this.props.router}
           person={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
         />
         <WorkstationContainer
+          {...this.props.router}
           person={this.props.selectedPersonInfo.person}
           tags={this.props.tags}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
-        /> */}
+        />
         {canEdit && (
           <HistoryContainer
             controller='peopleAdmin'
