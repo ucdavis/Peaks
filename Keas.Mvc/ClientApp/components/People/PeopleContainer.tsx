@@ -10,10 +10,13 @@ import CreatePerson from './CreatePerson';
 import PeopleTable from './PeopleTable';
 import PersonDetails from './PersonDetails';
 
+// /:team/people/:personAction?/:personId?/:assetType?/:action?/:id
 interface IMatchParams {
   personAction: string;
-  assetType: string;
   personId: string;
+  assetType: string;
+  action: string;
+  id: string;
 }
 
 interface IState {
@@ -75,7 +78,7 @@ export default class PeopleContainer extends React.Component<
       return <h2>Loading...</h2>;
     }
 
-    const { personAction, assetType, personId } = this.props.match.params;
+    const { personAction, personId } = this.props.match.params;
     const selectedId = parseInt(personId, 10);
     const detailPerson = this.state.people.find(e => e.id === selectedId);
     return (
@@ -135,6 +138,7 @@ export default class PeopleContainer extends React.Component<
   private _renderDetailsView = (detailPerson: IPersonInfo) => {
     return (
       <PersonDetails
+        router={this.props}
         selectedPersonInfo={detailPerson}
         tags={this.state.tags}
         goBack={this._goBack}

@@ -1,5 +1,6 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { AppContext, IEquipment, IPerson, ISpace } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
@@ -12,6 +13,14 @@ import EquipmentList from './EquipmentList';
 import EquipmentTableContainer from './EquipmentTableContainer';
 import RevokeEquipment from './RevokeEquipment';
 
+interface IMatchParams {
+  personAction: string;
+  personId: string;
+  assetType: string;
+  action: string;
+  id: string;
+}
+
 interface IState {
   commonAttributeKeys: string[];
   equipmentTypes: string[];
@@ -22,7 +31,7 @@ interface IState {
   equipmentAvailabilityLevels: string[];
 }
 
-interface IProps {
+interface IProps extends RouteChildrenProps<IMatchParams> {
   assetInUseUpdated?: (
     type: string,
     spaceId: number,
@@ -116,7 +125,7 @@ export default class EquipmentContainer extends React.Component<
       return <h2>Loading...</h2>;
     }
 
-    const { action, assetType, id } = this.context.router.route.match.params;
+    const { action, assetType, id } = this.props.match.params;
     const activeAsset = !assetType || assetType === 'equipment';
     const selectedId = parseInt(id, 10);
     const detailEquipment = this.state.equipment.find(e => e.id === selectedId);
@@ -489,49 +498,49 @@ export default class EquipmentContainer extends React.Component<
   };
 
   private _openAssignModal = (equipment: IEquipment) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/equipment/assign/${equipment.id}`
     );
   };
 
   private _openCreateModal = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/equipment/create`);
+    this.props.history.push(`${this._getBaseUrl()}/equipment/create`);
   };
 
   private _openDetailsModal = (equipment: IEquipment) => {
     // if we are on spaces page, and this equipment is not assigned to this space
     // this happens on the search
     if (this.state.equipment.findIndex(x => x.id === equipment.id) === -1) {
-      this.context.router.history.push(
+      this.props.history.push(
         `/${this.context.team.slug}/equipment/details/${equipment.id}`
       );
     } else {
-      this.context.router.history.push(
+      this.props.history.push(
         `${this._getBaseUrl()}/equipment/details/${equipment.id}`
       );
     }
   };
 
   private _openEditModal = (equipment: IEquipment) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/equipment/edit/${equipment.id}`
     );
   };
 
   private _openRevokeModal = (equipment: IEquipment) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/equipment/revoke/${equipment.id}`
     );
   };
 
   private _openDeleteModal = (equipment: IEquipment) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/equipment/delete/${equipment.id}`
     );
   };
 
   private _closeModals = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/equipment`);
+    this.props.history.push(`${this._getBaseUrl()}/equipment`);
   };
 
   private _getBaseUrl = () => {

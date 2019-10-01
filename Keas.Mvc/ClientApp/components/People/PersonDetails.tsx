@@ -1,5 +1,6 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
 import { AppContext, IPerson, IPersonInfo } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
@@ -11,8 +12,15 @@ import WorkstationContainer from '../Workstations/WorkstationContainer';
 import BioContainer from './BioContainer';
 import DeletePerson from './DeletePerson';
 import EditPerson from './EditPerson';
-
+interface IMatchParams {
+  personAction: string;
+  personId: string;
+  assetType: string;
+  action: string;
+  id: string;
+}
 interface IProps {
+  router: RouteChildrenProps<IMatchParams>;
   goBack: () => void;
   selectedPersonInfo: IPersonInfo;
   tags: string[];
@@ -88,17 +96,18 @@ export default class PersonDetails extends React.Component<IProps, {}> {
           <BioContainer person={this.props.selectedPersonInfo.person} />
         </div>
 
-        <KeySerialContainer
+        {/* <KeySerialContainer
           selectedPerson={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
-        />
+        /> */}
         <EquipmentContainer
+          {...this.props.router}
           person={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
         />
-        <AccessContainer
+        {/* <AccessContainer
           person={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
@@ -108,7 +117,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
           tags={this.props.tags}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
-        />
+        /> */}
         {canEdit && (
           <HistoryContainer
             controller='peopleAdmin'
