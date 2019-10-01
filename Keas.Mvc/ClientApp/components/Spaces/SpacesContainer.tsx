@@ -137,7 +137,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         </div>
 
         <div className='card-content'>
-          {!containerAction &&
+          {(!containerAction || !!this.props.selectedKeyInfo) && // show on keys/details page
             !activeWorkstationAsset &&
             this._renderTableOrList()}
           {containerAction === 'details' &&
