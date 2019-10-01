@@ -299,7 +299,7 @@ export default class PeopleContainer extends React.Component<
   };
 
   private _goToKeyDetails = (key: IKey) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `/${this.context.team.slug}/keys/details/${key.id}`
     );
   };
