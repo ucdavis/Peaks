@@ -1,10 +1,12 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
 import {
   AppContext,
   IAccess,
   IAccessAssignment,
+  IMatchParams,
   IPerson,
   ISpace
 } from '../../Types';
@@ -25,7 +27,7 @@ interface IState {
   tags: string[];
 }
 
-interface IProps {
+interface IProps extends RouteChildrenProps<IMatchParams> {
   assetInUseUpdated?: (
     type: string,
     spaceId: number,
@@ -90,7 +92,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
-    const { action, assetType, id } = this.context.router.route.match.params;
+    const { action, assetType, id } = this.props.match.params;
     const activeAsset = !assetType || assetType === 'access';
     const selectedId = parseInt(id, 10);
     const detailAccess = this.state.accesses.find(a => a.id === selectedId);
@@ -436,9 +438,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   };
 
   private _openAssignModal = (access: IAccess) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/access/assign/${access.id}`
-    );
+    this.props.history.push(`${this._getBaseUrl()}/access/assign/${access.id}`);
   };
 
   private _openRevokeModal = (access: IAccess) => {
@@ -451,36 +451,32 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       this._revokeAccess(accessAssignment[0]);
     } // otherwise, pull up the modal
     else {
-      this.context.router.history.push(
+      this.props.history.push(
         `${this._getBaseUrl()}/access/revoke/${access.id}`
       );
     }
   };
 
   private _openCreateModal = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/access/create`);
+    this.props.history.push(`${this._getBaseUrl()}/access/create`);
   };
 
   private _openDetailsModal = (access: IAccess) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/access/details/${access.id}`
     );
   };
 
   private _openEditModal = (access: IAccess) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/access/edit/${access.id}`
-    );
+    this.props.history.push(`${this._getBaseUrl()}/access/edit/${access.id}`);
   };
 
   private _openDeleteModal = (access: IAccess) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/access/delete/${access.id}`
-    );
+    this.props.history.push(`${this._getBaseUrl()}/access/delete/${access.id}`);
   };
 
   private _closeModals = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/access`);
+    this.props.history.push(`${this._getBaseUrl()}/access`);
   };
 
   private _getBaseUrl = () => {
