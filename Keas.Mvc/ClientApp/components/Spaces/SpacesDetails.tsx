@@ -47,12 +47,13 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
               tags={this.props.selectedSpaceInfo.tags}
             />
           )}
-          {/* <KeyContainer
+          <KeyContainer
+            {...this.props.route}
             space={this.props.selectedSpaceInfo.space}
             assetInUseUpdated={this.props.inUseUpdated}
             assetTotalUpdated={this.props.totalUpdated}
             assetEdited={this.props.edited}
-          /> */}
+          />
           <EquipmentContainer
             {...this.props.route}
             space={this.props.selectedSpaceInfo.space}

@@ -118,7 +118,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       id
     } = this.props.match.params;
 
-    // if on key tab, select using keyId. if on spaces, select using id
+    // if on key tab, select using containerId. if on spaces, select using id
     const selectedKeyId = containerId
       ? parseInt(containerId, 10)
       : parseInt(id, 10);
@@ -156,8 +156,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           </div>
         </div>
         <div className='card-content'>
-          {containerAction !== 'details' && this._renderTableOrListView()}
-          {containerAction === 'details' && this._renderDetailsView()}
+          {(containerAction !== 'details' || !!this.props.space) &&
+            this._renderTableOrListView()}
+          {containerAction === 'details' && // if we are on keys/details
+            !this.props.space &&
+            !this.props.person &&
+            this._renderDetailsView()}
           <EditKey
             onEdit={this._editKey}
             closeModal={this._closeModals}
@@ -255,7 +259,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const { containerId } = this.props.match.params;
     const selectedKeyId = parseInt(containerId, 10);
     const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
-    const selectedKey = selectedKeyInfo.key;
 
     const routeObject = {
       history: this.props.history,
