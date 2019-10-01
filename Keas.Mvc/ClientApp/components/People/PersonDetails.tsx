@@ -2,7 +2,13 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
-import { AppContext, IMatchParams, IPerson, IPersonInfo } from '../../Types';
+import {
+  AppContext,
+  IKey,
+  IMatchParams,
+  IPerson,
+  IPersonInfo
+} from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import AccessContainer from '../Access/AccessContainer';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
@@ -27,6 +33,7 @@ interface IProps {
   edited?: (type: string, spaceId: number, personId: number) => void;
   onEdit: (person: IPerson) => void;
   onDelete: (person: IPerson) => void;
+  goToKeyDetails: (key: IKey) => void;
 }
 
 export default class PersonDetails extends React.Component<IProps, {}> {
@@ -95,6 +102,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
           selectedPerson={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
+          goToKeyDetails={this.props.goToKeyDetails}
         />
         <EquipmentContainer
           {...this.props.router}

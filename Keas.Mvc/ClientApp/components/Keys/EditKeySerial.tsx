@@ -1,7 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { AppContext, IKeySerial } from '../../Types';
+import { AppContext, IKey, IKeySerial } from '../../Types';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
 
@@ -12,6 +12,7 @@ interface IProps {
   openUpdateModal: (keySerial: IKeySerial) => void;
   selectedKeySerial: IKeySerial;
   statusList: string[];
+  goToKeyDetails: (key: IKey) => void;
 }
 
 interface IState {
@@ -75,6 +76,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
                 changeProperty={this._changeProperty}
                 disableEditing={false}
                 statusList={this.props.statusList}
+                goToKeyDetails={this.props.goToKeyDetails}
               />
 
               <KeySerialAssignmentValues

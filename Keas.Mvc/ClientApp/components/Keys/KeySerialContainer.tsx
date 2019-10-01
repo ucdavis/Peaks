@@ -40,6 +40,7 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
     count: number
   ) => void;
   assetEdited?: (type: string, keySerialId: number, personId: number) => void;
+  goToKeyDetails: (key: IKey) => void;
 }
 
 export default class KeySerialContainer extends React.Component<
@@ -136,6 +137,7 @@ export default class KeySerialContainer extends React.Component<
               openEditModal={this._openEditModal}
               openDetailsModal={this._openDetailsModal}
               statusList={this.state.statusList}
+              goToKeyDetails={this.props.goToKeyDetails}
             />
           </div>
         </div>
@@ -188,6 +190,7 @@ export default class KeySerialContainer extends React.Component<
             openUpdateModal={this._openUpdateModal}
             isModalOpen={activeAsset && action === 'edit'}
             statusList={this.state.statusList}
+            goToKeyDetails={this.props.goToKeyDetails}
           />
         </div>
       </div>

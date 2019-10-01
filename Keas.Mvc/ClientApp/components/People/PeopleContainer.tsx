@@ -2,7 +2,13 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
-import { AppContext, IMatchParams, IPerson, IPersonInfo } from '../../Types';
+import {
+  AppContext,
+  IKey,
+  IMatchParams,
+  IPerson,
+  IPersonInfo
+} from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
@@ -139,6 +145,7 @@ export default class PeopleContainer extends React.Component<
         inUseUpdated={this._assetInUseUpdated}
         onEdit={this._editPerson}
         onDelete={this._deletePerson}
+        goToKeyDetails={this._goToKeyDetails}
       />
     );
   };
@@ -289,6 +296,12 @@ export default class PeopleContainer extends React.Component<
       ...this.state,
       people: updatePeople
     });
+  };
+
+  private _goToKeyDetails = (key: IKey) => {
+    this.context.router.history.push(
+      `/${this.context.team.slug}/keys/details/${key.id}`
+    );
   };
 
   private _openCreateModal = () => {

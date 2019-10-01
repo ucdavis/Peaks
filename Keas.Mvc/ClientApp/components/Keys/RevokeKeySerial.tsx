@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { IKeySerial } from '../../Types';
+import { IKey, IKeySerial } from '../../Types';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
 
@@ -12,6 +12,7 @@ interface IProps {
   onRevoke: (keySerial: IKeySerial) => void;
   selectedKeySerial: IKeySerial;
   updateSelectedKeySerial: (keySerial: IKeySerial) => void;
+  goToKeyDetails: (key: IKey) => void;
 }
 
 interface IState {
@@ -54,6 +55,7 @@ export default class RevokeKeySerial extends React.Component<IProps, IState> {
               keySerial={selectedKeySerial}
               disableEditing={true}
               openEditModal={this.props.openEditModal}
+              goToKeyDetails={this.props.goToKeyDetails}
             />
             <KeySerialAssignmentValues
               selectedKeySerial={selectedKeySerial}
