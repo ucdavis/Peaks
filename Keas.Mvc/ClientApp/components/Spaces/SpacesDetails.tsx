@@ -60,13 +60,14 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
             assetTotalUpdated={this.props.totalUpdated}
             assetEdited={this.props.edited}
           />
-          {/* <WorkstationContainer
+          <WorkstationContainer
+            {...this.props.route}
             space={this.props.selectedSpaceInfo.space}
             tags={this.props.tags}
             assetInUseUpdated={this.props.inUseUpdated}
             assetTotalUpdated={this.props.totalUpdated}
             assetEdited={this.props.edited}
-          /> */}
+          />
         </div>
       </div>
     );

@@ -1,8 +1,15 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
-import { AppContext, IPerson, ISpace, IWorkstation } from '../../Types';
+import {
+  AppContext,
+  IMatchParams,
+  IPerson,
+  ISpace,
+  IWorkstation
+} from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import AssignWorkstation from '../Workstations/AssignWorkstation';
@@ -12,7 +19,7 @@ import WorkstationDetails from '../Workstations/WorkstationDetails';
 import WorkstationList from './../Workstations/WorkstationList';
 import DeleteWorkstation from './DeleteWorkstation';
 
-interface IProps {
+interface IProps extends RouteChildrenProps<IMatchParams> {
   assetInUseUpdated?: (
     type: string,
     spaceId: number,
@@ -89,7 +96,7 @@ export default class WorkstationContainer extends React.Component<
     if (this.state.loading) {
       return <div>Loading Workstations...</div>;
     }
-    const { action, assetType, id } = this.context.router.route.match.params;
+    const { action, assetType, id } = this.props.match.params;
     const activeAsset = assetType === 'workstations';
     const selectedId = parseInt(id, 10);
     const selectedWorkstation = this.state.workstations.find(
@@ -414,45 +421,43 @@ export default class WorkstationContainer extends React.Component<
     if (
       this.state.workstations.findIndex(x => x.id === workstation.id) === -1
     ) {
-      this.context.router.history.push(
+      this.props.history.push(
         `/${this.context.team.slug}/spaces/details/${workstation.space.id}/workstations/details/${workstation.id}`
       );
     } else {
-      this.context.router.history.push(
+      this.props.history.push(
         `${this._getBaseUrl()}/workstations/details/${workstation.id}`
       );
     }
   };
 
   private _openEditModal = (workstation: IWorkstation) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/workstations/edit/${workstation.id}`
     );
   };
 
   private _openAssignModal = (workstation: IWorkstation) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/workstations/assign/${workstation.id}`
     );
   };
 
   private _openCreateModal = () => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/workstations/create/`
-    );
+    this.props.history.push(`${this._getBaseUrl()}/workstations/create/`);
   };
 
   private _openRevokeModal = (workstation: IWorkstation) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/workstations/revoke/${workstation.id}`
     );
   };
 
   private _closeModals = () => {
     if (!!this.props.person && !this.props.space) {
-      this.context.router.history.push(`${this._getBaseUrl()}`);
+      this.props.history.push(`${this._getBaseUrl()}`);
     } else if (!this.props.person && !!this.props.space) {
-      this.context.router.history.push(`${this._getBaseUrl()}`);
+      this.props.history.push(`${this._getBaseUrl()}`);
     }
   };
 
