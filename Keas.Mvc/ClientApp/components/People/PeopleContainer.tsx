@@ -1,5 +1,6 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { AppContext, IPerson, IPersonInfo } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
@@ -9,6 +10,12 @@ import CreatePerson from './CreatePerson';
 import PeopleTable from './PeopleTable';
 import PersonDetails from './PersonDetails';
 
+interface IMatchParams {
+  personAction: string;
+  assetType: string;
+  personId: string;
+}
+
 interface IState {
   loading: boolean;
   people: IPersonInfo[];
@@ -16,11 +23,14 @@ interface IState {
   tagFilters: string[]; // string of tag filters
   tags: string[]; // existing tags that are options for SearchTags
 }
-export default class PeopleContainer extends React.Component<{}, IState> {
+
+export default class PeopleContainer extends React.Component<
+  RouteChildrenProps<IMatchParams>,
+  IState
+> {
   public static contextTypes = {
     fetch: PropTypes.func,
     permissions: PropTypes.array,
-    router: PropTypes.object,
     team: PropTypes.object
   };
   public context: AppContext;
@@ -65,11 +75,7 @@ export default class PeopleContainer extends React.Component<{}, IState> {
       return <h2>Loading...</h2>;
     }
 
-    const {
-      personAction,
-      assetType,
-      personId
-    } = this.context.router.route.match.params;
+    const { personAction, assetType, personId } = this.props.match.params;
     const selectedId = parseInt(personId, 10);
     const detailPerson = this.state.people.find(e => e.id === selectedId);
     return (
@@ -288,17 +294,17 @@ export default class PeopleContainer extends React.Component<{}, IState> {
   };
 
   private _openCreateModal = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/people/create`);
+    this.props.history.push(`${this._getBaseUrl()}/people/create`);
   };
 
   private _openDetailsModal = (person: IPerson) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/people/details/${person.id}`
     );
   };
 
   private _goBack = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/people`);
+    this.props.history.push(`${this._getBaseUrl()}/people`);
   };
 
   private _getBaseUrl = () => {
