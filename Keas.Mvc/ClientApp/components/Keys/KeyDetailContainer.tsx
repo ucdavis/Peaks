@@ -55,6 +55,7 @@ export default class KeyDetailContainer extends React.Component<IProps, {}> {
           </Button>
         </div>
         <KeySerialContainer
+          {...this.props.route}
           selectedKey={selectedKeyInfo.key}
           assetInUseUpdated={this._serialInUseUpdated}
           assetTotalUpdated={this._serialTotalUpdated}
