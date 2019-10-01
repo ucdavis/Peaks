@@ -1,7 +1,7 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { AppContext, IKeySerial } from '../../Types';
+import { AppContext, IKey, IKeySerial } from '../../Types';
 
 interface IProps {
   keySerial: IKeySerial;
@@ -9,23 +9,15 @@ interface IProps {
   changeProperty?: (property: string, value: string) => void;
   openEditModal?: (keySerial: IKeySerial) => void;
   statusList?: string[];
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 export default class KeySerialEditValues extends React.Component<IProps, {}> {
-  public static contextTypes = {
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-
-  public context: AppContext;
-
   public render() {
     const { keySerial } = this.props;
 
     const numberValue = keySerial ? keySerial.number : '';
     const statusValue = keySerial ? keySerial.status : 'Active';
-
-    const { personAction } = this.context.router.route.match.params;
 
     const listItems = !!this.props.statusList ? (
       this.props.statusList.map(x => (
@@ -73,7 +65,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
               value={this.props.keySerial.key.code}
             />
           </div>
-          {personAction && (
+          {this.props.goToKeyDetails && (
             <Button color='link' onClick={() => this._goToKeyDetails()}>
               <i className='fas fa-link fa-xs' /> View Key Details
             </Button>
@@ -135,9 +127,6 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
     if (!this.props.keySerial || !this.props.keySerial.key) {
       return;
     }
-    const { team } = this.context;
-    this.context.router.history.push(
-      `/${team.slug}/keys/details/${this.props.keySerial.key.id}`
-    );
+    this.props.goToKeyDetails(this.props.keySerial.key);
   };
 }

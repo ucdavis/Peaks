@@ -40,7 +40,7 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
     count: number
   ) => void;
   assetEdited?: (type: string, keySerialId: number, personId: number) => void;
-  goToKeyDetails: (key: IKey) => void;
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 export default class KeySerialContainer extends React.Component<
@@ -171,6 +171,7 @@ export default class KeySerialContainer extends React.Component<
             openEditModal={this._openEditModal}
             openUpdateModal={this._openUpdateModal}
             updateSelectedKeySerial={this._updateKeySerialsFromDetails}
+            goToKeyDetails={this.props.goToKeyDetails}
           />
           <RevokeKeySerial
             selectedKeySerial={selectedKeySerial}
@@ -182,6 +183,7 @@ export default class KeySerialContainer extends React.Component<
             openUpdateModal={this._openUpdateModal}
             updateSelectedKeySerial={this._updateKeySerialsFromDetails}
             onRevoke={this._revokeKeySerial}
+            goToKeyDetails={this.props.goToKeyDetails}
           />
           <EditKeySerial
             selectedKeySerial={selectedKeySerial}

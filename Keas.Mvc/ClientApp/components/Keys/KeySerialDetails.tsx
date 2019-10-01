@@ -14,7 +14,7 @@ interface IProps {
   openUpdateModal: (keySerial: IKeySerial) => void;
   selectedKeySerial: IKeySerial;
   updateSelectedKeySerial: (keySerial: IKeySerial, id?: number) => void;
-  goToKeyDetails: (key: IKey) => void;
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 export default class KeyDetails extends React.Component<IProps, {}> {

@@ -20,7 +20,7 @@ interface IProps {
   openEditModal: (keySerial: IKeySerial) => void;
   openDetailsModal: (keySerial: IKeySerial) => void;
   statusList: string[];
-  goToKeyDetails: (key: IKey) => void;
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 interface IState {

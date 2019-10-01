@@ -12,7 +12,7 @@ interface IProps {
   onRevoke: (keySerial: IKeySerial) => void;
   selectedKeySerial: IKeySerial;
   updateSelectedKeySerial: (keySerial: IKeySerial) => void;
-  goToKeyDetails: (key: IKey) => void;
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 interface IState {
