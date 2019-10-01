@@ -1,12 +1,14 @@
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
-import { ISpaceInfo } from '../../Types';
+import { IMatchParams, ISpaceInfo } from '../../Types';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
 import KeyContainer from '../Keys/KeyContainer';
 import WorkstationContainer from '../Workstations/WorkstationContainer';
 import SpaceDetailContainer from './SpaceDetailContainer';
 
 interface IProps {
+  route: RouteChildrenProps<IMatchParams>;
   goBack: () => void;
   selectedSpaceInfo: ISpaceInfo;
   inUseUpdated: (
@@ -50,14 +52,15 @@ export default class SpacesDetails extends React.Component<IProps, {}> {
             assetInUseUpdated={this.props.inUseUpdated}
             assetTotalUpdated={this.props.totalUpdated}
             assetEdited={this.props.edited}
-          />
+          /> */}
           <EquipmentContainer
+            {...this.props.route}
             space={this.props.selectedSpaceInfo.space}
             assetInUseUpdated={this.props.inUseUpdated}
             assetTotalUpdated={this.props.totalUpdated}
             assetEdited={this.props.edited}
           />
-          <WorkstationContainer
+          {/* <WorkstationContainer
             space={this.props.selectedSpaceInfo.space}
             tags={this.props.tags}
             assetInUseUpdated={this.props.inUseUpdated}
