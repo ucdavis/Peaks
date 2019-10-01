@@ -16,6 +16,15 @@ export interface AppContext {
     permissions: string[];
 }
 
+// /:team/${container}/:containerAction?/:containerId?/:assetType?/:action?/:id
+export interface IMatchParams {
+  containerAction: string;
+  containerId: string;
+  assetType: string;
+  action: string;
+  id: string;
+}
+
 export interface IRouteProps {
     id: string;
     action: string;

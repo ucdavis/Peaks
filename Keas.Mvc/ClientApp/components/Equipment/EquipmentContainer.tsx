@@ -2,7 +2,13 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
-import { AppContext, IEquipment, IPerson, ISpace } from '../../Types';
+import {
+  AppContext,
+  IEquipment,
+  IMatchParams,
+  IPerson,
+  ISpace
+} from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import AssignEquipment from './AssignEquipment';
@@ -12,14 +18,6 @@ import EquipmentDetails from './EquipmentDetails';
 import EquipmentList from './EquipmentList';
 import EquipmentTableContainer from './EquipmentTableContainer';
 import RevokeEquipment from './RevokeEquipment';
-
-interface IMatchParams {
-  personAction: string;
-  personId: string;
-  assetType: string;
-  action: string;
-  id: string;
-}
 
 interface IState {
   commonAttributeKeys: string[];

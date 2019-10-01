@@ -2,22 +2,13 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
-import { AppContext, IPerson, IPersonInfo } from '../../Types';
+import { AppContext, IMatchParams, IPerson, IPersonInfo } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
 import CreatePerson from './CreatePerson';
 import PeopleTable from './PeopleTable';
 import PersonDetails from './PersonDetails';
-
-// /:team/people/:personAction?/:personId?/:assetType?/:action?/:id
-interface IMatchParams {
-  personAction: string;
-  personId: string;
-  assetType: string;
-  action: string;
-  id: string;
-}
 
 interface IState {
   loading: boolean;
@@ -78,7 +69,10 @@ export default class PeopleContainer extends React.Component<
       return <h2>Loading...</h2>;
     }
 
-    const { personAction, personId } = this.props.match.params;
+    const {
+      containerAction: personAction,
+      containerId: personId
+    } = this.props.match.params;
     const selectedId = parseInt(personId, 10);
     const detailPerson = this.state.people.find(e => e.id === selectedId);
     return (

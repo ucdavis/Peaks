@@ -2,7 +2,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
-import { AppContext, IPerson, IPersonInfo } from '../../Types';
+import { AppContext, IMatchParams, IPerson, IPersonInfo } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import AccessContainer from '../Access/AccessContainer';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
@@ -12,13 +12,7 @@ import WorkstationContainer from '../Workstations/WorkstationContainer';
 import BioContainer from './BioContainer';
 import DeletePerson from './DeletePerson';
 import EditPerson from './EditPerson';
-interface IMatchParams {
-  personAction: string;
-  personId: string;
-  assetType: string;
-  action: string;
-  id: string;
-}
+
 interface IProps {
   router: RouteChildrenProps<IMatchParams>;
   goBack: () => void;
