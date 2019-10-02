@@ -38,7 +38,6 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
   ) => void;
 
   assetEdited?: (type: string, spaceId: number, personId: number) => void;
-  person?: IPerson;
   space?: ISpace;
 }
 
@@ -118,12 +117,17 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       id
     } = this.props.match.params;
 
+    const onSpaceTab = !!space;
     // if on key tab, select using containerId. if on spaces, select using id
-    const selectedKeyId = containerId
+    const selectedKeyId = !onSpaceTab
       ? parseInt(containerId, 10)
       : parseInt(id, 10);
     const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
     const selectedKey = selectedKeyInfo ? selectedKeyInfo.key : null;
+
+    const shouldRenderDetailsView =
+      !onSpaceTab && containerAction === 'details';
+    const shouldRenderTableView = !shouldRenderDetailsView;
 
     return (
       <div className='card keys-color'>
@@ -132,7 +136,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             <h2>
               <i className='fas fa-key fa-xs' /> Keys
             </h2>
-            {!space && (
+            {!onSpaceTab && (
               <CreateKey
                 onCreate={this._createKey}
                 onOpenModal={this._openCreateModal}
@@ -142,7 +146,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                 checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValid}
               />
             )}
-            {!!space && (
+            {onSpaceTab && shouldRenderTableView && (
               <AssociateSpace
                 selectedKeyInfo={selectedKeyInfo}
                 selectedSpace={space}
@@ -156,12 +160,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           </div>
         </div>
         <div className='card-content'>
-          {(containerAction !== 'details' || !!this.props.space) &&
-            this._renderTableOrListView()}
-          {containerAction === 'details' && // if we are on keys/details
-            !this.props.space &&
-            !this.props.person &&
-            this._renderDetailsView()}
+          {shouldRenderTableView && this._renderTableOrListView(selectedKeyId)}
+          {shouldRenderDetailsView && this._renderDetailsView()}
           <EditKey
             onEdit={this._editKey}
             closeModal={this._closeModals}
@@ -181,13 +181,13 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     );
   }
 
-  private _renderTableOrListView() {
+  private _renderTableOrListView(selectedKeyId: number) {
     const { space } = this.props;
     if (!space) {
       return this._renderTableView();
     }
 
-    return this._renderListView();
+    return this._renderListView(selectedKeyId);
   }
 
   private _renderTableView() {
@@ -225,15 +225,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     );
   }
 
-  private _renderListView() {
+  private _renderListView(selectedKeyId: number) {
     // this is what is rendered inside of space container
     const { space } = this.props;
-    const { containerId, action, id } = this.props.match.params;
-
-    // if on key tab, select using keyId. if on spaces, select using id
-    const selectedKeyId = containerId
-      ? parseInt(containerId, 10)
-      : parseInt(id, 10);
+    const { action } = this.props.match.params;
     const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
     return (
       <div>
@@ -326,7 +321,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       this.props.assetTotalUpdated(
         'key',
         this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null,
+        null,
         1
       );
     }
@@ -382,7 +377,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       this.props.assetEdited(
         'key',
         this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null
+        null
       );
     }
 
@@ -468,7 +463,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       this.props.assetTotalUpdated(
         'key',
         this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null,
+        null,
         1
       );
     }
@@ -509,7 +504,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       this.props.assetTotalUpdated(
         'key',
         this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null,
+        null,
         -1
       );
     }
@@ -587,12 +582,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   };
 
   private _getBaseUrl = () => {
-    const { person, space } = this.props;
+    const { space } = this.props;
     const slug = this.context.team.slug;
-
-    if (!!person) {
-      return `/${slug}/people/details/${person.id}`;
-    }
 
     if (!!space) {
       return `/${slug}/spaces/details/${space.id}`;

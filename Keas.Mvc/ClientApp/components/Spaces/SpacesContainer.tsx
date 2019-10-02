@@ -95,15 +95,14 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
       id
     } = this.props.match.params;
     const activeWorkstationAsset = assetType === 'workstations';
-    const selectedId = containerId
-      ? parseInt(containerId, 10)
-      : parseInt(id, 10);
+    const onKeysTab = !!this.props.selectedKeyInfo;
+    // if on keys tab, should be id
+    // if on spaces tab, should be container id
+    const selectedId = onKeysTab ? parseInt(id, 10) : parseInt(containerId, 10);
     const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
-    const shouldRenderTableView =
-      !containerAction &&
-      !activeWorkstationAsset &&
-      !!this.props.selectedKeyInfo;
 
+    const shouldRenderDetailsView = !onKeysTab && containerAction === 'details';
+    const shouldRenderTableView = !shouldRenderDetailsView;
     return (
       <div className='card spaces-color'>
         <div className='card-header-spaces'>
@@ -111,7 +110,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             <h2>
               <i className='fas fa-building fa-xs' /> Spaces
             </h2>
-            {shouldRenderTableView && (
+            {shouldRenderTableView && onKeysTab && (
               <AssociateSpace
                 selectedKeyInfo={this.props.selectedKeyInfo}
                 onAssign={this._associateSpace}
@@ -137,21 +136,22 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         </div>
 
         <div className='card-content'>
-          {(!containerAction || !!this.props.selectedKeyInfo) && // show on keys/details page
-            !activeWorkstationAsset &&
-            this._renderTableOrList()}
-          {containerAction === 'details' &&
-            (!!selectedSpaceInfo && !!selectedSpaceInfo.space) &&
+          {shouldRenderTableView && this._renderTableOrList(selectedId) // show on keys/details page
+          }
+          {shouldRenderDetailsView &&
+            !onKeysTab &&
+            !!selectedSpaceInfo &&
+            !!selectedSpaceInfo.space &&
             this._renderDetailsView(selectedSpaceInfo)}
         </div>
       </div>
     );
   }
 
-  private _renderTableOrList() {
+  private _renderTableOrList(selectedId: number) {
     const { selectedKeyInfo } = this.props;
     if (!!selectedKeyInfo) {
-      return this._renderTableList();
+      return this._renderTableList(selectedId);
     }
 
     return this._renderTableView();
@@ -186,16 +186,13 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     );
   }
 
-  private _renderTableList = () => {
+  private _renderTableList = (selectedId: number) => {
     // this is what is rendered inside of KeyContainer
     const { selectedKeyInfo } = this.props;
 
     // flatten the space info for simple space
     const spaces = this.state.spaces.map(s => s.space);
     const { containerId, action, id } = this.props.match.params;
-    const selectedId = containerId
-      ? parseInt(containerId, 10)
-      : parseInt(id, 10);
     const selectedSpace = spaces.find(k => k.id === selectedId);
     return (
       <div>
