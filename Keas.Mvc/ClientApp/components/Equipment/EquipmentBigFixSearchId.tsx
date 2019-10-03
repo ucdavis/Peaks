@@ -14,6 +14,7 @@ import {
   ModalFooter,
   Table
 } from 'reactstrap';
+import { Context } from '../../Context';
 import { IBigFixSearchedName } from '../../Types';
 
 interface IProps {
@@ -34,12 +35,8 @@ export default class EquipmentBigFixSearchId extends React.Component<
   IProps,
   IState
 > {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   constructor(props) {
     super(props);

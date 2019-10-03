@@ -1,6 +1,6 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { AppContext, IEquipment } from '../../Types';
+import { Context } from '../../Context';
+import { IEquipment } from '../../Types';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentTable from './EquipmentTable';
 import SearchAttributes from './SearchAttributes';
@@ -33,12 +33,9 @@ export default class EquipmentTableContainer extends React.Component<
   IProps,
   IState
 > {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
-  public context: AppContext;
   constructor(props) {
     super(props);
     this.state = {

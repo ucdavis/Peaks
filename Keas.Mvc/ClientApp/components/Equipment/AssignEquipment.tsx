@@ -1,15 +1,9 @@
 import { addYears, format, isBefore, startOfDay } from 'date-fns';
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import {
-  AppContext,
-  IEquipment,
-  IEquipmentAttribute,
-  IPerson,
-  ISpace
-} from '../../Types';
+import { Context } from '../../Context';
+import { IEquipment, IEquipmentAttribute, IPerson, ISpace } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
 import EquipmentEditValues from './EquipmentEditValues';
 import SearchEquipment from './SearchEquipment';
@@ -39,10 +33,9 @@ interface IState {
 }
 
 export default class AssignEquipment extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
     this.state = {

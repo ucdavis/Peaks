@@ -1,14 +1,8 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
-import {
-  AppContext,
-  IEquipment,
-  IMatchParams,
-  IPerson,
-  ISpace
-} from '../../Types';
+import { Context } from '../../Context';
+import { IEquipment, IMatchParams, IPerson, ISpace } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import AssignEquipment from './AssignEquipment';
@@ -51,13 +45,9 @@ export default class EquipmentContainer extends React.Component<
   IProps,
   IState
 > {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
 
