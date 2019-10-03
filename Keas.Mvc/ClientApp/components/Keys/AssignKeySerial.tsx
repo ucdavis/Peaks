@@ -62,39 +62,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
     };
   }
 
-  public componentWillReceiveProps(nextProps: IProps) {
-    // make sure we change the key we are updating if the parent changes selected key
-    if (nextProps.selectedKeySerial !== this.props.selectedKeySerial) {
-      this.setState({ keySerial: nextProps.selectedKeySerial });
-    }
-
-    if (nextProps.person !== this.state.person) {
-      this.setState({ person: nextProps.person });
-    }
-
-    const assignment =
-      nextProps.selectedKeySerial &&
-      nextProps.selectedKeySerial.keySerialAssignment;
-    if (!!assignment) {
-      this.setState({
-        date: new Date(assignment.expiresAt),
-        person: assignment.person
-      });
-    }
-  }
-
   public render() {
-    return (
-      <div>
-        <Button color='link' onClick={this.props.onOpenModal}>
-          <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Key Serial
-        </Button>
-        {this.renderModal()}
-      </div>
-    );
-  }
-
-  private renderModal() {
     const { isModalOpen, selectedKey } = this.props;
     const { person, keySerial } = this.state;
 
