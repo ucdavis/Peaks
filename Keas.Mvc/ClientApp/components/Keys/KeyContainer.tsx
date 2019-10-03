@@ -2,6 +2,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
+import { Button } from 'reactstrap';
 import {
   AppContext,
   IKey,
@@ -147,15 +148,26 @@ export default class KeyContainer extends React.Component<IProps, IState> {
               />
             )}
             {onSpaceTab && shouldRenderTableView && (
-              <AssociateSpace
-                selectedKeyInfo={selectedKeyInfo}
-                selectedSpace={space}
-                onAssign={this._associateSpace}
-                isModalOpen={action === 'associate'}
-                openModal={this._openAssociate}
-                closeModal={this._closeModals}
-                searchableTags={tags}
-              />
+              <div>
+                <Button
+                  color='link'
+                  onClick={this._openAssociate}
+                  className='keys-anomaly'
+                >
+                  <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
+                  Associate
+                </Button>
+                <AssociateSpace
+                  key={`associate-space-${selectedKeyId}`}
+                  selectedKeyInfo={selectedKeyInfo}
+                  selectedSpace={space}
+                  onAssign={this._associateSpace}
+                  isModalOpen={action === 'associate'}
+                  openModal={this._openAssociate}
+                  closeModal={this._closeModals}
+                  searchableTags={tags}
+                />
+              </div>
             )}
           </div>
         </div>

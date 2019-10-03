@@ -17,6 +17,7 @@ import SearchTags from '../Tags/SearchTags';
 import SpacesDetails from './SpacesDetails';
 import SpacesList from './SpacesList';
 import SpacesTable from './SpacesTable';
+import { Button } from 'reactstrap';
 
 interface IProps extends RouteChildrenProps<IMatchParams> {
   selectedKeyInfo?: IKeyInfo;
@@ -111,14 +112,24 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
               <i className='fas fa-building fa-xs' /> Spaces
             </h2>
             {shouldRenderTableView && onKeysTab && (
-              <AssociateSpace
-                selectedKeyInfo={this.props.selectedKeyInfo}
-                onAssign={this._associateSpace}
-                openModal={() => this._openAssociateModal(null)}
-                closeModal={this._closeModals}
-                isModalOpen={action === 'associate'}
-                searchableTags={this.state.tags}
-              />
+              <div>
+                <Button
+                  color='link'
+                  onClick={() => this._openAssociateModal(null)}
+                >
+                  <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
+                  Associate
+                </Button>
+                <AssociateSpace
+                  key={`associate-space-${selectedId}`}
+                  selectedKeyInfo={this.props.selectedKeyInfo}
+                  onAssign={this._associateSpace}
+                  openModal={() => this._openAssociateModal(null)}
+                  closeModal={this._closeModals}
+                  isModalOpen={action === 'associate'}
+                  searchableTags={this.state.tags}
+                />
+              </div>
             )}
           </div>
           {this.state.spaces.length === 0 && (
