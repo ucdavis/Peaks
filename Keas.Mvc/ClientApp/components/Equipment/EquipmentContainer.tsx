@@ -200,7 +200,7 @@ export default class EquipmentContainer extends React.Component<
   private _renderAssignModal = (selectedId: number, equipment?: IEquipment) => {
     return (
       <AssignEquipment
-        key={`assign-equipment-${selectedId}`}
+        key={selectedId ? `assign-equipment-${selectedId}` : 'create-equipment'}
         onCreate={this._createAndMaybeAssignEquipment}
         modal={true}
         onAddNew={this._openCreateModal}
