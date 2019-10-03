@@ -1,7 +1,14 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
-import { AppContext, IKeyInfo, ISpace, ISpaceInfo } from '../../Types';
+import {
+  AppContext,
+  IKeyInfo,
+  IMatchParams,
+  ISpace,
+  ISpaceInfo
+} from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import AssociateSpace from '../Keys/AssociateSpace';
 import DisassociateSpace from '../Keys/DisassociateSpace';
@@ -11,7 +18,7 @@ import SpacesDetails from './SpacesDetails';
 import SpacesList from './SpacesList';
 import SpacesTable from './SpacesTable';
 
-interface IProps {
+interface IProps extends RouteChildrenProps<IMatchParams> {
   selectedKeyInfo?: IKeyInfo;
   spacesTotalUpdated?: (keyId: number, count: number) => void;
 }
@@ -81,18 +88,21 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
       return <h2>Loading...</h2>;
     }
     const {
-      spaceAction,
-      spaceId,
+      containerAction,
+      containerId,
       assetType,
       action,
       id
-    } = this.context.router.route.match.params;
+    } = this.props.match.params;
     const activeWorkstationAsset = assetType === 'workstations';
-    const selectedId = spaceId ? parseInt(spaceId, 10) : parseInt(id, 10);
+    const onKeysTab = !!this.props.selectedKeyInfo;
+    // if on keys tab, should be id
+    // if on spaces tab, should be container id
+    const selectedId = onKeysTab ? parseInt(id, 10) : parseInt(containerId, 10);
     const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
-    const shouldRenderTableView =
-      !spaceAction && !activeWorkstationAsset && !!this.props.selectedKeyInfo;
 
+    const shouldRenderDetailsView = !onKeysTab && containerAction === 'details';
+    const shouldRenderTableView = !shouldRenderDetailsView;
     return (
       <div className='card spaces-color'>
         <div className='card-header-spaces'>
@@ -100,7 +110,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
             <h2>
               <i className='fas fa-building fa-xs' /> Spaces
             </h2>
-            {shouldRenderTableView && (
+            {shouldRenderTableView && onKeysTab && (
               <AssociateSpace
                 selectedKeyInfo={this.props.selectedKeyInfo}
                 onAssign={this._associateSpace}
@@ -126,19 +136,22 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         </div>
 
         <div className='card-content'>
-          {!spaceAction && !activeWorkstationAsset && this._renderTableOrList()}
-          {spaceAction === 'details' &&
-            (!!selectedSpaceInfo && !!selectedSpaceInfo.space) &&
+          {shouldRenderTableView && this._renderTableOrList(selectedId) // show on keys/details page
+          }
+          {shouldRenderDetailsView &&
+            !onKeysTab &&
+            !!selectedSpaceInfo &&
+            !!selectedSpaceInfo.space &&
             this._renderDetailsView(selectedSpaceInfo)}
         </div>
       </div>
     );
   }
 
-  private _renderTableOrList() {
+  private _renderTableOrList(selectedId: number) {
     const { selectedKeyInfo } = this.props;
     if (!!selectedKeyInfo) {
-      return this._renderTableList();
+      return this._renderTableList(selectedId);
     }
 
     return this._renderTableView();
@@ -173,14 +186,13 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     );
   }
 
-  private _renderTableList = () => {
+  private _renderTableList = (selectedId: number) => {
     // this is what is rendered inside of KeyContainer
     const { selectedKeyInfo } = this.props;
 
     // flatten the space info for simple space
     const spaces = this.state.spaces.map(s => s.space);
-    const { spaceId, action, id } = this.context.router.route.match.params;
-    const selectedId = spaceId ? parseInt(spaceId, 10) : parseInt(id, 10);
+    const { containerId, action, id } = this.props.match.params;
     const selectedSpace = spaces.find(k => k.id === selectedId);
     return (
       <div>
@@ -203,8 +215,14 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
   // if we are at route teamName/spaces/details/spaceId
   private _renderDetailsView = (selectedSpaceInfo: ISpaceInfo) => {
+    const routeObject = {
+      history: this.props.history,
+      location: this.props.location,
+      match: this.props.match
+    };
     return (
       <SpacesDetails
+        route={routeObject}
         goBack={this._goBack}
         selectedSpaceInfo={selectedSpaceInfo}
         tags={this.state.tags}
@@ -221,34 +239,32 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
   private _openDetails = (space: ISpace) => {
     const { team } = this.context;
-    this.context.router.history.push(
-      `/${team.slug}/spaces/details/${space.id}`
-    );
+    this.props.history.push(`/${team.slug}/spaces/details/${space.id}`);
   };
 
   private _openAssociateModal = (space: ISpace) => {
     if (!!space) {
-      this.context.router.history.push(
+      this.props.history.push(
         `${this._getBaseUrl()}/spaces/associate/${space.id}`
       );
       return;
     }
 
-    this.context.router.history.push(`${this._getBaseUrl()}/spaces/associate/`);
+    this.props.history.push(`${this._getBaseUrl()}/spaces/associate/`);
   };
 
   private _openDisassociateModal = (space: ISpace) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/spaces/disassociate/${space.id}`
     );
   };
 
   private _closeModals = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}`);
+    this.props.history.push(`${this._getBaseUrl()}`);
   };
 
   private _goBack = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/spaces`);
+    this.props.history.push(`${this._getBaseUrl()}/spaces`);
   };
 
   // managing counts for assigned or revoked

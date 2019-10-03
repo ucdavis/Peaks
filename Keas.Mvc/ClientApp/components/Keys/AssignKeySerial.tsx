@@ -20,6 +20,7 @@ interface IProps {
   openEditModal: (keySerial: IKeySerial) => void;
   openDetailsModal: (keySerial: IKeySerial) => void;
   statusList: string[];
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 interface IState {
@@ -185,6 +186,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                         changeProperty={this._changeProperty}
                         disableEditing={false}
                         statusList={this.props.statusList}
+                        goToKeyDetails={this.props.goToKeyDetails}
                       />
                     )}
                   </div>
@@ -207,6 +209,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                     disableEditing={true}
                     openEditModal={this.props.openEditModal}
                     statusList={this.props.statusList}
+                    goToKeyDetails={this.props.goToKeyDetails}
                   />
                 </div>
               )}

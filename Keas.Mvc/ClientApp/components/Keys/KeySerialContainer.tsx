@@ -1,7 +1,14 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
-import { AppContext, IKey, IKeySerial, IPerson } from '../../Types';
+import {
+  AppContext,
+  IKey,
+  IKeySerial,
+  IMatchParams,
+  IPerson
+} from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import AssignKeySerial from './AssignKeySerial';
@@ -17,7 +24,7 @@ interface IState {
   loading: boolean;
 }
 
-interface IProps {
+interface IProps extends RouteChildrenProps<IMatchParams> {
   selectedPerson?: IPerson;
   selectedKey?: IKey;
   assetInUseUpdated?: (
@@ -33,6 +40,7 @@ interface IProps {
     count: number
   ) => void;
   assetEdited?: (type: string, keySerialId: number, personId: number) => void;
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 export default class KeySerialContainer extends React.Component<
@@ -100,7 +108,7 @@ export default class KeySerialContainer extends React.Component<
       return <h2>Loading...</h2>;
     }
 
-    const { action, assetType, id } = this.context.router.route.match.params;
+    const { action, assetType, id } = this.props.match.params;
     const activeAsset = !assetType || assetType === 'keyserials';
     const selectedKeySerialId = parseInt(id, 10);
     const selectedKeySerial = this.state.keySerials.find(
@@ -129,6 +137,7 @@ export default class KeySerialContainer extends React.Component<
               openEditModal={this._openEditModal}
               openDetailsModal={this._openDetailsModal}
               statusList={this.state.statusList}
+              goToKeyDetails={this.props.goToKeyDetails}
             />
           </div>
         </div>
@@ -162,6 +171,7 @@ export default class KeySerialContainer extends React.Component<
             openEditModal={this._openEditModal}
             openUpdateModal={this._openUpdateModal}
             updateSelectedKeySerial={this._updateKeySerialsFromDetails}
+            goToKeyDetails={this.props.goToKeyDetails}
           />
           <RevokeKeySerial
             selectedKeySerial={selectedKeySerial}
@@ -173,6 +183,7 @@ export default class KeySerialContainer extends React.Component<
             openUpdateModal={this._openUpdateModal}
             updateSelectedKeySerial={this._updateKeySerialsFromDetails}
             onRevoke={this._revokeKeySerial}
+            goToKeyDetails={this.props.goToKeyDetails}
           />
           <EditKeySerial
             selectedKeySerial={selectedKeySerial}
@@ -181,6 +192,7 @@ export default class KeySerialContainer extends React.Component<
             openUpdateModal={this._openUpdateModal}
             isModalOpen={activeAsset && action === 'edit'}
             statusList={this.state.statusList}
+            goToKeyDetails={this.props.goToKeyDetails}
           />
         </div>
       </div>
@@ -391,49 +403,49 @@ export default class KeySerialContainer extends React.Component<
   };
 
   private _openAssignModal = (keySerial: IKeySerial) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/keyserials/assign/${keySerial.id}`
     );
   };
 
   private _openCreateModal = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/keyserials/create`);
+    this.props.history.push(`${this._getBaseUrl()}/keyserials/create`);
   };
 
   private _openDetailsModal = (keySerial: IKeySerial) => {
     // if we are on person page, and this serial is not in our state
     // this happens on the search, when selecting already assigned
     if (this.state.keySerials.findIndex(x => x.id === keySerial.id) === -1) {
-      this.context.router.history.push(
+      this.props.history.push(
         `/${this.context.team.slug}/keys/details/${keySerial.key.id}/keyserials/details/${keySerial.id}`
       );
     } else {
-      this.context.router.history.push(
+      this.props.history.push(
         `${this._getBaseUrl()}/keyserials/details/${keySerial.id}`
       );
     }
   };
 
   private _openRevokeModal = (keySerial: IKeySerial) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/keyserials/revoke/${keySerial.id}`
     );
   };
 
   private _openEditModal = (keySerial: IKeySerial) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/keyserials/edit/${keySerial.id}`
     );
   };
 
   private _openUpdateModal = (keySerial: IKeySerial) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/keyserials/update/${keySerial.id}`
     );
   };
 
   private _closeModals = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}`);
+    this.props.history.push(`${this._getBaseUrl()}`);
   };
 
   private _getBaseUrl = () => {

@@ -1,7 +1,15 @@
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
-import { AppContext, IKey, IKeyInfo, IPerson, ISpace } from '../../Types';
+import {
+  AppContext,
+  IKey,
+  IKeyInfo,
+  IMatchParams,
+  IPerson,
+  ISpace
+} from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
@@ -14,7 +22,7 @@ import KeyDetailContainer from './KeyDetailContainer';
 import KeyList from './KeyList';
 import KeyTable from './KeyTable';
 
-interface IProps {
+interface IProps extends RouteChildrenProps<IMatchParams> {
   assetInUseUpdated?: (
     type: string,
     spaceId: number,
@@ -30,7 +38,6 @@ interface IProps {
   ) => void;
 
   assetEdited?: (type: string, spaceId: number, personId: number) => void;
-  person?: IPerson;
   space?: ISpace;
 }
 
@@ -104,16 +111,23 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     const { space } = this.props;
     const { tags } = this.state;
     const {
-      keyAction,
-      keyId,
+      containerAction,
+      containerId,
       action,
       id
-    } = this.context.router.route.match.params;
+    } = this.props.match.params;
 
-    // if on key tab, select using keyId. if on spaces, select using id
-    const selectedKeyId = keyId ? parseInt(keyId, 10) : parseInt(id, 10);
+    const onSpaceTab = !!space;
+    // if on key tab, select using containerId. if on spaces, select using id
+    const selectedKeyId = !onSpaceTab
+      ? parseInt(containerId, 10)
+      : parseInt(id, 10);
     const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
     const selectedKey = selectedKeyInfo ? selectedKeyInfo.key : null;
+
+    const shouldRenderDetailsView =
+      !onSpaceTab && containerAction === 'details';
+    const shouldRenderTableView = !shouldRenderDetailsView;
 
     return (
       <div className='card keys-color'>
@@ -122,17 +136,17 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             <h2>
               <i className='fas fa-key fa-xs' /> Keys
             </h2>
-            {!space && (
+            {!onSpaceTab && (
               <CreateKey
                 onCreate={this._createKey}
                 onOpenModal={this._openCreateModal}
                 closeModal={this._closeModals}
-                modal={keyAction === 'create'}
+                modal={containerAction === 'create'}
                 searchableTags={tags}
                 checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValid}
               />
             )}
-            {!!space && (
+            {onSpaceTab && shouldRenderTableView && (
               <AssociateSpace
                 selectedKeyInfo={selectedKeyInfo}
                 selectedSpace={space}
@@ -146,12 +160,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
           </div>
         </div>
         <div className='card-content'>
-          {keyAction !== 'details' && this._renderTableOrListView()}
-          {keyAction === 'details' && this._renderDetailsView()}
+          {shouldRenderTableView && this._renderTableOrListView(selectedKeyId)}
+          {shouldRenderDetailsView && this._renderDetailsView()}
           <EditKey
             onEdit={this._editKey}
             closeModal={this._closeModals}
-            modal={keyAction === 'edit'}
+            modal={containerAction === 'edit'}
             selectedKey={selectedKey}
             searchableTags={tags}
             checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValidOnEdit}
@@ -160,20 +174,20 @@ export default class KeyContainer extends React.Component<IProps, IState> {
             selectedKeyInfo={selectedKeyInfo}
             deleteKey={this._deleteKey}
             closeModal={this._closeModals}
-            modal={keyAction === 'delete' || action === 'delete'}
+            modal={containerAction === 'delete' || action === 'delete'}
           />
         </div>
       </div>
     );
   }
 
-  private _renderTableOrListView() {
+  private _renderTableOrListView(selectedKeyId: number) {
     const { space } = this.props;
     if (!space) {
       return this._renderTableView();
     }
 
-    return this._renderListView();
+    return this._renderListView(selectedKeyId);
   }
 
   private _renderTableView() {
@@ -211,13 +225,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     );
   }
 
-  private _renderListView() {
+  private _renderListView(selectedKeyId: number) {
     // this is what is rendered inside of space container
     const { space } = this.props;
-    const { keyId, action, id } = this.context.router.route.match.params;
-
-    // if on key tab, select using keyId. if on spaces, select using id
-    const selectedKeyId = keyId ? parseInt(keyId, 10) : parseInt(id, 10);
+    const { action } = this.props.match.params;
     const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
     return (
       <div>
@@ -240,13 +251,18 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   }
 
   private _renderDetailsView() {
-    const { keyId } = this.context.router.route.match.params;
-    const selectedKeyId = parseInt(keyId, 10);
+    const { containerId } = this.props.match.params;
+    const selectedKeyId = parseInt(containerId, 10);
     const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
-    const selectedKey = selectedKeyInfo.key;
 
+    const routeObject = {
+      history: this.props.history,
+      location: this.props.location,
+      match: this.props.match
+    };
     return (
       <KeyDetailContainer
+        route={routeObject}
         selectedKeyInfo={selectedKeyInfo}
         goBack={this._closeModals}
         serialInUseUpdated={this._serialInUseUpdated}
@@ -305,7 +321,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       this.props.assetTotalUpdated(
         'key',
         this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null,
+        null,
         1
       );
     }
@@ -361,7 +377,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       this.props.assetEdited(
         'key',
         this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null
+        null
       );
     }
 
@@ -447,7 +463,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       this.props.assetTotalUpdated(
         'key',
         this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null,
+        null,
         1
       );
     }
@@ -488,7 +504,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       this.props.assetTotalUpdated(
         'key',
         this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null,
+        null,
         -1
       );
     }
@@ -534,46 +550,40 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
   private _openCreateModal = () => {
     const { team } = this.context;
-    this.context.router.history.push(`/${team.slug}/keys/create`);
+    this.props.history.push(`/${team.slug}/keys/create`);
   };
 
   private _openDetailsModal = (key: IKey) => {
     const { team } = this.context;
-    this.context.router.history.push(`/${team.slug}/keys/details/${key.id}`);
+    this.props.history.push(`/${team.slug}/keys/details/${key.id}`);
   };
 
   private _openEditModal = (key: IKey) => {
     const { team } = this.context;
-    this.context.router.history.push(`/${team.slug}/keys/edit/${key.id}`);
+    this.props.history.push(`/${team.slug}/keys/edit/${key.id}`);
   };
 
   private _openDeleteModal = (key: IKey) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/keys/delete/${key.id}`
-    );
+    this.props.history.push(`${this._getBaseUrl()}/keys/delete/${key.id}`);
   };
 
   private _openAssociate = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/keys/associate`);
+    this.props.history.push(`${this._getBaseUrl()}/keys/associate`);
   };
 
   private _openDisassociate = (key: IKeyInfo) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/keys/disassociate/${key.id}`
     );
   };
 
   private _closeModals = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/keys`);
+    this.props.history.push(`${this._getBaseUrl()}/keys`);
   };
 
   private _getBaseUrl = () => {
-    const { person, space } = this.props;
+    const { space } = this.props;
     const slug = this.context.team.slug;
-
-    if (!!person) {
-      return `/${slug}/people/details/${person.id}`;
-    }
 
     if (!!space) {
       return `/${slug}/spaces/details/${space.id}`;

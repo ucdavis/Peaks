@@ -2,7 +2,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
-import { AppContext, IKeySerial } from '../../Types';
+import { AppContext, IKey, IKeySerial } from '../../Types';
 import HistoryContainer from '../History/HistoryContainer';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
@@ -14,6 +14,7 @@ interface IProps {
   openUpdateModal: (keySerial: IKeySerial) => void;
   selectedKeySerial: IKeySerial;
   updateSelectedKeySerial: (keySerial: IKeySerial, id?: number) => void;
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 export default class KeyDetails extends React.Component<IProps, {}> {
@@ -69,6 +70,7 @@ export default class KeyDetails extends React.Component<IProps, {}> {
               keySerial={selectedKeySerial}
               disableEditing={true}
               openEditModal={this.props.openEditModal}
+              goToKeyDetails={this.props.goToKeyDetails}
             />
             <KeySerialAssignmentValues
               selectedKeySerial={selectedKeySerial}
