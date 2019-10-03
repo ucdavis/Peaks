@@ -1,8 +1,8 @@
-﻿import * as PropTypes from 'prop-types';
-import * as React from 'react';
+﻿import * as React from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
-import { AppContext, ISpace } from '../../Types';
+import { Context } from '../../Context';
+import { ISpace } from '../../Types';
 
 interface IProps {
   onSelect: (space: ISpace) => void;
@@ -18,12 +18,8 @@ interface IState {
 // TODO: need a way to clear out selected space
 // Assign a space via search lookup, unless a space is already provided
 export default class SearchSpaces extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   constructor(props: IProps) {
     super(props);
