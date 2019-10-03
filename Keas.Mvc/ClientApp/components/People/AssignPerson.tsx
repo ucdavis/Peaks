@@ -1,10 +1,10 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
-import { AppContext, IPerson } from '../../Types';
+import { Context } from '../../Context';
+import { IPerson } from '../../Types';
 
 interface IProps {
   onSelect: (person: IPerson) => void;
@@ -22,12 +22,9 @@ interface IState {
 // TODO: need a way to clear out selected person
 // Assign a person via search lookup, unless a person is already provided
 export default class AssignPerson extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
     this.state = {
