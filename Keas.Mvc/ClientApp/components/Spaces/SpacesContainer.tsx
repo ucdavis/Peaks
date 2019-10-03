@@ -120,15 +120,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
                   <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
                   Associate
                 </Button>
-                <AssociateSpace
-                  key={`associate-space-${selectedId}`}
-                  selectedKeyInfo={this.props.selectedKeyInfo}
-                  onAssign={this._associateSpace}
-                  openModal={() => this._openAssociateModal(null)}
-                  closeModal={this._closeModals}
-                  isModalOpen={action === 'associate'}
-                  searchableTags={this.state.tags}
-                />
+                {action === 'associate' && this._renderAssociateModal()}
               </div>
             )}
           </div>
@@ -240,6 +232,20 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         inUseUpdated={this._assetInUseUpdated}
         totalUpdated={this._assetTotalUpdated}
         edited={this._assetEdited}
+      />
+    );
+  };
+
+  private _renderAssociateModal = () => {
+    return (
+      <AssociateSpace
+        key={'associate-space'}
+        selectedKeyInfo={this.props.selectedKeyInfo}
+        onAssign={this._associateSpace}
+        openModal={() => this._openAssociateModal(null)}
+        closeModal={this._closeModals}
+        isModalOpen={true}
+        searchableTags={this.state.tags}
       />
     );
   };

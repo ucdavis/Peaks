@@ -157,16 +157,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                   <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
                   Associate
                 </Button>
-                <AssociateSpace
-                  key={`associate-space-${selectedKeyId}`}
-                  selectedKeyInfo={selectedKeyInfo}
-                  selectedSpace={space}
-                  onAssign={this._associateSpace}
-                  isModalOpen={action === 'associate'}
-                  openModal={this._openAssociate}
-                  closeModal={this._closeModals}
-                  searchableTags={tags}
-                />
+                {action === 'associate' &&
+                  this._renderAssociateModal(selectedKeyId, selectedKeyInfo)}
               </div>
             )}
           </div>
@@ -274,6 +266,20 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       />
     );
   }
+  private _renderAssociateModal = (selectedId: number, keyInfo: IKeyInfo) => {
+    return (
+      <AssociateSpace
+        key={`associate-space-${selectedId}`}
+        selectedKeyInfo={keyInfo}
+        selectedSpace={this.props.space}
+        onAssign={this._associateSpace}
+        isModalOpen={true}
+        openModal={this._openAssociate}
+        closeModal={this._closeModals}
+        searchableTags={this.state.tags}
+      />
+    );
+  };
 
   private _renderEditModal = (selectedId: number, key: IKey) => {
     return (
