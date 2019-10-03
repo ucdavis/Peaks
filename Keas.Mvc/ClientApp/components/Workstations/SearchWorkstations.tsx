@@ -1,9 +1,9 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
-import { AppContext, ISpace, IWorkstation } from '../../Types';
+import { Context } from '../../Context';
+import { ISpace, IWorkstation } from '../../Types';
 
 interface IProps {
   selectedWorkstation?: IWorkstation;
@@ -23,12 +23,9 @@ export default class SearchWorkstations extends React.Component<
   IProps,
   IState
 > {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    person: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
     this.state = {
