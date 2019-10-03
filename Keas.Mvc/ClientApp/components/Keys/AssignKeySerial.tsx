@@ -1,5 +1,4 @@
 import { addYears, format, isBefore, startOfDay } from 'date-fns';
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';

@@ -1,8 +1,7 @@
-﻿import * as PropTypes from 'prop-types';
-import * as React from 'react';
+﻿import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { AppContext, IWorkstation } from '../../Types';
+import { IWorkstation } from '../../Types';
 import WorkstationEditValues from './WorkstationEditValues';
 
 interface IProps {
