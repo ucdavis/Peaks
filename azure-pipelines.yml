@@ -59,7 +59,7 @@ steps:
     publishWebProjects: false
     zipAfterPublish: false
     projects: './Keas.Jobs.SendMail/Keas.Jobs.SendMail.csproj'
-    arguments: '--configuration $(BuildConfiguration) --runtime win-x64 --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
+    arguments: '--configuration $(BuildConfiguration) --runtime win-x64 -f "netcoreapp2.0" --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'
