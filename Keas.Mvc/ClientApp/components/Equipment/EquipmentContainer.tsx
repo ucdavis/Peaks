@@ -135,11 +135,7 @@ export default class EquipmentContainer extends React.Component<
             <h2>
               <i className='fas fa-hdd fa-xs' /> Equipment
             </h2>
-            <Button
-              color='link'
-              onClick={this._openCreateModal}
-              key='add-equipment-button'
-            >
+            <Button color='link' onClick={this._openCreateModal}>
               <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add
               Equipment
             </Button>
