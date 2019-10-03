@@ -174,20 +174,10 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         <div className='card-content'>
           {shouldRenderTableView && this._renderTableOrListView(selectedKeyId)}
           {shouldRenderDetailsView && this._renderDetailsView()}
-          <EditKey
-            onEdit={this._editKey}
-            closeModal={this._closeModals}
-            modal={containerAction === 'edit'}
-            selectedKey={selectedKey}
-            searchableTags={tags}
-            checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValidOnEdit}
-          />
-          <DeleteKey
-            selectedKeyInfo={selectedKeyInfo}
-            deleteKey={this._deleteKey}
-            closeModal={this._closeModals}
-            modal={containerAction === 'delete' || action === 'delete'}
-          />
+          {containerAction === 'edit' &&
+            this._renderEditModal(selectedKeyId, selectedKey)}
+          {(containerAction === 'delete' || action === 'delete') &&
+            this._renderDeleteModal(selectedKeyId, selectedKeyInfo)}
         </div>
       </div>
     );
@@ -284,6 +274,32 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       />
     );
   }
+
+  private _renderEditModal = (selectedId: number, key: IKey) => {
+    return (
+      <EditKey
+        key={`edit-key-${selectedId}`}
+        onEdit={this._editKey}
+        closeModal={this._closeModals}
+        modal={!!key}
+        selectedKey={key}
+        searchableTags={this.state.tags}
+        checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValidOnEdit}
+      />
+    );
+  };
+
+  private _renderDeleteModal = (selectedId: number, keyInfo: IKeyInfo) => {
+    return (
+      <DeleteKey
+        key={`delete-key-${selectedId}`}
+        selectedKeyInfo={keyInfo}
+        deleteKey={this._deleteKey}
+        closeModal={this._closeModals}
+        modal={!!keyInfo}
+      />
+    );
+  };
 
   private _createKey = async (key: IKey) => {
     const request = {
