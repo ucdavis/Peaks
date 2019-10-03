@@ -1,7 +1,7 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Button } from 'reactstrap';
-import { AppContext, IHistory } from '../../Types';
+import { Context } from '../../Context';
+import { IHistory } from '../../Types';
 import HistoryList from './HistoryList';
 
 interface IState {
@@ -17,12 +17,9 @@ interface IProps {
 }
 
 export default class HistoryContainer extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
 
