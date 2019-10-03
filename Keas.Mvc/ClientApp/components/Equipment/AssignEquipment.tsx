@@ -63,123 +63,71 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     };
   }
 
-  // make sure we change the equipment we are updating if the parent changes selected equipment
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedEquipment !== this.props.selectedEquipment) {
-      this.setState({ equipment: nextProps.selectedEquipment });
-    }
-
-    if (nextProps.person !== this.state.person) {
-      this.setState({ person: nextProps.person });
-    }
-    if (
-      !!nextProps.selectedEquipment &&
-      !!nextProps.selectedEquipment.assignment
-    ) {
-      this.setState({
-        date: new Date(nextProps.selectedEquipment.assignment.expiresAt),
-        person: nextProps.selectedEquipment.assignment.person
-      });
-    }
-  }
-
   public render() {
     return (
-      <div>
-        <Button color='link' onClick={this.props.onAddNew}>
-          <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Equipment
-        </Button>
-        <Modal
-          isOpen={this.props.modal}
-          toggle={this._confirmClose}
-          size='lg'
-          className='equipment-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>
-              {this.props.selectedEquipment || this.props.person
-                ? 'Assign Equipment'
-                : 'Add Equipment'}
-            </h2>
-            <Button color='link' onClick={this._closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
-          <ModalBody>
-            <div className='container-fluid'>
-              <form>
+      <Modal
+        isOpen={this.props.modal}
+        toggle={this._confirmClose}
+        size='lg'
+        className='equipment-color'
+      >
+        <div className='modal-header row justify-content-between'>
+          <h2>
+            {this.props.selectedEquipment || this.props.person
+              ? 'Assign Equipment'
+              : 'Add Equipment'}
+          </h2>
+          <Button color='link' onClick={this._closeModal}>
+            <i className='fas fa-times fa-lg' />
+          </Button>
+        </div>
+        <ModalBody>
+          <div className='container-fluid'>
+            <form>
+              <div className='form-group'>
+                <label htmlFor='assignto'>Assign To</label>
+                <AssignPerson
+                  person={this.state.person}
+                  onSelect={this._onSelectPerson}
+                  isRequired={
+                    this.state.equipment && this.state.equipment.teamId !== 0
+                  }
+                  disabled={
+                    !!this.props.person ||
+                    (!!this.props.selectedEquipment &&
+                      !!this.props.selectedEquipment.assignment)
+                  } // disable if we are on person page or updating
+                />
+              </div>
+              {(!!this.state.person || !!this.props.person) && (
                 <div className='form-group'>
-                  <label htmlFor='assignto'>Assign To</label>
-                  <AssignPerson
-                    person={this.state.person}
-                    onSelect={this._onSelectPerson}
-                    isRequired={
-                      this.state.equipment && this.state.equipment.teamId !== 0
-                    }
-                    disabled={
-                      !!this.props.person ||
-                      (!!this.props.selectedEquipment &&
-                        !!this.props.selectedEquipment.assignment)
-                    } // disable if we are on person page or updating
+                  <label>Set the expiration date</label>
+                  <br />
+                  <DatePicker
+                    format='MM/dd/yyyy'
+                    required={true}
+                    clearIcon={null}
+                    value={this.state.date}
+                    onChange={this._changeDate}
                   />
                 </div>
-                {(!!this.state.person || !!this.props.person) && (
-                  <div className='form-group'>
-                    <label>Set the expiration date</label>
-                    <br />
-                    <DatePicker
-                      format='MM/dd/yyyy'
-                      required={true}
-                      clearIcon={null}
-                      value={this.state.date}
-                      onChange={this._changeDate}
-                    />
-                  </div>
-                )}
-                {!this.state.equipment && (
-                  <div className='form-group'>
-                    <SearchEquipment
-                      selectedEquipment={this.state.equipment}
-                      onSelect={this._onSelected}
-                      onDeselect={this._onDeselected}
-                      space={this.props.space}
-                      openDetailsModal={this.props.openDetailsModal}
-                    />
-                  </div>
-                )}
-                {this.state.equipment &&
-                !this.state.equipment.teamId && ( // if we are creating a new equipment, edit properties
-                    <div>
-                      <div className='row justify-content-between'>
-                        <h3>Create New Equipment</h3>
-                        <Button
-                          className='btn btn-link'
-                          onClick={this._onDeselected}
-                        >
-                          Clear{' '}
-                          <i
-                            className='fas fa-times fa-sm'
-                            aria-hidden='true'
-                          />
-                        </Button>
-                      </div>
-
-                      <EquipmentEditValues
-                        selectedEquipment={this.state.equipment}
-                        commonAttributeKeys={this.props.commonAttributeKeys}
-                        changeProperty={this._changeProperty}
-                        disableEditing={false}
-                        updateAttributes={this._updateAttributes}
-                        space={this.props.space}
-                        tags={this.props.tags}
-                        equipmentTypes={this.props.equipmentTypes}
-                      />
-                    </div>
-                  )}
-                {this.state.equipment && !!this.state.equipment.teamId && (
+              )}
+              {!this.state.equipment && (
+                <div className='form-group'>
+                  <SearchEquipment
+                    selectedEquipment={this.state.equipment}
+                    onSelect={this._onSelected}
+                    onDeselect={this._onDeselected}
+                    space={this.props.space}
+                    openDetailsModal={this.props.openDetailsModal}
+                  />
+                </div>
+              )}
+              {this.state.equipment &&
+              !this.state.equipment.teamId && ( // if we are creating a new equipment, edit properties
                   <div>
                     <div className='row justify-content-between'>
-                      <h3>Assign Existing Equipment</h3>
+                      <h3>Create New Equipment</h3>
                       <Button
                         className='btn btn-link'
                         onClick={this._onDeselected}
@@ -192,30 +140,54 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     <EquipmentEditValues
                       selectedEquipment={this.state.equipment}
                       commonAttributeKeys={this.props.commonAttributeKeys}
-                      disableEditing={true}
-                      openEditModal={this.props.openEditModal}
+                      changeProperty={this._changeProperty}
+                      disableEditing={false}
+                      updateAttributes={this._updateAttributes}
+                      space={this.props.space}
                       tags={this.props.tags}
+                      equipmentTypes={this.props.equipmentTypes}
                     />
                   </div>
                 )}
-                {this.state.error}
-              </form>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color='primary'
-              onClick={this._assignSelected}
-              disabled={!this.state.validState || this.state.submitting}
-            >
-              Go!{' '}
-              {this.state.submitting && (
-                <i className='fas fa-circle-notch fa-spin' />
+              {this.state.equipment && !!this.state.equipment.teamId && (
+                <div>
+                  <div className='row justify-content-between'>
+                    <h3>Assign Existing Equipment</h3>
+                    <Button
+                      className='btn btn-link'
+                      onClick={this._onDeselected}
+                    >
+                      Clear{' '}
+                      <i className='fas fa-times fa-sm' aria-hidden='true' />
+                    </Button>
+                  </div>
+
+                  <EquipmentEditValues
+                    selectedEquipment={this.state.equipment}
+                    commonAttributeKeys={this.props.commonAttributeKeys}
+                    disableEditing={true}
+                    openEditModal={this.props.openEditModal}
+                    tags={this.props.tags}
+                  />
+                </div>
               )}
-            </Button>{' '}
-          </ModalFooter>
-        </Modal>
-      </div>
+              {this.state.error}
+            </form>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color='primary'
+            onClick={this._assignSelected}
+            disabled={!this.state.validState || this.state.submitting}
+          >
+            Go!{' '}
+            {this.state.submitting && (
+              <i className='fas fa-circle-notch fa-spin' />
+            )}
+          </Button>{' '}
+        </ModalFooter>
+      </Modal>
     );
   }
 

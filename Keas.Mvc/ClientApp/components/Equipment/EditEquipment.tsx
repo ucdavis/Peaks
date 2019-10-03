@@ -49,12 +49,12 @@ export default class EditEquipment extends React.Component<IProps, IState> {
     };
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedEquipment !== this.props.selectedEquipment) {
-      this.setState({ equipment: nextProps.selectedEquipment });
-    }
-  }
+  // // make sure we change the key we are updating if the parent changes selected key
+  // public componentWillReceiveProps(nextProps) {
+  //   if (nextProps.selectedEquipment !== this.props.selectedEquipment) {
+  //     this.setState({ equipment: nextProps.selectedEquipment });
+  //   }
+  // }
 
   public render() {
     if (!this.state.equipment) {

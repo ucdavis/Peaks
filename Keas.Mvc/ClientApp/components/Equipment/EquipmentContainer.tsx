@@ -18,6 +18,7 @@ import EquipmentDetails from './EquipmentDetails';
 import EquipmentList from './EquipmentList';
 import EquipmentTableContainer from './EquipmentTableContainer';
 import RevokeEquipment from './RevokeEquipment';
+import { Button } from 'reactstrap';
 
 interface IState {
   commonAttributeKeys: string[];
@@ -134,65 +135,116 @@ export default class EquipmentContainer extends React.Component<
             <h2>
               <i className='fas fa-hdd fa-xs' /> Equipment
             </h2>
-            <AssignEquipment
-              onCreate={this._createAndMaybeAssignEquipment}
-              modal={
-                activeAsset && (action === 'create' || action === 'assign')
-              }
-              onAddNew={this._openCreateModal}
-              closeModal={this._closeModals}
-              selectedEquipment={detailEquipment}
-              person={this.props.person}
-              space={this.props.space}
-              tags={this.state.tags}
-              commonAttributeKeys={this.state.commonAttributeKeys}
-              openDetailsModal={this._openDetailsModal}
-              openEditModal={this._openEditModal}
-              equipmentTypes={this.state.equipmentTypes}
-            />
+            <Button
+              color='link'
+              onClick={this._openCreateModal}
+              key='add-equipment-button'
+            >
+              <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add
+              Equipment
+            </Button>
           </div>
         </div>
         <div className='card-content'>
           {this._renderTableOrList()}
-          <EquipmentDetails
-            selectedEquipment={detailEquipment}
-            modal={activeAsset && action === 'details' && !!detailEquipment}
-            closeModal={this._closeModals}
-            openEditModal={this._openEditModal}
-            openUpdateModal={this._openAssignModal}
-            updateSelectedEquipment={this._updateEquipmentFromDetails}
-          />
-          <EditEquipment
-            selectedEquipment={detailEquipment}
-            onEdit={this._editEquipment}
-            closeModal={this._closeModals}
-            openUpdateModal={this._openAssignModal}
-            modal={activeAsset && action === 'edit'}
-            tags={this.state.tags}
-            space={this.props.space}
-            commonAttributeKeys={this.state.commonAttributeKeys}
-            equipmentTypes={this.state.equipmentTypes}
-          />
-          <RevokeEquipment
-            selectedEquipment={detailEquipment}
-            revokeEquipment={this._revokeEquipment}
-            closeModal={this._closeModals}
-            openEditModal={this._openEditModal}
-            openUpdateModal={this._openAssignModal}
-            modal={activeAsset && action === 'revoke'}
-          />
-          <DeleteEquipment
-            selectedEquipment={detailEquipment}
-            deleteEquipment={this._deleteEquipment}
-            closeModal={this._closeModals}
-            openEditModal={this._openEditModal}
-            openUpdateModal={this._openAssignModal}
-            modal={activeAsset && action === 'delete'}
-          />
+          {activeAsset &&
+            (action === 'assign' || action === 'create') &&
+            this._renderAssignModal(selectedId, detailEquipment)}
+          {activeAsset &&
+            action === 'details' &&
+            this._renderDetailsModal(selectedId, detailEquipment)}
+          {activeAsset &&
+            action === 'edit' &&
+            this._renderEditModal(selectedId, detailEquipment)}
+          {activeAsset &&
+            action === 'revoke' &&
+            this._renderRevokeModal(selectedId, detailEquipment)}
+          {activeAsset &&
+            action === 'delete' &&
+            this._renderDeleteModal(selectedId, detailEquipment)}
         </div>
       </div>
     );
   }
+
+  private _renderAssignModal = (selectedId: number, equipment?: IEquipment) => {
+    return (
+      <AssignEquipment
+        key={`assign-equipment-${selectedId}`}
+        onCreate={this._createAndMaybeAssignEquipment}
+        modal={true}
+        onAddNew={this._openCreateModal}
+        closeModal={this._closeModals}
+        selectedEquipment={equipment}
+        person={this.props.person}
+        space={this.props.space}
+        tags={this.state.tags}
+        commonAttributeKeys={this.state.commonAttributeKeys}
+        openDetailsModal={this._openDetailsModal}
+        openEditModal={this._openEditModal}
+        equipmentTypes={this.state.equipmentTypes}
+      />
+    );
+  };
+
+  private _renderDetailsModal = (selectedId: number, equipment: IEquipment) => {
+    return (
+      <EquipmentDetails
+        key={`details-equipment-${selectedId}`}
+        selectedEquipment={equipment}
+        modal={!!equipment}
+        closeModal={this._closeModals}
+        openEditModal={this._openEditModal}
+        openUpdateModal={this._openAssignModal}
+        updateSelectedEquipment={this._updateEquipmentFromDetails}
+      />
+    );
+  };
+
+  private _renderEditModal = (selectedId: number, equipment: IEquipment) => {
+    return (
+      <EditEquipment
+        key={`edit-equipment-${selectedId}`}
+        selectedEquipment={equipment}
+        onEdit={this._editEquipment}
+        closeModal={this._closeModals}
+        openUpdateModal={this._openAssignModal}
+        modal={!!equipment}
+        tags={this.state.tags}
+        space={this.props.space}
+        commonAttributeKeys={this.state.commonAttributeKeys}
+        equipmentTypes={this.state.equipmentTypes}
+      />
+    );
+  };
+
+  private _renderRevokeModal = (selectedId: number, equipment: IEquipment) => {
+    return (
+      <RevokeEquipment
+        key={`revoke-equipment-${selectedId}`}
+        selectedEquipment={equipment}
+        revokeEquipment={this._revokeEquipment}
+        closeModal={this._closeModals}
+        openEditModal={this._openEditModal}
+        openUpdateModal={this._openAssignModal}
+        modal={!!equipment}
+      />
+    );
+  };
+
+  private _renderDeleteModal = (selectedId: number, equipment: IEquipment) => {
+    return (
+      <DeleteEquipment
+        key={`delete-equipment-${selectedId}`}
+        selectedEquipment={equipment}
+        deleteEquipment={this._deleteEquipment}
+        closeModal={this._closeModals}
+        openEditModal={this._openEditModal}
+        openUpdateModal={this._openAssignModal}
+        modal={!!equipment}
+      />
+    );
+  };
 
   private _renderTableOrList = () => {
     if (!!this.props.person || !!this.props.space) {
