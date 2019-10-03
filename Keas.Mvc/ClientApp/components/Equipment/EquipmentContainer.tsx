@@ -2,6 +2,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
+import { Button } from 'reactstrap';
 import {
   AppContext,
   IEquipment,
@@ -18,7 +19,6 @@ import EquipmentDetails from './EquipmentDetails';
 import EquipmentList from './EquipmentList';
 import EquipmentTableContainer from './EquipmentTableContainer';
 import RevokeEquipment from './RevokeEquipment';
-import { Button } from 'reactstrap';
 
 interface IState {
   commonAttributeKeys: string[];
@@ -163,6 +163,40 @@ export default class EquipmentContainer extends React.Component<
     );
   }
 
+  private _renderTableOrList = () => {
+    if (!!this.props.person || !!this.props.space) {
+      return (
+        <div>
+          <EquipmentList
+            equipment={this.state.equipment}
+            onRevoke={this._openRevokeModal}
+            onDelete={this._openDeleteModal}
+            onAdd={this._openAssignModal}
+            showDetails={this._openDetailsModal}
+            onEdit={this._openEditModal}
+          />
+        </div>
+      );
+    } else {
+      return (
+        <div>
+          <EquipmentTableContainer
+            equipment={this.state.equipment}
+            tags={this.state.tags}
+            equipmentAvailabilityLevels={this.state.equipmentAvailabilityLevels}
+            equipmentProtectionLevels={this.state.equipmentProtectionLevels}
+            equipmentTypes={this.state.equipmentTypes}
+            openRevokeModal={this._openRevokeModal}
+            openDeleteModal={this._openDeleteModal}
+            openAssignModal={this._openAssignModal}
+            openDetailsModal={this._openDetailsModal}
+            openEditModal={this._openEditModal}
+          />
+        </div>
+      );
+    }
+  };
+
   private _renderAssignModal = (selectedId: number, equipment?: IEquipment) => {
     return (
       <AssignEquipment
@@ -240,40 +274,6 @@ export default class EquipmentContainer extends React.Component<
         modal={!!equipment}
       />
     );
-  };
-
-  private _renderTableOrList = () => {
-    if (!!this.props.person || !!this.props.space) {
-      return (
-        <div>
-          <EquipmentList
-            equipment={this.state.equipment}
-            onRevoke={this._openRevokeModal}
-            onDelete={this._openDeleteModal}
-            onAdd={this._openAssignModal}
-            showDetails={this._openDetailsModal}
-            onEdit={this._openEditModal}
-          />
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <EquipmentTableContainer
-            equipment={this.state.equipment}
-            tags={this.state.tags}
-            equipmentAvailabilityLevels={this.state.equipmentAvailabilityLevels}
-            equipmentProtectionLevels={this.state.equipmentProtectionLevels}
-            equipmentTypes={this.state.equipmentTypes}
-            openRevokeModal={this._openRevokeModal}
-            openDeleteModal={this._openDeleteModal}
-            openAssignModal={this._openAssignModal}
-            openDetailsModal={this._openDetailsModal}
-            openEditModal={this._openEditModal}
-          />
-        </div>
-      );
-    }
   };
 
   private _createAndMaybeAssignEquipment = async (
