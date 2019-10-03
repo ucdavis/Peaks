@@ -221,24 +221,18 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
   private _renderListView(selectedKeyId: number) {
     // this is what is rendered inside of space container
-    const { space } = this.props;
     const { action } = this.props.match.params;
     const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
     return (
       <div>
+        {action === 'disassociate' &&
+          this._renderDisassociateModal(selectedKeyId, selectedKeyInfo)}
         <KeyList
           keysInfo={this.state.keys}
           onEdit={this._openEditModal}
           showDetails={this._openDetailsModal}
           onDelete={this._openDeleteModal}
           onDisassociate={this._openDisassociate}
-        />
-        <DisassociateSpace
-          selectedKeyInfo={selectedKeyInfo}
-          selectedSpace={space}
-          onDisassociate={this._disassociateSpace}
-          isModalOpen={action === 'disassociate'}
-          closeModal={this._closeModals}
         />
       </div>
     );
@@ -277,6 +271,22 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         openModal={this._openAssociate}
         closeModal={this._closeModals}
         searchableTags={this.state.tags}
+      />
+    );
+  };
+
+  private _renderDisassociateModal = (
+    selectedId: number,
+    selectedKeyInfo: IKeyInfo
+  ) => {
+    return (
+      <DisassociateSpace
+        key={`disassociate-key-${selectedId}`}
+        selectedKeyInfo={selectedKeyInfo}
+        selectedSpace={this.props.space}
+        onDisassociate={this._disassociateSpace}
+        isModalOpen={!!selectedKeyInfo}
+        closeModal={this._closeModals}
       />
     );
   };

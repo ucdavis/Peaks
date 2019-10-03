@@ -199,13 +199,8 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     const selectedSpace = spaces.find(k => k.id === selectedId);
     return (
       <div>
-        <DisassociateSpace
-          selectedKeyInfo={this.props.selectedKeyInfo}
-          selectedSpace={selectedSpace}
-          onDisassociate={this._disassociateSpace}
-          isModalOpen={action === 'disassociate'}
-          closeModal={this._closeModals}
-        />
+        {action === 'disassociate' &&
+          this._renderDisassociateModal(selectedId, selectedSpace)}
         <SpacesList
           selectedKeyInfo={selectedKeyInfo}
           spaces={spaces}
@@ -246,6 +241,22 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         closeModal={this._closeModals}
         isModalOpen={true}
         searchableTags={this.state.tags}
+      />
+    );
+  };
+
+  private _renderDisassociateModal = (
+    selectedId: number,
+    selectedSpace: ISpace
+  ) => {
+    return (
+      <DisassociateSpace
+        key={`disassociate-space-${selectedId}`}
+        selectedKeyInfo={this.props.selectedKeyInfo}
+        selectedSpace={selectedSpace}
+        onDisassociate={this._disassociateSpace}
+        isModalOpen={!!selectedSpace}
+        closeModal={this._closeModals}
       />
     );
   };
