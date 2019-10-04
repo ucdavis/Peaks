@@ -1,16 +1,9 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
-import {
-  AppContext,
-  IKey,
-  IKeyInfo,
-  IMatchParams,
-  IPerson,
-  ISpace
-} from '../../Types';
+import { Context } from '../../Context';
+import { IKey, IKeyInfo, IMatchParams, IPerson, ISpace } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
@@ -52,14 +45,8 @@ interface IState {
 }
 
 export default class KeyContainer extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   constructor(props) {
     super(props);

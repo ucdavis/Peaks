@@ -1,9 +1,9 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
-import { AppContext, IEquipment, IEquipmentLabel, ISpace } from '../../Types';
+import { Context } from '../../Context';
+import { IEquipment, IEquipmentLabel, ISpace } from '../../Types';
 
 interface IProps {
   onDeselect: () => void;
@@ -20,12 +20,9 @@ interface IState {
 
 // Search for existing equipment then send selection back to parent
 export default class SearchEquipment extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    person: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
     this.state = {

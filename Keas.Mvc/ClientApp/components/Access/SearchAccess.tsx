@@ -1,9 +1,9 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
-import { AppContext, IAccess } from '../../Types';
+import { Context } from '../../Context';
+import { IAccess } from '../../Types';
 
 interface IProps {
   selectedAccess?: IAccess;
@@ -18,12 +18,9 @@ interface IState {
 
 // Search for existing access then send selection back to parent
 export default class SearchAccess extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    person: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
     this.state = {

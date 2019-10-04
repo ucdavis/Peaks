@@ -1,9 +1,9 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
-import { AppContext, IKey, IKeySerial } from '../../Types';
+import { Context } from '../../Context';
+import { IKey, IKeySerial } from '../../Types';
 
 interface IProps {
   selectedKey?: IKey;
@@ -20,13 +20,8 @@ interface IState {
 
 // Search for existing key then send selection back to parent
 export default class SearchKeySerials extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    person: PropTypes.object,
-    team: PropTypes.object
-  };
-
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   constructor(props: IProps) {
     super(props);

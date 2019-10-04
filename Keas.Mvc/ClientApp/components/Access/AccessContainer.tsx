@@ -1,10 +1,9 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
+import { Context } from '../../Context';
 import {
-  AppContext,
   IAccess,
   IAccessAssignment,
   IMatchParams,
@@ -47,13 +46,9 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
 }
 
 export default class AccessContainer extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
 

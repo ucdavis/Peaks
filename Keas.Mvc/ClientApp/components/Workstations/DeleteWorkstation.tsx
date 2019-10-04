@@ -1,7 +1,7 @@
-﻿import * as PropTypes from 'prop-types';
-import * as React from 'react';
+﻿import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { AppContext, IWorkstation } from '../../Types';
+import { Context } from '../../Context';
+import { IWorkstation } from '../../Types';
 import WorkstationEditValues from './WorkstationEditValues';
 
 interface IProps {
@@ -16,11 +16,9 @@ interface IState {
 }
 
 export default class DeleteWorkstation extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
     this.state = {

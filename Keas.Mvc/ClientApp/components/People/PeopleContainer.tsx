@@ -1,14 +1,8 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
-import {
-  AppContext,
-  IKey,
-  IMatchParams,
-  IPerson,
-  IPersonInfo
-} from '../../Types';
+import { Context } from '../../Context';
+import { IKey, IMatchParams, IPerson, IPersonInfo } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
@@ -28,12 +22,9 @@ export default class PeopleContainer extends React.Component<
   RouteChildrenProps<IMatchParams>,
   IState
 > {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
 

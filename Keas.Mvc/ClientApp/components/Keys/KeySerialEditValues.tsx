@@ -1,7 +1,6 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { AppContext, IKey, IKeySerial } from '../../Types';
+import { IKey, IKeySerial } from '../../Types';
 
 interface IProps {
   keySerial: IKeySerial;

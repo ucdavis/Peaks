@@ -1,7 +1,7 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { AppContext, IKey, IKeySerial } from '../../Types';
+import { Context } from '../../Context';
+import { IKey, IKeySerial } from '../../Types';
 import KeySerialEditValues from './KeySerialEditValues';
 
 interface IProps {
@@ -21,12 +21,8 @@ interface IState {
 }
 
 export default class CreateKeySerial extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   constructor(props: IProps) {
     super(props);

@@ -1,14 +1,8 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
-import {
-  AppContext,
-  IKey,
-  IMatchParams,
-  IPerson,
-  IPersonInfo
-} from '../../Types';
+import { Context } from '../../Context';
+import { IKey, IMatchParams, IPerson, IPersonInfo } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import AccessContainer from '../Access/AccessContainer';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
@@ -37,13 +31,9 @@ interface IProps {
 }
 
 export default class PersonDetails extends React.Component<IProps, {}> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   public render() {
     if (
       !this.props.selectedPersonInfo ||
