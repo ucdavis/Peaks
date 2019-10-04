@@ -250,6 +250,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     };
     return (
       <KeyDetailContainer
+        key={`key-details-${selectedKeyId}`}
         route={routeObject}
         selectedKeyInfo={selectedKeyInfo}
         goBack={this._closeModals}

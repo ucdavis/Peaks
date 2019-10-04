@@ -2,6 +2,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
+import { Button } from 'reactstrap';
 import {
   AppContext,
   IKeyInfo,
@@ -17,7 +18,6 @@ import SearchTags from '../Tags/SearchTags';
 import SpacesDetails from './SpacesDetails';
 import SpacesList from './SpacesList';
 import SpacesTable from './SpacesTable';
-import { Button } from 'reactstrap';
 
 interface IProps extends RouteChildrenProps<IMatchParams> {
   selectedKeyInfo?: IKeyInfo;
@@ -220,6 +220,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     };
     return (
       <SpacesDetails
+        key={`spaces-details-${selectedSpaceInfo.id}`}
         route={routeObject}
         goBack={this._goBack}
         selectedSpaceInfo={selectedSpaceInfo}
