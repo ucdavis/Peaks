@@ -67,11 +67,13 @@ export default class PersonDetails extends React.Component<IProps, {}> {
               {canEdit && (
                 <div className='row justify-content-between'>
                   <EditPerson
+                    key={`edit-person-${this.props.selectedPersonInfo.id}`}
                     onEdit={this.props.onEdit}
                     selectedPerson={this.props.selectedPersonInfo.person}
                     tags={this.props.tags}
                   />
                   <DeletePerson
+                    key={`delete-person-${this.props.selectedPersonInfo.id}`}
                     selectedPersonInfo={this.props.selectedPersonInfo}
                     onDelete={this.props.onDelete}
                   />
