@@ -36,13 +36,6 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
     };
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (nextProps.selectedKeySerial !== this.props.selectedKeySerial) {
-      this.setState({ keySerial: nextProps.selectedKeySerial });
-    }
-  }
-
   public render() {
     if (!this.state.keySerial) {
       return null;

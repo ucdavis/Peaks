@@ -55,25 +55,6 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
     };
   }
 
-  // make sure we change the workstation we are updating if the parent changes selected workstation
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedWorkstation !== this.props.selectedWorkstation) {
-      this.setState({ workstation: nextProps.selectedWorkstation });
-    }
-
-    if (nextProps.person !== this.state.person) {
-      this.setState({ person: nextProps.person });
-    } else if (
-      !!nextProps.selectedWorkstation &&
-      !!nextProps.selectedWorkstation.assignment
-    ) {
-      this.setState({
-        date: new Date(nextProps.selectedWorkstation.assignment.expiresAt),
-        person: nextProps.selectedWorkstation.assignment.person
-      });
-    }
-  }
-
   public render() {
     return (
       <div>

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
+import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey, IKeyInfo, IMatchParams, IPerson, ISpace } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
@@ -134,35 +135,28 @@ export default class KeyContainer extends React.Component<IProps, IState> {
               />
             )}
             {onSpaceTab && shouldRenderTableView && (
-              <AssociateSpace
-                selectedKeyInfo={selectedKeyInfo}
-                selectedSpace={space}
-                onAssign={this._associateSpace}
-                isModalOpen={action === 'associate'}
-                openModal={this._openAssociate}
-                closeModal={this._closeModals}
-                searchableTags={tags}
-              />
+              <div>
+                <Button
+                  color='link'
+                  onClick={this._openAssociate}
+                  className='keys-anomaly'
+                >
+                  <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
+                  Associate
+                </Button>
+                {action === 'associate' &&
+                  this._renderAssociateModal(selectedKeyId, selectedKeyInfo)}
+              </div>
             )}
           </div>
         </div>
         <div className='card-content'>
           {shouldRenderTableView && this._renderTableOrListView(selectedKeyId)}
           {shouldRenderDetailsView && this._renderDetailsView()}
-          <EditKey
-            onEdit={this._editKey}
-            closeModal={this._closeModals}
-            modal={containerAction === 'edit'}
-            selectedKey={selectedKey}
-            searchableTags={tags}
-            checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValidOnEdit}
-          />
-          <DeleteKey
-            selectedKeyInfo={selectedKeyInfo}
-            deleteKey={this._deleteKey}
-            closeModal={this._closeModals}
-            modal={containerAction === 'delete' || action === 'delete'}
-          />
+          {containerAction === 'edit' &&
+            this._renderEditModal(selectedKeyId, selectedKey)}
+          {(containerAction === 'delete' || action === 'delete') &&
+            this._renderDeleteModal(selectedKeyId, selectedKeyInfo)}
         </div>
       </div>
     );
@@ -214,24 +208,18 @@ export default class KeyContainer extends React.Component<IProps, IState> {
 
   private _renderListView(selectedKeyId: number) {
     // this is what is rendered inside of space container
-    const { space } = this.props;
     const { action } = this.props.match.params;
     const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
     return (
       <div>
+        {action === 'disassociate' &&
+          this._renderDisassociateModal(selectedKeyId, selectedKeyInfo)}
         <KeyList
           keysInfo={this.state.keys}
           onEdit={this._openEditModal}
           showDetails={this._openDetailsModal}
           onDelete={this._openDeleteModal}
           onDisassociate={this._openDisassociate}
-        />
-        <DisassociateSpace
-          selectedKeyInfo={selectedKeyInfo}
-          selectedSpace={space}
-          onDisassociate={this._disassociateSpace}
-          isModalOpen={action === 'disassociate'}
-          closeModal={this._closeModals}
         />
       </div>
     );
@@ -249,6 +237,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     };
     return (
       <KeyDetailContainer
+        key={`key-details-${selectedKeyId}`}
         route={routeObject}
         selectedKeyInfo={selectedKeyInfo}
         goBack={this._closeModals}
@@ -259,6 +248,62 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       />
     );
   }
+  private _renderAssociateModal = (selectedId: number, keyInfo: IKeyInfo) => {
+    return (
+      <AssociateSpace
+        key={`associate-space-${selectedId}`}
+        selectedKeyInfo={keyInfo}
+        selectedSpace={this.props.space}
+        onAssign={this._associateSpace}
+        isModalOpen={true}
+        openModal={this._openAssociate}
+        closeModal={this._closeModals}
+        searchableTags={this.state.tags}
+      />
+    );
+  };
+
+  private _renderDisassociateModal = (
+    selectedId: number,
+    selectedKeyInfo: IKeyInfo
+  ) => {
+    return (
+      <DisassociateSpace
+        key={`disassociate-key-${selectedId}`}
+        selectedKeyInfo={selectedKeyInfo}
+        selectedSpace={this.props.space}
+        onDisassociate={this._disassociateSpace}
+        isModalOpen={!!selectedKeyInfo}
+        closeModal={this._closeModals}
+      />
+    );
+  };
+
+  private _renderEditModal = (selectedId: number, key: IKey) => {
+    return (
+      <EditKey
+        key={`edit-key-${selectedId}`}
+        onEdit={this._editKey}
+        closeModal={this._closeModals}
+        modal={!!key}
+        selectedKey={key}
+        searchableTags={this.state.tags}
+        checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValidOnEdit}
+      />
+    );
+  };
+
+  private _renderDeleteModal = (selectedId: number, keyInfo: IKeyInfo) => {
+    return (
+      <DeleteKey
+        key={`delete-key-${selectedId}`}
+        selectedKeyInfo={keyInfo}
+        deleteKey={this._deleteKey}
+        closeModal={this._closeModals}
+        modal={!!keyInfo}
+      />
+    );
+  };
 
   private _createKey = async (key: IKey) => {
     const request = {

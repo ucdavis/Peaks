@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
+import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey, IKeySerial, IMatchParams, IPerson } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
@@ -86,8 +87,6 @@ export default class KeySerialContainer extends React.Component<
   }
 
   public render() {
-    const { selectedKey } = this.props;
-
     if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
       return <Denied viewName='Keys' />;
     }
@@ -109,24 +108,10 @@ export default class KeySerialContainer extends React.Component<
             <h2>
               <i className='fas fa-key fa-xs' /> Key Serials
             </h2>
-            <AssignKeySerial
-              person={this.props.selectedPerson}
-              selectedKey={selectedKey}
-              selectedKeySerial={selectedKeySerial}
-              onCreate={this._createAndMaybeAssignKey}
-              isModalOpen={
-                activeAsset &&
-                (action === 'create' ||
-                  action === 'assign' ||
-                  action === 'update')
-              }
-              onOpenModal={this._openCreateModal}
-              closeModal={this._closeModals}
-              openEditModal={this._openEditModal}
-              openDetailsModal={this._openDetailsModal}
-              statusList={this.state.statusList}
-              goToKeyDetails={this.props.goToKeyDetails}
-            />
+            <Button color='link' onClick={this._openCreateModal}>
+              <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Key
+              Serial
+            </Button>
           </div>
         </div>
         <div className='card-content'>
@@ -150,42 +135,89 @@ export default class KeySerialContainer extends React.Component<
               showDetails={this._openDetailsModal}
             />
           )}
-          <KeySerialDetails
-            selectedKeySerial={selectedKeySerial}
-            isModalOpen={
-              activeAsset && action === 'details' && !!selectedKeySerial
-            }
-            closeModal={this._closeModals}
-            openEditModal={this._openEditModal}
-            openUpdateModal={this._openUpdateModal}
-            updateSelectedKeySerial={this._updateKeySerialsFromDetails}
-            goToKeyDetails={this.props.goToKeyDetails}
-          />
-          <RevokeKeySerial
-            selectedKeySerial={selectedKeySerial}
-            isModalOpen={
-              activeAsset && action === 'revoke' && !!selectedKeySerial
-            }
-            closeModal={this._closeModals}
-            openEditModal={this._openEditModal}
-            openUpdateModal={this._openUpdateModal}
-            updateSelectedKeySerial={this._updateKeySerialsFromDetails}
-            onRevoke={this._revokeKeySerial}
-            goToKeyDetails={this.props.goToKeyDetails}
-          />
-          <EditKeySerial
-            selectedKeySerial={selectedKeySerial}
-            onEdit={this._editKeySerial}
-            closeModal={this._closeModals}
-            openUpdateModal={this._openUpdateModal}
-            isModalOpen={activeAsset && action === 'edit'}
-            statusList={this.state.statusList}
-            goToKeyDetails={this.props.goToKeyDetails}
-          />
+          {activeAsset &&
+            (action === 'create' ||
+              action === 'assign' ||
+              action === 'update') &&
+            this._renderAssignModal(selectedKeySerialId, selectedKeySerial)}
+          {activeAsset &&
+            action === 'details' &&
+            this._renderDetailsModal(selectedKeySerialId, selectedKeySerial)}
+          {activeAsset &&
+            action === 'edit' &&
+            this._renderEditModal(selectedKeySerialId, selectedKeySerial)}
+          {activeAsset &&
+            action === 'revoke' &&
+            this._renderRevokeModal(selectedKeySerialId, selectedKeySerial)}
         </div>
       </div>
     );
   }
+
+  private _renderAssignModal = (selectedId: number, keySerial?: IKeySerial) => {
+    return (
+      <AssignKeySerial
+        key={selectedId ? `assign-keySerial-${selectedId}` : 'create-keySerial'}
+        person={this.props.selectedPerson}
+        selectedKey={this.props.selectedKey}
+        selectedKeySerial={keySerial}
+        onCreate={this._createAndMaybeAssignKey}
+        isModalOpen={true}
+        onOpenModal={this._openCreateModal}
+        closeModal={this._closeModals}
+        openEditModal={this._openEditModal}
+        openDetailsModal={this._openDetailsModal}
+        statusList={this.state.statusList}
+        goToKeyDetails={this.props.goToKeyDetails}
+      />
+    );
+  };
+
+  private _renderDetailsModal = (selectedId: number, keySerial: IKeySerial) => {
+    return (
+      <KeySerialDetails
+        key={`details-keySerial-${selectedId}`}
+        selectedKeySerial={keySerial}
+        isModalOpen={!!keySerial}
+        closeModal={this._closeModals}
+        openEditModal={this._openEditModal}
+        openUpdateModal={this._openUpdateModal}
+        updateSelectedKeySerial={this._updateKeySerialsFromDetails}
+        goToKeyDetails={this.props.goToKeyDetails}
+      />
+    );
+  };
+
+  private _renderEditModal = (selectedId: number, keySerial: IKeySerial) => {
+    return (
+      <EditKeySerial
+        key={`edit-keySerial-${selectedId}`}
+        selectedKeySerial={keySerial}
+        onEdit={this._editKeySerial}
+        closeModal={this._closeModals}
+        openUpdateModal={this._openUpdateModal}
+        isModalOpen={!!keySerial}
+        statusList={this.state.statusList}
+        goToKeyDetails={this.props.goToKeyDetails}
+      />
+    );
+  };
+
+  private _renderRevokeModal = (selectedId: number, keySerial: IKeySerial) => {
+    return (
+      <RevokeKeySerial
+        key={`revoke-keySerial-${selectedId}`}
+        selectedKeySerial={keySerial}
+        isModalOpen={!!keySerial}
+        closeModal={this._closeModals}
+        openEditModal={this._openEditModal}
+        openUpdateModal={this._openUpdateModal}
+        updateSelectedKeySerial={this._updateKeySerialsFromDetails}
+        onRevoke={this._revokeKeySerial}
+        goToKeyDetails={this.props.goToKeyDetails}
+      />
+    );
+  };
 
   private _createAndMaybeAssignKey = async (
     person: IPerson,

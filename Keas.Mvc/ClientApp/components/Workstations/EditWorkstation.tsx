@@ -35,13 +35,6 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
     };
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedWorkstation !== this.props.selectedWorkstation) {
-      this.setState({ workstation: nextProps.selectedWorkstation });
-    }
-  }
-
   public render() {
     if (!this.state.workstation) {
       return null;

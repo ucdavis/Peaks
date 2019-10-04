@@ -34,13 +34,6 @@ export default class EditAccess extends React.Component<IProps, IState> {
     };
   }
 
-  // make sure we change the access we are updating if the parent changes selected access
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedAccess !== this.props.selectedAccess) {
-      this.setState({ access: nextProps.selectedAccess });
-    }
-  }
-
   public render() {
     if (!this.state.access) {
       return null;

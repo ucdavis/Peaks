@@ -17,6 +17,13 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- task: UseDotNet@2
+  displayName: 'Use .NET Core 2.2 sdk'
+  inputs:
+    packageType: sdk
+    version: 2.2.106
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -52,7 +59,7 @@ steps:
     publishWebProjects: false
     zipAfterPublish: false
     projects: './Keas.Jobs.SendMail/Keas.Jobs.SendMail.csproj'
-    arguments: '--configuration $(BuildConfiguration) --runtime win-x64 --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
+    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact'

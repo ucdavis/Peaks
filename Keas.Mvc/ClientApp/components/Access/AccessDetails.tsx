@@ -25,17 +25,6 @@ export default class AccessDetails extends React.Component<IProps, {}> {
     this._fetchDetails(this.props.selectedAccess.id);
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (
-      nextProps.selectedAccess &&
-      (!this.props.selectedAccess ||
-        nextProps.selectedAccess.id !== this.props.selectedAccess.id)
-    ) {
-      this._fetchDetails(nextProps.selectedAccess.id);
-    }
-  }
-
   public render() {
     if (!this.props.selectedAccess) {
       return null;
