@@ -30,17 +30,6 @@ export default class WorkstationDetails extends React.Component<IProps, {}> {
     this._fetchDetails(this.props.selectedWorkstation.id);
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (
-      nextProps.selectedWorkstation &&
-      (!this.props.selectedWorkstation ||
-        nextProps.selectedWorkstation.id !== this.props.selectedWorkstation.id)
-    ) {
-      this._fetchDetails(nextProps.selectedWorkstation.id);
-    }
-  }
-
   public render() {
     if (!this.props.selectedWorkstation) {
       return null;

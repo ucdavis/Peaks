@@ -43,13 +43,6 @@ export default class EditKey extends React.Component<IProps, IState> {
     };
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedKey !== this.props.selectedKey) {
-      this.setState({ key: nextProps.selectedKey });
-    }
-  }
-
   public render() {
     if (!this.state.key) {
       return null;

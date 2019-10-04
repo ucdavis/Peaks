@@ -30,17 +30,6 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
     this._fetchDetails(this.props.selectedEquipment.id);
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (
-      nextProps.selectedEquipment &&
-      (!this.props.selectedEquipment ||
-        nextProps.selectedEquipment.id !== this.props.selectedEquipment.id)
-    ) {
-      this._fetchDetails(nextProps.selectedEquipment.id);
-    }
-  }
-
   public render() {
     if (!this.props.selectedEquipment) {
       return null;

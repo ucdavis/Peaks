@@ -31,16 +31,6 @@ export default class KeyDetails extends React.Component<IProps, {}> {
     this._fetchDetails(this.props.selectedKeySerial.id);
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (
-      nextProps.selectedKeySerial &&
-      (!this.props.selectedKeySerial ||
-        nextProps.selectedKeySerial.id !== this.props.selectedKeySerial.id)
-    ) {
-      this._fetchDetails(nextProps.selectedKeySerial.id);
-    }
-  }
   public render() {
     const { selectedKeySerial } = this.props;
 

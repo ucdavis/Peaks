@@ -138,6 +138,7 @@ export default class PeopleContainer extends React.Component<
   private _renderDetailsView = (detailPerson: IPersonInfo) => {
     return (
       <PersonDetails
+        key={`person-details-${detailPerson.id}`}
         router={this.props}
         selectedPersonInfo={detailPerson}
         tags={this.state.tags}

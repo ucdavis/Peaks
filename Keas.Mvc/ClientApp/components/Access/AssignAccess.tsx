@@ -46,91 +46,52 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     };
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedAccess !== this.props.selectedAccess) {
-      this.setState({ access: nextProps.selectedAccess });
-    }
-
-    if (nextProps.person !== this.props.person) {
-      this.setState({ person: nextProps.person });
-    }
-  }
-
   public render() {
     return (
-      <div>
-        <Button color='link' onClick={this.props.onAddNew}>
-          <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Access
-        </Button>
-        <Modal
-          isOpen={this.props.modal}
-          toggle={this._confirmClose}
-          size='lg'
-          className='access-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>
-              {this.props.selectedAccess || this.props.person
-                ? 'Assign Access'
-                : 'Add Access'}
-            </h2>
-            <Button color='link' onClick={this._closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
-          <ModalBody>
-            <div className='container-fluid'>
-              <form>
+      <Modal
+        isOpen={this.props.modal}
+        toggle={this._confirmClose}
+        size='lg'
+        className='access-color'
+      >
+        <div className='modal-header row justify-content-between'>
+          <h2>
+            {this.props.selectedAccess || this.props.person
+              ? 'Assign Access'
+              : 'Add Access'}
+          </h2>
+          <Button color='link' onClick={this._closeModal}>
+            <i className='fas fa-times fa-lg' />
+          </Button>
+        </div>
+        <ModalBody>
+          <div className='container-fluid'>
+            <form>
+              <div className='form-group'>
+                <label htmlFor='assignto'>Assign To</label>
+                <AssignPerson
+                  disabled={!!this.props.person}
+                  person={this.props.person || this.state.person}
+                  onSelect={this._onSelectPerson}
+                  isRequired={
+                    this.state.access && this.state.access.teamId !== 0
+                  }
+                />
+              </div>
+              {!this.state.access && (
                 <div className='form-group'>
-                  <label htmlFor='assignto'>Assign To</label>
-                  <AssignPerson
-                    disabled={!!this.props.person}
-                    person={this.props.person || this.state.person}
-                    onSelect={this._onSelectPerson}
-                    isRequired={
-                      this.state.access && this.state.access.teamId !== 0
-                    }
+                  <SearchAccess
+                    selectedAccess={this.state.access}
+                    onSelect={this._onSelected}
+                    onDeselect={this._onDeselected}
                   />
                 </div>
-                {!this.state.access && (
-                  <div className='form-group'>
-                    <SearchAccess
-                      selectedAccess={this.state.access}
-                      onSelect={this._onSelected}
-                      onDeselect={this._onDeselected}
-                    />
-                  </div>
-                )}
-                {!!this.state.access &&
-                !this.state.access.teamId && ( // if we are creating a new access, edit properties
-                    <div>
-                      <div className='row justify-content-between'>
-                        <h3>Create New Access</h3>
-                        <Button
-                          className='btn btn-link'
-                          onClick={this._onDeselected}
-                        >
-                          Clear{' '}
-                          <i
-                            className='fas fa-times fa-sm'
-                            aria-hidden='true'
-                          />
-                        </Button>
-                      </div>
-                      <AccessEditValues
-                        selectedAccess={this.state.access}
-                        changeProperty={this._changeProperty}
-                        disableEditing={false}
-                        onRevoke={null}
-                        tags={this.props.tags}
-                      />
-                    </div>
-                  )}
-                {!!this.state.access && !!this.state.access.teamId && (
+              )}
+              {!!this.state.access &&
+              !this.state.access.teamId && ( // if we are creating a new access, edit properties
                   <div>
                     <div className='row justify-content-between'>
-                      <h3>Assign Exisiting Access</h3>
+                      <h3>Create New Access</h3>
                       <Button
                         className='btn btn-link'
                         onClick={this._onDeselected}
@@ -141,45 +102,65 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     </div>
                     <AccessEditValues
                       selectedAccess={this.state.access}
-                      disableEditing={true}
-                      tags={this.props.tags}
-                      openEditModal={this.props.openEditModal}
+                      changeProperty={this._changeProperty}
+                      disableEditing={false}
                       onRevoke={null}
+                      tags={this.props.tags}
                     />
                   </div>
                 )}
-
-                {(!!this.state.person || !!this.props.person) && (
-                  <div className='form-group'>
-                    <label>Set the expiration date</label>
-                    <br />
-                    <DatePicker
-                      format='MM/dd/yyyy'
-                      required={true}
-                      clearIcon={null}
-                      value={this.state.date}
-                      onChange={this._changeDate}
-                    />
+              {!!this.state.access && !!this.state.access.teamId && (
+                <div>
+                  <div className='row justify-content-between'>
+                    <h3>Assign Exisiting Access</h3>
+                    <Button
+                      className='btn btn-link'
+                      onClick={this._onDeselected}
+                    >
+                      Clear{' '}
+                      <i className='fas fa-times fa-sm' aria-hidden='true' />
+                    </Button>
                   </div>
-                )}
-                {this.state.error}
-              </form>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color='primary'
-              onClick={this._assignSelected}
-              disabled={!this.state.validState || this.state.submitting}
-            >
-              Go!{' '}
-              {this.state.submitting && (
-                <i className='fas fa-circle-notch fa-spin' />
+                  <AccessEditValues
+                    selectedAccess={this.state.access}
+                    disableEditing={true}
+                    tags={this.props.tags}
+                    openEditModal={this.props.openEditModal}
+                    onRevoke={null}
+                  />
+                </div>
               )}
-            </Button>{' '}
-          </ModalFooter>
-        </Modal>
-      </div>
+
+              {(!!this.state.person || !!this.props.person) && (
+                <div className='form-group'>
+                  <label>Set the expiration date</label>
+                  <br />
+                  <DatePicker
+                    format='MM/dd/yyyy'
+                    required={true}
+                    clearIcon={null}
+                    value={this.state.date}
+                    onChange={this._changeDate}
+                  />
+                </div>
+              )}
+              {this.state.error}
+            </form>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color='primary'
+            onClick={this._assignSelected}
+            disabled={!this.state.validState || this.state.submitting}
+          >
+            Go!{' '}
+            {this.state.submitting && (
+              <i className='fas fa-circle-notch fa-spin' />
+            )}
+          </Button>{' '}
+        </ModalFooter>
+      </Modal>
     );
   }
 

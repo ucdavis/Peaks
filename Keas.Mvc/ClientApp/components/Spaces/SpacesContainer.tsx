@@ -2,6 +2,7 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
+import { Button } from 'reactstrap';
 import {
   AppContext,
   IKeyInfo,
@@ -111,14 +112,16 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
               <i className='fas fa-building fa-xs' /> Spaces
             </h2>
             {shouldRenderTableView && onKeysTab && (
-              <AssociateSpace
-                selectedKeyInfo={this.props.selectedKeyInfo}
-                onAssign={this._associateSpace}
-                openModal={() => this._openAssociateModal(null)}
-                closeModal={this._closeModals}
-                isModalOpen={action === 'associate'}
-                searchableTags={this.state.tags}
-              />
+              <div>
+                <Button
+                  color='link'
+                  onClick={() => this._openAssociateModal(null)}
+                >
+                  <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
+                  Associate
+                </Button>
+                {action === 'associate' && this._renderAssociateModal()}
+              </div>
             )}
           </div>
           {this.state.spaces.length === 0 && (
@@ -196,13 +199,8 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     const selectedSpace = spaces.find(k => k.id === selectedId);
     return (
       <div>
-        <DisassociateSpace
-          selectedKeyInfo={this.props.selectedKeyInfo}
-          selectedSpace={selectedSpace}
-          onDisassociate={this._disassociateSpace}
-          isModalOpen={action === 'disassociate'}
-          closeModal={this._closeModals}
-        />
+        {action === 'disassociate' &&
+          this._renderDisassociateModal(selectedId, selectedSpace)}
         <SpacesList
           selectedKeyInfo={selectedKeyInfo}
           spaces={spaces}
@@ -222,6 +220,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     };
     return (
       <SpacesDetails
+        key={`spaces-details-${selectedSpaceInfo.id}`}
         route={routeObject}
         goBack={this._goBack}
         selectedSpaceInfo={selectedSpaceInfo}
@@ -229,6 +228,36 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         inUseUpdated={this._assetInUseUpdated}
         totalUpdated={this._assetTotalUpdated}
         edited={this._assetEdited}
+      />
+    );
+  };
+
+  private _renderAssociateModal = () => {
+    return (
+      <AssociateSpace
+        key={'associate-space'}
+        selectedKeyInfo={this.props.selectedKeyInfo}
+        onAssign={this._associateSpace}
+        openModal={() => this._openAssociateModal(null)}
+        closeModal={this._closeModals}
+        isModalOpen={true}
+        searchableTags={this.state.tags}
+      />
+    );
+  };
+
+  private _renderDisassociateModal = (
+    selectedId: number,
+    selectedSpace: ISpace
+  ) => {
+    return (
+      <DisassociateSpace
+        key={`disassociate-space-${selectedId}`}
+        selectedKeyInfo={this.props.selectedKeyInfo}
+        selectedSpace={selectedSpace}
+        onDisassociate={this._disassociateSpace}
+        isModalOpen={!!selectedSpace}
+        closeModal={this._closeModals}
       />
     );
   };
