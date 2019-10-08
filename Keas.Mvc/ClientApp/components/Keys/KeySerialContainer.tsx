@@ -101,6 +101,9 @@ export default class KeySerialContainer extends React.Component<
     const selectedKeySerial = this.state.keySerials.find(
       s => s.id === selectedKeySerialId
     );
+    const reservedNames = this.state.keySerials.map(x =>
+      x.id !== selectedKeySerialId ? x.number : null
+    );
     return (
       <div className='card keys-color'>
         <div className='card-header-keys'>
@@ -139,13 +142,21 @@ export default class KeySerialContainer extends React.Component<
             (action === 'create' ||
               action === 'assign' ||
               action === 'update') &&
-            this._renderAssignModal(selectedKeySerialId, selectedKeySerial)}
+            this._renderAssignModal(
+              selectedKeySerialId,
+              selectedKeySerial,
+              reservedNames
+            )}
           {activeAsset &&
             action === 'details' &&
             this._renderDetailsModal(selectedKeySerialId, selectedKeySerial)}
           {activeAsset &&
             action === 'edit' &&
-            this._renderEditModal(selectedKeySerialId, selectedKeySerial)}
+            this._renderEditModal(
+              selectedKeySerialId,
+              selectedKeySerial,
+              reservedNames
+            )}
           {activeAsset &&
             action === 'revoke' &&
             this._renderRevokeModal(selectedKeySerialId, selectedKeySerial)}
@@ -154,13 +165,18 @@ export default class KeySerialContainer extends React.Component<
     );
   }
 
-  private _renderAssignModal = (selectedId: number, keySerial?: IKeySerial) => {
+  private _renderAssignModal = (
+    selectedId: number,
+    keySerial: IKeySerial,
+    reservedNames: string[]
+  ) => {
     return (
       <AssignKeySerial
         key={selectedId ? `assign-keySerial-${selectedId}` : 'create-keySerial'}
         person={this.props.selectedPerson}
         selectedKey={this.props.selectedKey}
         selectedKeySerial={keySerial}
+        reservedNames={reservedNames}
         onCreate={this._createAndMaybeAssignKey}
         isModalOpen={true}
         onOpenModal={this._openCreateModal}
@@ -188,16 +204,21 @@ export default class KeySerialContainer extends React.Component<
     );
   };
 
-  private _renderEditModal = (selectedId: number, keySerial: IKeySerial) => {
+  private _renderEditModal = (
+    selectedId: number,
+    keySerial: IKeySerial,
+    reservedNames: string[]
+  ) => {
     return (
       <EditKeySerial
         key={`edit-keySerial-${selectedId}`}
         selectedKeySerial={keySerial}
-        onEdit={this._editKeySerial}
-        closeModal={this._closeModals}
-        openUpdateModal={this._openUpdateModal}
-        isModalOpen={!!keySerial}
         statusList={this.state.statusList}
+        reservedNames={reservedNames}
+        isModalOpen={!!keySerial}
+        onEdit={this._editKeySerial}
+        openUpdateModal={this._openUpdateModal}
+        closeModal={this._closeModals}
         goToKeyDetails={this.props.goToKeyDetails}
       />
     );
