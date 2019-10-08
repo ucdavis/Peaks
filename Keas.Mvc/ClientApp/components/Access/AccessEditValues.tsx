@@ -72,7 +72,11 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
           {this.props.selectedAccess.teamId !== 0 &&
             this.props.selectedAccess.assignments.length > 0 && (
               <AccessAssignTable
-                onRevoke={async assignment => this.props.onRevoke(assignment)}
+                onRevoke={async assignment => {
+                  try {
+                    await this.props.onRevoke(assignment)
+                  } catch(e) {}
+                }}
                 assignments={this.props.selectedAccess.assignments}
               />
             )}
