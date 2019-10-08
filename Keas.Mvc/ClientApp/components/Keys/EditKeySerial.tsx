@@ -8,12 +8,12 @@ import KeySerialEditValues from './KeySerialEditValues';
 interface IProps {
   selectedKeySerial: IKeySerial;
   statusList: string[];
-  reservedNames: string[];
   isModalOpen: boolean;
   onEdit: (keySerial: IKeySerial) => void;
   openUpdateModal: (keySerial: IKeySerial) => void;
   closeModal: () => void;
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
+  checkIfKeySerialNumberIsValid: (serialNumber: string, id: number) => boolean;
 }
 
 interface IState {
@@ -156,7 +156,10 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
       valid = false;
       error = 'The serial number you have chosen is too long';
     } else if (
-      this.props.reservedNames.some(x => x === this.state.keySerial.number)
+      !this.props.checkIfKeySerialNumberIsValid(
+        this.state.keySerial.number,
+        this.state.keySerial.id
+      )
     ) {
       error =
         'The serial number you have entered is already in use by another key serial.';

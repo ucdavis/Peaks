@@ -13,15 +13,15 @@ interface IProps {
   person?: IPerson;
   selectedKey: IKey;
   selectedKeySerial: IKeySerial;
-  reservedNames: string[];
-  onCreate: (person: IPerson, keySerial: IKeySerial, date: any) => void;
+  statusList: string[];
   isModalOpen: boolean;
+  onCreate: (person: IPerson, keySerial: IKeySerial, date: any) => void;
   onOpenModal: () => void;
   closeModal: () => void;
   openEditModal: (keySerial: IKeySerial) => void;
   openDetailsModal: (keySerial: IKeySerial) => void;
-  statusList: string[];
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
+  checkIfKeySerialNumberIsValid: (serialNumber: string) => boolean;
 }
 
 interface IState {
@@ -327,7 +327,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
       valid = false;
       error = 'The serial number you have chosen is too long';
     } else if (
-      this.props.reservedNames.some(x => x === this.state.keySerial.number)
+      !this.props.checkIfKeySerialNumberIsValid(this.state.keySerial.number)
     ) {
       error =
         'The serial number you have entered is already in use by another key serial.';
