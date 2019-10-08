@@ -112,7 +112,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
             (action === 'assign' || action === 'create') &&
             this._renderAssignModal(selectedId, detailAccess)}
           {shouldRenderDetails &&
-            this._renderDetailsModal(selectedId, detailAccess)}
+            this._renderDetails(selectedId, detailAccess)}
           {activeAsset &&
             action === 'edit' &&
             this._renderEditModal(selectedId, detailAccess)}
@@ -185,7 +185,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     );
   };
 
-  private _renderDetailsModal = (selectedId: number, access: IAccess) => {
+  private _renderDetails = (selectedId: number, access: IAccess) => {
     return (
       <AccessDetails
         key={`details-access-${selectedId}`}
