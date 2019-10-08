@@ -1,6 +1,5 @@
 ﻿import * as React from 'react';
 import { toast } from 'react-toastify';
-import { Button, Modal, ModalBody } from 'reactstrap';
 import { Context } from '../../Context';
 import { IAccess, IAccessAssignment } from '../../Types';
 import AccessEditValues from './AccessEditValues';
@@ -32,28 +31,14 @@ export default class AccessDetails extends React.Component<IProps, {}> {
     const access = this.props.selectedAccess;
     return (
       <div>
-        <Modal
-          isOpen={this.props.modal}
-          toggle={this.props.closeModal}
-          size='lg'
-          className='access-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>Details for {access.name}</h2>
-            <Button color='link' onClick={this.props.closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
+        <h2>Details for {access.name}</h2>
 
-          <ModalBody>
-            <AccessEditValues
-              selectedAccess={access}
-              disableEditing={true}
-              onRevoke={this.props.onRevoke}
-              openEditModal={this.props.openEditModal}
-            />
-          </ModalBody>
-        </Modal>
+        <AccessEditValues
+          selectedAccess={access}
+          disableEditing={true}
+          onRevoke={this.props.onRevoke}
+          openEditModal={this.props.openEditModal}
+        />
       </div>
     );
   }

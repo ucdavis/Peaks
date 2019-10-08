@@ -92,6 +92,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     const activeAsset = !assetType || assetType === 'access';
     const selectedId = parseInt(id, 10);
     const detailAccess = this.state.accesses.find(a => a.id === selectedId);
+    const shouldRenderDetails = activeAsset && action === 'details';
 
     return (
       <div className='card access-color'>
@@ -106,12 +107,11 @@ export default class AccessContainer extends React.Component<IProps, IState> {
           </div>
         </div>
         <div className='card-content'>
-          {this._renderTableOrList()}
+          {!shouldRenderDetails && this._renderTableOrList()}
           {activeAsset &&
             (action === 'assign' || action === 'create') &&
             this._renderAssignModal(selectedId, detailAccess)}
-          {activeAsset &&
-            action === 'details' &&
+          {shouldRenderDetails &&
             this._renderDetailsModal(selectedId, detailAccess)}
           {activeAsset &&
             action === 'edit' &&
