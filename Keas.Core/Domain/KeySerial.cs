@@ -14,6 +14,7 @@ namespace Keas.Core.Domain
             Status = KeySerialStatusModel.Active;
         }
 
+        [Required]
         [StringLength(64)]
         public string Number { get; set; }
 
