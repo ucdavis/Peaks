@@ -72,7 +72,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
           {this.props.selectedAccess.teamId !== 0 &&
             this.props.selectedAccess.assignments.length > 0 && (
               <AccessAssignTable
-                onRevoke={async (assignment) => this.props.onRevoke(assignment)}
+                onRevoke={async assignment => this.props.onRevoke(assignment)}
                 assignments={this.props.selectedAccess.assignments}
               />
             )}
@@ -80,16 +80,4 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
       </div>
     );
   }
-
-  private _revokeSelected = async (personId: number) => {
-    const accessAssignment = this.props.selectedAccess.assignments.filter(
-      x => x.personId === personId
-    );
-    try {
-      await this.props.onRevoke(accessAssignment[0]);
-    } catch (err) {
-      // TODO: add submitting state and handle
-      return;
-    }
-  };
 }
