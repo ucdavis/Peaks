@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using Keas.Core.Resources;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,7 @@ namespace Keas.Core.Domain
             Status = KeySerialStatusModel.Active;
         }
 
+        [StringLength(64)]
         public string Number { get; set; }
 
         public string Status { get; set; }
