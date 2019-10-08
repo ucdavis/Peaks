@@ -1,10 +1,8 @@
 import * as React from 'react';
-import ReactTable from 'react-table';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IAccess, IAccessAssignment } from '../../Types';
-import { DateUtil } from '../../util/dates';
-import { ReactTableExpirationUtil } from '../../util/reactTable';
 import SearchTags from '../Tags/SearchTags';
+import AccessAssignTable from './AccessAssignTable';
 
 interface IProps {
   selectedAccess: IAccess;
@@ -17,49 +15,6 @@ interface IProps {
 
 export default class AccessEditValues extends React.Component<IProps, {}> {
   public render() {
-    const columns = [
-      {
-        Header: 'Name',
-        accessor: 'person.name',
-        filterMethod: (filter, row) =>
-          !!row[filter.id] &&
-          row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
-        filterable: true
-      },
-      {
-        Cell: row => (
-          <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
-        ),
-        Filter: ({ filter, onChange }) =>
-          ReactTableExpirationUtil.filter(filter, onChange),
-        Header: 'Expiration',
-        accessor: 'expiresAt',
-        filterMethod: (filter, row) =>
-          ReactTableExpirationUtil.filterMethod(filter, row),
-        filterable: true,
-        sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
-      },
-      {
-        Cell: row => (
-          <button
-            type='button'
-            className='btn btn-outline-danger'
-            disabled={this.props.disableEditing || !this.props.onRevoke}
-            onClick={() => this._revokeSelected(row.value)}
-          >
-            <i className='fas fa-trash' />
-          </button>
-        ),
-        Header: 'Revoke',
-        accessor: 'personId',
-        className: 'table-actions',
-        filterable: false,
-        headerClassName: 'table-actions',
-        resizable: false,
-        sortable: false
-      }
-    ];
-
     return (
       <div>
         {this.props.disableEditing && this.props.openEditModal && (
@@ -116,14 +71,10 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
           </div>
           {this.props.selectedAccess.teamId !== 0 &&
             this.props.selectedAccess.assignments.length > 0 && (
-              <div>
-                <h3>Assigned to:</h3>
-                <ReactTable
-                  data={this.props.selectedAccess.assignments}
-                  columns={columns}
-                  minRows={1}
-                />
-              </div>
+              <AccessAssignTable
+                onRevoke={async (assignment) => this.props.onRevoke(assignment)}
+                assignments={this.props.selectedAccess.assignments}
+              />
             )}
         </div>
       </div>
