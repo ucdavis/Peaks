@@ -1,7 +1,8 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
-import { AppContext, IPerson, IPersonInfo } from '../../Types';
+import { Context } from '../../Context';
+import { IKey, IMatchParams, IPerson, IPersonInfo } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
@@ -16,14 +17,14 @@ interface IState {
   tagFilters: string[]; // string of tag filters
   tags: string[]; // existing tags that are options for SearchTags
 }
-export default class PeopleContainer extends React.Component<{}, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+
+export default class PeopleContainer extends React.Component<
+  RouteChildrenProps<IMatchParams>,
+  IState
+> {
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
 
@@ -66,10 +67,9 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     }
 
     const {
-      personAction,
-      assetType,
-      personId
-    } = this.context.router.route.match.params;
+      containerAction: personAction,
+      containerId: personId
+    } = this.props.match.params;
     const selectedId = parseInt(personId, 10);
     const detailPerson = this.state.people.find(e => e.id === selectedId);
     return (
@@ -129,12 +129,15 @@ export default class PeopleContainer extends React.Component<{}, IState> {
   private _renderDetailsView = (detailPerson: IPersonInfo) => {
     return (
       <PersonDetails
+        key={`person-details-${detailPerson.id}`}
+        router={this.props}
         selectedPersonInfo={detailPerson}
         tags={this.state.tags}
         goBack={this._goBack}
         inUseUpdated={this._assetInUseUpdated}
         onEdit={this._editPerson}
         onDelete={this._deletePerson}
+        goToKeyDetails={this._goToKeyDetails}
       />
     );
   };
@@ -287,18 +290,24 @@ export default class PeopleContainer extends React.Component<{}, IState> {
     });
   };
 
+  private _goToKeyDetails = (key: IKey) => {
+    this.props.history.push(
+      `/${this.context.team.slug}/keys/details/${key.id}`
+    );
+  };
+
   private _openCreateModal = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/people/create`);
+    this.props.history.push(`${this._getBaseUrl()}/people/create`);
   };
 
   private _openDetailsModal = (person: IPerson) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/people/details/${person.id}`
     );
   };
 
   private _goBack = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/people`);
+    this.props.history.push(`${this._getBaseUrl()}/people`);
   };
 
   private _getBaseUrl = () => {

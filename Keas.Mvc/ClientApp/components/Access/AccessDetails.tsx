@@ -1,8 +1,8 @@
-﻿import * as PropTypes from 'prop-types';
-import * as React from 'react';
+﻿import * as React from 'react';
 import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
-import { AppContext, IAccess, IAccessAssignment } from '../../Types';
+import { Context } from '../../Context';
+import { IAccess, IAccessAssignment } from '../../Types';
 import AccessEditValues from './AccessEditValues';
 
 interface IProps {
@@ -15,28 +15,14 @@ interface IProps {
 }
 
 export default class AccessDetails extends React.Component<IProps, {}> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   public componentDidMount() {
     if (!this.props.selectedAccess) {
       return;
     }
     this._fetchDetails(this.props.selectedAccess.id);
-  }
-
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (
-      nextProps.selectedAccess &&
-      (!this.props.selectedAccess ||
-        nextProps.selectedAccess.id !== this.props.selectedAccess.id)
-    ) {
-      this._fetchDetails(nextProps.selectedAccess.id);
-    }
   }
 
   public render() {

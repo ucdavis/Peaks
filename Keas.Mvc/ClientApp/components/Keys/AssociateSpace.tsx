@@ -1,7 +1,7 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { AppContext, IKeyInfo, ISpace } from '../../Types';
+import { Context } from '../../Context';
+import { IKeyInfo, ISpace } from '../../Types';
 import SearchSpaces from '../Spaces/SearchSpaces';
 import KeyEditValues from './KeyEditValues';
 import SearchKeys from './SearchKeys';
@@ -27,12 +27,8 @@ interface IState {
 }
 
 export default class AssociateSpace extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   constructor(props: IProps) {
     super(props);
@@ -46,34 +42,7 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
     };
   }
 
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (nextProps.selectedKeyInfo !== this.props.selectedKeyInfo) {
-      this.setState({ selectedKeyInfo: nextProps.selectedKeyInfo });
-    }
-
-    if (nextProps.selectedSpace !== this.props.selectedSpace) {
-      this.setState({ selectedSpace: nextProps.selectedSpace });
-    }
-  }
-
   public render() {
-    const className = this.props.selectedKeyInfo ? '' : 'keys-anomaly'; // purple on keys/details
-    return (
-      <div>
-        <Button
-          className={className}
-          color='link'
-          onClick={this.props.openModal}
-        >
-          <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
-          Associate
-        </Button>
-        {this.renderModal()}
-      </div>
-    );
-  }
-
-  private renderModal() {
     const { isModalOpen, selectedKeyInfo, selectedSpace } = this.props;
     const { validState, submitting } = this.state;
 

@@ -1,7 +1,7 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Button } from 'reactstrap';
-import { AppContext, IPerson } from '../../Types';
+import { Context } from '../../Context';
+import { IPerson } from '../../Types';
 import { DateUtil } from '../../util/dates';
 
 interface IProps {
@@ -9,11 +9,9 @@ interface IProps {
 }
 
 export default class BioContainer extends React.Component<IProps, {}> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   public render() {
     return (
       <div className='card-content person-card'>

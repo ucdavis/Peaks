@@ -1,8 +1,8 @@
-﻿import * as PropTypes from 'prop-types';
-import * as React from 'react';
+﻿import * as React from 'react';
 import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
-import { AppContext, IWorkstation } from '../../Types';
+import { Context } from '../../Context';
+import { IWorkstation } from '../../Types';
 import HistoryContainer from '../History/HistoryContainer';
 import WorkstationAssignmentValues from './WorkstationAssignmentValues';
 import WorkstationEditValues from './WorkstationEditValues';
@@ -17,28 +17,14 @@ interface IProps {
 }
 
 export default class WorkstationDetails extends React.Component<IProps, {}> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   public componentDidMount() {
     if (!this.props.selectedWorkstation) {
       return;
     }
     this._fetchDetails(this.props.selectedWorkstation.id);
-  }
-
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (
-      nextProps.selectedWorkstation &&
-      (!this.props.selectedWorkstation ||
-        nextProps.selectedWorkstation.id !== this.props.selectedWorkstation.id)
-    ) {
-      this._fetchDetails(nextProps.selectedWorkstation.id);
-    }
   }
 
   public render() {

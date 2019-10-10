@@ -1,10 +1,12 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
+import { Button } from 'reactstrap';
+import { Context } from '../../Context';
 import {
-  AppContext,
   IAccess,
   IAccessAssignment,
+  IMatchParams,
   IPerson,
   ISpace
 } from '../../Types';
@@ -25,7 +27,7 @@ interface IState {
   tags: string[];
 }
 
-interface IProps {
+interface IProps extends RouteChildrenProps<IMatchParams> {
   assetInUseUpdated?: (
     type: string,
     spaceId: number,
@@ -44,13 +46,9 @@ interface IProps {
 }
 
 export default class AccessContainer extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
 
@@ -90,7 +88,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
-    const { action, assetType, id } = this.context.router.route.match.params;
+    const { action, assetType, id } = this.props.match.params;
     const activeAsset = !assetType || assetType === 'access';
     const selectedId = parseInt(id, 10);
     const detailAccess = this.state.accesses.find(a => a.id === selectedId);
@@ -102,45 +100,25 @@ export default class AccessContainer extends React.Component<IProps, IState> {
             <h2>
               <i className='fas fa-address-card fa-xs' /> Access
             </h2>
-            <AssignAccess
-              onAddNew={this._openCreateModal}
-              onCreate={this._createAndMaybeAssignAccess}
-              modal={
-                activeAsset && (action === 'create' || action === 'assign')
-              }
-              closeModal={this._closeModals}
-              selectedAccess={detailAccess}
-              person={this.props.person}
-              tags={this.state.tags}
-              openEditModal={this._openEditModal}
-            />
+            <Button color='link' onClick={this._openCreateModal}>
+              <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Access
+            </Button>
           </div>
         </div>
         <div className='card-content'>
           {this._renderTableOrList()}
-          <AccessDetails
-            selectedAccess={detailAccess}
-            modal={activeAsset && action === 'details' && !!detailAccess}
-            closeModal={this._closeModals}
-            openEditModal={this._openEditModal}
-            onRevoke={this._revokeAccess}
-            updateSelectedAccess={this._updateAccessFromDetails}
-          />
-          <EditAccess
-            onEdit={this._editAccess}
-            closeModal={this._closeModals}
-            modal={activeAsset && action === 'edit'}
-            selectedAccess={detailAccess}
-            onRevoke={this._revokeAccess}
-            tags={this.state.tags}
-          />
-          <DeleteAccess
-            selectedAccess={detailAccess}
-            onRevoke={this._revokeAccess}
-            closeModal={this._closeModals}
-            deleteAccess={this._deleteAccess}
-            modal={activeAsset && action === 'delete'}
-          />
+          {activeAsset &&
+            (action === 'assign' || action === 'create') &&
+            this._renderAssignModal(selectedId, detailAccess)}
+          {activeAsset &&
+            action === 'details' &&
+            this._renderDetailsModal(selectedId, detailAccess)}
+          {activeAsset &&
+            action === 'edit' &&
+            this._renderEditModal(selectedId, detailAccess)}
+          {activeAsset &&
+            action === 'delete' &&
+            this._renderDeleteModal(selectedId, detailAccess)}
         </div>
       </div>
     );
@@ -189,6 +167,77 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         </div>
       );
     }
+  };
+
+  private _renderAssignModal = (selectedId: number, access?: IAccess) => {
+    return (
+      <AssignAccess
+        key={`assign-access-${selectedId}`}
+        onAddNew={this._openCreateModal}
+        onCreate={this._createAndMaybeAssignAccess}
+        modal={true}
+        closeModal={this._closeModals}
+        selectedAccess={access}
+        person={this.props.person}
+        tags={this.state.tags}
+        openEditModal={this._openEditModal}
+      />
+    );
+  };
+
+  private _renderDetailsModal = (selectedId: number, access: IAccess) => {
+    return (
+      <AccessDetails
+        key={`details-access-${selectedId}`}
+        selectedAccess={access}
+        modal={!!access}
+        closeModal={this._closeModals}
+        openEditModal={this._openEditModal}
+        onRevoke={this._revokeAccess}
+        updateSelectedAccess={this._updateAccessFromDetails}
+      />
+    );
+  };
+
+  private _renderEditModal = (selectedId: number, access: IAccess) => {
+    return (
+      <EditAccess
+        key={`edit-access-${selectedId}`}
+        onEdit={this._editAccess}
+        closeModal={this._closeModals}
+        modal={!!access}
+        selectedAccess={access}
+        onRevoke={this._revokeAccess}
+        tags={this.state.tags}
+      />
+    );
+  };
+
+  // private _renderRevokeModal = (selectedId: number, access: IAccess) => {
+  //   return (
+  //     <RevokeEquipment
+  //       key={`revoke-equipment-${selectedId}`}
+  //       selectedEquipment={equipment}
+  //       revokeEquipment={this._revokeEquipment}
+  //       closeModal={this._closeModals}
+  //       openEditModal={this._openEditModal}
+  //       openUpdateModal={this._openAssignModal}
+  //       modal={!!equipment}
+  //     />
+  //   );
+  // };
+
+  private _renderDeleteModal = (selectedId: number, access: IAccess) => {
+    return (
+      <DeleteAccess
+        key={`delete-access-${selectedId}`}
+        selectedAccess={access}
+        onRevoke={this._revokeAccess}
+        closeModal={this._closeModals}
+        deleteAccess={this._deleteAccess}
+        modal={!!access}
+      />
+    );
   };
 
   private _filterTags = (filters: string[]) => {
@@ -436,9 +485,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   };
 
   private _openAssignModal = (access: IAccess) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/access/assign/${access.id}`
-    );
+    this.props.history.push(`${this._getBaseUrl()}/access/assign/${access.id}`);
   };
 
   private _openRevokeModal = (access: IAccess) => {
@@ -451,36 +498,32 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       this._revokeAccess(accessAssignment[0]);
     } // otherwise, pull up the modal
     else {
-      this.context.router.history.push(
+      this.props.history.push(
         `${this._getBaseUrl()}/access/revoke/${access.id}`
       );
     }
   };
 
   private _openCreateModal = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/access/create`);
+    this.props.history.push(`${this._getBaseUrl()}/access/create`);
   };
 
   private _openDetailsModal = (access: IAccess) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/access/details/${access.id}`
     );
   };
 
   private _openEditModal = (access: IAccess) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/access/edit/${access.id}`
-    );
+    this.props.history.push(`${this._getBaseUrl()}/access/edit/${access.id}`);
   };
 
   private _openDeleteModal = (access: IAccess) => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/access/delete/${access.id}`
-    );
+    this.props.history.push(`${this._getBaseUrl()}/access/delete/${access.id}`);
   };
 
   private _closeModals = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/access`);
+    this.props.history.push(`${this._getBaseUrl()}/access`);
   };
 
   private _getBaseUrl = () => {

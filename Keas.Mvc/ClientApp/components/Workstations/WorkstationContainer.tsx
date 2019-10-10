@@ -1,8 +1,9 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
-import { AppContext, IPerson, ISpace, IWorkstation } from '../../Types';
+import { Context } from '../../Context';
+import { IMatchParams, IPerson, ISpace, IWorkstation } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import AssignWorkstation from '../Workstations/AssignWorkstation';
@@ -12,7 +13,7 @@ import WorkstationDetails from '../Workstations/WorkstationDetails';
 import WorkstationList from './../Workstations/WorkstationList';
 import DeleteWorkstation from './DeleteWorkstation';
 
-interface IProps {
+interface IProps extends RouteChildrenProps<IMatchParams> {
   assetInUseUpdated?: (
     type: string,
     spaceId: number,
@@ -40,14 +41,8 @@ export default class WorkstationContainer extends React.Component<
   IProps,
   IState
 > {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   constructor(props) {
     super(props);
@@ -89,7 +84,7 @@ export default class WorkstationContainer extends React.Component<
     if (this.state.loading) {
       return <div>Loading Workstations...</div>;
     }
-    const { action, assetType, id } = this.context.router.route.match.params;
+    const { action, assetType, id } = this.props.match.params;
     const activeAsset = assetType === 'workstations';
     const selectedId = parseInt(id, 10);
     const selectedWorkstation = this.state.workstations.find(
@@ -119,54 +114,117 @@ export default class WorkstationContainer extends React.Component<
             onDelete={this._deleteWorkstation}
             onRevoke={this._openRevokeModal}
           />
-          <AssignWorkstation
-            closeModal={this._closeModals}
-            modal={activeAsset && (action === 'assign' || action === 'create')}
-            person={
-              selectedWorkstation && selectedWorkstation.assignment
-                ? selectedWorkstation.assignment.person
-                : this.props.person
-            }
-            selectedWorkstation={selectedWorkstation}
-            tags={this.props.tags}
-            space={this.props.space}
-            onCreate={this._createAndMaybeAssignWorkstation}
-            openEditModal={this._openEditModal}
-            openDetailsModal={this._openDetailsModal}
-            onAddNew={this._openCreateModal}
-          />
-          <WorkstationDetails
-            closeModal={this._closeModals}
-            modal={activeAsset && action === 'details'}
-            selectedWorkstation={selectedWorkstation}
-            openEditModal={this._openEditModal}
-            openUpdateModal={this._openAssignModal}
-            updateSelectedWorkstation={this._updateWorkstationFromDetails}
-          />
-          <EditWorkstation
-            closeModal={this._closeModals}
-            tags={this.props.tags}
-            modal={activeAsset && action === 'edit'}
-            selectedWorkstation={selectedWorkstation}
-            onEdit={this._editWorkstation}
-            openUpdateModal={this._openAssignModal}
-          />
-          <RevokeWorkstation
-            closeModal={this._closeModals}
-            revokeWorkstation={this._revokeWorkstation}
-            modal={activeAsset && action === 'revoke'}
-            selectedWorkstation={selectedWorkstation}
-          />
-          <DeleteWorkstation
-            selectedWorkstation={selectedWorkstation}
-            deleteWorkstation={this._deleteWorkstation}
-            closeModal={this._closeModals}
-            modal={activeAsset && action === 'delete'}
-          />
+
+          {activeAsset &&
+            (action === 'assign' || action === 'create') &&
+            this._renderAssignModal(selectedId, selectedWorkstation)}
+          {activeAsset &&
+            action === 'details' &&
+            this._renderDetailsModal(selectedId, selectedWorkstation)}
+          {activeAsset &&
+            action === 'edit' &&
+            this._renderEditModal(selectedId, selectedWorkstation)}
+          {activeAsset &&
+            action === 'revoke' &&
+            this._renderRevokeModal(selectedId, selectedWorkstation)}
+          {activeAsset &&
+            action === 'delete' &&
+            this._renderDeleteModal(selectedId, selectedWorkstation)}
         </div>
       </div>
     );
   }
+
+  private _renderAssignModal = (
+    selectedId: number,
+    workstation?: IWorkstation
+  ) => {
+    return (
+      <AssignWorkstation
+        key={
+          selectedId ? `assign-workstation-${selectedId}` : 'create-workstation'
+        }
+        closeModal={this._closeModals}
+        modal={true}
+        person={
+          workstation && workstation.assignment
+            ? workstation.assignment.person
+            : this.props.person
+        }
+        selectedWorkstation={workstation}
+        tags={this.props.tags}
+        space={this.props.space}
+        onCreate={this._createAndMaybeAssignWorkstation}
+        openEditModal={this._openEditModal}
+        openDetailsModal={this._openDetailsModal}
+        onAddNew={this._openCreateModal}
+      />
+    );
+  };
+
+  private _renderDetailsModal = (
+    selectedId: number,
+    workstation: IWorkstation
+  ) => {
+    return (
+      <WorkstationDetails
+        key={`details-workstation-${selectedId}`}
+        closeModal={this._closeModals}
+        modal={!!workstation}
+        selectedWorkstation={workstation}
+        openEditModal={this._openEditModal}
+        openUpdateModal={this._openAssignModal}
+        updateSelectedWorkstation={this._updateWorkstationFromDetails}
+      />
+    );
+  };
+
+  private _renderEditModal = (
+    selectedId: number,
+    workstation: IWorkstation
+  ) => {
+    return (
+      <EditWorkstation
+        key={`edit-workstation-${selectedId}`}
+        closeModal={this._closeModals}
+        tags={this.props.tags}
+        modal={!!workstation}
+        selectedWorkstation={workstation}
+        onEdit={this._editWorkstation}
+        openUpdateModal={this._openAssignModal}
+      />
+    );
+  };
+
+  private _renderRevokeModal = (
+    selectedId: number,
+    workstation: IWorkstation
+  ) => {
+    return (
+      <RevokeWorkstation
+        key={`revoke-workstation-${selectedId}`}
+        closeModal={this._closeModals}
+        revokeWorkstation={this._revokeWorkstation}
+        modal={!!workstation}
+        selectedWorkstation={workstation}
+      />
+    );
+  };
+
+  private _renderDeleteModal = (
+    selectedId: number,
+    workstation: IWorkstation
+  ) => {
+    return (
+      <DeleteWorkstation
+        key={`delete-workstation-${selectedId}`}
+        selectedWorkstation={workstation}
+        deleteWorkstation={this._deleteWorkstation}
+        closeModal={this._closeModals}
+        modal={!!workstation}
+      />
+    );
+  };
 
   private _createAndMaybeAssignWorkstation = async (
     person: IPerson,
@@ -414,45 +472,43 @@ export default class WorkstationContainer extends React.Component<
     if (
       this.state.workstations.findIndex(x => x.id === workstation.id) === -1
     ) {
-      this.context.router.history.push(
+      this.props.history.push(
         `/${this.context.team.slug}/spaces/details/${workstation.space.id}/workstations/details/${workstation.id}`
       );
     } else {
-      this.context.router.history.push(
+      this.props.history.push(
         `${this._getBaseUrl()}/workstations/details/${workstation.id}`
       );
     }
   };
 
   private _openEditModal = (workstation: IWorkstation) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/workstations/edit/${workstation.id}`
     );
   };
 
   private _openAssignModal = (workstation: IWorkstation) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/workstations/assign/${workstation.id}`
     );
   };
 
   private _openCreateModal = () => {
-    this.context.router.history.push(
-      `${this._getBaseUrl()}/workstations/create/`
-    );
+    this.props.history.push(`${this._getBaseUrl()}/workstations/create/`);
   };
 
   private _openRevokeModal = (workstation: IWorkstation) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/workstations/revoke/${workstation.id}`
     );
   };
 
   private _closeModals = () => {
     if (!!this.props.person && !this.props.space) {
-      this.context.router.history.push(`${this._getBaseUrl()}`);
+      this.props.history.push(`${this._getBaseUrl()}`);
     } else if (!this.props.person && !!this.props.space) {
-      this.context.router.history.push(`${this._getBaseUrl()}`);
+      this.props.history.push(`${this._getBaseUrl()}`);
     }
   };
 

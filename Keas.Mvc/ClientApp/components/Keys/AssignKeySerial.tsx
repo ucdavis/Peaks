@@ -1,9 +1,9 @@
 import { addYears, format, isBefore, startOfDay } from 'date-fns';
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { AppContext, IKey, IKeyInfo, IKeySerial, IPerson } from '../../Types';
+import { Context } from '../../Context';
+import { IKey, IKeyInfo, IKeySerial, IPerson } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
 import KeySerialEditValues from './KeySerialEditValues';
 import SearchKeys from './SearchKeys';
@@ -20,6 +20,7 @@ interface IProps {
   openEditModal: (keySerial: IKeySerial) => void;
   openDetailsModal: (keySerial: IKeySerial) => void;
   statusList: string[];
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 interface IState {
@@ -32,12 +33,8 @@ interface IState {
 }
 
 export default class AssignKey extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   constructor(props: IProps) {
     super(props);
@@ -61,39 +58,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
     };
   }
 
-  public componentWillReceiveProps(nextProps: IProps) {
-    // make sure we change the key we are updating if the parent changes selected key
-    if (nextProps.selectedKeySerial !== this.props.selectedKeySerial) {
-      this.setState({ keySerial: nextProps.selectedKeySerial });
-    }
-
-    if (nextProps.person !== this.state.person) {
-      this.setState({ person: nextProps.person });
-    }
-
-    const assignment =
-      nextProps.selectedKeySerial &&
-      nextProps.selectedKeySerial.keySerialAssignment;
-    if (!!assignment) {
-      this.setState({
-        date: new Date(assignment.expiresAt),
-        person: assignment.person
-      });
-    }
-  }
-
   public render() {
-    return (
-      <div>
-        <Button color='link' onClick={this.props.onOpenModal}>
-          <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Key Serial
-        </Button>
-        {this.renderModal()}
-      </div>
-    );
-  }
-
-  private renderModal() {
     const { isModalOpen, selectedKey } = this.props;
     const { person, keySerial } = this.state;
 
@@ -185,6 +150,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                         changeProperty={this._changeProperty}
                         disableEditing={false}
                         statusList={this.props.statusList}
+                        goToKeyDetails={this.props.goToKeyDetails}
                       />
                     )}
                   </div>
@@ -207,6 +173,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                     disableEditing={true}
                     openEditModal={this.props.openEditModal}
                     statusList={this.props.statusList}
+                    goToKeyDetails={this.props.goToKeyDetails}
                   />
                 </div>
               )}

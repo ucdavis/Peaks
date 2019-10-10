@@ -1,8 +1,8 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
-import { AppContext, IKeySerial } from '../../Types';
+import { Context } from '../../Context';
+import { IKey, IKeySerial } from '../../Types';
 import HistoryContainer from '../History/HistoryContainer';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
@@ -14,14 +14,12 @@ interface IProps {
   openUpdateModal: (keySerial: IKeySerial) => void;
   selectedKeySerial: IKeySerial;
   updateSelectedKeySerial: (keySerial: IKeySerial, id?: number) => void;
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 export default class KeyDetails extends React.Component<IProps, {}> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   public componentDidMount() {
     if (!this.props.selectedKeySerial) {
@@ -30,16 +28,6 @@ export default class KeyDetails extends React.Component<IProps, {}> {
     this._fetchDetails(this.props.selectedKeySerial.id);
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (
-      nextProps.selectedKeySerial &&
-      (!this.props.selectedKeySerial ||
-        nextProps.selectedKeySerial.id !== this.props.selectedKeySerial.id)
-    ) {
-      this._fetchDetails(nextProps.selectedKeySerial.id);
-    }
-  }
   public render() {
     const { selectedKeySerial } = this.props;
 
@@ -69,6 +57,7 @@ export default class KeyDetails extends React.Component<IProps, {}> {
               keySerial={selectedKeySerial}
               disableEditing={true}
               openEditModal={this.props.openEditModal}
+              goToKeyDetails={this.props.goToKeyDetails}
             />
             <KeySerialAssignmentValues
               selectedKeySerial={selectedKeySerial}

@@ -1,7 +1,9 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
-import { AppContext, IKey, IKeySerial, IPerson } from '../../Types';
+import { Button } from 'reactstrap';
+import { Context } from '../../Context';
+import { IKey, IKeySerial, IMatchParams, IPerson } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import AssignKeySerial from './AssignKeySerial';
@@ -17,7 +19,7 @@ interface IState {
   loading: boolean;
 }
 
-interface IProps {
+interface IProps extends RouteChildrenProps<IMatchParams> {
   selectedPerson?: IPerson;
   selectedKey?: IKey;
   assetInUseUpdated?: (
@@ -33,20 +35,15 @@ interface IProps {
     count: number
   ) => void;
   assetEdited?: (type: string, keySerialId: number, personId: number) => void;
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 export default class KeySerialContainer extends React.Component<
   IProps,
   IState
 > {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   constructor(props: IProps) {
     super(props);
@@ -90,8 +87,6 @@ export default class KeySerialContainer extends React.Component<
   }
 
   public render() {
-    const { selectedKey } = this.props;
-
     if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
       return <Denied viewName='Keys' />;
     }
@@ -100,7 +95,7 @@ export default class KeySerialContainer extends React.Component<
       return <h2>Loading...</h2>;
     }
 
-    const { action, assetType, id } = this.context.router.route.match.params;
+    const { action, assetType, id } = this.props.match.params;
     const activeAsset = !assetType || assetType === 'keyserials';
     const selectedKeySerialId = parseInt(id, 10);
     const selectedKeySerial = this.state.keySerials.find(
@@ -113,23 +108,10 @@ export default class KeySerialContainer extends React.Component<
             <h2>
               <i className='fas fa-key fa-xs' /> Key Serials
             </h2>
-            <AssignKeySerial
-              person={this.props.selectedPerson}
-              selectedKey={selectedKey}
-              selectedKeySerial={selectedKeySerial}
-              onCreate={this._createAndMaybeAssignKey}
-              isModalOpen={
-                activeAsset &&
-                (action === 'create' ||
-                  action === 'assign' ||
-                  action === 'update')
-              }
-              onOpenModal={this._openCreateModal}
-              closeModal={this._closeModals}
-              openEditModal={this._openEditModal}
-              openDetailsModal={this._openDetailsModal}
-              statusList={this.state.statusList}
-            />
+            <Button color='link' onClick={this._openCreateModal}>
+              <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Key
+              Serial
+            </Button>
           </div>
         </div>
         <div className='card-content'>
@@ -153,39 +135,89 @@ export default class KeySerialContainer extends React.Component<
               showDetails={this._openDetailsModal}
             />
           )}
-          <KeySerialDetails
-            selectedKeySerial={selectedKeySerial}
-            isModalOpen={
-              activeAsset && action === 'details' && !!selectedKeySerial
-            }
-            closeModal={this._closeModals}
-            openEditModal={this._openEditModal}
-            openUpdateModal={this._openUpdateModal}
-            updateSelectedKeySerial={this._updateKeySerialsFromDetails}
-          />
-          <RevokeKeySerial
-            selectedKeySerial={selectedKeySerial}
-            isModalOpen={
-              activeAsset && action === 'revoke' && !!selectedKeySerial
-            }
-            closeModal={this._closeModals}
-            openEditModal={this._openEditModal}
-            openUpdateModal={this._openUpdateModal}
-            updateSelectedKeySerial={this._updateKeySerialsFromDetails}
-            onRevoke={this._revokeKeySerial}
-          />
-          <EditKeySerial
-            selectedKeySerial={selectedKeySerial}
-            onEdit={this._editKeySerial}
-            closeModal={this._closeModals}
-            openUpdateModal={this._openUpdateModal}
-            isModalOpen={activeAsset && action === 'edit'}
-            statusList={this.state.statusList}
-          />
+          {activeAsset &&
+            (action === 'create' ||
+              action === 'assign' ||
+              action === 'update') &&
+            this._renderAssignModal(selectedKeySerialId, selectedKeySerial)}
+          {activeAsset &&
+            action === 'details' &&
+            this._renderDetailsModal(selectedKeySerialId, selectedKeySerial)}
+          {activeAsset &&
+            action === 'edit' &&
+            this._renderEditModal(selectedKeySerialId, selectedKeySerial)}
+          {activeAsset &&
+            action === 'revoke' &&
+            this._renderRevokeModal(selectedKeySerialId, selectedKeySerial)}
         </div>
       </div>
     );
   }
+
+  private _renderAssignModal = (selectedId: number, keySerial?: IKeySerial) => {
+    return (
+      <AssignKeySerial
+        key={selectedId ? `assign-keySerial-${selectedId}` : 'create-keySerial'}
+        person={this.props.selectedPerson}
+        selectedKey={this.props.selectedKey}
+        selectedKeySerial={keySerial}
+        onCreate={this._createAndMaybeAssignKey}
+        isModalOpen={true}
+        onOpenModal={this._openCreateModal}
+        closeModal={this._closeModals}
+        openEditModal={this._openEditModal}
+        openDetailsModal={this._openDetailsModal}
+        statusList={this.state.statusList}
+        goToKeyDetails={this.props.goToKeyDetails}
+      />
+    );
+  };
+
+  private _renderDetailsModal = (selectedId: number, keySerial: IKeySerial) => {
+    return (
+      <KeySerialDetails
+        key={`details-keySerial-${selectedId}`}
+        selectedKeySerial={keySerial}
+        isModalOpen={!!keySerial}
+        closeModal={this._closeModals}
+        openEditModal={this._openEditModal}
+        openUpdateModal={this._openUpdateModal}
+        updateSelectedKeySerial={this._updateKeySerialsFromDetails}
+        goToKeyDetails={this.props.goToKeyDetails}
+      />
+    );
+  };
+
+  private _renderEditModal = (selectedId: number, keySerial: IKeySerial) => {
+    return (
+      <EditKeySerial
+        key={`edit-keySerial-${selectedId}`}
+        selectedKeySerial={keySerial}
+        onEdit={this._editKeySerial}
+        closeModal={this._closeModals}
+        openUpdateModal={this._openUpdateModal}
+        isModalOpen={!!keySerial}
+        statusList={this.state.statusList}
+        goToKeyDetails={this.props.goToKeyDetails}
+      />
+    );
+  };
+
+  private _renderRevokeModal = (selectedId: number, keySerial: IKeySerial) => {
+    return (
+      <RevokeKeySerial
+        key={`revoke-keySerial-${selectedId}`}
+        selectedKeySerial={keySerial}
+        isModalOpen={!!keySerial}
+        closeModal={this._closeModals}
+        openEditModal={this._openEditModal}
+        openUpdateModal={this._openUpdateModal}
+        updateSelectedKeySerial={this._updateKeySerialsFromDetails}
+        onRevoke={this._revokeKeySerial}
+        goToKeyDetails={this.props.goToKeyDetails}
+      />
+    );
+  };
 
   private _createAndMaybeAssignKey = async (
     person: IPerson,
@@ -391,49 +423,49 @@ export default class KeySerialContainer extends React.Component<
   };
 
   private _openAssignModal = (keySerial: IKeySerial) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/keyserials/assign/${keySerial.id}`
     );
   };
 
   private _openCreateModal = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}/keyserials/create`);
+    this.props.history.push(`${this._getBaseUrl()}/keyserials/create`);
   };
 
   private _openDetailsModal = (keySerial: IKeySerial) => {
     // if we are on person page, and this serial is not in our state
     // this happens on the search, when selecting already assigned
     if (this.state.keySerials.findIndex(x => x.id === keySerial.id) === -1) {
-      this.context.router.history.push(
+      this.props.history.push(
         `/${this.context.team.slug}/keys/details/${keySerial.key.id}/keyserials/details/${keySerial.id}`
       );
     } else {
-      this.context.router.history.push(
+      this.props.history.push(
         `${this._getBaseUrl()}/keyserials/details/${keySerial.id}`
       );
     }
   };
 
   private _openRevokeModal = (keySerial: IKeySerial) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/keyserials/revoke/${keySerial.id}`
     );
   };
 
   private _openEditModal = (keySerial: IKeySerial) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/keyserials/edit/${keySerial.id}`
     );
   };
 
   private _openUpdateModal = (keySerial: IKeySerial) => {
-    this.context.router.history.push(
+    this.props.history.push(
       `${this._getBaseUrl()}/keyserials/update/${keySerial.id}`
     );
   };
 
   private _closeModals = () => {
-    this.context.router.history.push(`${this._getBaseUrl()}`);
+    this.props.history.push(`${this._getBaseUrl()}`);
   };
 
   private _getBaseUrl = () => {

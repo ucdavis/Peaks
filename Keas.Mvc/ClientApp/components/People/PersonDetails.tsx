@@ -1,7 +1,8 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
-import { AppContext, IPerson, IPersonInfo } from '../../Types';
+import { Context } from '../../Context';
+import { IKey, IMatchParams, IPerson, IPersonInfo } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import AccessContainer from '../Access/AccessContainer';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
@@ -13,6 +14,7 @@ import DeletePerson from './DeletePerson';
 import EditPerson from './EditPerson';
 
 interface IProps {
+  router: RouteChildrenProps<IMatchParams>;
   goBack: () => void;
   selectedPersonInfo: IPersonInfo;
   tags: string[];
@@ -25,16 +27,13 @@ interface IProps {
   edited?: (type: string, spaceId: number, personId: number) => void;
   onEdit: (person: IPerson) => void;
   onDelete: (person: IPerson) => void;
+  goToKeyDetails: (key: IKey) => void;
 }
 
 export default class PersonDetails extends React.Component<IProps, {}> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    permissions: PropTypes.array,
-    router: PropTypes.object,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   public render() {
     if (
       !this.props.selectedPersonInfo ||
@@ -58,11 +57,13 @@ export default class PersonDetails extends React.Component<IProps, {}> {
               {canEdit && (
                 <div className='row justify-content-between'>
                   <EditPerson
+                    key={`edit-person-${this.props.selectedPersonInfo.id}`}
                     onEdit={this.props.onEdit}
                     selectedPerson={this.props.selectedPersonInfo.person}
                     tags={this.props.tags}
                   />
                   <DeletePerson
+                    key={`delete-person-${this.props.selectedPersonInfo.id}`}
                     selectedPersonInfo={this.props.selectedPersonInfo}
                     onDelete={this.props.onDelete}
                   />
@@ -89,21 +90,26 @@ export default class PersonDetails extends React.Component<IProps, {}> {
         </div>
 
         <KeySerialContainer
+          {...this.props.router}
           selectedPerson={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
+          goToKeyDetails={this.props.goToKeyDetails}
         />
         <EquipmentContainer
+          {...this.props.router}
           person={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
         />
         <AccessContainer
+          {...this.props.router}
           person={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
           assetEdited={this.props.edited}
         />
         <WorkstationContainer
+          {...this.props.router}
           person={this.props.selectedPersonInfo.person}
           tags={this.props.tags}
           assetInUseUpdated={this.props.inUseUpdated}

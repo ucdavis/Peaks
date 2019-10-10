@@ -1,8 +1,8 @@
-﻿import * as PropTypes from 'prop-types';
-import * as React from 'react';
+﻿import * as React from 'react';
 import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
-import { AppContext, IEquipment } from '../../Types';
+import { Context } from '../../Context';
+import { IEquipment } from '../../Types';
 import HistoryContainer from '../History/HistoryContainer';
 import EquipmentAssignmentValues from './EquipmentAssignmentValues';
 import EquipmentEditValues from './EquipmentEditValues';
@@ -17,28 +17,14 @@ interface IProps {
 }
 
 export default class EquipmentDetails extends React.Component<IProps, {}> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   public componentDidMount() {
     if (!this.props.selectedEquipment) {
       return;
     }
     this._fetchDetails(this.props.selectedEquipment.id);
-  }
-
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (
-      nextProps.selectedEquipment &&
-      (!this.props.selectedEquipment ||
-        nextProps.selectedEquipment.id !== this.props.selectedEquipment.id)
-    ) {
-      this._fetchDetails(nextProps.selectedEquipment.id);
-    }
   }
 
   public render() {

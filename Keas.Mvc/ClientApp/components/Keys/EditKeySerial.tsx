@@ -1,7 +1,7 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { AppContext, IKeySerial } from '../../Types';
+import { Context } from '../../Context';
+import { IKey, IKeySerial } from '../../Types';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
 
@@ -12,6 +12,7 @@ interface IProps {
   openUpdateModal: (keySerial: IKeySerial) => void;
   selectedKeySerial: IKeySerial;
   statusList: string[];
+  goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
 interface IState {
@@ -22,12 +23,8 @@ interface IState {
 }
 
 export default class EditKeySerial extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   constructor(props: IProps) {
     super(props);
@@ -37,13 +34,6 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
       submitting: false,
       validState: false
     };
-  }
-
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps: IProps) {
-    if (nextProps.selectedKeySerial !== this.props.selectedKeySerial) {
-      this.setState({ keySerial: nextProps.selectedKeySerial });
-    }
   }
 
   public render() {
@@ -75,6 +65,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
                 changeProperty={this._changeProperty}
                 disableEditing={false}
                 statusList={this.props.statusList}
+                goToKeyDetails={this.props.goToKeyDetails}
               />
 
               <KeySerialAssignmentValues

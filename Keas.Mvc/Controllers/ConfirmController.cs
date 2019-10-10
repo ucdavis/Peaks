@@ -63,8 +63,14 @@ namespace Keas.Mvc.Controllers
         
         public async Task<IActionResult> AcceptKey(int serialId)
         {
+            var person = await _securityService.GetPerson(Team);
+            if (person == null)
+            {
+                Message = "You are not yet added to the system.";
+                return RedirectToAction("NoAccess", "Home");
+            }
             var keyAssignment =
-                await _context.KeySerials.Where(s => s.Id == serialId).Select(sa => sa.KeySerialAssignment).FirstAsync();
+                await _context.KeySerials.Where(s => s.Id == serialId && s.KeySerialAssignment.PersonId == person.Id).Select(sa => sa.KeySerialAssignment).FirstAsync();
             keyAssignment.IsConfirmed = true;
             keyAssignment.ConfirmedAt = DateTime.UtcNow;
             _context.Update(keyAssignment);
@@ -79,7 +85,14 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> AcceptWorkstation(int workstationId)
         {
-            var workstationAssignment = await _context.Workstations.Where(w => w.Id == workstationId)
+            var person = await _securityService.GetPerson(Team);
+            if (person == null)
+            {
+                Message = "You are not yet added to the system.";
+                return RedirectToAction("NoAccess", "Home");
+            }
+
+            var workstationAssignment = await _context.Workstations.Where(w => w.Id == workstationId && w.Assignment.PersonId == person.Id)
                 .Select(wa => wa.Assignment).FirstAsync();
             workstationAssignment.IsConfirmed = true;
             workstationAssignment.ConfirmedAt = DateTime.UtcNow;;
@@ -97,8 +110,15 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> AcceptEquipment(int equipmentId)
         {
+            var person = await _securityService.GetPerson(Team);
+            if (person == null)
+            {
+                Message = "You are not yet added to the system.";
+                return RedirectToAction("NoAccess", "Home");
+            }
+
             var equipmentAssignment = await 
-                _context.Equipment.Where(e => e.Id == equipmentId).Select(eq => eq.Assignment).FirstAsync();
+                _context.Equipment.Where(e => e.Id == equipmentId && e.Assignment.PersonId == person.Id).Select(eq => eq.Assignment).FirstAsync();
             equipmentAssignment.IsConfirmed = true;
             equipmentAssignment.ConfirmedAt = DateTime.UtcNow;
             _context.Update(equipmentAssignment);

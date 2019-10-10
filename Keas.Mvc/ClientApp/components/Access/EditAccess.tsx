@@ -1,7 +1,7 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { AppContext, IAccess, IAccessAssignment, IPerson } from '../../Types';
+import { Context } from '../../Context';
+import { IAccess, IAccessAssignment, IPerson } from '../../Types';
 import AccessEditValues from './AccessEditValues';
 
 interface IProps {
@@ -21,10 +21,9 @@ interface IState {
 }
 
 export default class EditAccess extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -33,13 +32,6 @@ export default class EditAccess extends React.Component<IProps, IState> {
       submitting: false,
       validState: false
     };
-  }
-
-  // make sure we change the access we are updating if the parent changes selected access
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedAccess !== this.props.selectedAccess) {
-      this.setState({ access: nextProps.selectedAccess });
-    }
   }
 
   public render() {

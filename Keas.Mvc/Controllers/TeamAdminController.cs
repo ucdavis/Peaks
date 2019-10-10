@@ -34,6 +34,7 @@ namespace Keas.Mvc.Controllers
         private readonly IFinancialService _financialService;
         private readonly INotificationService _notificationService;
         private readonly IBigfixService _bigfixService;
+        private static readonly DateTime MinAssignmentDate = new DateTime(1970,01,01);
 
 
         public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService, INotificationService notificationService, IBigfixService bigfixService)
@@ -708,6 +709,11 @@ namespace Keas.Mvc.Controllers
                                             if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
                                             {
                                                 assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                                if (assignment.RequestedAt <= MinAssignmentDate)
+                                                {
+                                                    //Force to a minimum data
+                                                    assignment.RequestedAt = MinAssignmentDate;
+                                                }
                                             }
                                             else
                                             {
@@ -758,6 +764,11 @@ namespace Keas.Mvc.Controllers
                                             if (r.DateIssued.HasValue && r.DateIssued < DateTime.Now)
                                             {
                                                 assignment.RequestedAt = r.DateIssued.Value.ToUniversalTime();
+                                                if (assignment.RequestedAt <= MinAssignmentDate)
+                                                {
+                                                    //Force to a minimum data
+                                                    assignment.RequestedAt = MinAssignmentDate;
+                                                }
                                             }
                                             else
                                             {
@@ -1301,6 +1312,11 @@ namespace Keas.Mvc.Controllers
             ModelState.Clear();
             var assignment = new EquipmentAssignment();
             assignment.RequestedAt = r.DateIssued.HasValue && r.DateIssued < DateTime.Now ? r.DateIssued.Value.ToUniversalTime() : DateTime.Now.ToUniversalTime();
+            if (assignment.RequestedAt <= MinAssignmentDate)
+            {
+                //Force to a minimum data
+                assignment.RequestedAt =MinAssignmentDate;
+            }
             if (r.DateDue.HasValue && r.DateDue.Value > DateTime.Now)
             {
                 assignment.ExpiresAt = r.DateDue.Value.ToUniversalTime();

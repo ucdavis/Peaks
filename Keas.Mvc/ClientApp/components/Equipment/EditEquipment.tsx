@@ -1,12 +1,7 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import {
-  AppContext,
-  IEquipment,
-  IEquipmentAttribute,
-  ISpace
-} from '../../Types';
+import { Context } from '../../Context';
+import { IEquipment, IEquipmentAttribute, ISpace } from '../../Types';
 import EquipmentAssignmentValues from './EquipmentAssignmentValues';
 import EquipmentEditValues from './EquipmentEditValues';
 
@@ -30,10 +25,9 @@ interface IState {
 }
 
 export default class EditEquipment extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -47,13 +41,6 @@ export default class EditEquipment extends React.Component<IProps, IState> {
       submitting: false,
       validState: false
     };
-  }
-
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedEquipment !== this.props.selectedEquipment) {
-      this.setState({ equipment: nextProps.selectedEquipment });
-    }
   }
 
   public render() {

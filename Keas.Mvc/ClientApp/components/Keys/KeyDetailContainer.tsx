@@ -1,11 +1,13 @@
 import * as React from 'react';
+import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
-import { IKey, IKeyInfo } from '../../Types';
+import { IKey, IKeyInfo, IMatchParams } from '../../Types';
 import HistoryContainer from '../History/HistoryContainer';
 import SpacesContainer from '../Spaces/SpacesContainer';
 import KeySerialContainer from './KeySerialContainer';
 
 interface IProps {
+  route: RouteChildrenProps<IMatchParams>;
   goBack: () => void;
   openEditModal: (key: IKey) => void;
   selectedKeyInfo: IKeyInfo;
@@ -53,11 +55,13 @@ export default class KeyDetailContainer extends React.Component<IProps, {}> {
           </Button>
         </div>
         <KeySerialContainer
+          {...this.props.route}
           selectedKey={selectedKeyInfo.key}
           assetInUseUpdated={this._serialInUseUpdated}
           assetTotalUpdated={this._serialTotalUpdated}
         />
         <SpacesContainer
+          {...this.props.route}
           selectedKeyInfo={selectedKeyInfo}
           spacesTotalUpdated={this.props.spacesTotalUpdated}
         />

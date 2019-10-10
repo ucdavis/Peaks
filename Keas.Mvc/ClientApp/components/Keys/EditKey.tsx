@@ -1,7 +1,7 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { AppContext, IKey } from '../../Types';
+import { Context } from '../../Context';
+import { IKey } from '../../Types';
 import KeyEditValues from './KeyEditValues';
 
 interface IProps {
@@ -21,12 +21,8 @@ interface IState {
 }
 
 export default class EditKey extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
   private _formRef: React.RefObject<HTMLFormElement>;
 
@@ -41,13 +37,6 @@ export default class EditKey extends React.Component<IProps, IState> {
       submitting: false,
       validState: false
     };
-  }
-
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedKey !== this.props.selectedKey) {
-      this.setState({ key: nextProps.selectedKey });
-    }
   }
 
   public render() {

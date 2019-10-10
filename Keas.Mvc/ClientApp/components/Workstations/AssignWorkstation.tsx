@@ -1,9 +1,9 @@
 import { addYears, format, isBefore, startOfDay } from 'date-fns';
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { AppContext, IPerson, ISpace, IWorkstation } from '../../Types';
+import { Context } from '../../Context';
+import { IPerson, ISpace, IWorkstation } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
 import SearchWorkstations from './SearchWorkstations';
 import WorkstationEditValues from './WorkstationEditValues';
@@ -31,11 +31,9 @@ interface IState {
 }
 
 export default class AssignWorkstation extends React.Component<IProps, IState> {
-  public static contextTypes = {
-    fetch: PropTypes.func,
-    team: PropTypes.object
-  };
-  public context: AppContext;
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
+
   constructor(props) {
     super(props);
 
@@ -55,25 +53,6 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
       validState: false,
       workstation: this.props.selectedWorkstation
     };
-  }
-
-  // make sure we change the workstation we are updating if the parent changes selected workstation
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedWorkstation !== this.props.selectedWorkstation) {
-      this.setState({ workstation: nextProps.selectedWorkstation });
-    }
-
-    if (nextProps.person !== this.state.person) {
-      this.setState({ person: nextProps.person });
-    } else if (
-      !!nextProps.selectedWorkstation &&
-      !!nextProps.selectedWorkstation.assignment
-    ) {
-      this.setState({
-        date: new Date(nextProps.selectedWorkstation.assignment.expiresAt),
-        person: nextProps.selectedWorkstation.assignment.person
-      });
-    }
   }
 
   public render() {
