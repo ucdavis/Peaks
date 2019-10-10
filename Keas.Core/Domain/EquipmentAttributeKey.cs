@@ -8,6 +8,7 @@ namespace Keas.Core.Domain
         public Team Team { get; set; }
         public int? TeamId { get; set; }
         [Required]
+        [StringLength(64)]
         public string Key { get; set; }
         [Required]
         [StringLength(50)]
