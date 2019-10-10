@@ -21,14 +21,6 @@
 .btn:disabled {
   opacity: 0.25;
 }
-.rbt-input-main,
-.rbt-input-hint > input {
-  height: 42px;
-}
-
-.rbt-input-hint > input {
-  box-sizing: border-box !important;
-}
 
 .ReactTable .-pagination {
   box-shadow: none !important;
