@@ -54,7 +54,6 @@ namespace Test.TestsDatabase
             }));
             expectedFields.Add(new NameAndType("Model", "System.String", new List<string>
             {
-                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
             }));
             expectedFields.Add(new NameAndType("Name", "System.String", new List<string>
@@ -69,7 +68,6 @@ namespace Test.TestsDatabase
             }));
             expectedFields.Add(new NameAndType("SerialNumber", "System.String", new List<string>
             {
-                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
             }));
             expectedFields.Add(new NameAndType("Space", "Keas.Core.Domain.Space", new List<string>()));
