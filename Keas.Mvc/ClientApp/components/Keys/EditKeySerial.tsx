@@ -151,7 +151,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
       valid = false;
     } else if (!this.state.keySerial.number) {
       valid = false;
-      error = 'You must give this key serial a name.';
+      error = 'You must give this key serial a number.';
     } else if (this.state.keySerial.number.length > 64) {
       valid = false;
       error = 'The serial number you have chosen is too long';
