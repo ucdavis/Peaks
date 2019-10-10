@@ -76,7 +76,9 @@ export default class EditEquipment extends React.Component<IProps, IState> {
               selectedEquipment={this.props.selectedEquipment}
               openUpdateModal={this.props.openUpdateModal}
             />
-            {this.state.error}
+            {this.state.error && (
+              <span className='color-unitrans'>{this.state.error}</span>
+            )}{' '}
           </div>
         </ModalBody>
         <ModalFooter>
@@ -157,17 +159,46 @@ export default class EditEquipment extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let valid = true;
     let error = '';
+    let valid = true;
     if (!this.state.equipment) {
       valid = false;
-    } else if (!this.state.equipment.name) {
-      valid = false;
+    } else if (this.state.equipment.name.trim() === '') {
       error = 'You must give this equipment a name.';
-    } else if (this.state.equipment.name.length > 64) {
       valid = false;
-      error = 'The name you have chosen is too long';
+    } else if (this.state.equipment.name.length > 64) {
+      error = 'The equipment name you have entered is too long.';
+      valid = false;
+    } else if (
+      this.state.equipment.serialNumber &&
+      this.state.equipment.serialNumber.length > 64
+    ) {
+      error = 'The serial number you have entered is too long.';
+      valid = false;
+    } else if (
+      this.state.equipment.make &&
+      this.state.equipment.make.length > 64
+    ) {
+      error = 'The make you have entered is too long.';
+      valid = false;
+    } else if (
+      this.state.equipment.model &&
+      this.state.equipment.model.length > 64
+    ) {
+      error = 'The model you have entered is too long.';
+      valid = false;
+    } else if (
+      this.state.equipment.systemManagementId &&
+      this.state.equipment.systemManagementId.length > 16
+    ) {
+      error = 'The bigfix id you have entered is too long.';
+      valid = false;
+    } else if (
+      this.state.equipment.attributes.some(x => x.value && x.value.length > 64)
+    ) {
+      error = 'One of the attribute values you entered is too long.';
+      valid = false;
     }
-    this.setState({ validState: valid, error });
+    this.setState({ error, validState: valid });
   };
 }

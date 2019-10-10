@@ -164,7 +164,9 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                   />
                 </div>
               )}
-              {this.state.error}
+              {this.state.error && (
+                <span className='color-unitrans'>{this.state.error}</span>
+              )}{' '}
             </form>
           </div>
         </ModalBody>
@@ -278,9 +280,47 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     this.setState({ person }, this._validateState);
   };
 
+  private _changeDate = (newDate: Date) => {
+    this.setState(
+      { date: startOfDay(new Date(newDate)), error: '' },
+      this._validateState
+    );
+  };
+
   private _validateState = () => {
+    let error = '';
     let valid = true;
-    if (!this.state.equipment || this.state.equipment.name === '') {
+    if (!this.state.equipment) {
+      valid = false;
+    } else if (this.state.equipment.name.trim() === '') {
+      error = 'You must give this equipment a name.';
+      valid = false;
+    } else if (this.state.equipment.name.length > 64) {
+      error = 'The equipment name you have entered is too long.';
+      valid = false;
+    } else if (
+      this.state.equipment.serialNumber &&
+      this.state.equipment.serialNumber.length > 64
+    ) {
+      error = 'The serial number you have entered is too long.';
+      valid = false;
+    } else if (
+      this.state.equipment.make &&
+      this.state.equipment.make.length > 64
+    ) {
+      error = 'The make you have entered is too long.';
+      valid = false;
+    } else if (
+      this.state.equipment.model &&
+      this.state.equipment.model.length > 64
+    ) {
+      error = 'The model you have entered is too long.';
+      valid = false;
+    } else if (
+      this.state.equipment.systemManagementId &&
+      this.state.equipment.systemManagementId.length > 16
+    ) {
+      error = 'The bigfix id you have entered is too long.';
       valid = false;
     } else if (
       this.state.equipment.teamId !== 0 &&
@@ -288,21 +328,20 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
       !this.props.person
     ) {
       // if not a new equipment, require a person
-      valid = false;
-    } else if (this.state.error !== '') {
+      error = 'You must choose a person to assign this equipment to.';
       valid = false;
     } else if (!this.state.date) {
+      error = 'A date is required for this assignment.';
       valid = false;
     } else if (!isBefore(new Date(), new Date(this.state.date))) {
+      error = 'The date you have chosen is not valid.';
+      valid = false;
+    } else if (
+      this.state.equipment.attributes.some(x => x.value && x.value.length > 64)
+    ) {
+      error = 'One of the attribute values you entered is too long.';
       valid = false;
     }
     this.setState({ validState: valid });
-  };
-
-  private _changeDate = (newDate: Date) => {
-    this.setState(
-      { date: startOfDay(new Date(newDate)), error: '' },
-      this._validateState
-    );
   };
 }
