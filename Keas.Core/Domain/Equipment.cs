@@ -13,9 +13,13 @@ namespace Keas.Core.Domain
         // Computer / Phone / other
         public string Type { get; set; }
 
+        [StringLength(64)]
         public string SerialNumber { get; set; }
 
+        [StringLength(64)]        
         public string Make { get; set; }
+        
+        [StringLength(64)]
         public string Model { get; set; }
 
         [StringLength(2)]
