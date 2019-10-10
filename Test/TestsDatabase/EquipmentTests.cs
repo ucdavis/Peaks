@@ -48,8 +48,15 @@ namespace Test.TestsDatabase
             {
                 "[System.ComponentModel.DataAnnotations.KeyAttribute()]",
             }));
-            expectedFields.Add(new NameAndType("Make", "System.String", new List<string>()));
-            expectedFields.Add(new NameAndType("Model", "System.String", new List<string>()));
+            expectedFields.Add(new NameAndType("Make", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
+            }));
+            expectedFields.Add(new NameAndType("Model", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
+            }));
             expectedFields.Add(new NameAndType("Name", "System.String", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
@@ -60,7 +67,11 @@ namespace Test.TestsDatabase
             {
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)2)]",
             }));
-            expectedFields.Add(new NameAndType("SerialNumber", "System.String", new List<string>()));
+            expectedFields.Add(new NameAndType("SerialNumber", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
+            }));
             expectedFields.Add(new NameAndType("Space", "Keas.Core.Domain.Space", new List<string>()));
             expectedFields.Add(new NameAndType("SpaceId", "System.Nullable`1[System.Int32]", new List<string>()));
             expectedFields.Add(new NameAndType("SystemManagementId", "System.String", new List<string>

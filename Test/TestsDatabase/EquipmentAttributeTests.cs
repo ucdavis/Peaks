@@ -39,8 +39,15 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("Equipment", "Keas.Core.Domain.Equipment", new List<string>()));
             expectedFields.Add(new NameAndType("EquipmentId", "System.Int32", new List<string>()));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>()));
-            expectedFields.Add(new NameAndType("Key", "System.String", new List<string>()));
-            expectedFields.Add(new NameAndType("Value", "System.String", new List<string>()));
+            expectedFields.Add(new NameAndType("Key", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
+            }));
+            expectedFields.Add(new NameAndType("Value", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)64)]",
+            }));
           
             #endregion Arrange
 
