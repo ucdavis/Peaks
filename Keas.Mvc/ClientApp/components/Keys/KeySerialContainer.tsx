@@ -200,9 +200,7 @@ export default class KeySerialContainer extends React.Component<
         openUpdateModal={this._openUpdateModal}
         closeModal={this._closeModals}
         goToKeyDetails={this.props.goToKeyDetails}
-        checkIfKeySerialNumberIsValid={
-          this._checkIfKeySerialNumberIsValidOnEdit
-        }
+        checkIfKeySerialNumberIsValid={this._checkIfKeySerialNumberIsValid}
       />
     );
   };
@@ -426,11 +424,7 @@ export default class KeySerialContainer extends React.Component<
     this.setState({ ...this.state, keySerials: updateKeySerials });
   };
 
-  private _checkIfKeySerialNumberIsValid = (keySerialNumber: string) => {
-    return !this.state.keySerials.some(x => x.number === keySerialNumber);
-  };
-
-  private _checkIfKeySerialNumberIsValidOnEdit = (
+  private _checkIfKeySerialNumberIsValid = (
     keySerialNumber: string,
     id: number
   ) => {

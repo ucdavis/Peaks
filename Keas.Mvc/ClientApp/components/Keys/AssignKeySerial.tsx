@@ -21,7 +21,7 @@ interface IProps {
   openEditModal: (keySerial: IKeySerial) => void;
   openDetailsModal: (keySerial: IKeySerial) => void;
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
-  checkIfKeySerialNumberIsValid: (serialNumber: string) => boolean;
+  checkIfKeySerialNumberIsValid: (serialNumber: string, id: number) => boolean;
 }
 
 interface IState {
@@ -321,13 +321,16 @@ export default class AssignKey extends React.Component<IProps, IState> {
       !this.state.keySerial.number ||
       this.state.keySerial.number.trim().length < 1
     ) {
-      error = 'You must give this key serial a name.';
+      error = 'You must give this key serial a number.';
       valid = false;
     } else if (this.state.keySerial.number.length > 64) {
       valid = false;
       error = 'The serial number you have chosen is too long';
     } else if (
-      !this.props.checkIfKeySerialNumberIsValid(this.state.keySerial.number)
+      !this.props.checkIfKeySerialNumberIsValid(
+        this.state.keySerial.number,
+        this.state.keySerial.id
+      )
     ) {
       error =
         'The serial number you have entered is already in use by another key serial.';
