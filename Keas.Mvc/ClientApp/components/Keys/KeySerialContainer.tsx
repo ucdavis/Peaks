@@ -154,13 +154,14 @@ export default class KeySerialContainer extends React.Component<
     );
   }
 
-  private _renderAssignModal = (selectedId: number, keySerial?: IKeySerial) => {
+  private _renderAssignModal = (selectedId: number, keySerial: IKeySerial) => {
     return (
       <AssignKeySerial
         key={selectedId ? `assign-keySerial-${selectedId}` : 'create-keySerial'}
         person={this.props.selectedPerson}
         selectedKey={this.props.selectedKey}
         selectedKeySerial={keySerial}
+        checkIfKeySerialNumberIsValid={this._checkIfKeySerialNumberIsValid}
         onCreate={this._createAndMaybeAssignKey}
         isModalOpen={true}
         onOpenModal={this._openCreateModal}
@@ -193,12 +194,13 @@ export default class KeySerialContainer extends React.Component<
       <EditKeySerial
         key={`edit-keySerial-${selectedId}`}
         selectedKeySerial={keySerial}
-        onEdit={this._editKeySerial}
-        closeModal={this._closeModals}
-        openUpdateModal={this._openUpdateModal}
-        isModalOpen={!!keySerial}
         statusList={this.state.statusList}
+        isModalOpen={!!keySerial}
+        onEdit={this._editKeySerial}
+        openUpdateModal={this._openUpdateModal}
+        closeModal={this._closeModals}
         goToKeyDetails={this.props.goToKeyDetails}
+        checkIfKeySerialNumberIsValid={this._checkIfKeySerialNumberIsValid}
       />
     );
   };
@@ -420,6 +422,15 @@ export default class KeySerialContainer extends React.Component<
     }
 
     this.setState({ ...this.state, keySerials: updateKeySerials });
+  };
+
+  private _checkIfKeySerialNumberIsValid = (
+    keySerialNumber: string,
+    id: number
+  ) => {
+    return !this.state.keySerials.some(
+      x => x.number === keySerialNumber && x.id !== id
+    );
   };
 
   private _openAssignModal = (keySerial: IKeySerial) => {

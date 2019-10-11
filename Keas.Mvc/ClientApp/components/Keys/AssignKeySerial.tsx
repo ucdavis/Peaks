@@ -13,14 +13,15 @@ interface IProps {
   person?: IPerson;
   selectedKey: IKey;
   selectedKeySerial: IKeySerial;
-  onCreate: (person: IPerson, keySerial: IKeySerial, date: any) => void;
+  statusList: string[];
   isModalOpen: boolean;
+  onCreate: (person: IPerson, keySerial: IKeySerial, date: any) => void;
   onOpenModal: () => void;
   closeModal: () => void;
   openEditModal: (keySerial: IKeySerial) => void;
   openDetailsModal: (keySerial: IKeySerial) => void;
-  statusList: string[];
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
+  checkIfKeySerialNumberIsValid: (serialNumber: string, id: number) => boolean;
 }
 
 interface IState {
@@ -178,7 +179,9 @@ export default class AssignKey extends React.Component<IProps, IState> {
                 </div>
               )}
 
-              {this.state.error}
+              {this.state.error && (
+                <span className='color-unitrans'>{this.state.error}</span>
+              )}
             </form>
           </div>
         </ModalBody>
@@ -308,17 +311,37 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
   private _validateState = () => {
     let valid = true;
+    let error = '';
     if (!this.state.keySerial) {
       valid = false;
     } else if (this.state.keySerial.id !== 0 && !this.state.person) {
+      error = 'You must choose a person to assign this key serial to.';
       valid = false;
-    } else if (this.state.error !== '') {
+    } else if (
+      !this.state.keySerial.number ||
+      this.state.keySerial.number.trim().length < 1
+    ) {
+      error = 'You must give this key serial a number.';
+      valid = false;
+    } else if (this.state.keySerial.number.length > 64) {
+      valid = false;
+      error = 'The serial number you have chosen is too long';
+    } else if (
+      !this.props.checkIfKeySerialNumberIsValid(
+        this.state.keySerial.number,
+        this.state.keySerial.id
+      )
+    ) {
+      error =
+        'The serial number you have entered is already in use by another key serial.';
       valid = false;
     } else if (!this.state.date) {
+      error = 'A date is required for this assignment.';
       valid = false;
     } else if (!isBefore(new Date(), new Date(this.state.date))) {
+      error = 'The date you have chosen is not valid.';
       valid = false;
     }
-    this.setState({ validState: valid });
+    this.setState({ error, validState: valid });
   };
 }

@@ -6,13 +6,14 @@ import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
 
 interface IProps {
-  onEdit: (keySerial: IKeySerial) => void;
-  isModalOpen: boolean;
-  closeModal: () => void;
-  openUpdateModal: (keySerial: IKeySerial) => void;
   selectedKeySerial: IKeySerial;
   statusList: string[];
+  isModalOpen: boolean;
+  onEdit: (keySerial: IKeySerial) => void;
+  openUpdateModal: (keySerial: IKeySerial) => void;
+  closeModal: () => void;
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
+  checkIfKeySerialNumberIsValid: (serialNumber: string, id: number) => boolean;
 }
 
 interface IState {
@@ -72,6 +73,10 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
                 selectedKeySerial={this.props.selectedKeySerial}
                 openUpdateModal={this.props.openUpdateModal}
               />
+
+              {this.state.error && (
+                <span className='color-unitrans'>{this.state.error}</span>
+              )}
             </form>
           </div>
         </ModalBody>
@@ -146,12 +151,20 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
       valid = false;
     } else if (!this.state.keySerial.number) {
       valid = false;
-      error = 'You must give this key a name.';
+      error = 'You must give this key serial a number.';
     } else if (this.state.keySerial.number.length > 64) {
       valid = false;
-      error = 'The name you have chosen is too long';
+      error = 'The serial number you have chosen is too long';
+    } else if (
+      !this.props.checkIfKeySerialNumberIsValid(
+        this.state.keySerial.number,
+        this.state.keySerial.id
+      )
+    ) {
+      error =
+        'The serial number you have entered is already in use by another key serial.';
+      valid = false;
     }
-
     this.setState({ validState: valid, error });
   };
 }
