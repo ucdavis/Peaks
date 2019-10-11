@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import { Button } from 'reactstrap';
+import { Button, Alert } from 'reactstrap';
 import { Context } from '../../Context';
 import { IAccess, IAccessAssignment } from '../../Types';
 import AccessEditValues from './AccessEditValues';
@@ -13,6 +13,7 @@ interface IProps {
 
 interface IState {
   submitting: boolean;
+  error?: String
 }
 
 export default class RevokeAccess extends React.Component<IProps, IState> {
@@ -23,6 +24,7 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
   }
   public render() {
     const valid = !!this.props.assignment
+    const assignment = this.props.assignment
     return (
       valid ? 
       <AccessModal
@@ -37,7 +39,8 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
               this.props.revoke(this.props.assignment).catch(e => {
                 console.error(e)
                 this.setState({
-                  submitting: false
+                  submitting: false,
+                  error: "Error -- " + e.message + " -- Please try again later"
                 })
               })
             }}
@@ -49,7 +52,16 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
             )}
           </Button>
         }
-      ></AccessModal> : <AccessModal
+      >
+        {this.state.error && (
+          <Alert color="danger">{this.state.error}</Alert>
+        )}
+        <h1>Name: </h1>
+        <p>{assignment.access.name}</p>
+        <h2>Notes: </h2>
+        <p>{assignment.access.notes}</p>
+        <p>Expires At {assignment.expiresAt}</p>
+      </AccessModal> : <AccessModal
       isOpen={true}
       closeModal={this.props.cancelRevoke}
       header={<h1>Assignment not found</h1>}
