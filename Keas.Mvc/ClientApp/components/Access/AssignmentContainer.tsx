@@ -36,9 +36,10 @@ class AssignmentContainer extends React.Component<IProps, IState> {
     super(props);
 
     const assignments = (props.access && props.access.assignments) || [];
+    const {action} = props.match.params
 
     this.state = {
-      isRevokeModalShown: props.match.params.action === 'revoke',
+      isRevokeModalShown: action === 'revoke',
       assignments: assignments,
       selectedAssignment: assignments.find(
         el => el.id === parseInt(props.match.params.id, 10)
@@ -67,16 +68,20 @@ class AssignmentContainer extends React.Component<IProps, IState> {
     if (this.state.assignments.length === 0) {
       let assignments = await this.fetchAssignments();
       this.setState({
-        assignments: assignments
+        assignments: assignments,
+        selectedAssignment: assignments.find(
+          el => el.id === parseInt(this.props.match.params.id, 10)
+        )
       });
     }
   }
 
-  private showRevokeModal = assignment => {
+  private showRevokeModal = (assignment:IAccessAssignment) => {
     this.setState({
       isRevokeModalShown: true,
       selectedAssignment: assignment
     });
+    this.props.history.push(`${this._getBaseUrl()}/accessAssignment/revoke/${assignment.id}`)
   };
 
   private hideRevokeModal = () => {
@@ -84,6 +89,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
       isRevokeModalShown: false,
       selectedAssignment: null
     });
+    this.props.history.replace(this._getBaseUrl())
   };
   private callRevoke = async assignment => {
     await this.context.fetch(
@@ -145,12 +151,12 @@ class AssignmentContainer extends React.Component<IProps, IState> {
 
   private _openDetails = (access: IAccess) => {
     this.props.history.push(
-      `${this._getBaseUrl()}/access/details/${access.id}`
+      `${this.context.team.slug}/access/details/${access.id}`
     );
   };
 
   private _getBaseUrl = () => {
-    return `/${this.context.team.slug}`;
+    return this.props.person ? `/${this.context.team.slug}/people/details/${this.props.person.id}` : `/${this.context.team.slug}/access/details/${this.props.access.id}`;
   };
 }
 

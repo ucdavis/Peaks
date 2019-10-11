@@ -6,7 +6,7 @@ import AccessEditValues from './AccessEditValues';
 import AccessModal from './AccessModal';
 
 interface IProps {
-  assignment: IAccessAssignment;
+  assignment?: IAccessAssignment;
   revoke: (accessAssignment: IAccessAssignment) => Promise<void>;
   cancelRevoke();
 }
@@ -22,7 +22,9 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
     this.state = {submitting: false}
   }
   public render() {
+    const valid = !!this.props.assignment
     return (
+      valid ? 
       <AccessModal
         isOpen={true}
         closeModal={this.props.cancelRevoke}
@@ -47,7 +49,11 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
             )}
           </Button>
         }
-      ></AccessModal>
+      ></AccessModal> : <AccessModal
+      isOpen={true}
+      closeModal={this.props.cancelRevoke}
+      header={<h1>Assignment not found</h1>}
+    ></AccessModal>
     );
   }
 }
