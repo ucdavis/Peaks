@@ -66,7 +66,6 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   async componentDidMount() {
     if (this.state.assignments.length === 0) {
       let assignments = await this.fetchAssignments();
-      console.log(assignments);
       this.setState({
         assignments: assignments
       });
@@ -87,17 +86,22 @@ class AssignmentContainer extends React.Component<IProps, IState> {
     });
   };
   private callRevoke = async assignment => {
+    await this.context.fetch(
+      `/api/${this.context.team.slug}/access/revoke/${assignment.id}`,
+      {
+        method: 'POST'
+      }
+    );
+
+    toast.success('Access revoked sucessfully!');
+
     let assignments = this.state.assignments;
     assignments.splice(assignments.indexOf(assignment), 1)
-    try {
-      this.setState({
-        assignments: assignments
-      });
-      this.props.onRevokeSuccess(assignment);
-      await this.hideRevokeModal();
-    } catch (e) {
-      console.error(e);
-    }
+    this.setState({
+      assignments: assignments
+    });
+    this.hideRevokeModal();
+    this.props.onRevokeSuccess(assignment);
   };
 
   public render() {
