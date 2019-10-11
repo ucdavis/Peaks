@@ -147,13 +147,11 @@ export default class AccessContainer extends React.Component<
     return (
       <AssignAccess
         key={`assign-access-${selectedId}`}
-        onAddNew={this._openCreateModal}
         onCreate={this._createAndMaybeAssignAccess}
         modal={true}
         closeModal={this._closeModals}
         selectedAccess={access}
         tags={this.state.tags}
-        openEditModal={this._openEditModal}
       />
     );
   };
@@ -209,8 +207,6 @@ export default class AccessContainer extends React.Component<
     date: any,
     person: IPerson
   ) => {
-    let updateTotalAssetCount = false;
-    let updateInUseAssetCount = false;
     // call API to create a access, then assign it if there is a person to assign to
     // if we are creating a new access
     if (access.id === 0) {
@@ -228,7 +224,6 @@ export default class AccessContainer extends React.Component<
         toast.error('Error creating access.');
         throw new Error(); // throw error so modal doesn't close
       }
-      updateTotalAssetCount = true;
     }
 
     // if we know who to assign it to, do it now
@@ -248,7 +243,6 @@ export default class AccessContainer extends React.Component<
       accessAssignment.person = person;
       // then push it
       access.assignments.push(accessAssignment);
-      updateInUseAssetCount = true;
     }
 
     const index = this.state.accesses.findIndex(x => x.id === access.id);
@@ -265,38 +259,6 @@ export default class AccessContainer extends React.Component<
       this.setState({
         accesses: [...this.state.accesses, access]
       });
-    }
-  };
-
-  private _revokeAccess = async (accessAssignment: IAccessAssignment) => {
-    if (!confirm('Are you sure you want to revoke access?')) {
-      return false;
-    }
-    try {
-      // call API to actually revoke
-      const removed: IAccess = await this.context.fetch(
-        `/api/${this.context.team.slug}/access/revoke/${accessAssignment.id}`,
-        {
-          method: 'POST'
-        }
-      );
-      toast.success('Access revoked sucessfully!');
-    } catch (err) {
-      toast.error('Error revoking access.');
-      throw new Error(); // throw error so modal doesn't close
-    }
-
-    // find index of access in state
-    const accessIndex = this.state.accesses.findIndex(
-      x => x.id === accessAssignment.accessId
-    );
-    if (accessIndex > -1) {
-      const shallowCopy = [...this.state.accesses];
-     
-        const assignmentIndex = shallowCopy[accessIndex].assignments.indexOf(
-          accessAssignment
-        );
-        shallowCopy[accessIndex].assignments.splice(assignmentIndex, 1);
     }
   };
 

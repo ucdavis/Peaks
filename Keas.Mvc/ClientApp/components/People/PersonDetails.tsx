@@ -102,6 +102,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
         <AssignmentContainer
           person={this.props.selectedPersonInfo.person}
           onRevokeSuccess={() => this.props.inUseUpdated("access", 0, this.props.selectedPersonInfo.id, -1)}
+          onAssignSuccess={() => this.props.inUseUpdated("access", 0, this.props.selectedPersonInfo.id, 1)}
         />
         <WorkstationContainer
           {...this.props.router}

@@ -1,8 +1,6 @@
 ﻿import * as React from 'react';
 import { Button, Alert } from 'reactstrap';
-import { Context } from '../../Context';
-import { IAccess, IAccessAssignment } from '../../Types';
-import AccessEditValues from './AccessEditValues';
+import {  IAccessAssignment } from '../../Types';
 import AccessModal from './AccessModal';
 
 interface IProps {

@@ -37,7 +37,7 @@ export default class AccessListItem extends React.Component<IProps, {}> {
       });
     }
 
-    if (!!this.props.onRevoke) {
+    if (!!this.props.onRevoke && hasAssignment) {
       actions.push({
         onClick: () => this.props.onRevoke(this.props.accessEntity),
         title: 'Revoke'
