@@ -1,20 +1,29 @@
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { IAccess, IAccessAssignment } from '../../Types';
+import { IAccess } from '../../Types';
 import SearchTags from '../Tags/SearchTags';
-import AccessAssignTable from './AccessAssignTable';
+import AssignmentContainer from './AssignmentContainer';
 
 interface IProps {
   selectedAccess: IAccess;
+  onAccessUpdate?(access: IAccess);
   disableEditing: boolean;
   changeProperty?: (property: string, value: string) => void;
-  onRevoke: (accessAssignment: IAccessAssignment) => void;
   openEditModal?: (access: IAccess) => void;
   tags?: string[];
 }
 
 export default class AccessEditValues extends React.Component<IProps, {}> {
+  constructor(props: IProps) {
+    super(props);
+    if (!props.disableEditing && !props.onAccessUpdate) {
+      throw new Error(
+        'If the access is editable then a callback must be provided'
+      );
+    }
+  }
   public render() {
+    const assignments = this.props.selectedAccess.assignments;
     return (
       <div>
         {this.props.disableEditing && this.props.openEditModal && (
@@ -71,13 +80,18 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
           </div>
           {this.props.selectedAccess.teamId !== 0 &&
             this.props.selectedAccess.assignments.length > 0 && (
-              <AccessAssignTable
-                onRevoke={async assignment => {
-                  try {
-                    await this.props.onRevoke(assignment)
-                  } catch(e) {}
-                }}
-                assignments={this.props.selectedAccess.assignments}
+              <AssignmentContainer
+                disableEditing={this.props.disableEditing}
+                onRevokeSuccess={assignment =>
+                  this.props.onAccessUpdate({
+                    ...this.props.selectedAccess,
+                    assignments: assignments.splice(
+                      assignments.indexOf(assignment),
+                      1
+                    )
+                  })
+                }
+                access={this.props.selectedAccess}
               />
             )}
         </div>

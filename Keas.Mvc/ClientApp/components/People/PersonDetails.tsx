@@ -4,7 +4,7 @@ import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey, IMatchParams, IPerson, IPersonInfo } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
-import AccessContainer from '../Access/AccessContainer';
+import AssignmentContainer from '../Access/AssignmentContainer';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
 import HistoryContainer from '../History/HistoryContainer';
 import KeySerialContainer from '../Keys/KeySerialContainer';
@@ -24,7 +24,6 @@ interface IProps {
     personId: number,
     count: number
   ) => void;
-  edited?: (type: string, spaceId: number, personId: number) => void;
   onEdit: (person: IPerson) => void;
   onDelete: (person: IPerson) => void;
   goToKeyDetails: (key: IKey) => void;
@@ -93,27 +92,22 @@ export default class PersonDetails extends React.Component<IProps, {}> {
           {...this.props.router}
           selectedPerson={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
-          assetEdited={this.props.edited}
           goToKeyDetails={this.props.goToKeyDetails}
         />
         <EquipmentContainer
           {...this.props.router}
           person={this.props.selectedPersonInfo.person}
           assetInUseUpdated={this.props.inUseUpdated}
-          assetEdited={this.props.edited}
         />
-        <AccessContainer
-          {...this.props.router}
+        <AssignmentContainer
           person={this.props.selectedPersonInfo.person}
-          assetInUseUpdated={this.props.inUseUpdated}
-          assetEdited={this.props.edited}
+          onRevokeSuccess={() => this.props.inUseUpdated("access", 0, this.props.selectedPersonInfo.id, -1)}
         />
         <WorkstationContainer
           {...this.props.router}
           person={this.props.selectedPersonInfo.person}
           tags={this.props.tags}
           assetInUseUpdated={this.props.inUseUpdated}
-          assetEdited={this.props.edited}
         />
         {canEdit && (
           <HistoryContainer
