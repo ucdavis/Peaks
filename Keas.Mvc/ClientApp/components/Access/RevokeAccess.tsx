@@ -32,7 +32,12 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
             color='primary'
             onClick={() => {
               this.setState({submitting: true})
-              this.props.revoke(this.props.assignment).catch(e => console.error(e)).finally(() => this.setState({submitting: false}))
+              this.props.revoke(this.props.assignment).catch(e => {
+                console.error(e)
+                this.setState({
+                  submitting: false
+                })
+              })
             }}
             disabled={this.state.submitting}
           >

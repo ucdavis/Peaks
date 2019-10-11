@@ -12,6 +12,7 @@ import AssignmentTable from './AssignmentTable';
 import RevokeAccess from './RevokeAccess';
 import { Context } from '../../Context';
 import AccessList from './AccessList';
+import { access } from 'fs';
 
 // List of assignments passed by props, since this container can be in multiple places
 interface IProps extends RouteChildrenProps<IMatchParams> {
@@ -86,11 +87,11 @@ class AssignmentContainer extends React.Component<IProps, IState> {
     });
   };
   private callRevoke = async assignment => {
-    console.log(assignment);
-    const assignments = this.state.assignments;
+    let assignments = this.state.assignments;
+    assignments.splice(assignments.indexOf(assignment), 1)
     try {
       this.setState({
-        assignments: assignments.splice(assignments.indexOf(assignment), 1)
+        assignments: assignments
       });
       this.props.onRevokeSuccess(assignment);
       await this.hideRevokeModal();
@@ -101,23 +102,39 @@ class AssignmentContainer extends React.Component<IProps, IState> {
 
   public render() {
     return (
-      <div>
-        {this.state.isRevokeModalShown && (
-          <RevokeAccess
-            assignment={this.state.selectedAssignment}
-            revoke={this.callRevoke}
-            cancelRevoke={this.hideRevokeModal}
-          />
-        )}
-        {this.props.person ? (
-          <AccessList showDetails={this._openDetails} personView={true} access={this.state.assignments.map(assignment => assignment.access)}/>
-        ) : (
-          <AssignmentTable
-            assignments={this.state.assignments}
-            onRevoke={this.showRevokeModal}
-            disableEditing={this.props.disableEditing}
-          ></AssignmentTable>
-        )}
+      <div className='card access-color'>
+        <div className='card-header-access'>
+          <div className='card-head row justify-content-between'>
+            <h2>
+              <i className='fas fa-address-card fa-xs' /> Access
+            </h2>
+          </div>
+        </div>
+        <div className='card-content'>
+          {this.state.isRevokeModalShown && (
+            <RevokeAccess
+              assignment={this.state.selectedAssignment}
+              revoke={this.callRevoke}
+              cancelRevoke={this.hideRevokeModal}
+            />
+          )}
+          {this.props.person ? (
+            <AccessList
+              showDetails={this._openDetails}
+              personView={true}
+              access={this.state.assignments.map(
+                assignment => assignment.access
+              )}
+              onRevoke={access => this.showRevokeModal(access.assignments.find(assignment => assignment.accessId === access.id)) }
+            />
+          ) : (
+            <AssignmentTable
+              assignments={this.state.assignments}
+              onRevoke={this.showRevokeModal}
+              disableEditing={this.props.disableEditing}
+            ></AssignmentTable>
+          )}
+        </div>
       </div>
     );
   }

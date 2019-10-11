@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'reactstrap';
-import { IAccess } from '../../Types';
+import { IAccess, IAccessAssignment } from '../../Types';
 import { DateUtil } from '../../util/dates';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 
@@ -9,6 +9,7 @@ interface IProps {
   personView: boolean;
   onDelete?: (access: IAccess) => void;
   onAdd?: (access: IAccess) => void;
+  onRevoke?: (access: IAccess) => void;
   showDetails: (access: IAccess) => void;
 }
 
@@ -33,6 +34,13 @@ export default class AccessListItem extends React.Component<IProps, {}> {
       actions.push({
         onClick: () => this.props.onDelete(this.props.accessEntity),
         title: 'Delete'
+      });
+    }
+
+    if (!!this.props.onRevoke) {
+      actions.push({
+        onClick: () => this.props.onRevoke(this.props.accessEntity),
+        title: 'Revoke'
       });
     }
 
