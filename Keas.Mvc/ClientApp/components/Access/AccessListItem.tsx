@@ -7,10 +7,8 @@ import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 interface IProps {
   accessEntity: IAccess;
   personView: boolean;
-  onRevoke: (access: IAccess) => void;
-  onDelete: (access: IAccess) => void;
-  onAdd: (access: IAccess) => void;
-  onEdit: (access: IAccess) => void;
+  onDelete?: (access: IAccess) => void;
+  onAdd?: (access: IAccess) => void;
   showDetails: (access: IAccess) => void;
 }
 

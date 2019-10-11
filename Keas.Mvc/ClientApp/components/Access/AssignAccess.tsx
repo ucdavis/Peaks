@@ -102,7 +102,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                       selectedAccess={this.state.access}
                       changeProperty={this._changeProperty}
                       disableEditing={false}
-                      onRevoke={null}
                       tags={this.props.tags}
                     />
                   </div>
@@ -124,7 +123,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     disableEditing={true}
                     tags={this.props.tags}
                     openEditModal={this.props.openEditModal}
-                    onRevoke={null}
                   />
                 </div>
               )}

@@ -10,7 +10,6 @@ import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 
 interface IProps {
   accesses: IAccess[];
-  onRevoke?: (access: IAccess) => void;
   onDelete?: (access: IAccess) => void;
   onAdd?: (access: IAccess) => void;
   showDetails?: (access: IAccess) => void;

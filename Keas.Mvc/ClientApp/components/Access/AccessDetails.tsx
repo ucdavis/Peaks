@@ -1,14 +1,13 @@
 ﻿import * as React from 'react';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
-import { IAccess, IAccessAssignment } from '../../Types';
+import { IAccess } from '../../Types';
 import AccessEditValues from './AccessEditValues';
 
 interface IProps {
   modal: boolean;
   closeModal: () => void;
   selectedAccess: IAccess;
-  onRevoke: (accessAssignment: IAccessAssignment) => void;
   openEditModal: (access: IAccess) => void;
   updateSelectedAccess: (access: IAccess, id?: number) => void;
 }
@@ -36,7 +35,6 @@ export default class AccessDetails extends React.Component<IProps, {}> {
         <AccessEditValues
           selectedAccess={access}
           disableEditing={true}
-          onRevoke={this.props.onRevoke}
           openEditModal={this.props.openEditModal}
         />
       </div>
