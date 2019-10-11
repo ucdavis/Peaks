@@ -39,7 +39,7 @@ const AccessAssignTable: React.FunctionComponent<IProps> = (props: React.PropsWi
           type='button'
           className='btn btn-outline-danger'
           disabled={props.disableEditing || !props.onRevoke}
-          onClick={() => props.onRevoke(props.assignments.find((el: IAccessAssignment) => row.value == el.id))}
+          onClick={() => props.onRevoke(props.assignments.find((el: IAccessAssignment) => row.value == el.personId))}
         >
           <i className='fas fa-trash' />
         </button>
