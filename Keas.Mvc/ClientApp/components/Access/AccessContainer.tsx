@@ -8,18 +8,15 @@ import {
   IAccessAssignment,
   IMatchParams,
   IPerson,
-  ISpace
 } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
 import AccessDetails from './AccessDetails';
-import AccessList from './AccessList';
 import AccessTable from './AccessTable';
 import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
 import EditAccess from './EditAccess';
-import { access } from 'fs';
 
 interface IState {
   accesses: IAccess[]; // either access assigned to this person, or all team access
@@ -82,12 +79,10 @@ export default class AccessContainer extends React.Component<
     const {
       containerAction,
       assetType,
-      action,
       containerId,
-      id
     } = this.props.match.params;
     const activeAsset = !assetType || assetType === 'access';
-    const selectedId = parseInt(!assetType ? containerId : id, 10);
+    const selectedId = parseInt(containerId, 10)
     const detailAccess = this.state.accesses.find(a => a.id === selectedId);
     const shouldRenderDetails = !assetType && containerAction === 'details';
 
