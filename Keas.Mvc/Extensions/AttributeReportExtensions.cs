@@ -16,13 +16,13 @@ namespace Keas.Mvc.Extensions
                 return string.Empty;
             }
 
-            var rtValue = new StringBuilder();
+            var rtValue = new List<string>();
             foreach (var attributeReportModel in value)
             {
-                rtValue.AppendLine($"(Key: {attributeReportModel.Key} Value: {attributeReportModel.Value}) ");
+                rtValue.Add($"{attributeReportModel.Key}={attributeReportModel.Value}");
             }
 
-            return rtValue.ToString();
+            return string.Join(',', rtValue);
         }
     }
 }
