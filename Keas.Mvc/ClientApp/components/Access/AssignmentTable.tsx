@@ -5,12 +5,14 @@ import { ReactTableExpirationUtil } from '../../util/reactTable';
 import { IAccessAssignment } from 'ClientApp/Types';
 
 interface IProps {
-    assignments: Array<IAccessAssignment> 
-    onRevoke: (assignment: IAccessAssignment) => void
-    disableEditing?: boolean
+  assignments: Array<IAccessAssignment>;
+  onRevoke: (assignment: IAccessAssignment) => void;
+  disableEditing?: boolean;
 }
 
-const AccessAssignTable: React.FunctionComponent<IProps> = (props: React.PropsWithChildren<IProps>): React.ReactElement => {
+const AccessAssignTable: React.FunctionComponent<IProps> = (
+  props: React.PropsWithChildren<IProps>
+): React.ReactElement => {
   const columns = [
     {
       Header: 'Name',
@@ -39,7 +41,13 @@ const AccessAssignTable: React.FunctionComponent<IProps> = (props: React.PropsWi
           type='button'
           className='btn btn-outline-danger'
           disabled={props.disableEditing || !props.onRevoke}
-          onClick={() => props.onRevoke(props.assignments.find((el: IAccessAssignment) => row.value == el.personId))}
+          onClick={() =>
+            props.onRevoke(
+              props.assignments.find(
+                (el: IAccessAssignment) => row.value == el.personId
+              )
+            )
+          }
         >
           <i className='fas fa-trash' />
         </button>
@@ -56,11 +64,7 @@ const AccessAssignTable: React.FunctionComponent<IProps> = (props: React.PropsWi
   return (
     <div>
       <h3>Assigned to:</h3>
-      <ReactTable
-        data={props.assignments}
-        columns={columns}
-        minRows={1}
-      />
+      <ReactTable data={props.assignments} columns={columns} minRows={1} />
     </div>
   );
 };

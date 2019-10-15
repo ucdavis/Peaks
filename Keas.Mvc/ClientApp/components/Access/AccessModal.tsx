@@ -24,12 +24,8 @@ const AccessModal: React.FunctionComponent<IProps> = (
           <i className='fas fa-times fa-lg' />
         </Button>
       </div>
-      <ModalBody>
-        {props.children}
-      </ModalBody>
-      <ModalFooter>
-        {props.footer}
-      </ModalFooter>
+      <ModalBody>{props.children}</ModalBody>
+      <ModalFooter>{props.footer}</ModalFooter>
     </Modal>
   );
 };

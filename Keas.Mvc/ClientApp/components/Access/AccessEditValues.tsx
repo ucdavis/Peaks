@@ -79,20 +79,20 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
             />
           </div>
           {this.props.selectedAccess.teamId !== 0 && (
-              <AssignmentContainer
-                disableEditing={this.props.disableEditing}
-                onRevokeSuccess={assignment =>
-                  this.props.onAccessUpdate({
-                    ...this.props.selectedAccess,
-                    assignments: assignments.splice(
-                      assignments.indexOf(assignment),
-                      1
-                    )
-                  })
-                }
-                access={this.props.selectedAccess}
-              />
-            )}
+            <AssignmentContainer
+              disableEditing={this.props.disableEditing}
+              onRevokeSuccess={assignment =>
+                this.props.onAccessUpdate({
+                  ...this.props.selectedAccess,
+                  assignments: assignments.splice(
+                    assignments.indexOf(assignment),
+                    1
+                  )
+                })
+              }
+              access={this.props.selectedAccess}
+            />
+          )}
         </div>
       </div>
     );

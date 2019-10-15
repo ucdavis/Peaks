@@ -3,12 +3,7 @@ import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import {
-  IAccess,
-  IAccessAssignment,
-  IMatchParams,
-  IPerson,
-} from '../../Types';
+import { IAccess, IAccessAssignment, IMatchParams, IPerson } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
@@ -64,7 +59,7 @@ export default class AccessContainer extends React.Component<
         ...assignment,
         access: a
       }))
-    }))
+    }));
 
     this.setState({ accesses, loading: false, tags });
   }
@@ -76,13 +71,9 @@ export default class AccessContainer extends React.Component<
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
-    const {
-      containerAction,
-      assetType,
-      containerId,
-    } = this.props.match.params;
+    const { containerAction, assetType, containerId } = this.props.match.params;
     const activeAsset = !assetType || assetType === 'access';
-    const selectedId = parseInt(containerId, 10)
+    const selectedId = parseInt(containerId, 10);
     const detailAccess = this.state.accesses.find(a => a.id === selectedId);
     const shouldRenderDetails = !assetType && containerAction === 'details';
 
