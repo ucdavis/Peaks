@@ -86,7 +86,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { action } = this.props.match.params;
+    const { action, containerAction } = this.props.match.params;
     const isRevokeModalShown =
       !this.props.disableEditing && action === 'revoke';
     const isAssignModalShown =
@@ -98,10 +98,12 @@ class AssignmentContainer extends React.Component<IProps, IState> {
             <h2>
               <i className='fas fa-address-card fa-xs' /> Assignments
             </h2>
-            <Button color='link' onClick={this._openAssignModal}>
-              <i className='fas fa-plus fa-sm' aria-hidden='true' /> Assign
-              Access
-            </Button>
+            {containerAction === 'details' && (
+              <Button color='link' onClick={this._openAssignModal}>
+                <i className='fas fa-plus fa-sm' aria-hidden='true' /> Assign
+                Access
+              </Button>
+            )}
           </div>
         </div>
         <div className='card-content'>
@@ -113,7 +115,6 @@ class AssignmentContainer extends React.Component<IProps, IState> {
             />
           )}
           {isAssignModalShown && (
-            
             <AssignAccess
               closeModal={this.hideModals}
               modal={isAssignModalShown}
@@ -139,7 +140,6 @@ class AssignmentContainer extends React.Component<IProps, IState> {
               }
             />
           ) : (
-            
             <AssignmentTable
               assignments={this.state.assignments}
               onRevoke={this.showRevokeModal}
