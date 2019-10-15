@@ -78,8 +78,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
               onSelect={e => this.props.changeProperty('tags', e.join(','))}
             />
           </div>
-          {this.props.selectedAccess.teamId !== 0 &&
-            this.props.selectedAccess.assignments.length > 0 && (
+          {this.props.selectedAccess.teamId !== 0 && (
               <AssignmentContainer
                 disableEditing={this.props.disableEditing}
                 onRevokeSuccess={assignment =>
