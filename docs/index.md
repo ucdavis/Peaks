@@ -50,4 +50,4 @@ Track individual employees, faculty and students to determine which assets they 
 
 # I want it!!
 
-Well today is your lucky day.  Visit [our help ticketing system](https://secure.caes.ucdavis.edu/help/Ticket/Submit?appName=peaks) and drop us a line.
+Well today is your lucky day.  Visit [our help ticketing system](https://caeshelp.ucdavis.edu/?appname=Peaks) and drop us a line.
