@@ -100,7 +100,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                       changeProperty={this._changeProperty}
                       disableEditing={false}
                       onAccessUpdate={access =>
-                        this.setState({ access: access })
+                        this.setState({ access })
                       }
                       tags={this.props.tags}
                     />

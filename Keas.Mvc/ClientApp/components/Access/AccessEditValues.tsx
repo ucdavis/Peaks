@@ -2,15 +2,15 @@ import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IAccess } from '../../Types';
 import SearchTags from '../Tags/SearchTags';
-import AssignmentContainer from './AssignmentContainer';
+import AssignmentContainer from './AccessAssignmentContainer';
 
 interface IProps {
   selectedAccess: IAccess;
-  onAccessUpdate?(access: IAccess);
   disableEditing: boolean;
   changeProperty?: (property: string, value: string) => void;
   openEditModal?: (access: IAccess) => void;
   tags?: string[];
+  onAccessUpdate?(access: IAccess);
 }
 
 export default class AccessEditValues extends React.Component<IProps, {}> {

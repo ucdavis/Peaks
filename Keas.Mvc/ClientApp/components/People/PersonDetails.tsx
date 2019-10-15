@@ -4,7 +4,7 @@ import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey, IMatchParams, IPerson, IPersonInfo } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
-import AssignmentContainer from '../Access/AssignmentContainer';
+import AssignmentContainer from '../Access/AccessAssignmentContainer';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
 import HistoryContainer from '../History/HistoryContainer';
 import KeySerialContainer from '../Keys/KeySerialContainer';

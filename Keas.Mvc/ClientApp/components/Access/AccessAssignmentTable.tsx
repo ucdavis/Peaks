@@ -1,16 +1,16 @@
+import { IAccessAssignment } from 'ClientApp/Types';
 import * as React from 'react';
 import ReactTable from 'react-table';
 import { DateUtil } from '../../util/dates';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
-import { IAccessAssignment } from 'ClientApp/Types';
 
 interface IProps {
-  assignments: Array<IAccessAssignment>;
+  assignments: IAccessAssignment[];
   onRevoke: (assignment: IAccessAssignment) => void;
   disableEditing?: boolean;
 }
 
-const AccessAssignTable: React.FunctionComponent<IProps> = (
+const accessAssignTable: React.FunctionComponent<IProps> = (
   props: React.PropsWithChildren<IProps>
 ): React.ReactElement => {
   const columns = [
@@ -44,7 +44,7 @@ const AccessAssignTable: React.FunctionComponent<IProps> = (
           onClick={() =>
             props.onRevoke(
               props.assignments.find(
-                (el: IAccessAssignment) => row.value == el.personId
+                (el: IAccessAssignment) => row.value === el.personId
               )
             )
           }
@@ -69,4 +69,4 @@ const AccessAssignTable: React.FunctionComponent<IProps> = (
   );
 };
 
-export default AccessAssignTable;
+export default accessAssignTable;
