@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Keas.Mvc.Models;
+using Bigfix;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -331,9 +332,14 @@ namespace Keas.Mvc.Controllers.Api
                  var result = await this._bigfixService.GetComputer(id);
                  return Json(result);
             }
-            catch (Exception) 
+            catch (BigfixApiException ex) 
             {
-                return NotFound();
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return NotFound();
+                }
+                else
+                    throw;
             } 
         }
 
@@ -341,11 +347,19 @@ namespace Keas.Mvc.Controllers.Api
         {
             if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
             {
-                var result = await this._bigfixService.GetComputersByName(value);
-                if (result.Length == 0) {
-                    return NotFound();
+                try
+                {
+                    var result = await this._bigfixService.GetComputersByName(value);
+                    if (result.Length == 0)
+                        return NotFound();
+
+                    else
+                        return Json(result);
+
+                } catch (BigfixApiException) {
+                    throw;
                 }
-                return Json(result);
+                
             } else
             {
                 // not supported yet

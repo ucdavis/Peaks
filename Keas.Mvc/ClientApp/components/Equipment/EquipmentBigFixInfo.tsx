@@ -14,6 +14,7 @@ interface IState {
   computerInfo: object;
   isFetched: boolean;
   isValidRequest: boolean;
+  isFound: boolean;
 }
 
 export default class EquipmentBigFixInfo extends React.Component<
@@ -29,6 +30,7 @@ export default class EquipmentBigFixInfo extends React.Component<
       bigfixModal: false,
       computerInfo: {},
       isFetched: false,
+      isFound: true,
       isValidRequest: true
     };
   }
@@ -89,25 +91,35 @@ export default class EquipmentBigFixInfo extends React.Component<
 
   private _renderComputerInfo = () => {
     if (this.state.isValidRequest) {
+      // if found
+      if (this.state.isFound) {
+        return (
+          <Table>
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.keys(this.state.computerInfo).map(key => {
+                return (
+                  <tr key={key}>
+                    <td>{key}</td>
+                    <td>{this.state.computerInfo[key]}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        );
+      }
+
+      // if not found
       return (
-        <Table>
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.keys(this.state.computerInfo).map(key => {
-              return (
-                <tr key={key}>
-                  <td>{key}</td>
-                  <td>{this.state.computerInfo[key]}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
+        <p>
+          Not a valid Bigfix id, please make sure to enter a valid Bigfix id.
+        </p>
       );
     }
 
@@ -123,17 +135,20 @@ export default class EquipmentBigFixInfo extends React.Component<
     } catch (err) {
       if (err.message === 'Not Found') {
         toast.error(
-          'Not a valid Bigfix id, please make sure to enter a valid Bigfix id.'
-        );
+        this.setState({
+          isFetched: true,
+          isFound: false
+        });
       } else {
+        this.setState({
+          isFetched: true,
+          isValidRequest: false
+        });
         toast.error(
           'Error fetching Computer details. Please refresh the page to try again.'
         );
       }
-      this.setState({
-        isFetched: true,
-        isValidRequest: false
-      });
+
       return;
     }
 
@@ -155,6 +170,7 @@ export default class EquipmentBigFixInfo extends React.Component<
     this.setState(prevState => ({
       bigfixModal: !prevState.bigfixModal,
       isFetched: false,
+      isFound: true,
       isValidRequest: true
     }));
   };
