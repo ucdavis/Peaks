@@ -1,4 +1,3 @@
-
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { toast } from 'react-toastify';
@@ -17,6 +16,7 @@ import {
 } from 'reactstrap';
 import { Context } from '../../Context';
 import { IBigFixSearchedName } from '../../Types';
+import { threadId } from 'worker_threads';
 
 interface IProps {
   addBigFixId: (property: string, id: string) => void;
@@ -24,6 +24,7 @@ interface IProps {
 
 interface IState {
   isFetched: boolean;
+  isFound: boolean;
   isSearching: boolean;
   isValidSearch: boolean;
   searchModal: boolean;
@@ -43,6 +44,7 @@ export default class EquipmentBigFixSearchId extends React.Component<
     super(props);
     this.state = {
       isFetched: false,
+      isFound: true,
       isSearching: false,
       isValidSearch: true,
       listOfComputers: [],
@@ -171,14 +173,22 @@ export default class EquipmentBigFixSearchId extends React.Component<
   };
 
   private _renderNameTable = () => {
+    // default state where, fetching has not has happend.
     if (!this.state.isFetched) {
       return null;
     }
 
+    // if fetch request processed but not an error happend. this triggers toast.
     if (!this.state.isValidSearch) {
       return <p className='text-center'>No data to present.</p>;
     }
 
+    // if fetch request processed but not found
+    if (!this.state.isFound) {
+      return <p>Not a valid Name, please make sure to enter a valid Name.</p>;
+    }
+
+    // if fetch request process is a succsessful
     return (
       <Table>
         <tbody>
@@ -233,20 +243,24 @@ export default class EquipmentBigFixSearchId extends React.Component<
         `/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`
       );
     } catch (err) {
+      debugger;
       if (err.message === 'Not Found') {
-        toast.error(
-          'Not a valid Name, please make sure to enter a valid Name.'
-        );
+        this.setState({
+          isFetched: true,
+          isSearching: false,
+          isFound: false
+        });
       } else {
+        this.setState({
+          isFetched: true,
+          isSearching: false,
+          isValidSearch: false
+        });
         toast.error(
           'Error fetching Names. Please refresh the page to try again.'
         );
       }
-      this.setState({
-        isFetched: true,
-        isSearching: false,
-        isValidSearch: false
-      });
+
       return;
     }
 
@@ -269,6 +283,7 @@ export default class EquipmentBigFixSearchId extends React.Component<
   private _modalToggle = () => {
     this.setState(prevState => ({
       isFetched: false,
+      isFound: true,
       isValidSearch: true,
       listOfComputers: [],
       searchModal: !prevState.searchModal
