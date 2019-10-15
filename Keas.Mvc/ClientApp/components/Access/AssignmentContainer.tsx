@@ -76,7 +76,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   }
 
   async componentDidMount() {
-    if (this.state.assignments.length === 0) {
+    if (this.state.assignments.length === 0 && this.props.person) {
       let assignments = await this.fetchAssignments();
       console.log(assignments)
       this.setState({

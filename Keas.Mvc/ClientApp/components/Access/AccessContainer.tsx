@@ -159,6 +159,7 @@ export default class AccessContainer extends React.Component<
   private _renderDetails = (selectedId: number, access: IAccess) => {
     return (
       <AccessDetails
+        goBack={this.props.history.goBack}
         key={`details-access-${selectedId}`}
         selectedAccess={access}
         modal={!!access}

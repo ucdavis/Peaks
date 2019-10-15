@@ -1,10 +1,13 @@
 ﻿import * as React from 'react';
 import { toast } from 'react-toastify';
+import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IAccess } from '../../Types';
 import AccessEditValues from './AccessEditValues';
+import { RouteComponentProps } from 'react-router';
 
 interface IProps {
+  goBack: () => void;
   modal: boolean;
   closeModal: () => void;
   selectedAccess: IAccess;
@@ -30,6 +33,12 @@ export default class AccessDetails extends React.Component<IProps, {}> {
     const access = this.props.selectedAccess;
     return (
       <div>
+        <div className='mb-3'>
+          <Button color='link' onClick={this.props.goBack}>
+            <i className='fas fa-arrow-left fa-xs' /> Return to Table
+          </Button>
+        </div>
+
         <h2>Details for {access.name}</h2>
 
         <AccessEditValues
