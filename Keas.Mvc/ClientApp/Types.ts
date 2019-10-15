@@ -101,7 +101,6 @@ export interface IKey {
 export interface IKeySerial {
   id: number;
   number: string;
-  tags: string;
   status: string;
   notes: string;
   key: IKey;
