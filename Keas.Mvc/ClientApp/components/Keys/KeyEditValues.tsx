@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { IKey } from '../../Types';
+import { IKey } from '../../models/Keys';
 import SearchTags from '../Tags/SearchTags';
 
 interface IProps {

@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import Button from 'reactstrap/lib/Button';
-import { IKeySerial } from '../../Types';
+import { IKeySerial } from '../../models/KeySerials';
 import { DateUtil } from '../../util/dates';
 
 interface IProps {

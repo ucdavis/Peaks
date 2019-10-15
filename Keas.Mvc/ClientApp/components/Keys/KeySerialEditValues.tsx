@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { IKey, IKeySerial } from '../../Types';
+import { IKey } from '../../models/Keys';
+import { IKeySerial } from '../../models/KeySerials';
 
 interface IProps {
   keySerial: IKeySerial;
