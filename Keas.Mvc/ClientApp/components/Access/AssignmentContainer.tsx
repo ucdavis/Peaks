@@ -249,7 +249,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
 
   private _openDetails = (access: IAccess) => {
     this.props.history.push(
-      `${this.context.team.slug}/access/details/${access.id}`
+      `/${this.context.team.slug}/access/details/${access.id}`
     );
   };
 
