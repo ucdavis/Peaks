@@ -25,8 +25,6 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
 }
 
 interface IState {
-  isRevokeModalShown: boolean;
-  isAssignModalShown: boolean;
   selectedAssignment?: IAccessAssignment;
   assignments: Array<IAccessAssignment>;
 }
@@ -48,8 +46,6 @@ class AssignmentContainer extends React.Component<IProps, IState> {
     const { action } = props.match.params;
 
     this.state = {
-      isRevokeModalShown: !props.disableEditing && action === 'revoke',
-      isAssignModalShown: !props.disableEditing && action === 'assign',
       assignments: assignments,
       selectedAssignment: assignments.find(
         el => el.id === parseInt(props.match.params.id, 10)
@@ -69,7 +65,9 @@ class AssignmentContainer extends React.Component<IProps, IState> {
 
     return accesses.map(access => ({
       ...access.assignments.find(
-        assignment => assignment.accessId === access.id && assignment.personId === this.props.person.id
+        assignment =>
+          assignment.accessId === access.id &&
+          assignment.personId === this.props.person.id
       ),
       access
     }));
@@ -78,7 +76,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   async componentDidMount() {
     if (this.state.assignments.length === 0 && this.props.person) {
       let assignments = await this.fetchAssignments();
-      console.log(assignments)
+      console.log(assignments);
       this.setState({
         assignments: assignments,
         selectedAssignment: assignments.find(
@@ -90,7 +88,6 @@ class AssignmentContainer extends React.Component<IProps, IState> {
 
   private showRevokeModal = (assignment: IAccessAssignment) => {
     this.setState({
-      isRevokeModalShown: true,
       selectedAssignment: assignment
     });
     this.props.history.push(
@@ -100,8 +97,6 @@ class AssignmentContainer extends React.Component<IProps, IState> {
 
   private hideModals = () => {
     this.setState({
-      isRevokeModalShown: false,
-      isAssignModalShown: false,
       selectedAssignment: null
     });
     this.props.history.replace(this._getBaseUrl());
@@ -132,9 +127,6 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   };
 
   private _openAssignModal = () => {
-    this.setState({
-      isAssignModalShown: true
-    });
     if (this.props.access) {
       this.props.history.push(
         `/${this.context.team.slug}/access/assign/${this.props.access.id}`
@@ -169,7 +161,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
         method: 'POST'
       });
 
-      access.assignments.push(accessAssignment)
+      access.assignments.push(accessAssignment);
 
       accessAssignment.access = access;
       toast.success('Access assigned successfully!');
@@ -189,6 +181,11 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   };
 
   public render() {
+    const { action } = this.props.match.params;
+    const isRevokeModalShown =
+      !this.props.disableEditing && action === 'revoke';
+    const isAssignModalShown =
+      !this.props.disableEditing && action === 'assign';
     return (
       <div className='card access-color'>
         <div className='card-header-access'>
@@ -196,26 +193,24 @@ class AssignmentContainer extends React.Component<IProps, IState> {
             <h2>
               <i className='fas fa-address-card fa-xs' /> Assignments
             </h2>
-            {!this.props.disableEditing && (
-              <Button color='link' onClick={this._openAssignModal}>
-                <i className='fas fa-plus fa-sm' aria-hidden='true' /> Assign
-                Access
-              </Button>
-            )}
+            <Button color='link' onClick={this._openAssignModal}>
+              <i className='fas fa-plus fa-sm' aria-hidden='true' /> Assign
+              Access
+            </Button>
           </div>
         </div>
         <div className='card-content'>
-          {this.state.isRevokeModalShown && (
+          {isRevokeModalShown && (
             <RevokeAccess
               assignment={this.state.selectedAssignment}
               revoke={this.callRevoke}
               cancelRevoke={this.hideModals}
             />
           )}
-          {this.state.isAssignModalShown && (
+          {isAssignModalShown && (
             <AssignAccess
               closeModal={this.hideModals}
-              modal={this.state.isAssignModalShown}
+              modal={isAssignModalShown}
               person={this.props.person}
               tags={[]}
               onCreate={this.callAssign}
@@ -231,7 +226,9 @@ class AssignmentContainer extends React.Component<IProps, IState> {
               onAdd={this._openAssignModal}
               onRevoke={access =>
                 this.showRevokeModal(
-                  this.state.assignments.find(assignment => assignment.accessId === access.id)
+                  this.state.assignments.find(
+                    assignment => assignment.accessId === access.id
+                  )
                 )
               }
             />
