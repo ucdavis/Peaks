@@ -78,51 +78,6 @@ export interface ITeam {
   slug: string;
 }
 
-export interface IKeyInfo {
-  id: number;
-  key: IKey;
-  serialsTotalCount: number;
-  serialsInUseCount: number;
-  spacesCount: number;
-  code?: string;
-}
-
-export interface IKey {
-  id: number;
-  teamId: number;
-  name: string;
-  code: string;
-  notes: string;
-  tags: string;
-  serials?: IKeySerial[];
-  keyXSpaces?: IKeySpaceAssociation[];
-}
-
-export interface IKeySerial {
-  id: number;
-  number: string;
-  status: string;
-  notes: string;
-  key: IKey;
-  keySerialAssignment?: IKeySerialAssignment;
-}
-
-export interface IKeySerialAssignment {
-  id: number;
-  expiresAt: Date;
-  keySerial: IKeySerial;
-  keySerialId: number;
-  person: IPerson;
-}
-
-export interface IKeySpaceAssociation {
-  id: number;
-  spaceId: number;
-  keyId: number;
-  space?: ISpace;
-  key?: IKey;
-}
-
 export interface IAccess {
   id: number;
   teamId: number;
