@@ -134,7 +134,6 @@ export default class EquipmentBigFixInfo extends React.Component<
       );
     } catch (err) {
       if (err.message === 'Not Found') {
-        toast.error(
         this.setState({
           isFetched: true,
           isFound: false
