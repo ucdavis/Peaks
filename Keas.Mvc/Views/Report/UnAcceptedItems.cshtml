@@ -4,14 +4,6 @@
     ViewData["Title"] = "Items Pending Acceptance";
 }
 
-@section Styles {
-    @await Html.PartialAsync("_ReportStylePartial")
-}
-
-@section Scripts {
-   @await Html.PartialAsync("_ReportScriptsPartial")                             
-}
-
 
 <form asp-action="UnAcceptedItems" method="get">
     <div class="card">
@@ -141,3 +133,12 @@
         </div>
     </div>
 </form>
+
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+    @await Html.PartialAsync("_ReportScriptsPartial")                             
+}
