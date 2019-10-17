@@ -140,5 +140,37 @@
 }
 
 @section Scripts {
-    @await Html.PartialAsync("_ReportScriptsPartial")                             
+    @{await Html.RenderPartialAsync("_ImportJS");}
+
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+            "dom": 'lBfrtip',
+            "buttons": [
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                },
+                {
+                     extend: 'csvHtml5',
+                     exportOptions: {
+                         columns: [0, 1, 2, 3, 4]
+                     }
+                },
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4]
+                    }
+                }
+            ],
+        });
+    </script>
 }
