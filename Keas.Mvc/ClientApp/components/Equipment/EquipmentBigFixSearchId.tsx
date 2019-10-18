@@ -17,6 +17,7 @@ import {
 import { Context } from '../../Context';
 import { IBigFixSearchedName } from '../../Types';
 import { threadId } from 'worker_threads';
+import { isThisQuarter } from 'date-fns';
 
 interface IProps {
   addBigFixId: (property: string, id: string) => void;
@@ -173,42 +174,47 @@ export default class EquipmentBigFixSearchId extends React.Component<
   };
 
   private _renderNameTable = () => {
-    // default state where, fetching has not has happend.
-    if (!this.state.isFetched) {
-      return null;
-    }
 
-    // if fetch request processed but not an error happend. this triggers toast.
-    if (!this.state.isValidSearch) {
+    // after request, if fetched 
+    if (this.state.isFetched) {
+
+      // if no error occured except Not Found
+      if (this.state.isValidSearch) {
+
+        // if not NotFound error.
+        if (this.state.isFound) {
+          return (
+            <Table>
+              <tbody>
+                {this.state.listOfComputers.map(computer => {
+                  return (
+                    <tr key={computer.id} className='bigfix-info border-bottom'>
+                      <Button
+                        color='link'
+                        onClick={() =>
+                          this.props.addBigFixId(
+                            'systemManagementId',
+                            computer.id
+                          )
+                        }
+                      >
+                        {computer.name}
+                      </Button>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          );
+        }
+        // if NotFound error.
+        return <p>Not a valid Name, please make sure to enter a valid Name.</p>;
+      }
+      // if other errors accurs. also toast error is displayed.
       return <p className='text-center'>No data to present.</p>;
     }
-
-    // if fetch request processed but not found
-    if (!this.state.isFound) {
-      return <p>Not a valid Name, please make sure to enter a valid Name.</p>;
-    }
-
-    // if fetch request process is a succsessful
-    return (
-      <Table>
-        <tbody>
-          {this.state.listOfComputers.map(computer => {
-            return (
-              <tr key={computer.id} className='bigfix-info border-bottom'>
-                <Button
-                  color='link'
-                  onClick={() =>
-                    this.props.addBigFixId('systemManagementId', computer.id)
-                  }
-                >
-                  {computer.name}
-                </Button>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
-    );
+    // default, if no request has happend yet. 
+    return null;
   };
 
   private _renderSearchButton = () => {
@@ -229,7 +235,13 @@ export default class EquipmentBigFixSearchId extends React.Component<
   };
 
   private _onSearch = () => {
-    this.setState({ isSearching: true, isFetched: false, isValidSearch: true });
+    this.setState({
+      isSearching: true,
+      isFetched: false,
+      isFound: true,
+      isValidSearch: true,
+      listOfComputers: []
+    });
     this._getComputersBySearchId(
       this.state.selectedField,
       this.state.valueToBeSearched
@@ -275,6 +287,9 @@ export default class EquipmentBigFixSearchId extends React.Component<
   private _changeSelectedInput = value => {
     this.setState({
       isFetched: false,
+      isFound: true,
+      isValidSearch: true,
+      isSearching: false,
       listOfComputers: [],
       selectedField: value
     });
@@ -286,6 +301,7 @@ export default class EquipmentBigFixSearchId extends React.Component<
       isFound: true,
       isValidSearch: true,
       listOfComputers: [],
+      valueToBeSearched: '',
       searchModal: !prevState.searchModal
     }));
   };
