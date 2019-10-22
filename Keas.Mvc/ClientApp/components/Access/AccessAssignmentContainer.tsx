@@ -88,7 +88,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   public render() {
     const { action, containerAction, assetType } = this.props.match.params;
     const isRevokeModalShown =
-      !this.props.disableEditing && assetType === "accessAssignment" && action === 'revoke';
+      assetType === "accessAssignment" && action === 'revoke';
     const isAssignModalShown =
       !this.props.disableEditing && assetType === "access" && action === 'assign';
     return (

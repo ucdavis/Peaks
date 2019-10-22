@@ -75,7 +75,7 @@ export default class AccessContainer extends React.Component<
     const activeAsset = !assetType || assetType === 'access';
     const selectedId = parseInt(containerId, 10);
     const detailAccess = this.state.accesses.find(a => a.id === selectedId);
-    const shouldRenderDetails = !assetType && containerAction === 'details';
+    const shouldRenderDetails = containerAction === 'details';
 
     return (
       <div className='card access-color'>
