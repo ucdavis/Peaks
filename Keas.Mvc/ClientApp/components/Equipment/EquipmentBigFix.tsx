@@ -22,9 +22,7 @@ export default class EquipmentBigFix extends React.Component<IProps, {}> {
   }
 
   private _renderBigFixInfoOrSearchId = () => {
-    // if no Bigfix Id exist
     if (!this.props.bigfixId) {
-      // if editing disabled
       if (this.props.disableEditing) {
         return (
           <span className='ml-3'>
