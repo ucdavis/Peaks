@@ -86,11 +86,11 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { action, containerAction } = this.props.match.params;
+    const { action, containerAction, assetType } = this.props.match.params;
     const isRevokeModalShown =
-      !this.props.disableEditing && action === 'revoke';
+      !this.props.disableEditing && assetType === "accessAssignment" && action === 'revoke';
     const isAssignModalShown =
-      !this.props.disableEditing && action === 'assign';
+      !this.props.disableEditing && assetType === "access" && action === 'assign';
     return (
       <div className='card access-color'>
         <div className='card-header-access'>
