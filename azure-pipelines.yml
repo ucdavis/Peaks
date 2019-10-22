@@ -3,8 +3,8 @@
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
-# trigger:
-# - master
+trigger:
+- master
 
 name: 1.1.$(Date:yyMM).$(build.buildId)
 
@@ -16,52 +16,61 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
-steps:
-- task: UseDotNet@2
-  displayName: 'Use .NET Core 2.2 sdk'
-  inputs:
-    packageType: sdk
-    version: 2.2.106
-    installationPath: $(Agent.ToolsDirectory)/dotnet
+stages:
+- stage: Build
+  jobs:
+  - job:
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET Core 2.2 sdk'
+      inputs:
+       packageType: sdk
+       version: 2.2.106
+       installationPath: $(Agent.ToolsDirectory)/dotnet
 
-- task: NuGetToolInstaller@1
+    - task: NuGetToolInstaller@1
 
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Build Keas.Mvc'
-  inputs:
-    command: 'build'
-    projects: './Keas.Mvc/Keas.Mvc.csproj'
-    arguments: '--configuration $(BuildConfiguration) /property:Version=$(build.buildNumber)'
+    - task: DotNetCoreCLI@2
+      displayName: 'Build Keas.Mvc'
+      inputs:
+        command: 'build'
+        projects: './Keas.Mvc/Keas.Mvc.csproj'
+        arguments: '--configuration $(BuildConfiguration) /property:Version=$(build.buildNumber)'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Run Server Tests'
-  inputs:
-    command: 'test'
+    - task: DotNetCoreCLI@2
+      displayName: 'Run Server Tests'
+      inputs:
+        command: 'test'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Publish Keas.Mvc'
-  inputs:
-    command: 'publish'
-    publishWebProjects: true
-    zipAfterPublish: false
-    modifyOutputPath: false
-    projects: './Keas.Mvc/Keas.Mvc.csproj'
-    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/ --no-build --no-restore'
+- stage: Publish
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  jobs:
+    - job:
+      steps:
+        - task: DotNetCoreCLI@2
+          displayName: 'Publish Keas.Mvc'
+          inputs:
+            command: 'publish'
+            publishWebProjects: true
+            zipAfterPublish: false
+            modifyOutputPath: false
+            projects: './Keas.Mvc/Keas.Mvc.csproj'
+            arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/ --no-build --no-restore'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Publish Keas.Jobs.SendMail'
-  inputs:
-    command: 'publish'
-    publishWebProjects: false
-    zipAfterPublish: false
-    projects: './Keas.Jobs.SendMail/Keas.Jobs.SendMail.csproj'
-    arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
+        - task: DotNetCoreCLI@2
+          displayName: 'Publish Keas.Jobs.SendMail'
+          inputs:
+            command: 'publish'
+            publishWebProjects: false
+            zipAfterPublish: false
+            projects: './Keas.Jobs.SendMail/Keas.Jobs.SendMail.csproj'
+            arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
 
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact'
-  inputs:
-    PathtoPublish: '$(build.artifactstagingdirectory)'
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact'
+          inputs:
+            PathtoPublish: '$(build.artifactstagingdirectory)'
