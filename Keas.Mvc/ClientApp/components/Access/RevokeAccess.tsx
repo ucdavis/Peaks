@@ -6,7 +6,7 @@ import AccessModal from './AccessModal';
 interface IProps {
   assignment?: IAccessAssignment;
   revoke: (accessAssignment: IAccessAssignment) => Promise<void>;
-  cancelRevoke();
+  cancelRevoke: () => void;
 }
 
 interface IState {
@@ -63,8 +63,8 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
   private _callRevoke = () => {
     this.setState({ submitting: true });
     try {
-      this.props.revoke(this.props.assignment)
-    } catch(e) {
+      this.props.revoke(this.props.assignment);
+    } catch (e) {
       this.setState({
         error: 'Error -- ' + e.message + ' -- Please try again later',
         submitting: false
