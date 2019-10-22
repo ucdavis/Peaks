@@ -73,6 +73,19 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                   }
                 />
               </div>
+              {(!!this.state.person || !!this.props.person) && (
+                <div className='form-group'>
+                  <label>Set the expiration date</label>
+                  <br />
+                  <DatePicker
+                    format='MM/dd/yyyy'
+                    required={true}
+                    clearIcon={null}
+                    value={this.state.date}
+                    onChange={this._changeDate}
+                  />
+                </div>
+              )}
               {!this.state.access && (
                 <div className='form-group'>
                   <SearchAccess
@@ -122,20 +135,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     selectedAccess={this.state.access}
                     disableEditing={true}
                     tags={this.props.tags}
-                  />
-                </div>
-              )}
-
-              {(!!this.state.person || !!this.props.person) && (
-                <div className='form-group'>
-                  <label>Set the expiration date</label>
-                  <br />
-                  <DatePicker
-                    format='MM/dd/yyyy'
-                    required={true}
-                    clearIcon={null}
-                    value={this.state.date}
-                    onChange={this._changeDate}
                   />
                 </div>
               )}
