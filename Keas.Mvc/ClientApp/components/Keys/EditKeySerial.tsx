@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey } from '../../models/Keys';
-import { IKeySerial } from '../../models/KeySerials';
+import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
 
@@ -15,6 +15,7 @@ interface IProps {
   closeModal: () => void;
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
   checkIfKeySerialNumberIsValid: (serialNumber: string, id: number) => boolean;
+  reservedNames: string[];
 }
 
 interface IState {
@@ -144,7 +145,13 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
     this._closeModal();
   };
 
-  private _validateState = () => {
+  private _validateState = async () => {
+    const validcheck = await keySerialSchema.validateSync(
+      this.state.keySerial,
+      {
+        context: { reservedNames: this.props.reservedNames }
+      }
+    );
     let valid = true;
     let error = '';
 

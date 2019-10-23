@@ -103,6 +103,9 @@ export default class KeySerialContainer extends React.Component<
     const selectedKeySerial = this.state.keySerials.find(
       s => s.id === selectedKeySerialId
     );
+    const reservedNames = this.state.keySerials
+      .filter(x => x.id !== selectedKeySerialId)
+      .map(x => x.number);
     return (
       <div className='card keys-color'>
         <div className='card-header-keys'>
@@ -147,7 +150,11 @@ export default class KeySerialContainer extends React.Component<
             this._renderDetailsModal(selectedKeySerialId, selectedKeySerial)}
           {activeAsset &&
             action === 'edit' &&
-            this._renderEditModal(selectedKeySerialId, selectedKeySerial)}
+            this._renderEditModal(
+              selectedKeySerialId,
+              selectedKeySerial,
+              reservedNames
+            )}
           {activeAsset &&
             action === 'revoke' &&
             this._renderRevokeModal(selectedKeySerialId, selectedKeySerial)}
@@ -191,7 +198,11 @@ export default class KeySerialContainer extends React.Component<
     );
   };
 
-  private _renderEditModal = (selectedId: number, keySerial: IKeySerial) => {
+  private _renderEditModal = (
+    selectedId: number,
+    keySerial: IKeySerial,
+    reservedNames: string[]
+  ) => {
     return (
       <EditKeySerial
         key={`edit-keySerial-${selectedId}`}
@@ -203,6 +214,7 @@ export default class KeySerialContainer extends React.Component<
         closeModal={this._closeModals}
         goToKeyDetails={this.props.goToKeyDetails}
         checkIfKeySerialNumberIsValid={this._checkIfKeySerialNumberIsValid}
+        reservedNames={reservedNames}
       />
     );
   };
