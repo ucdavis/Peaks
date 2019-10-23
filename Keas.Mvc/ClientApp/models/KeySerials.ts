@@ -21,7 +21,8 @@ export const keySerialSchema = yup.object<IKeySerial>().shape({
     .nullable(),
   number: yup
     .string()
-    .required()
+    .required('Serial Number is required.')
+    .max(64)
     .test(
       'reservedNames',
       'The serial number you have chosen is already in use.',

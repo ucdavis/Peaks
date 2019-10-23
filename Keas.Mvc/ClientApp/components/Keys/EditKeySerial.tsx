@@ -148,9 +148,8 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
   private _validateState = () => {
     try {
       const validcheck = keySerialSchema.validateSync(this.state.keySerial, {
-        context: { reservedNames: this.props.reservedNames || [] }
+        context: { reservedNames: this.props.reservedNames }
       });
-      console.log(validcheck);
       this.setState({ error: '', validState: true });
     } catch (err) {
       this.setState({ error: err.message, validState: false });
