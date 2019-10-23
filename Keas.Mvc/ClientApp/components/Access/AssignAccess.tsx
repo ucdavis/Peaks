@@ -6,6 +6,8 @@ import { Context } from '../../Context';
 import { IAccess, IPerson } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
 import AccessEditValues from './AccessEditValues';
+import AccessAssignmentCard from './AccessAssignmentCard';
+import AccessAssignmentTable from './AccessAssignmentTable';
 import SearchAccess from './SearchAccess';
 
 interface IProps {
@@ -110,10 +112,9 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     </div>
                     <AccessEditValues
                       selectedAccess={this.state.access}
-                      changeProperty={this._changeProperty}
                       disableEditing={false}
                       onAccessUpdate={access =>
-                        this.setState({ access })
+                        this.setState({ access }, this._validateState)
                       }
                       tags={this.props.tags}
                     />
@@ -135,7 +136,11 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     selectedAccess={this.state.access}
                     disableEditing={true}
                     tags={this.props.tags}
-                  />
+                  >
+                    <AccessAssignmentCard disableEditing={true}>
+                      <AccessAssignmentTable assignments={this.state.access.assignments}/>
+                    </AccessAssignmentCard>
+                  </AccessEditValues>
                 </div>
               )}
               {this.state.error}
@@ -157,18 +162,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
       </Modal>
     );
   }
-
-  private _changeProperty = (property: string, value: string) => {
-    this.setState(
-      {
-        access: {
-          ...this.state.access,
-          [property]: value
-        }
-      },
-      this._validateState
-    );
-  };
 
   // clear everything out on close
   private _confirmClose = () => {

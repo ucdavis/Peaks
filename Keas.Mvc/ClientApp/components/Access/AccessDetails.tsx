@@ -1,10 +1,9 @@
-import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
+﻿import * as React from 'react';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IAccess } from '../../Types';
-import AccessEditValues from './AccessEditValues';
+import AccessAssignmentContainer from './AccessAssignmentContainer';
 
 interface IProps {
   goBack: () => void;
@@ -41,10 +40,12 @@ export default class AccessDetails extends React.Component<IProps, {}> {
 
         <h2>Details for {access.name}</h2>
 
-        <AccessEditValues
-          selectedAccess={access}
-          disableEditing={true}
-          openEditModal={this.props.openEditModal}
+        <AccessAssignmentContainer
+          access={this.props.selectedAccess}
+          onAssignSuccess={assignment => {
+            access.assignments.push(assignment);
+            this.props.updateSelectedAccess(access);
+          }}
         />
       </div>
     );

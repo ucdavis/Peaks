@@ -9,7 +9,6 @@ import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
 import AccessDetails from './AccessDetails';
 import AccessTable from './AccessTable';
-import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
 import EditAccess from './EditAccess';
 
@@ -134,7 +133,7 @@ export default class AccessContainer extends React.Component<
   private _renderDetails = (selectedId: number, access: IAccess) => {
     return (
       <AccessDetails
-        goBack={this.props.history.goBack}
+        goBack={() => this.props.history.push(this._getBaseUrl() + '/access')}
         key={`details-access-${selectedId}`}
         selectedAccess={access}
         modal={!!access}
