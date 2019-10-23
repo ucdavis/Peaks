@@ -15,7 +15,10 @@ export const keySerialSchema = yup.object<IKeySerial>().shape({
   id: yup.number(),
   key: yup.object<IKey>(),
   keySerialAssignment: yup.object<IKeySerialAssignment>().nullable(),
-  notes: yup.string().notRequired(),
+  notes: yup
+    .string()
+    .notRequired()
+    .nullable(),
   number: yup
     .string()
     .required()
@@ -24,8 +27,10 @@ export const keySerialSchema = yup.object<IKeySerial>().shape({
       'The serial number you have chosen is already in use.',
       function test(value) {
         const context: any = this.options.context;
-        console.log(context);
-        return !context.reservedNames.some(x => x === value);
+        const val =
+          !!value && !context.reservedNames.includes(x => x === value);
+        console.log(val);
+        return val;
       }
     ),
   status: yup

@@ -145,13 +145,12 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
     this._closeModal();
   };
 
-  private _validateState = async () => {
-    const validcheck = await keySerialSchema.validateSync(
-      this.state.keySerial,
-      {
-        context: { reservedNames: this.props.reservedNames }
-      }
-    );
+  private _validateState = () => {
+    console.log(this.props.reservedNames);
+    const validcheck = keySerialSchema.validateSync(this.state.keySerial, {
+      context: { reservedNames: this.props.reservedNames || [] }
+    });
+    console.log('VALID CHECK: ' + validcheck);
     let valid = true;
     let error = '';
 
