@@ -27,9 +27,7 @@ export const keySerialSchema = yup.object<IKeySerial>().shape({
       'The serial number you have chosen is already in use.',
       function test(value) {
         const context: any = this.options.context;
-        const val =
-          !!value && !context.reservedNames.includes(x => x === value);
-        console.log(val);
+        const val = !context.reservedNames.some(x => x === value);
         return val;
       }
     ),

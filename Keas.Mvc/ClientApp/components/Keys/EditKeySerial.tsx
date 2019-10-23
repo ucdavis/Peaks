@@ -146,32 +146,14 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    console.log(this.props.reservedNames);
-    const validcheck = keySerialSchema.validateSync(this.state.keySerial, {
-      context: { reservedNames: this.props.reservedNames || [] }
-    });
-    console.log('VALID CHECK: ' + validcheck);
-    let valid = true;
-    let error = '';
-
-    if (!this.state.keySerial) {
-      valid = false;
-    } else if (!this.state.keySerial.number) {
-      valid = false;
-      error = 'You must give this key serial a number.';
-    } else if (this.state.keySerial.number.length > 64) {
-      valid = false;
-      error = 'The serial number you have chosen is too long';
-    } else if (
-      !this.props.checkIfKeySerialNumberIsValid(
-        this.state.keySerial.number,
-        this.state.keySerial.id
-      )
-    ) {
-      error =
-        'The serial number you have entered is already in use by another key serial.';
-      valid = false;
+    try {
+      const validcheck = keySerialSchema.validateSync(this.state.keySerial, {
+        context: { reservedNames: this.props.reservedNames || [] }
+      });
+      console.log(validcheck);
+      this.setState({ error: '', validState: true });
+    } catch (err) {
+      this.setState({ error: err.message, validState: false });
     }
-    this.setState({ validState: valid, error });
   };
 }
