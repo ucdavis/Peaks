@@ -59,7 +59,7 @@ stages:
             zipAfterPublish: false
             modifyOutputPath: false
             projects: './Keas.Mvc/Keas.Mvc.csproj'
-            arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/ --no-build --no-restore'
+            arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/'
 
         - task: DotNetCoreCLI@2
           displayName: 'Publish Keas.Jobs.SendMail'
