@@ -91,7 +91,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
               {!this.state.access && (
                 <div className='form-group'>
                   <SearchAccess
-                    selectedAccess={this.state.access}
                     onSelect={this._onSelected}
                     onDeselect={this._onDeselected}
                   />

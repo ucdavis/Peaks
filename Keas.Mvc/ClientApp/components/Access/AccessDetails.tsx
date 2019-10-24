@@ -46,6 +46,10 @@ export default class AccessDetails extends React.Component<IProps, {}> {
             access.assignments.push(assignment);
             this.props.updateSelectedAccess(access);
           }}
+          onRevokeSuccess={assignment => {
+            access.assignments.splice(access.assignments.indexOf(assignment), 1)
+            this.props.updateSelectedAccess(access);
+          }}
         />
       </div>
     );
