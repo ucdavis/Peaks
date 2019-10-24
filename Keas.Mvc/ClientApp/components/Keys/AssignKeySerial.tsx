@@ -313,6 +313,13 @@ export default class AssignKey extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
+    // for if they select person before key serial, don't show error but disable button
+    if (!this.state.keySerial) {
+      this.setState({ validState: false });
+      return;
+    }
+
+    // yup schemas will throw if an error was found
     try {
       const validKeySerial = keySerialSchema.validateSync(
         this.state.keySerial,
@@ -323,7 +330,8 @@ export default class AssignKey extends React.Component<IProps, IState> {
           }
         }
       );
-      if (this.state.keySerial.id !== 0) {
+      if (this.state.keySerial.id !== 0 || !!this.state.person) {
+        // if assigning, not just creating new serial
         const validAssignment = assignmentSchema.validateSync({
           date: this.state.date,
           person: this.state.person

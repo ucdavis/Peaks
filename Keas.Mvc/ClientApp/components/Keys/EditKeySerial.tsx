@@ -145,6 +145,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
+    // yup schemas will throw if an error was found
     try {
       const validKeySerial = keySerialSchema.validateSync(
         this.state.keySerial,
