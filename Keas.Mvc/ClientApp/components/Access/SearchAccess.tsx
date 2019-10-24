@@ -48,19 +48,9 @@ export default class SearchAccess extends React.Component<IProps, IState> {
             allowNew={false}
             renderMenuItemChildren={(option, props, index) => (
               <div>
-                <div>
-                  <Highlighter key='name' search={props.text}>
-                    {option.name}
-                  </Highlighter>
-                </div>
-                <div>
-                  <small>
-                    Some other search term:
-                    <Highlighter key='id' search={props.text}>
-                      text
-                    </Highlighter>
-                  </small>
-                </div>
+                <Highlighter key='name' search={props.text}>
+                  {option.name}
+                </Highlighter>
               </div>
             )}
             onSearch={this._onSearch}

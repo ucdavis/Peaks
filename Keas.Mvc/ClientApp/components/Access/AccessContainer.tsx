@@ -3,18 +3,11 @@ import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import {
-  IAccess,
-  IAccessAssignment,
-  IMatchParams,
-  IPerson,
-  ISpace
-} from '../../Types';
+import { IAccess, IAccessAssignment, IMatchParams, IPerson } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
 import AccessDetails from './AccessDetails';
-import AccessList from './AccessList';
 import AccessTable from './AccessTable';
 import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
@@ -27,25 +20,10 @@ interface IState {
   tags: string[];
 }
 
-interface IProps extends RouteChildrenProps<IMatchParams> {
-  assetInUseUpdated?: (
-    type: string,
-    spaceId: number,
-    personId: number,
-    count: number
-  ) => void;
-  assetTotalUpdated?: (
-    type: string,
-    spaceId: number,
-    personId: number,
-    count: number
-  ) => void;
-  assetEdited?: (type: string, spaceId: number, personId: number) => void;
-  person?: IPerson;
-  space?: ISpace;
-}
-
-export default class AccessContainer extends React.Component<IProps, IState> {
+export default class AccessContainer extends React.Component<
+  RouteChildrenProps<IMatchParams>,
+  IState
+> {
   public static contextType = Context;
   public context!: React.ContextType<typeof Context>;
 
@@ -63,10 +41,7 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     if (!PermissionsUtil.canViewAccess(this.context.permissions)) {
       return;
     }
-    // are we getting the person's access or the team's?
-    const accessFetchUrl = this.props.person
-      ? `/api/${this.context.team.slug}/access/listAssigned?personId=${this.props.person.id}`
-      : `/api/${this.context.team.slug}/access/list/`;
+    const accessFetchUrl = `/api/${this.context.team.slug}/access/list/`;
     let accesses: IAccess[] = null;
     try {
       accesses = await this.context.fetch(accessFetchUrl);
@@ -78,6 +53,14 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       `/api/${this.context.team.slug}/tags/listTags`
     );
 
+    accesses = accesses.map(a => ({
+      ...a,
+      assignments: a.assignments.map(assignment => ({
+        ...assignment,
+        access: a
+      }))
+    }));
+
     this.setState({ accesses, loading: false, tags });
   }
   public render() {
@@ -88,10 +71,11 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     if (this.state.loading) {
       return <h2>Loading...</h2>;
     }
-    const { action, assetType, id } = this.props.match.params;
+    const { containerAction, assetType, containerId } = this.props.match.params;
     const activeAsset = !assetType || assetType === 'access';
-    const selectedId = parseInt(id, 10);
+    const selectedId = parseInt(containerId, 10);
     const detailAccess = this.state.accesses.find(a => a.id === selectedId);
+    const shouldRenderDetails = containerAction === 'details';
 
     return (
       <div className='card access-color'>
@@ -106,94 +90,72 @@ export default class AccessContainer extends React.Component<IProps, IState> {
           </div>
         </div>
         <div className='card-content'>
-          {this._renderTableOrList()}
+          {!shouldRenderDetails && this._renderTable()}
           {activeAsset &&
-            (action === 'assign' || action === 'create') &&
+            (containerAction === 'assign' || containerAction === 'create') &&
             this._renderAssignModal(selectedId, detailAccess)}
+          {shouldRenderDetails && this._renderDetails(selectedId, detailAccess)}
           {activeAsset &&
-            action === 'details' &&
-            this._renderDetailsModal(selectedId, detailAccess)}
-          {activeAsset &&
-            action === 'edit' &&
+            containerAction === 'edit' &&
             this._renderEditModal(selectedId, detailAccess)}
           {activeAsset &&
-            action === 'delete' &&
+            containerAction === 'delete' &&
             this._renderDeleteModal(selectedId, detailAccess)}
         </div>
       </div>
     );
   }
 
-  private _renderTableOrList = () => {
-    if (!!this.props.person || !!this.props.space) {
-      return (
-        <div>
-          <AccessList
-            access={this.state.accesses}
-            personView={this.props.person ? true : false}
-            onRevoke={this._openRevokeModal}
-            onDelete={this._openDeleteModal}
-            onAdd={this._openAssignModal}
-            onEdit={this._openEditModal}
-            showDetails={this._openDetailsModal}
-          />
-        </div>
-      );
-    } else {
-      let filteredAccess = this.state.accesses;
-      if (this.state.tagFilters.length > 0) {
-        filteredAccess = filteredAccess.filter(x =>
-          this._checkTagFilters(x, this.state.tagFilters)
-        );
-      }
-      return (
-        <div>
-          <div className='row'>
-            <SearchTags
-              tags={this.state.tags}
-              selected={this.state.tagFilters}
-              onSelect={this._filterTags}
-              disabled={false}
-            />
-          </div>
-          <AccessTable
-            accesses={filteredAccess}
-            onRevoke={this._openRevokeModal}
-            onDelete={this._openDeleteModal}
-            onAdd={this._openAssignModal}
-            onEdit={this._openEditModal}
-            showDetails={this._openDetailsModal}
-          />
-        </div>
+  private _renderTable = () => {
+    let filteredAccess = this.state.accesses;
+    if (this.state.tagFilters.length > 0) {
+      filteredAccess = filteredAccess.filter(x =>
+        this._checkTagFilters(x, this.state.tagFilters)
       );
     }
+    return (
+      <div>
+        <div className='row'>
+          <SearchTags
+            tags={this.state.tags}
+            selected={this.state.tagFilters}
+            onSelect={this._filterTags}
+            disabled={false}
+          />
+        </div>
+        <AccessTable
+          accesses={filteredAccess}
+          onDelete={this._openDeleteModal}
+          onAdd={this._openAssignModal}
+          onEdit={this._openEditModal}
+          showDetails={this._openDetails}
+        />
+      </div>
+    );
   };
 
   private _renderAssignModal = (selectedId: number, access?: IAccess) => {
     return (
       <AssignAccess
         key={`assign-access-${selectedId}`}
-        onAddNew={this._openCreateModal}
         onCreate={this._createAndMaybeAssignAccess}
         modal={true}
         closeModal={this._closeModals}
         selectedAccess={access}
-        person={this.props.person}
         tags={this.state.tags}
-        openEditModal={this._openEditModal}
       />
     );
   };
 
-  private _renderDetailsModal = (selectedId: number, access: IAccess) => {
+  private _renderDetails = (selectedId: number, access: IAccess) => {
     return (
       <AccessDetails
+        goBack={this.props.history.goBack}
         key={`details-access-${selectedId}`}
         selectedAccess={access}
         modal={!!access}
         closeModal={this._closeModals}
         openEditModal={this._openEditModal}
-        onRevoke={this._revokeAccess}
         updateSelectedAccess={this._updateAccessFromDetails}
       />
     );
@@ -207,32 +169,16 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         closeModal={this._closeModals}
         modal={!!access}
         selectedAccess={access}
-        onRevoke={this._revokeAccess}
         tags={this.state.tags}
       />
     );
   };
-
-  // private _renderRevokeModal = (selectedId: number, access: IAccess) => {
-  //   return (
-  //     <RevokeEquipment
-  //       key={`revoke-equipment-${selectedId}`}
-  //       selectedEquipment={equipment}
-  //       revokeEquipment={this._revokeEquipment}
-  //       closeModal={this._closeModals}
-  //       openEditModal={this._openEditModal}
-  //       openUpdateModal={this._openAssignModal}
-  //       modal={!!equipment}
-  //     />
-  //   );
-  // };
 
   private _renderDeleteModal = (selectedId: number, access: IAccess) => {
     return (
       <DeleteAccess
         key={`delete-access-${selectedId}`}
         selectedAccess={access}
-        onRevoke={this._revokeAccess}
         closeModal={this._closeModals}
         deleteAccess={this._deleteAccess}
         modal={!!access}
@@ -253,8 +199,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     date: any,
     person: IPerson
   ) => {
-    let updateTotalAssetCount = false;
-    let updateInUseAssetCount = false;
     // call API to create a access, then assign it if there is a person to assign to
     // if we are creating a new access
     if (access.id === 0) {
@@ -272,7 +216,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
         toast.error('Error creating access.');
         throw new Error(); // throw error so modal doesn't close
       }
-      updateTotalAssetCount = true;
     }
 
     // if we know who to assign it to, do it now
@@ -290,13 +233,8 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       }
       // fetching only returns the assignment, so add it to the access in our state with the right person
       accessAssignment.person = person;
-      if (!!this.props.person) {
-        // if we are on a person page, replace any fetched assignments with this one
-        access.assignments = [];
-      }
       // then push it
       access.assignments.push(accessAssignment);
-      updateInUseAssetCount = true;
     }
 
     const index = this.state.accesses.findIndex(x => x.id === access.id);
@@ -313,69 +251,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       this.setState({
         accesses: [...this.state.accesses, access]
       });
-    }
-    if (updateTotalAssetCount && this.props.assetTotalUpdated) {
-      this.props.assetTotalUpdated(
-        'access',
-        this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null,
-        1
-      );
-    }
-    if (updateInUseAssetCount && this.props.assetInUseUpdated) {
-      this.props.assetInUseUpdated(
-        'access',
-        this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null,
-        1
-      );
-    }
-  };
-
-  private _revokeAccess = async (accessAssignment: IAccessAssignment) => {
-    if (!confirm('Are you sure you want to revoke access?')) {
-      return false;
-    }
-    try {
-      // call API to actually revoke
-      const removed: IAccess = await this.context.fetch(
-        `/api/${this.context.team.slug}/access/revoke/${accessAssignment.id}`,
-        {
-          method: 'POST'
-        }
-      );
-      toast.success('Access revoked sucessfully!');
-    } catch (err) {
-      toast.error('Error revoking access.');
-      throw new Error(); // throw error so modal doesn't close
-    }
-
-    // find index of access in state
-    const accessIndex = this.state.accesses.findIndex(
-      x => x.id === accessAssignment.accessId
-    );
-    if (accessIndex > -1) {
-      const shallowCopy = [...this.state.accesses];
-      if (!this.props.person) {
-        // if we are looking at all access, remove from access.assignments
-        const assignmentIndex = shallowCopy[accessIndex].assignments.indexOf(
-          accessAssignment
-        );
-        shallowCopy[accessIndex].assignments.splice(assignmentIndex, 1);
-      } else {
-        // if we are looking at a person, remove access entirely
-        shallowCopy.splice(accessIndex, 1);
-      }
-      this.setState({ accesses: shallowCopy });
-
-      if (this.props.assetInUseUpdated) {
-        this.props.assetInUseUpdated(
-          'access',
-          this.props.space ? this.props.space.id : null,
-          this.props.person ? this.props.person.id : null,
-          -1
-        );
-      }
     }
   };
 
@@ -402,24 +277,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       const shallowCopy = [...this.state.accesses];
       shallowCopy.splice(index, 1);
       this.setState({ accesses: shallowCopy });
-
-      if (this.props.assetInUseUpdated && access.assignments.length > 0) {
-        this.props.assetInUseUpdated(
-          'access',
-          this.props.space ? this.props.space.id : null,
-          this.props.person ? this.props.person.id : null,
-          -1 * access.assignments.length
-        );
-      }
-
-      if (this.props.assetTotalUpdated) {
-        this.props.assetTotalUpdated(
-          'access',
-          this.props.space ? this.props.space.id : null,
-          this.props.person ? this.props.person.id : null,
-          -1
-        );
-      }
     }
   };
 
@@ -454,14 +311,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
       ...this.state,
       accesses: updateAccesses
     });
-
-    if (this.props.assetEdited) {
-      this.props.assetEdited(
-        'access',
-        this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null
-      );
-    }
   };
 
   private _updateAccessFromDetails = (access: IAccess, id?: number) => {
@@ -488,27 +337,11 @@ export default class AccessContainer extends React.Component<IProps, IState> {
     this.props.history.push(`${this._getBaseUrl()}/access/assign/${access.id}`);
   };
 
-  private _openRevokeModal = (access: IAccess) => {
-    if (!!this.props.person) {
-      // if we already have the person, just revoke
-      const accessIndex = this.state.accesses.indexOf(access);
-      const accessAssignment = this.state.accesses[
-        accessIndex
-      ].assignments.filter(x => x.personId === this.props.person.id);
-      this._revokeAccess(accessAssignment[0]);
-    } // otherwise, pull up the modal
-    else {
-      this.props.history.push(
-        `${this._getBaseUrl()}/access/revoke/${access.id}`
-      );
-    }
-  };
-
   private _openCreateModal = () => {
     this.props.history.push(`${this._getBaseUrl()}/access/create`);
   };
 
-  private _openDetailsModal = (access: IAccess) => {
+  private _openDetails = (access: IAccess) => {
     this.props.history.push(
       `${this._getBaseUrl()}/access/details/${access.id}`
     );
@@ -527,8 +360,6 @@ export default class AccessContainer extends React.Component<IProps, IState> {
   };
 
   private _getBaseUrl = () => {
-    return this.props.person
-      ? `/${this.context.team.slug}/people/details/${this.props.person.id}`
-      : `/${this.context.team.slug}`;
+    return `/${this.context.team.slug}`;
   };
 }

@@ -22,7 +22,7 @@ export const routes = (
       path='/:team/equipment/:action?/:id?'
       component={EquipmentContainer}
     />
-    <Route path='/:team/access/:action?/:id?' component={AccessContainer} />
+    <Route path='/:team/access/:containerAction?/:containerId?/:assetType?/:action?/:id?' component={AccessContainer} />
     <Route
       path='/:team/spaces/:containerAction?/:containerId?/:assetType?/:action?/:id?'
       component={SpacesContainer}

@@ -136,6 +136,7 @@ export interface IAccess {
 export interface IAccessAssignment {
   id: number;
   accessId: number;
+  access: IAccess;
   expiresAt: Date;
   person: IPerson;
   personId: number;

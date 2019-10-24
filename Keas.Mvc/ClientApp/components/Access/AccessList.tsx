@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { IAccess } from '../../Types';
+import { IAccess, IAccessAssignment } from '../../Types';
 import AccessListItem from './AccessListItem';
 
 interface IProps {
   access: IAccess[];
   personView: boolean;
-  onRevoke: (access: IAccess) => void;
-  onDelete: (access: IAccess) => void;
-  onAdd: (access: IAccess) => void;
-  onEdit: (access: IAccess) => void;
+  onDelete?: (access: IAccess) => void;
+  onAdd?: (access: IAccess) => void;
+  onRevoke?: (assignment: IAccess) => void;
   showDetails: (access: IAccess) => void;
 }
 
@@ -25,10 +24,9 @@ export default class AccessList extends React.Component<IProps, {}> {
             key={x.id.toString()}
             accessEntity={x}
             personView={this.props.personView}
-            onRevoke={this.props.onRevoke}
             onDelete={this.props.onDelete}
             onAdd={this.props.onAdd}
-            onEdit={this.props.onEdit}
+            onRevoke={this.props.onRevoke}
             showDetails={this.props.showDetails}
           />
         ))

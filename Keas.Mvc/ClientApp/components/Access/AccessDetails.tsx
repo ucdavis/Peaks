@@ -1,15 +1,16 @@
-﻿import * as React from 'react';
+import * as React from 'react';
+import { RouteComponentProps } from 'react-router';
 import { toast } from 'react-toastify';
-import { Button, Modal, ModalBody } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import { IAccess, IAccessAssignment } from '../../Types';
+import { IAccess } from '../../Types';
 import AccessEditValues from './AccessEditValues';
 
 interface IProps {
+  goBack: () => void;
   modal: boolean;
   closeModal: () => void;
   selectedAccess: IAccess;
-  onRevoke: (accessAssignment: IAccessAssignment) => void;
   openEditModal: (access: IAccess) => void;
   updateSelectedAccess: (access: IAccess, id?: number) => void;
 }
@@ -32,28 +33,19 @@ export default class AccessDetails extends React.Component<IProps, {}> {
     const access = this.props.selectedAccess;
     return (
       <div>
-        <Modal
-          isOpen={this.props.modal}
-          toggle={this.props.closeModal}
-          size='lg'
-          className='access-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>Details for {access.name}</h2>
-            <Button color='link' onClick={this.props.closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
+        <div className='mb-3'>
+          <Button color='link' onClick={this.props.goBack}>
+            <i className='fas fa-arrow-left fa-xs' /> Return to Table
+          </Button>
+        </div>
 
-          <ModalBody>
-            <AccessEditValues
-              selectedAccess={access}
-              disableEditing={true}
-              onRevoke={this.props.onRevoke}
-              openEditModal={this.props.openEditModal}
-            />
-          </ModalBody>
-        </Modal>
+        <h2>Details for {access.name}</h2>
+
+        <AccessEditValues
+          selectedAccess={access}
+          disableEditing={true}
+          openEditModal={this.props.openEditModal}
+        />
       </div>
     );
   }

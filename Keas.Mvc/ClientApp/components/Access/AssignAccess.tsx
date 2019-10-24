@@ -11,19 +11,17 @@ import SearchAccess from './SearchAccess';
 interface IProps {
   closeModal: () => void;
   modal: boolean;
-  onCreate: (access: IAccess, date: any, person: IPerson) => void;
-  onAddNew: () => void;
-  openEditModal: (access: IAccess) => void;
+  onCreate: (access: IAccess, date: any, person: IPerson) => Promise<void>;
   person?: IPerson;
-  selectedAccess: IAccess;
+  selectedAccess?: IAccess;
   tags: string[];
 }
 
 interface IState {
-  access: IAccess;
+  access?: IAccess;
   date: Date;
   error: string;
-  person: IPerson;
+  person?: IPerson;
   submitting: boolean;
   validState: boolean;
 }
@@ -38,7 +36,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
       access: this.props.selectedAccess,
       date: addYears(startOfDay(new Date()), 3),
       error: '',
-      person: null,
       submitting: false,
       validState: false
     };
@@ -102,7 +99,9 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                       selectedAccess={this.state.access}
                       changeProperty={this._changeProperty}
                       disableEditing={false}
-                      onRevoke={null}
+                      onAccessUpdate={access =>
+                        this.setState({ access })
+                      }
                       tags={this.props.tags}
                     />
                   </div>
@@ -123,8 +122,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     selectedAccess={this.state.access}
                     disableEditing={true}
                     tags={this.props.tags}
-                    openEditModal={this.props.openEditModal}
-                    onRevoke={null}
                   />
                 </div>
               )}

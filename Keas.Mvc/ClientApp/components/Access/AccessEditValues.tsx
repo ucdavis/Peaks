@@ -1,65 +1,29 @@
 import * as React from 'react';
-import ReactTable from 'react-table';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { IAccess, IAccessAssignment } from '../../Types';
-import { DateUtil } from '../../util/dates';
-import { ReactTableExpirationUtil } from '../../util/reactTable';
+import { IAccess } from '../../Types';
 import SearchTags from '../Tags/SearchTags';
+import AssignmentContainer from './AccessAssignmentContainer';
 
 interface IProps {
   selectedAccess: IAccess;
   disableEditing: boolean;
   changeProperty?: (property: string, value: string) => void;
-  onRevoke: (accessAssignment: IAccessAssignment) => void;
   openEditModal?: (access: IAccess) => void;
   tags?: string[];
+  onAccessUpdate?(access: IAccess);
 }
 
 export default class AccessEditValues extends React.Component<IProps, {}> {
+  constructor(props: IProps) {
+    super(props);
+    if (!props.disableEditing && !props.onAccessUpdate) {
+      throw new Error(
+        'If the access is editable then a callback must be provided'
+      );
+    }
+  }
   public render() {
-    const columns = [
-      {
-        Header: 'Name',
-        accessor: 'person.name',
-        filterMethod: (filter, row) =>
-          !!row[filter.id] &&
-          row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
-        filterable: true
-      },
-      {
-        Cell: row => (
-          <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
-        ),
-        Filter: ({ filter, onChange }) =>
-          ReactTableExpirationUtil.filter(filter, onChange),
-        Header: 'Expiration',
-        accessor: 'expiresAt',
-        filterMethod: (filter, row) =>
-          ReactTableExpirationUtil.filterMethod(filter, row),
-        filterable: true,
-        sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
-      },
-      {
-        Cell: row => (
-          <button
-            type='button'
-            className='btn btn-outline-danger'
-            disabled={this.props.disableEditing || !this.props.onRevoke}
-            onClick={() => this._revokeSelected(row.value)}
-          >
-            <i className='fas fa-trash' />
-          </button>
-        ),
-        Header: 'Revoke',
-        accessor: 'personId',
-        className: 'table-actions',
-        filterable: false,
-        headerClassName: 'table-actions',
-        resizable: false,
-        sortable: false
-      }
-    ];
-
+    const assignments = this.props.selectedAccess.assignments;
     return (
       <div>
         {this.props.disableEditing && this.props.openEditModal && (
@@ -114,31 +78,23 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
               onSelect={e => this.props.changeProperty('tags', e.join(','))}
             />
           </div>
-          {this.props.selectedAccess.teamId !== 0 &&
-            this.props.selectedAccess.assignments.length > 0 && (
-              <div>
-                <h3>Assigned to:</h3>
-                <ReactTable
-                  data={this.props.selectedAccess.assignments}
-                  columns={columns}
-                  minRows={1}
-                />
-              </div>
-            )}
+          {this.props.selectedAccess.teamId !== 0 && (
+            <AssignmentContainer
+              disableEditing={this.props.disableEditing}
+              onRevokeSuccess={assignment =>
+                this.props.onAccessUpdate({
+                  ...this.props.selectedAccess,
+                  assignments: assignments.splice(
+                    assignments.indexOf(assignment),
+                    1
+                  )
+                })
+              }
+              access={this.props.selectedAccess}
+            />
+          )}
         </div>
       </div>
     );
   }
-
-  private _revokeSelected = async (personId: number) => {
-    const accessAssignment = this.props.selectedAccess.assignments.filter(
-      x => x.personId === personId
-    );
-    try {
-      await this.props.onRevoke(accessAssignment[0]);
-    } catch (err) {
-      // TODO: add submitting state and handle
-      return;
-    }
-  };
 }

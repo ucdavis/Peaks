@@ -9,7 +9,6 @@ interface IProps {
   closeModal: () => void;
   deleteAccess: (access: IAccess) => void;
   selectedAccess: IAccess;
-  onRevoke: (accessAssignment: IAccessAssignment) => void;
 }
 
 interface IState {
@@ -50,7 +49,6 @@ export default class DeleteAccess extends React.Component<IProps, IState> {
             <AccessEditValues
               selectedAccess={this.props.selectedAccess}
               disableEditing={true}
-              onRevoke={this.props.onRevoke}
             />
           </ModalBody>
           <ModalFooter>
