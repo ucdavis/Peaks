@@ -1,5 +1,5 @@
-import { IPerson } from 'ClientApp/Types';
 import * as yup from 'yup';
+import { IPerson } from '../Types';
 import { IKey } from './Keys';
 
 export interface IKeySerial {
@@ -46,10 +46,12 @@ export interface IKeySerialAssignment {
   person: IPerson;
 }
 
-export const keySerialAssignmentSchema = yup.object<IKeySerialAssignment>({
-  expiresAt: yup.date(),
-  id: yup.number(),
-  keySerial: yup.object<IKeySerial>(),
-  keySerialId: yup.number(),
-  person: yup.object<IPerson>()
-});
+export const keySerialAssignmentSchema = yup
+  .object<IKeySerialAssignment>()
+  .shape({
+    expiresAt: yup.date(),
+    id: yup.number(),
+    keySerial: yup.object<IKeySerial>(),
+    keySerialId: yup.number(),
+    person: yup.object<IPerson>()
+  });

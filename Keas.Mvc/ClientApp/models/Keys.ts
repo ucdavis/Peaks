@@ -22,7 +22,7 @@ export interface IKey {
   keyXSpaces?: IKeySpaceAssociation[];
 }
 
-export const keySchema = yup.object<IKey>({
+export const keySchema = yup.object<IKey>().shape({
   code: yup.string().required(),
   id: yup.number(),
   keyXSpaces: yup.array<IKeySpaceAssociation>().nullable(),
