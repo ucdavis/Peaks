@@ -1,4 +1,3 @@
-import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { toast } from 'react-toastify';
 
@@ -16,8 +15,7 @@ import {
 } from 'reactstrap';
 import { Context } from '../../Context';
 import { IBigFixSearchedName } from '../../Types';
-import { threadId } from 'worker_threads';
-import { isThisQuarter } from 'date-fns';
+
 
 interface IProps {
   addBigFixId: (property: string, id: string) => void;

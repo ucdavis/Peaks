@@ -339,7 +339,9 @@ namespace Keas.Mvc.Controllers.Api
                     return NotFound();
                 }
                 else
+                {
                     throw;
+                }
             } 
         }
 
@@ -347,24 +349,19 @@ namespace Keas.Mvc.Controllers.Api
         {
             if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
             {
-                try
+                var result = await this._bigfixService.GetComputersByName(value);
+                 if (result.Length == 0)
                 {
-                    var result = await this._bigfixService.GetComputersByName(value);
-                    if (result.Length == 0)
-                        return NotFound();
-
-                    else
-                        return Json(result);
-
-                } catch (BigfixApiException) {
-                    throw;
+                    return NotFound();
                 }
-                
+                else
+                {
+                    return Json(result);
+                }
             } else
             {
                 // not supported yet
                 return null;
-
             }
         }
     }
