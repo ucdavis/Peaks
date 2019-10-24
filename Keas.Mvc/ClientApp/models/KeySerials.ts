@@ -45,13 +45,3 @@ export interface IKeySerialAssignment {
   keySerialId: number;
   person: IPerson;
 }
-
-export const keySerialAssignmentSchema = yup
-  .object<IKeySerialAssignment>()
-  .shape({
-    expiresAt: yup.date(),
-    id: yup.number(),
-    keySerial: yup.object<IKeySerial>(),
-    keySerialId: yup.number(),
-    person: yup.object<IPerson>()
-  });
