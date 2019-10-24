@@ -24,11 +24,11 @@ export const keySerialSchema = yup.object<IKeySerial>().shape({
     .required('Serial Number is required.')
     .max(64)
     .test(
-      'reservedNames',
+      'checkIfKeySerialNumberIsValid',
       'The serial number you have chosen is already in use.',
       function test(value) {
         const context: any = this.options.context;
-        return context.checkIfKeySerialNumberIsValid(value);
+        return context.checkIfKeySerialNumberIsValid(value, this.parent.id);
       }
     ),
   status: yup
