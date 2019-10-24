@@ -27,6 +27,7 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
 interface IState {
   selectedAssignment?: IAccessAssignment;
   assignments: IAccessAssignment[];
+  tags: string[];
 }
 
 class AssignmentContainer extends React.Component<IProps, IState> {
@@ -49,7 +50,8 @@ class AssignmentContainer extends React.Component<IProps, IState> {
       assignments,
       selectedAssignment: assignments.find(
         el => el.id === parseInt(props.match.params.id, 10)
-      )
+      ),
+      tags: []
     };
   }
 
@@ -83,6 +85,11 @@ class AssignmentContainer extends React.Component<IProps, IState> {
         )
       });
     }
+
+    const tags = await this.context.fetch(
+      `/api/${this.context.team.slug}/tags/listTags`
+    );
+    this.setState({tags})
   }
 
   public render() {
@@ -119,7 +126,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
               closeModal={this.hideModals}
               modal={isAssignModalShown}
               person={this.props.person}
-              tags={[]}
+              tags={this.state.tags}
               onCreate={this.callAssign}
             />
           )}
