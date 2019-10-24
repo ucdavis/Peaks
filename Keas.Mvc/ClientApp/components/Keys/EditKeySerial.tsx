@@ -15,7 +15,6 @@ interface IProps {
   closeModal: () => void;
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
   checkIfKeySerialNumberIsValid: (serialNumber: string, id: number) => boolean;
-  reservedNames: string[];
 }
 
 interface IState {
