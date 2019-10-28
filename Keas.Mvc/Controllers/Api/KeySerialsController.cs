@@ -298,6 +298,7 @@ namespace Keas.Mvc.Controllers.Api
             // clear out assignment
             var assignment = keySerial.KeySerialAssignment;
             _context.KeySerialAssignments.Remove(assignment);
+            keySerial.KeySerialAssignmentId = null;
 
             await _context.SaveChangesAsync();
 
