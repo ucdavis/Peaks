@@ -16,7 +16,6 @@ import {
 import { Context } from '../../Context';
 import { IBigFixSearchedName } from '../../Types';
 
-
 interface IProps {
   addBigFixId: (property: string, id: string) => void;
 }
@@ -172,13 +171,10 @@ export default class EquipmentBigFixSearchId extends React.Component<
   };
 
   private _renderNameTable = () => {
-
-    // after request, if fetched 
+    // after request, if fetched
     if (this.state.isFetched) {
-
       // if no error occured except Not Found
       if (this.state.isValidSearch) {
-
         // if not NotFound error.
         if (this.state.isFound) {
           return (
@@ -211,7 +207,7 @@ export default class EquipmentBigFixSearchId extends React.Component<
       // if other errors accurs. also toast error is displayed.
       return <p className='text-center'>No data to present.</p>;
     }
-    // default, if no request has happend yet. 
+    // default, if no request has happend yet.
     return null;
   };
 
@@ -253,7 +249,6 @@ export default class EquipmentBigFixSearchId extends React.Component<
         `/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`
       );
     } catch (err) {
-      debugger;
       if (err.message === 'Not Found') {
         this.setState({
           isFetched: true,

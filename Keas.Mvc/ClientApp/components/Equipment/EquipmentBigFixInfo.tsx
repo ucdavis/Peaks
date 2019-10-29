@@ -3,7 +3,6 @@ import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody, Table } from 'reactstrap';
 import { Context } from '../../Context';
 
-
 interface IProps {
   bigfixId: string;
 }
