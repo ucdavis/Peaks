@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { toast } from 'react-toastify';
+
 import {
   Button,
   Form,
@@ -20,6 +22,7 @@ interface IProps {
 
 interface IState {
   isFetched: boolean;
+  isFound: boolean;
   isSearching: boolean;
   isValidSearch: boolean;
   searchModal: boolean;
@@ -39,6 +42,7 @@ export default class EquipmentBigFixSearchId extends React.Component<
     super(props);
     this.state = {
       isFetched: false,
+      isFound: true,
       isSearching: false,
       isValidSearch: true,
       listOfComputers: [],
@@ -167,38 +171,44 @@ export default class EquipmentBigFixSearchId extends React.Component<
   };
 
   private _renderNameTable = () => {
-    if (!this.state.isFetched) {
-      return null;
+    // after request, if fetched
+    if (this.state.isFetched) {
+      // if no error occured except Not Found
+      if (this.state.isValidSearch) {
+        // if not NotFound error.
+        if (this.state.isFound) {
+          return (
+            <Table>
+              <tbody>
+                {this.state.listOfComputers.map(computer => {
+                  return (
+                    <tr key={computer.id} className='bigfix-info border-bottom'>
+                      <Button
+                        color='link'
+                        onClick={() =>
+                          this.props.addBigFixId(
+                            'systemManagementId',
+                            computer.id
+                          )
+                        }
+                      >
+                        {computer.name}
+                      </Button>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          );
+        }
+        // if NotFound error.
+        return <p>Not a valid Name, please make sure to enter a valid Name.</p>;
+      }
+      // if other errors accurs. also toast error is displayed.
+      return <p className='text-center'>No data to present.</p>;
     }
-
-    if (!this.state.isValidSearch) {
-      return (
-        <p className='text-center text-danger'>
-          No computer found by this name, please try again.
-        </p>
-      );
-    }
-
-    return (
-      <Table>
-        <tbody>
-          {this.state.listOfComputers.map(computer => {
-            return (
-              <tr key={computer.id} className='bigfix-info border-bottom'>
-                <Button
-                  color='link'
-                  onClick={() =>
-                    this.props.addBigFixId('systemManagementId', computer.id)
-                  }
-                >
-                  {computer.name}
-                </Button>
-              </tr>
-            );
-          })}
-        </tbody>
-      </Table>
-    );
+    // default, if no request has happend yet.
+    return null;
   };
 
   private _renderSearchButton = () => {
@@ -219,45 +229,60 @@ export default class EquipmentBigFixSearchId extends React.Component<
   };
 
   private _onSearch = () => {
-    this.setState({ isSearching: true, isFetched: false, isValidSearch: true });
-    this._getComputersBySearch(
+    this.setState({
+      isSearching: true,
+      isFetched: false,
+      isFound: true,
+      isValidSearch: true,
+      listOfComputers: []
+    });
+    this._getComputersBySearchId(
       this.state.selectedField,
       this.state.valueToBeSearched
     );
   };
 
-  private _getComputersBySearch = async (field: string, value: string) => {
+  private _getComputersBySearchId = async (field: string, value: string) => {
     let response = null;
     try {
       response = await this.context.fetch(
-        `/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`,
-        {
-          method: 'GET'
-        }
+        `/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`
       );
     } catch (err) {
-      response = null;
+      if (err.message === 'Not Found') {
+        this.setState({
+          isFetched: true,
+          isSearching: false,
+          isFound: false
+        });
+      } else {
+        this.setState({
+          isFetched: true,
+          isSearching: false,
+          isValidSearch: false
+        });
+        toast.error(
+          'Error fetching Names. Please refresh the page to try again.'
+        );
+      }
+
+      return;
     }
-    // if length is 0, not a valid search
-    if (response.length === 0 || response === null) {
-      this.setState({
-        isFetched: true,
-        isSearching: false,
-        isValidSearch: false
-      });
-    } else {
-      const firstFiveName = response.slice(0, 5);
-      this.setState({
-        isFetched: true,
-        isSearching: false,
-        listOfComputers: firstFiveName
-      });
-    }
+
+    const firstFiveName = response.slice(0, 5);
+    this.setState({
+      isFetched: true,
+      isSearching: false,
+      listOfComputers: firstFiveName
+    });
   };
 
   private _changeSelectedInput = value => {
     this.setState({
       isFetched: false,
+      isFound: true,
+      isValidSearch: true,
+      isSearching: false,
       listOfComputers: [],
       selectedField: value
     });
@@ -266,8 +291,10 @@ export default class EquipmentBigFixSearchId extends React.Component<
   private _modalToggle = () => {
     this.setState(prevState => ({
       isFetched: false,
+      isFound: true,
       isValidSearch: true,
       listOfComputers: [],
+      valueToBeSearched: '',
       searchModal: !prevState.searchModal
     }));
   };

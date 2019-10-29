@@ -1,12 +1,10 @@
 import * as React from 'react';
+import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody, Table } from 'reactstrap';
 import { Context } from '../../Context';
-import EquipmentBigFixSearchId from './EquipmentBigFixSearchId';
 
 interface IProps {
   bigfixId: string;
-  addBigFixId: (property: string, id: string) => void;
-  disableEditing: boolean;
 }
 
 interface IState {
@@ -14,6 +12,7 @@ interface IState {
   computerInfo: object;
   isFetched: boolean;
   isValidRequest: boolean;
+  isFound: boolean;
 }
 
 export default class EquipmentBigFixInfo extends React.Component<
@@ -29,6 +28,7 @@ export default class EquipmentBigFixInfo extends React.Component<
       bigfixModal: false,
       computerInfo: {},
       isFetched: false,
+      isFound: true,
       isValidRequest: true
     };
   }
@@ -36,11 +36,7 @@ export default class EquipmentBigFixInfo extends React.Component<
   public render() {
     return (
       <>
-        <div className='d-flex'>
-          <label> Bigfix Id</label>
-          <span />
-          {this._renderInfoIcon()}
-        </div>
+        {this._renderInfoIcon()}
 
         {this._renderBigFixModal()}
       </>
@@ -48,17 +44,6 @@ export default class EquipmentBigFixInfo extends React.Component<
   }
 
   private _renderInfoIcon = () => {
-    if (!this.props.bigfixId) {
-      if (this.props.disableEditing) {
-        return (
-          <span className='ml-3'>
-            ( Click Edit Equipment above to search for Bigfix Id )
-          </span>
-        );
-      }
-      return <EquipmentBigFixSearchId addBigFixId={this.props.addBigFixId} />;
-    }
-
     return (
       <a
         className='bigfix-info'
@@ -104,54 +89,70 @@ export default class EquipmentBigFixInfo extends React.Component<
 
   private _renderComputerInfo = () => {
     if (this.state.isValidRequest) {
+      // if found
+      if (this.state.isFound) {
+        return (
+          <Table>
+            <thead>
+              <tr>
+                <th>Key</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.keys(this.state.computerInfo).map(key => {
+                return (
+                  <tr key={key}>
+                    <td>{key}</td>
+                    <td>{this.state.computerInfo[key]}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        );
+      }
+
+      // if not found
       return (
-        <Table>
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.keys(this.state.computerInfo).map(key => {
-              return (
-                <tr key={key}>
-                  <td>{key}</td>
-                  <td>{this.state.computerInfo[key]}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </Table>
+        <p>
+          Not a valid Bigfix id, please make sure to enter a valid Bigfix id.
+        </p>
       );
     }
 
-    return (
-      <p>Not a valid Bigfix id, please make sure to enter a valid Bigfix id.</p>
-    );
+    return <p>No data to present</p>;
   };
 
   private _getBigFixComputerInfo = async (id: string) => {
-    const response = await fetch(
-      `/api/${this.context.team.slug}/equipment/GetComputer/${id}`,
-      {
-        method: 'GET'
+    let response = null;
+    try {
+      response = await this.context.fetch(
+        `/api/${this.context.team.slug}/equipment/GetComputer/${id}`
+      );
+    } catch (err) {
+      if (err.message === 'Not Found') {
+        this.setState({
+          isFetched: true,
+          isFound: false
+        });
+      } else {
+        this.setState({
+          isFetched: true,
+          isValidRequest: false
+        });
+        toast.error(
+          'Error fetching Computer details. Please refresh the page to try again.'
+        );
       }
-    );
 
-    if (!response.ok) {
-      // show the invalid Bigfix-id message.
-      this.setState({
-        isFetched: true,
-        isValidRequest: false
-      });
+      return;
     }
 
-    const result = await response.json();
-    const sortedResult = Object.keys(result)
+    const sortedResult = Object.keys(response)
       .sort()
       .reduce((accumulator, currentValue) => {
-        accumulator[currentValue] = result[currentValue];
+        accumulator[currentValue] = response[currentValue];
         return accumulator;
       }, {});
 
@@ -166,6 +167,7 @@ export default class EquipmentBigFixInfo extends React.Component<
     this.setState(prevState => ({
       bigfixModal: !prevState.bigfixModal,
       isFetched: false,
+      isFound: true,
       isValidRequest: true
     }));
   };
