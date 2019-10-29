@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Alert, Button } from 'reactstrap';
 import { IAccessAssignment } from '../../Types';
 import AccessModal from './AccessModal';
+import SearchTags from '../Tags/SearchTags';
 
 interface IProps {
   assignment?: IAccessAssignment;
@@ -45,10 +46,22 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
         }
       >
         {this.state.error && <Alert color='danger'>{this.state.error}</Alert>}
-        <h1>Name: </h1>
-        <p>{assignment.access.name}</p>
+        <h1>Access Name: {assignment.access.name}</h1>
         <h2>Notes: </h2>
         <p>{assignment.access.notes}</p>
+        {assignment.access.tags.length > 0 && (
+          <>
+            <p>
+              <b>Tags</b>
+            </p>
+            <SearchTags
+              tags={[]}
+              disabled={true}
+              onSelect={() => {}}
+              selected={assignment.access.tags.split(',')}
+            />
+          </>
+        )}
         <p>Expires At {assignment.expiresAt}</p>
       </AccessModal>
     ) : (
