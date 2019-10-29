@@ -139,6 +139,7 @@ export default class AccessContainer extends React.Component<
         modal={!!access}
         closeModal={this._closeModals}
         openEditModal={this._openEditModal}
+        openDeleteModal={this._openDeleteModal}
         updateSelectedAccess={this._updateAccessFromDetails}
       />
     );
