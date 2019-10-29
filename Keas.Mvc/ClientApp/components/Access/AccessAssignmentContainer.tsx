@@ -11,8 +11,8 @@ import {
 import { RouteChildrenProps, withRouter } from 'react-router';
 import { Context } from '../../Context';
 import AccessAssignmentCard from './AccessAssignmentCard';
-import AccessList from './AccessList';
 import AssignmentTable from './AccessAssignmentTable';
+import AccessList from './AccessList';
 import AssignAccess from './AssignAccess';
 import RevokeAccess from './RevokeAccess';
 

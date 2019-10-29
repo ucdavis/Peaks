@@ -5,9 +5,9 @@ import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
 import { IAccess, IPerson } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
-import AccessEditValues from './AccessEditValues';
 import AccessAssignmentCard from './AccessAssignmentCard';
 import AccessAssignmentTable from './AccessAssignmentTable';
+import AccessEditValues from './AccessEditValues';
 import SearchAccess from './SearchAccess';
 
 interface IProps {

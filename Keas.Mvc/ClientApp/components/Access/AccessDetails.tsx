@@ -3,8 +3,8 @@ import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IAccess } from '../../Types';
-import AccessAssignmentContainer from './AccessAssignmentContainer';
 import SearchTags from '../Tags/SearchTags';
+import AccessAssignmentContainer from './AccessAssignmentContainer';
 
 interface IProps {
   goBack: () => void;
@@ -32,7 +32,6 @@ export default class AccessDetails extends React.Component<IProps, {}> {
       return null;
     }
     const access = this.props.selectedAccess;
-    console.log(access.tags);
     return (
       <div>
         <div className='mb-3'>
