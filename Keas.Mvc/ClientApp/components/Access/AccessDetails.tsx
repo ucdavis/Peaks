@@ -1,4 +1,5 @@
 ﻿import * as React from 'react';
+import { RouteComponentProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
