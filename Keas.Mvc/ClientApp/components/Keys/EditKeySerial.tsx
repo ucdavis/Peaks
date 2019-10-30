@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IKey, IKeySerial } from '../../Types';
+import { IKey } from '../../models/Keys';
+import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
 
@@ -144,27 +145,20 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let valid = true;
-    let error = '';
-
-    if (!this.state.keySerial) {
-      valid = false;
-    } else if (!this.state.keySerial.number) {
-      valid = false;
-      error = 'You must give this key serial a number.';
-    } else if (this.state.keySerial.number.length > 64) {
-      valid = false;
-      error = 'The serial number you have chosen is too long';
-    } else if (
-      !this.props.checkIfKeySerialNumberIsValid(
-        this.state.keySerial.number,
-        this.state.keySerial.id
-      )
-    ) {
-      error =
-        'The serial number you have entered is already in use by another key serial.';
-      valid = false;
+    // yup schemas will throw if an error was found
+    try {
+      const validKeySerial = keySerialSchema.validateSync(
+        this.state.keySerial,
+        {
+          context: {
+            checkIfKeySerialNumberIsValid: this.props
+              .checkIfKeySerialNumberIsValid
+          }
+        }
+      );
+      this.setState({ error: '', validState: true });
+    } catch (err) {
+      this.setState({ error: err.message, validState: false });
     }
-    this.setState({ validState: valid, error });
   };
 }

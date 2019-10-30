@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { IKey, IKeySerial } from '../../Types';
+import { IKey } from '../../models/Keys';
+import { IKeySerial } from '../../models/KeySerials';
 
 interface IProps {
   keySerial: IKeySerial;
@@ -78,9 +79,9 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
               value={numberValue}
               onChange={this.onChangeNumber}
               onBlur={this.onBlurNumber}
-              invalid={!numberValue}
+              invalid={!numberValue || numberValue.length > 64}
             />
-            <FormFeedback>Serial number is required</FormFeedback>
+            <FormFeedback>Serial Number is required</FormFeedback>
           </FormGroup>
           <div className='form-group'>
             <label>Status</label>

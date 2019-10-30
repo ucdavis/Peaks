@@ -1,7 +1,7 @@
 ﻿import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IKey, IKeyInfo } from '../../Types';
+import { IKey, IKeyInfo } from '../../models/Keys';
 import KeyEditValues from './KeyEditValues';
 
 interface IProps {

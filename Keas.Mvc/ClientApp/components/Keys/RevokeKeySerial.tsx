@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { IKey, IKeySerial } from '../../Types';
+import { IKey } from '../../models/Keys';
+import { IKeySerial } from '../../models/KeySerials';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IKeySerial } from '../../Types';
+import { IKeySerial } from '../../models/KeySerials';
 import KeySerialListItem from './KeySerialListItem';
 
 interface IProps {

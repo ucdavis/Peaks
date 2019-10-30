@@ -1,7 +1,7 @@
 import * as React from 'react';
 import ReactTable from 'react-table';
 import { Button } from 'reactstrap';
-import { IKeySerial } from '../../Types';
+import { IKeySerial } from '../../models/KeySerials';
 import { DateUtil } from '../../util/dates';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';

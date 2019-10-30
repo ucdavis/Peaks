@@ -3,7 +3,10 @@ import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IKey, IKeyInfo, IKeySerial, IPerson } from '../../Types';
+import { IKey, IKeyInfo } from '../../models/Keys';
+import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
+import { assignmentSchema } from '../../models/Shared';
+import { IPerson } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
 import KeySerialEditValues from './KeySerialEditValues';
 import SearchKeys from './SearchKeys';
@@ -295,7 +298,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
   };
 
   private _onDeselected = () => {
-    this.setState({ keySerial: null, error: '' }, this._validateState);
+    this.setState({ keySerial: null, error: '' });
   };
 
   private _onSelectPerson = (person: IPerson) => {
@@ -310,38 +313,33 @@ export default class AssignKey extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let valid = true;
-    let error = '';
+    // for if they select person before key serial, don't show error but disable button
     if (!this.state.keySerial) {
-      valid = false;
-    } else if (this.state.keySerial.id !== 0 && !this.state.person) {
-      error = 'You must choose a person to assign this key serial to.';
-      valid = false;
-    } else if (
-      !this.state.keySerial.number ||
-      this.state.keySerial.number.trim().length < 1
-    ) {
-      error = 'You must give this key serial a number.';
-      valid = false;
-    } else if (this.state.keySerial.number.length > 64) {
-      valid = false;
-      error = 'The serial number you have chosen is too long';
-    } else if (
-      !this.props.checkIfKeySerialNumberIsValid(
-        this.state.keySerial.number,
-        this.state.keySerial.id
-      )
-    ) {
-      error =
-        'The serial number you have entered is already in use by another key serial.';
-      valid = false;
-    } else if (!this.state.date) {
-      error = 'A date is required for this assignment.';
-      valid = false;
-    } else if (!isBefore(new Date(), new Date(this.state.date))) {
-      error = 'The date you have chosen is not valid.';
-      valid = false;
+      this.setState({ validState: false });
+      return;
     }
-    this.setState({ error, validState: valid });
+
+    // yup schemas will throw if an error was found
+    try {
+      const validKeySerial = keySerialSchema.validateSync(
+        this.state.keySerial,
+        {
+          context: {
+            checkIfKeySerialNumberIsValid: this.props
+              .checkIfKeySerialNumberIsValid
+          }
+        }
+      );
+      if (this.state.keySerial.id !== 0 || !!this.state.person) {
+        // if assigning, not just creating new serial
+        const validAssignment = assignmentSchema.validateSync({
+          date: this.state.date,
+          person: this.state.person
+        });
+      }
+      this.setState({ error: '', validState: true });
+    } catch (err) {
+      this.setState({ error: err.message, validState: false });
+    }
   };
 }
