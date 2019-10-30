@@ -338,6 +338,10 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     return NotFound();
                 }
+                else if (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                {
+                    return StatusCode(403);
+                }
                 else
                 {
                     throw;

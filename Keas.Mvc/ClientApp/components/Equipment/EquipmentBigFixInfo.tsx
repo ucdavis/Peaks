@@ -136,6 +136,14 @@ export default class EquipmentBigFixInfo extends React.Component<
           isFetched: true,
           isFound: false
         });
+      } else if (err.message === 'Forbidden') {
+        this.setState({
+          isFetched: true,
+          isValidRequest: false
+        });
+        toast.error(
+          'Error fetching Computer details due to a permissions issue.'
+        );
       } else {
         this.setState({
           isFetched: true,
