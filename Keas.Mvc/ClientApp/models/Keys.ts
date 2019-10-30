@@ -23,7 +23,17 @@ export interface IKey {
 }
 
 export const keySchema = yup.object<IKey>().shape({
-  code: yup.string().required(),
+  code: yup
+    .string()
+    .required()
+    .test(
+      'checkIfKeyCodeIsValid',
+      'The key code you have chosen is already in use.',
+      function test(value) {
+        const context: any = this.options.context;
+        return context.checkIfKeyCodeIsValid(value, this.parent.id);
+      }
+    ),
   id: yup.number(),
   keyXSpaces: yup.array<IKeySpaceAssociation>().nullable(),
   name: yup.string().required(),
