@@ -70,7 +70,9 @@ export default class EditKey extends React.Component<IProps, IState> {
               />
             </form>
           </div>
-          {this.state.error}
+          {this.state.error && (
+            <span className='color-unitrans'>{this.state.error}</span>
+          )}
         </ModalBody>
         <ModalFooter>
           <Button
