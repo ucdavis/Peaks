@@ -8,6 +8,8 @@ interface IProps {
   disableEditing: boolean;
   changeProperty?: (property: string, value: string) => void;
   searchableTags?: string[];
+  errorMessage?: string;
+  errorPath?: string;
 }
 
 export default class KeyEditValues extends React.Component<IProps, {}> {
@@ -29,9 +31,9 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
             onChange={this.onChangeName}
             required={true}
             minLength={1}
-            invalid={!name}
+            invalid={this.props.errorPath === 'name'}
           />
-          <FormFeedback>Item name is required</FormFeedback>
+          <FormFeedback>{this.props.errorMessage}</FormFeedback>
         </FormGroup>
         <FormGroup>
           <Label for='code'>Code</Label>
@@ -45,9 +47,9 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
             required={true}
             minLength={1}
             maxLength={10}
-            invalid={!code}
+            invalid={this.props.errorPath === 'code'}
           />
-          <FormFeedback>Code is required</FormFeedback>
+          <FormFeedback>{this.props.errorMessage}</FormFeedback>
         </FormGroup>
         <div className='form-group'>
           <label>Notes</label>

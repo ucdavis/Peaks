@@ -26,6 +26,7 @@ export const keySchema = yup.object<IKey>().shape({
   code: yup
     .string()
     .required()
+    .max(64)
     .test(
       'checkIfKeyCodeIsValid',
       'The key code you have chosen is already in use.',
@@ -36,7 +37,10 @@ export const keySchema = yup.object<IKey>().shape({
     ),
   id: yup.number(),
   keyXSpaces: yup.array<IKeySpaceAssociation>().nullable(),
-  name: yup.string().required(),
+  name: yup
+    .string()
+    .required()
+    .max(64),
   notes: yup.string().notRequired(),
   serials: yup.array<IKeySerial>().nullable(),
   tags: yup.string().notRequired(),
