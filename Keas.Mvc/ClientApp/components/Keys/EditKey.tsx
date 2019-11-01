@@ -3,6 +3,7 @@ import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { ValidationError } from 'yup';
 import { Context } from '../../Context';
 import { IKey, keySchema } from '../../models/Keys';
+import { IValidationError } from '../../models/Shared';
 import KeyEditValues from './KeyEditValues';
 
 interface IProps {
@@ -15,8 +16,7 @@ interface IProps {
 }
 
 interface IState {
-  errorMessage: string;
-  errorPath: string;
+  error: IValidationError;
   key: IKey;
   submitting: boolean;
   validState: boolean;
@@ -34,8 +34,10 @@ export default class EditKey extends React.Component<IProps, IState> {
     this._formRef = React.createRef();
 
     this.state = {
-      errorMessage: '',
-      errorPath: '',
+      error: {
+        message: '',
+        path: ''
+      },
       key: this.props.selectedKey,
       submitting: false,
       validState: false
@@ -70,8 +72,7 @@ export default class EditKey extends React.Component<IProps, IState> {
                 changeProperty={this._changeProperty}
                 disableEditing={false}
                 searchableTags={searchableTags}
-                errorMessage={this.state.errorMessage}
-                errorPath={this.state.errorPath}
+                error={this.state.error}
               />
             </form>
           </div>
@@ -115,8 +116,10 @@ export default class EditKey extends React.Component<IProps, IState> {
 
   private _closeModal = () => {
     this.setState({
-      errorMessage: '',
-      errorPath: '',
+      error: {
+        message: '',
+        path: ''
+      },
       key: null,
       submitting: false,
       validState: false
@@ -147,12 +150,31 @@ export default class EditKey extends React.Component<IProps, IState> {
           checkIfKeyCodeIsValid: this.props.checkIfKeyCodeIsValid
         }
       });
-      this.setState({ errorMessage: '', errorPath: '', validState: true });
+      this.setState({
+        error: {
+          message: '',
+          path: ''
+        },
+        validState: true
+      });
     } catch (err) {
       if (err instanceof ValidationError) {
-        this.setState({ errorMessage: err.message, errorPath: err.path });
+        this.setState({
+          error: {
+            message: err.message,
+            path: err.path
+          },
+          validState: false
+        });
+      } else {
+        this.setState({
+          error: {
+            message: err.message,
+            path: ''
+          },
+          validState: false
+        });
       }
-      this.setState({ errorMessage: err.message, validState: false });
     }
   };
 }

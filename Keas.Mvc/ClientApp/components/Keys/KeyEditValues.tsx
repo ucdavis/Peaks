@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IKey } from '../../models/Keys';
+import { IValidationError } from '../../models/Shared';
 import SearchTags from '../Tags/SearchTags';
 
 interface IProps {
@@ -8,8 +9,7 @@ interface IProps {
   disableEditing: boolean;
   changeProperty?: (property: string, value: string) => void;
   searchableTags?: string[];
-  errorMessage?: string;
-  errorPath?: string;
+  error?: IValidationError;
 }
 
 export default class KeyEditValues extends React.Component<IProps, {}> {
@@ -31,9 +31,9 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
             onChange={this.onChangeName}
             required={true}
             minLength={1}
-            invalid={this.props.errorPath === 'name'}
+            invalid={this.props.error.path === 'name'}
           />
-          <FormFeedback>{this.props.errorMessage}</FormFeedback>
+          <FormFeedback>{this.props.error.message}</FormFeedback>
         </FormGroup>
         <FormGroup>
           <Label for='code'>Code</Label>
@@ -47,9 +47,9 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
             required={true}
             minLength={1}
             maxLength={10}
-            invalid={this.props.errorPath === 'code'}
+            invalid={this.props.error.path === 'code'}
           />
-          <FormFeedback>{this.props.errorMessage}</FormFeedback>
+          <FormFeedback>{this.props.error.message}</FormFeedback>
         </FormGroup>
         <div className='form-group'>
           <label>Notes</label>
@@ -69,6 +69,10 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
             onSelect={this.onChangeTags}
           />
         </div>
+        {this.props.error.message && // if we have an error message
+        !this.props.error.path && ( // that does not correspond to an input
+            <span className='color-unitrans'>{this.props.error.message}</span>
+          )}
       </div>
     );
   }

@@ -10,3 +10,8 @@ export const assignmentSchema = yup.object().shape({
     .object<IPerson>()
     .required('A person is required for this assignment.')
 });
+
+export interface IValidationError {
+  message: string;
+  path: string;
+}
