@@ -3,6 +3,7 @@ import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey } from '../../models/Keys';
 import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
+import { IValidationError, yupValidation } from '../../models/Shared';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
 
@@ -18,7 +19,7 @@ interface IProps {
 }
 
 interface IState {
-  error: string;
+  error: IValidationError;
   keySerial: IKeySerial;
   submitting: boolean;
   validState: boolean;
@@ -31,7 +32,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      error: '',
+      error: { message: '', path: '' },
       keySerial: this.props.selectedKeySerial,
       submitting: false,
       validState: false
@@ -68,16 +69,13 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
                 disableEditing={false}
                 statusList={this.props.statusList}
                 goToKeyDetails={this.props.goToKeyDetails}
+                error={this.state.error}
               />
 
               <KeySerialAssignmentValues
                 selectedKeySerial={this.props.selectedKeySerial}
                 openUpdateModal={this.props.openUpdateModal}
               />
-
-              {this.state.error && (
-                <span className='color-unitrans'>{this.state.error}</span>
-              )}
             </form>
           </div>
         </ModalBody>
@@ -120,7 +118,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
 
   private _closeModal = () => {
     this.setState({
-      error: '',
+      error: { message: '', path: '' },
       keySerial: null,
       submitting: false,
       validState: false
@@ -145,20 +143,11 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    // yup schemas will throw if an error was found
-    try {
-      const validKeySerial = keySerialSchema.validateSync(
-        this.state.keySerial,
-        {
-          context: {
-            checkIfKeySerialNumberIsValid: this.props
-              .checkIfKeySerialNumberIsValid
-          }
-        }
-      );
-      this.setState({ error: '', validState: true });
-    } catch (err) {
-      this.setState({ error: err.message, validState: false });
-    }
+    const checkIfKeySerialNumberIsValid = this.props
+      .checkIfKeySerialNumberIsValid;
+    const error = yupValidation(keySerialSchema, this.state.keySerial, {
+      context: { checkIfKeySerialNumberIsValid }
+    });
+    this.setState({ error, validState: error.message === '' });
   };
 }
