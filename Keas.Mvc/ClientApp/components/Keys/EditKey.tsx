@@ -3,7 +3,7 @@ import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { ValidationError } from 'yup';
 import { Context } from '../../Context';
 import { IKey, keySchema } from '../../models/Keys';
-import { IValidationError } from '../../models/Shared';
+import { IValidationError, yupValidation } from '../../models/Shared';
 import KeyEditValues from './KeyEditValues';
 
 interface IProps {
@@ -143,38 +143,10 @@ export default class EditKey extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    // yup schemas will throw if an error was found
-    try {
-      const validKey = keySchema.validateSync(this.state.key, {
-        context: {
-          checkIfKeyCodeIsValid: this.props.checkIfKeyCodeIsValid
-        }
-      });
-      this.setState({
-        error: {
-          message: '',
-          path: ''
-        },
-        validState: true
-      });
-    } catch (err) {
-      if (err instanceof ValidationError) {
-        this.setState({
-          error: {
-            message: err.message,
-            path: err.path
-          },
-          validState: false
-        });
-      } else {
-        this.setState({
-          error: {
-            message: err.message,
-            path: ''
-          },
-          validState: false
-        });
-      }
-    }
+    const checkIfKeyCodeIsValid = this.props.checkIfKeyCodeIsValid;
+    const error = yupValidation(keySchema, this.state.key, {
+      context: { checkIfKeyCodeIsValid }
+    });
+    this.setState({ error, validState: error.message === '' });
   };
 }
