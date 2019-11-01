@@ -19,7 +19,7 @@ export interface IValidationError {
   path: string;
 }
 
-export const yupValidation = (
+export const yupAssetValidation = (
   schema: yup.ObjectSchema<IKey | IKeySerial>,
   object: IKey | IKeySerial,
   options?: ValidateOptions
