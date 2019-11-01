@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey, keySchema } from '../../models/Keys';
-import { IValidationError, yupValidation } from '../../models/Shared';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import KeyEditValues from './KeyEditValues';
 
 interface IProps {
@@ -162,7 +162,7 @@ export default class CreateKey extends React.Component<IProps, IState> {
 
   private _validateState = () => {
     const checkIfKeyCodeIsValid = this.props.checkIfKeyCodeIsValid;
-    const error = yupValidation(keySchema, this.state.key, {
+    const error = yupAssetValidation(keySchema, this.state.key, {
       context: { checkIfKeyCodeIsValid }
     });
     this.setState({ error, validState: error.message === '' });

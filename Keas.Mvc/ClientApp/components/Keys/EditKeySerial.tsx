@@ -3,7 +3,7 @@ import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey } from '../../models/Keys';
 import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
-import { IValidationError, yupValidation } from '../../models/Shared';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
 
@@ -145,7 +145,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
   private _validateState = () => {
     const checkIfKeySerialNumberIsValid = this.props
       .checkIfKeySerialNumberIsValid;
-    const error = yupValidation(keySerialSchema, this.state.keySerial, {
+    const error = yupAssetValidation(keySerialSchema, this.state.keySerial, {
       context: { checkIfKeySerialNumberIsValid }
     });
     this.setState({ error, validState: error.message === '' });
