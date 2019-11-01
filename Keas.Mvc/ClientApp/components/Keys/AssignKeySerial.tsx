@@ -1,11 +1,21 @@
 import { addYears, format, isBefore, startOfDay } from 'date-fns';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  FormFeedback
+} from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
-import { assignmentSchema } from '../../models/Shared';
+import {
+  assignmentSchema,
+  IValidationError,
+  yupAssetValidation
+} from '../../models/Shared';
 import { IPerson } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
 import KeySerialEditValues from './KeySerialEditValues';
@@ -29,7 +39,7 @@ interface IProps {
 
 interface IState {
   date: Date;
-  error: string;
+  error: IValidationError;
   keySerial: IKeySerial;
   person: IPerson;
   submitting: boolean;
@@ -54,7 +64,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
     this.state = {
       date,
-      error: '',
+      error: { message: '', path: '' },
       keySerial: props.selectedKeySerial,
       person,
       submitting: false,
@@ -112,6 +122,10 @@ export default class AssignKey extends React.Component<IProps, IState> {
                     value={this.state.date}
                     onChange={this._changeDate}
                   />
+                  <FormFeedback>
+                    {this.state.error.path === 'date' &&
+                      this.state.error.message}
+                  </FormFeedback>
                 </div>
               )}
               {!this.state.keySerial && (
@@ -155,6 +169,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                         disableEditing={false}
                         statusList={this.props.statusList}
                         goToKeyDetails={this.props.goToKeyDetails}
+                        error={this.state.error}
                       />
                     )}
                   </div>
@@ -180,10 +195,6 @@ export default class AssignKey extends React.Component<IProps, IState> {
                     goToKeyDetails={this.props.goToKeyDetails}
                   />
                 </div>
-              )}
-
-              {this.state.error && (
-                <span className='color-unitrans'>{this.state.error}</span>
               )}
             </form>
           </div>
@@ -246,7 +257,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
   private _closeModal = () => {
     this.setState({
       date: addYears(startOfDay(new Date()), 3),
-      error: '',
+      error: { message: '', path: '' },
       keySerial: null,
       person: null,
       submitting: false,
@@ -280,25 +291,14 @@ export default class AssignKey extends React.Component<IProps, IState> {
   };
 
   private _onSelected = (keySerial: IKeySerial) => {
-    // if this key is not already assigned
-
-    // TODO: more validation of name
-    if (keySerial.number.length > 64) {
-      this.setState(
-        {
-          error: 'The key name you have chosen is too long',
-          keySerial: null
-        },
-        this._validateState
-      );
-
-      return;
-    }
-    this.setState({ keySerial, error: '' }, this._validateState);
+    this.setState(
+      { keySerial, error: { message: '', path: '' } },
+      this._validateState
+    );
   };
 
   private _onDeselected = () => {
-    this.setState({ keySerial: null, error: '' });
+    this.setState({ keySerial: null, error: { message: '', path: '' } });
   };
 
   private _onSelectPerson = (person: IPerson) => {
@@ -307,7 +307,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
   private _changeDate = (newDate: Date) => {
     this.setState(
-      { date: startOfDay(new Date(newDate)), error: '' },
+      { date: startOfDay(new Date(newDate)), error: { message: '', path: '' } },
       this._validateState
     );
   };
@@ -319,27 +319,16 @@ export default class AssignKey extends React.Component<IProps, IState> {
       return;
     }
 
-    // yup schemas will throw if an error was found
-    try {
-      const validKeySerial = keySerialSchema.validateSync(
-        this.state.keySerial,
-        {
-          context: {
-            checkIfKeySerialNumberIsValid: this.props
-              .checkIfKeySerialNumberIsValid
-          }
-        }
-      );
-      if (this.state.keySerial.id !== 0 || !!this.state.person) {
-        // if assigning, not just creating new serial
-        const validAssignment = assignmentSchema.validateSync({
-          date: this.state.date,
-          person: this.state.person
-        });
-      }
-      this.setState({ error: '', validState: true });
-    } catch (err) {
-      this.setState({ error: err.message, validState: false });
-    }
+    const checkIfKeySerialNumberIsValid = this.props
+      .checkIfKeySerialNumberIsValid;
+    const error = yupAssetValidation(
+      keySerialSchema,
+      this.state.keySerial,
+      {
+        context: { checkIfKeySerialNumberIsValid }
+      },
+      { date: this.state.date, person: this.state.person }
+    );
+    this.setState({ error, validState: error.message === '' });
   };
 }

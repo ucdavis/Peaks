@@ -19,17 +19,28 @@ export interface IValidationError {
   path: string;
 }
 
+export interface IAssignmentSchema {
+  date: Date;
+  person: IPerson;
+}
+
 export const yupAssetValidation = (
   schema: yup.ObjectSchema<IKey | IKeySerial>,
-  object: IKey | IKeySerial,
-  options?: ValidateOptions
+  asset: IKey | IKeySerial,
+  options?: ValidateOptions,
+  assignment?: IAssignmentSchema
 ) => {
   const error: IValidationError = {
     message: '',
     path: ''
   };
+  console.log('yupAssetValidation');
   try {
-    const validObject = schema.validateSync(object, options);
+    const validObject = schema.validateSync(asset, options);
+    if (!!assignment && asset.id !== 0) {
+      // if asset is already created, require assignment
+      const validAssignment = assignmentSchema.validateSync(assignment);
+    }
   } catch (err) {
     if (err instanceof ValidationError) {
       error.path = err.path;

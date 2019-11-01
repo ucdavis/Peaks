@@ -11,7 +11,7 @@ interface IProps {
   openEditModal?: (keySerial: IKeySerial) => void;
   statusList?: string[];
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
-  error: IValidationError;
+  error?: IValidationError;
 }
 
 export default class KeySerialEditValues extends React.Component<IProps, {}> {
@@ -106,10 +106,10 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
             />
           </div>
         </div>
-        {this.props.error.message && // if we have an error message
-        !this.props.error.path && ( // that does not correspond to an input
-            <span className='color-unitrans'>{this.props.error.message}</span>
-          )}
+        {error &&
+        error.message &&
+        !error.path && <span className='color-unitrans'>{error.message // if we have a non-specific error
+            }</span>}
       </div>
     );
   }
