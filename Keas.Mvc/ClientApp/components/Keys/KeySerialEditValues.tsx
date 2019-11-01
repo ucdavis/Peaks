@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IKey } from '../../models/Keys';
 import { IKeySerial } from '../../models/KeySerials';
+import { IValidationError } from '../../models/Shared';
 
 interface IProps {
   keySerial: IKeySerial;
@@ -10,11 +11,12 @@ interface IProps {
   openEditModal?: (keySerial: IKeySerial) => void;
   statusList?: string[];
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
+  error: IValidationError;
 }
 
 export default class KeySerialEditValues extends React.Component<IProps, {}> {
   public render() {
-    const { keySerial } = this.props;
+    const { keySerial, error } = this.props;
 
     const numberValue = keySerial ? keySerial.number : '';
     const statusValue = keySerial ? keySerial.status : 'Active';
@@ -79,9 +81,9 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
               value={numberValue}
               onChange={this.onChangeNumber}
               onBlur={this.onBlurNumber}
-              invalid={!numberValue || numberValue.length > 64}
+              invalid={error ? error.path === 'number' : false}
             />
-            <FormFeedback>Serial Number is required</FormFeedback>
+            <FormFeedback>{error ? error.message : ''}</FormFeedback>
           </FormGroup>
           <div className='form-group'>
             <label>Status</label>
@@ -104,6 +106,10 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
             />
           </div>
         </div>
+        {this.props.error.message && // if we have an error message
+        !this.props.error.path && ( // that does not correspond to an input
+            <span className='color-unitrans'>{this.props.error.message}</span>
+          )}
       </div>
     );
   }
