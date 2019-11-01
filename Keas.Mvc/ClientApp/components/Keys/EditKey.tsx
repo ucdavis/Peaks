@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { ValidationError } from 'yup';
 import { Context } from '../../Context';
 import { IKey, keySchema } from '../../models/Keys';
 import { IValidationError, yupValidation } from '../../models/Shared';

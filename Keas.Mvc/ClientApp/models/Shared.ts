@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { ValidationError, ValidateOptions } from 'yup';
+import { ValidateOptions, ValidationError } from 'yup';
 import { IPerson } from '../Types';
 import { IKey } from './Keys';
 import { IKeySerial } from './KeySerials';
