@@ -1,5 +1,8 @@
 import * as yup from 'yup';
+import { ValidationError, ValidateOptions } from 'yup';
 import { IPerson } from '../Types';
+import { IKey } from './Keys';
+import { IKeySerial } from './KeySerials';
 
 export const assignmentSchema = yup.object().shape({
   date: yup
@@ -15,3 +18,23 @@ export interface IValidationError {
   message: string;
   path: string;
 }
+
+export const yupValidation = (
+  schema: yup.ObjectSchema<IKey | IKeySerial>,
+  object: IKey | IKeySerial,
+  options?: ValidateOptions
+) => {
+  const error: IValidationError = {
+    message: '',
+    path: ''
+  };
+  try {
+    const validObject = schema.validateSync(object, options);
+  } catch (err) {
+    if (err instanceof ValidationError) {
+      error.path = err.path;
+    }
+    error.message = err.message;
+  }
+  return error;
+};
