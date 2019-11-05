@@ -15,7 +15,7 @@ interface IProps {
 export default class KeyEditValues extends React.Component<IProps, {}> {
   public render() {
     const { name, code, tags } = this.props.selectedKey;
-
+    const error = this.props.error;
     const parsedTags = tags ? tags.split(',') : [];
 
     return (
@@ -25,53 +25,67 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
           <Input
             type='text'
             className='form-control'
-            disabled={this.props.disableEditing}
+            readOnly={this.props.disableEditing}
             value={name}
             onBlur={this.onBlurName}
             onChange={this.onChangeName}
             required={true}
             minLength={1}
-            invalid={this.props.error.path === 'name'}
+            invalid={error && error.path === 'name'}
           />
-          <FormFeedback>{this.props.error.message}</FormFeedback>
+          <FormFeedback>{error.message}</FormFeedback>
         </FormGroup>
         <FormGroup>
           <Label for='code'>Code</Label>
           <Input
             type='text'
             className='form-control'
-            disabled={this.props.disableEditing}
+            readOnly={this.props.disableEditing}
             value={code}
             onBlur={this.onBlurCode}
             onChange={this.onChangeCode}
             required={true}
             minLength={1}
             maxLength={10}
-            invalid={this.props.error.path === 'code'}
+            invalid={error && error.path === 'code'}
           />
-          <FormFeedback>{this.props.error.message}</FormFeedback>
+          <FormFeedback>
+            {error && error.path === 'code' ? error.message : ''}
+          </FormFeedback>
         </FormGroup>
-        <div className='form-group'>
-          <label>Notes</label>
-          <textarea
+        <FormGroup>
+          <Label>Notes</Label>
+          <Input
+            type='textarea'
             className='form-control'
-            disabled={this.props.disableEditing}
+            readOnly={this.props.disableEditing}
             value={this.props.selectedKey.notes || ''}
             onChange={e => this.props.changeProperty('notes', e.target.value)}
+            invalid={error && error.path === 'notes'}
           />
-        </div>
-        <div className='form-group'>
-          <label>Tags</label>
+          <FormFeedback>
+            {error && error.path === 'notes' ? error.message : ''}
+          </FormFeedback>
+        </FormGroup>
+        <FormGroup>
+          <Label>Tags</Label>
           <SearchTags
             tags={this.props.searchableTags}
             disabled={this.props.disableEditing}
             selected={parsedTags}
             onSelect={this.onChangeTags}
           />
-        </div>
-        {this.props.error.message && // if we have an error message
-        !this.props.error.path && ( // that does not correspond to an input
-            <span className='color-unitrans'>{this.props.error.message}</span>
+          <FormFeedback>
+            {error && error.path === 'tags' ? error.message : ''}
+          </FormFeedback>
+        </FormGroup>
+        {error.message && // if we have an error message
+          !error.path && (
+            <span className='color-unitrans'>
+              {
+                error.message // that does not correspond to an input
+              }
+            </span>
           )}
       </div>
     );
