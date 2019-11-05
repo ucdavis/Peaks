@@ -87,7 +87,9 @@ export default class AssignPerson extends React.Component<IProps, IState> {
             options={this.state.people}
           />
           {this.props.error && this.props.error.path === 'person' && (
-            <div className='invalid-feedback'>{this.props.error.message}</div>
+            <div className='invalid-feedback d-block'>
+              {this.props.error.message}
+            </div>
           )}
         </FormGroup>
         <div>
