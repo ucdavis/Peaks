@@ -7,10 +7,12 @@ import { IKeySerial } from './KeySerials';
 export const assignmentSchema = yup.object().shape({
   date: yup
     .date()
+    .nullable()
     .required('A date is required for this assignment.')
     .min(new Date(), 'You must choose a date after today.'),
   person: yup
     .object<IPerson>()
+    .nullable()
     .required('A person is required for this assignment.')
 });
 
