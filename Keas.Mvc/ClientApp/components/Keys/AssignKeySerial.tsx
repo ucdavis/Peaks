@@ -3,19 +3,15 @@ import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import {
   Button,
+  FormFeedback,
   Modal,
   ModalBody,
-  ModalFooter,
-  FormFeedback
+  ModalFooter
 } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
-import {
-  assignmentSchema,
-  IValidationError,
-  yupAssetValidation
-} from '../../models/Shared';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { IPerson } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
 import KeySerialEditValues from './KeySerialEditValues';
@@ -108,6 +104,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                   // disable if we are on person page or updating
                   person={person}
                   onSelect={this._onSelectPerson}
+                  error={this.state.error}
                 />
               </div>
 
