@@ -36,7 +36,6 @@ export const yupAssetValidation = (
     message: '',
     path: ''
   };
-  console.log('yupAssetValidation');
   try {
     const validObject = schema.validateSync(asset, options);
     if (!!assignment && asset.id !== 0) {
