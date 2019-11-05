@@ -45,28 +45,28 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
           </div>
         )}
         <div className='wrapperasset'>
-          <div className='form-group'>
-            <label>Key Name</label>
-            <input
+          <FormGroup>
+            <Label for='key.name'>Key Name</Label>
+            <Input
               type='text'
               className='form-control'
-              disabled={true}
+              readOnly={true}
               value={
                 this.props.keySerial.key.name
                   ? this.props.keySerial.key.name
                   : ''
               }
             />
-          </div>
-          <div className='form-group'>
-            <label>Key Code</label>
-            <input
+          </FormGroup>
+          <FormGroup>
+            <Label for='key.code'>Key Code</Label>
+            <Input
               type='text'
               className='form-control'
-              disabled={true}
+              readOnly={true}
               value={this.props.keySerial.key.code}
             />
-          </div>
+          </FormGroup>
           {this.props.goToKeyDetails && (
             <Button color='link' onClick={() => this._goToKeyDetails()}>
               <i className='fas fa-link fa-xs' /> View Key Details
@@ -77,39 +77,54 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
             <Input
               type='text'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               value={numberValue}
               onChange={this.onChangeNumber}
               onBlur={this.onBlurNumber}
               invalid={error ? error.path === 'number' : false}
             />
-            <FormFeedback>{error ? error.message : ''}</FormFeedback>
+            <FormFeedback>
+              {error && error.path === 'number' ? error.message : ''}
+            </FormFeedback>
           </FormGroup>
-          <div className='form-group'>
-            <label>Status</label>
-            <select
+          <FormGroup>
+            <Label>Status</Label>
+            <Input
+              type='select'
               className='form-control'
               value={statusValue}
               onChange={this.onChangeStatus}
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
+              invalid={error ? error.path === 'status' : false}
             >
               {listItems}
-            </select>
-          </div>
-          <div className='form-group'>
-            <label>Notes</label>
-            <textarea
+            </Input>
+            <FormFeedback>
+              {error && error.path === 'status' ? error.message : ''}
+            </FormFeedback>
+          </FormGroup>
+          <FormGroup>
+            <Label>Notes</Label>
+            <Input
+              type='textarea'
               className='form-control'
               disabled={this.props.disableEditing}
               value={this.props.keySerial.notes || ''}
               onChange={e => this.props.changeProperty('notes', e.target.value)}
+              invalid={error ? error.path === 'notes' : false}
             />
-          </div>
+            <FormFeedback>
+              {error && error.path === 'notes' ? error.message : ''}
+            </FormFeedback>
+          </FormGroup>
         </div>
-        {error &&
-        error.message &&
-        !error.path && <span className='color-unitrans'>{error.message // if we have a non-specific error
-            }</span>}
+        {error && error.message && !error.path && (
+          <span className='color-unitrans'>
+            {
+              error.message // if we have a non-specific error
+            }
+          </span>
+        )}
       </div>
     );
   }
@@ -125,7 +140,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
     this.props.changeProperty('number', event.target.value);
   };
 
-  private onChangeStatus = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  private onChangeStatus = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.props.changeProperty('status', event.target.value);
   };
 
