@@ -9,6 +9,7 @@ import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
 import AccessDetails from './AccessDetails';
 import AccessTable from './AccessTable';
+import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
 import EditAccess from './EditAccess';
 
@@ -92,6 +93,9 @@ export default class AccessContainer extends React.Component<
           {!shouldRenderDetails && this._renderTable()}
           {shouldRenderDetails && this._renderDetails(selectedId, detailAccess)}
           {activeAsset &&
+            (containerAction === 'assign' || containerAction === 'create') &&
+            this._renderAssignModal(selectedId, detailAccess)}
+          {activeAsset &&
             containerAction === 'edit' &&
             this._renderEditModal(selectedId, detailAccess)}
           {activeAsset &&
@@ -101,6 +105,63 @@ export default class AccessContainer extends React.Component<
       </div>
     );
   }
+
+  private _createAndMaybeAssignAccess = async (
+    access: IAccess,
+    date: any,
+    person: IPerson
+  ) => {
+    const accesses = this.state.accesses;
+    if (access.id === 0) {
+      access.teamId = this.context.team.id;
+      try {
+        access = await this.context.fetch(
+          `/api/${this.context.team.slug}/access/create`,
+          {
+            body: JSON.stringify(access),
+            method: 'POST'
+          }
+        );
+        accesses.push(access);
+        this.setState({ accesses });
+        toast.success('Access created successfully!');
+      } catch (err) {
+        toast.error('Error creating access.');
+        throw new Error(); // throw error so modal doesn't close
+      }
+    }
+
+    const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
+    let accessAssignment: IAccessAssignment = null;
+    try {
+      accessAssignment = await this.context.fetch(assignUrl, {
+        method: 'POST'
+      });
+
+      accessAssignment.access = access;
+      access.assignments.push(accessAssignment);
+
+      accesses[accesses.indexOf(access)] = access;
+      this.setState({ accesses });
+      toast.success('Access assigned successfully!');
+    } catch (err) {
+      toast.error('Error assigning access.');
+      throw new Error(); // throw error so modal doesn't close
+    }
+  };
+
+  private _renderAssignModal = (selectedId: number, access?: IAccess) => {
+    return (
+      <AssignAccess
+        key={`assign-access-${selectedId}`}
+        onCreate={this._createAndMaybeAssignAccess}
+        modal={true}
+        closeModal={this._closeModals}
+        selectedAccess={access}
+        tags={this.state.tags}
+      />
+    );
+  };
 
   private _renderTable = () => {
     let filteredAccess = this.state.accesses;
@@ -258,7 +319,9 @@ export default class AccessContainer extends React.Component<
   };
 
   private _openAssignModal = (access: IAccess) => {
-    this.props.history.push(`${this._getBaseUrl()}/access/details/${access.id}/assign/${access.id}`);
+    this.props.history.push(
+      `${this._getBaseUrl()}/access/details/${access.id}/assign/${access.id}`
+    );
   };
 
   private _openCreateModal = () => {
