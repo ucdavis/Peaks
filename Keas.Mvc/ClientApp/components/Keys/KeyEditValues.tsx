@@ -33,7 +33,9 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
             minLength={1}
             invalid={error && error.path === 'name'}
           />
-          <FormFeedback>{error.message}</FormFeedback>
+          <FormFeedback>
+            {error && error.path === 'name' && error.message}
+          </FormFeedback>
         </FormGroup>
         <FormGroup>
           <Label for='code'>Code</Label>
@@ -50,7 +52,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
             invalid={error && error.path === 'code'}
           />
           <FormFeedback>
-            {error && error.path === 'code' ? error.message : ''}
+            {error && error.path === 'code' && error.message}
           </FormFeedback>
         </FormGroup>
         <FormGroup>
@@ -64,7 +66,7 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
             invalid={error && error.path === 'notes'}
           />
           <FormFeedback>
-            {error && error.path === 'notes' ? error.message : ''}
+            {error && error.path === 'notes' && error.message}
           </FormFeedback>
         </FormGroup>
         <FormGroup>
@@ -76,10 +78,11 @@ export default class KeyEditValues extends React.Component<IProps, {}> {
             onSelect={this.onChangeTags}
           />
           <FormFeedback>
-            {error && error.path === 'tags' ? error.message : ''}
+            {error && error.path === 'tags' && error.message}
           </FormFeedback>
         </FormGroup>
-        {error.message && // if we have an error message
+        {error &&
+        error.message && // if we have an error message
           !error.path && (
             <span className='color-unitrans'>
               {

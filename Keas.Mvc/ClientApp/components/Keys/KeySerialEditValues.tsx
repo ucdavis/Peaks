@@ -81,10 +81,10 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
               value={numberValue}
               onChange={this.onChangeNumber}
               onBlur={this.onBlurNumber}
-              invalid={error ? error.path === 'number' : false}
+              invalid={error && error.path === 'number'}
             />
             <FormFeedback>
-              {error && error.path === 'number' ? error.message : ''}
+              {error && error.path === 'number' && error.message}
             </FormFeedback>
           </FormGroup>
           <FormGroup>
@@ -95,12 +95,12 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
               value={statusValue}
               onChange={this.onChangeStatus}
               readOnly={this.props.disableEditing}
-              invalid={error ? error.path === 'status' : false}
+              invalid={error && error.path === 'status'}
             >
               {listItems}
             </Input>
             <FormFeedback>
-              {error && error.path === 'status' ? error.message : ''}
+              {error && error.path === 'status' && error.message}
             </FormFeedback>
           </FormGroup>
           <FormGroup>
@@ -111,10 +111,10 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
               disabled={this.props.disableEditing}
               value={this.props.keySerial.notes || ''}
               onChange={e => this.props.changeProperty('notes', e.target.value)}
-              invalid={error ? error.path === 'notes' : false}
+              invalid={error && error.path === 'notes'}
             />
             <FormFeedback>
-              {error && error.path === 'notes' ? error.message : ''}
+              {error && error.path === 'notes' && error.message}
             </FormFeedback>
           </FormGroup>
         </div>
