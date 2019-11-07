@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IKey } from '../../models/Keys';
+import { IKey, keySchema } from '../../models/Keys';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import KeyEditValues from './KeyEditValues';
 
 interface IProps {
@@ -14,7 +15,7 @@ interface IProps {
 }
 
 interface IState {
-  error: string;
+  error: IValidationError;
   key: IKey;
   submitting: boolean;
   validState: boolean;
@@ -32,7 +33,10 @@ export default class EditKey extends React.Component<IProps, IState> {
     this._formRef = React.createRef();
 
     this.state = {
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       key: this.props.selectedKey,
       submitting: false,
       validState: false
@@ -67,10 +71,10 @@ export default class EditKey extends React.Component<IProps, IState> {
                 changeProperty={this._changeProperty}
                 disableEditing={false}
                 searchableTags={searchableTags}
+                error={this.state.error}
               />
             </form>
           </div>
-          {this.state.error}
         </ModalBody>
         <ModalFooter>
           <Button
@@ -111,7 +115,10 @@ export default class EditKey extends React.Component<IProps, IState> {
 
   private _closeModal = () => {
     this.setState({
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       key: null,
       submitting: false,
       validState: false
@@ -135,24 +142,10 @@ export default class EditKey extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    const { key } = this.state;
-
-    let valid = this._formRef.current.checkValidity();
-    let error = '';
-
-    if (!key) {
-      valid = false;
-    } else if (!key.code) {
-      valid = false;
-      error = 'You must give this key a name.';
-    } else if (key.code.length > 64) {
-      valid = false;
-      error = 'The name you have chosen is too long';
-    } else if (!this.props.checkIfKeyCodeIsValid(key.code, key.id)) {
-      valid = false;
-      error = 'The code you have chosen is already in use.';
-    }
-
-    this.setState({ validState: valid, error });
+    const checkIfKeyCodeIsValid = this.props.checkIfKeyCodeIsValid;
+    const error = yupAssetValidation(keySchema, this.state.key, {
+      context: { checkIfKeyCodeIsValid }
+    });
+    this.setState({ error, validState: error.message === '' });
   };
 }
