@@ -3,6 +3,7 @@ import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import {
   Button,
+  Form,
   FormFeedback,
   Modal,
   ModalBody,
@@ -14,6 +15,7 @@ import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { IPerson } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
+import { AssignDate } from '../Shared/AssignDate';
 import KeySerialEditValues from './KeySerialEditValues';
 import SearchKeys from './SearchKeys';
 import SearchKeySerial from './SearchKeySerials';
@@ -91,39 +93,28 @@ export default class AssignKey extends React.Component<IProps, IState> {
         </div>
         <ModalBody>
           <div className='container-fluid'>
-            <form>
-              <div className='form-group'>
-                <label htmlFor='assignto'>Assign To</label>
-                <AssignPerson
-                  disabled={
-                    !!this.props.person ||
-                    (!!this.props.selectedKeySerial &&
-                      !!this.props.selectedKeySerial.keySerialAssignment)
-                  }
-                  isRequired={keySerial && keySerial.id !== 0 && !person}
-                  // disable if we are on person page or updating
-                  person={person}
-                  onSelect={this._onSelectPerson}
-                  error={this.state.error}
-                />
-              </div>
+            <Form>
+              <AssignPerson
+                disabled={
+                  !!this.props.person ||
+                  (!!this.props.selectedKeySerial &&
+                    !!this.props.selectedKeySerial.keySerialAssignment)
+                }
+                isRequired={keySerial && keySerial.id !== 0 && !person}
+                // disable if we are on person page or updating
+                label='Assign Person'
+                person={person}
+                onSelect={this._onSelectPerson}
+                error={this.state.error}
+              />
 
               {(!!person || !!this.props.person) && (
-                <div className='form-group'>
-                  <label>Set the expiration date</label>
-                  <br />
-                  <DatePicker
-                    format='MM/dd/yyyy'
-                    required={true}
-                    clearIcon={null}
-                    value={this.state.date}
-                    onChange={this._changeDate}
-                  />
-                  <FormFeedback>
-                    {this.state.error.path === 'date' &&
-                      this.state.error.message}
-                  </FormFeedback>
-                </div>
+                <AssignDate
+                  date={this.state.date}
+                  isRequired={true}
+                  error={this.state.error}
+                  onChangeDate={this._changeDate}
+                />
               )}
               {!this.state.keySerial && (
                 <div className='form-group'>
@@ -193,7 +184,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                   />
                 </div>
               )}
-            </form>
+            </Form>
           </div>
         </ModalBody>
         <ModalFooter>
