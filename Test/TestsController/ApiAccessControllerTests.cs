@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
 using Keas.Core.Models;
 using Keas.Mvc.Controllers.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shouldly;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using TestHelpers.Helpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -71,7 +66,29 @@ namespace Test.TestsController
             //1
             ControllerReflection.MethodExpectedNoAttribute("GetTeam", "GetTeam-1");
             //2
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Search", 1 + countAdjustment, "Search", showListOfAttributes: true);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Search", 1 + countAdjustment, "Search", showListOfAttributes: false);
+            //3
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("ListAssigned", 1 + countAdjustment, "ListAssigned", showListOfAttributes: false);
+            //4
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("List", 1 + countAdjustment, "List", showListOfAttributes: false);
+            //5
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Details", 1 + countAdjustment, "Details", showListOfAttributes: false);
+            //6
+            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Create", 2 + countAdjustment, "Create", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Create", 2 + countAdjustment, "Create", showListOfAttributes: false);
+            //7
+            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Assign", 2 + countAdjustment, "Assign", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Assign", 2 + countAdjustment, "Assign", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Create", 2 + countAdjustment, "Create", showListOfAttributes: false);
+            //8
+            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Update", 2 + countAdjustment, "Update", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Update", 2 + countAdjustment, "Update", showListOfAttributes: false);
+            //9
+            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Revoke", 2 + countAdjustment, "Revoke", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Revoke", 2 + countAdjustment, "Revoke", showListOfAttributes: false);
+            //10
+            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Delete", 2 + countAdjustment, "Delete", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Delete", 2 + countAdjustment, "Delete", showListOfAttributes: false);
         }
 
         #endregion
