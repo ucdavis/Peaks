@@ -10,8 +10,10 @@ using Keas.Mvc.Controllers.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shouldly;
+using TestHelpers.Helpers;
 using Xunit;
 using Xunit.Abstractions;
+
 namespace Test.TestsController
 {
     [Trait("Category", "ControllerTests")]
@@ -24,113 +26,54 @@ namespace Test.TestsController
     public class ApiAccessControllerReflectionTests
     {
         private readonly ITestOutputHelper output;
-        protected readonly Type ControllerClass = typeof(AccessController);
+        public ControllerReflection ControllerReflection;
 
         public ApiAccessControllerReflectionTests(ITestOutputHelper output)
         {
             this.output = output;
+            ControllerReflection = new ControllerReflection(this.output, typeof(AccessController));
         }
 
         #region Controller Class Tests
-        [Fact]
-        public void TestControllerInheritsFromApplicationController()
-        {
-            #region Arrange
-            var controllerClass = ControllerClass.GetTypeInfo();
-            #endregion Arrange
-
-            #region Act
-            controllerClass.BaseType.ShouldNotBe(null);
-            var result = controllerClass.BaseType.Name;
-            #endregion Act
-
-            #region Assert
-            result.ShouldBe("SuperController");
-
-            #endregion Assert
-        }
 
         [Fact]
-        public void TestControllerExpectedNumberOfAttributes()
+        public void TestControllerClassAttributes()
         {
-            #region Arrange
-            var controllerClass = ControllerClass.GetTypeInfo();
-            #endregion Arrange
+            ControllerReflection.ControllerInherits("SuperController");
+            var authAttribute = ControllerReflection.ClassExpectedAttribute<AuthorizeAttribute>(4);
+            authAttribute.ElementAt(0).Roles.ShouldBe(null);
+            authAttribute.ElementAt(0).Policy.ShouldBe(AccessCodes.Codes.AccessMasterAccess);
 
-            #region Act
-            var result = controllerClass.GetCustomAttributes(true);
-            #endregion Act
-
-            #region Assert
-            foreach (var o in result)
-            {
-                output.WriteLine(o.ToString()); //Output shows 
-            }
-            result.Count().ShouldBe(4);
-
-            #endregion Assert
+            ControllerReflection.ClassExpectedAttribute<AutoValidateAntiforgeryTokenAttribute>(4);
+            ControllerReflection.ClassExpectedAttribute<ControllerAttribute>(4);
         }
 
-        /// <summary>
-        /// #1
-        /// </summary>
-        [Fact]
-        public void TestControllerHasControllerAttribute()
-        {
-            #region Arrange
-            var controllerClass = ControllerClass.GetTypeInfo();
-            #endregion Arrange
-
-            #region Act
-            var result = controllerClass.GetCustomAttributes(true).OfType<ControllerAttribute>();
-            #endregion Act
-
-            #region Assert
-            result.Count().ShouldBeGreaterThan(0, "ControllerAttribute not found.");
-
-            #endregion Assert
-        }
-
-        /// <summary>
-        /// #2
-        /// </summary>
-        [Fact]
-        public void TestControllerHasAuthorizeAttribute()
-        {
-            #region Arrange
-            var controllerClass = ControllerClass.GetTypeInfo();
-            #endregion Arrange
-
-            #region Act
-            var result = controllerClass.GetCustomAttributes(true).OfType<AuthorizeAttribute>();
-            #endregion Act
-
-            #region Assert
-            result.Count().ShouldBeGreaterThan(0, "AuthorizeAttribute not found.");
-            result.ElementAt(0).Roles.ShouldBe(null);
-            result.ElementAt(0).Policy.ShouldBe(AccessCodes.Codes.AccessMasterAccess);
-            #endregion Assert
-        }
-
-        /// <summary>
-        /// #3
-        /// </summary>
-        [Fact]
-        public void TestControllerHasAutoValidateAntiforgeryTokenAttribute()
-        {
-            #region Arrange
-            var controllerClass = ControllerClass.GetTypeInfo();
-            #endregion Arrange
-
-            #region Act
-            var result = controllerClass.GetCustomAttributes(true).OfType<AutoValidateAntiforgeryTokenAttribute>();
-            #endregion Act
-
-            #region Assert
-            result.Count().ShouldBeGreaterThan(0, "AutoValidateAntiforgeryTokenAttribute not found.");
-
-            #endregion Assert
-        }
         #endregion Controller Class Tests
+
+        #region Controller Method Tests
+
+        [Fact]
+        public void TestControllerContainsExpectedNumberOfPublicMethods()
+        {
+            ControllerReflection.ControllerPublicMethods(10);
+        }
+
+        [Fact]
+        public void TestControllerMethodAttributes()
+        {
+
+#if DEBUG
+            var countAdjustment = 1;
+#else
+            var countAdjustment = 0;
+#endif
+
+            //1
+            ControllerReflection.MethodExpectedNoAttribute("GetTeam", "GetTeam-1");
+            //2
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Search", 1 + countAdjustment, "Search", showListOfAttributes: true);
+        }
+
+        #endregion
     }
 }
