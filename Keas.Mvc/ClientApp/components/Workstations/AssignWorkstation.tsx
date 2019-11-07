@@ -78,22 +78,20 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
           <ModalBody>
             <div className='container-fluid'>
               <form>
-                <div className='form-group'>
-                  <label htmlFor='assignto'>Assign To</label>
-                  <AssignPerson
-                    disabled={
-                      !!this.props.person ||
-                      (!!this.props.selectedWorkstation &&
-                        !!this.props.selectedWorkstation.assignment)
-                    } // disable if we are on person page or updating
-                    person={this.props.person || this.state.person}
-                    onSelect={this._onSelectPerson}
-                    isRequired={
-                      this.state.workstation &&
-                      this.state.workstation.teamId !== 0
-                    }
-                  />
-                </div>
+                <AssignPerson
+                  disabled={
+                    !!this.props.person ||
+                    (!!this.props.selectedWorkstation &&
+                      !!this.props.selectedWorkstation.assignment)
+                  } // disable if we are on person page or updating
+                  person={this.props.person || this.state.person}
+                  label='Assign To'
+                  onSelect={this._onSelectPerson}
+                  isRequired={
+                    this.state.workstation &&
+                    this.state.workstation.teamId !== 0
+                  }
+                />
                 {(!!this.state.person || !!this.props.person) && (
                   <div className='form-group'>
                     <label>Set the expiration date</label>

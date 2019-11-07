@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button, FormFeedback, FormGroup } from 'reactstrap';
+import { Button, FormFeedback, FormGroup, Label } from 'reactstrap';
 import { Context } from '../../Context';
 import { IValidationError } from '../../models/Shared';
 import { IPerson } from '../../Types';
@@ -10,6 +10,7 @@ import { IPerson } from '../../Types';
 interface IProps {
   onSelect: (person: IPerson) => void;
   person?: IPerson;
+  label: string;
   disabled: boolean;
   isRequired: boolean;
   error?: IValidationError;
@@ -48,6 +49,7 @@ export default class AssignPerson extends React.Component<IProps, IState> {
     return (
       <div>
         <FormGroup>
+          <Label for='searchPeople'>{this.props.label}</Label>
           <AsyncTypeahead
             id='searchPeople' // for accessibility
             inputProps={{

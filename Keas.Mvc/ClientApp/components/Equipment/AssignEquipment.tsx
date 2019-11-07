@@ -77,21 +77,19 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         <ModalBody>
           <div className='container-fluid'>
             <form>
-              <div className='form-group'>
-                <label htmlFor='assignto'>Assign To</label>
-                <AssignPerson
-                  person={this.state.person}
-                  onSelect={this._onSelectPerson}
-                  isRequired={
-                    this.state.equipment && this.state.equipment.teamId !== 0
-                  }
-                  disabled={
-                    !!this.props.person ||
-                    (!!this.props.selectedEquipment &&
-                      !!this.props.selectedEquipment.assignment)
-                  } // disable if we are on person page or updating
-                />
-              </div>
+              <AssignPerson
+                person={this.state.person}
+                label='Assign To'
+                onSelect={this._onSelectPerson}
+                isRequired={
+                  this.state.equipment && this.state.equipment.teamId !== 0
+                }
+                disabled={
+                  !!this.props.person ||
+                  (!!this.props.selectedEquipment &&
+                    !!this.props.selectedEquipment.assignment)
+                } // disable if we are on person page or updating
+              />
               {(!!this.state.person || !!this.props.person) && (
                 <div className='form-group'>
                   <label>Set the expiration date</label>
