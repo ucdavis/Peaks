@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.TestHelpers" Version="1.0.34" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.0.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0-preview-20170628-02" />
     <PackageReference Include="Moq" Version="4.8.2" />
     <PackageReference Include="Shouldly" Version="3.0.0" />
@@ -18,11 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="TestsController\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Keas.Core\Keas.Core.csproj" />
+    <ProjectReference Include="..\Keas.Mvc\Keas.Mvc.csproj" />
   </ItemGroup>
 
 </Project>
