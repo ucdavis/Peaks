@@ -18,6 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="TestsController\" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Keas.Core\Keas.Core.csproj" />
     <ProjectReference Include="..\Keas.Mvc\Keas.Mvc.csproj" />
   </ItemGroup>
