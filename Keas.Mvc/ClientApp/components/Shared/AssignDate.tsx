@@ -23,9 +23,9 @@ export const AssignDate = (props: IProps) => {
         value={props.date}
         onChange={props.onChangeDate}
       />
-      <FormFeedback>
-        {props.error && props.error.path === 'date' && props.error.message}
-      </FormFeedback>
+      {props.error && props.error.path === 'date' && (
+        <div className='invalid-feedback d-block'>{props.error.message}</div>
+      )}
     </FormGroup>
   );
 };
