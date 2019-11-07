@@ -108,17 +108,19 @@ export default class AccessContainer extends React.Component<
 
   private _createAndMaybeAssignAccess = async (
     access: IAccess,
-    date: any,
-    person: IPerson
+    date?: any,
+    person?: IPerson
   ) => {
     const accesses = this.state.accesses;
     if (access.id === 0) {
-      access.teamId = this.context.team.id;
       try {
         access = await this.context.fetch(
           `/api/${this.context.team.slug}/access/create`,
           {
-            body: JSON.stringify(access),
+            body: JSON.stringify({
+              ...access,
+              teamId: this.context.team.id
+            }),
             method: 'POST'
           }
         );
@@ -130,23 +132,24 @@ export default class AccessContainer extends React.Component<
         throw new Error(); // throw error so modal doesn't close
       }
     }
+    if (person && date) {
+      const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
+      let accessAssignment: IAccessAssignment = null;
+      try {
+        accessAssignment = await this.context.fetch(assignUrl, {
+          method: 'POST'
+        });
 
-    const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
-    let accessAssignment: IAccessAssignment = null;
-    try {
-      accessAssignment = await this.context.fetch(assignUrl, {
-        method: 'POST'
-      });
+        accessAssignment.access = access;
+        access.assignments.push(accessAssignment);
 
-      accessAssignment.access = access;
-      access.assignments.push(accessAssignment);
-
-      accesses[accesses.indexOf(access)] = access;
-      this.setState({ accesses });
-      toast.success('Access assigned successfully!');
-    } catch (err) {
-      toast.error('Error assigning access.');
-      throw new Error(); // throw error so modal doesn't close
+        accesses[accesses.indexOf(access)] = access;
+        this.setState({ accesses });
+        toast.success('Access assigned successfully!');
+      } catch (err) {
+        toast.error('Error assigning access.');
+        throw new Error(); // throw error so modal doesn't close
+      }
     }
   };
 

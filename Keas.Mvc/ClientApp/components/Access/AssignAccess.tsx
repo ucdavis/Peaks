@@ -198,10 +198,10 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         format(this.state.date, 'MM/dd/yyyy'),
         person
       );
-    } catch (err) {
+    } finally {
       this.setState({ submitting: false });
-      return;
     }
+
     this._closeModal();
   };
 
