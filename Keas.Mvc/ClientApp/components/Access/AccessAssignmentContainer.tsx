@@ -142,7 +142,6 @@ class AssignmentContainer extends React.Component<IProps, IState> {
             />
           )}
         </AccessAssignmentCard>
-        />
       </div>
     );
   }

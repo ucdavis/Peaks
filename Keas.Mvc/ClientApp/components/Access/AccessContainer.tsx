@@ -140,10 +140,10 @@ export default class AccessContainer extends React.Component<
           method: 'POST'
         });
 
-        accessAssignment.access = access;
-        access.assignments.push(accessAssignment);
+        const newAccess = accesses.find(a => a.id === access.id);
+        accessAssignment.access = newAccess;
+        newAccess.assignments.push(accessAssignment);
 
-        accesses[accesses.indexOf(access)] = access;
         this.setState({ accesses });
         toast.success('Access assigned successfully!');
       } catch (err) {
