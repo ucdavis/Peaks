@@ -66,6 +66,9 @@ export default class BioContainer extends React.Component<IProps, {}> {
                   {this.props.person.email && (
                     <p className='person-label'>Email</p>
                   )}
+                  {this.props.person.userId && (
+                    <p className='person-label'>User Id</p>
+                  )}
                   {this.props.person.homePhone && (
                     <p className='person-label'>Home</p>
                   )}
@@ -78,6 +81,7 @@ export default class BioContainer extends React.Component<IProps, {}> {
                 </div>
                 <div>
                   {this.props.person.email && <p>{this.props.person.email}</p>}
+                  {this.props.person.userId && <p>{this.props.person.userId}</p>}
                   {this.props.person.homePhone && (
                     <p>{this.props.person.homePhone}</p>
                   )}
