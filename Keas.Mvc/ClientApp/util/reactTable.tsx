@@ -1,7 +1,42 @@
 import { addWeeks, isAfter, isBefore, isSameDay, startOfDay } from 'date-fns';
 import * as React from 'react';
 
+interface IFilterOption {
+  value: string;
+  displayText: string;
+}
+
 export class ReactTableExpirationUtil {
+
+  public static defaultFilterOptions: IFilterOption[] = [
+    {
+      displayText: 'Show All',
+      value: 'all'
+    },
+    {
+      displayText: 'Unassigned',
+      value: 'unassigned'
+    },
+    {
+      displayText: 'Expired',
+      value: 'expired'
+    },
+    {
+      displayText: 'All Unexpired',
+      value: 'unexpired'
+    },
+    {
+      displayText: 'Expiring within 3 weeks',
+      value: '3weeks'
+    },
+    {
+      displayText: 'Expiring within 6 weeks',
+      value: '6weeks'
+    }
+  ];
+
+  public static filter = ReactTableExpirationUtil.getFilter(ReactTableExpirationUtil.defaultFilterOptions);
+
   public static filterMethod(filter, row) {
     if (filter.value === 'all') {
       return true;
@@ -31,21 +66,22 @@ export class ReactTableExpirationUtil {
     }
   }
 
-  public static filter(filter, onChange) {
-    return (
-      <select
-        onChange={e => onChange(e.target.value)}
-        style={{ width: '100%' }}
-        value={filter ? filter.value : 'all'}
-      >
-        <option value='all'>Show All</option>
-        <option value='unassigned'>Unassigned</option>
-        <option value='expired'>Expired</option>
-        <option value='unexpired'>All Unexpired</option>
-        <option value='3weeks'>Expiring within 3 weeks</option>
-        <option value='6weeks'>Expiring within 6 weeks</option>
-      </select>
-    );
+  public static getFilter(options: IFilterOption[]) {
+    return (filter, onChange) => {
+      return (
+        <select
+          onChange={e => onChange(e.target.value)}
+          style={{ width: '100%' }}
+          value={filter ? filter.value : 'all'}
+        >
+          {options.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.displayText}
+            </option>
+          ))}
+        </select>
+      );
+    };
   }
 
   public static sortMethod(a, b) {

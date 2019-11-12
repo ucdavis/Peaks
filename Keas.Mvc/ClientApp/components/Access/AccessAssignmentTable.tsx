@@ -13,6 +13,9 @@ interface IProps {
 const accessAssignTable: React.FunctionComponent<IProps> = (
   props: React.PropsWithChildren<IProps>
 ): React.ReactElement => {
+  const options = [...ReactTableExpirationUtil.defaultFilterOptions];
+  options.splice(options.findIndex(v => v.value === 'unassigned'), 1)
+
   const columns = [
     {
       Header: 'Name',
@@ -27,7 +30,7 @@ const accessAssignTable: React.FunctionComponent<IProps> = (
         <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
       ),
       Filter: ({ filter, onChange }) =>
-        ReactTableExpirationUtil.filter(filter, onChange),
+        ReactTableExpirationUtil.getFilter(options)(filter, onChange),
       Header: 'Expiration',
       accessor: 'expiresAt',
       filterMethod: (filter, row) =>
