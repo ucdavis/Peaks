@@ -215,7 +215,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
         method: 'POST'
       });
 
-      accessAssignment.access = access;
+      accessAssignment.access = {...access, assignments: [...access.assignments, accessAssignment]};
       toast.success('Access assigned successfully!');
     } catch (err) {
       toast.error('Error assigning access.');
