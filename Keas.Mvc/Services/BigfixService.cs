@@ -51,7 +51,7 @@ namespace Keas.Mvc.Services
         {
            using (var bf = GetClient())
             {
-                var query = bf.Queries.Common.GroupedQueries.GetComputerByNameEquals(name);
+                var query = bf.Queries.Common.GroupedQueries.GetComputerByNameContains(name);
 
                 var results = await bf.Queries.SearchWithGroupedResults(query);
 
