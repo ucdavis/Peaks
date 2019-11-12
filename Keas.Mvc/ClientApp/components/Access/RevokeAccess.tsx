@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Alert, Button } from 'reactstrap';
 import { IAccessAssignment } from '../../Types';
+import { DateUtil } from '../../util/dates';
 import SearchTags from '../Tags/SearchTags';
 import AccessModal from './AccessModal';
 
@@ -25,12 +26,15 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
   public render() {
     const valid = !!this.props.assignment;
     const assignment = this.props.assignment;
+    const { person } = assignment || {person: null};
     return valid ? (
       <AccessModal
         isOpen={true}
         closeModal={this.props.cancelRevoke}
         header={
-          <h1>Revoke Access for {this.props.assignment.person.firstName}</h1>
+          <h1>
+            Revoke Access for {person.firstName} {person.lastName}
+          </h1>
         }
         footer={
           <Button
@@ -62,7 +66,7 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
             />
           </>
         )}
-        <p>Expires At {assignment.expiresAt}</p>
+        <p>Expires At {DateUtil.formatExpiration(assignment.expiresAt)}</p>
       </AccessModal>
     ) : (
       <AccessModal
