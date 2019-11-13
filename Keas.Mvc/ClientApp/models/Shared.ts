@@ -1,3 +1,4 @@
+import { endOfDay } from 'date-fns';
 import * as yup from 'yup';
 import { ValidateOptions, ValidationError } from 'yup';
 import { IPerson } from '../Types';
@@ -9,7 +10,7 @@ export const assignmentSchema = yup.object().shape({
     .date()
     .nullable()
     .required('A date is required for this assignment.')
-    .min(new Date(), 'You must choose a date after today.'),
+    .min(endOfDay(new Date()), 'You must choose a date after today.'),
   person: yup
     .object<IPerson>()
     .nullable()
@@ -38,7 +39,7 @@ export const yupAssetValidation = (
   };
   try {
     const validObject = schema.validateSync(asset, options);
-    if (!!assignment && asset.id !== 0) {
+    if (!!assignment) {
       // if asset is already created, require assignment
       const validAssignment = assignmentSchema.validateSync(assignment);
     }
