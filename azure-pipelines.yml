@@ -37,13 +37,6 @@ stages:
     - task: DotNetCoreCLI@2
       displayName: 'Build Keas.Mvc'
       inputs:
-        command: 'build'
-        projects: './Keas.Mvc/Keas.Mvc.csproj'
-        arguments: '--configuration $(BuildConfiguration) /property:Version=$(build.buildNumber)'
-
-    - task: DotNetCoreCLI@2
-        displayName: 'Assemble Keas.Mvc'
-        inputs:
             command: 'publish'
             publishWebProjects: true
             zipAfterPublish: false
