@@ -39,7 +39,7 @@ stages:
       inputs:
         command: 'build'
         projects: './Keas.Mvc/Keas.Mvc.csproj'
-        arguments: '--configuration $(BuildConfiguration) /property:Version=$(build.buildNumber) --output $(build.artifactstagingdirectory)/'
+        arguments: '--configuration $(BuildConfiguration) /property:Version=$(build.buildNumber)'
 
     - task: DotNetCoreCLI@2
       displayName: 'Run Server Tests'
