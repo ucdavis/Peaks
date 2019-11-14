@@ -23,10 +23,24 @@ export interface IKey {
 }
 
 export const keySchema = yup.object<IKey>().shape({
-  code: yup.string().required(),
+  code: yup
+    .string()
+    .required()
+    .max(64)
+    .test(
+      'checkIfKeyCodeIsValid',
+      'The key code you have chosen is already in use.',
+      function test(value) {
+        const context: any = this.options.context;
+        return context.checkIfKeyCodeIsValid(value, this.parent.id);
+      }
+    ),
   id: yup.number(),
   keyXSpaces: yup.array<IKeySpaceAssociation>().nullable(),
-  name: yup.string().required(),
+  name: yup
+    .string()
+    .required()
+    .max(64),
   notes: yup.string().notRequired(),
   serials: yup.array<IKeySerial>().nullable(),
   tags: yup.string().notRequired(),

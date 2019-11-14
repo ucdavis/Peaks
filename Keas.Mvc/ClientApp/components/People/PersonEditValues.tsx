@@ -150,15 +150,13 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
           />
         </div>
 
-        <div className='form-group'>
-          <label>Supervisor</label>
-          <AssignPerson
-            disabled={this.props.disableEditing}
-            onSelect={this.props.changeSupervisor}
-            person={this.props.selectedPerson.supervisor}
-            isRequired={false}
-          />
-        </div>
+        <AssignPerson
+          disabled={this.props.disableEditing}
+          onSelect={this.props.changeSupervisor}
+          person={this.props.selectedPerson.supervisor}
+          isRequired={false}
+          label='Supervisor'
+        />
 
         <div className='form-group'>
           <label>Category</label>

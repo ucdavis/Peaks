@@ -62,17 +62,13 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         <ModalBody>
           <div className='container-fluid'>
             <form>
-              <div className='form-group'>
-                <label htmlFor='assignto'>Assign To</label>
-                <AssignPerson
-                  disabled={!!this.props.person}
-                  person={this.props.person || this.state.person}
-                  onSelect={this._onSelectPerson}
-                  isRequired={
-                    this.state.access && this.state.access.teamId !== 0
-                  }
-                />
-              </div>
+              <AssignPerson
+                disabled={!!this.props.person}
+                person={this.props.person || this.state.person}
+                onSelect={this._onSelectPerson}
+                label='Assign To'
+                isRequired={this.state.access && this.state.access.teamId !== 0}
+              />
               {!this.state.access && (
                 <div className='form-group'>
                   <SearchAccess
@@ -99,9 +95,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                       selectedAccess={this.state.access}
                       changeProperty={this._changeProperty}
                       disableEditing={false}
-                      onAccessUpdate={access =>
-                        this.setState({ access })
-                      }
+                      onAccessUpdate={access => this.setState({ access })}
                       tags={this.props.tags}
                     />
                   </div>
