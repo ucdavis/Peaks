@@ -41,6 +41,11 @@ stages:
         projects: './Keas.Mvc/Keas.Mvc.csproj'
         arguments: '--configuration $(BuildConfiguration) /property:Version=$(build.buildNumber)'
 
+    - task: Npm@1
+      inputs:
+        command: 'install'
+        workingDir: './Keas.Mvc'
+
     - task: DotNetCoreCLI@2
       displayName: 'Run Server Tests'
       inputs:
