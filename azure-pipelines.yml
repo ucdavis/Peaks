@@ -37,12 +37,9 @@ stages:
     - task: DotNetCoreCLI@2
       displayName: 'Build Keas.Mvc'
       inputs:
-            command: 'publish'
-            publishWebProjects: true
-            zipAfterPublish: false
-            modifyOutputPath: false
-            projects: './Keas.Mvc/Keas.Mvc.csproj'
-            arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/'
+        command: 'build'
+        projects: './Keas.Mvc/Keas.Mvc.csproj'
+        arguments: '--configuration $(BuildConfiguration) /property:Version=$(build.buildNumber)'
 
     - task: DotNetCoreCLI@2
       displayName: 'Run Server Tests'
