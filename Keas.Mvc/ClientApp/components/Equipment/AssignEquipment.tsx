@@ -1,6 +1,6 @@
-import { addYears, format, isBefore, startOfDay } from 'date-fns';
+import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
-import { Button, Modal, ModalBody, ModalFooter, Form } from 'reactstrap';
+import { Button, Form, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
 import {
   equipmentSchema,

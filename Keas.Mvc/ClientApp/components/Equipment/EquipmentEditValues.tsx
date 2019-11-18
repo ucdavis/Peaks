@@ -56,7 +56,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
             <Input
               type='text'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               value={
                 this.props.selectedEquipment.name
                   ? this.props.selectedEquipment.name
@@ -90,7 +90,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
             <Input
               type='text'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               autoFocus={
                 !this.props.disableEditing &&
                 this.props.selectedEquipment.name !== ''
@@ -186,7 +186,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
               <Input
                 type='text'
                 className='form-control'
-                disabled={this.props.disableEditing}
+                readOnly={this.props.disableEditing}
                 value={
                   this.props.selectedEquipment.make
                     ? this.props.selectedEquipment.make
@@ -211,7 +211,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
               <Input
                 type='text'
                 className='form-control'
-                disabled={this.props.disableEditing}
+                readOnly={this.props.disableEditing}
                 value={
                   this.props.selectedEquipment.model
                     ? this.props.selectedEquipment.model
@@ -240,7 +240,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
               <Input
                 type='text'
                 className='form-control'
-                disabled={this.props.disableEditing}
+                readOnly={this.props.disableEditing}
                 value={this.props.selectedEquipment.systemManagementId || ''}
                 maxLength={16}
                 onChange={e =>
@@ -261,7 +261,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
             <Input
               type='textarea'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               value={this.props.selectedEquipment.notes || ''}
               onChange={e => this.props.changeProperty('notes', e.target.value)}
               invalid={error && error.path === 'notes'}
@@ -301,7 +301,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
               <Input
                 type='text'
                 className='form-control'
-                disabled={true}
+                readOnly={true}
                 value={
                   this.props.selectedEquipment.space
                     ? `${this.props.selectedEquipment.space.roomNumber} ${this.props.selectedEquipment.space.bldgName}`
