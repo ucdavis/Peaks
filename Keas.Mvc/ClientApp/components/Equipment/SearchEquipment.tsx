@@ -3,7 +3,8 @@ import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import { IEquipment, IEquipmentLabel, ISpace } from '../../Types';
+import { IEquipment, IEquipmentLabel } from '../../models/Equipment';
+import { ISpace } from '../../Types';
 
 interface IProps {
   onDeselect: () => void;

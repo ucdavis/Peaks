@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import Button from 'reactstrap/lib/Button';
-import { IEquipment } from '../../Types';
+import { IEquipment } from '../../models/Equipment';
 import { DateUtil } from '../../util/dates';
 
 interface IProps {

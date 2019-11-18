@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Context } from '../../Context';
-import { IEquipment } from '../../Types';
+import { IEquipment } from '../../models/Equipment';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentTable from './EquipmentTable';
 import SearchAttributes from './SearchAttributes';

@@ -94,7 +94,7 @@ export default class KeySerialEditValues extends React.Component<IProps, {}> {
               className='form-control'
               value={statusValue}
               onChange={this.onChangeStatus}
-              readOnly={this.props.disableEditing}
+              disabled={this.props.disableEditing}
               invalid={error && error.path === 'status'}
             >
               {listItems}

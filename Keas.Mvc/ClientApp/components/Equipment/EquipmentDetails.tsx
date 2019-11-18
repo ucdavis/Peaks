@@ -2,7 +2,7 @@
 import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
 import { Context } from '../../Context';
-import { IEquipment } from '../../Types';
+import { IEquipment } from '../../models/Equipment';
 import HistoryContainer from '../History/HistoryContainer';
 import EquipmentAssignmentValues from './EquipmentAssignmentValues';
 import EquipmentEditValues from './EquipmentEditValues';
