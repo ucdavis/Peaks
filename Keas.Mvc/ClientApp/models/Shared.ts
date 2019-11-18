@@ -4,6 +4,7 @@ import { ValidateOptions, ValidationError } from 'yup';
 import { IPerson } from '../Types';
 import { IKey } from './Keys';
 import { IKeySerial } from './KeySerials';
+import { IWorkstation } from './Workstations';
 
 export const assignmentSchema = yup.object().shape({
   date: yup
@@ -28,8 +29,8 @@ export interface IAssignmentSchema {
 }
 
 export const yupAssetValidation = (
-  schema: yup.ObjectSchema<IKey | IKeySerial>,
-  asset: IKey | IKeySerial,
+  schema: yup.ObjectSchema<IKey | IKeySerial | IWorkstation>,
+  asset: IKey | IKeySerial | IWorkstation,
   options?: ValidateOptions,
   assignment?: IAssignmentSchema
 ) => {

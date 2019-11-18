@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
+import { IValidationError } from '../../models/Shared';
 import { IWorkstation } from '../../models/Workstations';
 import { ISpace } from '../../Types';
 import SearchSpaces from '../Spaces/SearchSpaces';
@@ -13,6 +14,7 @@ interface IProps {
   disableSpaceEditing: boolean;
   selectedWorkstation: IWorkstation;
   space?: ISpace;
+  error?: IValidationError;
 }
 
 export default class WorkstationEditValues extends React.Component<IProps, {}> {

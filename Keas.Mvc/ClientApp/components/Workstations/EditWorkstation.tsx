@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IWorkstation } from '../../models/Workstations';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
+import { IWorkstation, workstationSchema } from '../../models/Workstations';
 import WorkstationAssignmentValues from './WorkstationAssignmentValues';
 import WorkstationEditValues from './WorkstationEditValues';
 
@@ -15,7 +16,7 @@ interface IProps {
 }
 
 interface IState {
-  error: string;
+  error: IValidationError;
   submitting: boolean;
   workstation: IWorkstation;
   validState: boolean;
@@ -28,7 +29,10 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       submitting: false,
       validState: false,
       workstation: this.props.selectedWorkstation
@@ -67,7 +71,6 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
               selectedWorkstation={this.props.selectedWorkstation}
               openUpdateModal={this.props.openUpdateModal}
             />
-            {this.state.error}
           </div>
         </ModalBody>
         <ModalFooter>
@@ -109,7 +112,10 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
 
   private _closeModal = () => {
     this.setState({
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       submitting: false,
       validState: false,
       workstation: null
@@ -135,21 +141,7 @@ export default class EditWorkstation extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let valid = true;
-    let error = '';
-    if (
-      !this.state.workstation ||
-      !this.state.workstation.space ||
-      !this.state.workstation.name
-    ) {
-      valid = false;
-    } else if (!this.state.workstation.name) {
-      valid = false;
-      error = 'You must give this workstation a name.';
-    } else if (this.state.workstation.name.length > 64) {
-      valid = false;
-      error = 'The name you have chosen is too long';
-    }
-    this.setState({ validState: valid, error });
+    const error = yupAssetValidation(workstationSchema, this.state.workstation);
+    this.setState({ error, validState: error.message === '' });
   };
 }
