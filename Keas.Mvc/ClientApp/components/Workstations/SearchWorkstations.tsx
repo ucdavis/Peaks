@@ -3,7 +3,8 @@ import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import { ISpace, IWorkstation } from '../../Types';
+import { IWorkstation } from '../../models/Workstations';
+import { ISpace } from '../../Types';
 
 interface IProps {
   selectedWorkstation?: IWorkstation;
