@@ -132,6 +132,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                   disabled={this.props.disableEditing}
                   invalid={error && error.path === 'protectionLevel'}
                 >
+                  {/* if you change these, be sure to change the schema */}
                   <option value='P1'>P1 - Minimal</option>
                   <option value='P2'>P2 - Low</option>
                   <option value='P3'>P3 - Moderate</option>
@@ -163,6 +164,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                   disabled={this.props.disableEditing}
                   invalid={error && error.path === 'availabilityLevel'}
                 >
+                  {/* if you change these, be sure to change the schema */}
                   <option value='A1'>A1 - Minimal</option>
                   <option value='A2'>A2 - Low</option>
                   <option value='A3'>A3 - Moderate</option>

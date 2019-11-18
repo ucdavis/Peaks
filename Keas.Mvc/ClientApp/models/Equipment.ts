@@ -29,6 +29,7 @@ export const equipmentSchema = yup.object<IEquipment>().shape({
   availabilityLevel: yup
     .string()
     .max(2)
+    .oneOf(['A1', 'A2', 'A3', 'A4'])
     .notRequired()
     .nullable(),
   equipmentAssignmentId: yup.number().nullable(),
@@ -52,6 +53,7 @@ export const equipmentSchema = yup.object<IEquipment>().shape({
   protectionLevel: yup
     .string()
     .max(2)
+    .oneOf(['P1', 'P2', 'P3', 'P4'])
     .notRequired()
     .nullable(),
   serialNumber: yup
@@ -64,6 +66,7 @@ export const equipmentSchema = yup.object<IEquipment>().shape({
     .nullable(),
   systemManagementId: yup
     .string()
+    .max(16)
     .notRequired()
     .nullable(),
   tags: yup
