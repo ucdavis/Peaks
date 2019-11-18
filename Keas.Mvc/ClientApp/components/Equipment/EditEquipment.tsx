@@ -1,7 +1,12 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IEquipment, IEquipmentAttribute } from '../../models/Equipment';
+import {
+  equipmentSchema,
+  IEquipment,
+  IEquipmentAttribute
+} from '../../models/Equipment';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { ISpace } from '../../Types';
 import EquipmentAssignmentValues from './EquipmentAssignmentValues';
 import EquipmentEditValues from './EquipmentEditValues';
@@ -19,7 +24,7 @@ interface IProps {
 }
 
 interface IState {
-  error: string;
+  error: IValidationError;
   equipment: IEquipment;
   submitting: boolean;
   validState: boolean;
@@ -38,7 +43,10 @@ export default class EditEquipment extends React.Component<IProps, IState> {
             attributes: [...this.props.selectedEquipment.attributes]
           }
         : null,
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       submitting: false,
       validState: false
     };
@@ -72,12 +80,12 @@ export default class EditEquipment extends React.Component<IProps, IState> {
               equipmentTypes={this.props.equipmentTypes}
               tags={this.props.tags}
               space={this.props.space}
+              error={this.state.error}
             />
             <EquipmentAssignmentValues
               selectedEquipment={this.props.selectedEquipment}
               openUpdateModal={this.props.openUpdateModal}
             />
-            {this.state.error}
           </div>
         </ModalBody>
         <ModalFooter>
@@ -120,7 +128,10 @@ export default class EditEquipment extends React.Component<IProps, IState> {
   private _closeModal = () => {
     this.setState({
       equipment: null,
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       submitting: false,
       validState: false
     });
@@ -158,17 +169,7 @@ export default class EditEquipment extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let valid = true;
-    let error = '';
-    if (!this.state.equipment) {
-      valid = false;
-    } else if (!this.state.equipment.name) {
-      valid = false;
-      error = 'You must give this equipment a name.';
-    } else if (this.state.equipment.name.length > 64) {
-      valid = false;
-      error = 'The name you have chosen is too long';
-    }
-    this.setState({ validState: valid, error });
+    const error = yupAssetValidation(equipmentSchema, this.state.equipment);
+    this.setState({ error, validState: error.message === '' });
   };
 }
