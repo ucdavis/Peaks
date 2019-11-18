@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IEquipment } from '../../Types';
+import { IEquipment } from '../../models/Equipment';
 import EquipmentListItem from './EquipmentListItem';
 
 interface IProps {

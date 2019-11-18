@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { IEquipment, IEquipmentAttribute, ISpace } from '../../Types';
+import { IEquipment, IEquipmentAttribute } from '../../models/Equipment';
+import { ISpace } from '../../Types';
 import SearchSpaces from '../Spaces/SearchSpaces';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentAttributes from './EquipmentAttributes';

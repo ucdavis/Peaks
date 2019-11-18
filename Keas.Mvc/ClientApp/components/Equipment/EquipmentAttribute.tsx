@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead';
-import { IEquipmentAttribute } from '../../Types';
+import { IEquipmentAttribute } from '../../models/Equipment';
 
 interface IProps {
   attribute: IEquipmentAttribute;
