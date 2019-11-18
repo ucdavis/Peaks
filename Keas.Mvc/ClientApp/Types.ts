@@ -162,23 +162,6 @@ export interface ISpace {
   roomCategoryName: string;
 }
 
-export interface IWorkstation {
-  id: number;
-  name: string;
-  space: ISpace;
-  tags: string;
-  notes: string;
-  teamId: number;
-  assignment?: IWorkstationAssignment;
-}
-
-export interface IWorkstationAssignment {
-  id: number;
-  workstationId: number;
-  expiresAt: Date;
-  person: IPerson;
-}
-
 export interface IHistory {
   description: string;
   actedDate: Date;
