@@ -96,47 +96,8 @@ export interface IAccessAssignment {
   personId: number;
 }
 
-export interface IEquipment {
-  assignment?: IEquipmentAssignment;
-  equipmentAssignmentId?: number;
-  id: number;
-  make: string;
-  model: string;
-  name: string;
-  space: ISpace;
-  serialNumber: string;
-  tags: string;
-  teamId: number;
-  type: string;
-  protectionLevel: string;
-  availabilityLevel: string;
-  systemManagementId: string;
-  notes: string;
-  attributes: IEquipmentAttribute[];
-}
-
-export interface IEquipmentAssignment {
-  id: number;
-  equipmentId: number;
-  expiresAt: Date;
-  equipment: IEquipment;
-  person: IPerson;
-}
-
-export interface IEquipmentLabel {
-  equipment: IEquipment;
-  label: string;
-}
-
 export interface IHasExpiration {
   expiresAt: Date;
-}
-
-export interface IEquipmentAttribute {
-  id?: number;
-  equipmentId: number;
-  key: string;
-  value: string;
 }
 
 export interface ISpaceInfo {

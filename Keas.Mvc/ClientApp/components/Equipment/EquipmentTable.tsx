@@ -2,7 +2,7 @@ import * as React from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import { Button } from 'reactstrap';
-import { IEquipment } from '../../Types';
+import { IEquipment } from '../../models/Equipment';
 import { DateUtil } from '../../util/dates';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';

@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { IEquipment, IEquipmentAttribute, ISpace } from '../../Types';
+import { IEquipment, IEquipmentAttribute } from '../../models/Equipment';
+import { IValidationError } from '../../models/Shared';
+import { ISpace } from '../../Types';
 import SearchSpaces from '../Spaces/SearchSpaces';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentAttributes from './EquipmentAttributes';
@@ -16,6 +18,7 @@ interface IProps {
   tags?: string[];
   updateAttributes?: (attribute: IEquipmentAttribute[]) => void;
   openEditModal?: (equipment: IEquipment) => void; // if disableEditing is true, this needs to be supplied
+  error?: IValidationError;
 }
 
 export default class EquipmentEditValues extends React.Component<IProps, {}> {
@@ -30,6 +33,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
     ) : (
       <option value={typeValue}>{typeValue}</option>
     );
+    const error = this.props.error;
     return (
       <div>
         {this.props.disableEditing && this.props.openEditModal && (
@@ -52,34 +56,41 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
             <Input
               type='text'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               value={
                 this.props.selectedEquipment.name
                   ? this.props.selectedEquipment.name
                   : ''
               }
               onChange={e => this.props.changeProperty('name', e.target.value)}
-              invalid={!this.props.selectedEquipment.name}
+              invalid={error && error.path === 'name'}
             />
-            <FormFeedback>Item name is required</FormFeedback>
+            <FormFeedback>
+              {error && error.path === 'name' && error.message}
+            </FormFeedback>
           </FormGroup>
-          <div className='form-group'>
-            <label>Type</label>
-            <select
+          <FormGroup>
+            <Label for='type'>Type</Label>
+            <Input
+              type='select'
               className='form-control'
               value={typeValue}
               onChange={e => this.props.changeProperty('type', e.target.value)}
               disabled={this.props.disableEditing}
+              invalid={error && error.path === 'type'}
             >
               {listItems}
-            </select>
-          </div>
-          <div className='form-group'>
-            <label>Serial Number / Identifier</label>
-            <input
+            </Input>
+            <FormFeedback>
+              {error && error.path === 'type' && error.message}
+            </FormFeedback>
+          </FormGroup>
+          <FormGroup>
+            <Label for='serialNumber'>Serial Number / Identifier</Label>
+            <Input
               type='text'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               autoFocus={
                 !this.props.disableEditing &&
                 this.props.selectedEquipment.name !== ''
@@ -92,44 +103,56 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
               onChange={e =>
                 this.props.changeProperty('serialNumber', e.target.value)
               }
+              invalid={error && error.path === 'serialNumber'}
             />
-          </div>
+            <FormFeedback>
+              {error && error.path === 'name' && error.message}
+            </FormFeedback>
+          </FormGroup>
           {this._shouldShowForType(
             this.props.selectedEquipment.type,
             'ProtectionAndAvailability'
           ) && (
-            <div>
-              <div className='form-group'>
-                <label>Protection Level</label> <span />{' '}
+            <>
+              <FormGroup>
+                <Label for='protectionLevel'>Protection Level</Label> <span />{' '}
                 <a
                   href='https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html'
                   target='_blank'
                 >
                   <i className='fas fa-info-circle' />
                 </a>
-                <select
+                <Input
+                  type='select'
                   className='form-control'
                   value={this.props.selectedEquipment.protectionLevel || ''}
                   onChange={e =>
                     this.props.changeProperty('protectionLevel', e.target.value)
                   }
                   disabled={this.props.disableEditing}
+                  invalid={error && error.path === 'protectionLevel'}
                 >
+                  {/* if you change these, be sure to change the schema */}
                   <option value='P1'>P1 - Minimal</option>
                   <option value='P2'>P2 - Low</option>
                   <option value='P3'>P3 - Moderate</option>
                   <option value='P4'>P4 - High</option>
-                </select>
-              </div>
-              <div className='form-group'>
-                <label>Availability Level</label> <span />{' '}
+                </Input>
+                <FormFeedback>
+                  {error && error.path === 'protectionLevel' && error.message}
+                </FormFeedback>
+              </FormGroup>
+              <FormGroup>
+                <Label for='availabilityLevel'>Availability Level</Label>{' '}
+                <span />{' '}
                 <a
                   href='https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html'
                   target='_blank'
                 >
                   <i className='fas fa-info-circle' />
                 </a>
-                <select
+                <Input
+                  type='select'
                   className='form-control'
                   value={this.props.selectedEquipment.availabilityLevel || ''}
                   onChange={e =>
@@ -139,26 +162,31 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     )
                   }
                   disabled={this.props.disableEditing}
+                  invalid={error && error.path === 'availabilityLevel'}
                 >
+                  {/* if you change these, be sure to change the schema */}
                   <option value='A1'>A1 - Minimal</option>
                   <option value='A2'>A2 - Low</option>
                   <option value='A3'>A3 - Moderate</option>
                   <option value='A4'>A4 - High</option>
-                </select>
-              </div>
-            </div>
+                </Input>
+                <FormFeedback>
+                  {error && error.path === 'availabilityLevel' && error.message}
+                </FormFeedback>
+              </FormGroup>
+            </>
           )}
 
           {this._shouldShowForType(
             this.props.selectedEquipment.type,
             'Make'
           ) && (
-            <div className='form-group'>
-              <label>Make</label>
-              <input
+            <FormGroup>
+              <Label for='make'>Make</Label>
+              <Input
                 type='text'
                 className='form-control'
-                disabled={this.props.disableEditing}
+                readOnly={this.props.disableEditing}
                 value={
                   this.props.selectedEquipment.make
                     ? this.props.selectedEquipment.make
@@ -167,19 +195,23 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                 onChange={e =>
                   this.props.changeProperty('make', e.target.value)
                 }
+                invalid={error && error.path === 'make'}
               />
-            </div>
+              <FormFeedback>
+                {error && error.path === 'make' && error.message}
+              </FormFeedback>
+            </FormGroup>
           )}
           {this._shouldShowForType(
             this.props.selectedEquipment.type,
             'Model'
           ) && (
-            <div className='form-group'>
-              <label>Model</label>
-              <input
+            <FormGroup>
+              <Label for='model'>Model</Label>
+              <Input
                 type='text'
                 className='form-control'
-                disabled={this.props.disableEditing}
+                readOnly={this.props.disableEditing}
                 value={
                   this.props.selectedEquipment.model
                     ? this.props.selectedEquipment.model
@@ -188,23 +220,27 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                 onChange={e =>
                   this.props.changeProperty('model', e.target.value)
                 }
+                invalid={error && error.path === 'model'}
               />
-            </div>
+              <FormFeedback>
+                {error && error.path === 'model' && error.message}
+              </FormFeedback>
+            </FormGroup>
           )}
           {this._shouldShowForType(
             this.props.selectedEquipment.type,
             'SystemManagementId'
           ) && (
-            <div className='form-group'>
+            <FormGroup>
               <EquipmentBigFix
                 bigfixId={this.props.selectedEquipment.systemManagementId}
                 addBigFixId={this.props.changeProperty}
                 disableEditing={this.props.disableEditing}
               />
-              <input
+              <Input
                 type='text'
                 className='form-control'
-                disabled={this.props.disableEditing}
+                readOnly={this.props.disableEditing}
                 value={this.props.selectedEquipment.systemManagementId || ''}
                 maxLength={16}
                 onChange={e =>
@@ -213,18 +249,27 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     e.target.value
                   )
                 }
+                invalid={error && error.path === 'systemManagementId'}
               />
-            </div>
+              <FormFeedback>
+                {error && error.path === 'systemManagementId' && error.message}
+              </FormFeedback>
+            </FormGroup>
           )}
-          <div className='form-group'>
-            <label>Notes</label>
-            <textarea
+          <FormGroup>
+            <Label for='notes'>Notes</Label>
+            <Input
+              type='textarea'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               value={this.props.selectedEquipment.notes || ''}
               onChange={e => this.props.changeProperty('notes', e.target.value)}
+              invalid={error && error.path === 'notes'}
             />
-          </div>
+            <FormFeedback>
+              {error && error.path === 'notes' && error.message}
+            </FormFeedback>
+          </FormGroup>
           <EquipmentAttributes
             updateAttributes={this.props.updateAttributes}
             disableEdit={this.props.disableEditing}
@@ -232,8 +277,8 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
             commonKeys={this.props.commonAttributeKeys}
           />
 
-          <div className='form-group'>
-            <label>Tags</label>
+          <FormGroup>
+            <Label for='tags'>Tags</Label>
             <SearchTags
               tags={this.props.tags}
               disabled={this.props.disableEditing}
@@ -244,28 +289,31 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
               }
               onSelect={e => this.props.changeProperty('tags', e.join(','))}
             />
-          </div>
+            <FormFeedback>
+              {error && error.path === 'tags' && error.message}
+            </FormFeedback>
+          </FormGroup>
 
           {this.props.disableEditing && (
             // if we are looking at details, or if we are assigning
-            <div className='form-group'>
-              <label>Room</label>
-              <input
+            <FormGroup>
+              <Label for='room'>Room</Label>
+              <Input
                 type='text'
                 className='form-control'
-                disabled={true}
+                readOnly={true}
                 value={
                   this.props.selectedEquipment.space
                     ? `${this.props.selectedEquipment.space.roomNumber} ${this.props.selectedEquipment.space.bldgName}`
                     : ''
                 }
               />
-            </div>
+            </FormGroup>
           )}
           {!this.props.disableEditing && (
             // if we are editing or creating
-            <div className='form-group'>
-              <label>Room</label>
+            <FormGroup>
+              <Label for='room'>Room</Label>
               <SearchSpaces
                 onSelect={this._selectSpace}
                 defaultSpace={
@@ -274,7 +322,10 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                     : this.props.selectedEquipment.space
                 }
               />
-            </div>
+              <FormFeedback>
+                {error && error.path === 'space' && error.message}
+              </FormFeedback>
+            </FormGroup>
           )}
         </div>
       </div>
