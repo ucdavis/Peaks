@@ -1,10 +1,10 @@
 import { endOfDay } from 'date-fns';
 import * as yup from 'yup';
 import { ValidateOptions, ValidationError } from 'yup';
-import { IPerson } from '../Types';
 import { IEquipment } from './Equipment';
 import { IKey } from './Keys';
 import { IKeySerial } from './KeySerials';
+import { IPerson } from './People';
 import { IWorkstation } from './Workstations';
 
 export const assignmentSchema = yup.object().shape({

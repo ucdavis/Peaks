@@ -1,7 +1,8 @@
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
-import { IPerson, ISpace } from '../../Types';
+import { IPerson } from '../../models/People';
+import { ISpace } from '../../Types';
 import SearchTags from '../Tags/SearchTags';
 import AssignPerson from './AssignPerson';
 

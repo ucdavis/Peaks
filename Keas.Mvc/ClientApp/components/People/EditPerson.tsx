@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IPerson } from '../../Types';
+import { IPerson } from '../../models/People';
 import { validateEmail } from '../../util/email';
 import PersonEditValues from './PersonEditValues';
 

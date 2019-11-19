@@ -12,8 +12,8 @@ import {
 import { Context } from '../../Context';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
+import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
-import { IPerson } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
 import { AssignDate } from '../Shared/AssignDate';
 import KeySerialEditValues from './KeySerialEditValues';

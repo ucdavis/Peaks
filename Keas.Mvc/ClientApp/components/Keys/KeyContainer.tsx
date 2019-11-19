@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey, IKeyInfo } from '../../models/Keys';
-import { IMatchParams, IPerson, ISpace } from '../../Types';
+import { IMatchParams, ISpace } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
