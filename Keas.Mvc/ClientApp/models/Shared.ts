@@ -30,8 +30,10 @@ export interface IAssignmentSchema {
 }
 
 export const yupAssetValidation = (
-  schema: yup.ObjectSchema<IKey | IKeySerial | IEquipment | IWorkstation>,
-  asset: IKey | IKeySerial | IEquipment | IWorkstation,
+  schema: yup.ObjectSchema<
+    IKey | IKeySerial | IEquipment | IWorkstation | IPerson
+  >,
+  asset: IKey | IKeySerial | IEquipment | IWorkstation | IPerson,
   options?: ValidateOptions,
   assignment?: IAssignmentSchema
 ) => {

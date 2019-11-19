@@ -41,7 +41,7 @@ export interface IPersonInfo {
   workstationCount: number;
 }
 
-export const equipmentSchema = yup.object<IPerson>().shape({
+export const personSchema = yup.object<IPerson>().shape({
   active: yup
     .boolean()
     .notRequired()
