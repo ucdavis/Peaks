@@ -76,6 +76,7 @@ export default class EditPerson extends React.Component<IProps, IState> {
                   changeSupervisor={this._changeSupervisor}
                   disableEditing={false}
                   tags={this.props.tags}
+                  error={this.state.error}
                 />
               </form>
             </div>
