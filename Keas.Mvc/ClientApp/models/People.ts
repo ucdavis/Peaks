@@ -100,7 +100,10 @@ export const personSchema = yup.object<IPerson>().shape({
     .number()
     .notRequired()
     .nullable(),
-  tags: yup.string().notRequired(),
+  tags: yup
+    .string()
+    .notRequired()
+    .nullable(),
   teamId: yup.number(),
   teamPhone: yup
     .string()
