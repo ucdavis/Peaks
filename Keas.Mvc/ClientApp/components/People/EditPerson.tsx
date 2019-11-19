@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IPerson } from '../../models/People';
+import { IPerson, personSchema } from '../../models/People';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { validateEmail } from '../../util/email';
 import PersonEditValues from './PersonEditValues';
 
@@ -12,7 +13,7 @@ interface IProps {
 }
 
 interface IState {
-  error: string;
+  error: IValidationError;
   modal: boolean;
   person: IPerson;
   submitting: boolean;
@@ -26,7 +27,10 @@ export default class EditPerson extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       modal: false,
       person: this.props.selectedPerson,
       submitting: false,
@@ -74,7 +78,6 @@ export default class EditPerson extends React.Component<IProps, IState> {
                   tags={this.props.tags}
                 />
               </form>
-              {this.state.error}
             </div>
           </ModalBody>
           <ModalFooter>
@@ -130,7 +133,10 @@ export default class EditPerson extends React.Component<IProps, IState> {
 
   private _closeModal = () => {
     this.setState({
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       modal: false,
       submitting: false,
       validState: false
@@ -160,26 +166,9 @@ export default class EditPerson extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let valid = true;
-    let error = '';
-    if (!this.state.person) {
-      valid = false;
-    } else if (!this.state.person.firstName || !this.state.person.lastName) {
-      valid = false;
-      error = 'You must give this person a name';
-    } else if (
-      this.state.person.firstName.length > 50 ||
-      this.state.person.lastName.length > 50
-    ) {
-      valid = false;
-      error = 'The name you have chosen is too long';
-    } else if (!this.state.person.email) {
-      valid = false;
-      error = 'You must give this person an email address';
-    } else if (!validateEmail(this.state.person.email)) {
-      valid = false;
-      error = 'You must use a valid email address';
-    }
-    this.setState({ validState: valid, error });
+    const error = yupAssetValidation(personSchema, this.state.person, {
+      context: { validateEmail }
+    });
+    this.setState({ error, validState: error.message === '' });
   };
 }
