@@ -1,15 +1,10 @@
 import * as React from 'react';
+import { RouteChildrenProps, withRouter } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
-
-import {
-  IAccess,
-  IAccessAssignment,
-  IMatchParams,
-  IPerson
-} from 'ClientApp/Types';
-import { RouteChildrenProps, withRouter } from 'react-router';
 import { Context } from '../../Context';
+import { IPerson } from '../../models/People';
+import { IAccess, IAccessAssignment, IMatchParams } from '../../Types';
 import AssignmentTable from './AccessAssignmentTable';
 import AccessList from './AccessList';
 import AssignAccess from './AssignAccess';
@@ -89,15 +84,17 @@ class AssignmentContainer extends React.Component<IProps, IState> {
     const tags = await this.context.fetch(
       `/api/${this.context.team.slug}/tags/listTags`
     );
-    this.setState({tags})
+    this.setState({ tags });
   }
 
   public render() {
     const { action, containerAction, assetType } = this.props.match.params;
     const isRevokeModalShown =
-      assetType === "accessAssignment" && action === 'revoke';
+      assetType === 'accessAssignment' && action === 'revoke';
     const isAssignModalShown =
-      !this.props.disableEditing && assetType === "access" && action === 'assign';
+      !this.props.disableEditing &&
+      assetType === 'access' &&
+      action === 'assign';
     return (
       <div className='card access-color'>
         <div className='card-header-access'>

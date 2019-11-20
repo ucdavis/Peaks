@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, FormFeedback, FormGroup, Label } from 'reactstrap';
 import { Context } from '../../Context';
+import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
-import { IPerson } from '../../Types';
 
 interface IProps {
   onSelect: (person: IPerson) => void;

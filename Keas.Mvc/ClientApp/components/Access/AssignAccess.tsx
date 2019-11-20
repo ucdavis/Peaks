@@ -3,7 +3,8 @@ import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IAccess, IPerson } from '../../Types';
+import { IPerson } from '../../models/People';
+import { IAccess } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
 import AccessEditValues from './AccessEditValues';
 import SearchAccess from './SearchAccess';
@@ -257,7 +258,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     if (!this.state.access || this.state.access.name === '') {
       valid = false;
     } else if (!!this.state.person || !!this.props.person) {
-      const result = this._checkValidAssignmentToPerson()
+      const result = this._checkValidAssignmentToPerson();
       valid = result.valid;
       error = result.error ? result.error.message : '';
     } else if (

@@ -7,8 +7,9 @@ import {
   IEquipment,
   IEquipmentAttribute
 } from '../../models/Equipment';
+import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
-import { IPerson, ISpace } from '../../Types';
+import { ISpace } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
 import { AssignDate } from '../Shared/AssignDate';
 import EquipmentEditValues from './EquipmentEditValues';
