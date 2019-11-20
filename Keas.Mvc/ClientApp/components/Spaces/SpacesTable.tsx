@@ -13,13 +13,6 @@ interface IProps {
 }
 
 export default class SpacesTable extends React.Component<IProps, {}> {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      filtered: []
-    };
-  }
   public render() {
     return (
       <ReactTable
