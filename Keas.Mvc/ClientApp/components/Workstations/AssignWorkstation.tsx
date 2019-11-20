@@ -1,10 +1,12 @@
 import { addYears, format, isBefore, startOfDay } from 'date-fns';
 import * as React from 'react';
-import DatePicker from 'react-date-picker';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IPerson, ISpace, IWorkstation } from '../../Types';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
+import { IWorkstation, workstationSchema } from '../../models/Workstations';
+import { IPerson, ISpace } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
+import { AssignDate } from '../Shared/AssignDate';
 import SearchWorkstations from './SearchWorkstations';
 import WorkstationEditValues from './WorkstationEditValues';
 
@@ -24,7 +26,7 @@ interface IProps {
 interface IState {
   date: Date;
   workstation: IWorkstation;
-  error: string;
+  error: IValidationError;
   person: IPerson;
   submitting: boolean;
   validState: boolean;
@@ -43,7 +45,10 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
         !!this.props.selectedWorkstation.assignment
           ? new Date(this.props.selectedWorkstation.assignment.expiresAt)
           : addYears(startOfDay(new Date()), 3),
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       person:
         !!this.props.selectedWorkstation &&
         !!this.props.selectedWorkstation.assignment
@@ -91,19 +96,15 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     this.state.workstation &&
                     this.state.workstation.teamId !== 0
                   }
+                  error={this.state.error}
                 />
                 {(!!this.state.person || !!this.props.person) && (
-                  <div className='form-group'>
-                    <label>Set the expiration date</label>
-                    <br />
-                    <DatePicker
-                      format='MM/dd/yyyy'
-                      required={true}
-                      clearIcon={null}
-                      value={this.state.date}
-                      onChange={this._changeDate}
-                    />
-                  </div>
+                  <AssignDate
+                    date={this.state.date}
+                    isRequired={true}
+                    error={this.state.error}
+                    onChangeDate={this._changeDate}
+                  />
                 )}
                 {!this.state.workstation && (
                   <div className='form-group'>
@@ -161,7 +162,6 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     />
                   </div>
                 )}
-                {this.state.error}
               </form>
             </div>
           </ModalBody>
@@ -206,7 +206,10 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
   private _closeModal = () => {
     this.setState({
       date: addYears(startOfDay(new Date()), 3),
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       person: null,
       submitting: false,
       validState: false,
@@ -240,24 +243,20 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
 
   // once we have either selected or created the workstation we care about
   private _onSelected = (workstation: IWorkstation) => {
-    // if this workstation is not already assigned
-
-    // TODO: more validation of name
-    if (workstation.name.length > 64) {
-      this.setState(
-        {
-          error: 'The workstation name you have chosen is too long',
-          workstation: null
-        },
-        this._validateState
-      );
-    } else {
-      this.setState({ workstation, error: '' }, this._validateState);
-    }
+    this.setState({ workstation }, this._validateState);
   };
 
   private _onDeselected = () => {
-    this.setState({ workstation: null, error: '' }, this._validateState);
+    this.setState(
+      {
+        workstation: null,
+        error: {
+          message: '',
+          path: ''
+        }
+      },
+      this._validateState
+    );
   };
 
   private _onSelectPerson = (person: IPerson) => {
@@ -265,27 +264,16 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let valid = true;
-    if (
-      !this.state.workstation ||
-      !this.state.workstation.space ||
-      !this.state.workstation.name
-    ) {
-      valid = false;
-    } else if (this.state.error !== '') {
-      valid = false;
-    } else if (!this.state.date) {
-      valid = false;
-    } else if (!isBefore(new Date(), new Date(this.state.date))) {
-      valid = false;
-    }
-    this.setState({ validState: valid });
+    const error = yupAssetValidation(
+      workstationSchema,
+      this.state.workstation,
+      {}, // no context
+      { date: this.state.date, person: this.state.person }
+    );
+    this.setState({ error, validState: error.message === '' });
   };
 
   private _changeDate = (newDate: Date) => {
-    this.setState(
-      { date: startOfDay(new Date(newDate)), error: '' },
-      this._validateState
-    );
+    this.setState({ date: startOfDay(new Date(newDate)) }, this._validateState);
   };
 }

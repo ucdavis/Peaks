@@ -2,7 +2,7 @@
 import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
 import { Context } from '../../Context';
-import { IWorkstation } from '../../Types';
+import { IWorkstation } from '../../models/Workstations';
 import HistoryContainer from '../History/HistoryContainer';
 import WorkstationAssignmentValues from './WorkstationAssignmentValues';
 import WorkstationEditValues from './WorkstationEditValues';

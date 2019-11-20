@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { Context } from '../../Context';
-import { IWorkstation } from '../../Types';
+import { IWorkstation } from '../../models/Workstations';
 import WorkstationEditValues from './WorkstationEditValues';
 
 interface IProps {

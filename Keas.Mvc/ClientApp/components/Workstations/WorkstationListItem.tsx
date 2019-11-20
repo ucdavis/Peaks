@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'reactstrap';
-import { IWorkstation } from '../../Types';
+import { IWorkstation } from '../../models/Workstations';
 import { DateUtil } from '../../util/dates';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 
