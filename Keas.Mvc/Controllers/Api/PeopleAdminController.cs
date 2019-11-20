@@ -47,12 +47,14 @@ namespace Keas.Mvc.Controllers.Api
                 p.EndDate = person.EndDate;
                 p.Category = person.Category;
                 p.Notes = person.Notes;
+                p.Supervisor = person.Supervisor;
+                p.SupervisorId = person.SupervisorId;
 
                 if (person.Supervisor != null)
                 {
-                    p.Supervisor = person.Supervisor;
                     _context.Attach(p.Supervisor);
                 }
+
 
                 await _context.SaveChangesAsync();
                 return Json(p);
