@@ -3,7 +3,7 @@ import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import {IKeyInfo}  from '../../models/Keys';
+import { IKeyInfo } from '../../models/Keys';
 import { IMatchParams, ISpace, ISpaceInfo } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import AssociateSpace from '../Keys/AssociateSpace';
@@ -119,6 +119,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
               <a
                 href='https://computing.caes.ucdavis.edu/documentation/peaks/spaces'
                 target='_blank'
+                rel='noopener noreferrer'
               >
                 Space FAQ
               </a>

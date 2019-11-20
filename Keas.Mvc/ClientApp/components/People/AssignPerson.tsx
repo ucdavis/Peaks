@@ -95,7 +95,11 @@ export default class AssignPerson extends React.Component<IProps, IState> {
           )}
         </FormGroup>
         <div>
-          <Link to={`/${this.context.team.slug}/people/create`} target='_blank'>
+          <Link
+            to={`/${this.context.team.slug}/people/create`}
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             <Button color='link' type='button'>
               <i className='fas fa-search fas-sm' aria-hidden='true' /> Can't
               find who you're looking for?
