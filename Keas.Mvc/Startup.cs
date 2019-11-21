@@ -99,9 +99,7 @@ namespace Keas.Mvc
             .AddCAS(options => {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.CasServerUrlBase = Configuration["Authentication:CasBaseUrl"];
-                options.Events.OnTicketReceived = async context => { 
-                    var c = context;
-
+                options.Events.OnTicketReceived = async context => {
                     var identity = (ClaimsIdentity) context.Principal.Identity;
 
                     // kerb comes across in name & name identifier
