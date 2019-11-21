@@ -119,6 +119,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                 <a
                   href='https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html'
                   target='_blank'
+                  rel='noopener noreferrer'
                 >
                   <i className='fas fa-info-circle' />
                 </a>
@@ -147,6 +148,7 @@ export default class EquipmentEditValues extends React.Component<IProps, {}> {
                 <a
                   href='https://security.ucop.edu/policies/institutional-information-and-it-resource-classification.html'
                   target='_blank'
+                  rel='noopener noreferrer'
                 >
                   <i className='fas fa-info-circle' />
                 </a>

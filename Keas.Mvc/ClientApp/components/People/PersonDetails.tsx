@@ -72,6 +72,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                     <a
                       href={`/${this.context.team.slug}/Report/PersonTeamList/?personId=${this.props.selectedPersonInfo.id}`}
                       target='_blank'
+                      rel='noopener noreferrer'
                     >
                       <Button className='btn btn-link'>
                         <i

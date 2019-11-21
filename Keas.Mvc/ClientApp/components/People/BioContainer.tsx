@@ -111,6 +111,7 @@ export default class BioContainer extends React.Component<IProps, {}> {
               <a
                 href={`/${this.context.team.slug}/Report/SupervisorDirectReports/?personId=${this.props.person.id}`}
                 target='_blank'
+                rel='noopener noreferrer'
               >
                 <Button className='btn btn-link'>
                   <i
