@@ -533,7 +533,7 @@ namespace Keas.Mvc.Controllers
             var errorCount = 0;
             //var reactivatedCount = 0; Not used
             var rowNumber = 1;
-            bool import = true;
+            bool import;
             bool somethingSaved = false;
 
             if (file == null || file.Length == 0)
