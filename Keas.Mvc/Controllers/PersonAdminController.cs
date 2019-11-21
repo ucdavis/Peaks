@@ -394,7 +394,7 @@ namespace Keas.Mvc.Controllers
                 }
                 catch (Exception)
                 {
-
+                    person.HomePhone = null;
                 }
 
                 if (string.IsNullOrWhiteSpace(person.HomePhone))
@@ -410,7 +410,7 @@ namespace Keas.Mvc.Controllers
                 }
                 catch (Exception)
                 {
-
+                    person.TeamPhone = null;
                 }
 
                 if (string.IsNullOrWhiteSpace(person.TeamPhone))

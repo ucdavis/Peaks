@@ -498,12 +498,13 @@ namespace Keas.Mvc.Controllers
                 }
             }
 
-            var rtValue = "";
+            var rtValue = new StringBuilder();
             foreach (var s in resultsList)
             {
-                rtValue = rtValue + "\n" + s;
+                rtValue.AppendLine(s);
             }
-            return rtValue;
+
+            return rtValue.ToString();
         }
 
         public IActionResult Upload()
