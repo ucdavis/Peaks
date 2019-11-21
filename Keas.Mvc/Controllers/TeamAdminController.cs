@@ -915,7 +915,6 @@ namespace Keas.Mvc.Controllers
 
             var userIdentity = User.Identity.Name;
             var userName = User.GetNameClaim();
-            var equipmentAttribute = new EquipmentAttribute();
 
             var equipmentCount = 0;
             var peopleCount = 0;
@@ -964,7 +963,6 @@ namespace Keas.Mvc.Controllers
 
                     using (var transaction = await _context.Database.BeginTransactionAsync())
                     {
-                        somethingSaved = false;
                         rowNumber += 1;
                         var result = new EquipmentImportResults(r)
                         {
