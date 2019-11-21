@@ -78,52 +78,6 @@ export interface ITeam {
   slug: string;
 }
 
-export interface IKeyInfo {
-  id: number;
-  key: IKey;
-  serialsTotalCount: number;
-  serialsInUseCount: number;
-  spacesCount: number;
-  code?: string;
-}
-
-export interface IKey {
-  id: number;
-  teamId: number;
-  name: string;
-  code: string;
-  notes: string;
-  tags: string;
-  serials?: IKeySerial[];
-  keyXSpaces?: IKeySpaceAssociation[];
-}
-
-export interface IKeySerial {
-  id: number;
-  number: string;
-  tags: string;
-  status: string;
-  notes: string;
-  key: IKey;
-  keySerialAssignment?: IKeySerialAssignment;
-}
-
-export interface IKeySerialAssignment {
-  id: number;
-  expiresAt: Date;
-  keySerial: IKeySerial;
-  keySerialId: number;
-  person: IPerson;
-}
-
-export interface IKeySpaceAssociation {
-  id: number;
-  spaceId: number;
-  keyId: number;
-  space?: ISpace;
-  key?: IKey;
-}
-
 export interface IAccess {
   id: number;
   teamId: number;
@@ -142,47 +96,8 @@ export interface IAccessAssignment {
   personId: number;
 }
 
-export interface IEquipment {
-  assignment?: IEquipmentAssignment;
-  equipmentAssignmentId?: number;
-  id: number;
-  make: string;
-  model: string;
-  name: string;
-  space: ISpace;
-  serialNumber: string;
-  tags: string;
-  teamId: number;
-  type: string;
-  protectionLevel: string;
-  availabilityLevel: string;
-  systemManagementId: string;
-  notes: string;
-  attributes: IEquipmentAttribute[];
-}
-
-export interface IEquipmentAssignment {
-  id: number;
-  equipmentId: number;
-  expiresAt: Date;
-  equipment: IEquipment;
-  person: IPerson;
-}
-
-export interface IEquipmentLabel {
-  equipment: IEquipment;
-  label: string;
-}
-
 export interface IHasExpiration {
   expiresAt: Date;
-}
-
-export interface IEquipmentAttribute {
-  id?: number;
-  equipmentId: number;
-  key: string;
-  value: string;
 }
 
 export interface ISpaceInfo {

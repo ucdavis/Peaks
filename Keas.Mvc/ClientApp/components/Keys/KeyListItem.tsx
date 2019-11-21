@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'reactstrap';
-import { IKey, IKeyInfo } from '../../Types';
+import { IKey, IKeyInfo } from '../../models/Keys';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 
 interface IProps {

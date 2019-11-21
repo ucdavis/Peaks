@@ -13,6 +13,7 @@ interface IState {
   isFetched: boolean;
   isValidRequest: boolean;
   isFound: boolean;
+  isForbidden: boolean;
 }
 
 export default class EquipmentBigFixInfo extends React.Component<
@@ -29,6 +30,7 @@ export default class EquipmentBigFixInfo extends React.Component<
       computerInfo: {},
       isFetched: false,
       isFound: true,
+      isForbidden: false,
       isValidRequest: true
     };
   }
@@ -111,14 +113,17 @@ export default class EquipmentBigFixInfo extends React.Component<
             </tbody>
           </Table>
         );
+      } else if (this.state.isForbidden) {
+        return (
+          <p>Error fetching Computer details due to permissions issue.</p>
+        );
+      } else {
+        return (
+          <p>
+            Not a valid Bigfix id, please make sure to enter a valid Bigfix id.
+          </p>
+        );
       }
-
-      // if not found
-      return (
-        <p>
-          Not a valid Bigfix id, please make sure to enter a valid Bigfix id.
-        </p>
-      );
     }
 
     return <p>No data to present</p>;
@@ -135,6 +140,12 @@ export default class EquipmentBigFixInfo extends React.Component<
         this.setState({
           isFetched: true,
           isFound: false
+        });
+      } else if (err.message === 'Forbidden') {
+        this.setState({
+          isFetched: true,
+          isFound: false,
+          isForbidden: true
         });
       } else {
         this.setState({
@@ -168,6 +179,7 @@ export default class EquipmentBigFixInfo extends React.Component<
       bigfixModal: !prevState.bigfixModal,
       isFetched: false,
       isFound: true,
+      isForbidden: false,
       isValidRequest: true
     }));
   };

@@ -1,10 +1,16 @@
-import { addYears, format, isBefore, startOfDay } from 'date-fns';
+import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
-import DatePicker from 'react-date-picker';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Form, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IEquipment, IEquipmentAttribute, IPerson, ISpace } from '../../Types';
+import {
+  equipmentSchema,
+  IEquipment,
+  IEquipmentAttribute
+} from '../../models/Equipment';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
+import { IPerson, ISpace } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
+import { AssignDate } from '../Shared/AssignDate';
 import EquipmentEditValues from './EquipmentEditValues';
 import SearchEquipment from './SearchEquipment';
 
@@ -26,7 +32,7 @@ interface IProps {
 interface IState {
   date: Date;
   equipment: IEquipment;
-  error: string;
+  error: IValidationError;
   person: IPerson;
   submitting: boolean;
   validState: boolean;
@@ -45,7 +51,10 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
           ? new Date(this.props.selectedEquipment.assignment.expiresAt)
           : addYears(startOfDay(new Date()), 3),
       equipment: this.props.selectedEquipment,
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       person:
         !!this.props.selectedEquipment &&
         !!this.props.selectedEquipment.assignment
@@ -76,34 +85,28 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
         </div>
         <ModalBody>
           <div className='container-fluid'>
-            <form>
-              <div className='form-group'>
-                <label htmlFor='assignto'>Assign To</label>
-                <AssignPerson
-                  person={this.state.person}
-                  onSelect={this._onSelectPerson}
-                  isRequired={
-                    this.state.equipment && this.state.equipment.teamId !== 0
-                  }
-                  disabled={
-                    !!this.props.person ||
-                    (!!this.props.selectedEquipment &&
-                      !!this.props.selectedEquipment.assignment)
-                  } // disable if we are on person page or updating
-                />
-              </div>
+            <Form>
+              <AssignPerson
+                person={this.state.person}
+                label='Assign To'
+                onSelect={this._onSelectPerson}
+                isRequired={
+                  this.state.equipment && this.state.equipment.teamId !== 0
+                }
+                disabled={
+                  !!this.props.person ||
+                  (!!this.props.selectedEquipment &&
+                    !!this.props.selectedEquipment.assignment)
+                } // disable if we are on person page or updating
+                error={this.state.error}
+              />
               {(!!this.state.person || !!this.props.person) && (
-                <div className='form-group'>
-                  <label>Set the expiration date</label>
-                  <br />
-                  <DatePicker
-                    format='MM/dd/yyyy'
-                    required={true}
-                    clearIcon={null}
-                    value={this.state.date}
-                    onChange={this._changeDate}
-                  />
-                </div>
+                <AssignDate
+                  date={this.state.date}
+                  isRequired={true}
+                  error={this.state.error}
+                  onChangeDate={this._changeDate}
+                />
               )}
               {!this.state.equipment && (
                 <div className='form-group'>
@@ -139,6 +142,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                       space={this.props.space}
                       tags={this.props.tags}
                       equipmentTypes={this.props.equipmentTypes}
+                      error={this.state.error}
                     />
                   </div>
                 )}
@@ -161,11 +165,11 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     disableEditing={true}
                     openEditModal={this.props.openEditModal}
                     tags={this.props.tags}
+                    error={this.state.error}
                   />
                 </div>
               )}
-              {this.state.error}
-            </form>
+            </Form>
           </div>
         </ModalBody>
         <ModalFooter>
@@ -221,7 +225,10 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
     this.setState({
       date: addYears(startOfDay(new Date()), 3),
       equipment: null,
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       person: null,
       submitting: false,
       validState: false
@@ -254,24 +261,20 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   // once we have either selected or created the equipment we care about
   private _onSelected = (equipment: IEquipment) => {
-    // if this equipment is not already assigned
-
-    // TODO: more validation of name
-    if (equipment.name.length > 64) {
-      this.setState(
-        {
-          equipment: null,
-          error: 'The equipment name you have chosen is too long'
-        },
-        this._validateState
-      );
-    } else {
-      this.setState({ equipment, error: '' }, this._validateState);
-    }
+    this.setState({ equipment }, this._validateState);
   };
 
   private _onDeselected = () => {
-    this.setState({ equipment: null, error: '' }, this._validateState);
+    this.setState(
+      {
+        equipment: null,
+        error: {
+          message: '',
+          path: ''
+        }
+      },
+      this._validateState
+    );
   };
 
   private _onSelectPerson = (person: IPerson) => {
@@ -279,29 +282,24 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let valid = true;
-    if (!this.state.equipment || this.state.equipment.name === '') {
-      valid = false;
-    } else if (
-      this.state.equipment.teamId !== 0 &&
-      !this.state.person &&
-      !this.props.person
-    ) {
-      // if not a new equipment, require a person
-      valid = false;
-    } else if (this.state.error !== '') {
-      valid = false;
-    } else if (!this.state.date) {
-      valid = false;
-    } else if (!isBefore(new Date(), new Date(this.state.date))) {
-      valid = false;
-    }
-    this.setState({ validState: valid });
+    const error = yupAssetValidation(
+      equipmentSchema,
+      this.state.equipment,
+      {}, // no context
+      { date: this.state.date, person: this.state.person }
+    );
+    this.setState({ error, validState: error.message === '' });
   };
 
   private _changeDate = (newDate: Date) => {
     this.setState(
-      { date: startOfDay(new Date(newDate)), error: '' },
+      {
+        date: startOfDay(new Date(newDate)),
+        error: {
+          message: '',
+          path: ''
+        }
+      },
       this._validateState
     );
   };

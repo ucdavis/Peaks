@@ -1,10 +1,21 @@
 import { addYears, format, isBefore, startOfDay } from 'date-fns';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import {
+  Button,
+  Form,
+  FormFeedback,
+  Modal,
+  ModalBody,
+  ModalFooter
+} from 'reactstrap';
 import { Context } from '../../Context';
-import { IKey, IKeyInfo, IKeySerial, IPerson } from '../../Types';
+import { IKey, IKeyInfo } from '../../models/Keys';
+import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
+import { IPerson } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
+import { AssignDate } from '../Shared/AssignDate';
 import KeySerialEditValues from './KeySerialEditValues';
 import SearchKeys from './SearchKeys';
 import SearchKeySerial from './SearchKeySerials';
@@ -26,7 +37,7 @@ interface IProps {
 
 interface IState {
   date: Date;
-  error: string;
+  error: IValidationError;
   keySerial: IKeySerial;
   person: IPerson;
   submitting: boolean;
@@ -51,7 +62,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
     this.state = {
       date,
-      error: '',
+      error: { message: '', path: '' },
       keySerial: props.selectedKeySerial,
       person,
       submitting: false,
@@ -82,34 +93,28 @@ export default class AssignKey extends React.Component<IProps, IState> {
         </div>
         <ModalBody>
           <div className='container-fluid'>
-            <form>
-              <div className='form-group'>
-                <label htmlFor='assignto'>Assign To</label>
-                <AssignPerson
-                  disabled={
-                    !!this.props.person ||
-                    (!!this.props.selectedKeySerial &&
-                      !!this.props.selectedKeySerial.keySerialAssignment)
-                  }
-                  isRequired={keySerial && keySerial.id !== 0 && !person}
-                  // disable if we are on person page or updating
-                  person={person}
-                  onSelect={this._onSelectPerson}
-                />
-              </div>
+            <Form>
+              <AssignPerson
+                disabled={
+                  !!this.props.person ||
+                  (!!this.props.selectedKeySerial &&
+                    !!this.props.selectedKeySerial.keySerialAssignment)
+                }
+                isRequired={keySerial && keySerial.id !== 0 && !person}
+                // disable if we are on person page or updating
+                label='Assign Person'
+                person={person}
+                onSelect={this._onSelectPerson}
+                error={this.state.error}
+              />
 
               {(!!person || !!this.props.person) && (
-                <div className='form-group'>
-                  <label>Set the expiration date</label>
-                  <br />
-                  <DatePicker
-                    format='MM/dd/yyyy'
-                    required={true}
-                    clearIcon={null}
-                    value={this.state.date}
-                    onChange={this._changeDate}
-                  />
-                </div>
+                <AssignDate
+                  date={this.state.date}
+                  isRequired={true}
+                  error={this.state.error}
+                  onChangeDate={this._changeDate}
+                />
               )}
               {!this.state.keySerial && (
                 <div className='form-group'>
@@ -152,6 +157,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                         disableEditing={false}
                         statusList={this.props.statusList}
                         goToKeyDetails={this.props.goToKeyDetails}
+                        error={this.state.error}
                       />
                     )}
                   </div>
@@ -178,11 +184,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                   />
                 </div>
               )}
-
-              {this.state.error && (
-                <span className='color-unitrans'>{this.state.error}</span>
-              )}
-            </form>
+            </Form>
           </div>
         </ModalBody>
         <ModalFooter>
@@ -243,7 +245,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
   private _closeModal = () => {
     this.setState({
       date: addYears(startOfDay(new Date()), 3),
-      error: '',
+      error: { message: '', path: '' },
       keySerial: null,
       person: null,
       submitting: false,
@@ -277,25 +279,14 @@ export default class AssignKey extends React.Component<IProps, IState> {
   };
 
   private _onSelected = (keySerial: IKeySerial) => {
-    // if this key is not already assigned
-
-    // TODO: more validation of name
-    if (keySerial.number.length > 64) {
-      this.setState(
-        {
-          error: 'The key name you have chosen is too long',
-          keySerial: null
-        },
-        this._validateState
-      );
-
-      return;
-    }
-    this.setState({ keySerial, error: '' }, this._validateState);
+    this.setState(
+      { keySerial, error: { message: '', path: '' } },
+      this._validateState
+    );
   };
 
   private _onDeselected = () => {
-    this.setState({ keySerial: null, error: '' }, this._validateState);
+    this.setState({ keySerial: null, error: { message: '', path: '' } });
   };
 
   private _onSelectPerson = (person: IPerson) => {
@@ -304,44 +295,28 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
   private _changeDate = (newDate: Date) => {
     this.setState(
-      { date: startOfDay(new Date(newDate)), error: '' },
+      { date: startOfDay(new Date(newDate)), error: { message: '', path: '' } },
       this._validateState
     );
   };
 
   private _validateState = () => {
-    let valid = true;
-    let error = '';
+    // for if they select person before key serial, don't show error but disable button
     if (!this.state.keySerial) {
-      valid = false;
-    } else if (this.state.keySerial.id !== 0 && !this.state.person) {
-      error = 'You must choose a person to assign this key serial to.';
-      valid = false;
-    } else if (
-      !this.state.keySerial.number ||
-      this.state.keySerial.number.trim().length < 1
-    ) {
-      error = 'You must give this key serial a number.';
-      valid = false;
-    } else if (this.state.keySerial.number.length > 64) {
-      valid = false;
-      error = 'The serial number you have chosen is too long';
-    } else if (
-      !this.props.checkIfKeySerialNumberIsValid(
-        this.state.keySerial.number,
-        this.state.keySerial.id
-      )
-    ) {
-      error =
-        'The serial number you have entered is already in use by another key serial.';
-      valid = false;
-    } else if (!this.state.date) {
-      error = 'A date is required for this assignment.';
-      valid = false;
-    } else if (!isBefore(new Date(), new Date(this.state.date))) {
-      error = 'The date you have chosen is not valid.';
-      valid = false;
+      this.setState({ validState: false });
+      return;
     }
-    this.setState({ error, validState: valid });
+
+    const checkIfKeySerialNumberIsValid = this.props
+      .checkIfKeySerialNumberIsValid;
+    const error = yupAssetValidation(
+      keySerialSchema,
+      this.state.keySerial,
+      {
+        context: { checkIfKeySerialNumberIsValid }
+      },
+      { date: this.state.date, person: this.state.person }
+    );
+    this.setState({ error, validState: error.message === '' });
   };
 }

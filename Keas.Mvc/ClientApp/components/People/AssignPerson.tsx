@@ -2,15 +2,18 @@ import * as React from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button } from 'reactstrap';
+import { Button, FormFeedback, FormGroup, Label } from 'reactstrap';
 import { Context } from '../../Context';
+import { IValidationError } from '../../models/Shared';
 import { IPerson } from '../../Types';
 
 interface IProps {
   onSelect: (person: IPerson) => void;
   person?: IPerson;
+  label: string;
   disabled: boolean;
   isRequired: boolean;
+  error?: IValidationError;
 }
 
 interface IState {
@@ -39,13 +42,20 @@ export default class AssignPerson extends React.Component<IProps, IState> {
   }
 
   private _renderFindPerson = () => {
+    const isInvalid =
+      (this.props.isRequired && !this.props.person) ||
+      (this.props.error && this.props.error.path === 'person');
     // call onSelect when a user is found
     return (
       <div>
-        <div>
+        <FormGroup>
+          <Label for='searchPeople'>{this.props.label}</Label>
           <AsyncTypeahead
             id='searchPeople' // for accessibility
-            isInvalid={this.props.isRequired && !this.props.person}
+            inputProps={{
+              className: isInvalid ? 'form-control is-invalid' : ''
+            }}
+            isInvalid={isInvalid}
             disabled={this.props.disabled}
             isLoading={this.state.isSearchLoading}
             minLength={3}
@@ -78,7 +88,12 @@ export default class AssignPerson extends React.Component<IProps, IState> {
             }}
             options={this.state.people}
           />
-        </div>
+          {this.props.error && this.props.error.path === 'person' && (
+            <div className='invalid-feedback d-block'>
+              {this.props.error.message}
+            </div>
+          )}
+        </FormGroup>
         <div>
           <Link to={`/${this.context.team.slug}/people/create`} target='_blank'>
             <Button color='link' type='button'>

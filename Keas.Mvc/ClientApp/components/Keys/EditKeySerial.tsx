@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IKey, IKeySerial } from '../../Types';
+import { IKey } from '../../models/Keys';
+import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
 import KeySerialEditValues from './KeySerialEditValues';
 
@@ -17,7 +19,7 @@ interface IProps {
 }
 
 interface IState {
-  error: string;
+  error: IValidationError;
   keySerial: IKeySerial;
   submitting: boolean;
   validState: boolean;
@@ -30,7 +32,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      error: '',
+      error: { message: '', path: '' },
       keySerial: this.props.selectedKeySerial,
       submitting: false,
       validState: false
@@ -67,16 +69,13 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
                 disableEditing={false}
                 statusList={this.props.statusList}
                 goToKeyDetails={this.props.goToKeyDetails}
+                error={this.state.error}
               />
 
               <KeySerialAssignmentValues
                 selectedKeySerial={this.props.selectedKeySerial}
                 openUpdateModal={this.props.openUpdateModal}
               />
-
-              {this.state.error && (
-                <span className='color-unitrans'>{this.state.error}</span>
-              )}
             </form>
           </div>
         </ModalBody>
@@ -119,7 +118,7 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
 
   private _closeModal = () => {
     this.setState({
-      error: '',
+      error: { message: '', path: '' },
       keySerial: null,
       submitting: false,
       validState: false
@@ -144,27 +143,11 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let valid = true;
-    let error = '';
-
-    if (!this.state.keySerial) {
-      valid = false;
-    } else if (!this.state.keySerial.number) {
-      valid = false;
-      error = 'You must give this key serial a number.';
-    } else if (this.state.keySerial.number.length > 64) {
-      valid = false;
-      error = 'The serial number you have chosen is too long';
-    } else if (
-      !this.props.checkIfKeySerialNumberIsValid(
-        this.state.keySerial.number,
-        this.state.keySerial.id
-      )
-    ) {
-      error =
-        'The serial number you have entered is already in use by another key serial.';
-      valid = false;
-    }
-    this.setState({ validState: valid, error });
+    const checkIfKeySerialNumberIsValid = this.props
+      .checkIfKeySerialNumberIsValid;
+    const error = yupAssetValidation(keySerialSchema, this.state.keySerial, {
+      context: { checkIfKeySerialNumberIsValid }
+    });
+    this.setState({ error, validState: error.message === '' });
   };
 }

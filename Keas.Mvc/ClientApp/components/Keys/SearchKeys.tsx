@@ -2,7 +2,7 @@ import * as React from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
-import { IKeyInfo } from '../../Types';
+import { IKeyInfo } from '../../models/Keys';
 
 interface IProps {
   defaultKeyInfo?: IKeyInfo;

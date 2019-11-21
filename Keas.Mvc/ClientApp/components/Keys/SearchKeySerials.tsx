@@ -3,7 +3,8 @@ import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import { IKey, IKeySerial } from '../../Types';
+import { IKey } from '../../models/Keys';
+import { IKeySerial } from '../../models/KeySerials';
 
 interface IProps {
   selectedKey?: IKey;
@@ -144,8 +145,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
         key: this.props.selectedKey,
         notes: '',
         number: selected[0].number,
-        status: 'Active',
-        tags: ''
+        status: 'Active'
       };
       this.props.onSelect(keySerial);
     } else if (!!selected[0].keySerialAssignment) {

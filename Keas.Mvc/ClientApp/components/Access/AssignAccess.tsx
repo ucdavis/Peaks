@@ -28,6 +28,11 @@ interface IState {
   validState: boolean;
 }
 
+interface IPersonValidation {
+  valid: boolean;
+  error?: Error;
+}
+
 export default class AssignAccess extends React.Component<IProps, IState> {
   public static contextType = Context;
   public context!: React.ContextType<typeof Context>;
@@ -70,6 +75,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                   disabled={!!this.props.person}
                   person={this.props.person || this.state.person}
                   onSelect={this._onSelectPerson}
+                  label='Assign To'
                   isRequired={
                     this.state.access && this.state.access.teamId !== 0
                   }
@@ -244,14 +250,14 @@ export default class AssignAccess extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
+    let error = '';
     let valid = true;
     if (!this.state.access || this.state.access.name === '') {
       valid = false;
-    } else if (
-      (!!this.state.person || !!this.props.person) &&
-      !this._checkValidAssignmentToPerson()
-    ) {
-      valid = false;
+    } else if (!!this.state.person || !!this.props.person) {
+      const result = this._checkValidAssignmentToPerson()
+      valid = result.valid;
+      error = result.error ? result.error.message : '';
     } else if (
       this.state.access.teamId !== 0 &&
       !this.state.person &&
@@ -259,18 +265,16 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     ) {
       // if not a new access, require a person
       valid = false;
-    } else if (this.state.error !== '') {
-      valid = false;
     } else if (
       (!!this.state.person || !!this.props.person) &&
       (!this.state.date || !isBefore(new Date(), new Date(this.state.date)))
     ) {
       valid = false;
     }
-    this.setState({ validState: valid });
+    this.setState({ validState: valid, error });
   };
 
-  private _checkValidAssignmentToPerson = () => {
+  private _checkValidAssignmentToPerson = (): IPersonValidation => {
     let valid = true;
     const person = this.props.person ? this.props.person : this.state.person;
     const assignments = this.state.access.assignments;
@@ -280,14 +284,15 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         break;
       }
     }
+
+    let error = null;
     if (!valid) {
-      this.setState({
-        error: 'The user you have selected is already assigned this access.'
-      });
-    } else {
-      this.setState({ error: '' });
+      error = new Error(
+        'The user you have selected is already assigned this access.'
+      );
     }
-    return valid;
+
+    return { valid, error };
   };
 
   private _changeDate = (newDate: Date) => {

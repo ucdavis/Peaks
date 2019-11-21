@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'reactstrap';
-import { IEquipment, IEquipmentAttribute } from '../../Types';
+import { IEquipmentAttribute } from '../../models/Equipment';
 import EquipmentAttribute from './EquipmentAttribute';
 
 interface IProps {

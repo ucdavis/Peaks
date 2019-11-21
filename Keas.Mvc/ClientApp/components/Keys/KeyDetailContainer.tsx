@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
-import { IKey, IKeyInfo, IMatchParams } from '../../Types';
+import { IKey, IKeyInfo } from '../../models/Keys';
+import { IMatchParams } from '../../Types';
 import HistoryContainer from '../History/HistoryContainer';
 import SpacesContainer from '../Spaces/SpacesContainer';
 import KeySerialContainer from './KeySerialContainer';
