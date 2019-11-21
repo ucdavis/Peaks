@@ -56,6 +56,7 @@ namespace Keas.Mvc
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
             services.Configure<BigfixSettings>(Configuration.GetSection("Bigfix"));
+            services.Configure<SuperuserSettings>(Configuration.GetSection("Superuser"));
 
             // setup services
             services.AddScoped<IIdentityService, IdentityService>();
