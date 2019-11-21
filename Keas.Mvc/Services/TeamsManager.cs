@@ -98,7 +98,7 @@ namespace Keas.Mvc.Services
 
             var sessionResult = _contextAccessor.HttpContext.Session.GetString(RolesSessionKey);
 
-            var roleContainer = new RoleContainer();
+            RoleContainer roleContainer;
 
             if (sessionResult == null)
             {
