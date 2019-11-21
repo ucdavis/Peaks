@@ -745,7 +745,7 @@ namespace Keas.Mvc.Controllers
                                             {
                                                 _context.KeySerialAssignments.Add(assignment);
                                                 await _context.SaveChangesAsync();
-                                                somethingSaved = true;
+                                                //somethingSaved = true; //Note, even though we are saving here, the something saved value isn't used. Keeping this comment here as it may be something we want to look at in the future
                                                 serial.KeySerialAssignment = assignment;
                                                 serial.KeySerialAssignmentId = assignment.Id;
                                                 recAssignmentCount += 1;
