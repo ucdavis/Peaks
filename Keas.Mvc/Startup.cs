@@ -101,6 +101,10 @@ namespace Keas.Mvc
                 options.CasServerUrlBase = Configuration["Authentication:CasBaseUrl"];
                 options.Events.OnTicketReceived = async context => {
                     var identity = (ClaimsIdentity) context.Principal.Identity;
+                    if (identity == null)
+                    {
+                        return;
+                    }
 
                     // kerb comes across in name & name identifier
                     var kerb = identity?.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -115,6 +119,7 @@ namespace Keas.Mvc
                     {
                         throw new InvalidOperationException("Could not retrieve user information from IAM");
                     }
+                    
 
                     identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier));
                     identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
