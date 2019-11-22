@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using Keas.Core.Data;
 using Keas.Mvc.Helpers;
+using Keas.Mvc.Models;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Keas.Mvc
 {
@@ -16,7 +18,8 @@ namespace Keas.Mvc
             using (var scope = host.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var dbInitilizer = new DbInitializer(dbContext);
+                var superuserSetting = scope.ServiceProvider.GetRequiredService<IOptions<SuperuserSettings>>();
+                var dbInitilizer = new DbInitializer(dbContext, superuserSetting);
                 dbInitilizer.Initialize();
             }
 

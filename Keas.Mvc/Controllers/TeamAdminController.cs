@@ -498,12 +498,13 @@ namespace Keas.Mvc.Controllers
                 }
             }
 
-            var rtValue = "";
+            var rtValue = new StringBuilder();
             foreach (var s in resultsList)
             {
-                rtValue = rtValue + "\n" + s;
+                rtValue.AppendLine(s);
             }
-            return rtValue;
+
+            return rtValue.ToString();
         }
 
         public IActionResult Upload()
@@ -533,7 +534,7 @@ namespace Keas.Mvc.Controllers
             var errorCount = 0;
             //var reactivatedCount = 0; Not used
             var rowNumber = 1;
-            bool import = true;
+            bool import;
             bool somethingSaved = false;
 
             if (file == null || file.Length == 0)
@@ -745,7 +746,7 @@ namespace Keas.Mvc.Controllers
                                             {
                                                 _context.KeySerialAssignments.Add(assignment);
                                                 await _context.SaveChangesAsync();
-                                                somethingSaved = true;
+                                                //somethingSaved = true; //Note, even though we are saving here, the something saved value isn't used. Keeping this comment here as it may be something we want to look at in the future
                                                 serial.KeySerialAssignment = assignment;
                                                 serial.KeySerialAssignmentId = assignment.Id;
                                                 recAssignmentCount += 1;
@@ -915,7 +916,6 @@ namespace Keas.Mvc.Controllers
 
             var userIdentity = User.Identity.Name;
             var userName = User.GetNameClaim();
-            var equipmentAttribute = new EquipmentAttribute();
 
             var equipmentCount = 0;
             var peopleCount = 0;
@@ -964,7 +964,6 @@ namespace Keas.Mvc.Controllers
 
                     using (var transaction = await _context.Database.BeginTransactionAsync())
                     {
-                        somethingSaved = false;
                         rowNumber += 1;
                         var result = new EquipmentImportResults(r)
                         {

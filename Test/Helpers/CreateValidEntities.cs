@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Keas.Core.Domain;
@@ -16,6 +16,7 @@ namespace Test.Helpers
 
             if (populateAllFields)
             {
+                rtValue.Email = $"FirstName{(counter ?? 99).ToString()}@test.com";
             }
 
             rtValue.Id = (counter ?? 99).ToString();

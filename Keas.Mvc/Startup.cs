@@ -56,6 +56,7 @@ namespace Keas.Mvc
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
             services.Configure<BigfixSettings>(Configuration.GetSection("Bigfix"));
+            services.Configure<SuperuserSettings>(Configuration.GetSection("Superuser"));
 
             // setup services
             services.AddScoped<IIdentityService, IdentityService>();
@@ -98,10 +99,12 @@ namespace Keas.Mvc
             .AddCAS(options => {
                 options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.CasServerUrlBase = Configuration["Authentication:CasBaseUrl"];
-                options.Events.OnTicketReceived = async context => { 
-                    var c = context;
-
+                options.Events.OnTicketReceived = async context => {
                     var identity = (ClaimsIdentity) context.Principal.Identity;
+                    if (identity == null)
+                    {
+                        return;
+                    }
 
                     // kerb comes across in name & name identifier
                     var kerb = identity?.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -116,6 +119,7 @@ namespace Keas.Mvc
                     {
                         throw new InvalidOperationException("Could not retrieve user information from IAM");
                     }
+                    
 
                     identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier));
                     identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));

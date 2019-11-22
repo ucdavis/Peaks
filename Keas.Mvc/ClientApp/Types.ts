@@ -1,3 +1,5 @@
+import { IPerson } from './models/People';
+
 // Main Type of the context
 // tslint:disable-next-line:interface-name
 export interface AppContext {
@@ -29,47 +31,6 @@ export interface IRouteProps {
 
   keyId: string;
   keyAction: string;
-}
-
-export interface IUser {
-  firstName: string;
-  lastName: string;
-  name: string;
-  email: string;
-  id: string;
-  iam: string;
-}
-
-export interface IPerson {
-  active?: boolean;
-  id: number;
-  userId: string;
-  teamId: number;
-  user?: IUser;
-  tags: string;
-  firstName: string;
-  lastName: string;
-  name: string;
-  email: string;
-  homePhone: string;
-  teamPhone: string;
-  title: string;
-  supervisorId?: number;
-  supervisor?: IPerson;
-  startDate: Date;
-  endDate: Date;
-  category: string;
-  notes: string;
-  isSupervisor: boolean;
-}
-
-export interface IPersonInfo {
-  person: IPerson;
-  id: number;
-  accessCount: number;
-  equipmentCount: number;
-  keyCount: number;
-  workstationCount: number;
 }
 
 export interface ITeam {
@@ -121,23 +82,6 @@ export interface ISpace {
   roomNumber: string;
   sqFt: string;
   roomCategoryName: string;
-}
-
-export interface IWorkstation {
-  id: number;
-  name: string;
-  space: ISpace;
-  tags: string;
-  notes: string;
-  teamId: number;
-  assignment?: IWorkstationAssignment;
-}
-
-export interface IWorkstationAssignment {
-  id: number;
-  workstationId: number;
-  expiresAt: Date;
-  person: IPerson;
 }
 
 export interface IHistory {

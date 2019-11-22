@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IPerson, IUser } from '../../Types';
+import { IPerson, personSchema } from '../../models/People';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
+import { validateEmail } from '../../util/email';
 import PersonEditValues from './PersonEditValues';
 import SearchUsers from './SearchUsers';
 
@@ -15,7 +17,8 @@ interface IProps {
 }
 
 interface IState {
-  moreInfoString: string; // for errors and for explaining results, e.g. if person is new or inactive
+  error: IValidationError;
+  moreInfoString: string; // for explaining results, e.g. if person is new or inactive
   person: IPerson;
   submitting: boolean;
   validState: boolean;
@@ -28,6 +31,10 @@ export default class CreatePerson extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
+      error: {
+        message: '',
+        path: ''
+      },
       moreInfoString: '',
       person: null,
       submitting: false,
@@ -66,6 +73,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
                   changeSupervisor={this._changeSupervisor}
                   disableEditing={false}
                   tags={this.props.tags}
+                  error={this.state.error}
                 />
               </div>
 
@@ -125,6 +133,10 @@ export default class CreatePerson extends React.Component<IProps, IState> {
 
   private _closeModal = () => {
     this.setState({
+      error: {
+        message: '',
+        path: ''
+      },
       moreInfoString: '',
       person: null,
       submitting: false,
@@ -196,16 +208,9 @@ export default class CreatePerson extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let valid = true;
-    if (!this.state.person) {
-      valid = false;
-    } else if (
-      !this.state.person.firstName ||
-      !this.state.person.lastName ||
-      !this.state.person.email
-    ) {
-      valid = false;
-    }
-    this.setState({ validState: valid });
+    const error = yupAssetValidation(personSchema, this.state.person, {
+      context: { validateEmail }
+    });
+    this.setState({ error, validState: error.message === '' });
   };
 }

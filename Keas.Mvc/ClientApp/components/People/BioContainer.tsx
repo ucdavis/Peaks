@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import { IPerson } from '../../Types';
+import { IPerson } from '../../models/People';
 import { DateUtil } from '../../util/dates';
 
 interface IProps {
@@ -81,7 +81,9 @@ export default class BioContainer extends React.Component<IProps, {}> {
                 </div>
                 <div>
                   {this.props.person.email && <p>{this.props.person.email}</p>}
-                  {this.props.person.userId && <p>{this.props.person.userId}</p>}
+                  {this.props.person.userId && (
+                    <p>{this.props.person.userId}</p>
+                  )}
                   {this.props.person.homePhone && (
                     <p>{this.props.person.homePhone}</p>
                   )}
@@ -109,6 +111,7 @@ export default class BioContainer extends React.Component<IProps, {}> {
               <a
                 href={`/${this.context.team.slug}/Report/SupervisorDirectReports/?personId=${this.props.person.id}`}
                 target='_blank'
+                rel='noopener noreferrer'
               >
                 <Button className='btn btn-link'>
                   <i

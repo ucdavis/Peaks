@@ -1,7 +1,9 @@
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
-import { IPerson, ISpace } from '../../Types';
+import { IPerson } from '../../models/People';
+import { IValidationError } from '../../models/Shared';
+import { ISpace } from '../../Types';
 import SearchTags from '../Tags/SearchTags';
 import AssignPerson from './AssignPerson';
 
@@ -13,6 +15,7 @@ interface IProps {
   selectedPerson: IPerson;
   space?: ISpace;
   creating?: boolean;
+  error?: IValidationError;
 }
 
 export default class PersonEditValues extends React.Component<IProps, {}> {

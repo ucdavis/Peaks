@@ -91,7 +91,7 @@ namespace Keas.Core.Services
             transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems);
 
             var client = GetSparkpostClient();
-            var result = await client.Transmissions.Send(transmission);
+            await client.Transmissions.Send(transmission);
 
             // reset next notification date
             // TODO Do we need a team level notification date????
@@ -150,7 +150,7 @@ namespace Keas.Core.Services
                 var client = GetSparkpostClient();
                 try
                 {
-                    var result = await client.Transmissions.Send(transmission);
+                    await client.Transmissions.Send(transmission);
                 }
                 catch (Exception e)
                 {
@@ -269,7 +269,7 @@ namespace Keas.Core.Services
             transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems);
 
             var client = GetSparkpostClient();
-            var result = await client.Transmissions.Send(transmission);
+            await client.Transmissions.Send(transmission);
 
             // reset next notification date
             foreach (var assignment in expiringItems.KeySerials.Select(k => k.KeySerialAssignment))
@@ -449,7 +449,7 @@ namespace Keas.Core.Services
             transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList());
 
             var client = GetSparkpostClient();
-            var result = await client.Transmissions.Send(transmission);
+            await client.Transmissions.Send(transmission);
 
             foreach (var notificationGroup in notifications)
             {

@@ -9,7 +9,7 @@ import {
   Label
 } from 'reactstrap';
 import { Context } from '../../Context';
-import { IPerson } from '../../Types';
+import { IPerson } from '../../models/People';
 
 interface IState {
   isInvalid: boolean;

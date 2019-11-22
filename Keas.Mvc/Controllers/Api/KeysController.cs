@@ -260,8 +260,8 @@ namespace Keas.Mvc.Controllers.Api
             // create new association and save it
             association = new KeyXSpace()
             {
-                KeyId = id,
-                SpaceId = model.SpaceId,
+                KeyId = key.Id,
+                SpaceId = space.Id,
             };
 
             _context.KeyXSpaces.Add(association);
@@ -293,7 +293,7 @@ namespace Keas.Mvc.Controllers.Api
 
             // find existing relationship
             var association = await _context.KeyXSpaces
-                .SingleOrDefaultAsync(x => x.KeyId == id && x.SpaceId == model.SpaceId);
+                .SingleOrDefaultAsync(x => x.KeyId == id && x.SpaceId == space.Id);
 
             if (association == null)
             {

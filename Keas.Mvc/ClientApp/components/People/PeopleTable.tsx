@@ -2,7 +2,7 @@ import * as React from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import { Button } from 'reactstrap';
-import { IPerson, IPersonInfo } from '../../Types';
+import { IPerson, IPersonInfo } from '../../models/People';
 import { ReactTableUtil } from '../../util/tableUtil';
 
 interface IProps {

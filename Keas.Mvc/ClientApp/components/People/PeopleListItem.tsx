@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
 import { NavLink } from 'react-router-dom';
-import { IPerson } from '../../Types';
+import { IPerson } from '../../models/People';
 
 interface IProps {
   person: IPerson;

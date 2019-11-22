@@ -1,6 +1,6 @@
 import * as yup from 'yup';
-import { IPerson } from '../Types';
 import { IKey } from './Keys';
+import { IPerson } from './People';
 
 export interface IKeySerial {
   id: number;

@@ -1,5 +1,6 @@
 import * as yup from 'yup';
-import { IPerson, ISpace } from '../Types';
+import { ISpace } from '../Types';
+import { IPerson } from './People';
 
 export interface IEquipment {
   assignment?: IEquipmentAssignment;
@@ -29,7 +30,6 @@ export const equipmentSchema = yup.object<IEquipment>().shape({
   availabilityLevel: yup
     .string()
     .max(2)
-    .oneOf(['', 'A1', 'A2', 'A3', 'A4']) // empty string will default to A1 depending on type
     .notRequired()
     .nullable(),
   equipmentAssignmentId: yup.number().nullable(),
@@ -53,7 +53,6 @@ export const equipmentSchema = yup.object<IEquipment>().shape({
   protectionLevel: yup
     .string()
     .max(2)
-    .oneOf(['', 'P1', 'P2', 'P3', 'P4']) // empty string will default to P1 depending on type
     .notRequired()
     .nullable(),
   serialNumber: yup

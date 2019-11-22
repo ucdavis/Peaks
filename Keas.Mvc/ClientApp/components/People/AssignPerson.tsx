@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, FormFeedback, FormGroup, Label } from 'reactstrap';
 import { Context } from '../../Context';
+import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
-import { IPerson } from '../../Types';
 
 interface IProps {
   onSelect: (person: IPerson) => void;
@@ -95,7 +95,11 @@ export default class AssignPerson extends React.Component<IProps, IState> {
           )}
         </FormGroup>
         <div>
-          <Link to={`/${this.context.team.slug}/people/create`} target='_blank'>
+          <Link
+            to={`/${this.context.team.slug}/people/create`}
+            target='_blank'
+            rel='noopener noreferrer'
+          >
             <Button color='link' type='button'>
               <i className='fas fa-search fas-sm' aria-hidden='true' /> Can't
               find who you're looking for?

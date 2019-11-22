@@ -3,7 +3,8 @@ import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey } from '../../models/Keys';
-import { IMatchParams, IPerson, IPersonInfo } from '../../Types';
+import { IPerson, IPersonInfo } from '../../models/People';
+import { IMatchParams } from '../../Types';
 import { PermissionsUtil } from '../../util/permissions';
 import AssignmentContainer from '../Access/AccessAssignmentContainer';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
@@ -71,6 +72,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                     <a
                       href={`/${this.context.team.slug}/Report/PersonTeamList/?personId=${this.props.selectedPersonInfo.id}`}
                       target='_blank'
+                      rel='noopener noreferrer'
                     >
                       <Button className='btn btn-link'>
                         <i
@@ -102,8 +104,22 @@ export default class PersonDetails extends React.Component<IProps, {}> {
         />
         <AssignmentContainer
           person={this.props.selectedPersonInfo.person}
-          onRevokeSuccess={() => this.props.inUseUpdated("access", 0, this.props.selectedPersonInfo.id, -1)}
-          onAssignSuccess={() => this.props.inUseUpdated("access", 0, this.props.selectedPersonInfo.id, 1)}
+          onRevokeSuccess={() =>
+            this.props.inUseUpdated(
+              'access',
+              0,
+              this.props.selectedPersonInfo.id,
+              -1
+            )
+          }
+          onAssignSuccess={() =>
+            this.props.inUseUpdated(
+              'access',
+              0,
+              this.props.selectedPersonInfo.id,
+              1
+            )
+          }
         />
         <WorkstationContainer
           {...this.props.router}

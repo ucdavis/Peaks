@@ -142,7 +142,6 @@ namespace Keas.Mvc.Controllers
                 return NotFound();
             }
 
-            var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
             var eka = await _context.EquipmentAttributeKeys.SingleAsync(a => a.TeamId != null && a.Team.Slug == Team && a.Id == id);
 
             _context.Remove(eka);

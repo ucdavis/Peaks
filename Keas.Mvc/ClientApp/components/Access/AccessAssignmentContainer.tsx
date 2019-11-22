@@ -1,16 +1,11 @@
 import * as React from 'react';
+import { RouteChildrenProps, withRouter } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
-
-import {
-  IAccess,
-  IAccessAssignment,
-  IMatchParams,
-  IPerson
-} from 'ClientApp/Types';
-import { RouteChildrenProps, withRouter } from 'react-router';
 import { Context } from '../../Context';
 import AccessAssignmentCard from './AccessAssignmentCard';
+import { IPerson } from '../../models/People';
+import { IAccess, IAccessAssignment, IMatchParams } from '../../Types';
 import AssignmentTable from './AccessAssignmentTable';
 import AccessList from './AccessList';
 import AssignAccess from './AssignAccess';
@@ -89,7 +84,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
     const tags = await this.context.fetch(
       `/api/${this.context.team.slug}/tags/listTags`
     );
-    this.setState({tags})
+    this.setState({ tags });
   }
 
   public render() {
@@ -187,7 +182,11 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   };
 
   private _openAssignModal = () => {
-    this.props.history.push(`${this._getBaseUrl()}/access/assign${this.props.access ? "/" + this.props.access.id : ""}`);
+    this.props.history.push(
+      `${this._getBaseUrl()}/access/assign${
+        this.props.access ? '/' + this.props.access.id : ''
+      }`
+    );
   };
 
   private callAssign = async (access: IAccess, date: any, person: IPerson) => {
@@ -215,7 +214,10 @@ class AssignmentContainer extends React.Component<IProps, IState> {
         method: 'POST'
       });
 
-      accessAssignment.access = {...access, assignments: [...access.assignments, accessAssignment]};
+      accessAssignment.access = {
+        ...access,
+        assignments: [...access.assignments, accessAssignment]
+      };
       toast.success('Access assigned successfully!');
     } catch (err) {
       toast.error('Error assigning access.');
