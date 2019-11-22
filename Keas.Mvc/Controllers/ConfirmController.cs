@@ -206,7 +206,7 @@ namespace Keas.Mvc.Controllers
             }
             if (teams.Count() == 1 && groupPermissions.Count == 0) {
                 if(!string.IsNullOrWhiteSpace(urlRedirect)){
-                    return Redirect("/" + teams.First().Slug + "/" + urlRedirect);
+                    return Redirect("/" + teams.First().Slug + "/home/index" );
                 } else {
                     return Redirect("/" + teams.First().Slug + "/Confirm/MyStuff");
                 }
