@@ -22,13 +22,13 @@ namespace Keas.Mvc.Helpers
         public void Initialize()
         {
             // Create All Roles
-            var keyMaster       = CreateOrFindRole(new Role { Name = "KeyMaster" });
-            var equipMaster     = CreateOrFindRole(new Role { Name = "EquipMaster" });
-            var departmentAdmin = CreateOrFindRole(new Role { Name = "DepartmentalAdmin" });
-            var accessMaster    = CreateOrFindRole(new Role { Name = "AccessMaster" });
-            var spaceMaster     = CreateOrFindRole(new Role { Name = "SpaceMaster" });
-            var admin           = CreateOrFindRole(new Role { Name = "Admin", IsAdmin = true });
-            var personManager   = CreateOrFindRole(new Role { Name = "PersonManager"});
+            CreateOrFindRole(new Role { Name = "KeyMaster" });
+            CreateOrFindRole(new Role { Name = "EquipMaster" });
+            CreateOrFindRole(new Role { Name = "DepartmentalAdmin" });
+            CreateOrFindRole(new Role { Name = "AccessMaster" });
+            CreateOrFindRole(new Role { Name = "SpaceMaster" });
+            var admin = CreateOrFindRole(new Role { Name = "Admin", IsAdmin = true });
+            CreateOrFindRole(new Role { Name = "PersonManager"});
 
             // Create Config Super User
             if (!string.IsNullOrWhiteSpace(_superuserSettings.Kerb))
