@@ -56,9 +56,8 @@ export default class EditAccess extends React.Component<IProps, IState> {
             <form>
               <AccessEditValues
                 selectedAccess={this.state.access}
-                changeProperty={this._changeProperty}
                 disableEditing={false}
-                onAccessUpdate={this.props.onEdit}
+                onAccessUpdate={access => this.setState({access}, this._validateState)}
                 tags={this.props.tags}
               />
             </form>
@@ -80,18 +79,6 @@ export default class EditAccess extends React.Component<IProps, IState> {
       </Modal>
     );
   }
-
-  private _changeProperty = (property: string, value: string) => {
-    this.setState(
-      {
-        access: {
-          ...this.state.access,
-          [property]: value
-        }
-      },
-      this._validateState
-    );
-  };
 
   // clear everything out on close
   private _confirmClose = () => {

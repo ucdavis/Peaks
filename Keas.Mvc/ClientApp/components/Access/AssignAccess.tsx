@@ -6,6 +6,8 @@ import { Context } from '../../Context';
 import { IPerson } from '../../models/People';
 import { IAccess } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
+import AccessAssignmentCard from './AccessAssignmentCard';
+import AccessAssignmentTable from './AccessAssignmentTable';
 import AccessEditValues from './AccessEditValues';
 import SearchAccess from './SearchAccess';
 
@@ -68,17 +70,33 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         <ModalBody>
           <div className='container-fluid'>
             <form>
-              <AssignPerson
-                disabled={!!this.props.person}
-                person={this.props.person || this.state.person}
-                onSelect={this._onSelectPerson}
-                label='Assign To'
-                isRequired={this.state.access && this.state.access.teamId !== 0}
-              />
+              <div className='form-group'>
+                <AssignPerson
+                  disabled={!!this.props.person}
+                  person={this.props.person || this.state.person}
+                  onSelect={this._onSelectPerson}
+                  label='Assign To'
+                  isRequired={
+                    this.state.access && this.state.access.teamId !== 0
+                  }
+                />
+              </div>
+              {(!!this.state.person || !!this.props.person) && (
+                <div className='form-group'>
+                  <label>Set the expiration date</label>
+                  <br />
+                  <DatePicker
+                    format='MM/dd/yyyy'
+                    required={true}
+                    clearIcon={null}
+                    value={this.state.date}
+                    onChange={this._changeDate}
+                  />
+                </div>
+              )}
               {!this.state.access && (
                 <div className='form-group'>
                   <SearchAccess
-                    selectedAccess={this.state.access}
                     onSelect={this._onSelected}
                     onDeselect={this._onDeselected}
                   />
@@ -99,9 +117,10 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     </div>
                     <AccessEditValues
                       selectedAccess={this.state.access}
-                      changeProperty={this._changeProperty}
                       disableEditing={false}
-                      onAccessUpdate={access => this.setState({ access })}
+                      onAccessUpdate={access =>
+                        this.setState({ access }, this._validateState)
+                      }
                       tags={this.props.tags}
                     />
                   </div>
@@ -122,21 +141,13 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     selectedAccess={this.state.access}
                     disableEditing={true}
                     tags={this.props.tags}
-                  />
-                </div>
-              )}
-
-              {(!!this.state.person || !!this.props.person) && (
-                <div className='form-group'>
-                  <label>Set the expiration date</label>
-                  <br />
-                  <DatePicker
-                    format='MM/dd/yyyy'
-                    required={true}
-                    clearIcon={null}
-                    value={this.state.date}
-                    onChange={this._changeDate}
-                  />
+                  >
+                    <AccessAssignmentCard disableEditing={true}>
+                      <AccessAssignmentTable
+                        assignments={this.state.access.assignments}
+                      />
+                    </AccessAssignmentCard>
+                  </AccessEditValues>
                 </div>
               )}
               {this.state.error}
@@ -158,18 +169,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
       </Modal>
     );
   }
-
-  private _changeProperty = (property: string, value: string) => {
-    this.setState(
-      {
-        access: {
-          ...this.state.access,
-          [property]: value
-        }
-      },
-      this._validateState
-    );
-  };
 
   // clear everything out on close
   private _confirmClose = () => {
@@ -207,10 +206,10 @@ export default class AssignAccess extends React.Component<IProps, IState> {
         format(this.state.date, 'MM/dd/yyyy'),
         person
       );
-    } catch (err) {
+    } finally {
       this.setState({ submitting: false });
-      return;
     }
+
     this._closeModal();
   };
 

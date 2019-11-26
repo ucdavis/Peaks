@@ -2,19 +2,19 @@ import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IAccess } from '../../Types';
 import SearchTags from '../Tags/SearchTags';
-import AssignmentContainer from './AccessAssignmentContainer';
+import AccessAssignmentCard from './AccessAssignmentCard';
+import AccessAssignmentTable from './AccessAssignmentTable';
 
 interface IProps {
   selectedAccess: IAccess;
   disableEditing: boolean;
-  changeProperty?: (property: string, value: string) => void;
   openEditModal?: (access: IAccess) => void;
   tags?: string[];
   onAccessUpdate?(access: IAccess);
 }
 
-export default class AccessEditValues extends React.Component<IProps, {}> {
-  constructor(props: IProps) {
+export default class AccessEditValues extends React.Component<React.PropsWithChildren<IProps>> {
+  constructor(props: React.PropsWithChildren<IProps>) {
     super(props);
     if (!props.disableEditing && !props.onAccessUpdate) {
       throw new Error(
@@ -23,7 +23,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
     }
   }
   public render() {
-    const assignments = this.props.selectedAccess.assignments;
+    const access = this.props.selectedAccess;
     return (
       <div>
         {this.props.disableEditing && this.props.openEditModal && (
@@ -51,7 +51,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                   ? this.props.selectedAccess.name
                   : ''
               }
-              onChange={e => this.props.changeProperty('name', e.target.value)}
+              onChange={e => this.props.onAccessUpdate({...access, name: e.target.value})}
               invalid={!this.props.selectedAccess.name}
             />
             <FormFeedback>Item name is required</FormFeedback>
@@ -62,7 +62,7 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
               className='form-control'
               disabled={this.props.disableEditing}
               value={this.props.selectedAccess.notes || ''}
-              onChange={e => this.props.changeProperty('notes', e.target.value)}
+              onChange={e => this.props.onAccessUpdate({...access, notes: e.target.value})}
             />
           </div>
           <div className='form-group'>
@@ -75,24 +75,13 @@ export default class AccessEditValues extends React.Component<IProps, {}> {
                   ? this.props.selectedAccess.tags.split(',')
                   : []
               }
-              onSelect={e => this.props.changeProperty('tags', e.join(','))}
+              onSelect={e => {
+                access.tags = e.join(',')
+                this.props.onAccessUpdate(access)
+              }}
             />
           </div>
-          {this.props.selectedAccess.teamId !== 0 && (
-            <AssignmentContainer
-              disableEditing={this.props.disableEditing}
-              onRevokeSuccess={assignment =>
-                this.props.onAccessUpdate({
-                  ...this.props.selectedAccess,
-                  assignments: assignments.splice(
-                    assignments.indexOf(assignment),
-                    1
-                  )
-                })
-              }
-              access={this.props.selectedAccess}
-            />
-          )}
+          {this.props.children}
         </div>
       </div>
     );

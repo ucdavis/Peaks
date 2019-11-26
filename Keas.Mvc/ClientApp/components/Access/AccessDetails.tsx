@@ -1,10 +1,11 @@
-import * as React from 'react';
+﻿import * as React from 'react';
 import { RouteComponentProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IAccess } from '../../Types';
-import AccessEditValues from './AccessEditValues';
+import SearchTags from '../Tags/SearchTags';
+import AccessAssignmentContainer from './AccessAssignmentContainer';
 
 interface IProps {
   goBack: () => void;
@@ -12,6 +13,7 @@ interface IProps {
   closeModal: () => void;
   selectedAccess: IAccess;
   openEditModal: (access: IAccess) => void;
+  openDeleteModal: (access: IAccess) => void;
   updateSelectedAccess: (access: IAccess, id?: number) => void;
 }
 
@@ -38,13 +40,55 @@ export default class AccessDetails extends React.Component<IProps, {}> {
             <i className='fas fa-arrow-left fa-xs' /> Return to Table
           </Button>
         </div>
+        <div className='d-flex flex-row flex-wrap-reverse justify-content-between'>
+          <h2>Details for {access.name}</h2>
+          <div>
+            <Button className='btn btn-link' onClick={() => {this.props.openEditModal(access)}}>
+              <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
+              Edit Access
+            </Button>
+            <Button className='btn btn-link' onClick={() => {this.props.openDeleteModal(access)}}>
+              <i className='fas fa-trash fa-sm fa-fw mr-2' aria-hidden='true' />
+              Delete Access
+            </Button>
+          </div>
+        </div>
+        {access.notes && (
+          <>
+            <p>
+              <b>Notes:</b>
+            </p>
+            <p>{access.notes}</p>
+          </>
+        )}
 
-        <h2>Details for {access.name}</h2>
+        {access.tags.length > 0 && (
+          <>
+            <p>
+              <b>Tags</b>
+            </p>
+            <SearchTags
+              tags={[]}
+              disabled={true}
+              onSelect={() => {}}
+              selected={access.tags.split(',')}
+            />
+          </>
+        )}
 
-        <AccessEditValues
-          selectedAccess={access}
-          disableEditing={true}
-          openEditModal={this.props.openEditModal}
+        <AccessAssignmentContainer
+          access={this.props.selectedAccess}
+          onAssignSuccess={assignment => {
+            access.assignments.push(assignment);
+            this.props.updateSelectedAccess(access);
+          }}
+          onRevokeSuccess={assignment => {
+            access.assignments.splice(
+              access.assignments.indexOf(assignment),
+              1
+            );
+            this.props.updateSelectedAccess(access);
+          }}
         />
       </div>
     );

@@ -3,6 +3,7 @@ import { RouteChildrenProps, withRouter } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
+import AccessAssignmentCard from './AccessAssignmentCard';
 import { IPerson } from '../../models/People';
 import { IAccess, IAccessAssignment, IMatchParams } from '../../Types';
 import AssignmentTable from './AccessAssignmentTable';
@@ -12,7 +13,6 @@ import RevokeAccess from './RevokeAccess';
 
 // List of assignments passed by props, since this container can be in multiple places
 interface IProps extends RouteChildrenProps<IMatchParams> {
-  disableEditing?: boolean;
   person?: IPerson;
   access?: IAccess;
   onRevokeSuccess?(assignment: IAccessAssignment);
@@ -88,45 +88,31 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
-    const { action, containerAction, assetType } = this.props.match.params;
+    const { action, assetType } = this.props.match.params;
     const isRevokeModalShown =
       assetType === 'accessAssignment' && action === 'revoke';
-    const isAssignModalShown =
-      !this.props.disableEditing &&
-      assetType === 'access' &&
-      action === 'assign';
+    const isAssignModalShown = assetType === 'access' && action === 'assign';
+    const assignments = this.state.assignments;
     return (
-      <div className='card access-color'>
-        <div className='card-header-access'>
-          <div className='card-head row justify-content-between'>
-            <h2>
-              <i className='fas fa-address-card fa-xs' /> Assignments
-            </h2>
-            {containerAction === 'details' && (
-              <Button color='link' onClick={this._openAssignModal}>
-                <i className='fas fa-plus fa-sm' aria-hidden='true' /> Assign
-                Access
-              </Button>
-            )}
-          </div>
-        </div>
-        <div className='card-content'>
-          {isRevokeModalShown && (
-            <RevokeAccess
-              assignment={this.state.selectedAssignment}
-              revoke={this.callRevoke}
-              cancelRevoke={this.hideModals}
-            />
-          )}
-          {isAssignModalShown && (
-            <AssignAccess
-              closeModal={this.hideModals}
-              modal={isAssignModalShown}
-              person={this.props.person}
-              tags={this.state.tags}
-              onCreate={this.callAssign}
-            />
-          )}
+      <div>
+        {isRevokeModalShown && (
+          <RevokeAccess
+            assignment={this.state.selectedAssignment}
+            revoke={this.callRevoke}
+            cancelRevoke={this.hideModals}
+          />
+        )}
+        {isAssignModalShown && (
+          <AssignAccess
+            closeModal={this.hideModals}
+            modal={isAssignModalShown}
+            person={this.props.person}
+            tags={this.state.tags}
+            selectedAccess={this.props.access}
+            onCreate={this.callAssign}
+          />
+        )}
+        <AccessAssignmentCard openAssignModal={this._openAssignModal}>
           {this.props.person ? (
             <AccessList
               showDetails={this._openDetails}
@@ -134,23 +120,23 @@ class AssignmentContainer extends React.Component<IProps, IState> {
               access={this.state.assignments.map(
                 assignment => assignment.access
               )}
-              onAdd={this._openAssignModal}
               onRevoke={access =>
                 this.showRevokeModal(
-                  this.state.assignments.find(
-                    assignment => assignment.accessId === access.id
+                  assignments.find(
+                    assignment =>
+                      assignment.accessId === access.id &&
+                      assignment.personId === this.props.person.id
                   )
                 )
               }
             />
           ) : (
             <AssignmentTable
-              assignments={this.state.assignments}
+              assignments={assignments}
               onRevoke={this.showRevokeModal}
-              disableEditing={this.props.disableEditing}
             />
           )}
-        </div>
+        </AccessAssignmentCard>
       </div>
     );
   }
@@ -196,13 +182,11 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   };
 
   private _openAssignModal = () => {
-    if (this.props.access) {
-      this.props.history.push(
-        `/${this.context.team.slug}/access/assign/${this.props.access.id}`
-      );
-    } else if (this.props.person) {
-      this.props.history.push(`${this._getBaseUrl()}/access/assign`);
-    }
+    this.props.history.push(
+      `${this._getBaseUrl()}/access/assign${
+        this.props.access ? '/' + this.props.access.id : ''
+      }`
+    );
   };
 
   private callAssign = async (access: IAccess, date: any, person: IPerson) => {
@@ -230,9 +214,10 @@ class AssignmentContainer extends React.Component<IProps, IState> {
         method: 'POST'
       });
 
-      access.assignments.push(accessAssignment);
-
-      accessAssignment.access = access;
+      accessAssignment.access = {
+        ...access,
+        assignments: [...access.assignments, accessAssignment]
+      };
       toast.success('Access assigned successfully!');
     } catch (err) {
       toast.error('Error assigning access.');

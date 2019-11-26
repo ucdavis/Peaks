@@ -6,7 +6,7 @@ import { ReactTableExpirationUtil } from '../../util/reactTable';
 
 interface IProps {
   assignments: IAccessAssignment[];
-  onRevoke: (assignment: IAccessAssignment) => void;
+  onRevoke?: (assignment: IAccessAssignment) => void;
   disableEditing?: boolean;
 }
 
@@ -45,6 +45,7 @@ const accessAssignTable: React.FunctionComponent<IProps> = (
           className='btn btn-outline-danger'
           disabled={props.disableEditing || !props.onRevoke}
           onClick={() =>
+            props.onRevoke &&
             props.onRevoke(
               props.assignments.find(
                 (el: IAccessAssignment) => row.value === el.personId

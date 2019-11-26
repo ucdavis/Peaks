@@ -92,10 +92,10 @@ export default class AccessContainer extends React.Component<
         </div>
         <div className='card-content'>
           {!shouldRenderDetails && this._renderTable()}
+          {shouldRenderDetails && this._renderDetails(selectedId, detailAccess)}
           {activeAsset &&
             (containerAction === 'assign' || containerAction === 'create') &&
             this._renderAssignModal(selectedId, detailAccess)}
-          {shouldRenderDetails && this._renderDetails(selectedId, detailAccess)}
           {activeAsset &&
             containerAction === 'edit' &&
             this._renderEditModal(selectedId, detailAccess)}
@@ -106,6 +106,66 @@ export default class AccessContainer extends React.Component<
       </div>
     );
   }
+
+  private _createAndMaybeAssignAccess = async (
+    access: IAccess,
+    date?: any,
+    person?: IPerson
+  ) => {
+    const accesses = this.state.accesses;
+    if (access.id === 0) {
+      try {
+        access = await this.context.fetch(
+          `/api/${this.context.team.slug}/access/create`,
+          {
+            body: JSON.stringify({
+              ...access,
+              teamId: this.context.team.id
+            }),
+            method: 'POST'
+          }
+        );
+        accesses.push(access);
+        this.setState({ accesses });
+        toast.success('Access created successfully!');
+      } catch (err) {
+        toast.error('Error creating access.');
+        throw new Error(); // throw error so modal doesn't close
+      }
+    }
+    if (person && date) {
+      const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
+      let accessAssignment: IAccessAssignment = null;
+      try {
+        accessAssignment = await this.context.fetch(assignUrl, {
+          method: 'POST'
+        });
+
+        const newAccess = accesses.find(a => a.id === access.id);
+        accessAssignment.access = newAccess;
+        newAccess.assignments.push(accessAssignment);
+
+        this.setState({ accesses });
+        toast.success('Access assigned successfully!');
+      } catch (err) {
+        toast.error('Error assigning access.');
+        throw new Error(); // throw error so modal doesn't close
+      }
+    }
+  };
+
+  private _renderAssignModal = (selectedId: number, access?: IAccess) => {
+    return (
+      <AssignAccess
+        key={`assign-access-${selectedId}`}
+        onCreate={this._createAndMaybeAssignAccess}
+        modal={true}
+        closeModal={this._closeModals}
+        selectedAccess={access}
+        tags={this.state.tags}
+      />
+    );
+  };
 
   private _renderTable = () => {
     let filteredAccess = this.state.accesses;
@@ -135,28 +195,16 @@ export default class AccessContainer extends React.Component<
     );
   };
 
-  private _renderAssignModal = (selectedId: number, access?: IAccess) => {
-    return (
-      <AssignAccess
-        key={`assign-access-${selectedId}`}
-        onCreate={this._createAndMaybeAssignAccess}
-        modal={true}
-        closeModal={this._closeModals}
-        selectedAccess={access}
-        tags={this.state.tags}
-      />
-    );
-  };
-
   private _renderDetails = (selectedId: number, access: IAccess) => {
     return (
       <AccessDetails
-        goBack={this.props.history.goBack}
+        goBack={() => this.props.history.push(this._getBaseUrl() + '/access')}
         key={`details-access-${selectedId}`}
         selectedAccess={access}
         modal={!!access}
         closeModal={this._closeModals}
         openEditModal={this._openEditModal}
+        openDeleteModal={this._openDeleteModal}
         updateSelectedAccess={this._updateAccessFromDetails}
       />
     );
@@ -193,66 +241,6 @@ export default class AccessContainer extends React.Component<
 
   private _checkTagFilters = (access: IAccess, filters: string[]) => {
     return filters.every(f => !!access.tags && access.tags.includes(f));
-  };
-
-  private _createAndMaybeAssignAccess = async (
-    access: IAccess,
-    date: any,
-    person: IPerson
-  ) => {
-    // call API to create a access, then assign it if there is a person to assign to
-    // if we are creating a new access
-    if (access.id === 0) {
-      access.teamId = this.context.team.id;
-      try {
-        access = await this.context.fetch(
-          `/api/${this.context.team.slug}/access/create`,
-          {
-            body: JSON.stringify(access),
-            method: 'POST'
-          }
-        );
-        toast.success('Access created successfully!');
-      } catch (err) {
-        toast.error('Error creating access.');
-        throw new Error(); // throw error so modal doesn't close
-      }
-    }
-
-    // if we know who to assign it to, do it now
-    if (person) {
-      const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
-      let accessAssignment: IAccessAssignment = null;
-      try {
-        accessAssignment = await this.context.fetch(assignUrl, {
-          method: 'POST'
-        });
-        toast.success('Access assigned successfully!');
-      } catch (err) {
-        toast.error('Error assigning access.');
-        throw new Error(); // throw error so modal doesn't close
-      }
-      // fetching only returns the assignment, so add it to the access in our state with the right person
-      accessAssignment.person = person;
-      // then push it
-      access.assignments.push(accessAssignment);
-    }
-
-    const index = this.state.accesses.findIndex(x => x.id === access.id);
-    if (index !== -1) {
-      // update already existing entry in access
-      const updateAccesses = [...this.state.accesses];
-      updateAccesses[index] = access;
-
-      this.setState({
-        ...this.state,
-        accesses: updateAccesses
-      });
-    } else {
-      this.setState({
-        accesses: [...this.state.accesses, access]
-      });
-    }
   };
 
   private _deleteAccess = async (access: IAccess) => {
@@ -335,7 +323,9 @@ export default class AccessContainer extends React.Component<
   };
 
   private _openAssignModal = (access: IAccess) => {
-    this.props.history.push(`${this._getBaseUrl()}/access/assign/${access.id}`);
+    this.props.history.push(
+      `${this._getBaseUrl()}/access/details/${access.id}/assign/${access.id}`
+    );
   };
 
   private _openCreateModal = () => {

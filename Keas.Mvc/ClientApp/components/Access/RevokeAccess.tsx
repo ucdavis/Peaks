@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Alert, Button } from 'reactstrap';
 import { IAccessAssignment } from '../../Types';
+import { DateUtil } from '../../util/dates';
+import SearchTags from '../Tags/SearchTags';
 import AccessModal from './AccessModal';
 
 interface IProps {
@@ -24,12 +26,15 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
   public render() {
     const valid = !!this.props.assignment;
     const assignment = this.props.assignment;
+    const { person } = assignment || {person: null};
     return valid ? (
       <AccessModal
         isOpen={true}
         closeModal={this.props.cancelRevoke}
         header={
-          <h1>Revoke Access for {this.props.assignment.person.firstName}</h1>
+          <h1>
+            Revoke Access for {person.firstName} {person.lastName}
+          </h1>
         }
         footer={
           <Button
@@ -45,11 +50,23 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
         }
       >
         {this.state.error && <Alert color='danger'>{this.state.error}</Alert>}
-        <h1>Name: </h1>
-        <p>{assignment.access.name}</p>
+        <h1>Access Name: {assignment.access.name}</h1>
         <h2>Notes: </h2>
         <p>{assignment.access.notes}</p>
-        <p>Expires At {assignment.expiresAt}</p>
+        {assignment.access.tags.length > 0 && (
+          <>
+            <p>
+              <b>Tags</b>
+            </p>
+            <SearchTags
+              tags={[]}
+              disabled={true}
+              onSelect={() => {}}
+              selected={assignment.access.tags.split(',')}
+            />
+          </>
+        )}
+        <p>Expires At {DateUtil.formatExpiration(assignment.expiresAt)}</p>
       </AccessModal>
     ) : (
       <AccessModal
