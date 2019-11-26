@@ -191,24 +191,24 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
 
   private _changeProperty = (property: string, value: string) => {
     this.setState(
-      {
+      prevState => ({
         equipment: {
-          ...this.state.equipment,
+          ...prevState.equipment,
           [property]: value
         }
-      },
+      }),
       this._validateState
     );
   };
 
   private _updateAttributes = (attributes: IEquipmentAttribute[]) => {
     this.setState(
-      {
+      prevState => ({
         equipment: {
-          ...this.state.equipment,
+          ...prevState.equipment,
           attributes
         }
-      },
+      }),
       this._validateState
     );
   };
