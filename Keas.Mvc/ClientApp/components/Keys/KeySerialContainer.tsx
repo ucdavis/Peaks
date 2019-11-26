@@ -391,7 +391,6 @@ export default class KeySerialContainer extends React.Component<
     updateKeySerials[index] = keySerial;
 
     this.setState({
-      ...this.state,
       keySerials: updateKeySerials
     });
 
@@ -424,7 +423,7 @@ export default class KeySerialContainer extends React.Component<
       updateKeySerials[index] = keySerial;
     }
 
-    this.setState({ ...this.state, keySerials: updateKeySerials });
+    this.setState({ keySerials: updateKeySerials });
   };
 
   private _checkIfKeySerialNumberIsValid = (

@@ -99,25 +99,25 @@ export default class CreatePerson extends React.Component<IProps, IState> {
 
   private _changeProperty = (property: string, value: string) => {
     this.setState(
-      {
+      prevState => ({
         person: {
-          ...this.state.person,
+          ...prevState.person,
           [property]: value
         }
-      },
+      }),
       this._validateState
     );
   };
 
   private _changeSupervisor = (supervisor: IPerson) => {
     this.setState(
-      {
+      prevState => ({
         person: {
-          ...this.state.person,
+          ...prevState.person,
           supervisor,
           supervisorId: supervisor !== null ? supervisor.id : null
         }
-      },
+      }),
       this._validateState
     );
   };

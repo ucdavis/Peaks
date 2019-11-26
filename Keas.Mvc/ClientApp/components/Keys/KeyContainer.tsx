@@ -341,13 +341,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       keyInfo = updateKeys[index];
 
       this.setState({
-        ...this.state,
         keys: updateKeys
       });
     } else {
-      this.setState({
-        keys: [...this.state.keys, keyInfo]
-      });
+      this.setState(prevState => ({
+        keys: [...prevState.keys, keyInfo]
+      }));
     }
 
     if (this.props.assetTotalUpdated) {
@@ -402,7 +401,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     updateKey[index].key = key;
 
     this.setState({
-      ...this.state,
       keys: updateKey
     });
 
@@ -484,13 +482,12 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       updateKeys[index] = keyInfo;
 
       this.setState({
-        ...this.state,
         keys: updateKeys
       });
     } else {
-      this.setState({
-        keys: [...this.state.keys, keyInfo]
-      });
+      this.setState(prevState => ({
+        keys: [...prevState.keys, keyInfo]
+      }));
     }
     if (this.props.assetTotalUpdated) {
       this.props.assetTotalUpdated(

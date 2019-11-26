@@ -285,7 +285,6 @@ export default class WorkstationContainer extends React.Component<
       updateWorkstation[index] = workstation;
 
       this.setState({
-        ...this.state,
         workstations: updateWorkstation
       });
     } else if (
@@ -294,9 +293,9 @@ export default class WorkstationContainer extends React.Component<
     ) {
       // if we are on the space tab and we have created a workstation that is not in this space, do nothing to our state here
     } else {
-      this.setState({
-        workstations: [...this.state.workstations, workstation]
-      });
+      this.setState(prevState => ({
+        workstations: [...prevState.workstations, workstation]
+      }));
     }
     if (updateTotalAssetCount && this.props.assetTotalUpdated) {
       this.props.assetTotalUpdated(
@@ -430,7 +429,6 @@ export default class WorkstationContainer extends React.Component<
     updateWorkstation[index] = updated;
 
     this.setState({
-      ...this.state,
       workstations: updateWorkstation
     });
 
@@ -465,7 +463,7 @@ export default class WorkstationContainer extends React.Component<
     } else {
       updateWorkstations[index] = workstation;
     }
-    this.setState({ ...this.state, workstations: updateWorkstations });
+    this.setState({ workstations: updateWorkstations });
   };
 
   private _openDetailsModal = (workstation: IWorkstation) => {

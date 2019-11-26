@@ -217,9 +217,9 @@ export default class PeopleContainer extends React.Component<
       person,
       workstationCount: 0
     };
-    this.setState({
-      people: [...this.state.people, personInfo]
-    });
+    this.setState(prevState => ({
+      people: [...prevState.people, personInfo]
+    }));
   };
 
   private _editPerson = async (person: IPerson) => {
@@ -250,7 +250,6 @@ export default class PeopleContainer extends React.Component<
     updatePeople[index].person = updated;
 
     this.setState({
-      ...this.state,
       people: updatePeople
     });
   };
@@ -287,7 +286,6 @@ export default class PeopleContainer extends React.Component<
     updatePeople.splice(index, 1);
 
     this.setState({
-      ...this.state,
       people: updatePeople
     });
   };

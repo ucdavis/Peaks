@@ -156,15 +156,15 @@ export default class AssociateSpace extends React.Component<IProps, IState> {
 
   private _changeProperty = (property: string, value: string) => {
     this.setState(
-      {
+      prevState => ({
         selectedKeyInfo: {
-          ...this.state.selectedKeyInfo,
+          ...prevState.selectedKeyInfo,
           key: {
-            ...this.state.selectedKeyInfo.key,
+            ...prevState.selectedKeyInfo.key,
             [property]: value
           }
         }
-      },
+      }),
       this._validateState
     );
   };

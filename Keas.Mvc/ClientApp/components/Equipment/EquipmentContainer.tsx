@@ -326,7 +326,6 @@ export default class EquipmentContainer extends React.Component<
       updateEquipment[index] = equipment;
 
       this.setState({
-        ...this.state,
         equipment: updateEquipment
       });
     } else if (
@@ -336,9 +335,9 @@ export default class EquipmentContainer extends React.Component<
     ) {
       // if we are on the space tab and we have assigned/created an equipment that is not in this space, do nothing to our state here
     } else {
-      this.setState({
-        equipment: [...this.state.equipment, equipment]
-      });
+      this.setState(prevState => ({
+        equipment: [...prevState.equipment, equipment]
+      }));
     }
 
     if (updateTotalAssetCount && this.props.assetTotalUpdated) {
@@ -498,7 +497,6 @@ export default class EquipmentContainer extends React.Component<
     }
 
     this.setState({
-      ...this.state,
       equipment: updateEquipment
     });
 
@@ -532,7 +530,7 @@ export default class EquipmentContainer extends React.Component<
       updateEquipment[index] = equipment;
     }
 
-    this.setState({ ...this.state, equipment: updateEquipment });
+    this.setState({ equipment: updateEquipment });
   };
 
   private _openAssignModal = (equipment: IEquipment) => {
