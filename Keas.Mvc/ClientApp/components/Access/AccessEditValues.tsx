@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { IAccess } from '../../Types';
+import { IAccess } from '../../models/Access';
 import SearchTags from '../Tags/SearchTags';
-import AccessAssignmentCard from './AccessAssignmentCard';
-import AccessAssignmentTable from './AccessAssignmentTable';
 
 interface IProps {
   selectedAccess: IAccess;
@@ -13,7 +11,9 @@ interface IProps {
   onAccessUpdate?(access: IAccess);
 }
 
-export default class AccessEditValues extends React.Component<React.PropsWithChildren<IProps>> {
+export default class AccessEditValues extends React.Component<
+  React.PropsWithChildren<IProps>
+> {
   constructor(props: React.PropsWithChildren<IProps>) {
     super(props);
     if (!props.disableEditing && !props.onAccessUpdate) {
@@ -51,7 +51,9 @@ export default class AccessEditValues extends React.Component<React.PropsWithChi
                   ? this.props.selectedAccess.name
                   : ''
               }
-              onChange={e => this.props.onAccessUpdate({...access, name: e.target.value})}
+              onChange={e =>
+                this.props.onAccessUpdate({ ...access, name: e.target.value })
+              }
               invalid={!this.props.selectedAccess.name}
             />
             <FormFeedback>Item name is required</FormFeedback>
@@ -62,7 +64,9 @@ export default class AccessEditValues extends React.Component<React.PropsWithChi
               className='form-control'
               disabled={this.props.disableEditing}
               value={this.props.selectedAccess.notes || ''}
-              onChange={e => this.props.onAccessUpdate({...access, notes: e.target.value})}
+              onChange={e =>
+                this.props.onAccessUpdate({ ...access, notes: e.target.value })
+              }
             />
           </div>
           <div className='form-group'>
@@ -76,8 +80,8 @@ export default class AccessEditValues extends React.Component<React.PropsWithChi
                   : []
               }
               onSelect={e => {
-                access.tags = e.join(',')
-                this.props.onAccessUpdate(access)
+                access.tags = e.join(',');
+                this.props.onAccessUpdate(access);
               }}
             />
           </div>

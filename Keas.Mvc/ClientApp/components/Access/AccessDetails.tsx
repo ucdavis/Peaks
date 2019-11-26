@@ -1,9 +1,8 @@
 ﻿import * as React from 'react';
-import { RouteComponentProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import { IAccess } from '../../Types';
+import { IAccess } from '../../models/Access';
 import SearchTags from '../Tags/SearchTags';
 import AccessAssignmentContainer from './AccessAssignmentContainer';
 
@@ -43,11 +42,21 @@ export default class AccessDetails extends React.Component<IProps, {}> {
         <div className='d-flex flex-row flex-wrap-reverse justify-content-between'>
           <h2>Details for {access.name}</h2>
           <div>
-            <Button className='btn btn-link' onClick={() => {this.props.openEditModal(access)}}>
+            <Button
+              className='btn btn-link'
+              onClick={() => {
+                this.props.openEditModal(access);
+              }}
+            >
               <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
               Edit Access
             </Button>
-            <Button className='btn btn-link' onClick={() => {this.props.openDeleteModal(access)}}>
+            <Button
+              className='btn btn-link'
+              onClick={() => {
+                this.props.openDeleteModal(access);
+              }}
+            >
               <i className='fas fa-trash fa-sm fa-fw mr-2' aria-hidden='true' />
               Delete Access
             </Button>

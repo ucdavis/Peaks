@@ -3,7 +3,7 @@ import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import { IAccess } from '../../Types';
+import { IAccess } from '../../models/Access';
 
 interface IProps {
   selectedAccess?: IAccess;

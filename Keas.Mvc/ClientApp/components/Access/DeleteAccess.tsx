@@ -1,7 +1,7 @@
 ﻿import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IAccess, IAccessAssignment } from '../../Types';
+import { IAccess } from '../../models/Access';
 import AccessEditValues from './AccessEditValues';
 
 interface IProps {

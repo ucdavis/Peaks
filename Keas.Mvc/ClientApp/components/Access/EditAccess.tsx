@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IPerson } from '../../models/People';
-import { IAccess, IAccessAssignment } from '../../Types';
+import { IAccess } from '../../models/Access';
 import AccessEditValues from './AccessEditValues';
 
 interface IProps {
@@ -57,7 +56,9 @@ export default class EditAccess extends React.Component<IProps, IState> {
               <AccessEditValues
                 selectedAccess={this.state.access}
                 disableEditing={false}
-                onAccessUpdate={access => this.setState({access}, this._validateState)}
+                onAccessUpdate={access =>
+                  this.setState({ access }, this._validateState)
+                }
                 tags={this.props.tags}
               />
             </form>
