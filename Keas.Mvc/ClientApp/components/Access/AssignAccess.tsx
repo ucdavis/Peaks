@@ -240,16 +240,14 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
   private _validateState = () => {
     const checkValidAssignmentToPerson = this._checkValidAssignmentToPerson;
-    const personId = this.props.person
-      ? this.props.person.id
-      : this.state.person.id;
+    const person = this.props.person ? this.props.person : this.state.person;
     const error = yupAssetValidation(
       accessSchema,
       this.state.access,
       {
-        context: { checkValidAssignmentToPerson, personId }
+        context: { checkValidAssignmentToPerson, personId: person.id }
       },
-      { date: this.state.date, person: this.state.person }
+      { date: this.state.date, person }
     );
     // duplicate assignments are checked on access.assignments
     // but we want it to show up under the person input
