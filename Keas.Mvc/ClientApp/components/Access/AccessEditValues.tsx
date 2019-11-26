@@ -48,7 +48,7 @@ export default class AccessEditValues extends React.Component<
             <Input
               type='text'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               value={
                 this.props.selectedAccess && this.props.selectedAccess.name
                   ? this.props.selectedAccess.name
