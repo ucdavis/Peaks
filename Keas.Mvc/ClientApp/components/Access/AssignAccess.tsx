@@ -1,6 +1,5 @@
-import { addYears, format, isBefore, startOfDay } from 'date-fns';
+import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
-import DatePicker from 'react-date-picker';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
 import { accessSchema, IAccess, IAccessAssignment } from '../../models/Access';

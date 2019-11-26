@@ -1,5 +1,3 @@
-import { IPerson } from './models/People';
-
 // Main Type of the context
 // tslint:disable-next-line:interface-name
 export interface AppContext {

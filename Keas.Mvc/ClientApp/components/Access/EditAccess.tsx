@@ -64,6 +64,7 @@ export default class EditAccess extends React.Component<IProps, IState> {
                   this.setState({ access }, this._validateState)
                 }
                 tags={this.props.tags}
+                error={this.state.error}
               />
             </form>
           </div>
