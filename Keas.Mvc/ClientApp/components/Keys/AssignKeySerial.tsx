@@ -205,32 +205,32 @@ export default class AssignKey extends React.Component<IProps, IState> {
 
   private _changeProperty = (property: string, value: string) => {
     this.setState(
-      {
+      prevState => ({
         keySerial: {
-          ...this.state.keySerial,
+          ...prevState.keySerial,
           [property]: value
         }
-      },
+      }),
       this._validateState
     );
   };
 
   private _selectKey = (keyInfo: IKeyInfo) => {
-    this.setState({
+    this.setState(prevState => ({
       keySerial: {
-        ...this.state.keySerial,
+        ...prevState.keySerial,
         key: keyInfo.key
       }
-    });
+    }));
   };
 
   private _deselectKey = () => {
-    this.setState({
+    this.setState(prevState => ({
       keySerial: {
-        ...this.state.keySerial,
+        ...prevState.keySerial,
         key: null
       }
-    });
+    }));
   };
 
   // clear everything out on close

@@ -97,12 +97,12 @@ export default class EditKeySerial extends React.Component<IProps, IState> {
 
   private _changeProperty = (property: string, value: string) => {
     this.setState(
-      {
+      prevState => ({
         keySerial: {
-          ...this.state.keySerial,
+          ...prevState.keySerial,
           [property]: value
         }
-      },
+      }),
       this._validateState
     );
   };
