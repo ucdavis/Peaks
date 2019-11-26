@@ -1,5 +1,6 @@
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
+import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import DatePicker from 'react-date-picker';
 import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
@@ -23,14 +24,15 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
     if (!this.props.selectedPerson) {
       return null;
     }
+    const error = this.props.error;
     return (
       <div className='wrapperasset'>
-        <div className='form-group'>
-          <label>First Name</label>
-          <input
+        <FormGroup>
+          <Label for='First Name'>First Name</Label>
+          <Input
             type='text'
             className='form-control'
-            disabled={this.props.disableEditing}
+            readOnly={this.props.disableEditing}
             value={
               this.props.selectedPerson.firstName
                 ? this.props.selectedPerson.firstName
@@ -39,15 +41,19 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             onChange={e =>
               this.props.changeProperty('firstName', e.target.value)
             }
+            invalid={error && error.path === 'firstName'}
           />
-        </div>
+          <FormFeedback>
+            {error && error.path === 'firstName' && error.message}
+          </FormFeedback>
+        </FormGroup>
 
-        <div className='form-group'>
-          <label>Last Name</label>
-          <input
+        <FormGroup>
+          <Label for='Last Name'>Last Name</Label>
+          <Input
             type='text'
             className='form-control'
-            disabled={this.props.disableEditing}
+            readOnly={this.props.disableEditing}
             value={
               this.props.selectedPerson.lastName
                 ? this.props.selectedPerson.lastName
@@ -56,30 +62,38 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             onChange={e =>
               this.props.changeProperty('lastName', e.target.value)
             }
+            invalid={error && error.path === 'lastName'}
           />
-        </div>
+          <FormFeedback>
+            {error && error.path === 'lastName' && error.message}
+          </FormFeedback>
+        </FormGroup>
 
-        <div className='form-group'>
-          <label>Email</label>
-          <input
+        <FormGroup>
+          <Label for='Email'>Email</Label>
+          <Input
             type='text'
             className='form-control'
-            disabled={this.props.disableEditing}
+            readOnly={this.props.disableEditing}
             value={
               this.props.selectedPerson.email
                 ? this.props.selectedPerson.email
                 : ''
             }
             onChange={e => this.props.changeProperty('email', e.target.value)}
+            invalid={error && error.path === 'email'}
           />
-        </div>
+          <FormFeedback>
+            {error && error.path === 'email' && error.message}
+          </FormFeedback>
+        </FormGroup>
 
-        <div className='form-group'>
-          <label>Home Phone Number</label>
-          <input
+        <FormGroup>
+          <Label for='Home Phone Number'>Home Phone Number</Label>
+          <Input
             type='text'
             className='form-control'
-            disabled={this.props.disableEditing}
+            readOnly={this.props.disableEditing}
             value={
               this.props.selectedPerson.homePhone
                 ? this.props.selectedPerson.homePhone
@@ -88,15 +102,19 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             onChange={e =>
               this.props.changeProperty('homePhone', e.target.value)
             }
+            invalid={error && error.path === 'homePhone'}
           />
-        </div>
+          <FormFeedback>
+            {error && error.path === 'homePhone' && error.message}
+          </FormFeedback>
+        </FormGroup>
 
-        <div className='form-group'>
-          <label>Team Phone Number</label>
-          <input
+        <FormGroup>
+          <Label for='Team Phone Number'>Team Phone Number</Label>
+          <Input
             type='text'
             className='form-control'
-            disabled={this.props.disableEditing}
+            readOnly={this.props.disableEditing}
             value={
               this.props.selectedPerson.teamPhone
                 ? this.props.selectedPerson.teamPhone
@@ -105,26 +123,34 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             onChange={e =>
               this.props.changeProperty('teamPhone', e.target.value)
             }
+            invalid={error && error.path === 'teamPhone'}
           />
-        </div>
+          <FormFeedback>
+            {error && error.path === 'teamPhone' && error.message}
+          </FormFeedback>
+        </FormGroup>
 
-        <div className='form-group'>
-          <label>Title</label>
-          <input
+        <FormGroup>
+          <Label for='Title'>Title</Label>
+          <Input
             type='text'
             className='form-control'
-            disabled={this.props.disableEditing}
+            readOnly={this.props.disableEditing}
             value={
               this.props.selectedPerson.title
                 ? this.props.selectedPerson.title
                 : ''
             }
             onChange={e => this.props.changeProperty('title', e.target.value)}
+            invalid={error && error.path === 'title'}
           />
-        </div>
+          <FormFeedback>
+            {error && error.path === 'title' && error.message}
+          </FormFeedback>
+        </FormGroup>
 
-        <div className='form-group'>
-          <label>Start Date</label>
+        <FormGroup>
+          <Label for='Start Date'>Start Date</Label>
           <br />
           <DatePicker
             value={
@@ -136,10 +162,10 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             format='MM/dd/yyyy'
             clearIcon={null}
           />
-        </div>
+        </FormGroup>
 
-        <div className='form-group'>
-          <label>End Date</label>
+        <FormGroup>
+          <Label for='End Date'>End Date</Label>
           <br />
           <DatePicker
             value={
@@ -151,7 +177,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             format='MM/dd/yyyy'
             clearIcon={null}
           />
-        </div>
+        </FormGroup>
 
         <AssignPerson
           disabled={this.props.disableEditing}
@@ -161,8 +187,8 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
           label='Supervisor'
         />
 
-        <div className='form-group'>
-          <label>Category</label>
+        <FormGroup>
+          <Label for='Category'>Category</Label>
           <select
             onChange={e =>
               this.props.changeProperty('category', e.target.value)
@@ -185,20 +211,20 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             <option value='Visitor'>Visitor</option>
             <option value='Volunteer'>Volunteer</option>
           </select>
-        </div>
+        </FormGroup>
 
-        <div className='form-group'>
-          <label>Notes</label>
+        <FormGroup>
+          <Label for='Notes'>Notes</Label>
           <textarea
             className='form-control'
             disabled={this.props.disableEditing}
             value={this.props.selectedPerson.notes || ''}
             onChange={e => this.props.changeProperty('notes', e.target.value)}
           />
-        </div>
+        </FormGroup>
 
-        <div className='form-group'>
-          <label>Tags</label>
+        <FormGroup>
+          <Label for='Tags'>Tags</Label>
           <SearchTags
             tags={this.props.tags}
             disabled={this.props.disableEditing}
@@ -209,7 +235,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             }
             onSelect={e => this.props.changeProperty('tags', e.join(','))}
           />
-        </div>
+        </FormGroup>
       </div>
     );
   }
