@@ -3,9 +3,11 @@ import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IAccess } from '../../models/Access';
+import { accessSchema, IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import AssignPerson from '../People/AssignPerson';
+import { AssignDate } from '../Shared/AssignDate';
 import AccessAssignmentCard from './AccessAssignmentCard';
 import AccessAssignmentTable from './AccessAssignmentTable';
 import AccessEditValues from './AccessEditValues';
@@ -23,15 +25,10 @@ interface IProps {
 interface IState {
   access?: IAccess;
   date: Date;
-  error: string;
+  error: IValidationError;
   person?: IPerson;
   submitting: boolean;
   validState: boolean;
-}
-
-interface IPersonValidation {
-  valid: boolean;
-  error?: Error;
 }
 
 export default class AssignAccess extends React.Component<IProps, IState> {
@@ -43,7 +40,10 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     this.state = {
       access: this.props.selectedAccess,
       date: addYears(startOfDay(new Date()), 3),
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       submitting: false,
       validState: false
     };
@@ -79,20 +79,16 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                   isRequired={
                     this.state.access && this.state.access.teamId !== 0
                   }
+                  error={this.state.error}
                 />
               </div>
               {(!!this.state.person || !!this.props.person) && (
-                <div className='form-group'>
-                  <label>Set the expiration date</label>
-                  <br />
-                  <DatePicker
-                    format='MM/dd/yyyy'
-                    required={true}
-                    clearIcon={null}
-                    value={this.state.date}
-                    onChange={this._changeDate}
-                  />
-                </div>
+                <AssignDate
+                  date={this.state.date}
+                  isRequired={true}
+                  error={this.state.error}
+                  onChangeDate={this._changeDate}
+                />
               )}
               {!this.state.access && (
                 <div className='form-group'>
@@ -150,7 +146,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                   </AccessEditValues>
                 </div>
               )}
-              {this.state.error}
             </form>
           </div>
         </ModalBody>
@@ -183,7 +178,10 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     this.setState({
       access: null,
       date: addYears(startOfDay(new Date()), 3),
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       person: null,
       submitting: false,
       validState: false
@@ -215,33 +213,22 @@ export default class AssignAccess extends React.Component<IProps, IState> {
 
   // once we have either selected or created the access we care about
   private _onSelected = (access: IAccess) => {
-    // if this access is not already assigned
-
-    // TODO: more validation of name
-    if (access.name.length > 64) {
-      this.setState(
-        {
-          access: null,
-          error: 'The access name you have chosen is too long'
-        },
-        this._validateState
-      );
-    } else {
-      this.setState(
-        {
-          access,
-          error: ''
-        },
-        this._validateState
-      );
-    }
+    this.setState(
+      {
+        access
+      },
+      this._validateState
+    );
   };
 
   private _onDeselected = () => {
     this.setState(
       {
         access: null,
-        error: ''
+        error: {
+          message: '',
+          path: ''
+        }
       },
       this._validateState
     );
@@ -252,55 +239,41 @@ export default class AssignAccess extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let error = '';
-    let valid = true;
-    if (!this.state.access || this.state.access.name === '') {
-      valid = false;
-    } else if (!!this.state.person || !!this.props.person) {
-      const result = this._checkValidAssignmentToPerson();
-      valid = result.valid;
-      error = result.error ? result.error.message : '';
-    } else if (
-      this.state.access.teamId !== 0 &&
-      !this.state.person &&
-      !this.props.person
-    ) {
-      // if not a new access, require a person
-      valid = false;
-    } else if (
-      (!!this.state.person || !!this.props.person) &&
-      (!this.state.date || !isBefore(new Date(), new Date(this.state.date)))
-    ) {
-      valid = false;
+    const checkValidAssignmentToPerson = this._checkValidAssignmentToPerson;
+    const personId = this.props.person
+      ? this.props.person.id
+      : this.state.person.id;
+    const error = yupAssetValidation(
+      accessSchema,
+      this.state.access,
+      {
+        context: { checkValidAssignmentToPerson, personId }
+      },
+      { date: this.state.date, person: this.state.person }
+    );
+    // duplicate assignments are checked on access.assignments
+    // but we want it to show up under the person input
+    if (error.path === 'assignments') {
+      error.path = 'person';
     }
-    this.setState({ validState: valid, error });
+    this.setState({ error, validState: error.message === '' });
   };
 
-  private _checkValidAssignmentToPerson = (): IPersonValidation => {
+  private _checkValidAssignmentToPerson = (
+    assignments: IAccessAssignment[],
+    personId: number
+  ) => {
     let valid = true;
-    const person = this.props.person ? this.props.person : this.state.person;
-    const assignments = this.state.access.assignments;
     for (const a of assignments) {
-      if (a.personId === person.id) {
+      if (a.personId === personId) {
         valid = false;
         break;
       }
     }
-
-    let error = null;
-    if (!valid) {
-      error = new Error(
-        'The user you have selected is already assigned this access.'
-      );
-    }
-
-    return { valid, error };
+    return valid;
   };
 
   private _changeDate = (newDate: Date) => {
-    this.setState(
-      { date: startOfDay(new Date(newDate)), error: '' },
-      this._validateState
-    );
+    this.setState({ date: startOfDay(new Date(newDate)) }, this._validateState);
   };
 }

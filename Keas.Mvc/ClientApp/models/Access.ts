@@ -10,15 +10,35 @@ export interface IAccess {
   teamId: number;
 }
 
-export const keySchema = yup.object<IAccess>().shape({
-  assignments: yup.array<IAccessAssignment>().nullable(),
+export const accessSchema = yup.object<IAccess>().shape({
+  assignments: yup
+    .array<IAccessAssignment>()
+    .nullable()
+    .test(
+      'checkValidAssignmentToPerson',
+      'The user you have selected is already assigned this access.',
+      function test(value) {
+        const context: any = this.options.context;
+        const valid = context.checkValidAssignmentToPerson(
+          value,
+          context.personId
+        );
+        return valid;
+      }
+    ),
   id: yup.number(),
   name: yup
     .string()
     .required()
     .max(64),
-  notes: yup.string().notRequired(),
-  tags: yup.string().notRequired(),
+  notes: yup
+    .string()
+    .notRequired()
+    .nullable(),
+  tags: yup
+    .string()
+    .notRequired()
+    .nullable(),
   teamId: yup.number()
 });
 
