@@ -71,7 +71,6 @@ export default class AssignAccess extends React.Component<IProps, IState> {
           <div className='container-fluid'>
             <form>
               <div className='form-group'>
-                <label htmlFor='assignto'>Assign To</label>
                 <AssignPerson
                   disabled={!!this.props.person}
                   person={this.props.person || this.state.person}
@@ -144,7 +143,9 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     tags={this.props.tags}
                   >
                     <AccessAssignmentCard disableEditing={true}>
-                      <AccessAssignmentTable assignments={this.state.access.assignments}/>
+                      <AccessAssignmentTable
+                        assignments={this.state.access.assignments}
+                      />
                     </AccessAssignmentCard>
                   </AccessEditValues>
                 </div>
