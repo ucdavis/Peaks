@@ -1,6 +1,7 @@
 import { endOfDay } from 'date-fns';
 import * as yup from 'yup';
 import { ValidateOptions, ValidationError } from 'yup';
+import { IAccess } from './Access';
 import { IEquipment } from './Equipment';
 import { IKey } from './Keys';
 import { IKeySerial } from './KeySerials';
@@ -31,9 +32,9 @@ export interface IAssignmentSchema {
 
 export const yupAssetValidation = (
   schema: yup.ObjectSchema<
-    IKey | IKeySerial | IEquipment | IWorkstation | IPerson
+    IKey | IKeySerial | IEquipment | IWorkstation | IPerson | IAccess
   >,
-  asset: IKey | IKeySerial | IEquipment | IWorkstation | IPerson,
+  asset: IKey | IKeySerial | IEquipment | IWorkstation | IPerson | IAccess,
   options?: ValidateOptions,
   assignment?: IAssignmentSchema
 ) => {
