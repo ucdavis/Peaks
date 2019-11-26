@@ -39,24 +39,6 @@ export interface ITeam {
   slug: string;
 }
 
-export interface IAccess {
-  id: number;
-  teamId: number;
-  name: string;
-  notes: string;
-  tags: string;
-  assignments: IAccessAssignment[];
-}
-
-export interface IAccessAssignment {
-  id: number;
-  accessId: number;
-  access: IAccess;
-  expiresAt: Date;
-  person: IPerson;
-  personId: number;
-}
-
 export interface IHasExpiration {
   expiresAt: Date;
 }
