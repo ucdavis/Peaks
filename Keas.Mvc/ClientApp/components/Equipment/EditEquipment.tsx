@@ -156,11 +156,10 @@ export default class EditEquipment extends React.Component<IProps, IState> {
       return;
     }
     this.setState({ submitting: true });
-    this.state.equipment.attributes = this.state.equipment.attributes.filter(
-      x => !!x.key
-    );
+    const equipment = this.state.equipment;
+    equipment.attributes = equipment.attributes.filter(x => !!x.key);
     try {
-      await this.props.onEdit(this.state.equipment);
+      await this.props.onEdit(equipment);
     } catch (e) {
       this.setState({ submitting: false });
       return;
