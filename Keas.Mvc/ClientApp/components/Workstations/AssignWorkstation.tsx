@@ -140,6 +140,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                         changeProperty={this._changeProperty}
                         disableEditing={false}
                         disableSpaceEditing={false}
+                        error={this.state.error}
                       />
                     </div>
                   )}
