@@ -17,7 +17,6 @@ interface IProps {
 }
 
 interface IState {
-  modal: boolean;
   isSearchLoading: boolean;
   people: IPerson[];
 }
@@ -32,7 +31,6 @@ export default class AssignPerson extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       isSearchLoading: false,
-      modal: false,
       people: []
     };
   }
