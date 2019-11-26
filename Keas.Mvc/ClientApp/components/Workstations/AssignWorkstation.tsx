@@ -185,12 +185,12 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
 
   private _changeProperty = (property: string, value: string) => {
     this.setState(
-      {
+      prevState => ({
         workstation: {
-          ...this.state.workstation,
+          ...prevState.workstation,
           [property]: value
         }
-      },
+      }),
       this._validateState
     );
   };
