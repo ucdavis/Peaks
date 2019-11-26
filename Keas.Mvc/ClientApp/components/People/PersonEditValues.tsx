@@ -1,6 +1,6 @@
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
-import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
+import { FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import DatePicker from 'react-date-picker';
 import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';

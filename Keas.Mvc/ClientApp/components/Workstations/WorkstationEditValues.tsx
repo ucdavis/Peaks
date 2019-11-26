@@ -22,6 +22,7 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
     if (!this.props.selectedWorkstation) {
       return null;
     }
+    const error = this.props.error;
     return (
       <div>
         {this.props.disableEditing && this.props.openEditModal && (
@@ -43,17 +44,20 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
             <Input
               type='text'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               value={
                 this.props.selectedWorkstation.name
                   ? this.props.selectedWorkstation.name
                   : ''
               }
               onChange={e => this.props.changeProperty('name', e.target.value)}
-              invalid={!this.props.selectedWorkstation.name}
+              invalid={error && error.path === 'name'}
             />
-            <FormFeedback>Item name is required</FormFeedback>
+            <FormFeedback>
+              {error && error.path === 'name' && error.message}
+            </FormFeedback>
           </FormGroup>
+
           {this.props.disableSpaceEditing && (
             <div className='form-group'>
               <label>Room</label>
@@ -83,17 +87,24 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
               />
             </FormGroup>
           )}
-          <div className='form-group'>
-            <label>Notes</label>
-            <textarea
+
+          <FormGroup>
+            <Label for='notes'>Notes</Label>
+            <Input
+              type='textarea'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               value={this.props.selectedWorkstation.notes || ''}
               onChange={e => this.props.changeProperty('notes', e.target.value)}
+              invalid={error && error.path === 'notes'}
             />
-          </div>
-          <div className='form-group'>
-            <label>Tags</label>
+            <FormFeedback>
+              {error && error.path === 'notes' && error.message}
+            </FormFeedback>
+          </FormGroup>
+
+          <FormGroup>
+            <Label for='tags'>Tags</Label>
             <SearchTags
               tags={this.props.tags}
               disabled={this.props.disableEditing}
@@ -104,7 +115,10 @@ export default class WorkstationEditValues extends React.Component<IProps, {}> {
               }
               onSelect={e => this.props.changeProperty('tags', e.join(','))}
             />
-          </div>
+            <FormFeedback>
+              {error && error.path === 'tags' && error.message}
+            </FormFeedback>
+          </FormGroup>
         </div>
       </div>
     );
