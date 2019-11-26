@@ -189,7 +189,9 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
 
         <FormGroup>
           <Label for='Category'>Category</Label>
-          <select
+          <Input
+            type='select'
+            disabled={this.props.disableEditing}
             onChange={e =>
               this.props.changeProperty('category', e.target.value)
             }
@@ -210,14 +212,15 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             <option value='Undergrad'>Undergrad</option>
             <option value='Visitor'>Visitor</option>
             <option value='Volunteer'>Volunteer</option>
-          </select>
+          </Input>
         </FormGroup>
 
         <FormGroup>
           <Label for='Notes'>Notes</Label>
-          <textarea
+          <Input
+            type='textarea'
             className='form-control'
-            disabled={this.props.disableEditing}
+            readOnly={this.props.disableEditing}
             value={this.props.selectedPerson.notes || ''}
             onChange={e => this.props.changeProperty('notes', e.target.value)}
           />
