@@ -1,6 +1,6 @@
 import * as yup from 'yup';
-import { ISpace } from '../models/Spaces';
 import { IKeySerial } from './KeySerials';
+import { ISpace } from './Spaces';
 
 export interface IKeyInfo {
   id: number;

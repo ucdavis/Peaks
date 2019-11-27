@@ -1,5 +1,5 @@
 import { format, min } from 'date-fns';
-import { IHasExpiration } from '../Types';
+import { IHasExpiration } from '../models/Shared';
 
 export class DateUtil {
   public static formatExpiration(expiration: Date) {

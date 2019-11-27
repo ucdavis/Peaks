@@ -1,6 +1,6 @@
 import * as yup from 'yup';
-import { ISpace } from '../models/Spaces';
 import { IPerson } from './People';
+import { ISpace } from './Spaces';
 
 export interface IEquipment {
   assignment?: IEquipmentAssignment;
