@@ -117,6 +117,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                         this.setState({ access }, this._validateState)
                       }
                       tags={this.props.tags}
+                      error={this.state.error}
                     />
                   </div>
                 )}
@@ -136,6 +137,7 @@ export default class AssignAccess extends React.Component<IProps, IState> {
                     selectedAccess={this.state.access}
                     disableEditing={true}
                     tags={this.props.tags}
+                    error={this.state.error}
                   >
                     <AccessAssignmentCard disableEditing={true}>
                       <AccessAssignmentTable
