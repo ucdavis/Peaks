@@ -240,11 +240,12 @@ export default class AssignAccess extends React.Component<IProps, IState> {
   private _validateState = () => {
     const checkValidAssignmentToPerson = this._checkValidAssignmentToPerson;
     const person = this.props.person ? this.props.person : this.state.person;
+    const personId = person ? person.id : null;
     const error = yupAssetValidation(
       accessSchema,
       this.state.access,
       {
-        context: { checkValidAssignmentToPerson, personId: person.id }
+        context: { checkValidAssignmentToPerson, personId }
       },
       { date: this.state.date, person }
     );
