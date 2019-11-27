@@ -41,9 +41,15 @@ export const keySchema = yup.object<IKey>().shape({
     .string()
     .required()
     .max(64),
-  notes: yup.string().notRequired(),
+  notes: yup
+    .string()
+    .notRequired()
+    .nullable(),
   serials: yup.array<IKeySerial>().nullable(),
-  tags: yup.string().notRequired(),
+  tags: yup
+    .string()
+    .notRequired()
+    .nullable(),
   teamId: yup.number()
 });
 
