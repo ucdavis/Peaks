@@ -19,6 +19,10 @@ export const accessSchema = yup.object<IAccess>().shape({
       'The user you have selected is already assigned this access.',
       function test(value) {
         const context: any = this.options.context;
+        if (!context) {
+          // if we haven't been supplied context (e.g. on edit)
+          return true; // default to true
+        }
         const valid = context.checkValidAssignmentToPerson(
           value,
           context.personId
