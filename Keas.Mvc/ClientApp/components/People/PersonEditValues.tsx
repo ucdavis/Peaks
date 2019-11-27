@@ -3,7 +3,7 @@ import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
-import { ISpace } from '../../Types';
+import { ISpace } from '../../models/Spaces';
 import SearchTags from '../Tags/SearchTags';
 import AssignPerson from './AssignPerson';
 

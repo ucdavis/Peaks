@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { ISpace } from '../Types';
+import { ISpace } from '../models/Spaces';
 import { IPerson } from './People';
 
 export interface IEquipment {
@@ -100,4 +100,9 @@ export interface IEquipmentAttribute {
   equipmentId: number;
   key: string;
   value: string;
+}
+
+export interface IBigFixSearchedName {
+  id: string;
+  name: string;
 }

@@ -9,7 +9,7 @@ import {
 } from '../../models/Equipment';
 import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
-import { ISpace } from '../../Types';
+import { ISpace } from '../../models/Spaces';
 import AssignPerson from '../People/AssignPerson';
 import { AssignDate } from '../Shared/AssignDate';
 import EquipmentEditValues from './EquipmentEditValues';

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { IKeyInfo } from '../../models/Keys';
-import { ISpace } from '../../Types';
+import { ISpace } from '../../models/Spaces';
 import SpacesListItem from './SpacesListItem';
 
 interface IProps {

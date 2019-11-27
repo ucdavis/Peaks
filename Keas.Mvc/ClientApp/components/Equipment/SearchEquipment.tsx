@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IEquipment, IEquipmentLabel } from '../../models/Equipment';
-import { ISpace } from '../../Types';
+import { ISpace } from '../../models/Spaces';
 
 interface IProps {
   onDeselect: () => void;

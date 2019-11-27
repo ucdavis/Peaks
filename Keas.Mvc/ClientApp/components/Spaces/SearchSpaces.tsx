@@ -2,7 +2,7 @@
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
-import { ISpace } from '../../Types';
+import { ISpace } from '../../models/Spaces';
 
 interface IProps {
   onSelect: (space: ISpace) => void;

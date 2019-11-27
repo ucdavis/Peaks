@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IEquipment, IEquipmentAttribute } from '../../models/Equipment';
 import { IValidationError } from '../../models/Shared';
-import { ISpace } from '../../Types';
+import { ISpace } from '../../models/Spaces';
 import SearchSpaces from '../Spaces/SearchSpaces';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentAttributes from './EquipmentAttributes';

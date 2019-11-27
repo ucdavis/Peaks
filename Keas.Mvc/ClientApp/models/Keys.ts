@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { ISpace } from '../Types';
+import { ISpace } from '../models/Spaces';
 import { IKeySerial } from './KeySerials';
 
 export interface IKeyInfo {

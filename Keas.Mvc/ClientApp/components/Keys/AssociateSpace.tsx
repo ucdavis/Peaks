@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKeyInfo } from '../../models/Keys';
-import { ISpace } from '../../Types';
+import { ISpace } from '../../models/Spaces';
 import SearchSpaces from '../Spaces/SearchSpaces';
 import KeyEditValues from './KeyEditValues';
 import SearchKeys from './SearchKeys';

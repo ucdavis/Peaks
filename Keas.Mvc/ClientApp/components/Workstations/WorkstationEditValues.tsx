@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
+import { ISpace } from '../../models/Spaces';
 import { IWorkstation } from '../../models/Workstations';
-import { ISpace } from '../../Types';
 import SearchSpaces from '../Spaces/SearchSpaces';
 import SearchTags from '../Tags/SearchTags';
 
