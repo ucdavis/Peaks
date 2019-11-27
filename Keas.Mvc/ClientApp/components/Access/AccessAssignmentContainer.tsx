@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { Context } from '../../Context';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
-import { IMatchParams } from '../../Types';
+import { IMatchParams } from '../../models/Shared';
 import AccessAssignmentCard from './AccessAssignmentCard';
 import AssignmentTable from './AccessAssignmentTable';
 import AccessList from './AccessList';

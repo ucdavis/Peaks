@@ -4,7 +4,7 @@ import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey } from '../../models/Keys';
 import { IPerson, IPersonInfo } from '../../models/People';
-import { IMatchParams } from '../../Types';
+import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import AssignmentContainer from '../Access/AccessAssignmentContainer';
 import EquipmentContainer from '../Equipment/EquipmentContainer';

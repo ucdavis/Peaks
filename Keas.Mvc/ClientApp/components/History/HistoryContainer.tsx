@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import { IHistory } from '../../Types';
+import { IHistory } from '../../models/Shared';
 import HistoryList from './HistoryList';
 
 interface IState {

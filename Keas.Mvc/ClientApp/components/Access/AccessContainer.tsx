@@ -5,7 +5,7 @@ import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
-import { IMatchParams } from '../../Types';
+import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';

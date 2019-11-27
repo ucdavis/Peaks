@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
-import { IMatchParams } from '../../Types';
+import { IMatchParams } from '../../models/Shared';
 import HistoryContainer from '../History/HistoryContainer';
 import SpacesContainer from '../Spaces/SpacesContainer';
 import KeySerialContainer from './KeySerialContainer';
