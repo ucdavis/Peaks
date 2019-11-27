@@ -71,8 +71,3 @@ export interface IHistory {
   assetType?: string;
   id: number;
 }
-
-export interface IBigFixSearchedName {
-  id: string;
-  name: string;
-}
