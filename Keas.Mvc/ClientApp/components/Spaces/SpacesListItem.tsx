@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button } from 'reactstrap';
-import { ISpace } from '../../Types';
+import { ISpace } from '../../models/Spaces';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 
 interface IProps {

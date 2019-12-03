@@ -13,7 +13,7 @@ import {
   Table
 } from 'reactstrap';
 import { Context } from '../../Context';
-import { IBigFixSearchedName } from '../../Types';
+import { IBigFixSearchedName } from '../../models/Equipment';
 
 interface IProps {
   addBigFixId: (property: string, id: string) => void;

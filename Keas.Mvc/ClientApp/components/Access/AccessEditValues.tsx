@@ -1,19 +1,21 @@
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { IAccess } from '../../Types';
+import { IAccess } from '../../models/Access';
+import { IValidationError } from '../../models/Shared';
 import SearchTags from '../Tags/SearchTags';
-import AccessAssignmentCard from './AccessAssignmentCard';
-import AccessAssignmentTable from './AccessAssignmentTable';
 
 interface IProps {
   selectedAccess: IAccess;
   disableEditing: boolean;
   openEditModal?: (access: IAccess) => void;
   tags?: string[];
-  onAccessUpdate?(access: IAccess);
+  error?: IValidationError;
+  onAccessUpdate?: (access: IAccess) => void;
 }
 
-export default class AccessEditValues extends React.Component<React.PropsWithChildren<IProps>> {
+export default class AccessEditValues extends React.Component<
+  React.PropsWithChildren<IProps>
+> {
   constructor(props: React.PropsWithChildren<IProps>) {
     super(props);
     if (!props.disableEditing && !props.onAccessUpdate) {
@@ -24,6 +26,7 @@ export default class AccessEditValues extends React.Component<React.PropsWithChi
   }
   public render() {
     const access = this.props.selectedAccess;
+    const error = this.props.error;
     return (
       <div>
         {this.props.disableEditing && this.props.openEditModal && (
@@ -45,28 +48,39 @@ export default class AccessEditValues extends React.Component<React.PropsWithChi
             <Input
               type='text'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               value={
                 this.props.selectedAccess && this.props.selectedAccess.name
                   ? this.props.selectedAccess.name
                   : ''
               }
-              onChange={e => this.props.onAccessUpdate({...access, name: e.target.value})}
-              invalid={!this.props.selectedAccess.name}
+              onChange={e =>
+                this.props.onAccessUpdate({ ...access, name: e.target.value })
+              }
+              invalid={error && error.path === 'name'}
             />
-            <FormFeedback>Item name is required</FormFeedback>
+            <FormFeedback>
+              {error && error.path === 'name' && error.message}
+            </FormFeedback>
           </FormGroup>
-          <div className='form-group'>
-            <label>Notes</label>
-            <textarea
+          <FormGroup>
+            <Label>Notes</Label>
+            <Input
+              type='textarea'
               className='form-control'
-              disabled={this.props.disableEditing}
+              readOnly={this.props.disableEditing}
               value={this.props.selectedAccess.notes || ''}
-              onChange={e => this.props.onAccessUpdate({...access, notes: e.target.value})}
+              onChange={e =>
+                this.props.onAccessUpdate({ ...access, notes: e.target.value })
+              }
+              invalid={error && error.path === 'notes'}
             />
-          </div>
-          <div className='form-group'>
-            <label>Tags</label>
+            <FormFeedback>
+              {error && error.path === 'notes' && error.message}
+            </FormFeedback>
+          </FormGroup>
+          <FormGroup>
+            <Label>Tags</Label>
             <SearchTags
               tags={this.props.tags}
               disabled={this.props.disableEditing}
@@ -76,11 +90,14 @@ export default class AccessEditValues extends React.Component<React.PropsWithChi
                   : []
               }
               onSelect={e => {
-                access.tags = e.join(',')
-                this.props.onAccessUpdate(access)
+                access.tags = e.join(',');
+                this.props.onAccessUpdate(access);
               }}
             />
-          </div>
+            <FormFeedback>
+              {error && error.path === 'tags' && error.message}
+            </FormFeedback>
+          </FormGroup>
           {this.props.children}
         </div>
       </div>

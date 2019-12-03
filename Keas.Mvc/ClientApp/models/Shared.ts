@@ -1,6 +1,7 @@
 import { endOfDay } from 'date-fns';
 import * as yup from 'yup';
 import { ValidateOptions, ValidationError } from 'yup';
+import { IAccess } from './Access';
 import { IEquipment } from './Equipment';
 import { IKey } from './Keys';
 import { IKeySerial } from './KeySerials';
@@ -31,9 +32,9 @@ export interface IAssignmentSchema {
 
 export const yupAssetValidation = (
   schema: yup.ObjectSchema<
-    IKey | IKeySerial | IEquipment | IWorkstation | IPerson
+    IKey | IKeySerial | IEquipment | IWorkstation | IPerson | IAccess
   >,
-  asset: IKey | IKeySerial | IEquipment | IWorkstation | IPerson,
+  asset: IKey | IKeySerial | IEquipment | IWorkstation | IPerson | IAccess,
   options?: ValidateOptions,
   assignment?: IAssignmentSchema
 ) => {
@@ -58,3 +59,54 @@ export const yupAssetValidation = (
   }
   return error;
 };
+
+// Main Type of the context
+// tslint:disable-next-line:interface-name
+export interface AppContext {
+  fetch: (url: string, init?: RequestInit) => any;
+  team: ITeam;
+  permissions: string[];
+}
+
+// /:team/${container}/:containerAction?/:containerId?/:assetType?/:action?/:id
+export interface IMatchParams {
+  containerAction: string;
+  containerId: string;
+  assetType: string;
+  action: string;
+  id: string;
+}
+
+export interface IRouteProps {
+  id: string;
+  action: string;
+
+  assetType: string;
+
+  personId: string;
+  personAction: string;
+
+  spaceId: string;
+  spaceAction: string;
+
+  keyId: string;
+  keyAction: string;
+}
+
+export interface ITeam {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface IHasExpiration {
+  expiresAt: Date;
+}
+
+export interface IHistory {
+  description: string;
+  actedDate: Date;
+  actionType?: string;
+  assetType?: string;
+  id: number;
+}

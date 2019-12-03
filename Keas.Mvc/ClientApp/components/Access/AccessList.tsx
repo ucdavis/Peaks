@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IAccess, IAccessAssignment } from '../../Types';
+import { IAccess } from '../../models/Access';
 import AccessListItem from './AccessListItem';
 
 interface IProps {

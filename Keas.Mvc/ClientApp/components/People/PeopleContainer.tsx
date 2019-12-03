@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { Context } from '../../Context';
 import { IKey } from '../../models/Keys';
 import { IPerson, IPersonInfo } from '../../models/People';
-import { IMatchParams } from '../../Types';
+import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';

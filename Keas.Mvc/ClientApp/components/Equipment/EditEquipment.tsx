@@ -7,7 +7,7 @@ import {
   IEquipmentAttribute
 } from '../../models/Equipment';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
-import { ISpace } from '../../Types';
+import { ISpace } from '../../models/Spaces';
 import EquipmentAssignmentValues from './EquipmentAssignmentValues';
 import EquipmentEditValues from './EquipmentEditValues';
 

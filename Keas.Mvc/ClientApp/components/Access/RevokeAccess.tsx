@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Alert, Button } from 'reactstrap';
-import { IAccessAssignment } from '../../Types';
+import { IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
 import SearchTags from '../Tags/SearchTags';
 import AccessModal from './AccessModal';
@@ -26,7 +26,7 @@ export default class RevokeAccess extends React.Component<IProps, IState> {
   public render() {
     const valid = !!this.props.assignment;
     const assignment = this.props.assignment;
-    const { person } = assignment || {person: null};
+    const { person } = assignment || { person: null };
     return valid ? (
       <AccessModal
         isOpen={true}

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
-import { IPerson } from '../../models/People';
-import { IAccess, IAccessAssignment } from '../../Types';
+import { accessSchema, IAccess } from '../../models/Access';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import AccessEditValues from './AccessEditValues';
 
 interface IProps {
@@ -14,7 +14,7 @@ interface IProps {
 }
 
 interface IState {
-  error: string;
+  error: IValidationError;
   access: IAccess;
   submitting: boolean;
   validState: boolean;
@@ -28,7 +28,10 @@ export default class EditAccess extends React.Component<IProps, IState> {
     super(props);
     this.state = {
       access: this.props.selectedAccess,
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       submitting: false,
       validState: false
     };
@@ -57,11 +60,13 @@ export default class EditAccess extends React.Component<IProps, IState> {
               <AccessEditValues
                 selectedAccess={this.state.access}
                 disableEditing={false}
-                onAccessUpdate={access => this.setState({access}, this._validateState)}
+                onAccessUpdate={access =>
+                  this.setState({ access }, this._validateState)
+                }
                 tags={this.props.tags}
+                error={this.state.error}
               />
             </form>
-            {this.state.error}
           </div>
         </ModalBody>
         <ModalFooter>
@@ -92,7 +97,10 @@ export default class EditAccess extends React.Component<IProps, IState> {
   private _closeModal = () => {
     this.setState({
       access: null,
-      error: '',
+      error: {
+        message: '',
+        path: ''
+      },
       submitting: false,
       validState: false
     });
@@ -116,17 +124,7 @@ export default class EditAccess extends React.Component<IProps, IState> {
   };
 
   private _validateState = () => {
-    let valid = true;
-    let error = '';
-    if (!this.state.access) {
-      valid = false;
-    } else if (!this.state.access.name) {
-      valid = false;
-      error = 'You must give this access a name.';
-    } else if (this.state.access.name.length > 64) {
-      valid = false;
-      error = 'The name you have chosen is too long';
-    }
-    this.setState({ validState: valid, error });
+    const error = yupAssetValidation(accessSchema, this.state.access);
+    this.setState({ error, validState: error.message === '' });
   };
 }

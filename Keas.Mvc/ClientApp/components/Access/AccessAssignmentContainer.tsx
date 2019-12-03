@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { RouteChildrenProps, withRouter } from 'react-router';
 import { toast } from 'react-toastify';
-import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import AccessAssignmentCard from './AccessAssignmentCard';
+import { IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
-import { IAccess, IAccessAssignment, IMatchParams } from '../../Types';
+import { IMatchParams } from '../../models/Shared';
+import AccessAssignmentCard from './AccessAssignmentCard';
 import AssignmentTable from './AccessAssignmentTable';
 import AccessList from './AccessList';
 import AssignAccess from './AssignAccess';

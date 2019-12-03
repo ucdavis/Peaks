@@ -1,6 +1,6 @@
-import { IAccessAssignment } from 'ClientApp/Types';
 import * as React from 'react';
 import ReactTable from 'react-table';
+import { IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
 
@@ -14,7 +14,7 @@ const accessAssignTable: React.FunctionComponent<IProps> = (
   props: React.PropsWithChildren<IProps>
 ): React.ReactElement => {
   const options = [...ReactTableExpirationUtil.defaultFilterOptions];
-  options.splice(options.findIndex(v => v.value === 'unassigned'), 1)
+  options.splice(options.findIndex(v => v.value === 'unassigned'), 1);
 
   const columns = [
     {

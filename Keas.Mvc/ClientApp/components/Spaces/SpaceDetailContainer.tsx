@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ISpace } from '../../Types';
+import { ISpace } from '../../models/Spaces';
 
 interface IProps {
   space: ISpace;

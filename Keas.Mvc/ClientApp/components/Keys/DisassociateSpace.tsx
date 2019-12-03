@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { IKeyInfo } from '../../models/Keys';
-import { ISpace } from '../../Types';
+import { ISpace } from '../../models/Spaces';
 import KeyEditValues from './KeyEditValues';
 
 interface IProps {

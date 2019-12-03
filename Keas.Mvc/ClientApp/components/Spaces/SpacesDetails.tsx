@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
-import { IMatchParams, ISpaceInfo } from '../../Types';
+import { IMatchParams } from '../../models/Shared';
+import { ISpaceInfo } from '../../models/Spaces';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
 import KeyContainer from '../Keys/KeyContainer';
 import WorkstationContainer from '../Workstations/WorkstationContainer';

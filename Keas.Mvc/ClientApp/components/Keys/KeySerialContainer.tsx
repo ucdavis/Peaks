@@ -6,7 +6,7 @@ import { Context } from '../../Context';
 import { IKey } from '../../models/Keys';
 import { IKeySerial } from '../../models/KeySerials';
 import { IPerson } from '../../models/People';
-import { IMatchParams } from '../../Types';
+import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import AssignKeySerial from './AssignKeySerial';

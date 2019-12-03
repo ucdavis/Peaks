@@ -4,8 +4,8 @@ import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
 import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
+import { ISpace } from '../../models/Spaces';
 import { IWorkstation, workstationSchema } from '../../models/Workstations';
-import { ISpace } from '../../Types';
 import AssignPerson from '../People/AssignPerson';
 import { AssignDate } from '../Shared/AssignDate';
 import SearchWorkstations from './SearchWorkstations';
@@ -251,11 +251,11 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
   private _onDeselected = () => {
     this.setState(
       {
-        workstation: null,
         error: {
           message: '',
           path: ''
-        }
+        },
+        workstation: null
       },
       this._validateState
     );
