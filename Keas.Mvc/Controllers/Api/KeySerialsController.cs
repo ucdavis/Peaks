@@ -37,12 +37,9 @@ namespace Keas.Mvc.Controllers.Api
             var query = _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active);
 
-            foreach (var term in terms)
-            {
-                query = query.Where(x => x.Key.Name.StartsWith(term, comparison)
-                                        || x.Key.Code.StartsWith(term, comparison)
-                                        || x.Number.StartsWith(term, comparison));
-            }
+            query = query.Where(x => x.Key.Name.StartsWith(q, comparison)
+                                     || x.Key.Code.StartsWith(q, comparison)
+                                     || x.Number.StartsWith(q, comparison));
 
             var keySerials = await query
                 .Include(x => x.Key)
@@ -50,6 +47,24 @@ namespace Keas.Mvc.Controllers.Api
                 .OrderBy(x => x.KeySerialAssignment != null).ThenBy(x => x.Number)
                 .AsNoTracking()
                 .ToListAsync();
+
+            if (keySerials.Count <= 5)
+            {
+                query = _context.KeySerials
+                    .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active);
+                query = query.Where(x => terms.Any(a => a.StartsWith(x.Key.Name, comparison))
+                || terms.Any(a => a.StartsWith(x.Key.Code, comparison))
+                || terms.Any(a => a.StartsWith(x.Number, comparison)));
+
+                keySerials = await query
+                    .Include(x => x.Key)
+                    .Include(x => x.KeySerialAssignment)
+                    .OrderBy(x => x.KeySerialAssignment != null).ThenBy(x => x.Number)
+                    .AsNoTracking()
+                    .ToListAsync();
+            }
+
+
 
             return Json(keySerials);
         }
