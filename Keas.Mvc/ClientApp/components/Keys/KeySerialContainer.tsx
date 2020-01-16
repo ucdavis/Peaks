@@ -427,11 +427,12 @@ export default class KeySerialContainer extends React.Component<
   };
 
   private _checkIfKeySerialNumberIsValid = (
+    keyId: number,
     keySerialNumber: string,
     id: number
   ) => {
     return !this.state.keySerials.some(
-      x => x.number === keySerialNumber && x.id !== id
+      x => x.number === keySerialNumber && x.id !== id && x.keyId === keyId
     );
   };
 

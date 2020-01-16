@@ -8,6 +8,7 @@ export interface IKeySerial {
   status: string;
   notes: string;
   key: IKey;
+  keyId?: number;
   keySerialAssignment?: IKeySerialAssignment;
 }
 
@@ -28,7 +29,10 @@ export const keySerialSchema = yup.object<IKeySerial>().shape({
       'The serial number you have chosen is already in use.',
       function test(value) {
         const context: any = this.options.context;
-        return context.checkIfKeySerialNumberIsValid(value, this.parent.id);
+        // on people page, keyId is pulled from searching
+        // on key serials page, key obj is passed in 
+        const keyId = this.parent.key ? this.parent.key.id : this.parent.keyId;
+        return context.checkIfKeySerialNumberIsValid(keyId,value, this.parent.id);
       }
     ),
   status: yup

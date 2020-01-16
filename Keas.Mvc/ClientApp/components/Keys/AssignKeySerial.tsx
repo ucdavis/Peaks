@@ -32,7 +32,7 @@ interface IProps {
   openEditModal: (keySerial: IKeySerial) => void;
   openDetailsModal: (keySerial: IKeySerial) => void;
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
-  checkIfKeySerialNumberIsValid: (serialNumber: string, id: number) => boolean;
+  checkIfKeySerialNumberIsValid: (keyId: number, serialNumber: string, id: number) => boolean;
 }
 
 interface IState {
