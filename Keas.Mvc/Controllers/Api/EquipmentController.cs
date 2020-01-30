@@ -139,7 +139,7 @@ namespace Keas.Mvc.Controllers.Api
             }
             if (equipment.Space != null)
             {
-                var space = await _context.Spaces.SingleAsync(x => x.RoomKey == equipment.Space.RoomKey);
+                var space = await _context.Spaces.FirstAsync(x => x.Id == equipment.Space.Id);
                 equipment.Space = space;
             }
 

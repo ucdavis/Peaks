@@ -140,7 +140,7 @@ namespace Keas.Mvc.Controllers.Api
             }
             if (workstation.Space != null)
             {
-                var space = await _context.Spaces.SingleAsync(s => s.RoomKey == workstation.Space.RoomKey);
+                var space = await _context.Spaces.SingleAsync(s => s.Id == workstation.Space.Id);
                 workstation.Space = space;
             }
             _context.Workstations.Add(workstation);
