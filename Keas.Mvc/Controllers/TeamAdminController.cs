@@ -111,6 +111,12 @@ namespace Keas.Mvc.Controllers
                 return View(model);
             }
 
+            if (await _context.FISOrgs.AnyAsync(a => a.Team.Slug == Team && a.OrgCode.Equals(model.OrgCode, StringComparison.OrdinalIgnoreCase)))
+            {
+                ErrorMessage = "Org already esists for this team.";
+                return View(model);
+            }
+
             model.OrgCode = model.OrgCode.ToUpper();
             var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
             if (team == null)
