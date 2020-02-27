@@ -24,7 +24,7 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> ListTags() 
         {
-            var tags = await _context.Tags.Where(x => x.Team.Slug == Team).Select(x => x.Name).AsNoTracking().ToListAsync();
+            var tags = await _context.Tags.Where(x => x.Team.Slug == Team).Select(x => x.Name).OrderBy(x => x).AsNoTracking().ToListAsync();
             return Json(tags);
         }
     }

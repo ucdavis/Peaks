@@ -39,6 +39,7 @@ namespace Keas.Mvc.Controllers.Api
                         || (!string.IsNullOrWhiteSpace(x.RoomName) && queryWords.Any(s => x.RoomName.ToLower().Contains(s)))
                         || (!string.IsNullOrWhiteSpace(x.RoomNumber) && queryWords.Any(s => x.RoomNumber.ToLower().Contains(s)))))
                 .AsNoTracking()
+                .OrderBy(x => x.RoomNumber)
                 .ToListAsync();
 
             return Json(space);
