@@ -33,7 +33,7 @@ namespace Keas.Mvc.Helpers
             // Create Config Super User
             if (!string.IsNullOrWhiteSpace(_superuserSettings.Kerb))
             {
-                var su = CreateOrFindUser(new User{Id = _superuserSettings.Kerb, FirstName = _superuserSettings.FirstName, LastName = _superuserSettings.LastName, Email = _superuserSettings .Email});
+                var su = CreateOrFindUser(new User{Id = _superuserSettings.Kerb, FirstName = _superuserSettings.FirstName, LastName = _superuserSettings.LastName, Email = _superuserSettings.Email, Iam = _superuserSettings.Iam});
 
                 // Create All Admin Assignments
                 CreateSystemPermission(new SystemPermission {Role = admin, User = su});
