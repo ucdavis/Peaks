@@ -6,15 +6,32 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-@if(Model.PendingItems){
-      <div class="alert alert-warning">
-        <div class="row justify-content-between align-middle">
-          <p>You have pending items!</p>
-          <a asp-controller="Confirm" asp-action="Confirm">Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
-
+@if(Model.PendingItems)
+{
+    var currentSlug = TempData["TeamName"] as string;
+    if (Model.TeamsWithPendingAssignments.Any(a => a.Slug != null && a.Slug == currentSlug))
+    {
+        <div class="alert alert-warning">
+            <div class="row justify-content-between align-middle">
+                <p>You have pending items!</p>
+                <a asp-controller="Confirm" asp-action="Confirm">Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
+            </div>
         </div>
-      </div>
     }
+    if (Model.TeamsWithPendingAssignments.Any(a => a.Slug != currentSlug))
+    {
+        <h3>You have items pending in other teams:</h3>
+        foreach (var teamWithPending in Model.TeamsWithPendingAssignments.Where(a => a.Slug != "equip-test-1"))
+        {
+            <div class="alert alert-warning">
+                <div class="row justify-content-between align-middle">
+                    <p>You have pending items in team @teamWithPending.Name!</p>
+                    <a href='@string.Format("/{0}/Confirm/Confirm", teamWithPending.Slug)'>Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
+                </div>
+            </div>
+        }
+    }
+}
 <div class="card">
   <div class="card-header-primary">
     <div class="card-head t-center">

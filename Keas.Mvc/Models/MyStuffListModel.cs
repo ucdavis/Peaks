@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using System.Linq;
@@ -16,7 +16,7 @@ namespace Keas.Mvc.Models
         public List<Workstation> Workstations { get; set; }
         public List<History> Histories { get; set; }
         public bool PendingItems { get; set; }
-
+        public IEnumerable<Team> TeamsWithPendingAssignments { get; set; }
 
 
         public static async Task<MyStuffListModel> Create(ApplicationDbContext context, Person person)
@@ -47,9 +47,15 @@ namespace Keas.Mvc.Models
                     .OrderByDescending(x => x.ActedDate)
                     .Take(10).AsNoTracking().ToListAsync()
             };
-            viewModel.PendingItems = viewModel.KeySerials.Where(s => !s.KeySerialAssignment.IsConfirmed).Any() 
-                                    || viewModel.Equipment.Where(e => !e.Assignment.IsConfirmed).Any() 
-                                    || viewModel.Workstations.Where(w => !w.Assignment.IsConfirmed).Any() ;
+
+            var allPersons = await context.People.Where(a => a.Active && a.UserId == person.UserId).Select(a => a.Id).ToArrayAsync();
+            var equipTeams = await context.EquipmentAssignments.Where(a => allPersons.Contains(a.PersonId) && !a.IsConfirmed)
+                .Select(a => a.Person.Team).Distinct().ToListAsync();
+            var keyTeams = await context.KeySerialAssignments.Where(a => allPersons.Contains(a.PersonId) && !a.IsConfirmed).Select(a => a.Person.Team).Distinct().ToListAsync();
+            var workTeams = await context.WorkstationAssignments.Where(a => allPersons.Contains(a.PersonId) && !a.IsConfirmed).Select(a => a.Person.Team).Distinct().ToListAsync();
+
+            viewModel.TeamsWithPendingAssignments = equipTeams.Union(keyTeams).Union(workTeams);
+            viewModel.PendingItems = viewModel.TeamsWithPendingAssignments.Any();
             return viewModel;
         }
 
