@@ -25,11 +25,6 @@ namespace Keas.Mvc.Models
 
             var allPersons = await context.People.Where(a => a.Active && a.UserId == person.UserId).Select(a => a.Id).ToArrayAsync();
 
-            //var keys = await context.KeySerialAssignments.Where(s => s.Person == person && !s.IsConfirmed).AnyAsync();
-            //var equipment = await context.EquipmentAssignments.Where(e => e.Person == person && !e.IsConfirmed).AnyAsync();
-            //var workstations = await context.WorkstationAssignments.Where(w => w.Person == person && !w.IsConfirmed).AnyAsync();
-            //viewModel.PendingItems = keys || equipment || workstations;
-
             var equipTeams = await context.EquipmentAssignments.Where(a => allPersons.Contains(a.PersonId) && !a.IsConfirmed)
                 .Select(a => a.Person.Team).Distinct().ToListAsync();
             var keyTeams = await context.KeySerialAssignments.Where(a => allPersons.Contains(a.PersonId) && !a.IsConfirmed).Select(a => a.Person.Team).Distinct().ToListAsync();
