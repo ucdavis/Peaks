@@ -18,7 +18,7 @@
     if (Model.TeamsWithPendingAssignments.Any(a => a.Slug != currentSlug))
     {
         <h3>You have items pending in other teams:</h3>
-        foreach (var teamWithPending in Model.TeamsWithPendingAssignments.Where(a => a.Slug != "equip-test-1"))
+        foreach (var teamWithPending in Model.TeamsWithPendingAssignments.Where(a => a.Slug != currentSlug))
         {
             <div class="alert alert-warning">
                 <div class="row justify-content-between align-middle">
