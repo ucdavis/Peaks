@@ -9,7 +9,8 @@
     <div class="card-header-primary">
         <div class="row justify-content-between">
             <div class="card-head">
-                <h2>Contacts</h2>
+                <h2>For questions about your stuff, please contact one of the people below.</h2>
+                <p class="help-block">If you still have issues, or need technical support, then please submit a help ticket from the help menu.</p>
             </div>
             <div class="card-head">
             </div>
@@ -192,19 +193,4 @@
     }
 </div>
 
-<div class="card">
-    <div class="card-header-primary">
-        <div class="row justify-content-between">
-            <div class="card-head">
-                <h2>Technical Support</h2>
-                <div>Version: @ViewBag.Version</div>
-            </div>
-        </div>
-    </div>
-    <div class="card-content">
-        <a asp-action="MyContacts" class="btn  btn-primary" style="background-color: green">Question about your stuff?</a>
-        <a href="https://feedback.ucdavis.edu/app/Peaks" class="btn btn-primary" target="_blank" ref="noopener noreferrer">Make a Suggestion</a>
-        <a href=@($"https://caeshelp.ucdavis.edu/?appname=Peaks&team={@Model.Slug}") class="btn btn-primary" target="_blank" ref="noopener noreferrer">Create Help Ticket</a>
-        <a href="https://computing.caes.ucdavis.edu/documentation/peaks" class="btn btn-primary" target="_blank" ref="noopener noreferrer">FAQ</a>
-    </div>
-</div>
+
