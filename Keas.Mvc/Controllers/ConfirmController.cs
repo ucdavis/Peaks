@@ -60,7 +60,7 @@ namespace Keas.Mvc.Controllers
             return View(viewModel);
         }
 
-        
+        [HttpPost]
         public async Task<IActionResult> AcceptKey(int serialId)
         {
             var person = await _securityService.GetPerson(Team);
@@ -83,6 +83,7 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(Confirm));
         }
 
+        [HttpPost]
         public async Task<IActionResult> AcceptWorkstation(int workstationId)
         {
             var person = await _securityService.GetPerson(Team);
@@ -108,6 +109,7 @@ namespace Keas.Mvc.Controllers
 
         }
 
+        [HttpPost]
         public async Task<IActionResult> AcceptEquipment(int equipmentId)
         {
             var person = await _securityService.GetPerson(Team);
@@ -133,6 +135,7 @@ namespace Keas.Mvc.Controllers
             return RedirectToAction(nameof(Confirm));
         }
 
+        [HttpPost]
         public async Task<IActionResult> AcceptAll()
         {
             var person = await _securityService.GetPerson(Team);

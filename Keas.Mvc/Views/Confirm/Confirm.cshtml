@@ -51,7 +51,7 @@
                                     <td>@item.Key.Name</td>
                                     <td>@item.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>
                                     <td align="right">
-                                        <form asp-action="AcceptKey" asp-route-serialId="@item.Id">
+                                        <form asp-action="AcceptKey" asp-route-serialId="@item.Id" method="POST">
                                             <div class="form-group">
                                                 <input type="submit" value="Confirm" class="btn btn-primary" />
                                             </div>
@@ -103,7 +103,7 @@
                                         <td>&nbsp;</td>
                                     }
                                     <td align="right">
-                                        <form asp-action="AcceptEquipment" asp-route-equipmentId="@item.Id">
+                                        <form asp-action="AcceptEquipment" asp-route-equipmentId="@item.Id" method="POST">
                                             <div class="form-group">
                                                 <input type="submit" value="Confirm" class="btn btn-primary" />
                                             </div>
@@ -149,7 +149,7 @@
                                         <td>&nbsp;</td>
                                     }
                                     <td align="right">
-                                        <form asp-action="AcceptWorkstation" asp-route-workstationId="@item.Id">
+                                        <form asp-action="AcceptWorkstation" asp-route-workstationId="@item.Id" method="POST">
                                             <div class="form-group">
                                                 <input type="submit" value="Confirm" class="btn btn-primary" />
                                             </div>
