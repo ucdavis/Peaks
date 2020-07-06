@@ -5,7 +5,8 @@
   "scripts": {
     "debug": "ASPNETCORE_ENVIRONMENT=Development dotnet watch run",
     "webpack": "node node_modules/webpack/bin/webpack.js --env.dev --watch",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --coverage --coverageReporters=cobertura"
   },
   "dependencies": {
     "bootstrap": "4.3.1",
@@ -59,6 +60,7 @@
     "jasmine-core": "3.4.0",
     "jasmine-enzyme": "7.1.0",
     "jest": "^26.1.0",
+    "jest-trx-results-processor": "^2.0.3",
     "jsdom": "15.1.1",
     "json-loader": "0.5.7",
     "karma": "4.2.0",

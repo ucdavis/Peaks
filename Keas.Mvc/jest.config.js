@@ -8,5 +8,15 @@ module.exports = {
   setupFilesAfterEnv: ['<rootDir>/ClientApp/setupTests.ts'],
   moduleNameMapper: {
     '\\.(css|less)$': '<rootDir>/ClientApp/components/specs/styleMock.ts'
-  }
+  },
+  reporters: [
+    'default',
+    [
+      'jest-trx-results-processor',
+      {
+        outputFile: './ClientApp/jestTestresults.trx',
+        defaultUserName: 'user name to use if automatic detection fails'
+      }
+    ]
+  ]
 };
