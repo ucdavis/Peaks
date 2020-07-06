@@ -11,6 +11,7 @@ using Keas.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using ietws.PPSDepartment;
+using Serilog;
 
 
 namespace Keas.Mvc.Services
@@ -247,12 +248,18 @@ namespace Keas.Mvc.Services
         public async Task<string> GetTitle(string iamId)
         {
             var title = string.Empty;
-            var clientws = new IetClient(_authSettings.IamKey);
-            var result = await clientws.PPSAssociations.Search(PPSAssociationsSearchField.iamId, iamId);
-            if (result.ResponseData.Results.Length > 0)
+            try
             {
-
-                title = result.ResponseData.Results.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.titleOfficialName))?.titleOfficialName;
+                var clientws = new IetClient(_authSettings.IamKey);
+                var result = await clientws.PPSAssociations.Search(PPSAssociationsSearchField.iamId, iamId);
+                if (result.ResponseData.Results.Length > 0)
+                {
+                    title = result.ResponseData.Results.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.titleOfficialName))?.titleOfficialName;
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Getting Title for IamId: {iamId}.", ex);
             }
 
             return title;
