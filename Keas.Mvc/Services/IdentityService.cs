@@ -254,9 +254,7 @@ namespace Keas.Mvc.Services
                 var result = await clientws.PPSAssociations.Search(PPSAssociationsSearchField.iamId, iamId);
                 if (result.ResponseData.Results.Length > 0)
                 {
-
-                    title = result.ResponseData.Results
-                        .FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.titleOfficialName))?.titleOfficialName;
+                    title = result.ResponseData.Results.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.titleOfficialName))?.titleOfficialName;
                 }
             }
             catch (Exception ex)
