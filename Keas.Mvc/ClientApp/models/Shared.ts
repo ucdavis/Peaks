@@ -66,6 +66,7 @@ export interface AppContext {
   fetch: (url: string, init?: RequestInit) => any;
   team: ITeam;
   permissions: string[];
+  tags: string[];
 }
 
 // /:team/${container}/:containerAction?/:containerId?/:assetType?/:action?/:id

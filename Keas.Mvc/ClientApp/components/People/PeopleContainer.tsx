@@ -17,7 +17,6 @@ interface IState {
   people: IPersonInfo[];
   tableFilters: any[]; // object containing filters on table
   tagFilters: string[]; // string of tag filters
-  tags: string[]; // existing tags that are options for SearchTags
 }
 
 export default class PeopleContainer extends React.Component<
@@ -34,8 +33,7 @@ export default class PeopleContainer extends React.Component<
       loading: true,
       people: [],
       tableFilters: [],
-      tagFilters: [],
-      tags: []
+      tagFilters: []
     };
   }
 
@@ -52,11 +50,8 @@ export default class PeopleContainer extends React.Component<
       toast.error('Error fetching people. Please refresh to try again.');
       return;
     }
-    const tags = await this.context.fetch(
-      `/api/${this.context.team.slug}/tags/listTags`
-    );
 
-    this.setState({ loading: false, people, tags });
+    this.setState({ loading: false, people });
   }
 
   public render() {
@@ -86,7 +81,7 @@ export default class PeopleContainer extends React.Component<
               modal={personAction === 'create'}
               onAddNew={this._openCreateModal}
               closeModal={this._goBack}
-              tags={this.state.tags}
+              tags={this.context.tags}
               userIds={this.state.people.map(x => x.person.userId)}
             />
           </div>
@@ -113,7 +108,7 @@ export default class PeopleContainer extends React.Component<
     return (
       <div>
         <SearchTags
-          tags={this.state.tags}
+          tags={this.context.tags}
           selected={this.state.tagFilters}
           onSelect={this._filterTags}
           disabled={false}
@@ -134,7 +129,7 @@ export default class PeopleContainer extends React.Component<
         key={`person-details-${detailPerson.id}`}
         router={this.props}
         selectedPersonInfo={detailPerson}
-        tags={this.state.tags}
+        tags={this.context.tags}
         goBack={this._goBack}
         inUseUpdated={this._assetInUseUpdated}
         onEdit={this._editPerson}

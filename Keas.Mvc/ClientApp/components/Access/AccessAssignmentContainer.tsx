@@ -22,7 +22,6 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
 interface IState {
   selectedAssignment?: IAccessAssignment;
   assignments: IAccessAssignment[];
-  tags: string[];
 }
 
 class AssignmentContainer extends React.Component<IProps, IState> {
@@ -45,8 +44,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
       assignments,
       selectedAssignment: assignments.find(
         el => el.id === parseInt(props.match.params.id, 10)
-      ),
-      tags: []
+      )
     };
   }
 
@@ -71,8 +69,6 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount() {
-    console.log(this.context);
-
     if (this.state.assignments.length === 0 && this.props.person) {
       const assignments = await this.fetchAssignments();
       this.setState({
@@ -82,11 +78,6 @@ class AssignmentContainer extends React.Component<IProps, IState> {
         )
       });
     }
-
-    const tags = await this.context.fetch(
-      `/api/${this.context.team.slug}/tags/listTags`
-    );
-    this.setState({ tags });
   }
 
   public render() {
@@ -95,6 +86,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
       assetType === 'accessAssignment' && action === 'revoke';
     const isAssignModalShown = assetType === 'access' && action === 'assign';
     const assignments = this.state.assignments;
+
     return (
       <div>
         {isRevokeModalShown && (
@@ -109,7 +101,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
             closeModal={this.hideModals}
             modal={isAssignModalShown}
             person={this.props.person}
-            tags={this.state.tags}
+            tags={this.context.tags}
             selectedAccess={this.props.access}
             onCreate={this.callAssign}
           />

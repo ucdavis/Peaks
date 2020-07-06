@@ -19,7 +19,6 @@ interface IState {
   accesses: IAccess[]; // either access assigned to this person, or all team access
   loading: boolean;
   tagFilters: string[];
-  tags: string[];
 }
 
 export default class AccessContainer extends React.Component<
@@ -35,8 +34,7 @@ export default class AccessContainer extends React.Component<
     this.state = {
       accesses: [],
       loading: true,
-      tagFilters: [],
-      tags: []
+      tagFilters: []
     };
   }
   public async componentDidMount() {
@@ -50,10 +48,6 @@ export default class AccessContainer extends React.Component<
     } catch (err) {
       toast.error('Error loading access list. Please refresh and try again.');
     }
-    // TODO: move tags into context
-    const tags = await this.context.fetch(
-      `/api/${this.context.team.slug}/tags/listTags`
-    );
 
     accesses = accesses.map(a => ({
       ...a,
@@ -63,7 +57,7 @@ export default class AccessContainer extends React.Component<
       }))
     }));
 
-    this.setState({ accesses, loading: false, tags });
+    this.setState({ accesses, loading: false });
   }
   public render() {
     if (!PermissionsUtil.canViewAccess(this.context.permissions)) {
@@ -163,7 +157,7 @@ export default class AccessContainer extends React.Component<
         modal={true}
         closeModal={this._closeModals}
         selectedAccess={access}
-        tags={this.state.tags}
+        tags={this.context.tags}
       />
     );
   };
@@ -179,7 +173,7 @@ export default class AccessContainer extends React.Component<
       <div>
         <div className='row'>
           <SearchTags
-            tags={this.state.tags}
+            tags={this.context.tags}
             selected={this.state.tagFilters}
             onSelect={this._filterTags}
             disabled={false}
@@ -219,7 +213,7 @@ export default class AccessContainer extends React.Component<
         closeModal={this._closeModals}
         modal={!!access}
         selectedAccess={access}
-        tags={this.state.tags}
+        tags={this.context.tags}
       />
     );
   };
