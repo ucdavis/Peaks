@@ -16,13 +16,15 @@ declare var window: any;
 
 function renderApp() {
   const team = window.App.teamData;
+  const tags = window.App.tags;
   const permissions = window.App.permissionsData;
   const antiForgeryToken = window.App.antiForgeryToken;
-
+  
   const contextObject = {
     fetch: createFetch(antiForgeryToken),
     permissions,
-    team
+    team,
+    tags
   };
 
   // This code starts up the React app when it runs in a browser. It sets up the routing

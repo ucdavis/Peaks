@@ -33,8 +33,9 @@ namespace Keas.Mvc.Controllers
             }
 
             var permissionNames = await _securityService.GetUserRoleNamesInTeamOrAdmin(team.Slug);
- 
-            var model = new AssetModel { Team = team, Permissions = permissionNames };
+            var tags = await _context.Tags.Where(x => x.Team.Slug == Team).Select(x => x.Name).OrderBy(x => x).AsNoTracking().ToListAsync();
+
+            var model = new AssetModel { Team = team, Tags = tags, Permissions = permissionNames };
 
             return View(model);
         }

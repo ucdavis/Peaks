@@ -25,7 +25,6 @@ interface IState {
   loading: boolean;
   tableFilters: any[]; // object containing filters on table
   tagFilters: string[]; // array of filters from SearchTags
-  tags: string[];
 }
 export default class SpacesContainer extends React.Component<IProps, IState> {
   public static contextType = Context;
@@ -38,8 +37,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
       loading: true,
       spaces: [],
       tableFilters: [],
-      tagFilters: [],
-      tags: []
+      tagFilters: []
     };
   }
 
@@ -66,9 +64,8 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
       );
       return;
     }
-    const tags = await this.context.fetch(`/api/${team.slug}/tags/listTags`);
 
-    this.setState({ loading: false, spaces, tags });
+    this.setState({ loading: false, spaces });
   }
 
   public render() {
@@ -165,7 +162,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     return (
       <div>
         <SearchTags
-          tags={this.state.tags}
+          tags={this.context.tags}
           selected={this.state.tagFilters}
           onSelect={this._filterTags}
           disabled={false}
@@ -215,7 +212,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         route={routeObject}
         goBack={this._goBack}
         selectedSpaceInfo={selectedSpaceInfo}
-        tags={this.state.tags}
+        tags={this.context.tags}
         inUseUpdated={this._assetInUseUpdated}
         totalUpdated={this._assetTotalUpdated}
         edited={this._assetEdited}
@@ -232,7 +229,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         openModal={() => this._openAssociateModal(null)}
         closeModal={this._closeModals}
         isModalOpen={true}
-        searchableTags={this.state.tags}
+        searchableTags={this.context.tags}
       />
     );
   };
