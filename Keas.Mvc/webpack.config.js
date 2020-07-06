@@ -38,6 +38,7 @@ module.exports = env => {
                     {
                         test: /\.tsx?$/,
                         include: /ClientApp/,
+                        exclude: /\.test.tsx?$/,
                         use: "awesome-typescript-loader?silent=true"
                     },
                     {
