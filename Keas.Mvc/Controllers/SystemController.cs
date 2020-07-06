@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace Keas.Mvc.Controllers
 {
@@ -34,7 +35,7 @@ namespace Keas.Mvc.Controllers
         [Authorize()]
         public async Task<IActionResult> Emulate(EmulateUserViewModel model)
         {
-            //Log.Information("Emulation attempted for {username}", username);
+            Log.Information($"Emulation attempted for {model.UserEmail} by {User.Identity.Name}" );
             var lookupVal = model.UserEmail.Trim();
 
             var user = await _context.Users.SingleOrDefaultAsync(u => u.Email.Equals(lookupVal, StringComparison.OrdinalIgnoreCase) || u.Id.Equals(lookupVal, StringComparison.OrdinalIgnoreCase));
