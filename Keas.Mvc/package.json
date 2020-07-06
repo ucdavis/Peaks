@@ -34,7 +34,7 @@
     "@types/isomorphic-fetch": "0.0.35",
     "@types/jasmine": "3.4.0",
     "@types/jasmine-enzyme": "7.0.0",
-    "@types/jest": "^26.0.3",
+    "@types/jest": "^26.0.4",
     "@types/node": "12.7.1",
     "@types/react": "16.9.1",
     "@types/react-bootstrap-typeahead": "3.4.5",
