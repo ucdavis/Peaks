@@ -4,16 +4,12 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import PeopleContainer from '../People/PeopleContainer';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
+import { IPersonInfo } from 'ClientApp/models/People';
 
 // mock all route elements
 let mockRouter: any = {};
 let mockRouterMatch: any = {
   params: {
-    containerAction: 'People',
-    containerId: '',
-    assetType: '',
-    action: 'People',
-    id: ''
   }
 };
 
@@ -32,7 +28,7 @@ afterEach(() => {
   container = null;
 });
 
-describe('Link', () => {
+describe('People Container', () => {
   const contextObject = {
     fetch: (url: any, index: any) => {},
     permissions: ['DepartmentalAdmin', 'Admin'],
@@ -40,10 +36,41 @@ describe('Link', () => {
     tags: []
   };
 
-  it('Renders view name', () => {
-    act(() => {
+  it('Shows people list', async () => {
+    await act(async () => {
       contextObject.fetch = (url, init) => {
-        return Promise.resolve([]);
+        const fakePeople: IPersonInfo[] = [
+          {
+            person: {
+              id: 1247,
+              active: true,
+              teamId: 10,
+              user: null,
+              userId: 'postit',
+              firstName: 'Scott',
+              lastName: 'Kirkland',
+              name: 'Scott Kirkland',
+              email: 'srkirkland@ucdavis.edu',
+              tags: null,
+              title: null,
+              homePhone: null,
+              teamPhone: null,
+              supervisorId: null,
+              supervisor: null,
+              startDate: null,
+              endDate: null,
+              category: null,
+              notes: null,
+              isSupervisor: true
+            },
+            id: 1247,
+            equipmentCount: 1,
+            accessCount: 1,
+            keyCount: 1,
+            workstationCount: 0
+          }
+        ];
+        return Promise.resolve(fakePeople);
       };
 
       render(
@@ -58,8 +85,10 @@ describe('Link', () => {
       );
     });
 
-    console.log(container.textContent);
+    // grab out the first row and make sure it contains the test email address
+    const firstRowContent = container.querySelector('.rt-tr-group').textContent;
 
-    expect(container.querySelector('.ReactTable')).toBeDefined();
+    expect(firstRowContent).toContain('srkirkland@ucdavis.edu'); // confirm person is displayed
+    expect(firstRowContent).toContain('1110'); // confirm counts are displayed
   });
 });
