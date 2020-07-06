@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
+
 import Denied from '../Shared/Denied';
 
 describe('Link', () => {
-  it('Renders link to Google', () => {
-    const link = shallow(<Denied viewName='view name'></Denied>);
+  it('Renders view name', () => {
+    const { getByText } = render(<Denied viewName="abc123" />);
+    const div = getByText(/You do not have permission to see abc123/i);
 
-    expect(link.find('div').last().text()).toContain('view name');
+    expect(div).toBeInTheDocument();
   });
 });
