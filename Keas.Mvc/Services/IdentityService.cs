@@ -259,7 +259,7 @@ namespace Keas.Mvc.Services
             }
             catch (Exception ex)
             {
-                Log.Error($"Getting Title for IamId {iamId}. Exception: {ex.Message} -- {ex.InnerException.Message} ");
+                Log.Error($"Getting Title for IamId: {iamId}.", ex);
             }
 
             return title;
