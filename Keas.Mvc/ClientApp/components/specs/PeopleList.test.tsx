@@ -3,9 +3,19 @@ import { render, unmountComponentAtNode } from 'react-dom';
 
 import PeopleContainer from '../People/PeopleContainer';
 import { act } from 'react-dom/test-utils';
+import { Context } from '../../Context';
 
 // mock all route elements
 let mockRouter: any = {};
+let mockRouterMatch: any = {
+  params: {
+    containerAction: 'People',
+    containerId: '',
+    assetType: '',
+    action: 'People',
+    id: ''
+  }
+};
 
 let container: Element = null;
 
@@ -23,18 +33,33 @@ afterEach(() => {
 });
 
 describe('Link', () => {
+  const contextObject = {
+    fetch: (url: any, index: any) => {},
+    permissions: ['DepartmentalAdmin', 'Admin'],
+    team: { id: 1, name: 'Team', slug: 'team' },
+    tags: []
+  };
+
   it('Renders view name', () => {
     act(() => {
+      contextObject.fetch = (url, init) => {
+        return Promise.resolve([]);
+      };
+
       render(
-        <PeopleContainer
-          history={mockRouter}
-          match={mockRouter}
-          location={mockRouter}
-        />,
+        <Context.Provider value={contextObject}>
+          <PeopleContainer
+            history={mockRouter}
+            match={mockRouterMatch}
+            location={mockRouter}
+          />
+        </Context.Provider>,
         container
       );
     });
 
-    expect(container.querySelector(".ReactTable")).toBeDefined();
+    console.log(container.textContent);
+
+    expect(container.querySelector('.ReactTable')).toBeDefined();
   });
 });
