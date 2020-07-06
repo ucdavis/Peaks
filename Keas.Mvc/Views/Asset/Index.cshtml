@@ -11,6 +11,7 @@
     <script>
         window.App = {};
         window.App.teamData = @Json.Serialize(Model.Team);
+        window.App.tags = @Json.Serialize(Model.Tags);
         window.App.permissionsData = @Json.Serialize(Model.Permissions);
         window.App.antiForgeryToken = document.getElementsByName('__RequestVerificationToken')[0].value;
     </script>
