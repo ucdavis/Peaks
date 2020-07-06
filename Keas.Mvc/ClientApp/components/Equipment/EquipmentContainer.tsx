@@ -22,7 +22,6 @@ interface IState {
   equipmentTypes: string[];
   equipment: IEquipment[]; // either equipment assigned to this person, or all team equipment
   loading: boolean;
-  tags: string[];
   equipmentProtectionLevels: string[];
   equipmentAvailabilityLevels: string[];
 }
@@ -61,8 +60,7 @@ export default class EquipmentContainer extends React.Component<
       equipmentAvailabilityLevels: ['A1', 'A2', 'A3', 'A4'],
       equipmentProtectionLevels: ['P1', 'P2', 'P3', 'P4'],
       equipmentTypes: [],
-      loading: true,
-      tags: []
+      loading: true
     };
   }
   public async componentDidMount() {
@@ -96,16 +94,11 @@ export default class EquipmentContainer extends React.Component<
 
     const equipmentTypes = await this.context.fetch(equipmentTypeFetchUrl);
 
-    const tags = await this.context.fetch(
-      `/api/${this.context.team.slug}/tags/listTags`
-    );
-
     this.setState({
       commonAttributeKeys,
       equipment,
       equipmentTypes,
-      loading: false,
-      tags
+      loading: false
     });
   }
   public render() {
@@ -175,7 +168,7 @@ export default class EquipmentContainer extends React.Component<
         <div>
           <EquipmentTableContainer
             equipment={this.state.equipment}
-            tags={this.state.tags}
+            tags={this.context.tags}
             equipmentAvailabilityLevels={this.state.equipmentAvailabilityLevels}
             equipmentProtectionLevels={this.state.equipmentProtectionLevels}
             equipmentTypes={this.state.equipmentTypes}
@@ -201,7 +194,7 @@ export default class EquipmentContainer extends React.Component<
         selectedEquipment={equipment}
         person={this.props.person}
         space={this.props.space}
-        tags={this.state.tags}
+        tags={this.context.tags}
         commonAttributeKeys={this.state.commonAttributeKeys}
         openDetailsModal={this._openDetailsModal}
         openEditModal={this._openEditModal}
@@ -233,7 +226,7 @@ export default class EquipmentContainer extends React.Component<
         closeModal={this._closeModals}
         openUpdateModal={this._openAssignModal}
         modal={!!equipment}
-        tags={this.state.tags}
+        tags={this.context.tags}
         space={this.props.space}
         commonAttributeKeys={this.state.commonAttributeKeys}
         equipmentTypes={this.state.equipmentTypes}

@@ -40,7 +40,6 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
 interface IState {
   loading: boolean;
   keys: IKeyInfo[]; // either key assigned to this person, or all team keys
-  tags: string[];
 
   tableFilters: any[];
   tagFilters: string[];
@@ -57,8 +56,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       keys: [],
       loading: true,
       tableFilters: [],
-      tagFilters: [],
-      tags: []
+      tagFilters: []
     };
   }
   public async componentDidMount() {
@@ -84,9 +82,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       return;
     }
 
-    const tags = await this.context.fetch(`/api/${team.slug}/tags/listTags`);
-
-    this.setState({ keys, tags, loading: false });
+    this.setState({ keys, loading: false });
   }
 
   public render() {
@@ -99,7 +95,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     }
 
     const { space } = this.props;
-    const { tags } = this.state;
     const {
       containerAction,
       containerId,
@@ -132,7 +127,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
                 onOpenModal={this._openCreateModal}
                 closeModal={this._closeModals}
                 modal={containerAction === 'create'}
-                searchableTags={tags}
+                searchableTags={this.context.tags}
                 checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValid}
               />
             )}
@@ -174,7 +169,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   }
 
   private _renderTableView() {
-    const { keys, tableFilters, tags, tagFilters } = this.state;
+    const { keys, tableFilters, tagFilters } = this.state;
 
     let filteredKeys = keys;
 
@@ -191,7 +186,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
     return (
       <div>
         <SearchTags
-          tags={tags}
+          tags={this.context.tags}
           disabled={false}
           selected={tagFilters}
           onSelect={this._onTagsFiltered}
@@ -260,7 +255,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         isModalOpen={true}
         openModal={this._openAssociate}
         closeModal={this._closeModals}
-        searchableTags={this.state.tags}
+        searchableTags={this.context.tags}
       />
     );
   };
@@ -289,7 +284,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         closeModal={this._closeModals}
         modal={!!key}
         selectedKey={key}
-        searchableTags={this.state.tags}
+        searchableTags={this.context.tags}
         checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValidOnEdit}
       />
     );
