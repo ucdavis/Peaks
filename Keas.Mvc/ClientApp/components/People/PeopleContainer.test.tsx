@@ -4,7 +4,7 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import PeopleContainer from '../People/PeopleContainer';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
-import { fakePeople } from './TestData';
+import { fakePeople } from '../specs/TestData';
 
 // mock all route elements
 let mockRouter: any = {};
