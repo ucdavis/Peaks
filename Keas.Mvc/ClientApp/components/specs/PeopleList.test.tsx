@@ -4,13 +4,12 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import PeopleContainer from '../People/PeopleContainer';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
-import { IPersonInfo } from 'ClientApp/models/People';
+import { fakePeople } from './TestData';
 
 // mock all route elements
 let mockRouter: any = {};
 let mockRouterMatch: any = {
-  params: {
-  }
+  params: {}
 };
 
 let container: Element = null;
@@ -37,42 +36,14 @@ describe('People Container', () => {
   };
 
   it('Shows people list', async () => {
+    // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      contextObject.fetch = (url, init) => {
-        const fakePeople: IPersonInfo[] = [
-          {
-            person: {
-              id: 1247,
-              active: true,
-              teamId: 10,
-              user: null,
-              userId: 'postit',
-              firstName: 'Scott',
-              lastName: 'Kirkland',
-              name: 'Scott Kirkland',
-              email: 'srkirkland@ucdavis.edu',
-              tags: null,
-              title: null,
-              homePhone: null,
-              teamPhone: null,
-              supervisorId: null,
-              supervisor: null,
-              startDate: null,
-              endDate: null,
-              category: null,
-              notes: null,
-              isSupervisor: true
-            },
-            id: 1247,
-            equipmentCount: 1,
-            accessCount: 1,
-            keyCount: 1,
-            workstationCount: 0
-          }
-        ];
-        return Promise.resolve(fakePeople);
-      };
+      // spy on our context's fetch handler to return fake people
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakePeople));
 
+      // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
           <PeopleContainer
