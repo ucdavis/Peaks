@@ -8,7 +8,7 @@
     "jsx": "react",
     "sourceMap": true,
     "skipDefaultLibCheck": true,
-    "types": ["jasmine", "node", "webpack-env"]
+    "types": ["jest", "@testing-library/jest-dom", "node", "webpack-env"]
   },
   "exclude": ["bin", "node_modules"]
 }

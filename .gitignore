@@ -303,3 +303,6 @@ __pycache__/
 *.xsd.cs
 
 .vscode/
+
+# Ignore test results meant for CI
+*.trx
