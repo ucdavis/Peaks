@@ -51,6 +51,20 @@ stages:
       inputs:
         command: 'test'
 
+    - task: Npm@1
+      displayName: 'Run Client Tests'
+      inputs:
+        command: 'custom'
+        workingDir: './Keas.Mvc'
+        customCommand: 'test'
+
+    - task: PublishTestResults@2
+      displayName: 'Publish Client Tests'
+      inputs:
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '**/jestTestresults.trx'
+        testRunTitle: 'Client Tests'
+
 - stage: Publish
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   jobs:
