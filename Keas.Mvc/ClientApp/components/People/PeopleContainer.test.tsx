@@ -14,11 +14,45 @@ let mockRouterMatch: any = {
 
 let container: Element = null;
 
-// fake out the person details page
-jest.mock('./PersonDetails', () => {
+// mock out the sub containers, at least for now
+jest.mock('../Access/AccessAssignmentContainer', () => {
   return {
     default: () => {
-      return <div id='person-test'>PersonDetailsTEST</div>;
+      return (
+        <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>
+      );
+    }
+  };
+});
+
+jest.mock('../Equipment/EquipmentContainer', () => {
+  return {
+    default: () => {
+      return <div id='EquipmentContainer'>EquipmentContainer</div>;
+    }
+  };
+});
+
+jest.mock('../Keys/KeySerialContainer', () => {
+  return {
+    default: () => {
+      return <div id='KeySerialContainer'>KeySerialContainer</div>;
+    }
+  };
+});
+
+jest.mock('../Workstations/WorkstationContainer', () => {
+  return {
+    default: () => {
+      return <div id='WorkstationContainer'>WorkstationContainer</div>;
+    }
+  };
+});
+
+jest.mock('../History/HistoryContainer', () => {
+  return {
+    default: () => {
+      return <div id='HistoryContainer'>HistoryContainer</div>;
     }
   };
 });
@@ -68,14 +102,14 @@ describe('People Container', () => {
     // grab out the first row and make sure it contains the test email address
     const firstRowContent = container.querySelector('.rt-tr-group').textContent;
 
-    expect(firstRowContent).toContain('srkirkland@ucdavis.edu'); // confirm person is displayed
+    expect(firstRowContent).toContain('chuck@testpilot.gov'); // confirm person is displayed
     expect(firstRowContent).toContain('1110'); // confirm counts are displayed
   });
 
   it('Shows person details', async () => {
     mockRouterMatch.params = {
       containerAction: 'details',
-      containerId: 1247 // test personid
+      containerId: 123 // test personid
     };
 
     await act(async () => {
@@ -97,9 +131,16 @@ describe('People Container', () => {
       );
     });
 
-    // grab out the first row and make sure it contains the test email address
-    const content = container.querySelector('#person-test').textContent;
+    // should show person contact info
+    const personContent = container.querySelector('.person-col').textContent;
 
-    expect(content).toBe('PersonDetailsTEST');
+    expect(personContent).toContain('chuck@testpilot.gov');
+
+    // should show the access container
+    const accessAssignmentContainerContent = container.querySelector(
+      '#AccessAssignmentContainer'
+    ).textContent;
+
+    expect(accessAssignmentContainerContent).toBe('AccessAssignmentContainer');
   });
 });

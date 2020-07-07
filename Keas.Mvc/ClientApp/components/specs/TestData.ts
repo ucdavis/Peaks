@@ -3,15 +3,15 @@ import { IPersonInfo } from "ClientApp/models/People";
 export const fakePeople: IPersonInfo[] = [
   {
     person: {
-      id: 1247,
+      id: 123,
       active: true,
       teamId: 10,
       user: null,
-      userId: 'postit',
-      firstName: 'Scott',
-      lastName: 'Kirkland',
-      name: 'Scott Kirkland',
-      email: 'srkirkland@ucdavis.edu',
+      userId: 'userid',
+      firstName: 'Chuck',
+      lastName: 'Yeager',
+      name: 'Chuck Yeager',
+      email: 'chuck@testpilot.gov',
       tags: null,
       title: null,
       homePhone: null,
@@ -24,7 +24,7 @@ export const fakePeople: IPersonInfo[] = [
       notes: null,
       isSupervisor: true
     },
-    id: 1247,
+    id: 123,
     equipmentCount: 1,
     accessCount: 1,
     keyCount: 1,
