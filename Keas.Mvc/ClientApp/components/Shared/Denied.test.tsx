@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { render } from '@testing-library/react';
+import Denied from './Denied';
 
-import Denied from '../Shared/Denied';
 
 describe('Link', () => {
   it('Renders view name', () => {

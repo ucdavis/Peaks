@@ -6,6 +6,7 @@
     "debug": "ASPNETCORE_ENVIRONMENT=Development dotnet watch run",
     "webpack": "node node_modules/webpack/bin/webpack.js --env.dev --watch",
     "test": "jest",
+    "testwatch": "jest --watchAll",
     "coverage": "jest --coverage --coverageReporters=cobertura"
   },
   "dependencies": {
