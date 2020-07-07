@@ -14,6 +14,15 @@ let mockRouterMatch: any = {
 
 let container: Element = null;
 
+// fake out the person details page
+jest.mock('./PersonDetails', () => {
+  return {
+    default: () => {
+      return <div id='person-test'>PersonDetailsTEST</div>;
+    }
+  };
+});
+
 beforeEach(() => {
   // setup a DOM element as a render target
   container = document.createElement('div');
@@ -61,5 +70,36 @@ describe('People Container', () => {
 
     expect(firstRowContent).toContain('srkirkland@ucdavis.edu'); // confirm person is displayed
     expect(firstRowContent).toContain('1110'); // confirm counts are displayed
+  });
+
+  it('Shows person details', async () => {
+    mockRouterMatch.params = {
+      containerAction: 'details',
+      containerId: 1247 // test personid
+    };
+
+    await act(async () => {
+      // spy on our context's fetch handler to return fake people
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakePeople));
+
+      // important to add the context provider here since it includes permissions and fetch info
+      render(
+        <Context.Provider value={contextObject}>
+          <PeopleContainer
+            history={mockRouter}
+            match={mockRouterMatch}
+            location={mockRouter}
+          />
+        </Context.Provider>,
+        container
+      );
+    });
+
+    // grab out the first row and make sure it contains the test email address
+    const content = container.querySelector('#person-test').textContent;
+
+    expect(content).toBe('PersonDetailsTEST');
   });
 });
