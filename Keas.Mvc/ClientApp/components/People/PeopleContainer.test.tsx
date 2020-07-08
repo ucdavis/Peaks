@@ -99,11 +99,45 @@ describe('People Container', () => {
       );
     });
 
-    // grab out the first row and make sure it contains the test email address
-    const firstRowContent = container.querySelector('.rt-tr-group').textContent;
+    //Data is sorted by last name
+    const matches = container.querySelectorAll('.rt-tr-group');
 
-    expect(firstRowContent).toContain('chuck@testpilot.gov'); // confirm person is displayed
-    expect(firstRowContent).toContain('1110'); // confirm counts are displayed
+    let foundIt = false;
+    matches.forEach(function(match) {
+      const rowContent = match.textContent;
+      if (rowContent.includes('chuck@testpilot.gov')) {
+        foundIt = true;
+        expect(rowContent).toContain('chuck@testpilot.gov'); // confirm person is displayed
+        expect(rowContent).toContain('1110'); // confirm counts are displayed
+      }
+    });
+
+    expect(foundIt).toBeTruthy();
+  });
+
+  it('Shows correct number of persons', async () => {
+    // await act to make sure pending Promises complete before moving on
+    await act(async () => {
+      // spy on our context's fetch handler to return fake people
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakePeople));
+
+      // important to add the context provider here since it includes permissions and fetch info
+      render(
+        <Context.Provider value={contextObject}>
+          <PeopleContainer
+            history={mockRouter}
+            match={mockRouterMatch}
+            location={mockRouter}
+          />
+        </Context.Provider>,
+        container
+      );
+    });
+    const matches = container.querySelectorAll('.rt-tr-group');
+
+    expect(matches.length).toBe(4); //Should this be 3? Or is the inactive ignored and only used when queried by the api?
   });
 
   it('Shows person details', async () => {
