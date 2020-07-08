@@ -78,6 +78,59 @@ describe('People Container', () => {
     tags: []
   };
 
+  it('Shows Header Record', async () => {
+    // await act to make sure pending Promises complete before moving on
+    await act(async () => {
+      // spy on our context's fetch handler to return fake people
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakePeople));
+
+      // important to add the context provider here since it includes permissions and fetch info
+      render(
+        <Context.Provider value={contextObject}>
+          <PeopleContainer
+            history={mockRouter}
+            match={mockRouterMatch}
+            location={mockRouter}
+          />
+        </Context.Provider>,
+        container
+      );
+    });
+
+    const headerRecord = container.querySelector('.rt-tr').textContent;
+    expect(headerRecord).toBe(
+      'ActionsNameEmailSupervisorKeysEquipmentAccessesWorkstations'
+    );
+  });
+
+  it('Shows add button', async () => {
+    // await act to make sure pending Promises complete before moving on
+    await act(async () => {
+      // spy on our context's fetch handler to return fake people
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakePeople));
+
+      // important to add the context provider here since it includes permissions and fetch info
+      render(
+        <Context.Provider value={contextObject}>
+          <PeopleContainer
+            history={mockRouter}
+            match={mockRouterMatch}
+            location={mockRouter}
+          />
+        </Context.Provider>,
+        container
+      );
+    });
+
+    const headerRecord = container.querySelector('.card-header-people')
+      .textContent;
+    expect(headerRecord).toContain('Add Person');
+  });
+
   it('Shows people list', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
