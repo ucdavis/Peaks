@@ -23,6 +23,22 @@ export const GlobalFilter = ({
   );
 };
 
+// Define a default UI for filtering
+export const DefaultColumnFilter = ({
+  column: { filterValue, preFilteredRows, setFilter },
+}) => {
+  const count = preFilteredRows.length
+
+  return (
+    <input
+      value={filterValue || ''}
+      onChange={e => {
+        setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
+      }}
+    />
+  )
+}
+
 // This is a custom filter UI for selecting
 // a unique option from a list
 export const SelectColumnFilter = ({

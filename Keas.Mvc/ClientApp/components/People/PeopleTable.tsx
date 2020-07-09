@@ -28,21 +28,49 @@ export default class PeopleTable extends React.Component<IProps, {}> {
           </Button>
         ),
         Header: 'Actions',
-        maxWidth: 150,
+        maxWidth: 150
       },
-      { Header: 'PersonId', accessor: 'keyCount' },
       {
         Header: 'Name',
-        accessor: row => row.person.lastName + ', ' + row.person.firstName
+        id: 'name',
+        accessor: row => row.person.lastName + ', ' + row.person.firstName,
+        filter: 'contains'
+      },
+      {
+        Header: 'Email',
+        accessor: row => row.person.email
+      },
+      {
+        Header: 'Supervisor',
+        accessor: row => row.person.supervisor?.name
+      },
+      {
+        Header: 'Keys',
+        accessor: 'keyCount',
+        disableFilters: true
+      },
+      {
+        Header: 'Equipment',
+        accessor: 'equipmentCount',
+        disableFilters: true
+      },
+      {
+        Header: 'Access',
+        accessor: 'accessCount',
+        disableFilters: true
+      },
+      {
+        Header: 'Workstations',
+        accessor: 'workstationCount',
+        disableFilters: true
       }
     ];
 
     const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'keyCount' }],
-
+      sortBy: [{ id: 'name' }],
     };
 
     // return <h1>Hi</h1>;
-    return <ReactTable columns={columns} data={this.props.people} />;
+    return <ReactTable columns={columns} data={this.props.people} initialState={initialState} />;
   }
 }

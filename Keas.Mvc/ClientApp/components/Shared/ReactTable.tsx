@@ -6,10 +6,17 @@ import {
   useSortBy,
   usePagination
 } from 'react-table';
-import { ColumnFilterHeaders, GlobalFilter } from './Filtering';
+import { ColumnFilterHeaders, GlobalFilter, DefaultColumnFilter } from './Filtering';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 
 export const ReactTable = ({ columns, data, initialState }: any) => {
+  const defaultColumn = React.useMemo(
+    () => ({
+      Filter: DefaultColumnFilter
+    }),
+    []
+  );
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -35,7 +42,9 @@ export const ReactTable = ({ columns, data, initialState }: any) => {
     {
       columns,
       data,
-      initialState: { ...initialState, pageIndex: 0, pageSize: 20 }
+      defaultColumn,
+      initialState: { ...initialState, pageIndex: 0, pageSize: 20 },
+    //   filterTypes
     },
     useFilters, // useFilters!
     useGlobalFilter, // useGlobalFilter!
