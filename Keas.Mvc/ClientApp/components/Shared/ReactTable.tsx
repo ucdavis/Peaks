@@ -6,8 +6,13 @@ import {
   useSortBy,
   usePagination
 } from 'react-table';
-import { ColumnFilterHeaders, GlobalFilter, DefaultColumnFilter } from './Filtering';
+import {
+  ColumnFilterHeaders,
+  GlobalFilter,
+  DefaultColumnFilter
+} from './Filtering';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import { ReactTableUtil } from '../../util/tableUtil';
 
 export const ReactTable = ({ columns, data, initialState }: any) => {
   const defaultColumn = React.useMemo(
@@ -43,8 +48,8 @@ export const ReactTable = ({ columns, data, initialState }: any) => {
       columns,
       data,
       defaultColumn,
-      initialState: { ...initialState, pageIndex: 0, pageSize: 20 },
-    //   filterTypes
+      initialState: { ...initialState, pageIndex: 0 }
+      //   filterTypes
     },
     useFilters, // useFilters!
     useGlobalFilter, // useGlobalFilter!
@@ -126,6 +131,7 @@ export const ReactTable = ({ columns, data, initialState }: any) => {
             <select
               value={pageSize}
               onChange={e => {
+                ReactTableUtil.setPageSize(e.target.value);
                 setPageSize(Number(e.target.value));
               }}
             >

@@ -68,9 +68,16 @@ export default class PeopleTable extends React.Component<IProps, {}> {
 
     const initialState: Partial<TableState<any>> = {
       sortBy: [{ id: 'name' }],
+      pageSize: ReactTableUtil.getPageSize(),
     };
 
     // return <h1>Hi</h1>;
-    return <ReactTable columns={columns} data={this.props.people} initialState={initialState} />;
+    return (
+      <ReactTable
+        columns={columns}
+        data={this.props.people}
+        initialState={initialState}
+      />
+    );
   }
 }
