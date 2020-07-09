@@ -1,8 +1,8 @@
 import * as React from 'react';
-import ReactTable from 'react-table';
 import { IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
+import { ReactTable } from '../Shared/ReactTable';
 
 interface IProps {
   assignments: IAccessAssignment[];

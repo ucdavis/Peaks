@@ -1,11 +1,11 @@
 import * as React from 'react';
-import ReactTable from 'react-table';
 import { Button } from 'reactstrap';
 import { IKeySerial } from '../../models/KeySerials';
 import { DateUtil } from '../../util/dates';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
+import { ReactTable } from '../Shared/ReactTable';
 
 interface IProps {
   keySerials: IKeySerial[];

@@ -1,9 +1,8 @@
 import * as React from 'react';
-import ReactTable from 'react-table';
-import 'react-table/react-table.css';
 import { Button, UncontrolledTooltip } from 'reactstrap';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
 import { ReactTableUtil } from '../../util/tableUtil';
+import { ReactTable } from '../Shared/ReactTable';
 
 interface IProps {
   filtered: any[];

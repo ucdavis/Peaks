@@ -1,10 +1,9 @@
 import * as React from 'react';
-import ReactTable from 'react-table';
-import 'react-table/react-table.css';
 import { Button, UncontrolledTooltip } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
+import { ReactTable } from '../Shared/ReactTable';
 
 interface IProps {
   showDetails?: (key: IKey) => void;

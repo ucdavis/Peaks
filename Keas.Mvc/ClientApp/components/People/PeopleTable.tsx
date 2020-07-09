@@ -1,9 +1,9 @@
 import * as React from 'react';
-import ReactTable from 'react-table';
-import 'react-table/react-table.css';
 import { Button } from 'reactstrap';
 import { IPerson, IPersonInfo } from '../../models/People';
 import { ReactTableUtil } from '../../util/tableUtil';
+import { ReactTable } from '../Shared/ReactTable';
+import { Column, TableState } from 'react-table';
 
 interface IProps {
   filtered: any[];
@@ -17,97 +17,32 @@ interface IProps {
 
 export default class PeopleTable extends React.Component<IProps, {}> {
   public render() {
-    return (
-      <ReactTable
-        data={this.props.people}
-        filterable={true}
-        filtered={this.props.filtered}
-        onFilteredChange={filtered => this.props.updateFilters(filtered)}
-        defaultPageSize={ReactTableUtil.getPageSize()}
-        onPageSizeChange={pageSize => {
-          ReactTableUtil.setPageSize(pageSize);
-        }}
-        minRows={1}
-        columns={[
-          {
-            Cell: row => (
-              <Button
-                color='link'
-                onClick={() => this.props.showDetails(row.original)}
-              >
-                Details
-              </Button>
-            ),
-            Header: 'Actions',
-            className: 'spaces-details',
-            filterable: false,
-            headerClassName: 'spaces-details',
-            maxWidth: 150,
-            resizable: false,
-            sortable: false
-          },
-          {
-            Header: 'Name',
-            accessor: row => row.person.lastName + ', ' + row.person.firstName,
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
-            id: 'name'
-          },
-          {
-            Header: 'Email',
-            accessor: 'person.email',
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
-          },
-          {
-            Header: 'Supervisor',
-            accessor: 'person.supervisor.name',
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
-          },
-          {
-            Cell: row => <span>{row.original.keyCount}</span>,
-            Header: 'Keys',
-            accessor: 'keyCount',
-            className: 'table-10p',
-            filterable: false,
-            headerClassName: 'table-10p'
-          },
-          {
-            Cell: row => <span>{row.original.equipmentCount}</span>,
-            Header: 'Equipment',
-            accessor: 'equipmentCount',
-            className: 'table-10p',
-            filterable: false,
-            headerClassName: 'table-10p'
-          },
-          {
-            Cell: row => <span>{row.original.accessCount}</span>,
-            Header: 'Accesses',
-            accessor: 'accessCount',
-            className: 'table-10p',
-            filterable: false,
-            headerClassName: 'table-10p'
-          },
-          {
-            Cell: row => <span>{row.original.workstationCount}</span>,
-            Header: 'Workstations',
-            accessor: 'workstationCount',
-            className: 'table-10p',
-            filterable: false,
-            headerClassName: 'table-10p'
-          }
-        ]}
-        defaultSorted={[
-          {
-            desc: false,
-            id: 'name'
-          }
-        ]}
-      />
-    );
+    const columns: Column<IPersonInfo>[] = [
+      {
+        Cell: data => (
+          <Button
+            color='link'
+            onClick={() => this.props.showDetails(data.row.original)}
+          >
+            Details
+          </Button>
+        ),
+        Header: 'Actions',
+        maxWidth: 150,
+      },
+      { Header: 'PersonId', accessor: 'keyCount' },
+      {
+        Header: 'Name',
+        accessor: row => row.person.lastName + ', ' + row.person.firstName
+      }
+    ];
+
+    const initialState: Partial<TableState<any>> = {
+      sortBy: [{ id: 'keyCount' }],
+
+    };
+
+    // return <h1>Hi</h1>;
+    return <ReactTable columns={columns} data={this.props.people} />;
   }
 }
