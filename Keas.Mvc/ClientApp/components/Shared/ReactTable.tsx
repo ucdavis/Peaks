@@ -6,11 +6,7 @@ import {
   useSortBy,
   usePagination
 } from 'react-table';
-import {
-  ColumnFilterHeaders,
-  GlobalFilter,
-  DefaultColumnFilter
-} from './Filtering';
+import { ColumnFilterHeaders, DefaultColumnFilter } from './Filtering';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { ReactTableUtil } from '../../util/tableUtil';
 
@@ -27,11 +23,6 @@ export const ReactTable = ({ columns, data, initialState }: any) => {
     getTableBodyProps,
     headerGroups,
     prepareRow,
-    state,
-    flatColumns,
-    preGlobalFilteredRows,
-    setGlobalFilter,
-
     // pagination
     page,
     canPreviousPage,
@@ -84,7 +75,7 @@ export const ReactTable = ({ columns, data, initialState }: any) => {
           <ColumnFilterHeaders headerGroups={headerGroups} />
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row, i) => {
+          {page.map(row => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()}>

@@ -6,6 +6,26 @@ interface IFilterOption {
   displayText: string;
 }
 
+// will need to write custom filter
+// see: https://github.com/tannerlinsley/react-table/blob/master/docs/examples/simple.md#filtering
+export const ExperationFilter = ({
+  column: { filterValue, setFilter, preFilteredRows, id }
+}) => {
+  return (
+    <select
+      onChange={e => setFilter(e.target.value)}
+      style={{ width: '100%' }}
+      value={filterValue}
+    >
+      {ReactTableExpirationUtil.defaultFilterOptions.map(option => (
+        <option key={option.value} value={option.value}>
+          {option.displayText}
+        </option>
+      ))}
+    </select>
+  );
+};
+
 export class ReactTableExpirationUtil {
 
   public static defaultFilterOptions: IFilterOption[] = [

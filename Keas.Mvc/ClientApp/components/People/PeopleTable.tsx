@@ -4,7 +4,6 @@ import { IPerson, IPersonInfo } from '../../models/People';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { ReactTable } from '../Shared/ReactTable';
 import { Column, TableState } from 'react-table';
-import { ReactTableExpirationUtil } from '../../util/reactTable';
 
 interface IProps {
   filtered: any[];
@@ -15,23 +14,6 @@ interface IProps {
   onEdit?: (equipment: IPerson) => void;
   updateFilters: (filters: any[]) => void;
 }
-
-// Example of a filter, to be moved into react table utils
-const selectFilter = ({
-  column: { filterValue, setFilter, preFilteredRows, id }
-}) => {
-  return (
-    <select
-      onChange={e => setFilter(e.target.value)}
-      style={{ width: '100%' }}
-      value={filterValue}
-    >
-      <option value="">All</option>
-      <option>0</option>
-      <option>1</option>
-    </select>
-  );
-};
 
 export default class PeopleTable extends React.Component<IProps, {}> {
   public render() {
@@ -65,7 +47,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
       {
         Header: 'Keys',
         accessor: 'keyCount',
-        Filter: selectFilter
+        disableFilters: true
       },
       {
         Header: 'Equipment',
