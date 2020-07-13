@@ -18,85 +18,66 @@ interface IProps {
 
 export default class EquipmentTable extends React.Component<IProps, {}> {
   public render() {
+    const columns = [
+      {
+        Cell: row => (
+          <Button
+            color='link'
+            onClick={() => this.props.showDetails(row.original)}
+          >
+            Details
+          </Button>
+        ),
+        Header: 'Actions',
+        maxWidth: 150,
+      },
+      {
+        Header: 'Serial Number',
+        accessor: 'serialNumber',
+        id: 'serial number',
+        filter: 'contains'
+      },
+      {
+        Header: 'Name',
+        accessor: 'name',
+        filter: 'contains'
+      },
+      {
+        Header: 'Assigned To',
+        accessor: 'assignment.person.name'
+      },
+    ];
+
+    // [
+    //   {
+    //     Cell: row => (
+    //       <span>
+    //         {row.value ? DateUtil.formatExpiration(row.value) : ''}
+    //       </span>
+    //     ),
+    //     Filter: ({ filter, onChange }) =>
+    //       ReactTableExpirationUtil.filter(filter, onChange),
+    //     Header: 'Expiration',
+    //     accessor: 'assignment.expiresAt',
+    //     filterMethod: (filter, row) =>
+    //       ReactTableExpirationUtil.filterMethod(filter, row),
+    //     id: 'expiresAt',
+    //     sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
+    //   },
+    //   {
+    //     Cell: this.renderDropdownColumn,
+    //     Header: 'Actions',
+    //     className: 'table-actions',
+    //     filterable: false,
+    //     headerClassName: 'table-actions',
+    //     resizable: false,
+    //     sortable: false
+    //   }
+    // ]
     return (
       <ReactTable
         data={this.props.equipment}
-        filterable={true}
-        defaultPageSize={ReactTableUtil.getPageSize()}
-        onPageSizeChange={pageSize => {
-          ReactTableUtil.setPageSize(pageSize);
-        }}
-        minRows={1}
-        columns={[
-          {
-            Cell: row => (
-              <Button
-                color='link'
-                onClick={() => this.props.showDetails(row.original)}
-              >
-                Details
-              </Button>
-            ),
-            Header: '',
-            className: 'spaces-details',
-            filterable: false,
-            headerClassName: 'spaces-details',
-            maxWidth: 150,
-            resizable: false,
-            sortable: false
-          },
-          {
-            Header: 'Serial Number',
-            accessor: 'serialNumber',
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
-          },
-          {
-            Header: 'Name',
-            accessor: 'name',
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
-          },
-          {
-            Header: 'Assigned To',
-            accessor: 'assignment.person.name',
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
-          },
-          {
-            Cell: row => (
-              <span>
-                {row.value ? DateUtil.formatExpiration(row.value) : ''}
-              </span>
-            ),
-            Filter: ({ filter, onChange }) =>
-              ReactTableExpirationUtil.filter(filter, onChange),
-            Header: 'Expiration',
-            accessor: 'assignment.expiresAt',
-            filterMethod: (filter, row) =>
-              ReactTableExpirationUtil.filterMethod(filter, row),
-            id: 'expiresAt',
-            sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
-          },
-          {
-            Cell: this.renderDropdownColumn,
-            Header: 'Actions',
-            className: 'table-actions',
-            filterable: false,
-            headerClassName: 'table-actions',
-            resizable: false,
-            sortable: false
-          }
-        ]}
-        defaultSorted={[
-          {
-            desc: false,
-            id: 'name'
-          }
-        ]}
+        columns={columns}
       />
     );
   }
