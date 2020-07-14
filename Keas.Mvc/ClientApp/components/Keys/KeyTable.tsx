@@ -28,15 +28,15 @@ export default class KeyTable extends React.Component<IProps, {}> {
     const { filters, keysInfo } = this.props;
     const columns = [
       {
-        Cell: (row: IRow) => (
+        Cell: data => (
           <Button
             color='link'
-            onClick={() => this.props.showDetails(row.original.key)}
+            onClick={() => this.props.showDetails(data.row.original.key)}
           >
             Details
           </Button>
         ),
-        Header: 'Key',
+        Header: 'Details',
         className: 'key-details',
         filterable: false,
         headerClassName: 'key-details',
