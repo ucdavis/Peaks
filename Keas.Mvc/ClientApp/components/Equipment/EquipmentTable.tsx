@@ -20,15 +20,15 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
   public render() {
     const columns = [
       {
-        Cell: row => (
+        Cell: data => (
           <Button
             color='link'
-            onClick={() => this.props.showDetails(row.original)}
+            onClick={() => this.props.showDetails(data.row.original)}
           >
             Details
           </Button>
         ),
-        Header: 'Actions',
+        Header: 'Equipment Actions',
         maxWidth: 150,
       },
       {
@@ -46,46 +46,49 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
         Header: 'Assigned To',
         accessor: 'assignment.person.name'
       },
+      {
+        Cell: row => (
+          <span>
+            {row.value ? DateUtil.formatExpiration(row.value) : ''}
+          </span>
+        ),
+        Filter: ({ filter, onChange }) =>
+          ReactTableExpirationUtil.filter(filter, onChange),
+        Header: 'Expiration',
+        accessor: 'assignment.expiresAt',
+        filterMethod: (filter, row) =>
+          ReactTableExpirationUtil.filterMethod(filter, row),
+        id: 'expiresAt',
+        sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
+      },
+      {
+        Cell: this.renderDropdownColumn,
+        Header: 'Actions',
+        filterable: false,
+        resizable: false,
+        sortable: false
+      }
     ];
 
-    // [
-    //   {
-    //     Cell: row => (
-    //       <span>
-    //         {row.value ? DateUtil.formatExpiration(row.value) : ''}
-    //       </span>
-    //     ),
-    //     Filter: ({ filter, onChange }) =>
-    //       ReactTableExpirationUtil.filter(filter, onChange),
-    //     Header: 'Expiration',
-    //     accessor: 'assignment.expiresAt',
-    //     filterMethod: (filter, row) =>
-    //       ReactTableExpirationUtil.filterMethod(filter, row),
-    //     id: 'expiresAt',
-    //     sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
-    //   },
-    //   {
-    //     Cell: this.renderDropdownColumn,
-    //     Header: 'Actions',
-    //     className: 'table-actions',
-    //     filterable: false,
-    //     headerClassName: 'table-actions',
-    //     resizable: false,
-    //     sortable: false
-    //   }
-    // ]
     return (
       <ReactTable
         data={this.props.equipment}
         columns={columns}
+        defaultSorted={[
+          {
+            desc: false,
+            id: 'name'
+          }
+        ]}
       />
     );
   }
 
-  private renderDropdownColumn = row => {
-    const equipmentEntity: IEquipment = row.original;
+  private renderDropdownColumn = data => {
+    const equipmentEntity: IEquipment = data.row.original;
+    console.log(equipmentEntity);
     const hasAssignment = !!equipmentEntity.assignment;
-
+    
     const actions: IAction[] = [];
 
     if (!!this.props.onAdd && !hasAssignment) {

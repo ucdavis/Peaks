@@ -27,7 +27,7 @@ export default class PeopleTable extends React.Component<IProps, {}> {
             Details
           </Button>
         ),
-        Header: 'Actions',
+        Header: 'Details',
         maxWidth: 150
       },
       {

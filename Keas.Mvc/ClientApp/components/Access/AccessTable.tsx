@@ -52,9 +52,7 @@ export default class AccessTable extends React.Component<IProps, {}> {
           const namesAndEmail = row._original.assignments.map(
             x => x.person.name.toLowerCase() + x.person.email.toLowerCase()
           );
-          if (
-            namesAndEmail.some(x => x.includes(filter.value.toLowerCase()))
-          ) {
+          if (namesAndEmail.some(x => x.includes(filter.value.toLowerCase()))) {
             return true;
           }
         },
@@ -62,9 +60,7 @@ export default class AccessTable extends React.Component<IProps, {}> {
       },
       {
         Cell: row => (
-          <span>
-            {row.value ? DateUtil.formatExpiration(row.value) : ''}
-          </span>
+          <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
         ),
         Filter: ({ filter, onChange }) =>
           ReactTableExpirationUtil.filter(filter, onChange),
@@ -107,9 +103,8 @@ export default class AccessTable extends React.Component<IProps, {}> {
     );
   }
 
-  private renderDropdownColumn = row => {
-    const accessEntity: IAccess = row.original;
-
+  private renderDropdownColumn = data => {
+    const accessEntity: IAccess = data.row.original;
     const actions: IAction[] = [];
 
     if (!!this.props.onAdd) {

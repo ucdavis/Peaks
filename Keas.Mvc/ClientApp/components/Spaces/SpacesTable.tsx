@@ -34,7 +34,8 @@ export default class SpacesTable extends React.Component<IProps, {}> {
       {
         Cell: data => (
           <span>
-            {data.row.original.space.roomNumber} {data.row.original.space.bldgName}
+            {data.row.original.space.roomNumber}{' '}
+            {data.row.original.space.bldgName}
           </span>
         ),
         Header: 'Room',
@@ -91,10 +92,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
           <div>
             Workstations{' '}
             <i id='workstationsTooltip' className='fas fa-info-circle' />
-            <UncontrolledTooltip
-              placement='right'
-              target='workstationsTooltip'
-            >
+            <UncontrolledTooltip placement='right' target='workstationsTooltip'>
               In Use / Total
             </UncontrolledTooltip>
           </div>
