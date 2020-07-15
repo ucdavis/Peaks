@@ -10,7 +10,7 @@ import { ColumnFilterHeaders, DefaultColumnFilter } from './Filtering';
 import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { ReactTableUtil } from '../../util/tableUtil';
 
-export const ReactTable = ({ columns, data, initialState }: any) => {
+export const ReactTable = ({ columns, data, initialState, filterTypes }: any) => {
   const defaultColumn = React.useMemo(
     () => ({
       Filter: DefaultColumnFilter
@@ -39,8 +39,8 @@ export const ReactTable = ({ columns, data, initialState }: any) => {
       columns,
       data,
       defaultColumn,
-      initialState: { ...initialState, pageIndex: 0 }
-      //   filterTypes
+      initialState: { ...initialState, pageIndex: 0 },
+      filterTypes
     },
     useFilters, // useFilters!
     useGlobalFilter, // useGlobalFilter!
