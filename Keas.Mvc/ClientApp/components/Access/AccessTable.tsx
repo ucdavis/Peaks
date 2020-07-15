@@ -6,6 +6,7 @@ import { ReactTableExpirationUtil } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
+import { Column } from 'react-table';
 
 interface IProps {
   accesses: IAccess[];
@@ -17,6 +18,7 @@ interface IProps {
 
 export default class AccessTable extends React.Component<IProps, {}> {
   public render() {
+    // const columns: Column<IAccess>[] = [
     const columns = [
       {
         Cell: data => (
@@ -28,34 +30,20 @@ export default class AccessTable extends React.Component<IProps, {}> {
           </Button>
         ),
         Header: 'Access',
-        filterable: false,
-        maxWidth: 150,
-        resizable: false,
-        sortable: false
+        maxWidth: 150
       },
       {
         Header: 'Name',
-        accessor: 'name',
-        filter: 'contains'
+        accessor: 'name'
       },
       {
         Header: 'Number of Assignments',
         accessor: x => x.assignments.length,
-        filterable: false,
-        id: 'numAssignments',
-        sortable: true
+        id: 'numAssignments'
       },
       {
         Header: 'Assigned To',
         accessor: x => x.assignments.map(a => a.person.name).join(','),
-        filterMethod: (filter, row) => {
-          const namesAndEmail = row._original.assignments.map(
-            x => x.person.name.toLowerCase() + x.person.email.toLowerCase()
-          );
-          if (namesAndEmail.some(x => x.includes(filter.value.toLowerCase()))) {
-            return true;
-          }
-        },
         id: 'assignedTo'
       },
       {
@@ -75,11 +63,6 @@ export default class AccessTable extends React.Component<IProps, {}> {
       {
         Cell: this.renderDropdownColumn,
         Header: 'Actions',
-        className: 'table-actions',
-        filterable: false,
-        headerClassName: 'table-actions',
-        resizable: false,
-        sortable: false
       }
     ];
 

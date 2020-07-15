@@ -4,6 +4,7 @@ import { IKey, IKeyInfo } from '../../models/Keys';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
+import { Column } from 'react-table';
 
 interface IProps {
   showDetails?: (key: IKey) => void;
@@ -26,6 +27,7 @@ interface IRow {
 export default class KeyTable extends React.Component<IProps, {}> {
   public render() {
     const { filters, keysInfo } = this.props;
+    // const columns: Column<IKeyInfo>[] = [
     const columns = [
       {
         Cell: data => (
@@ -37,33 +39,17 @@ export default class KeyTable extends React.Component<IProps, {}> {
           </Button>
         ),
         Header: 'Details',
-        className: 'key-details',
-        filterable: false,
-        headerClassName: 'key-details',
-        maxWidth: 150,
-        resizable: false,
-        sortable: false
+        maxWidth: 150
       },
       {
         Header: 'Key Name',
-        accessor: 'key.name',
-        className: 'word-wrap',
-        filterMethod: (filter: IFilter, row: IRow) =>
-          !!row[filter.id] &&
-          row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+        accessor: 'key.name'
+        // accessor: row => row.key.name
       },
       {
         Header: 'Key Code',
-        accessor: 'key.code',
-        filterMethod: (filter: IFilter, row: IRow) =>
-          !!row[filter.id] &&
-          filter.value &&
-          (row[filter.id]
-            .toLowerCase()
-            .includes(filter.value.toLowerCase()) ||
-            filter.value
-              .toLowerCase()
-              .includes(row[filter.id].toLowerCase()))
+        accessor: 'key.code'
+        // accessor: row => row.key.code,
       },
       {
         Cell: row => (
@@ -98,7 +84,6 @@ export default class KeyTable extends React.Component<IProps, {}> {
             serialsTotal: keyInfo.serialsTotalCount
           };
         },
-        className: 'table-10p',
         filterMethod: (filter, row) => {
           if (filter.value === 'all') {
             return true;
@@ -120,7 +105,6 @@ export default class KeyTable extends React.Component<IProps, {}> {
             return row.serialsCount.serialsTotal === 0;
           }
         },
-        headerClassName: 'table-10p',
         id: 'serialsCount',
         sortMethod: (a, b) => {
           if (a.serialsTotal === b.serialsTotal) {
@@ -138,20 +122,10 @@ export default class KeyTable extends React.Component<IProps, {}> {
         Cell: data => <span>{data.row.original.spacesCount}</span>,
         Header: 'Spaces',
         accessor: 'spacesCount',
-        className: 'table-actions',
-        filterable: false,
-        headerClassName: 'table-actions',
-        resizable: false,
-        sortable: true
       },
       {
         Cell: this.renderDropdownColumn,
         Header: 'Actions',
-        className: 'table-actions',
-        filterable: false,
-        headerClassName: 'table-actions',
-        resizable: false,
-        sortable: false
       }
     ];
 

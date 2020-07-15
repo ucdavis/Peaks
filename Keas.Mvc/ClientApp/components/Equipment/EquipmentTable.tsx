@@ -4,8 +4,10 @@ import { IEquipment } from '../../models/Equipment';
 import { DateUtil } from '../../util/dates';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
+import { useTable, useFilters, useGlobalFilter, useAsyncDebounce } from 'react-table'
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
+import { Column } from 'react-table';
 
 interface IProps {
   equipment: IEquipment[];
@@ -18,6 +20,7 @@ interface IProps {
 
 export default class EquipmentTable extends React.Component<IProps, {}> {
   public render() {
+    // const columns: Column<IEquipment>[] = [
     const columns = [
       {
         Cell: data => (
@@ -35,16 +38,14 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
         Header: 'Serial Number',
         accessor: 'serialNumber',
         id: 'serial number',
-        filter: 'contains'
       },
       {
         Header: 'Name',
         accessor: 'name',
-        filter: 'contains'
       },
       {
         Header: 'Assigned To',
-        accessor: 'assignment.person.name'
+        accessor: row => row.assignment?.person?.name
       },
       {
         Cell: row => (
@@ -55,7 +56,8 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
         Filter: ({ filter, onChange }) =>
           ReactTableExpirationUtil.filter(filter, onChange),
         Header: 'Expiration',
-        accessor: 'assignment.expiresAt',
+        accessor: row => row.assignment?.expiresAt,
+        // accessor: 'assignment.expiresAt',
         filterMethod: (filter, row) =>
           ReactTableExpirationUtil.filterMethod(filter, row),
         id: 'expiresAt',
@@ -64,9 +66,6 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
       {
         Cell: this.renderDropdownColumn,
         Header: 'Actions',
-        filterable: false,
-        resizable: false,
-        sortable: false
       }
     ];
 
@@ -86,7 +85,6 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
 
   private renderDropdownColumn = data => {
     const equipmentEntity: IEquipment = data.row.original;
-    console.log(equipmentEntity);
     const hasAssignment = !!equipmentEntity.assignment;
     
     const actions: IAction[] = [];

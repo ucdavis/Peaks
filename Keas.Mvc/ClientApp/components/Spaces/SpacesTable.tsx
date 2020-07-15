@@ -3,6 +3,7 @@ import { Button, UncontrolledTooltip } from 'reactstrap';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { ReactTable } from '../Shared/ReactTable';
+import { Column } from 'react-table';
 
 interface IProps {
   filtered: any[];
@@ -13,6 +14,7 @@ interface IProps {
 
 export default class SpacesTable extends React.Component<IProps, {}> {
   public render() {
+    // const columns: Column<ISpaceInfo>[] = [
     const columns = [
       {
         Cell: data => (
@@ -24,12 +26,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
           </Button>
         ),
         Header: 'Actions',
-        className: 'spaces-details',
-        filterable: false,
-        headerClassName: 'spaces-details',
         maxWidth: 150,
-        resizable: false,
-        sortable: false
       },
       {
         Cell: data => (
@@ -40,35 +37,23 @@ export default class SpacesTable extends React.Component<IProps, {}> {
         ),
         Header: 'Room',
         accessor: row => row.space.roomNumber + ' ' + row.space.bldgName,
-        filterMethod: (filter, row) =>
-          !!row[filter.id] &&
-          row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
         id: 'room'
       },
       {
         Cell: data => <span>{data.row.original.space.roomName}</span>,
         Header: 'Room Name',
-        accessor: 'space.roomName',
-        className: 'word-wrap',
-        filterMethod: (filter, row) =>
-          !!row[filter.id] &&
-          row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+        accessor: key => key.space?.roomName
+        // accessor: 'space.roomName',
       },
       {
         Cell: data => <span>{data.row.original.keyCount}</span>,
         Header: 'Keys',
-        accessor: 'keyCount',
-        className: 'table-10p',
-        filterable: false,
-        headerClassName: 'table-10p'
+        accessor: 'keyCount'
       },
       {
         Cell: data => <span>{data.row.original.equipmentCount}</span>,
         Header: 'Equipment',
-        accessor: 'equipmentCount',
-        className: 'table-10p',
-        filterable: false,
-        headerClassName: 'table-10p'
+        accessor: 'equipmentCount'
       },
       {
         Cell: row => (
@@ -103,7 +88,6 @@ export default class SpacesTable extends React.Component<IProps, {}> {
             workstationsTotal: spaceInfo.workstationsTotal
           };
         },
-        className: 'table-10p',
         filterMethod: (filter, row) => {
           if (filter.value === 'all') {
             return true;
@@ -122,7 +106,6 @@ export default class SpacesTable extends React.Component<IProps, {}> {
             return row.workstationsCount.workstationsTotal > 0;
           }
         },
-        headerClassName: 'table-10p',
         id: 'workstationsCount',
         sortMethod: (a, b) => {
           if (a.workstationsTotal === b.workstationsTotal) {

@@ -6,6 +6,7 @@ import { ReactTableExpirationUtil } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
+import { Column } from 'react-table';
 
 interface IProps {
   keySerials: IKeySerial[];
@@ -28,6 +29,7 @@ interface IRow {
 export default class KeySerialTable extends React.Component<IProps, {}> {
   public render() {
     const { keySerials } = this.props;
+    // const columns: Column<IKeySerial>[] = [
     const columns = [
       {
         Cell: data => (
@@ -39,24 +41,13 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
           </Button>
         ),
         Header: 'Key Serial',
-        className: 'key-details',
-        filterable: false,
-        headerClassName: 'key-details',
         maxWidth: 150,
-        resizable: false,
-        sortable: false
       },
       {
         Header: 'Key Code and SN',
         accessor: (keySerial: IKeySerial) => {
           return keySerial.key.code + '-' + keySerial.number;
         },
-        filterMethod: (filter: IFilter, row) =>
-          !!row[filter.id] &&
-          row[filter.id]
-            .replace(/\-/g, '')
-            .toLowerCase()
-            .includes(filter.value.replace(/\-/g, '').toLowerCase()),
         id: 'keyCodeSN'
       },
       {
@@ -95,10 +86,6 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
           keySerial.keySerialAssignment
             ? keySerial.keySerialAssignment.person.name
             : null,
-        className: 'word-wrap',
-        filterMethod: (filter: IFilter, row: IRow) =>
-          !!row[filter.id] &&
-          row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
         id: 'assignedTo'
       },
       {
@@ -108,7 +95,8 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
         Filter: ({ filter, onChange }) =>
           ReactTableExpirationUtil.filter(filter, onChange),
         Header: 'Expiration',
-        accessor: 'keySerialAssignment.expiresAt',
+        accessor: row => row.keySerialAssignment?.expiresAt,
+        // accessor: 'keySerialAssignment.expiresAt',
         filterMethod: (filter: IFilter, row) =>
           ReactTableExpirationUtil.filterMethod(filter, row),
         id: 'expiresAt',
@@ -117,10 +105,6 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
       {
         Cell: this.renderDropdownColumn,
         Header: 'Actions',
-        className: 'table-actions',
-        filterable: false,
-        headerClassName: 'table-actions',
-        resizable: false,
         sortable: false
       }
     ];

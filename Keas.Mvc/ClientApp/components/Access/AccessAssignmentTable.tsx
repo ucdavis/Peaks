@@ -3,6 +3,7 @@ import { IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
 import { ReactTable } from '../Shared/ReactTable';
+import { Column } from 'react-table';
 
 interface IProps {
   assignments: IAccessAssignment[];
@@ -16,14 +17,12 @@ const accessAssignTable: React.FunctionComponent<IProps> = (
   const options = [...ReactTableExpirationUtil.defaultFilterOptions];
   options.splice(options.findIndex(v => v.value === 'unassigned'), 1);
 
+  // const columns: Column<IAccessAssignment>[] = [
   const columns = [
     {
       Header: 'Name',
-      accessor: 'person.name',
-      filterMethod: (filter, row) =>
-        !!row[filter.id] &&
-        row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
-      filterable: true
+      // accessor: row => row.person?.name
+      accessor: 'person.name'
     },
     {
       Cell: row => (
@@ -57,14 +56,10 @@ const accessAssignTable: React.FunctionComponent<IProps> = (
         </button>
       ),
       Header: 'Revoke',
-      accessor: 'personId',
-      className: 'table-actions',
-      filterable: false,
-      headerClassName: 'table-actions',
-      resizable: false,
-      sortable: false
+      accessor: 'personId'
     }
   ];
+
   return (
     <div>
       <h3>Assigned to:</h3>
