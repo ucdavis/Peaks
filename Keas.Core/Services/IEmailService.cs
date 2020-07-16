@@ -14,6 +14,8 @@ using Microsoft.Extensions.Options;
 using RazorLight;
 using Serilog;
 using SparkPost;
+using System.Net.Mail;
+using System.Net.Mime;
 
 namespace Keas.Core.Services
 {
@@ -33,10 +35,14 @@ namespace Keas.Core.Services
 
         private readonly SparkpostSettings _emailSettings;
 
+        private readonly SmtpClient _client;
+
         public EmailService(ApplicationDbContext dbContext, IOptions<SparkpostSettings> emailSettings)
         {
             _dbContext = dbContext;
             _emailSettings = emailSettings.Value;
+
+            _client = new SmtpClient(_emailSettings.Host, _emailSettings.Port) { Credentials = new NetworkCredential(_emailSettings.UserName, _emailSettings.Password), UseDefaultCredentials = true };
         }
 
         public async Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model)
@@ -72,26 +78,23 @@ namespace Keas.Core.Services
 
             var toEmails = toUsers
                  .Distinct()
-                 .Select(u => new Recipient() { Address = new Address(u.Email, u.Name, "to") })
+                 .Select(u => new MailAddress(u.Email, u.Name))
                  .ToList();
 
-            // Build list of people to email. I.E. get all DeptAdmin, if access.any then add AccessMaster, etc.
-            var transmission = new Transmission();
-            transmission.Content.Subject = "PEAKS Admin Expiring Items Notification";
-            transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-            transmission.Content.Text = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
-#if DEBUG
-            transmission.Recipients.Add(new Recipient() { Address = new Address("jscubbage@ucdavis.edu") });
-#else
-            toEmails.ForEach(transmission.Recipients.Add);
-#endif
+            var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Admin Expiring Items Notification" };
 
+            toEmails.ForEach(message.To.Add);
 
             var engine = GetRazorEngine();
-            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems);
 
-            var client = GetSparkpostClient();
-            await client.Transmissions.Send(transmission);
+            message.IsBodyHtml = true;
+            message.Body = await engine.CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems);
+
+            // add an alternate view for text-only readers
+            var textMessageView = AlternateView.CreateAlternateViewFromString("Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.", new ContentType(MediaTypeNames.Text.Plain));
+            message.AlternateViews.Add(textMessageView);
+
+            await _client.SendMailAsync(message);
 
             // reset next notification date
             // TODO Do we need a team level notification date????
