@@ -80,17 +80,17 @@ namespace Keas.Core.Services
                  .Select(u => new MailAddress(u.Email, u.Name))
                  .ToList();
 
-            var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Admin Expiring Items Notification" };
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Admin Expiring Items Notification" }) {
+                toEmails.ForEach(message.To.Add);
 
-            toEmails.ForEach(message.To.Add);
+                // body is our fallback text and we'll add an HTML view as an alternate.
+                message.Body = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
 
-            // body is our fallback text and we'll add an HTML view as an alternate.
-            message.Body = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
+                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+                message.AlternateViews.Add(htmlView);
 
-            var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
-            message.AlternateViews.Add(htmlView);
-
-            await _client.SendMailAsync(message);
+                await _client.SendMailAsync(message);
+            }
         }
 
         public async Task SendPersonNotification()
@@ -120,24 +120,24 @@ namespace Keas.Core.Services
                 //Send the Email
                 Log.Information($"Sending person notification email to {personEmail}");
 
-                var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS People Notification" };
+                using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS People Notification" }) {
+                    message.To.Add(personEmail);
 
-                message.To.Add(personEmail);
+                    // body is our fallback text and we'll add an HTML view as an alternate.
+                    message.Body = "The people in your teams have changed";
 
-                // body is our fallback text and we'll add an HTML view as an alternate.
-                message.Body = "The people in your teams have changed";
+                    var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications), new ContentType(MediaTypeNames.Text.Html));
+                    message.AlternateViews.Add(htmlView);
 
-                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications), new ContentType(MediaTypeNames.Text.Html));
-                message.AlternateViews.Add(htmlView);
-
-                try
-                {
-                    await _client.SendMailAsync(message);
-                }
-                catch (Exception e)
-                {
-                    Log.Error(e.Message);
-                    continue;
+                    try
+                    {
+                        await _client.SendMailAsync(message);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e.Message);
+                        continue;
+                    }
                 }
 
                 foreach (IGrouping<int?, PersonNotification> notificationGroup in personNotifications)
@@ -181,17 +181,17 @@ namespace Keas.Core.Services
                 return;                
             }
 
-            var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Expiring Items" };
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Expiring Items" }) {
+                message.To.Add(new MailAddress(person.Email, person.Name));
 
-            message.To.Add(new MailAddress(person.Email, person.Name));
+                // body is our fallback text and we'll add an HTML view as an alternate.
+                message.Body = BuildExpiringTextMessage(expiringItems);
 
-            // body is our fallback text and we'll add an HTML view as an alternate.
-            message.Body = BuildExpiringTextMessage(expiringItems);
+                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+                message.AlternateViews.Add(htmlView);
 
-            var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
-            message.AlternateViews.Add(htmlView);
-
-            await _client.SendMailAsync(message);
+                await _client.SendMailAsync(message);
+            }
 
             // reset next notification date
             foreach (var assignment in expiringItems.KeySerials.Select(k => k.KeySerialAssignment))
@@ -350,17 +350,17 @@ namespace Keas.Core.Services
             }
 
             //TODO: Do something with these notifications to build them into a single email.
-            var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Notification" };
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Notification" }) {
+                message.To.Add(new MailAddress(user.Email, user.Name));
 
-            message.To.Add(new MailAddress(user.Email, user.Name));
+                // body is our fallback text and we'll add an HTML view as an alternate.
+                message.Body = BuildNotificationTextMessage(notifications.ToList());
 
-            // body is our fallback text and we'll add an HTML view as an alternate.
-            message.Body = BuildNotificationTextMessage(notifications.ToList());
+                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList()), new ContentType(MediaTypeNames.Text.Html));
+                message.AlternateViews.Add(htmlView);
 
-            var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList()), new ContentType(MediaTypeNames.Text.Html));
-            message.AlternateViews.Add(htmlView);
-
-            await _client.SendMailAsync(message);
+                await _client.SendMailAsync(message);
+            }
 
             foreach (var notificationGroup in notifications)
             {
