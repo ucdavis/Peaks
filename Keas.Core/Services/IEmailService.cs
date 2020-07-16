@@ -42,7 +42,7 @@ namespace Keas.Core.Services
             _dbContext = dbContext;
             _emailSettings = emailSettings.Value;
 
-            _client = new SmtpClient(_emailSettings.Host, _emailSettings.Port) { Credentials = new NetworkCredential(_emailSettings.UserName, _emailSettings.Password), UseDefaultCredentials = true };
+            _client = new SmtpClient(_emailSettings.Host, _emailSettings.Port) { Credentials = new NetworkCredential(_emailSettings.UserName, _emailSettings.Password), EnableSsl = true };
         }
 
         public async Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model)
@@ -85,25 +85,13 @@ namespace Keas.Core.Services
 
             toEmails.ForEach(message.To.Add);
 
-            var engine = GetRazorEngine();
+            // body is our fallback text and we'll add an HTML view as an alternate.
+            message.Body = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
 
-            message.IsBodyHtml = true;
-            message.Body = await engine.CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems);
-
-            // add an alternate view for text-only readers
-            var textMessageView = AlternateView.CreateAlternateViewFromString("Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.", new ContentType(MediaTypeNames.Text.Plain));
-            message.AlternateViews.Add(textMessageView);
+            var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+            message.AlternateViews.Add(htmlView);
 
             await _client.SendMailAsync(message);
-
-            // reset next notification date
-            // TODO Do we need a team level notification date????
-            // var team = await _dbContext.Teams.FirstAsync(a => a.Id == teamId);
-            // team.NextNotificationDate = DateTime.Now.AddDays(1);
-            // _dbContext.Teams.Update(team);
-            // await _dbContext.SaveChangesAsync();
-            
-
         }
 
         public async Task SendPersonNotification()
