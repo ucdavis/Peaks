@@ -181,76 +181,18 @@ namespace Keas.Core.Services
             {
                 return;                
             }
-           
-            // build email
-            var transmission = new Transmission();
-            transmission.Content.Subject = "PEAKS Expiring Items";
-            transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-            transmission.Content.Text = BuildExpiringTextMessage(expiringItems);
-            transmission.Recipients = new List<Recipient>()
-            {
-#if DEBUG
-                new Recipient() { Address = new Address("jscubbage@ucdavis.edu") },
-#else
-                new Recipient() { Address = new Address(person.Email, person.Name) },
-#endif            
-            };
 
-            // TODO: Email supervisor?
-            
-            // build cc list
-//             var ccUsers = new List<User>();
+            var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Expiring Items" };
 
-//             if (expiringItems.AccessAssignments.Any())
-//             {
-//                 var roles = await _dbContext.Roles
-//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
-//                 var users = await GetUsersInRoles(roles, person.TeamId);
-//                 ccUsers.AddRange(users);
-//             }
+            message.To.Add(new MailAddress(person.Email, person.Name));
 
-//             if (expiringItems.KeySerials.Any())
-//             {
-//                 var roles = await _dbContext.Roles
-//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-//                 var users = await GetUsersInRoles(roles, person.TeamId);
-//                 ccUsers.AddRange(users);
-//             }
+            // body is our fallback text and we'll add an HTML view as an alternate.
+            message.Body = BuildExpiringTextMessage(expiringItems);
 
-//             if (expiringItems.Equipment.Any())
-//             {
-//                 var roles = await _dbContext.Roles
-//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
-//                 var users = await GetUsersInRoles(roles, person.TeamId);
-//                 ccUsers.AddRange(users);
-//             }
+            var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+            message.AlternateViews.Add(htmlView);
 
-//             if (expiringItems.Workstations.Any())
-//             {
-//                 var roles = await _dbContext.Roles
-//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
-//                 var users = await GetUsersInRoles(roles, person.TeamId);
-//                 ccUsers.AddRange(users);
-                
-//             }
-
-//             // transform to cc recipient
-//             var ccEmails = ccUsers
-//                 .Distinct()
-//                 .Select(u => new Recipient() {Address = new Address(u.Email, u.Name, "cc")})
-//                 .ToList();
-
-// #if !DEBUG
-//             // add emails to
-//             ccEmails.ForEach(transmission.Recipients.Add);
-// #endif
-
-            // build view
-            var engine = GetRazorEngine();
-            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems);
-
-            var client = GetSparkpostClient();
-            await client.Transmissions.Send(transmission);
+            await _client.SendMailAsync(message);
 
             // reset next notification date
             foreach (var assignment in expiringItems.KeySerials.Select(k => k.KeySerialAssignment))
