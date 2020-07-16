@@ -43,6 +43,7 @@ namespace Keas.Mvc.Handlers
 
             if (context.User.HasClaim("APIKEYTEAM", team)) {
                 context.Succeed(requirement);
+                return;
             }
 
             // TODO: if user doesn't have access based on claim/api key, check based on roles
