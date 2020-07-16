@@ -120,36 +120,26 @@ namespace Keas.Core.Services
                 
                 //Send the Email
                 Log.Information($"Sending person notification email to {personEmail}");
-                
-                var transmission = new Transmission();
-                transmission.Content.Subject = "PEAKS People Notification";
-                transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-                transmission.Content.Text = "The people in your teams have changed"; //TODO: Point to a report?
 
-                transmission.Recipients = new List<Recipient>()
-                {
-#if DEBUG
-                    new Recipient() {Address = new Address("jsylvestre@ucdavis.edu")},
-#else
-                    new Recipient() { Address = new Address(personEmail) },
-#endif
-                };
+                var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS People Notification" };
 
-                var engine = GetRazorEngine();
-                transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications);
+                message.To.Add(personEmail);
 
-                var client = GetSparkpostClient();
+                // body is our fallback text and we'll add an HTML view as an alternate.
+                message.Body = "The people in your teams have changed";
+
+                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications), new ContentType(MediaTypeNames.Text.Html));
+                message.AlternateViews.Add(htmlView);
+
                 try
                 {
-                    await client.Transmissions.Send(transmission);
+                    await _client.SendMailAsync(message);
                 }
                 catch (Exception e)
                 {
                     Log.Error(e.Message);
                     continue;
                 }
-                
-
 
                 foreach (IGrouping<int?, PersonNotification> notificationGroup in personNotifications)
                 {
