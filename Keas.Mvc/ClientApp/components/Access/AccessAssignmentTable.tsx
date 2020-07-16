@@ -1,9 +1,14 @@
 import * as React from 'react';
 import { IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
-import { ReactTableExpirationUtil } from '../../util/reactTable';
+import {
+  ExpirationColumnFilter,
+  expirationFilter,
+  ReactTableExpirationUtil
+} from '../../util/reactTable';
 import { ReactTable } from '../Shared/ReactTable';
-import { Column } from 'react-table';
+import { ReactTableUtil } from '../../util/tableUtil';
+import { Column, TableState } from 'react-table';
 
 interface IProps {
   assignments: IAccessAssignment[];
@@ -15,27 +20,24 @@ const accessAssignTable: React.FunctionComponent<IProps> = (
   props: React.PropsWithChildren<IProps>
 ): React.ReactElement => {
   const options = [...ReactTableExpirationUtil.defaultFilterOptions];
-  options.splice(options.findIndex(v => v.value === 'unassigned'), 1);
+  options.splice(
+    options.findIndex(v => v.value === 'unassigned'),
+    1
+  );
 
-  // const columns: Column<IAccessAssignment>[] = [
-  const columns = [
+  const columns: Column<IAccessAssignment>[] = [
     {
       Header: 'Name',
-      // accessor: row => row.person?.name
-      accessor: 'person.name'
+      accessor: row => row.person?.name
     },
     {
       Cell: row => (
         <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
       ),
-      Filter: ({ filter, onChange }) =>
-        ReactTableExpirationUtil.getFilter(options)(filter, onChange),
+      Filter: ExpirationColumnFilter,
+      filter: 'expiration',
       Header: 'Expiration',
-      accessor: 'expiresAt',
-      filterMethod: (filter, row) =>
-        ReactTableExpirationUtil.filterMethod(filter, row),
-      filterable: true,
-      sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
+      accessor: 'expiresAt'
     },
     {
       Cell: row => (
@@ -60,10 +62,20 @@ const accessAssignTable: React.FunctionComponent<IProps> = (
     }
   ];
 
+  const initialState: Partial<TableState<any>> = {
+    sortBy: [{ id: 'name' }],
+    pageSize: ReactTableUtil.getPageSize()
+  };
+
   return (
     <div>
       <h3>Assigned to:</h3>
-      <ReactTable data={props.assignments} columns={columns} minRows={1} />
+      <ReactTable
+        data={props.assignments}
+        columns={columns}
+        initialState={initialState}
+        filterTypes={{ expiration: expirationFilter }}
+      />
     </div>
   );
 };

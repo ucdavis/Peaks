@@ -2,11 +2,11 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IAccess } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
-import { ReactTableExpirationUtil } from '../../util/reactTable';
+import { ExpirationColumnFilter, expirationFilter } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { Column } from 'react-table';
+import { Column, TableState } from 'react-table';
 
 interface IProps {
   accesses: IAccess[];
@@ -18,8 +18,7 @@ interface IProps {
 
 export default class AccessTable extends React.Component<IProps, {}> {
   public render() {
-    // const columns: Column<IAccess>[] = [
-    const columns = [
+    const columns: Column<IAccess>[] = [
       {
         Cell: data => (
           <Button
@@ -50,38 +49,30 @@ export default class AccessTable extends React.Component<IProps, {}> {
         Cell: row => (
           <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
         ),
-        Filter: ({ filter, onChange }) =>
-          ReactTableExpirationUtil.filter(filter, onChange),
+        Filter: ExpirationColumnFilter,
+        filter: 'expiration',
         Header: 'Expiration',
         accessor: x =>
           DateUtil.getFirstExpiration(x.assignments.map(y => y.expiresAt)),
-        filterMethod: (filter, row) =>
-          ReactTableExpirationUtil.filterMethod(filter, row),
-        id: 'expiresAt',
-        sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
+        id: 'expiresAt'
       },
       {
         Cell: this.renderDropdownColumn,
         Header: 'Actions',
       }
     ];
+    
+    const initialState: Partial<TableState<any>> = {
+      sortBy: [{ id: 'name' }],
+      pageSize: ReactTableUtil.getPageSize()
+    };
 
     return (
       <ReactTable
         data={this.props.accesses}
-        filterable={true}
-        defaultPageSize={ReactTableUtil.getPageSize()}
-        onPageSizeChange={pageSize => {
-          ReactTableUtil.setPageSize(pageSize);
-        }}
-        minRows={1}
         columns={columns}
-        defaultSorted={[
-          {
-            desc: false,
-            id: 'name'
-          }
-        ]}
+        initialState={initialState}
+        filterTypes={{ expiration: expirationFilter }}
       />
     );
   }

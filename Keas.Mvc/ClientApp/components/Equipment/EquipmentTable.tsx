@@ -4,7 +4,6 @@ import { IEquipment } from '../../models/Equipment';
 import { DateUtil } from '../../util/dates';
 import { ExpirationColumnFilter, expirationFilter } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
-import { useTable, useFilters, useGlobalFilter, useAsyncDebounce } from 'react-table'
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
 import { Column, TableState } from 'react-table';
