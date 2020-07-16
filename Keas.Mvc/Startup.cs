@@ -138,6 +138,7 @@ namespace Keas.Mvc
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy("apikey", policy => policy.Requirements.Add(new VerifyAuthToken()));
                 options.AddPolicy(AccessCodes.Codes.KeyMasterAccess, policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.EquipMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.EquipmentMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.AccessMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin)));
@@ -148,6 +149,8 @@ namespace Keas.Mvc
                 options.AddPolicy(AccessCodes.Codes.DepartmentOrSystemAdminAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
                 options.AddPolicy(AccessCodes.Codes.PersonManagerAccess, policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.PersonManager, Role.Codes.DepartmentalAdmin)));
             });
+
+            services.AddScoped<IAuthorizationHandler, VerifyAuthTokenHandler>();
             services.AddScoped<IAuthorizationHandler, VerifyRoleAccessHandler>();
             
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -180,6 +183,7 @@ namespace Keas.Mvc
 
             appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
 
+            app.UseMiddleware<ApiKeyMiddleware>();
             app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<LogIdentityMiddleware>();
 
