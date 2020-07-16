@@ -13,7 +13,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RazorLight;
 using Serilog;
-using SparkPost;
 using System.Net.Mail;
 using System.Net.Mime;
 
@@ -351,28 +350,17 @@ namespace Keas.Core.Services
             }
 
             //TODO: Do something with these notifications to build them into a single email.
+            var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Notification" };
 
-            // build email
-            var transmission = new Transmission();
-            transmission.Content.Subject = "PEAKS Notification";
-            transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-            transmission.Content.Text = BuildNotificationTextMessage(notifications.ToList());
-            transmission.Recipients = new List<Recipient>()
-            {
-#if DEBUG
-                new Recipient() { Address = new Address("jscubbage@ucdavis.edu") },
-#else
-                new Recipient() { Address = new Address(user.Email, user.Name) },
-#endif
-            };
+            message.To.Add(new MailAddress(user.Email, user.Name));
 
-            //Bcc anyone?
+            // body is our fallback text and we'll add an HTML view as an alternate.
+            message.Body = BuildNotificationTextMessage(notifications.ToList());
 
-            var engine = GetRazorEngine();
-            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList());
+            var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList()), new ContentType(MediaTypeNames.Text.Html));
+            message.AlternateViews.Add(htmlView);
 
-            var client = GetSparkpostClient();
-            await client.Transmissions.Send(transmission);
+            await _client.SendMailAsync(message);
 
             foreach (var notificationGroup in notifications)
             {
@@ -408,12 +396,6 @@ namespace Keas.Core.Services
                 .Build();
 
             return engine;
-        }
-
-        private Client GetSparkpostClient()
-        {
-            var client = new Client(_emailSettings.ApiKey);
-            return client;
         }
     }
 }
