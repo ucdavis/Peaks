@@ -2,11 +2,14 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IKeySerial } from '../../models/KeySerials';
 import { DateUtil } from '../../util/dates';
-import { ReactTableExpirationUtil } from '../../util/reactTable';
+import {
+  ExpirationColumnFilter,
+  expirationFilter
+} from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { Column } from 'react-table';
+import { Column, TableState } from 'react-table';
 
 interface IProps {
   keySerials: IKeySerial[];
@@ -17,20 +20,118 @@ interface IProps {
   onEdit?: (keySerial: IKeySerial) => void;
 }
 
-interface IFilter {
-  id: string;
-  value: any;
+interface IFilterOption {
+  value: string;
+  displayText: string;
 }
 
-interface IRow {
-  original: IKeySerial;
+// UI for Key status column filter
+const KeyStatusColumnFilter = ({
+  column: { filterValue, setFilter }
+}) => {
+  // Render a multi-select box
+  return (
+    <select
+      value={filterValue}
+      style={{ width: '100%' }}
+      onChange={e => {
+        setFilter(e.target.value || undefined);
+      }}
+    >
+      {ReactTableStatusUtil.defaultFilterOptions.map(option => (
+        <option key={option.value} value={option.value}>
+          {option.displayText}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+// Logic to control what rows get displayed
+const statusFilter = (rows: any[], id, filterValue) => {
+  if (filterValue === 'all') {
+    return rows;
+  }
+  if (filterValue === 'active') {
+    return rows.filter(r => getRowStatus(r) === 'Active');
+  }
+  if (filterValue === 'inactive') {
+    return rows.filter(
+      r => getRowStatus(r) === 'Lost' || getRowStatus(r) === 'Destroyed'
+    );
+  }
+  if (filterValue === 'special') {
+    return rows.filter(r => getRowStatus(r) === 'Special');
+  }
+  return rows;
+};
+
+const getRowStatus = (row: any) => row.original?.status;
+
+class ReactTableStatusUtil {
+  // Lists filter options
+  public static defaultFilterOptions: IFilterOption[] = [
+    {
+      displayText: 'Show All',
+      value: 'all'
+    },
+    {
+      displayText: 'Active',
+      value: 'active'
+    },
+    {
+      displayText: 'Inactive',
+      value: 'inactive'
+    },
+    {
+      displayText: 'Special',
+      value: 'special'
+    }
+  ];
+
+  public static filter = ReactTableStatusUtil.getFilter(
+    ReactTableStatusUtil.defaultFilterOptions
+  );
+
+  public static filterMethod(filter, row) {
+    if (filter.value === 'all') {
+      return true;
+    }
+    if (filter.value === 'active') {
+      return row.status === 'Active';
+    }
+    if (filter.value === 'inactive') {
+      return row.status === 'Inactive';
+    }
+    if (filter.value === 'special') {
+      return row.status === 'Special';
+    }
+  }
+
+  // Displays all the filter options
+  public static getFilter(options: IFilterOption[]) {
+    return (filter, onChange) => {
+      return (
+        <select
+          onChange={e => onChange(e.target.value)}
+          style={{ width: '100%' }}
+          value={filter ? filter.value : 'all'}
+        >
+          {options.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.displayText}
+            </option>
+          ))}
+        </select>
+      );
+    };
+  }
 }
 
 export default class KeySerialTable extends React.Component<IProps, {}> {
   public render() {
     const { keySerials } = this.props;
-    // const columns: Column<IKeySerial>[] = [
-    const columns = [
+    const columns: Column<IKeySerial>[] = [
       {
         Cell: data => (
           <Button
@@ -41,7 +142,7 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
           </Button>
         ),
         Header: 'Key Serial',
-        maxWidth: 150,
+        maxWidth: 150
       },
       {
         Header: 'Key Code and SN',
@@ -51,34 +152,10 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
         id: 'keyCodeSN'
       },
       {
-        Filter: ({ filter, onChange }) => (
-          <select
-            onChange={e => onChange(e.target.value)}
-            style={{ width: '100%' }}
-            value={filter ? filter.value : 'all'}
-          >
-            <option value='all'>Show All</option>
-            <option value='active'>Active</option>
-            <option value='inactive'>Inactive</option>
-            <option value='special'>Special</option>
-          </select>
-        ),
+        Filter: KeyStatusColumnFilter,
+        filter: 'status',
         Header: 'Status',
-        accessor: 'status',
-        filterMethod: (filter: IFilter, row: IKeySerial) => {
-          if (filter.value === 'all') {
-            return true;
-          }
-          if (filter.value === 'active') {
-            return row.status === 'Active';
-          }
-          if (filter.value === 'inactive') {
-            return row.status !== 'Active';
-          }
-          if (filter.value === 'special') {
-            return row.status === 'Special';
-          }
-        }
+        accessor: 'status'
       },
       {
         Header: 'Assignment',
@@ -92,43 +169,29 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
         Cell: row => (
           <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
         ),
-        Filter: ({ filter, onChange }) =>
-          ReactTableExpirationUtil.filter(filter, onChange),
+        Filter: ExpirationColumnFilter,
+        filter: 'expiration',
         Header: 'Expiration',
         accessor: row => row.keySerialAssignment?.expiresAt,
-        // accessor: 'keySerialAssignment.expiresAt',
-        filterMethod: (filter: IFilter, row) =>
-          ReactTableExpirationUtil.filterMethod(filter, row),
-        id: 'expiresAt',
-        sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
+        id: 'expiresAt'
       },
       {
         Cell: this.renderDropdownColumn,
-        Header: 'Actions',
-        sortable: false
+        Header: 'Actions'
       }
     ];
+
+    const initialState: Partial<TableState<any>> = {
+      sortBy: [{ id: 'name' }],
+      pageSize: ReactTableUtil.getPageSize()
+    };
 
     return (
       <ReactTable
         data={keySerials}
-        filterable={true}
-        defaultPageSize={ReactTableUtil.getPageSize()}
-        onPageSizeChange={pageSize => {
-          ReactTableUtil.setPageSize(pageSize);
-        }}
-        minRows={1}
         columns={columns}
-        defaultSorted={[
-          {
-            desc: false,
-            id: 'status'
-          },
-          {
-            desc: false,
-            id: 'expiresAt'
-          }
-        ]}
+        initialState={initialState}
+        filterTypes={{ expiration: expirationFilter, status: statusFilter }}
       />
     );
   }

@@ -8,7 +8,7 @@ interface IFilterOption {
 
 // UI for expiration column filter
 export function ExpirationColumnFilter({
-  column: { filterValue, setFilter, preFilteredRows, id }
+  column: { filterValue, setFilter }
 }) {
   // Render a multi-select box
   return (
@@ -168,116 +168,5 @@ export class ReactTableExpirationUtil {
     } else {
       return isBefore(new Date(a), new Date(b)) ? -1 : 1;
     }
-  }
-}
-
-// UI for serial column filter
-export function SerialColumnFilter({
-  column: { filterValue, setFilter, preFilteredRows, id }
-}) {
-  // Render a multi-select box
-  return (
-    <select
-      value={filterValue}
-      style={{ width: '100%' }}
-      onChange={e => {
-        setFilter(e.target.value || undefined);
-      }}
-    >
-      {ReactTableSerialUtil.defaultFilterOptions.map(option => (
-        <option key={option.value} value={option.value}>
-          {option.displayText}
-        </option>
-      ))}
-    </select>
-  );
-}
-
-export function serialFilter(rows: any[], id, filterValue) {
-  if (filterValue === 'all') {
-    return rows;
-  }
-  if (filterValue === 'unassigned') {
-    return rows.filter(
-      r => getRowSerialsInUse(r) === 0 && getRowSerialsTotal(r) > 0
-    );
-  }
-  if (filterValue === 'assigned') {
-    return rows.filter(r => getRowSerialsInUse(r) > 0);
-  }
-  if (filterValue === 'hasSerial') {
-    return rows.filter(r => getRowSerialsTotal(r) > 0);
-  }
-  if (filterValue === 'noSerial') {
-    return rows.filter(r => getRowSerialsTotal(r) === 0);
-  }
-  return rows;
-}
-
-const getRowSerialsInUse = (row: any) => row.original?.serialsInUseCount;
-const getRowSerialsTotal = (row: any) => row.original?.serialsTotalCount;
-
-export class ReactTableSerialUtil {
-  public static defaultFilterOptions: IFilterOption[] = [
-    {
-      displayText: 'Show All',
-      value: 'all'
-    },
-    {
-      displayText: 'Unassigned',
-      value: 'unassigned'
-    },
-    {
-      displayText: 'Assigned',
-      value: 'assigned'
-    },
-    {
-      displayText: 'Has Serial',
-      value: 'hasSerial'
-    },
-    {
-      displayText: 'No Serial',
-      value: 'noSerial'
-    }
-  ];
-
-  public static filter = ReactTableSerialUtil.getFilter(
-    ReactTableSerialUtil.defaultFilterOptions
-  );
-
-  public static filterMethod(filter, row) {
-    if (filter.value === 'all') {
-      return true;
-    }
-    if (filter.value === 'unassigned') {
-      return row.serialsInUseCount === 0;
-    }
-    if (filter.value === 'assigned') {
-      return row.serialsInUseCount > 0;
-    }
-    if (filter.value === 'hasSerial') {
-      return row.serialsTotalCount > 0;
-    }
-    if (filter.value === 'noSerial') {
-      return row.serialsTotoalCount === 0;
-    }
-  }
-
-  public static getFilter(options: IFilterOption[]) {
-    return (filter, onChange) => {
-      return (
-        <select
-          onChange={e => onChange(e.target.value)}
-          style={{ width: '100%' }}
-          value={filter ? filter.value : 'all'}
-        >
-          {options.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.displayText}
-            </option>
-          ))}
-        </select>
-      );
-    };
   }
 }

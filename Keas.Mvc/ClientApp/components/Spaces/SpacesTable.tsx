@@ -3,13 +3,127 @@ import { Button, UncontrolledTooltip } from 'reactstrap';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { ReactTable } from '../Shared/ReactTable';
-import { Column } from 'react-table';
+import { Column, TableState } from 'react-table';
 
 interface IProps {
   filtered: any[];
   spaces: ISpaceInfo[];
   showDetails: (space: ISpace) => void;
   updateFilters: (filters: any[]) => void;
+}
+
+interface IFilterOption {
+  value: string;
+  displayText: string;
+}
+
+// UI for workstation column filter
+const SpaceWorkstationColumnFilter = ({
+  column: { filterValue, setFilter }
+}) => {
+  // Render a multi-select box
+  return (
+    <select
+      value={filterValue}
+      style={{ width: '100%' }}
+      onChange={e => {
+        setFilter(e.target.value || undefined);
+      }}
+    >
+      {ReactTableWorkstationUtil.defaultFilterOptions.map(option => (
+        <option key={option.value} value={option.value}>
+          {option.displayText}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+// Logic to control what rows get displayed
+const workstationFilter = (rows: any[], id, filterValue) => {
+  if (filterValue === 'all') {
+    return rows;
+  }
+  if (filterValue === 'unassigned') {
+    return rows.filter(
+      r =>
+        getRowWorkstationsTotal(r) > 0 &&
+        getRowWorkstationsInUse(r) < getRowWorkstationsTotal(r)
+    );
+  }
+  if (filterValue === 'assigned') {
+    return rows.filter(r => getRowWorkstationsInUse(r) > 0);
+  }
+  if (filterValue === 'any') {
+    return rows.filter(r => getRowWorkstationsTotal(r) > 0);
+  }
+  return rows;
+};
+
+const getRowWorkstationsInUse = (row: any) => row.original?.workstationsInUse;
+const getRowWorkstationsTotal = (row: any) => row.original?.workstationsTotal;
+
+class ReactTableWorkstationUtil {
+  // Lists all filter options
+  public static defaultFilterOptions: IFilterOption[] = [
+    {
+      displayText: 'Show All',
+      value: 'all'
+    },
+    {
+      displayText: 'Unassigned',
+      value: 'unassigned'
+    },
+    {
+      displayText: 'Assigned',
+      value: 'assigned'
+    },
+    {
+      displayText: 'Any',
+      value: 'any'
+    }
+  ];
+
+  public static filter = ReactTableWorkstationUtil.getFilter(
+    ReactTableWorkstationUtil.defaultFilterOptions
+  );
+
+  public static filterMethod(filter, row) {
+    if (filter.value === 'all') {
+      return true;
+    }
+    if (filter.value === 'unassigned') {
+      return (
+        row.workstationsTotal > 0 &&
+        row.workstationsInUse < row.workstationsTotal
+      );
+    }
+    if (filter.value === 'assigned') {
+      return row.workstationsInUse > 0;
+    }
+    if (filter.value === 'any') {
+      return row.workstationsTotal > 0;
+    }
+  }
+
+  // Displays all the filter options
+  public static getFilter(options: IFilterOption[]) {
+    return (filter, onChange) => {
+      return (
+        <select
+          onChange={e => onChange(e.target.value)}
+          style={{ width: '100%' }}
+          value={filter ? filter.value : 'all'}
+        >
+          {options.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.displayText}
+            </option>
+          ))}
+        </select>
+      );
+    };
+  }
 }
 
 export default class SpacesTable extends React.Component<IProps, {}> {
@@ -26,7 +140,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
           </Button>
         ),
         Header: 'Actions',
-        maxWidth: 150,
+        maxWidth: 150
       },
       {
         Cell: data => (
@@ -43,7 +157,6 @@ export default class SpacesTable extends React.Component<IProps, {}> {
         Cell: data => <span>{data.row.original.space.roomName}</span>,
         Header: 'Room Name',
         accessor: key => key.space?.roomName
-        // accessor: 'space.roomName',
       },
       {
         Cell: data => <span>{data.row.original.keyCount}</span>,
@@ -61,18 +174,8 @@ export default class SpacesTable extends React.Component<IProps, {}> {
             {row.value.workstationsInUse} / {row.value.workstationsTotal}
           </span>
         ),
-        Filter: ({ filter, onChange }) => (
-          <select
-            onChange={e => onChange(e.target.value)}
-            style={{ width: '100%' }}
-            value={filter ? filter.value : 'all'}
-          >
-            <option value='all'>Show All</option>
-            <option value='unassigned'>Unassigned</option>
-            <option value='assigned'>Assigned</option>
-            <option value='any'>Any</option>
-          </select>
-        ),
+        Filter: SpaceWorkstationColumnFilter,
+        filter: 'workstation',
         Header: header => (
           <div>
             Workstations{' '}
@@ -88,57 +191,21 @@ export default class SpacesTable extends React.Component<IProps, {}> {
             workstationsTotal: spaceInfo.workstationsTotal
           };
         },
-        filterMethod: (filter, row) => {
-          if (filter.value === 'all') {
-            return true;
-          }
-          if (filter.value === 'unassigned') {
-            return (
-              row.workstationsCount.workstationsTotal -
-                row.workstationsCount.workstationsInUse >
-              0
-            );
-          }
-          if (filter.value === 'assigned') {
-            return row.workstationsCount.workstationsInUse > 0;
-          }
-          if (filter.value === 'any') {
-            return row.workstationsCount.workstationsTotal > 0;
-          }
-        },
-        id: 'workstationsCount',
-        sortMethod: (a, b) => {
-          if (a.workstationsTotal === b.workstationsTotal) {
-            if (a.workstationsInUse === b.workstationsInUse) {
-              return 0;
-            } else {
-              return a.workstationsInUse < b.workstationsInUse ? 1 : -1;
-            }
-          } else {
-            return a.workstationsTotal < b.workstationsTotal ? 1 : -1;
-          }
-        }
+        id: 'workstationsCount'
       }
     ];
+
+    const initialState: Partial<TableState<any>> = {
+      sortBy: [{ id: 'name' }],
+      pageSize: ReactTableUtil.getPageSize()
+    };
 
     return (
       <ReactTable
         data={this.props.spaces}
-        filterable={true}
-        minRows={1}
-        filtered={this.props.filtered}
-        onFilteredChange={filtered => this.props.updateFilters(filtered)}
-        defaultPageSize={ReactTableUtil.getPageSize()}
-        onPageSizeChange={pageSize => {
-          ReactTableUtil.setPageSize(pageSize);
-        }}
         columns={columns}
-        defaultSorted={[
-          {
-            desc: false,
-            id: 'room'
-          }
-        ]}
+        initialState={initialState}
+        filterTypes={{ workstation: workstationFilter }}
       />
     );
   }

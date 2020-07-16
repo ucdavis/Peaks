@@ -4,7 +4,7 @@ import { IKey, IKeyInfo } from '../../models/Keys';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { Column } from 'react-table';
+import { Column, TableState } from 'react-table';
 
 interface IProps {
   showDetails?: (key: IKey) => void;
@@ -15,20 +15,129 @@ interface IProps {
   onFiltersChange: (filters: any[]) => void;
 }
 
-interface IFilter {
-  id: string;
-  value: any;
+interface IFilterOption {
+  value: string;
+  displayText: string;
 }
 
-interface IRow {
-  original: IKeyInfo;
+// UI for serial column filter
+const SerialColumnFilter = ({
+  column: { filterValue, setFilter }
+}) => {
+  // Render a multi-select box
+  return (
+    <select
+      value={filterValue}
+      style={{ width: '100%' }}
+      onChange={e => {
+        setFilter(e.target.value || undefined);
+      }}
+    >
+      {ReactTableSerialUtil.defaultFilterOptions.map(option => (
+        <option key={option.value} value={option.value}>
+          {option.displayText}
+        </option>
+      ))}
+    </select>
+  );
+};
+
+// Logic to control what rows get displayed
+const serialFilter = (rows: any[], id, filterValue) => {
+  if (filterValue === 'all') {
+    return rows;
+  }
+  if (filterValue === 'unassigned') {
+    return rows.filter(
+      r => getRowSerialsInUse(r) === 0 && getRowSerialsTotal(r) > 0
+    );
+  }
+  if (filterValue === 'assigned') {
+    return rows.filter(r => getRowSerialsInUse(r) > 0);
+  }
+  if (filterValue === 'hasSerial') {
+    return rows.filter(r => getRowSerialsTotal(r) > 0);
+  }
+  if (filterValue === 'noSerial') {
+    return rows.filter(r => getRowSerialsTotal(r) === 0);
+  }
+  return rows;
+};
+
+const getRowSerialsInUse = (row: any) => row.original?.serialsInUseCount;
+const getRowSerialsTotal = (row: any) => row.original?.serialsTotalCount;
+
+class ReactTableSerialUtil {
+  // Lists all filter options
+  public static defaultFilterOptions: IFilterOption[] = [
+    {
+      displayText: 'Show All',
+      value: 'all'
+    },
+    {
+      displayText: 'Unassigned',
+      value: 'unassigned'
+    },
+    {
+      displayText: 'Assigned',
+      value: 'assigned'
+    },
+    {
+      displayText: 'Has Serial',
+      value: 'hasSerial'
+    },
+    {
+      displayText: 'No Serial',
+      value: 'noSerial'
+    }
+  ];
+
+  public static filter = ReactTableSerialUtil.getFilter(
+    ReactTableSerialUtil.defaultFilterOptions
+  );
+
+  public static filterMethod(filter, row) {
+    if (filter.value === 'all') {
+      return true;
+    }
+    if (filter.value === 'unassigned') {
+      return row.serialsInUseCount === 0;
+    }
+    if (filter.value === 'assigned') {
+      return row.serialsInUseCount > 0;
+    }
+    if (filter.value === 'hasSerial') {
+      return row.serialsTotalCount > 0;
+    }
+    if (filter.value === 'noSerial') {
+      return row.serialsTotoalCount === 0;
+    }
+  }
+
+  // Displays all the filter options
+  public static getFilter(options: IFilterOption[]) {
+    return (filter, onChange) => {
+      return (
+        <select
+          onChange={e => onChange(e.target.value)}
+          style={{ width: '100%' }}
+          value={filter ? filter.value : 'all'}
+        >
+          {options.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.displayText}
+            </option>
+          ))}
+        </select>
+      );
+    };
+  }
 }
 
 export default class KeyTable extends React.Component<IProps, {}> {
   public render() {
     const { filters, keysInfo } = this.props;
-    // const columns: Column<IKeyInfo>[] = [
-    const columns = [
+    const columns: Column<IKeyInfo>[] = [
       {
         Cell: data => (
           <Button
@@ -43,13 +152,11 @@ export default class KeyTable extends React.Component<IProps, {}> {
       },
       {
         Header: 'Key Name',
-        accessor: 'key.name'
-        // accessor: row => row.key.name
+        accessor: row => row.key.name
       },
       {
         Header: 'Key Code',
-        accessor: 'key.code'
-        // accessor: row => row.key.code,
+        accessor: row => row.key.code
       },
       {
         Cell: row => (
@@ -57,19 +164,8 @@ export default class KeyTable extends React.Component<IProps, {}> {
             {row.value.serialsInUse} / {row.value.serialsTotal}
           </span>
         ),
-        Filter: ({ filter, onChange }) => (
-          <select
-            onChange={e => onChange(e.target.value)}
-            style={{ width: '100%' }}
-            value={filter ? filter.value : 'all'}
-          >
-            <option value='all'>Show All</option>
-            <option value='unassigned'>Unassigned</option>
-            <option value='assigned'>Assigned</option>
-            <option value='has-serial'>Has Serial</option>
-            <option value='no-serial'>No Serial</option>
-          </select>
-        ),
+        Filter: SerialColumnFilter,
+        filter: 'serial',
         Header: header => (
           <div>
             Serials <i id='serialTooltip' className='fas fa-info-circle' />
@@ -84,69 +180,30 @@ export default class KeyTable extends React.Component<IProps, {}> {
             serialsTotal: keyInfo.serialsTotalCount
           };
         },
-        filterMethod: (filter, row) => {
-          if (filter.value === 'all') {
-            return true;
-          }
-          if (filter.value === 'unassigned') {
-            return (
-              row.serialsCount.serialsTotal -
-                row.serialsCount.serialsInUse >
-              0
-            );
-          }
-          if (filter.value === 'assigned') {
-            return row.serialsCount.serialsInUse > 0;
-          }
-          if (filter.value === 'has-serial') {
-            return row.serialsCount.serialsTotal > 0;
-          }
-          if (filter.value === 'no-serial') {
-            return row.serialsCount.serialsTotal === 0;
-          }
-        },
-        id: 'serialsCount',
-        sortMethod: (a, b) => {
-          if (a.serialsTotal === b.serialsTotal) {
-            if (a.serialsInUse === b.serialsInUse) {
-              return 0;
-            } else {
-              return a.serialsInUse < b.serialsInUse ? 1 : -1;
-            }
-          } else {
-            return a.serialsTotal < b.serialsTotal ? 1 : -1;
-          }
-        }
+        id: 'serialsCount'
       },
       {
         Cell: data => <span>{data.row.original.spacesCount}</span>,
         Header: 'Spaces',
-        accessor: 'spacesCount',
+        accessor: 'spacesCount'
       },
       {
         Cell: this.renderDropdownColumn,
-        Header: 'Actions',
+        Header: 'Actions'
       }
     ];
+
+    const initialState: Partial<TableState<any>> = {
+      sortBy: [{ id: 'name' }],
+      pageSize: ReactTableUtil.getPageSize()
+    };
 
     return (
       <ReactTable
         data={keysInfo}
-        filterable={true}
-        defaultPageSize={ReactTableUtil.getPageSize()}
-        onPageSizeChange={pageSize => {
-          ReactTableUtil.setPageSize(pageSize);
-        }}
-        minRows={1}
-        filtered={filters}
-        onFilteredChange={this.props.onFiltersChange}
         columns={columns}
-        defaultSorted={[
-          {
-            desc: false,
-            id: 'key.name'
-          }
-        ]}
+        initialState={initialState}
+        filterTypes={{ serial: serialFilter }}
       />
     );
   }

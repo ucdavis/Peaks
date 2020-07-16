@@ -2,7 +2,10 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IEquipment } from '../../models/Equipment';
 import { DateUtil } from '../../util/dates';
-import { ExpirationColumnFilter, expirationFilter } from '../../util/reactTable';
+import {
+  ExpirationColumnFilter,
+  expirationFilter
+} from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
@@ -35,11 +38,11 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
       {
         Header: 'Serial Number',
         accessor: 'serialNumber',
-        id: 'serial number',
+        id: 'serial number'
       },
       {
         Header: 'Name',
-        accessor: 'name',
+        accessor: 'name'
       },
       {
         Header: 'Assigned To',
