@@ -4,20 +4,21 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Http;
+using Keas.Mvc.Attributes;
 
 namespace Keas.Mvc.Handlers
 {
-    public class VerifyAuthTokenHandler : AuthorizationHandler<VerifyAuthToken> {
+    public class VerifyRoleOrAuthTokenHandler : AuthorizationHandler<VerifyRoleOrAuthToken> {
         private readonly ITempDataDictionaryFactory _tempDataDictionaryFactory;
         private readonly IHttpContextAccessor _httpContext;
 
-        public VerifyAuthTokenHandler(IHttpContextAccessor httpContext, ITempDataDictionaryFactory tempDataDictionary)
+        public VerifyRoleOrAuthTokenHandler(IHttpContextAccessor httpContext, ITempDataDictionaryFactory tempDataDictionary)
         {
             _httpContext = httpContext;
             _tempDataDictionaryFactory = tempDataDictionary;
         }
 
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, VerifyAuthToken requirement) {
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, VerifyRoleOrAuthToken requirement) {
             // get team name from url
             var team = "";
             if (context.Resource is AuthorizationFilterContext mvcContext)
@@ -38,6 +39,8 @@ namespace Keas.Mvc.Handlers
             if (context.User.HasClaim("APIKEYTEAM", team)) {
                 context.Succeed(requirement);
             }
+
+            // TODO: if user doesn't have access based on claim/api key, check based on roles
 
             return Task.CompletedTask;
         }
