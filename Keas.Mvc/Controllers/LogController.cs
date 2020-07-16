@@ -6,6 +6,7 @@ using Serilog;
 
 namespace Keas.Mvc.Controllers
 {
+    [Authorize]
     public class LogController : SuperController
     {
         [HttpPost]

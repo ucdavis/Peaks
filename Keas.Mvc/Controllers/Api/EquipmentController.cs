@@ -14,9 +14,8 @@ using Bigfix;
 
 namespace Keas.Mvc.Controllers.Api
 {
-    // [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
     [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
-    public class EquipmentController : UnauthorizedSuperController
+    public class EquipmentController : SuperController
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;

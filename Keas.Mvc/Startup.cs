@@ -144,10 +144,10 @@ namespace Keas.Mvc
                 options.AddPolicy(AccessCodes.Codes.AccessMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.SpaceMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.SpaceMaster,Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.PersonManagerAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.PersonManager, Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy(AccessCodes.Codes.AnyRole, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.SpaceMaster, Role.Codes.DepartmentalAdmin, Role.Codes.AccessMaster, Role.Codes.EquipmentMaster, Role.Codes.KeyMaster, Role.Codes.PersonManager)));
 
                 // these require direct role access (no API access)
                 options.AddPolicy(AccessCodes.Codes.DepartmentAdminAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin)));
-                options.AddPolicy(AccessCodes.Codes.AnyRole, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.SpaceMaster, Role.Codes.DepartmentalAdmin, Role.Codes.AccessMaster, Role.Codes.EquipmentMaster, Role.Codes.KeyMaster, Role.Codes.PersonManager)));
                 options.AddPolicy(AccessCodes.Codes.SystemAdminAccess, policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.Admin)));
                 options.AddPolicy(AccessCodes.Codes.DepartmentOrSystemAdminAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
             });

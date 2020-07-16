@@ -6,11 +6,13 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Mvc.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers
 {
+    [Authorize]
     public class HelpController : SuperController
     {
         private readonly ApplicationDbContext _context;
