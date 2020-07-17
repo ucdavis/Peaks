@@ -128,8 +128,7 @@ class ReactTableWorkstationUtil {
 
 export default class SpacesTable extends React.Component<IProps, {}> {
   public render() {
-    // const columns: Column<ISpaceInfo>[] = [
-    const columns = [
+    const columns: Column<ISpaceInfo>[] = [
       {
         Cell: data => (
           <Button
