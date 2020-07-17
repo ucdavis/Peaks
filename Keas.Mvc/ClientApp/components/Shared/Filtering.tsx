@@ -27,7 +27,6 @@ export const GlobalFilter = ({
 export const DefaultColumnFilter = ({
   column: { filterValue, preFilteredRows, setFilter },
 }) => {
-  const count = preFilteredRows.length
 
   return (
     <input
