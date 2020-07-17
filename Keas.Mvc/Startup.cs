@@ -156,6 +156,7 @@ namespace Keas.Mvc
             services.AddScoped<IAuthorizationHandler, VerifyRoleAccessHandler>();
             
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<AutoValidateAntiforgeryTokenOrApiAuthorizationFilter>();
 
             //Added for Email Template View Engine
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();

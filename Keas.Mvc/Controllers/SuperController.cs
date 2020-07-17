@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
+using Keas.Mvc.Attributes;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Keas.Mvc.Controllers
 {
-    [AutoValidateAntiforgeryToken]
+    [AutoValidateAntiforgeryTokenOrApiAttribute]
     public class SuperController : Controller
     {
         public string Team => ControllerContext.RouteData.Values["teamName"] as string;
