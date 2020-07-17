@@ -8,6 +8,7 @@ using Keas.Mvc.Attributes;
 using Keas.Mvc.Services;
 using Keas.Core.Domain;
 using System.Linq;
+using Keas.Mvc.Helpers;
 
 namespace Keas.Mvc.Handlers
 {
@@ -41,7 +42,7 @@ namespace Keas.Mvc.Handlers
 
             // user has access to team based on claims
 
-            if (context.User.HasClaim("APIKEYTEAM", team)) {
+            if (context.User.HasClaim(ApiHelper.ClaimName, team)) {
                 context.Succeed(requirement);
                 return;
             }
