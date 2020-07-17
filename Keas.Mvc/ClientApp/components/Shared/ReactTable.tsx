@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import {
   useTable,
   useFilters,
@@ -56,7 +56,7 @@ export const ReactTable = ({ columns, data, initialState, filterTypes }: any) =>
       >
         <thead>
           {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
+            <tr className='table-row' {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
                 <th {...column.getHeaderProps(column.getSortByToggleProps())}>
                   {column.render('Header')}
@@ -78,7 +78,7 @@ export const ReactTable = ({ columns, data, initialState, filterTypes }: any) =>
           {page.map(row => {
             prepareRow(row);
             return (
-              <tr {...row.getRowProps()}>
+              <tr className='rt-tr-group' {...row.getRowProps()}>
                 {row.cells.map(cell => {
                   return (
                     <td {...cell.getCellProps()}>{cell.render('Cell')}</td>

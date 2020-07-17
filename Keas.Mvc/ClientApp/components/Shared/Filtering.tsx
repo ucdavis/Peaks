@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { Row, HeaderGroup } from 'react-table';
 
 // Define a default UI for filtering

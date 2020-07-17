@@ -99,9 +99,9 @@ describe('People Container', () => {
       );
     });
 
-    const headerRecord = container.querySelector('.rt-tr').textContent;
+    const headerRecord = container.querySelector('.table-row').textContent;
     expect(headerRecord).toBe(
-      'ActionsNameEmailSupervisorKeysEquipmentAccessesWorkstations'
+      'DetailsNameEmailSupervisorKeysEquipmentAccessWorkstations'
     );
   });
 

@@ -32,7 +32,6 @@ export default class PeopleTable extends React.Component<IProps, {}> {
       },
       {
         Header: 'Name',
-        id: 'name',
         accessor: row => row.person.lastName + ', ' + row.person.firstName,
         filter: 'contains'
       },
@@ -71,7 +70,6 @@ export default class PeopleTable extends React.Component<IProps, {}> {
       pageSize: ReactTableUtil.getPageSize()
     };
 
-    // return <h1>Hi</h1>;
     return (
       <ReactTable
         columns={columns}
