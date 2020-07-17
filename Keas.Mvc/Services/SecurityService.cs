@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Mvc.Helpers;
 
 namespace Keas.Mvc.Services
 {
@@ -85,8 +86,13 @@ namespace Keas.Mvc.Services
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
 
+            if (userId == null && ApiHelper.isApiUser(_contextAccessor.HttpContext.User)) {
+                userId = ApiHelper.UserId;
+            }
+
             var person = await _dbContext.People
                 .AsNoTracking()
+                .IgnoreQueryFilters()
                 .SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Slug == teamSlug);
 
             return person;
@@ -96,8 +102,14 @@ namespace Keas.Mvc.Services
         {
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
 
+            if (userId == null && ApiHelper.isApiUser(_contextAccessor.HttpContext.User))
+            {
+                userId = ApiHelper.UserId;
+            }
+
             var person = await _dbContext.People
                 .AsNoTracking()
+                .IgnoreQueryFilters()
                 .SingleOrDefaultAsync(p => p.User.Id == userId && p.Team.Id == teamId);
 
             return person;

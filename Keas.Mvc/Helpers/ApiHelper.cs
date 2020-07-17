@@ -6,5 +6,9 @@ namespace Keas.Mvc.Helpers
         public static string ClaimName = "APIKEYTEAM";
 
         public static string UserId = "api-peaks";
+
+        public static bool isApiUser(ClaimsPrincipal user) {
+            return user.HasClaim(c => c.Type == ClaimName);
+        }
     }
 }
