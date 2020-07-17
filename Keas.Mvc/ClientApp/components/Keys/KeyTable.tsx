@@ -29,7 +29,7 @@ const SerialColumnFilter = ({
       }}
     >
       <option value='all'>Show All</option>
-      <option value='anassigned'>Unassigned</option>
+      <option value='unassigned'>Unassigned</option>
       <option value='assigned'>Assigned</option>
       <option value='hasSerial'>Has Serial</option>
       <option value='noSerial'>No Serial</option>

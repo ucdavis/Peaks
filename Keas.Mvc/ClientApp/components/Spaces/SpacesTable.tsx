@@ -12,11 +12,6 @@ interface IProps {
   updateFilters: (filters: any[]) => void;
 }
 
-interface IFilterOption {
-  value: string;
-  displayText: string;
-}
-
 // UI for workstation column filter
 const SpaceWorkstationColumnFilter = ({
   column: { filterValue, setFilter }
@@ -30,11 +25,10 @@ const SpaceWorkstationColumnFilter = ({
         setFilter(e.target.value || undefined);
       }}
     >
-      {ReactTableWorkstationUtil.defaultFilterOptions.map(option => (
-        <option key={option.value} value={option.value}>
-          {option.displayText}
-        </option>
-      ))}
+      <option value='all'>Show All</option>
+      <option value='assigned'>Assigned</option>
+      <option value='unassigned'>Unassigned</option>
+      <option value='any'>Any</option>
     </select>
   );
 };
@@ -62,69 +56,6 @@ const workstationFilter = (rows: any[], id, filterValue) => {
 
 const getRowWorkstationsInUse = (row: any) => row.original?.workstationsInUse;
 const getRowWorkstationsTotal = (row: any) => row.original?.workstationsTotal;
-
-class ReactTableWorkstationUtil {
-  // Lists all filter options
-  public static defaultFilterOptions: IFilterOption[] = [
-    {
-      displayText: 'Show All',
-      value: 'all'
-    },
-    {
-      displayText: 'Unassigned',
-      value: 'unassigned'
-    },
-    {
-      displayText: 'Assigned',
-      value: 'assigned'
-    },
-    {
-      displayText: 'Any',
-      value: 'any'
-    }
-  ];
-
-  public static filter = ReactTableWorkstationUtil.getFilter(
-    ReactTableWorkstationUtil.defaultFilterOptions
-  );
-
-  public static filterMethod(filter, row) {
-    if (filter.value === 'all') {
-      return true;
-    }
-    if (filter.value === 'unassigned') {
-      return (
-        row.workstationsTotal > 0 &&
-        row.workstationsInUse < row.workstationsTotal
-      );
-    }
-    if (filter.value === 'assigned') {
-      return row.workstationsInUse > 0;
-    }
-    if (filter.value === 'any') {
-      return row.workstationsTotal > 0;
-    }
-  }
-
-  // Displays all the filter options
-  public static getFilter(options: IFilterOption[]) {
-    return (filter, onChange) => {
-      return (
-        <select
-          onChange={e => onChange(e.target.value)}
-          style={{ width: '100%' }}
-          value={filter ? filter.value : 'all'}
-        >
-          {options.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.displayText}
-            </option>
-          ))}
-        </select>
-      );
-    };
-  }
-}
 
 export default class SpacesTable extends React.Component<IProps, {}> {
   public render() {

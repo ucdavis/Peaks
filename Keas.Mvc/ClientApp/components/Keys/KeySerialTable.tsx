@@ -20,15 +20,8 @@ interface IProps {
   onEdit?: (keySerial: IKeySerial) => void;
 }
 
-interface IFilterOption {
-  value: string;
-  displayText: string;
-}
-
 // UI for Key status column filter
-const KeyStatusColumnFilter = ({
-  column: { filterValue, setFilter }
-}) => {
+const KeyStatusColumnFilter = ({ column: { filterValue, setFilter } }) => {
   // Render a multi-select box
   return (
     <select
@@ -38,11 +31,10 @@ const KeyStatusColumnFilter = ({
         setFilter(e.target.value || undefined);
       }}
     >
-      {ReactTableStatusUtil.defaultFilterOptions.map(option => (
-        <option key={option.value} value={option.value}>
-          {option.displayText}
-        </option>
-      ))}
+      <option value='all'>Show All</option>
+      <option value='active'>Active</option>
+      <option value='inactive'>Inactive</option>
+      <option value='special'>Special</option>
     </select>
   );
 };
@@ -67,66 +59,6 @@ const statusFilter = (rows: any[], id, filterValue) => {
 };
 
 const getRowStatus = (row: any) => row.original?.status;
-
-class ReactTableStatusUtil {
-  // Lists filter options
-  public static defaultFilterOptions: IFilterOption[] = [
-    {
-      displayText: 'Show All',
-      value: 'all'
-    },
-    {
-      displayText: 'Active',
-      value: 'active'
-    },
-    {
-      displayText: 'Inactive',
-      value: 'inactive'
-    },
-    {
-      displayText: 'Special',
-      value: 'special'
-    }
-  ];
-
-  public static filter = ReactTableStatusUtil.getFilter(
-    ReactTableStatusUtil.defaultFilterOptions
-  );
-
-  public static filterMethod(filter, row) {
-    if (filter.value === 'all') {
-      return true;
-    }
-    if (filter.value === 'active') {
-      return row.status === 'Active';
-    }
-    if (filter.value === 'inactive') {
-      return row.status === 'Inactive';
-    }
-    if (filter.value === 'special') {
-      return row.status === 'Special';
-    }
-  }
-
-  // Displays all the filter options
-  public static getFilter(options: IFilterOption[]) {
-    return (filter, onChange) => {
-      return (
-        <select
-          onChange={e => onChange(e.target.value)}
-          style={{ width: '100%' }}
-          value={filter ? filter.value : 'all'}
-        >
-          {options.map(option => (
-            <option key={option.value} value={option.value}>
-              {option.displayText}
-            </option>
-          ))}
-        </select>
-      );
-    };
-  }
-}
 
 export default class KeySerialTable extends React.Component<IProps, {}> {
   public render() {
