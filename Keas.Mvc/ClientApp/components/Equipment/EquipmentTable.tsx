@@ -32,7 +32,7 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
             Details
           </Button>
         ),
-        Header: 'Equipment Actions',
+        Header: 'Details',
         maxWidth: 150
       },
       {
