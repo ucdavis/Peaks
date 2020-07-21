@@ -480,7 +480,7 @@ namespace Keas.Core.Services
             var path = Path.GetFullPath(".");
 
             var engine = new RazorLightEngineBuilder()
-                .UseFilesystemProject(path)
+                .UseFileSystemProject(path)
                 .UseMemoryCachingProvider()
                 .Build();
 
