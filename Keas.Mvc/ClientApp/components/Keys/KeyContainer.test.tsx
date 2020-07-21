@@ -155,8 +155,8 @@ describe('Access Container', () => {
         const rowContent = match.textContent;
         if (rowContent.includes('Test')) {
           foundIt = true;
-          expect(rowContent).toContain('ER'); // confirm assigned person is displayed
-          expect(rowContent).toContain('1 / 1'); // confirm number of assignments is displayed
+          expect(rowContent).toContain('ER'); // confirm Key Code is displayed
+          expect(rowContent).toContain('1 / 1'); // confirm serials are displayed
         }
       });
 
