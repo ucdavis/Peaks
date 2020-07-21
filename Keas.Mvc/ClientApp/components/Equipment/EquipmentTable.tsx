@@ -66,7 +66,6 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
     ];
 
     const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'name' }],
       pageSize: ReactTableUtil.getPageSize()
     };
 
