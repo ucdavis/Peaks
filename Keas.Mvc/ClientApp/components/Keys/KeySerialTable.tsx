@@ -73,7 +73,7 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
             Details
           </Button>
         ),
-        Header: 'Key Serial',
+        Header: ' ',
         maxWidth: 150
       },
       {

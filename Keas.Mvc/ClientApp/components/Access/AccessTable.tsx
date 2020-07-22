@@ -28,7 +28,7 @@ export default class AccessTable extends React.Component<IProps, {}> {
             Details
           </Button>
         ),
-        Header: 'Details',
+        Header: ' ',
         maxWidth: 150
       },
       {

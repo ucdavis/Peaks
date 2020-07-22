@@ -69,7 +69,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
             Details
           </Button>
         ),
-        Header: 'Details',
+        Header: ' ',
         maxWidth: 150
       },
       {
