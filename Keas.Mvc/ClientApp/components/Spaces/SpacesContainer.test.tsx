@@ -139,28 +139,28 @@ describe('Space Container', () => {
     expect(foundIt).toBeTruthy();
   });
 
-    it('Shows correct number of spaces', async () => {
-      // await act to make sure pending Promises complete before moving on
-      await act(async () => {
-        // spy on our context's fetch handler to return fake spaces
-        jest
-          .spyOn(contextObject, 'fetch')
-          .mockImplementation(() => Promise.resolve(fakeSpaces));
+  it('Shows correct number of spaces', async () => {
+    // await act to make sure pending Promises complete before moving on
+    await act(async () => {
+      // spy on our context's fetch handler to return fake spaces
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakeSpaces));
 
-        // important to add the context provider here since it includes permissions and fetch info
-        render(
-          <Context.Provider value={contextObject}>
-            <SpacesContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
-            />
-          </Context.Provider>,
-          container
-        );
-      });
-      const matches = container.querySelectorAll('.rt-tr-group');
-
-      expect(matches.length).toBe(4);
+      // important to add the context provider here since it includes permissions and fetch info
+      render(
+        <Context.Provider value={contextObject}>
+          <SpacesContainer
+            history={mockRouter}
+            match={mockRouterMatch}
+            location={mockRouter}
+          />
+        </Context.Provider>,
+        container
+      );
     });
+    const matches = container.querySelectorAll('.rt-tr-group');
+
+    expect(matches.length).toBe(4);
+  });
 });
