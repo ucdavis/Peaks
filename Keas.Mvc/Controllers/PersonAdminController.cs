@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -190,10 +191,12 @@ namespace Keas.Mvc.Controllers
             var userName = User.GetNameClaim();
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
             using (var reader = new StreamReader(model.File.OpenReadStream()))
-            using (var csv = new CsvReader(reader))
+            using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty);
-                csv.Configuration.TrimOptions = TrimOptions.Trim;
+                PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty),
+                TrimOptions = TrimOptions.Trim
+            }))
+            {
                 var record = new PeopleImport();
                 var records = csv.EnumerateRecords(record);
 

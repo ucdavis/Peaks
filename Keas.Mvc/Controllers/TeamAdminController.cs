@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
@@ -15,6 +16,7 @@ using System.Runtime.CompilerServices;
 using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using System.Text;
+using CsvHelper.Configuration;
 using Keas.Core.Extensions;
 using Keas.Core.Resources;
 using Keas.Mvc.Extensions;
@@ -552,9 +554,11 @@ namespace Keas.Mvc.Controllers
             // Add counts
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
             using (var reader = new StreamReader(file.OpenReadStream()))
-            using (var csv = new CsvReader(reader))
+            using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
+                PrepareHeaderForMatch = (string header, int index) => header.ToLower()
+            }))
+            {
                 var record = new KeyImport();
                 var records = csv.EnumerateRecords(record);
 
@@ -943,9 +947,11 @@ namespace Keas.Mvc.Controllers
             var teamKeys = await _context.EquipmentAttributeKeys.Where(a => a.TeamId == null || a.TeamId == team.Id).ToListAsync();
 
             using (var reader = new StreamReader(file.OpenReadStream()))
-            using (var csv = new CsvReader(reader))
+            using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty);
+                PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty)
+            }))
+            {
                 var record = new EquipmentImport();
                 var records = csv.EnumerateRecords(record);
                 try
