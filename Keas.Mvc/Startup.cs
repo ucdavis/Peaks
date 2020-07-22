@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.SpaServices;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
+using SpaCliMiddleware;
 using StackifyLib;
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
@@ -192,11 +194,6 @@ namespace Keas.Mvc
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
-                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-                {
-                    HotModuleReplacement = true,
-                    ReactHotModuleReplacement = true
-                });
             }
             else
             {
@@ -208,48 +205,63 @@ namespace Keas.Mvc
             app.UseStatusCodePages("text/plain", "Status code page, status code: {0}");
 
             app.UseStaticFiles();
-
+            app.UseRouting();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseSession();
 
-            app.UseMvc(routes =>
+            app.UseEndpoints(routes =>
             {
-                routes.MapRoute(
+                routes.MapControllerRoute(
                     name: "API",
-                    template: "api/{teamName}/{controller}/{action}/{id?}",
+                    pattern: "api/{teamName}/{controller}/{action}/{id?}",
                     defaults: new { controller = "people", action = "Index" },
                     constraints: new { controller = "(keys|keyserials|equipment|access|spaces|people|person|workstations|tags|peopleAdmin)" }
                 );
 
-                routes.MapRoute(
+                routes.MapControllerRoute(
                     name: "Assets",
-                    template: "{teamName}/{asset}/{*type}",
+                    pattern: "{teamName}/{asset}/{*type}",
                     defaults: new { controller = "Asset", action = "Index" },
                     constraints: new { asset = "(keys|keyserials|equipment|access|spaces|people|person|workstations)" }
                 );
 
-                routes.MapRoute(
+                routes.MapControllerRoute(
                     name: "NonTeamRoutes",
-                    template: "{controller}/{action=Index}/{id?}",
+                    pattern: "{controller}/{action=Index}/{id?}",
                     defaults: null,
                     constraints: new { controller = "(admin|log)" }
                 );
 
-                routes.MapRoute(
+                routes.MapControllerRoute(
                     name: "GroupRoutes",
-                    template: "{controller}/{action=Index}/{id?}",
+                    pattern: "{controller}/{action=Index}/{id?}",
                     defaults: null,
                     constraints: new {controller = "(group)"}
                 );
 
-                routes.MapRoute(
+                routes.MapControllerRoute(
                     name: "TeamRoutes",
-                    template: "{teamName}/{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapRoute(
+                routes.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                
+                if (env.IsDevelopment())
+                {
+                    routes.MapToSpaCliProxy(
+                        "{*path}",
+                        options: new SpaOptions { SourcePath = "wwwroot/dist" },
+                        npmScript: "devpack",
+                        port: /*default(int)*/ 8080, // Allow webpack to find own port
+                        regex: "Project is running",
+                        forceKill: true, // kill anything running on our webpack port
+                        useProxy: true, // proxy webpack requests back through our aspnet server
+                        runner: ScriptRunnerType.Npm
+                    );
+                }
             });
         }
     }
