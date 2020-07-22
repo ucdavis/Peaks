@@ -17,6 +17,7 @@ interface IProps {
   space?: ISpace;
   creating?: boolean;
   error?: IValidationError;
+  isDeleting?: boolean;
 }
 
 export default class PersonEditValues extends React.Component<IProps, {}> {
@@ -153,6 +154,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
           <Label for='Start Date'>Start Date</Label>
           <br />
           <DatePicker
+            disabled={this.props.isDeleting}
             value={
               this.props.selectedPerson && this.props.selectedPerson.startDate
                 ? new Date(this.props.selectedPerson.startDate)
@@ -168,6 +170,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
           <Label for='End Date'>End Date</Label>
           <br />
           <DatePicker
+            disabled={this.props.isDeleting}
             value={
               this.props.selectedPerson && this.props.selectedPerson.endDate
                 ? new Date(this.props.selectedPerson.endDate)
