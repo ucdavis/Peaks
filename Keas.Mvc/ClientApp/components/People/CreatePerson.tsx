@@ -74,6 +74,7 @@ export default class CreatePerson extends React.Component<IProps, IState> {
                   disableEditing={false}
                   tags={this.props.tags}
                   error={this.state.error}
+                  isDeleting={false}
                 />
               </div>
 
