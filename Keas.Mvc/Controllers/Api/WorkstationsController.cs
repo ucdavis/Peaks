@@ -29,8 +29,8 @@ namespace Keas.Mvc.Controllers.Api
             var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (x.Name.StartsWith(q, comparison) || x.Space.BldgName.IndexOf(q, comparison) >= 0 // case-insensitive .Contains
-                    || x.Space.RoomNumber.StartsWith(q, comparison)))
+                (EF.Functions.Like(x.Name, $"{q}%") || EF.Functions.Like(x.Space.BldgName, $"%{q}%")
+                    || EF.Functions.Like(x.Space.RoomNumber, $"{q}%")))
                 .Include(x => x.Space)
                 .Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
@@ -42,11 +42,10 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> SearchInSpace(int spaceId, string q)
         {
-            var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
                 .Where(x => x.Team.Slug == Team && x.SpaceId == spaceId && x.Active &&
-                (x.Name.StartsWith(q, comparison) || x.Space.BldgName.IndexOf(q, comparison) >= 0 // case-insensitive .Contains
-                    || x.Space.RoomNumber.StartsWith(q, comparison)))
+                (EF.Functions.Like(x.Name, $"{q}%") || EF.Functions.Like(x.Space.BldgName, $"%{q}%")
+                                                                         || EF.Functions.Like(x.Space.RoomNumber, $"{q}%")))
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
                 .AsNoTracking().ToListAsync();

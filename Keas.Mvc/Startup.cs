@@ -20,7 +20,9 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -87,7 +89,17 @@ namespace Keas.Mvc
             }
             else
             {
-                services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));
+                services.AddDbContextPool<ApplicationDbContext>(o =>
+                {
+                    // Temporarily open connection to enable "server-side" case-insensitive comparisons.
+                    // As of EFCore 3.0 this is remembered for subsequent connections.
+                    var connection = new SqliteConnection("Data Source=keas.db");
+                    connection.Open();
+                    connection.CreateCollation("NOCASE", (x, y) => string.Compare(x, y, ignoreCase: true));
+                    connection.Close();
+
+                    o.UseSqlite(connection);
+                });
             }
 
             
@@ -206,10 +218,9 @@ namespace Keas.Mvc
 
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseSession();
 
             app.UseEndpoints(routes =>
             {

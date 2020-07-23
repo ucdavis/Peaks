@@ -33,10 +33,9 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.OrdinalIgnoreCase;
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person)
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (x.Name.StartsWith(q, comparison))) //|| x.SerialNumber.StartsWith(q, comparison)))
+                EF.Functions.Like(x.Name, $"{q}%")) //|| x.SerialNumber.StartsWith(q, comparison)))
                 .AsNoTracking().ToListAsync();
 
             return Json(access);

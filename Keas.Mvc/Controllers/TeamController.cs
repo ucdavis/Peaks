@@ -119,7 +119,7 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateGroup(Group model)
         {
-            if (await _context.Groups.AnyAsync(a => a.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase)))
+            if (await _context.Groups.AnyAsync(a => a.Name == model.Name))
             {
                 ModelState.AddModelError("Name", "Group name already used");
             }
@@ -213,13 +213,13 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> AddGroupTeam(GroupTeamPostModel model)
         {
             var group = await _context.Groups.Include(a => a.Teams).ThenInclude(a => a.Team).AsNoTracking().SingleAsync(a => a.Id == model.GroupId);
-            if (group.Teams.Any(a => a.Team.Slug.Equals(model.TeamSlug, StringComparison.OrdinalIgnoreCase)))
+            if (group.Teams.Any(a => a.Team.Slug == model.TeamSlug))
             {
                 ErrorMessage = "Team already Added";
                 return RedirectToAction("GroupDetails", new {id = model.GroupId});
             }
 
-            var team = await _context.Teams.SingleOrDefaultAsync(a => a.Slug.Equals(model.TeamSlug, StringComparison.OrdinalIgnoreCase));
+            var team = await _context.Teams.SingleOrDefaultAsync(a => a.Slug == model.TeamSlug);
             if (team == null)
             {
                 ErrorMessage = "Team not found.";

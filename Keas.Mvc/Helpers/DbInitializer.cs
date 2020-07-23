@@ -96,7 +96,7 @@ namespace Keas.Mvc.Helpers
         private void CreateGlobalAttributeKey(EquipmentAttributeKey attributeKey)
         {
             if ( _context.EquipmentAttributeKeys.Any(a =>
-                a.Key.Equals(attributeKey.Key, StringComparison.OrdinalIgnoreCase)))
+                a.Key == attributeKey.Key))
             {
                 return;
             }

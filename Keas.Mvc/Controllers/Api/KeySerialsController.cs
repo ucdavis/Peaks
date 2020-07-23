@@ -32,16 +32,14 @@ namespace Keas.Mvc.Controllers.Api
             // break out the query into terms
             var terms = q.Split(' ');
 
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
-
             var query = _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active);
 
             foreach (var term in terms)
             {
-                query = query.Where(x => x.Key.Name.StartsWith(term, comparison)
-                                        || x.Key.Code.StartsWith(term, comparison)
-                                        || x.Number.StartsWith(term, comparison));
+                query = query.Where(x => EF.Functions.Like(x.Key.Name, $"{term}%")
+                                         || EF.Functions.Like(x.Key.Code, $"{term}%")
+                                         || EF.Functions.Like(x.Number, $"{term}%"));
             }
 
             var keySerials = await query
@@ -58,16 +56,14 @@ namespace Keas.Mvc.Controllers.Api
             // break out the query into terms
             var terms = q.Split(' ');
 
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
-
             var query = _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active && x.Key.Id == keyId);
 
             foreach (var term in terms)
             {
-                query = query.Where(x => x.Key.Name.StartsWith(term, comparison)
-                                        || x.Key.Code.StartsWith(term, comparison)
-                                        || x.Number.StartsWith(term, comparison));
+                query = query.Where(x => EF.Functions.Like(x.Key.Name, $"{term}%")
+                                         || EF.Functions.Like(x.Key.Code, $"{term}%")
+                                         || EF.Functions.Like(x.Number, $"{term}%"));
             }
 
             var keySerials = await query

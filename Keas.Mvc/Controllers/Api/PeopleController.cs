@@ -77,10 +77,9 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> SearchPeople(string q)
         {
-            var comparison = StringComparison.OrdinalIgnoreCase;
             var people = await _context.People
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (x.Email.IndexOf(q, comparison) >= 0 || x.Name.IndexOf(q, comparison) >= 0)) // case-insensitive version of .Contains
+                (EF.Functions.Like(x.Email, $"%{q}%") || EF.Functions.Like(x.Name, $"%{q}%")))
                 .AsNoTracking().ToListAsync();
 
             return Json(people);
@@ -91,10 +90,9 @@ namespace Keas.Mvc.Controllers.Api
             // this will return either an existing person (regardless of if they are active or not)
             // or it will return a new person based on the user info
 
-            var comparison = StringComparison.OrdinalIgnoreCase;
             // first try and find an existing person
             var existingPerson = await _context.People
-                .Where(x => x.Team.Slug == Team && (String.Equals(x.Email, searchTerm, comparison) || String.Equals(x.UserId, searchTerm, comparison)))
+                .Where(x => x.Team.Slug == Team && (x.Email == searchTerm || x.UserId == searchTerm))
                 .Include(x => x.Supervisor)
                 .IgnoreQueryFilters()
                 .FirstOrDefaultAsync();
@@ -103,8 +101,8 @@ namespace Keas.Mvc.Controllers.Api
                 return Json(existingPerson);
             }
             // then try and find an existing user
-            var user = await _context.Users.Where(x => String.Equals(x.Email, searchTerm, comparison)
-                || String.Equals(x.Email, searchTerm, comparison)) //case-insensitive version of .Contains
+            var user = await _context.Users.Where(x => x.Email == searchTerm
+                || x.Email == searchTerm) //case-insensitive version of .Contains
                 .AsNoTracking().FirstOrDefaultAsync();
             // then try and find a user in the system
             if (user == null)

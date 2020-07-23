@@ -27,13 +27,11 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
-
             var keys =
             from key in _context.Keys
                 .Where(x => x.Team.Slug == Team
                         && x.Active
-                        && (x.Name.StartsWith(q, comparison) || x.Code.StartsWith(q, comparison)))
+                        && (EF.Functions.Like(x.Name, $"{q}%") || EF.Functions.Like(x.Code, $"{q}%")))
                 .Include(x => x.Serials)
                 .Include(x => x.KeyXSpaces)
                     .ThenInclude(xs => xs.Space)
@@ -121,7 +119,7 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
-            if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code.Equals(model.Code.Trim(), StringComparison.OrdinalIgnoreCase)))
+            if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code == model.Code.Trim()))
             {
                 return BadRequest();
                 //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
@@ -163,7 +161,7 @@ namespace Keas.Mvc.Controllers.Api
                         .ThenInclude(assignment => assignment.Person)
                 .SingleAsync(x => x.Id == id);
 
-            if (await _context.Keys.AnyAsync(a => a.Id != key.Id && a.Team.Slug == Team && a.Code.Equals(model.Code.Trim(), StringComparison.OrdinalIgnoreCase)))
+            if (await _context.Keys.AnyAsync(a => a.Id != key.Id && a.Team.Slug == Team && a.Code == model.Code.Trim()))
             {
                 return BadRequest();
                 //throw new Exception($"Duplicate Code detected for Team. {model.Code}");

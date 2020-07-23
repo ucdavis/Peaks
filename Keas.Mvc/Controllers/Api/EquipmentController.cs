@@ -35,11 +35,10 @@ namespace Keas.Mvc.Controllers.Api
 
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment =
                 from eq in _context.Equipment
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
+                (EF.Functions.Like(x.Name,$"{q}&") || EF.Functions.Like(x.SerialNumber, $"{q}%")))
                 .Include(x => x.Attributes)
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
