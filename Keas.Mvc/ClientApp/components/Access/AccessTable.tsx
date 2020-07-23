@@ -28,7 +28,7 @@ export default class AccessTable extends React.Component<IProps, {}> {
             Details
           </Button>
         ),
-        Header: 'Access',
+        Header: ' ',
         maxWidth: 150
       },
       {
@@ -63,7 +63,6 @@ export default class AccessTable extends React.Component<IProps, {}> {
     ];
     
     const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'name' }],
       pageSize: ReactTableUtil.getPageSize()
     };
 

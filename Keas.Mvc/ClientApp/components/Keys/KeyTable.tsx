@@ -75,7 +75,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
             Details
           </Button>
         ),
-        Header: 'Details',
+        Header: ' ',
         maxWidth: 150
       },
       {
@@ -123,7 +123,6 @@ export default class KeyTable extends React.Component<IProps, {}> {
     ];
 
     const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'name' }],
       pageSize: ReactTableUtil.getPageSize()
     };
 

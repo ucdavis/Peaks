@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 
-import PeopleContainer from '../People/PeopleContainer';
+import EquipmentContainer from '../Equipment/EquipmentContainer';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
-import { fakePeople } from '../specs/TestData';
+import { fakeEquipment } from '../specs/mockData/Equipment';
 
 // mock all route elements
 let mockRouter: any = {};
@@ -15,20 +15,20 @@ let mockRouterMatch: any = {
 let container: Element = null;
 
 // mock out the sub containers, at least for now
+jest.mock('../People/PeopleContainer', () => {
+  return {
+    default: () => {
+      return <div id='PeopleContainer'>PeopleContainer</div>;
+    }
+  };
+});
+
 jest.mock('../Access/AccessAssignmentContainer', () => {
   return {
     default: () => {
       return (
         <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>
       );
-    }
-  };
-});
-
-jest.mock('../Equipment/EquipmentContainer', () => {
-  return {
-    default: () => {
-      return <div id='EquipmentContainer'>EquipmentContainer</div>;
     }
   };
 });
@@ -70,7 +70,7 @@ afterEach(() => {
   container = null;
 });
 
-describe('People Container', () => {
+describe('Equipment Container', () => {
   const contextObject = {
     fetch: (url: any, index: any) => {},
     permissions: ['DepartmentalAdmin', 'Admin'],
@@ -81,15 +81,15 @@ describe('People Container', () => {
   it('Shows Header Record', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake people
+      // spy on our context's fetch handler to return fake equipment
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakePeople));
+        .mockImplementation(() => Promise.resolve(fakeEquipment));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <PeopleContainer
+          <EquipmentContainer
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -101,22 +101,22 @@ describe('People Container', () => {
 
     const headerRecord = container.querySelector('.table-row').textContent;
     expect(headerRecord).toBe(
-      ' NameEmailSupervisorKeysEquipmentAccessWorkstations'
+      ' Serial NumberNameAssigned ToExpirationActions'
     );
   });
 
-  it('Shows add button', async () => {
+  it('Shows Add Button', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake people
+      // spy on our context's fetch handler to return fake equipment
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakePeople));
+        .mockImplementation(() => Promise.resolve(fakeEquipment));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <PeopleContainer
+          <EquipmentContainer
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -126,23 +126,23 @@ describe('People Container', () => {
       );
     });
 
-    const headerRecord = container.querySelector('.card-header-people')
+    const headerRecord = container.querySelector('.card-header-equipment')
       .textContent;
-    expect(headerRecord).toContain('Add Person');
+    expect(headerRecord).toContain('Add Equipment');
   });
 
-  it('Shows people list', async () => {
+  it('Shows equipment list', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake people
+      // spy on our context's fetch handler to return fake equipment
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakePeople));
+        .mockImplementation(() => Promise.resolve(fakeEquipment));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <PeopleContainer
+          <EquipmentContainer
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -152,34 +152,33 @@ describe('People Container', () => {
       );
     });
 
-    //Data is sorted by last name
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function(match) {
+    matches.forEach(function (match) {
       const rowContent = match.textContent;
-      if (rowContent.includes('chuck@testpilot.gov')) {
+      if (rowContent.includes('Dell Desktop')) {
         foundIt = true;
-        expect(rowContent).toContain('chuck@testpilot.gov'); // confirm person is displayed
-        expect(rowContent).toContain('1110'); // confirm counts are displayed
+        expect(rowContent).toContain('Eren Yeager'); // confirm assigned person is displayed
+        expect(rowContent).toContain('4DVNPD2'); // confirm serial number are displayed
       }
     });
 
     expect(foundIt).toBeTruthy();
   });
 
-  it('Shows correct number of persons', async () => {
+  it('Shows correct number of equipment', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake people
+      // spy on our context's fetch handler to return fake equipment
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakePeople));
+        .mockImplementation(() => Promise.resolve(fakeEquipment));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <PeopleContainer
+          <EquipmentContainer
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -191,43 +190,5 @@ describe('People Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     expect(matches.length).toBe(4); //Should this be 3? Or is the inactive ignored and only used when queried by the api?
-  });
-
-  it('Shows person details', async () => {
-    mockRouterMatch.params = {
-      containerAction: 'details',
-      containerId: 123 // test personid
-    };
-
-    await act(async () => {
-      // spy on our context's fetch handler to return fake people
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakePeople));
-
-      // important to add the context provider here since it includes permissions and fetch info
-      render(
-        <Context.Provider value={contextObject}>
-          <PeopleContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
-        </Context.Provider>,
-        container
-      );
-    });
-
-    // should show person contact info
-    const personContent = container.querySelector('.person-col').textContent;
-
-    expect(personContent).toContain('chuck@testpilot.gov');
-
-    // should show the access container
-    const accessAssignmentContainerContent = container.querySelector(
-      '#AccessAssignmentContainer'
-    ).textContent;
-
-    expect(accessAssignmentContainerContent).toBe('AccessAssignmentContainer');
   });
 });
