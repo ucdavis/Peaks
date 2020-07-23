@@ -1,6 +1,8 @@
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
 import { FormFeedback, FormGroup, Input, Label } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-date-picker';
 import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
@@ -162,7 +164,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             }
             onChange={this._changeStartDate}
             format='MM/dd/yyyy'
-            clearIcon={null}
+            clearIcon={<FontAwesomeIcon icon={faTrash} pull="right" />}
           />
         </FormGroup>
 
@@ -178,7 +180,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             }
             onChange={this._changeEndDate}
             format='MM/dd/yyyy'
-            clearIcon={null}
+            clearIcon={<FontAwesomeIcon icon={faTrash} pull="right" />}
           />
         </FormGroup>
 
@@ -247,18 +249,14 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
   }
 
   private _changeStartDate = (date: Date) => {
-    if (date === null) {
-      date = new Date(this.props.selectedPerson.startDate);
-    }
-
-    this.props.changeProperty('startDate', startOfDay(date));
+    date === null
+      ? this.props.changeProperty('startDate', null)
+      : this.props.changeProperty('startDate', startOfDay(date));
   };
 
   private _changeEndDate = (date: any) => {
-    if (date === null) {
-      date = new Date(this.props.selectedPerson.endDate);
-    }
-
-    this.props.changeProperty('endDate', startOfDay(date));
+    date === null
+      ? this.props.changeProperty('endDate', null)
+      : this.props.changeProperty('endDate', startOfDay(date));
   };
 }
