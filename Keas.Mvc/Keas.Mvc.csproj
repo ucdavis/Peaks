@@ -6,6 +6,10 @@
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>  
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>obj\Debug\netcoreapp3.1\Keas.Mvc.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AspNetCore.Security.CAS" Version="2.0.5" />
     <PackageReference Include="BigfixApi" Version="1.1.201909266" />
