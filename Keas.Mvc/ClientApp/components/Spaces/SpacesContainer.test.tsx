@@ -14,6 +14,31 @@ let mockRouterMatch: any = {
 
 let container: Element = null;
 
+// mock out the sub containers, at least for now
+jest.mock('../Equipment/EquipmentContainer', () => {
+  return {
+    default: () => {
+      return <div id='EquipmentContainer'>EquipmentContainer</div>;
+    }
+  };
+});
+
+jest.mock('../Keys/KeyContainer', () => {
+  return {
+    default: () => {
+      return <div id='KeyContainer'>KeyContainer</div>;
+    }
+  };
+});
+
+jest.mock('../Workstations/WorkstationContainer', () => {
+  return {
+    default: () => {
+      return <div id='WorkstationContainer'>WorkstationContainer</div>;
+    }
+  };
+});
+
 beforeEach(() => {
   // setup a DOM element as a render target
   container = document.createElement('div');
@@ -121,5 +146,40 @@ describe('Space Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     expect(matches.length).toBe(4);
+  });
+
+  it('Shows spaces details', async () => {
+    mockRouterMatch.params = {
+      containerAction: 'details',
+      containerId: 3518 // test spaceid
+    };
+
+    await act(async () => {
+      // spy on our context's fetch handler to return fake spaces
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakeSpaces));
+
+      // important to add the context provider here since it includes permissions and fetch info
+      render(
+        <Context.Provider value={contextObject}>
+          <SpacesContainer
+            history={mockRouter}
+            match={mockRouterMatch}
+            location={mockRouter}
+          />
+        </Context.Provider>,
+        container
+      );
+    });
+
+    // should show spaces info
+    const spaceTitle = container.querySelector('.card-title').textContent;
+
+    expect(spaceTitle).toContain('0192 Temporary Building 200');
+
+    const spaceContent = container.querySelector('.card-text').textContent;
+
+    expect(spaceContent).toContain('562 Sq Feet')
   });
 });
