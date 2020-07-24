@@ -14,47 +14,6 @@ let mockRouterMatch: any = {
 
 let container: Element = null;
 
-// mock out the sub containers, at least for now
-jest.mock('../People/PeopleContainer', () => {
-  return {
-    default: () => {
-      return <div id='PeopleContainer'>PeopleContainer</div>;
-    }
-  };
-});
-
-jest.mock('../Equipment/EquipmentContainer', () => {
-  return {
-    default: () => {
-      return <div id='EquipmentContainer'>EquipmentContainer</div>;
-    }
-  };
-});
-
-jest.mock('../Keys/KeySerialContainer', () => {
-  return {
-    default: () => {
-      return <div id='KeySerialContainer'>KeySerialContainer</div>;
-    }
-  };
-});
-
-jest.mock('../Workstations/WorkstationContainer', () => {
-  return {
-    default: () => {
-      return <div id='WorkstationContainer'>WorkstationContainer</div>;
-    }
-  };
-});
-
-jest.mock('../History/HistoryContainer', () => {
-  return {
-    default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
-    }
-  };
-});
-
 beforeEach(() => {
   // setup a DOM element as a render target
   container = document.createElement('div');

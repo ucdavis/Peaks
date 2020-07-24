@@ -14,49 +14,6 @@ let mockRouterMatch: any = {
 
 let container: Element = null;
 
-// mock out the sub containers, at least for now
-jest.mock('../People/PeopleContainer', () => {
-  return {
-    default: () => {
-      return <div id='PeopleContainer'>PeopleContainer</div>;
-    }
-  };
-});
-
-jest.mock('../Access/AccessAssignmentContainer', () => {
-  return {
-    default: () => {
-      return (
-        <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>
-      );
-    }
-  };
-});
-
-jest.mock('../Keys/KeySerialContainer', () => {
-  return {
-    default: () => {
-      return <div id='KeySerialContainer'>KeySerialContainer</div>;
-    }
-  };
-});
-
-jest.mock('../Workstations/WorkstationContainer', () => {
-  return {
-    default: () => {
-      return <div id='WorkstationContainer'>WorkstationContainer</div>;
-    }
-  };
-});
-
-jest.mock('../History/HistoryContainer', () => {
-  return {
-    default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
-    }
-  };
-});
-
 beforeEach(() => {
   // setup a DOM element as a render target
   container = document.createElement('div');
@@ -100,9 +57,7 @@ describe('Equipment Container', () => {
     });
 
     const headerRecord = container.querySelector('.table-row').textContent;
-    expect(headerRecord).toBe(
-      ' Serial NumberNameAssigned ToExpirationActions'
-    );
+    expect(headerRecord).toBe(' Serial NumberNameAssigned ToExpirationActions');
   });
 
   it('Shows Add Button', async () => {
