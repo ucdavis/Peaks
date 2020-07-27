@@ -14,6 +14,30 @@ let mockRouterMatch: any = {
 
 let container: Element = null;
 
+jest.mock('../Spaces/SpacesContainer', () => {
+  return {
+    default: () => {
+      return <div id='SpacesContainer'>SpacesContainer</div>;
+    }
+  };
+});
+
+jest.mock('../Keys/KeySerialContainer', () => {
+  return {
+    default: () => {
+      return <div id='KeySerialContainer'>KeySerialContainer</div>;
+    }
+  };
+});
+
+jest.mock('../History/HistoryContainer', () => {
+  return {
+    default: () => {
+      return <div id='HistoryContainer'>HistoryContainer</div>;
+    }
+  };
+});
+
 beforeEach(() => {
   // setup a DOM element as a render target
   container = document.createElement('div');
@@ -145,5 +169,44 @@ describe('Access Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     expect(matches.length).toBe(3); //Should this be 3? Or is the inactive ignored and only used when queried by the api?
+  });
+
+  it('Shows keys details', async () => {
+    mockRouterMatch.params = {
+      containerAction: 'details',
+      containerId: 23 // test keyid
+    };
+
+    await act(async () => {
+      // spy on our context's fetch handler to return fake keys
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakeKeys));
+
+      // important to add the context provider here since it includes permissions and fetch info
+      render(
+        <Context.Provider value={contextObject}>
+          <KeyContainer
+            history={mockRouter}
+            match={mockRouterMatch}
+            location={mockRouter}
+          />
+        </Context.Provider>,
+        container
+      );
+    });
+
+    // should show keys info
+    const keyTitle = container.querySelector('h2.mb-3').textContent;
+
+    expect(keyTitle).toContain('Test'); // confirm key name is displayed
+    expect(keyTitle).toContain('ER'); // confirm key code is displayed
+
+    // should show the key serial container
+    const keySerialContent = container.querySelector(
+      '#KeySerialContainer'
+    ).textContent;
+
+    expect(keySerialContent).toBe('KeySerialContainer');
   });
 });
