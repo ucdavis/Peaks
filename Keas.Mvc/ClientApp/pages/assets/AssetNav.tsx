@@ -14,7 +14,7 @@ export default class AssetNav extends React.Component<{}, {}> {
               className='tab-link tab-people'
               activeClassName='active'
             >
-              People
+              Peoples
             </NavLink>
           )}
           {PermissionsUtil.canViewEquipment(this.context.permissions) && (

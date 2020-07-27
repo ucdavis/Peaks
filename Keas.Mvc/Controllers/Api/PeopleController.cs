@@ -9,12 +9,16 @@ using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers.Api
 {
-   [Authorize(Policy = AccessCodes.Codes.AnyRole)]
+    [Authorize(Policy = AccessCodes.Codes.AnyRole)]
+    [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
+    [ApiController]
+    [Route("api/{teamName}/people/[action]/{id?}")]
     public class PeopleController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -28,6 +32,7 @@ namespace Keas.Mvc.Controllers.Api
             _notificationService = notificationService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
@@ -75,6 +80,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(people);
         }
 
+        [HttpGet]
         public async Task<IActionResult> SearchPeople(string q)
         {
             var people = await _context.People
@@ -85,6 +91,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(people);
         }
 
+        [HttpGet]
         public async Task<IActionResult> SearchUsers(string searchTerm)
         {
             // this will return either an existing person (regardless of if they are active or not)

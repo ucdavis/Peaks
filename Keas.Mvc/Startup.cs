@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AspNetCore.Security.CAS;
 using Keas.Core.Data;
@@ -10,6 +12,7 @@ using Keas.Mvc.Handlers;
 using Keas.Mvc.Helpers;
 using Keas.Mvc.Models;
 using Keas.Mvc.Services;
+using Keas.Mvc.Swagger;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +30,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using SpaCliMiddleware;
 using StackifyLib;
@@ -36,6 +41,8 @@ namespace Keas.Mvc
 {
     public class Startup
     {
+        public const string CorsPolicyAllowAnyOrigin = "CorsPolicyAllowAnyOrigin";
+
         public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -187,6 +194,56 @@ namespace Keas.Mvc
                 .AddNewtonsoftJson(options => {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 });
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "PEAKS API v1",
+                    Version = "v1",
+                    Description = "People Equipment Access Keys Space",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Application Support",
+                        Email = "apprequests@caes.ucdavis.edu"
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "MIT",
+                        Url = new Uri("https://github.com/ucdavis/Peaks/blob/master/LICENSE")
+                    },
+                    Extensions =
+                    {
+                        { "ProjectUrl", new OpenApiString("https://github.com/ucdavis/Peaks/") }
+                    }
+                });
+
+                var xmlFilePath = Path.Combine(AppContext.BaseDirectory, "Keas.Mvc.xml");
+                c.IncludeXmlComments(xmlFilePath);
+
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "ApiKey"
+                    },
+                    Type = SecuritySchemeType.ApiKey,
+                    Description = "API Key Authentication",
+                    Name = "X-Auth-Token", //ApiKeyMiddleware.HeaderKey,
+                    In = ParameterLocation.Header,
+                    Scheme = "ApiKey"
+                };
+
+                c.AddSecurityDefinition("ApiKey", securityScheme);
+
+                c.OperationFilter<SecurityRequirementsOperationFilter>(securityScheme);
+            });
+
+            // cors support and policies
+            services.AddCors(o =>
+                o.AddPolicy(CorsPolicyAllowAnyOrigin, 
+                    b => b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -214,65 +271,76 @@ namespace Keas.Mvc
                 app.UseExceptionHandler("/Error/Index");
             }
 
+
             app.UseStatusCodePages("text/plain", "Status code page, status code: {0}");
 
-            app.UseStaticFiles();
+            if (env.IsDevelopment())
+            {
+                // dist folder will be served by webpack-dev-server
+                app.UseWhen(context => !context.Request.Path.StartsWithSegments("/dist"),
+                    appBuilder => { appBuilder.UseStaticFiles(); });
+            }
+            else
+            {
+                app.UseStaticFiles();
+            }
+
             app.UseRouting();
             app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseCors(); // CORS policies are specified via attribute on api controllers
 
-            app.UseEndpoints(routes =>
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Peaks API v1"));
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapControllerRoute(
-                    name: "API",
-                    pattern: "api/{teamName}/{controller}/{action}/{id?}",
-                    defaults: new { controller = "people", action = "Index" },
-                    constraints: new { controller = "(keys|keyserials|equipment|access|spaces|people|person|workstations|tags|peopleAdmin)" }
-                );
+                endpoints.MapControllers(); // map api controllers via attributes - necessary for being picked up by SwaggerGen
 
-                routes.MapControllerRoute(
-                    name: "Assets",
-                    pattern: "{teamName}/{asset}/{*type}",
-                    defaults: new { controller = "Asset", action = "Index" },
-                    constraints: new { asset = "(keys|keyserials|equipment|access|spaces|people|person|workstations)" }
-                );
-
-                routes.MapControllerRoute(
-                    name: "NonTeamRoutes",
-                    pattern: "{controller}/{action=Index}/{id?}",
-                    defaults: null,
-                    constraints: new { controller = "(admin|log)" }
-                );
-
-                routes.MapControllerRoute(
-                    name: "GroupRoutes",
-                    pattern: "{controller}/{action=Index}/{id?}",
-                    defaults: null,
-                    constraints: new {controller = "(group)"}
-                );
-
-                routes.MapControllerRoute(
-                    name: "TeamRoutes",
-                    pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}");
-
-                routes.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-                
                 if (env.IsDevelopment())
                 {
-                    routes.MapToSpaCliProxy(
-                        "{*path}",
-                        options: new SpaOptions { SourcePath = "wwwroot/dist" },
+                    endpoints.MapToSpaCliProxy(
+                        "/dist/{*path}",
+                        options: new SpaOptions {SourcePath = "wwwroot/dist"},
                         npmScript: "devpack",
-                        port: /*default(int)*/ 8080, // Allow webpack to find own port
+                        port: 8080,
                         regex: "Project is running",
                         forceKill: true, // kill anything running on our webpack port
                         useProxy: true, // proxy webpack requests back through our aspnet server
                         runner: ScriptRunnerType.Npm
                     );
                 }
+
+                endpoints.MapControllerRoute(
+                    name: "Assets",
+                    pattern: "{teamName}/{asset}/{*type}",
+                    defaults: new { controller = "Asset", action = "Index" },
+                    constraints: new { asset = "(keys|keyserials|equipment|access|spaces|people|person|workstations)" }
+                );
+
+                endpoints.MapControllerRoute(
+                    name: "NonTeamRoutes",
+                    pattern: "{controller}/{action=Index}/{id?}",
+                    defaults: null,
+                    constraints: new { controller = "(admin|log)" }
+                );
+
+                endpoints.MapControllerRoute(
+                    name: "GroupRoutes",
+                    pattern: "{controller}/{action=Index}/{id?}",
+                    defaults: null,
+                    constraints: new {controller = "(group)"}
+                );
+
+                endpoints.MapControllerRoute(
+                    name: "TeamRoutes",
+                    pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

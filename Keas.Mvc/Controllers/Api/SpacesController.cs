@@ -7,13 +7,17 @@ using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers.Api
 {
-   [Authorize(Policy = AccessCodes.Codes.AnyRole)]
+    [Authorize(Policy = AccessCodes.Codes.AnyRole)]
+    [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
+    [ApiController]
+    [Route("api/{teamName}/spaces/[action]/{id?}")]
     public class SpacesController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -23,6 +27,7 @@ namespace Keas.Mvc.Controllers.Api
             this._context = context;
         }
 
+        [HttpGet]
         public async Task<IActionResult> SearchSpaces(string q)
         {
             var orgIds = await _context.FISOrgs
@@ -45,6 +50,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(space);
         }
 
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             //TODO clean up workstations query or integrate with list query           
@@ -90,6 +96,7 @@ namespace Keas.Mvc.Controllers.Api
             return !string.IsNullOrWhiteSpace(tags) ? string.Join(",", tags.ToString().Split(',').Distinct().ToArray()) : "";
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetSpacesForKey(int keyId)
         {
             var result = await _context.KeyXSpaces
@@ -110,6 +117,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(spaces);
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetTagsInSpace(int spaceId)
         {
             var tags = await _context.Workstations
@@ -122,6 +130,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(string.Join(",", tags));
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var space = await _context.Spaces

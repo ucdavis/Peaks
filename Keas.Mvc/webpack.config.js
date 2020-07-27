@@ -37,7 +37,9 @@ module.exports = env => {
                 port: process.env.DEV_SERVER_PORT || 8080,
                 injectClient: false,
                 // transportMode: 'ws',  // TODO: move to WS once it's no longer experimental
-                contentBase: path.resolve(__dirname, 'wwwroot')
+                contentBase: path.resolve(__dirname, './dist'),
+                hot: true,
+                inline: true
             },
             mode: isDevBuild ? "development" : "production",
             devtool: isDevBuild ? "eval-source-map" : "source-map",

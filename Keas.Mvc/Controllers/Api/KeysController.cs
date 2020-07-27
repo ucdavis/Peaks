@@ -10,10 +10,14 @@ using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Models.KeyViewModels;
 using Dapper;
+using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
+    [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
+    [ApiController]
+    [Route("api/{teamName}/keys/[action]/{id?}")]
     public class KeysController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -25,6 +29,7 @@ namespace Keas.Mvc.Controllers.Api
             _eventService = eventService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Search(string q)
         {
             var keys =
@@ -51,6 +56,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         // List all keys for a team
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
@@ -80,6 +86,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         // list all keys for a space
+        [HttpGet]
         public async Task<IActionResult> GetKeysInSpace(int spaceId)
         {
             var joins = await _context.KeyXSpaces
@@ -305,6 +312,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories

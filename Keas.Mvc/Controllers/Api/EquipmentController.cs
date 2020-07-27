@@ -11,10 +11,14 @@ using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Keas.Mvc.Models;
 using Bigfix;
+using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
+    [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
+    [ApiController]
+    [Route("api/{teamName}/equipment/[action]/{id?}")]
     public class EquipmentController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -28,11 +32,13 @@ namespace Keas.Mvc.Controllers.Api
             this._bigfixService = bigfixService;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public string GetTeam()
         {
             return Team;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Search(string q)
         {
             var equipment =
@@ -51,6 +57,8 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(await equipment.ToListAsync());
         }
+
+        [HttpGet]
         public async Task<IActionResult> GetEquipmentInSpace(int spaceId)
         {
             var equipment = await _context.Equipment
@@ -65,6 +73,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipment);
         }
 
+        [HttpGet]
         public async Task<IActionResult> CommonAttributeKeys()
         {
             var keys = await _context.EquipmentAttributeKeys
@@ -75,8 +84,10 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keys);
         }
 
+        [HttpGet]
         public ActionResult ListEquipmentTypes() => Json(EquipmentTypes.Types);
 
+        [HttpGet]
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var equipmentAssignments = await _context.Equipment
@@ -92,6 +103,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         // List all equipments for a team
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             var equipments = await _context.Equipment
@@ -106,6 +118,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipments);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var equipment = await _context.Equipment
@@ -313,6 +326,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
@@ -324,6 +338,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(history);
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetComputer(string id)
         {
             try 
@@ -348,7 +363,8 @@ namespace Keas.Mvc.Controllers.Api
             } 
         }
 
-         public async Task<IActionResult> GetComputersBySearch(string field, string value)
+        [HttpGet]
+        public async Task<IActionResult> GetComputersBySearch(string field, string value)
         {
             if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
             {

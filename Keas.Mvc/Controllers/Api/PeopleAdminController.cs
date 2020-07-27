@@ -8,12 +8,16 @@ using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.PersonManagerAccess)]
+    [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
+    [ApiController]
+    [Route("api/{teamName}/peopleadmin/[action]/{id?}")]
     public class PeopleAdminController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -99,6 +103,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories.Where(x => x.TargetId == id)

@@ -9,10 +9,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
+using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.AccessMasterAccess)]
+    [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
+    [ApiController]
+    [Route("api/{teamName}/access/[action]/{id?}")]
     public class AccessController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -26,11 +30,13 @@ namespace Keas.Mvc.Controllers.Api
             _securityService = securityService;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public string GetTeam()
         {
             return Team;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Search(string q)
         {
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person)
@@ -41,6 +47,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(access);
         }
 
+        [HttpGet]
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var assignedAccess = await _context.Access
@@ -52,6 +59,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(assignedAccess);
         }
 
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             var accessList = await _context.Access
@@ -64,6 +72,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(accessList);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var access = await _context.Access

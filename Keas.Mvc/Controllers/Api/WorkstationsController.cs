@@ -9,10 +9,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
+using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
+    [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
+    [ApiController]
+    [Route("api/{teamName}/wprkstations/[action]/{id?}")]
     public class WorkstationsController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -24,6 +28,7 @@ namespace Keas.Mvc.Controllers.Api
             _eventService = eventService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Search(string q)
         {
             var comparison = StringComparison.OrdinalIgnoreCase;
@@ -40,6 +45,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
 
+        [HttpGet]
         public async Task<IActionResult> SearchInSpace(int spaceId, string q)
         {
             var equipment = await _context.Workstations
@@ -53,6 +59,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipment);
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetWorkstationsInSpace(int spaceId)
         {
             var workstations = await _context.Workstations
@@ -65,6 +72,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstations);
         }
 
+        [HttpGet]
         public async Task<IActionResult> CommonAttributeKeys()
         {
             var keys = await _context.WorkstationAttributes
@@ -77,6 +85,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keys);
         }
 
+        [HttpGet]
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var workstationAssignments = await _context.Workstations
@@ -91,6 +100,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstationAssignments);
         }
 
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             var workstations = await _context.Workstations
@@ -105,6 +115,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstations);
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
             var workstation = await _context.Workstations
@@ -272,6 +283,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
