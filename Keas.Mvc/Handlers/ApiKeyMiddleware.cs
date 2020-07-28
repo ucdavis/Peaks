@@ -13,6 +13,7 @@ namespace Keas.Mvc.Handlers
 {
     public class ApiKeyMiddleware
     {
+        private const string InvalidApiKeyMessage = "Invalid Api Key";
         public const string HeaderKey = "X-Auth-Token";
 
         private readonly RequestDelegate _next;
@@ -21,23 +22,35 @@ namespace Keas.Mvc.Handlers
         {
             _next = next;
         }
-        public Task Invoke(HttpContext context, ApplicationDbContext dbContext, IOptions<ApiSettings> apiSettingsOptions)
+        public async Task Invoke(HttpContext context, ApplicationDbContext dbContext, IOptions<ApiSettings> apiSettingsOptions)
         {
             var apiSettings = apiSettingsOptions.Value;
 
             // check for header
             if (!context.Request.Headers.ContainsKey(HeaderKey))
             {
-                return _next(context);
+                await _next.Invoke(context);
             }
             var headerValue = context.Request.Headers[HeaderKey].FirstOrDefault();
 
+            Guid headerGuidValue;
+
+            if (!Guid.TryParse(headerValue, out headerGuidValue)) {
+                // bad api key format, but just tell them it's unauthorized
+                context.Response.StatusCode = 401;
+                await context.Response.WriteAsync(InvalidApiKeyMessage);
+                return;
+            }
+
             // lookup team that this API key has acess to
-            var teamAccess = dbContext.Teams.FirstOrDefault(t => t.ApiCode == new Guid(headerValue));
+            var teamAccess = dbContext.Teams.FirstOrDefault(t => t.ApiCode == headerGuidValue);
 
             if (teamAccess == null)
             {
-                return _next(context);
+                // no team found with your auth token, fail
+                context.Response.StatusCode = 401; //UnAuthorized
+                await context.Response.WriteAsync(InvalidApiKeyMessage);
+                return;
             }
 
             // make sure we have an API user ready to go for this team
@@ -81,7 +94,7 @@ namespace Keas.Mvc.Handlers
                 new System.Security.Claims.Claim(ApiHelper.ClaimName, teamAccess.Slug)
             }));
 
-            return _next(context);
+            await _next.Invoke(context);
         }
     }
 }
