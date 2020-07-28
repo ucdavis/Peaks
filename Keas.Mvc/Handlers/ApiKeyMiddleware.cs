@@ -37,16 +37,16 @@ namespace Keas.Mvc.Handlers
             }
 
             // make sure we have an API user ready to go for this team
-            var apiPersonExists = dbContext.People.IgnoreQueryFilters().Any(p => p.UserId == ApiHelper.PeaksApiUserIdentifier && p.TeamId == teamAccess.Id);
+            var apiPersonExists = dbContext.People.IgnoreQueryFilters().Any(p => p.UserId == ApiHelper.PeaksApiUser && p.TeamId == teamAccess.Id);
 
             if (!apiPersonExists)
             {
                 // need to make sure our overall system-wide user exists
-                if (!dbContext.Users.Any(u => u.Id == ApiHelper.PeaksApiUserIdentifier))
+                if (!dbContext.Users.Any(u => u.Id == ApiHelper.PeaksApiUser))
                 {
                     dbContext.Users.Add(new User
                     {
-                        Id = ApiHelper.PeaksApiUserIdentifier,
+                        Id = ApiHelper.PeaksApiUser,
                         Email = "api@peaks.ucdavis.edu",
                         FirstName = "API",
                         LastName = "PEAKS"
@@ -63,7 +63,7 @@ namespace Keas.Mvc.Handlers
                     FirstName = "",
                     LastName = apiPersonName,
                     TeamId = teamAccess.Id,
-                    UserId = ApiHelper.PeaksApiUserIdentifier
+                    UserId = ApiHelper.PeaksApiUser
                 };
 
                 dbContext.People.Add(apiPerson);
