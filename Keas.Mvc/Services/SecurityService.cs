@@ -87,7 +87,7 @@ namespace Keas.Mvc.Services
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
 
             if (userId == null && ApiHelper.isApiUser(_contextAccessor.HttpContext.User)) {
-                userId = ApiHelper.UserId;
+                userId = ApiHelper.PeaksApiUserIdentifier;
             }
 
             var person = await _dbContext.People
@@ -104,7 +104,7 @@ namespace Keas.Mvc.Services
 
             if (userId == null && ApiHelper.isApiUser(_contextAccessor.HttpContext.User))
             {
-                userId = ApiHelper.UserId;
+                userId = ApiHelper.PeaksApiUserIdentifier;
             }
 
             var person = await _dbContext.People
