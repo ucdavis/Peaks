@@ -13,7 +13,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RazorLight;
 using Serilog;
-using SparkPost;
+using System.Net.Mail;
+using System.Net.Mime;
 
 namespace Keas.Core.Services
 {
@@ -33,10 +34,14 @@ namespace Keas.Core.Services
 
         private readonly SparkpostSettings _emailSettings;
 
+        private readonly SmtpClient _client;
+
         public EmailService(ApplicationDbContext dbContext, IOptions<SparkpostSettings> emailSettings)
         {
             _dbContext = dbContext;
             _emailSettings = emailSettings.Value;
+
+            _client = new SmtpClient(_emailSettings.Host, _emailSettings.Port) { Credentials = new NetworkCredential(_emailSettings.UserName, _emailSettings.Password), EnableSsl = true };
         }
 
         public async Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model)
@@ -72,35 +77,20 @@ namespace Keas.Core.Services
 
             var toEmails = toUsers
                  .Distinct()
-                 .Select(u => new Recipient() { Address = new Address(u.Email, u.Name, "to") })
+                 .Select(u => new MailAddress(u.Email, u.Name))
                  .ToList();
 
-            // Build list of people to email. I.E. get all DeptAdmin, if access.any then add AccessMaster, etc.
-            var transmission = new Transmission();
-            transmission.Content.Subject = "PEAKS Admin Expiring Items Notification";
-            transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-            transmission.Content.Text = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
-#if DEBUG
-            transmission.Recipients.Add(new Recipient() { Address = new Address("jscubbage@ucdavis.edu") });
-#else
-            toEmails.ForEach(transmission.Recipients.Add);
-#endif
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Admin Expiring Items Notification" }) {
+                toEmails.ForEach(message.To.Add);
 
+                // body is our fallback text and we'll add an HTML view as an alternate.
+                message.Body = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
 
-            var engine = GetRazorEngine();
-            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems);
+                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+                message.AlternateViews.Add(htmlView);
 
-            var client = GetSparkpostClient();
-            await client.Transmissions.Send(transmission);
-
-            // reset next notification date
-            // TODO Do we need a team level notification date????
-            // var team = await _dbContext.Teams.FirstAsync(a => a.Id == teamId);
-            // team.NextNotificationDate = DateTime.Now.AddDays(1);
-            // _dbContext.Teams.Update(team);
-            // await _dbContext.SaveChangesAsync();
-            
-
+                await _client.SendMailAsync(message);
+            }
         }
 
         public async Task SendPersonNotification()
@@ -129,36 +119,26 @@ namespace Keas.Core.Services
                 
                 //Send the Email
                 Log.Information($"Sending person notification email to {personEmail}");
-                
-                var transmission = new Transmission();
-                transmission.Content.Subject = "PEAKS People Notification";
-                transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-                transmission.Content.Text = "The people in your teams have changed"; //TODO: Point to a report?
 
-                transmission.Recipients = new List<Recipient>()
-                {
-#if DEBUG
-                    new Recipient() {Address = new Address("jsylvestre@ucdavis.edu")},
-#else
-                    new Recipient() { Address = new Address(personEmail) },
-#endif
-                };
+                using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS People Notification" }) {
+                    message.To.Add(personEmail);
 
-                var engine = GetRazorEngine();
-                transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications);
+                    // body is our fallback text and we'll add an HTML view as an alternate.
+                    message.Body = "The people in your teams have changed";
 
-                var client = GetSparkpostClient();
-                try
-                {
-                    await client.Transmissions.Send(transmission);
+                    var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications), new ContentType(MediaTypeNames.Text.Html));
+                    message.AlternateViews.Add(htmlView);
+
+                    try
+                    {
+                        await _client.SendMailAsync(message);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e.Message);
+                        continue;
+                    }
                 }
-                catch (Exception e)
-                {
-                    Log.Error(e.Message);
-                    continue;
-                }
-                
-
 
                 foreach (IGrouping<int?, PersonNotification> notificationGroup in personNotifications)
                 {
@@ -200,76 +180,18 @@ namespace Keas.Core.Services
             {
                 return;                
             }
-           
-            // build email
-            var transmission = new Transmission();
-            transmission.Content.Subject = "PEAKS Expiring Items";
-            transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-            transmission.Content.Text = BuildExpiringTextMessage(expiringItems);
-            transmission.Recipients = new List<Recipient>()
-            {
-#if DEBUG
-                new Recipient() { Address = new Address("jscubbage@ucdavis.edu") },
-#else
-                new Recipient() { Address = new Address(person.Email, person.Name) },
-#endif            
-            };
 
-            // TODO: Email supervisor?
-            
-            // build cc list
-//             var ccUsers = new List<User>();
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Expiring Items" }) {
+                message.To.Add(new MailAddress(person.Email, person.Name));
 
-//             if (expiringItems.AccessAssignments.Any())
-//             {
-//                 var roles = await _dbContext.Roles
-//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
-//                 var users = await GetUsersInRoles(roles, person.TeamId);
-//                 ccUsers.AddRange(users);
-//             }
+                // body is our fallback text and we'll add an HTML view as an alternate.
+                message.Body = BuildExpiringTextMessage(expiringItems);
 
-//             if (expiringItems.KeySerials.Any())
-//             {
-//                 var roles = await _dbContext.Roles
-//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
-//                 var users = await GetUsersInRoles(roles, person.TeamId);
-//                 ccUsers.AddRange(users);
-//             }
+                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+                message.AlternateViews.Add(htmlView);
 
-//             if (expiringItems.Equipment.Any())
-//             {
-//                 var roles = await _dbContext.Roles
-//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.EquipmentMaster).ToListAsync();
-//                 var users = await GetUsersInRoles(roles, person.TeamId);
-//                 ccUsers.AddRange(users);
-//             }
-
-//             if (expiringItems.Workstations.Any())
-//             {
-//                 var roles = await _dbContext.Roles
-//                     .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.SpaceMaster).ToListAsync();
-//                 var users = await GetUsersInRoles(roles, person.TeamId);
-//                 ccUsers.AddRange(users);
-                
-//             }
-
-//             // transform to cc recipient
-//             var ccEmails = ccUsers
-//                 .Distinct()
-//                 .Select(u => new Recipient() {Address = new Address(u.Email, u.Name, "cc")})
-//                 .ToList();
-
-// #if !DEBUG
-//             // add emails to
-//             ccEmails.ForEach(transmission.Recipients.Add);
-// #endif
-
-            // build view
-            var engine = GetRazorEngine();
-            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems);
-
-            var client = GetSparkpostClient();
-            await client.Transmissions.Send(transmission);
+                await _client.SendMailAsync(message);
+            }
 
             // reset next notification date
             foreach (var assignment in expiringItems.KeySerials.Select(k => k.KeySerialAssignment))
@@ -428,28 +350,17 @@ namespace Keas.Core.Services
             }
 
             //TODO: Do something with these notifications to build them into a single email.
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Notification" }) {
+                message.To.Add(new MailAddress(user.Email, user.Name));
 
-            // build email
-            var transmission = new Transmission();
-            transmission.Content.Subject = "PEAKS Notification";
-            transmission.Content.From = new Address("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification");
-            transmission.Content.Text = BuildNotificationTextMessage(notifications.ToList());
-            transmission.Recipients = new List<Recipient>()
-            {
-#if DEBUG
-                new Recipient() { Address = new Address("jscubbage@ucdavis.edu") },
-#else
-                new Recipient() { Address = new Address(user.Email, user.Name) },
-#endif
-            };
+                // body is our fallback text and we'll add an HTML view as an alternate.
+                message.Body = BuildNotificationTextMessage(notifications.ToList());
 
-            //Bcc anyone?
+                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList()), new ContentType(MediaTypeNames.Text.Html));
+                message.AlternateViews.Add(htmlView);
 
-            var engine = GetRazorEngine();
-            transmission.Content.Html = await engine.CompileRenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList());
-
-            var client = GetSparkpostClient();
-            await client.Transmissions.Send(transmission);
+                await _client.SendMailAsync(message);
+            }
 
             foreach (var notificationGroup in notifications)
             {
@@ -485,12 +396,6 @@ namespace Keas.Core.Services
                 .Build();
 
             return engine;
-        }
-
-        private Client GetSparkpostClient()
-        {
-            var client = new Client(_emailSettings.ApiKey);
-            return client;
         }
     }
 }

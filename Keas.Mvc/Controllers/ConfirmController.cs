@@ -7,9 +7,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Keas.Core.Helper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Keas.Mvc.Controllers
 {
+    [Authorize]
     public class ConfirmController : SuperController
     {
         private readonly ApplicationDbContext _context;

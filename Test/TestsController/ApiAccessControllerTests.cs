@@ -1,4 +1,5 @@
 using Keas.Core.Models;
+using Keas.Mvc.Attributes;
 using Keas.Mvc.Controllers.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -35,12 +36,12 @@ namespace Test.TestsController
         public void TestControllerClassAttributes()
         {
             ControllerReflection.ControllerInherits("SuperController");
-            var authAttribute = ControllerReflection.ClassExpectedAttribute<AuthorizeAttribute>(4);
+            var authAttribute = ControllerReflection.ClassExpectedAttribute<AuthorizeAttribute>(3);
             authAttribute.ElementAt(0).Roles.ShouldBe(null);
             authAttribute.ElementAt(0).Policy.ShouldBe(AccessCodes.Codes.AccessMasterAccess);
 
-            ControllerReflection.ClassExpectedAttribute<AutoValidateAntiforgeryTokenAttribute>(4);
-            ControllerReflection.ClassExpectedAttribute<ControllerAttribute>(4);
+            ControllerReflection.ClassExpectedAttribute<AutoValidateAntiforgeryTokenOrApiAttribute>(3);
+            ControllerReflection.ClassExpectedAttribute<ControllerAttribute>(3);
         }
 
         #endregion Controller Class Tests

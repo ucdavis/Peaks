@@ -12,6 +12,9 @@
     "lint": "node node_modules/eslint/bin/eslint.js ClientApp --ext .tsx,.ts,.js,.jsx"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.30",
+    "@fortawesome/free-solid-svg-icons": "^5.14.0",
+    "@fortawesome/react-fontawesome": "^0.1.11",
     "bootstrap": "4.5.0",
     "date-fns": "2.14.0",
     "isomorphic-fetch": "2.2.1",

@@ -56,6 +56,7 @@ export default class DeletePerson extends React.Component<IProps, IState> {
             <PersonEditValues
               selectedPerson={this.props.selectedPersonInfo.person}
               disableEditing={true}
+              isDeleting={true}
             />
             {!this._checkValidToDelete() && (
               <div>
