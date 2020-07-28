@@ -1,4 +1,5 @@
 using Keas.Core.Models;
+using Keas.Mvc.Attributes;
 using Keas.Mvc.Controllers.Api;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -39,7 +40,7 @@ namespace Test.TestsController
             authAttribute.ElementAt(0).Roles.ShouldBe(null);
             authAttribute.ElementAt(0).Policy.ShouldBe(AccessCodes.Codes.AccessMasterAccess);
 
-            ControllerReflection.ClassExpectedAttribute<AutoValidateAntiforgeryTokenAttribute>(3);
+            ControllerReflection.ClassExpectedAttribute<AutoValidateAntiforgeryTokenOrApiAttribute>(3);
             ControllerReflection.ClassExpectedAttribute<ControllerAttribute>(3);
         }
 
