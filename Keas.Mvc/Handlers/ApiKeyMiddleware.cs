@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Helpers;
+using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Keas.Mvc.Handlers
 {
@@ -19,8 +21,10 @@ namespace Keas.Mvc.Handlers
         {
             _next = next;
         }
-        public Task Invoke(HttpContext context, ApplicationDbContext dbContext)
+        public Task Invoke(HttpContext context, ApplicationDbContext dbContext, IOptions<ApiSettings> apiSettingsOptions)
         {
+            var apiSettings = apiSettingsOptions.Value;
+
             // check for header
             if (!context.Request.Headers.ContainsKey(HeaderKey))
             {
@@ -37,16 +41,16 @@ namespace Keas.Mvc.Handlers
             }
 
             // make sure we have an API user ready to go for this team
-            var apiPersonExists = dbContext.People.IgnoreQueryFilters().Any(p => p.UserId == ApiHelper.PeaksApiUser && p.TeamId == teamAccess.Id);
+            var apiPersonExists = dbContext.People.IgnoreQueryFilters().Any(p => p.UserId == apiSettings.UserId && p.TeamId == teamAccess.Id);
 
             if (!apiPersonExists)
             {
                 // need to make sure our overall system-wide user exists
-                if (!dbContext.Users.Any(u => u.Id == ApiHelper.PeaksApiUser))
+                if (!dbContext.Users.Any(u => u.Id == apiSettings.UserId))
                 {
                     dbContext.Users.Add(new User
                     {
-                        Id = ApiHelper.PeaksApiUser,
+                        Id = apiSettings.UserId,
                         Email = "api@peaks.ucdavis.edu",
                         FirstName = "API",
                         LastName = "PEAKS"
@@ -63,7 +67,7 @@ namespace Keas.Mvc.Handlers
                     FirstName = "",
                     LastName = apiPersonName,
                     TeamId = teamAccess.Id,
-                    UserId = ApiHelper.PeaksApiUser
+                    UserId = apiSettings.UserId
                 };
 
                 dbContext.People.Add(apiPerson);

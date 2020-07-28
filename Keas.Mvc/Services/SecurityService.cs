@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Helpers;
+using Microsoft.Extensions.Options;
+using Keas.Mvc.Models;
 
 namespace Keas.Mvc.Services
 {
@@ -42,13 +44,14 @@ namespace Keas.Mvc.Services
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ApplicationDbContext _dbContext;
         private readonly ITeamsManager _teamsManager;
+        private readonly ApiSettings _apiSettings;
 
-
-        public SecurityService(IHttpContextAccessor contextAccessor, ApplicationDbContext dbContext, ITeamsManager teamsManager)
+        public SecurityService(IHttpContextAccessor contextAccessor, ApplicationDbContext dbContext, ITeamsManager teamsManager, IOptions<ApiSettings> apiSettings)
         {
             _contextAccessor = contextAccessor;
             _dbContext = dbContext;
             _teamsManager = teamsManager;
+            _apiSettings = apiSettings.Value;
         }
 
         public async Task<bool> IsInRoles(string[] roles, string teamSlug, string userId)
@@ -87,7 +90,7 @@ namespace Keas.Mvc.Services
             var userId = _contextAccessor.HttpContext.User.Identity.Name;
 
             if (userId == null && ApiHelper.isApiUser(_contextAccessor.HttpContext.User)) {
-                userId = ApiHelper.PeaksApiUser;
+                userId = _apiSettings.UserId;
             }
 
             var person = await _dbContext.People
@@ -104,7 +107,7 @@ namespace Keas.Mvc.Services
 
             if (userId == null && ApiHelper.isApiUser(_contextAccessor.HttpContext.User))
             {
-                userId = ApiHelper.PeaksApiUser;
+                userId = _apiSettings.UserId;
             }
 
             var person = await _dbContext.People
