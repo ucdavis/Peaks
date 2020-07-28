@@ -13,6 +13,7 @@ namespace Keas.Mvc.Handlers
 {
     public class ApiKeyMiddleware
     {
+        private const string InvalidApiKeyMessage = "Invalid Api Key";
         public const string HeaderKey = "X-Auth-Token";
 
         private readonly RequestDelegate _next;
@@ -35,8 +36,9 @@ namespace Keas.Mvc.Handlers
             Guid headerGuidValue;
 
             if (!Guid.TryParse(headerValue, out headerGuidValue)) {
-                context.Response.StatusCode = 400;
-                await context.Response.WriteAsync("Invalid Api Key Format");
+                // bad api key format, but just tell them it's unauthorized
+                context.Response.StatusCode = 401;
+                await context.Response.WriteAsync(InvalidApiKeyMessage);
                 return;
             }
 
@@ -47,7 +49,7 @@ namespace Keas.Mvc.Handlers
             {
                 // no team found with your auth token, fail
                 context.Response.StatusCode = 401; //UnAuthorized
-                await context.Response.WriteAsync("Invalid Api Key");
+                await context.Response.WriteAsync(InvalidApiKeyMessage);
                 return;
             }
 
