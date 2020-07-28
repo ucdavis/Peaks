@@ -29,8 +29,10 @@ namespace Keas.Mvc.Handlers
             // check for header
             if (!context.Request.Headers.ContainsKey(HeaderKey))
             {
-                await _next.Invoke(context);
+                await _next(context);
+                return;
             }
+
             var headerValue = context.Request.Headers[HeaderKey].FirstOrDefault();
 
             Guid headerGuidValue;
@@ -94,7 +96,7 @@ namespace Keas.Mvc.Handlers
                 new System.Security.Claims.Claim(ApiHelper.ClaimName, teamAccess.Slug)
             }));
 
-            await _next.Invoke(context);
+            await _next(context);
         }
     }
 }
