@@ -21,23 +21,34 @@ namespace Keas.Mvc.Handlers
         {
             _next = next;
         }
-        public Task Invoke(HttpContext context, ApplicationDbContext dbContext, IOptions<ApiSettings> apiSettingsOptions)
+        public async Task Invoke(HttpContext context, ApplicationDbContext dbContext, IOptions<ApiSettings> apiSettingsOptions)
         {
             var apiSettings = apiSettingsOptions.Value;
 
             // check for header
             if (!context.Request.Headers.ContainsKey(HeaderKey))
             {
-                return _next(context);
+                await _next.Invoke(context);
             }
             var headerValue = context.Request.Headers[HeaderKey].FirstOrDefault();
 
+            Guid headerGuidValue;
+
+            if (!Guid.TryParse(headerValue, out headerGuidValue)) {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync("Invalid Api Key Format");
+                return;
+            }
+
             // lookup team that this API key has acess to
-            var teamAccess = dbContext.Teams.FirstOrDefault(t => t.ApiCode == new Guid(headerValue));
+            var teamAccess = dbContext.Teams.FirstOrDefault(t => t.ApiCode == headerGuidValue);
 
             if (teamAccess == null)
             {
-                return _next(context);
+                // no team found with your auth token, fail
+                context.Response.StatusCode = 401; //UnAuthorized
+                await context.Response.WriteAsync("Invalid Api Key");
+                return;
             }
 
             // make sure we have an API user ready to go for this team
@@ -81,7 +92,7 @@ namespace Keas.Mvc.Handlers
                 new System.Security.Claims.Claim(ApiHelper.ClaimName, teamAccess.Slug)
             }));
 
-            return _next(context);
+            await _next.Invoke(context);
         }
     }
 }
