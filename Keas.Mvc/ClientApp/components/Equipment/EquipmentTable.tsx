@@ -1,12 +1,15 @@
 import * as React from 'react';
-import ReactTable from 'react-table';
-import 'react-table/react-table.css';
 import { Button } from 'reactstrap';
 import { IEquipment } from '../../models/Equipment';
 import { DateUtil } from '../../util/dates';
-import { ReactTableExpirationUtil } from '../../util/reactTable';
+import {
+  ExpirationColumnFilter,
+  expirationFilter
+} from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
+import { ReactTable } from '../Shared/ReactTable';
+import { Column, TableState } from 'react-table';
 
 interface IProps {
   equipment: IEquipment[];
@@ -19,91 +22,66 @@ interface IProps {
 
 export default class EquipmentTable extends React.Component<IProps, {}> {
   public render() {
+    const columns: Column<IEquipment>[] = [
+      {
+        Cell: data => (
+          <Button
+            color='link'
+            onClick={() => this.props.showDetails(data.row.original)}
+          >
+            Details
+          </Button>
+        ),
+        Header: ' ',
+        maxWidth: 150
+      },
+      {
+        Header: 'Serial Number',
+        accessor: 'serialNumber',
+        id: 'serial number'
+      },
+      {
+        Header: 'Name',
+        accessor: 'name'
+      },
+      {
+        Header: 'Assigned To',
+        accessor: e => e.assignment?.person?.name
+      },
+      {
+        Cell: row => (
+          <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
+        ),
+        Filter: ExpirationColumnFilter,
+        filter: 'expiration',
+        Header: 'Expiration',
+        accessor: e => e.assignment?.expiresAt,
+        id: 'expiresAt'
+      },
+      {
+        Cell: this.renderDropdownColumn,
+        Header: 'Actions',
+        defaultCanFilter: false
+      }
+    ];
+
+    const initialState: Partial<TableState<any>> = {
+      sortBy: [{ id: 'name' }],
+      pageSize: ReactTableUtil.getPageSize()
+    };
+
     return (
       <ReactTable
         data={this.props.equipment}
-        filterable={true}
-        defaultPageSize={ReactTableUtil.getPageSize()}
-        onPageSizeChange={pageSize => {
-          ReactTableUtil.setPageSize(pageSize);
-        }}
-        minRows={1}
-        columns={[
-          {
-            Cell: row => (
-              <Button
-                color='link'
-                onClick={() => this.props.showDetails(row.original)}
-              >
-                Details
-              </Button>
-            ),
-            Header: '',
-            className: 'spaces-details',
-            filterable: false,
-            headerClassName: 'spaces-details',
-            maxWidth: 150,
-            resizable: false,
-            sortable: false
-          },
-          {
-            Header: 'Serial Number',
-            accessor: 'serialNumber',
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
-          },
-          {
-            Header: 'Name',
-            accessor: 'name',
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
-          },
-          {
-            Header: 'Assigned To',
-            accessor: 'assignment.person.name',
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
-          },
-          {
-            Cell: row => (
-              <span>
-                {row.value ? DateUtil.formatExpiration(row.value) : ''}
-              </span>
-            ),
-            Filter: ({ filter, onChange }) =>
-              ReactTableExpirationUtil.filter(filter, onChange),
-            Header: 'Expiration',
-            accessor: 'assignment.expiresAt',
-            filterMethod: (filter, row) =>
-              ReactTableExpirationUtil.filterMethod(filter, row),
-            id: 'expiresAt',
-            sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
-          },
-          {
-            Cell: this.renderDropdownColumn,
-            Header: 'Actions',
-            className: 'table-actions',
-            filterable: false,
-            headerClassName: 'table-actions',
-            resizable: false,
-            sortable: false
-          }
-        ]}
-        defaultSorted={[
-          {
-            desc: false,
-            id: 'name'
-          }
-        ]}
+        columns={columns}
+        initialState={initialState}
+        filterTypes={{ expiration: expirationFilter }}
       />
     );
   }
 
-  private renderDropdownColumn = row => {
-    const equipmentEntity: IEquipment = row.original;
+  private renderDropdownColumn = data => {
+    const equipmentEntity: IEquipment = data.row.original;
     const hasAssignment = !!equipmentEntity.assignment;
 
     const actions: IAction[] = [];

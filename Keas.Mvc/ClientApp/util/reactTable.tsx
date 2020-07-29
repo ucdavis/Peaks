@@ -1,13 +1,90 @@
 import { addWeeks, isAfter, isBefore, isSameDay, startOfDay } from 'date-fns';
 import * as React from 'react';
+import { DateUtil } from './dates';
 
 interface IFilterOption {
   value: string;
   displayText: string;
 }
 
-export class ReactTableExpirationUtil {
+// UI for expiration column filter
+export function ExpirationColumnFilter({
+  column: { filterValue, setFilter }
+}) {
+  // Render a multi-select box
+  return (
+    <select
+      value={filterValue}
+      style={{ width: '100%' }}
+      onChange={e => {
+        setFilter(e.target.value || undefined);
+      }}
+    >
+      {ReactTableExpirationUtil.defaultFilterOptions.map(option => (
+        <option key={option.value} value={option.value}>
+          {option.displayText}
+        </option>
+      ))}
+    </select>
+  );
+}
 
+// custom filter filter function for expirations
+export function expirationFilter(rows: any[], id, filterValue) {
+  if (filterValue === 'all') {
+    return rows;
+  }
+  if (filterValue === 'unassigned') {
+    return rows.filter(r => !getRowExpiresAt(r));
+  }
+  if (filterValue === 'expired') {
+    return rows.filter(
+      r =>
+        !!getRowExpiresAt(r) &&
+        !isAfter(new Date(getRowExpiresAt(r)), new Date())
+    );
+  }
+  if (filterValue === 'unexpired') {
+    return rows.filter(
+      r =>
+        !!getRowExpiresAt(r) &&
+        isAfter(new Date(getRowExpiresAt(r)), new Date())
+    );
+  }
+  if (filterValue === '3weeks') {
+    return rows.filter(
+      r =>
+        !!getRowExpiresAt(r) &&
+        isAfter(new Date(getRowExpiresAt(r)), new Date()) &&
+        isBefore(
+          new Date(getRowExpiresAt(r)),
+          addWeeks(startOfDay(new Date()), 3)
+        )
+    );
+  }
+  if (filterValue === '6weeks') {
+    return rows.filter(
+      r =>
+        !!getRowExpiresAt(r) &&
+        isAfter(new Date(getRowExpiresAt(r)), new Date()) &&
+        isBefore(
+          new Date(getRowExpiresAt(r)),
+          addWeeks(startOfDay(new Date()), 6)
+        )
+    );
+  }
+  return rows;
+}
+
+// row expiration is either the date of the soonest expiration if there are multiple, or just the expiration value if it exists
+const getRowExpiresAt = (row: any) =>
+  row.original.assignments
+    ? DateUtil.getFirstExpiration(
+        row.original.assignments.map(y => y.expiresAt)
+      )
+    : row.original.assignment?.expiresAt;
+
+export class ReactTableExpirationUtil {
   public static defaultFilterOptions: IFilterOption[] = [
     {
       displayText: 'Show All',
@@ -35,7 +112,9 @@ export class ReactTableExpirationUtil {
     }
   ];
 
-  public static filter = ReactTableExpirationUtil.getFilter(ReactTableExpirationUtil.defaultFilterOptions);
+  public static filter = ReactTableExpirationUtil.getFilter(
+    ReactTableExpirationUtil.defaultFilterOptions
+  );
 
   public static filterMethod(filter, row) {
     if (filter.value === 'all') {

@@ -3,7 +3,7 @@ export class ReactTableUtil {
     localStorage.setItem('PeaksDefaultPageSize', pageSize);
   }
 
-  public static getPageSize() {
-    return localStorage.getItem('PeaksDefaultPageSize') || 20;
+  public static getPageSize(): number {
+    return parseInt(localStorage.getItem('PeaksDefaultPageSize')) || 20;
   }
 }

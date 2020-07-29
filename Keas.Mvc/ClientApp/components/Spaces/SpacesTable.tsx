@@ -1,9 +1,9 @@
 import * as React from 'react';
-import ReactTable from 'react-table';
-import 'react-table/react-table.css';
 import { Button, UncontrolledTooltip } from 'reactstrap';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
 import { ReactTableUtil } from '../../util/tableUtil';
+import { ReactTable } from '../Shared/ReactTable';
+import { Column, TableState } from 'react-table';
 
 interface IProps {
   filtered: any[];
@@ -12,151 +12,130 @@ interface IProps {
   updateFilters: (filters: any[]) => void;
 }
 
+// UI for workstation column filter
+const SpaceWorkstationColumnFilter = ({
+  column: { filterValue, setFilter }
+}) => {
+  // Render a multi-select box
+  return (
+    <select
+      value={filterValue}
+      style={{ width: '100%' }}
+      onChange={e => {
+        setFilter(e.target.value || undefined);
+      }}
+    >
+      <option value='all'>Show All</option>
+      <option value='assigned'>Assigned</option>
+      <option value='unassigned'>Unassigned</option>
+      <option value='any'>Any</option>
+    </select>
+  );
+};
+
+// Logic to control what rows get displayed
+const workstationFilter = (rows: any[], id, filterValue) => {
+  if (filterValue === 'all') {
+    return rows;
+  }
+  if (filterValue === 'unassigned') {
+    return rows.filter(
+      r =>
+        getRowWorkstationsTotal(r) > 0 &&
+        getRowWorkstationsInUse(r) < getRowWorkstationsTotal(r)
+    );
+  }
+  if (filterValue === 'assigned') {
+    return rows.filter(r => getRowWorkstationsInUse(r) > 0);
+  }
+  if (filterValue === 'any') {
+    return rows.filter(r => getRowWorkstationsTotal(r) > 0);
+  }
+  return rows;
+};
+
+const getRowWorkstationsInUse = (row: any) => row.original?.workstationsInUse;
+const getRowWorkstationsTotal = (row: any) => row.original?.workstationsTotal;
+
 export default class SpacesTable extends React.Component<IProps, {}> {
   public render() {
+    const columns: Column<ISpaceInfo>[] = [
+      {
+        Cell: data => (
+          <Button
+            color='link'
+            onClick={() => this.props.showDetails(data.row.original.space)}
+          >
+            Details
+          </Button>
+        ),
+        Header: ' ',
+        maxWidth: 150
+      },
+      {
+        Cell: data => (
+          <span>
+            {data.row.original.space.roomNumber}{' '}
+            {data.row.original.space.bldgName}
+          </span>
+        ),
+        Header: 'Room',
+        accessor: row => row.space.roomNumber + ' ' + row.space.bldgName,
+        id: 'room'
+      },
+      {
+        Cell: data => <span>{data.row.original.space.roomName}</span>,
+        Header: 'Room Name',
+        accessor: key => key.space?.roomName
+      },
+      {
+        Cell: data => <span>{data.row.original.keyCount}</span>,
+        Header: 'Keys',
+        accessor: 'keyCount'
+      },
+      {
+        Cell: data => <span>{data.row.original.equipmentCount}</span>,
+        Header: 'Equipment',
+        accessor: 'equipmentCount'
+      },
+      {
+        Cell: row => (
+          <span>
+            {row.value.workstationsInUse} / {row.value.workstationsTotal}
+          </span>
+        ),
+        Filter: SpaceWorkstationColumnFilter,
+        filter: 'workstation',
+        Header: header => (
+          <div>
+            Workstations{' '}
+            <i id='workstationsTooltip' className='fas fa-info-circle' />
+            <UncontrolledTooltip placement='right' target='workstationsTooltip'>
+              In Use / Total
+            </UncontrolledTooltip>
+          </div>
+        ),
+        accessor: spaceInfo => {
+          return {
+            workstationsInUse: spaceInfo.workstationsInUse,
+            workstationsTotal: spaceInfo.workstationsTotal
+          };
+        },
+        id: 'workstationsCount'
+      }
+    ];
+
+    const initialState: Partial<TableState<any>> = {
+      sortBy: [{ id: 'room' }],
+      pageSize: ReactTableUtil.getPageSize()
+    };
+
     return (
       <ReactTable
         data={this.props.spaces}
-        filterable={true}
-        minRows={1}
-        filtered={this.props.filtered}
-        onFilteredChange={filtered => this.props.updateFilters(filtered)}
-        defaultPageSize={ReactTableUtil.getPageSize()}
-        onPageSizeChange={pageSize => {
-          ReactTableUtil.setPageSize(pageSize);
-        }}
-        columns={[
-          {
-            Cell: row => (
-              <Button
-                color='link'
-                onClick={() => this.props.showDetails(row.original.space)}
-              >
-                Details
-              </Button>
-            ),
-            Header: 'Actions',
-            className: 'spaces-details',
-            filterable: false,
-            headerClassName: 'spaces-details',
-            maxWidth: 150,
-            resizable: false,
-            sortable: false
-          },
-          {
-            Cell: row => (
-              <span>
-                {row.original.space.roomNumber} {row.original.space.bldgName}
-              </span>
-            ),
-            Header: 'Room',
-            accessor: row => row.space.roomNumber + ' ' + row.space.bldgName,
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
-            id: 'room'
-          },
-          {
-            Cell: row => <span>{row.original.space.roomName}</span>,
-            Header: 'Room Name',
-            accessor: 'space.roomName',
-            className: 'word-wrap',
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
-          },
-          {
-            Cell: row => <span>{row.original.keyCount}</span>,
-            Header: 'Keys',
-            accessor: 'keyCount',
-            className: 'table-10p',
-            filterable: false,
-            headerClassName: 'table-10p'
-          },
-          {
-            Cell: row => <span>{row.original.equipmentCount}</span>,
-            Header: 'Equipment',
-            accessor: 'equipmentCount',
-            className: 'table-10p',
-            filterable: false,
-            headerClassName: 'table-10p'
-          },
-          {
-            Cell: row => (
-              <span>
-                {row.value.workstationsInUse} / {row.value.workstationsTotal}
-              </span>
-            ),
-            Filter: ({ filter, onChange }) => (
-              <select
-                onChange={e => onChange(e.target.value)}
-                style={{ width: '100%' }}
-                value={filter ? filter.value : 'all'}
-              >
-                <option value='all'>Show All</option>
-                <option value='unassigned'>Unassigned</option>
-                <option value='assigned'>Assigned</option>
-                <option value='any'>Any</option>
-              </select>
-            ),
-            Header: header => (
-              <div>
-                Workstations{' '}
-                <i id='workstationsTooltip' className='fas fa-info-circle' />
-                <UncontrolledTooltip
-                  placement='right'
-                  target='workstationsTooltip'
-                >
-                  In Use / Total
-                </UncontrolledTooltip>
-              </div>
-            ),
-            accessor: spaceInfo => {
-              return {
-                workstationsInUse: spaceInfo.workstationsInUse,
-                workstationsTotal: spaceInfo.workstationsTotal
-              };
-            },
-            className: 'table-10p',
-            filterMethod: (filter, row) => {
-              if (filter.value === 'all') {
-                return true;
-              }
-              if (filter.value === 'unassigned') {
-                return (
-                  row.workstationsCount.workstationsTotal -
-                    row.workstationsCount.workstationsInUse >
-                  0
-                );
-              }
-              if (filter.value === 'assigned') {
-                return row.workstationsCount.workstationsInUse > 0;
-              }
-              if (filter.value === 'any') {
-                return row.workstationsCount.workstationsTotal > 0;
-              }
-            },
-            headerClassName: 'table-10p',
-            id: 'workstationsCount',
-            sortMethod: (a, b) => {
-              if (a.workstationsTotal === b.workstationsTotal) {
-                if (a.workstationsInUse === b.workstationsInUse) {
-                  return 0;
-                } else {
-                  return a.workstationsInUse < b.workstationsInUse ? 1 : -1;
-                }
-              } else {
-                return a.workstationsTotal < b.workstationsTotal ? 1 : -1;
-              }
-            }
-          }
-        ]}
-        defaultSorted={[
-          {
-            desc: false,
-            id: 'room'
-          }
-        ]}
+        columns={columns}
+        initialState={initialState}
+        filterTypes={{ workstation: workstationFilter }}
       />
     );
   }
