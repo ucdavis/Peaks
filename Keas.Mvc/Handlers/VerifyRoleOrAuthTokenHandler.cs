@@ -27,13 +27,11 @@ namespace Keas.Mvc.Handlers
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, VerifyRoleOrAuthToken requirement) {
             // get team name from url
             var team = "";
-            if (context.Resource is AuthorizationFilterContext mvcContext)
+            if (context.Resource is Endpoint)
             {
-                if (mvcContext.RouteData.Values["teamName"] != null)
-                {
-                    team = mvcContext.RouteData.Values["teamName"].ToString();
-                }
+                team = _httpContext.HttpContext.Request.RouteValues["teamName"].ToString();
             }
+
             if (string.IsNullOrWhiteSpace(team))
             {
                 var tempData = _tempDataDictionaryFactory.GetTempData(_httpContext.HttpContext);
