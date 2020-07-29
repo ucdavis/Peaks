@@ -18,7 +18,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.AnyRole)]
     [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
-    [Route("api/{teamName}/people/[action]/{id?}")]
+    [Route("api/{teamName}/people/[action]")]
     public class PeopleController : SuperController
     {
         private readonly ApplicationDbContext _context;

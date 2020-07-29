@@ -18,7 +18,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
     [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
-    [Route("api/{teamName}/equipment/[action]/{id?}")]
+    [Route("api/{teamName}/equipment/[action]")]
     public class EquipmentController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -118,7 +118,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipments);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var equipment = await _context.Equipment
@@ -264,7 +264,7 @@ namespace Keas.Mvc.Controllers.Api
             }
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Revoke(int id)
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
@@ -287,7 +287,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
@@ -326,7 +326,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
@@ -338,7 +338,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(history);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetComputer(string id)
         {
             try 

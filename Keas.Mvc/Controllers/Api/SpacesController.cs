@@ -17,7 +17,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.AnyRole)]
     [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
-    [Route("api/{teamName}/spaces/[action]/{id?}")]
+    [Route("api/{teamName}/spaces/[action]")]
     public class SpacesController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -130,7 +130,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(string.Join(",", tags));
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var space = await _context.Spaces

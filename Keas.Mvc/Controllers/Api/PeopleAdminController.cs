@@ -17,7 +17,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.PersonManagerAccess)]
     [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
-    [Route("api/{teamName}/peopleadmin/[action]/{id?}")]
+    [Route("api/{teamName}/peopleadmin/[action]")]
     public class PeopleAdminController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -66,7 +66,7 @@ namespace Keas.Mvc.Controllers.Api
             return BadRequest(ModelState);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var person = await _context.People
@@ -103,7 +103,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories.Where(x => x.TargetId == id)

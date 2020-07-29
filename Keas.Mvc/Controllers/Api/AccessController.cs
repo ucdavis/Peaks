@@ -16,7 +16,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.AccessMasterAccess)]
     [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
-    [Route("api/{teamName}/access/[action]/{id?}")]
+    [Route("api/{teamName}/access/[action]")]
     public class AccessController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -37,7 +37,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
-        public async Task<IActionResult> Search(string q)
+        public async Task<IActionResult> Search([FromQuery] string q)
         {
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person)
                 .Where(x => x.Team.Slug == Team && x.Active &&
@@ -72,7 +72,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(accessList);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var access = await _context.Access
@@ -157,7 +157,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Revoke(int id)
         {
             var assignment = await _context.AccessAssignments
@@ -173,7 +173,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(null);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var access = await _context.Access

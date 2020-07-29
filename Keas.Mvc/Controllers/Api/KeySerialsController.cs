@@ -18,7 +18,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
     [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
-    [Route("api/{teamName}/KeySerials/[action]/{id?}")]
+    [Route("api/{teamName}/KeySerials/[action]")]
     public class KeySerialsController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -115,7 +115,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerials);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var keySerial = await _context.KeySerials
@@ -181,7 +181,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateKeySerialViewModel model)
         {
             // TODO Make sure user has permissions

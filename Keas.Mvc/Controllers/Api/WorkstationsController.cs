@@ -16,7 +16,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
     [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
-    [Route("api/{teamName}/wprkstations/[action]/{id?}")]
+    [Route("api/{teamName}/wprkstations/[action]")]
     public class WorkstationsController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -31,7 +31,6 @@ namespace Keas.Mvc.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
                 .Where(x => x.Team.Slug == Team && x.Active &&
                 (EF.Functions.Like(x.Name, $"{q}%") || EF.Functions.Like(x.Space.BldgName, $"%{q}%")
@@ -115,7 +114,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstations);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var workstation = await _context.Workstations
@@ -208,7 +207,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstation);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Revoke(int id)
         {
             // TODO permission
@@ -252,7 +251,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(w);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var workstation = await _context.Workstations
@@ -283,7 +282,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories

@@ -17,7 +17,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
     [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
-    [Route("api/{teamName}/keys/[action]/{id?}")]
+    [Route("api/{teamName}/keys/[action]")]
     public class KeysController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -153,7 +153,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody]UpdateKeyViewModel model)
         {
             //TODO: check permissions, make sure SN isn't edited 
@@ -184,7 +184,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var key = await _context.Keys
@@ -233,7 +233,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> AssociateSpace(int id, [FromBody] AssociateKeyViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
@@ -276,7 +276,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(association);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> DisassociateSpace(int id, [FromBody] DisassociateKeyViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
@@ -312,7 +312,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
