@@ -114,7 +114,7 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
     ];
 
     const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'name' }],
+      sortBy: [{ id: 'status' }, { id: 'keyCodeSN'}],
       pageSize: ReactTableUtil.getPageSize()
     };
 
