@@ -101,7 +101,7 @@ describe('Equipment Container', () => {
 
     const headerRecord = container.querySelector('.table-row').textContent;
     expect(headerRecord).toBe(
-      ' Serial NumberNameAssigned ToExpirationActions'
+      ' Serial NumberName 🔼Assigned ToExpirationActions'
     );
   });
 

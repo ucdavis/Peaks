@@ -101,7 +101,7 @@ describe('People Container', () => {
 
     const headerRecord = container.querySelector('.table-row').textContent;
     expect(headerRecord).toBe(
-      ' NameEmailSupervisorKeysEquipmentAccessWorkstations'
+      ' Name 🔼EmailSupervisorKeysEquipmentAccessWorkstations'
     );
   });
 
