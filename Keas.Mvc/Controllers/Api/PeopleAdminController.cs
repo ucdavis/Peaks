@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.PersonManagerAccess)]
-    [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
     [Route("api/{teamName}/peopleadmin/[action]")]
     public class PeopleAdminController : SuperController

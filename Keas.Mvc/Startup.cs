@@ -41,8 +41,6 @@ namespace Keas.Mvc
 {
     public class Startup
     {
-        public const string CorsPolicyAllowAnyOrigin = "CorsPolicyAllowAnyOrigin";
-
         public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
@@ -246,11 +244,6 @@ namespace Keas.Mvc
 
                 c.OperationFilter<SecurityRequirementsOperationFilter>(securityScheme);
             });
-
-            // cors support and policies
-            services.AddCors(o =>
-                o.AddPolicy(CorsPolicyAllowAnyOrigin, 
-                    b => b.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

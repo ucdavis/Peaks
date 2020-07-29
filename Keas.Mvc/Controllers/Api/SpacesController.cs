@@ -15,7 +15,6 @@ using Microsoft.EntityFrameworkCore;
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.AnyRole)]
-    [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
     [Route("api/{teamName}/spaces/[action]")]
     public class SpacesController : SuperController

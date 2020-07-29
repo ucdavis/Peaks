@@ -14,9 +14,8 @@ using Microsoft.AspNetCore.Cors;
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
-    [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
-    [Route("api/{teamName}/wprkstations/[action]")]
+    [Route("api/{teamName}/workstations/[action]")]
     public class WorkstationsController : SuperController
     {
         private readonly ApplicationDbContext _context;

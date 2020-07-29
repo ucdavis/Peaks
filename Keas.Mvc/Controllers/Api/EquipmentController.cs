@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Cors;
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
-    [EnableCors(Startup.CorsPolicyAllowAnyOrigin)]
     [ApiController]
     [Route("api/{teamName}/equipment/[action]")]
     public class EquipmentController : SuperController
