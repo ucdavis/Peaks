@@ -210,7 +210,7 @@ namespace Keas.Mvc
                     Contact = new OpenApiContact
                     {
                         Name = "Application Support",
-                        Email = "apprequests@caes.ucdavis.edu"
+                        Url = new Uri("https://caeshelp.ucdavis.edu/?appname=Peaks")
                     },
                     License = new OpenApiLicense
                     {
