@@ -1,12 +1,12 @@
 import * as React from 'react';
-import ReactTable from 'react-table';
-import 'react-table/react-table.css';
 import { Button } from 'reactstrap';
 import { IAccess } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
-import { ReactTableExpirationUtil } from '../../util/reactTable';
+import { ExpirationColumnFilter, expirationFilter } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
+import { ReactTable } from '../Shared/ReactTable';
+import { Column, TableState } from 'react-table';
 
 interface IProps {
   accesses: IAccess[];
@@ -18,101 +18,67 @@ interface IProps {
 
 export default class AccessTable extends React.Component<IProps, {}> {
   public render() {
+    const columns: Column<IAccess>[] = [
+      {
+        Cell: data => (
+          <Button
+            color='link'
+            onClick={() => this.props.showDetails(data.row.original)}
+          >
+            Details
+          </Button>
+        ),
+        Header: ' ',
+        maxWidth: 150
+      },
+      {
+        Header: 'Name',
+        accessor: 'name'
+      },
+      {
+        Header: 'Number of Assignments',
+        accessor: x => x.assignments.length,
+        id: 'numAssignments'
+      },
+      {
+        Header: 'Assigned To',
+        accessor: x => x.assignments.map(a => a.person.name).join(','),
+        id: 'assignedTo'
+      },
+      {
+        Cell: row => (
+          <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
+        ),
+        Filter: ExpirationColumnFilter,
+        filter: 'expiration',
+        Header: 'Expiration',
+        accessor: x =>
+          DateUtil.getFirstExpiration(x.assignments.map(y => y.expiresAt)),
+        id: 'expiresAt'
+      },
+      {
+        Cell: this.renderDropdownColumn,
+        Header: 'Actions',
+      }
+    ];
+    
+    const initialState: Partial<TableState<any>> = {
+      sortBy: [{ id: 'name' }],
+      pageSize: ReactTableUtil.getPageSize()
+    };
+
     return (
       <ReactTable
         data={this.props.accesses}
-        filterable={true}
-        defaultPageSize={ReactTableUtil.getPageSize()}
-        onPageSizeChange={pageSize => {
-          ReactTableUtil.setPageSize(pageSize);
-        }}
-        minRows={1}
-        columns={[
-          {
-            Cell: row => (
-              <Button
-                color='link'
-                onClick={() => this.props.showDetails(row.original)}
-              >
-                Details
-              </Button>
-            ),
-            Header: '',
-            className: 'spaces-details',
-            filterable: false,
-            headerClassName: 'spaces-details',
-            maxWidth: 150,
-            resizable: false,
-            sortable: false
-          },
-          {
-            Header: 'Name',
-            accessor: 'name',
-            filterMethod: (filter, row) =>
-              !!row[filter.id] &&
-              row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
-          },
-          {
-            Header: 'Number of Assignments',
-            accessor: x => x.assignments.length,
-            filterable: false,
-            id: 'numAssignments',
-            sortable: true
-          },
-          {
-            Header: 'Assigned To',
-            accessor: x => x.assignments.map(a => a.person.name).join(','),
-            filterMethod: (filter, row) => {
-              const namesAndEmail = row._original.assignments.map(
-                x => x.person.name.toLowerCase() + x.person.email.toLowerCase()
-              );
-              if (
-                namesAndEmail.some(x => x.includes(filter.value.toLowerCase()))
-              ) {
-                return true;
-              }
-            },
-            id: 'assignedTo'
-          },
-          {
-            Cell: row => (
-              <span>
-                {row.value ? DateUtil.formatExpiration(row.value) : ''}
-              </span>
-            ),
-            Filter: ({ filter, onChange }) =>
-              ReactTableExpirationUtil.filter(filter, onChange),
-            Header: 'Expiration',
-            accessor: x =>
-              DateUtil.getFirstExpiration(x.assignments.map(y => y.expiresAt)),
-            filterMethod: (filter, row) =>
-              ReactTableExpirationUtil.filterMethod(filter, row),
-            id: 'expiresAt',
-            sortMethod: (a, b) => ReactTableExpirationUtil.sortMethod(a, b)
-          },
-          {
-            Cell: this.renderDropdownColumn,
-            Header: 'Actions',
-            className: 'table-actions',
-            filterable: false,
-            headerClassName: 'table-actions',
-            resizable: false,
-            sortable: false
-          }
-        ]}
-        defaultSorted={[
-          {
-            desc: false,
-            id: 'name'
-          }
-        ]}
+        columns={columns}
+        initialState={initialState}
+        filterTypes={{ expiration: expirationFilter }}
       />
     );
   }
 
-  private renderDropdownColumn = row => {
-    const accessEntity: IAccess = row.original;
-
+  private renderDropdownColumn = data => {
+    const accessEntity: IAccess = data.row.original;
     const actions: IAction[] = [];
 
     if (!!this.props.onAdd) {
