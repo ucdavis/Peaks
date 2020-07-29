@@ -1,6 +1,8 @@
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
 import { FormFeedback, FormGroup, Input, Label } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import DatePicker from 'react-date-picker';
 import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
@@ -17,6 +19,7 @@ interface IProps {
   space?: ISpace;
   creating?: boolean;
   error?: IValidationError;
+  isDeleting?: boolean;
 }
 
 export default class PersonEditValues extends React.Component<IProps, {}> {
@@ -153,6 +156,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
           <Label for='Start Date'>Start Date</Label>
           <br />
           <DatePicker
+            disabled={this.props.isDeleting}
             value={
               this.props.selectedPerson && this.props.selectedPerson.startDate
                 ? new Date(this.props.selectedPerson.startDate)
@@ -160,7 +164,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             }
             onChange={this._changeStartDate}
             format='MM/dd/yyyy'
-            clearIcon={null}
+            clearIcon={<FontAwesomeIcon icon={faTrash} pull="right" />}
           />
         </FormGroup>
 
@@ -168,6 +172,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
           <Label for='End Date'>End Date</Label>
           <br />
           <DatePicker
+            disabled={this.props.isDeleting}
             value={
               this.props.selectedPerson && this.props.selectedPerson.endDate
                 ? new Date(this.props.selectedPerson.endDate)
@@ -175,7 +180,7 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
             }
             onChange={this._changeEndDate}
             format='MM/dd/yyyy'
-            clearIcon={null}
+            clearIcon={<FontAwesomeIcon icon={faTrash} pull="right" />}
           />
         </FormGroup>
 
@@ -244,10 +249,14 @@ export default class PersonEditValues extends React.Component<IProps, {}> {
   }
 
   private _changeStartDate = (date: Date) => {
-    this.props.changeProperty('startDate', startOfDay(date));
+    date === null
+      ? this.props.changeProperty('startDate', null)
+      : this.props.changeProperty('startDate', startOfDay(date));
   };
 
   private _changeEndDate = (date: any) => {
-    this.props.changeProperty('endDate', startOfDay(date));
+    date === null
+      ? this.props.changeProperty('endDate', null)
+      : this.props.changeProperty('endDate', startOfDay(date));
   };
 }
