@@ -126,7 +126,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
     ];
 
     const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'name' }],
+      sortBy: [{ id: 'room' }],
       pageSize: ReactTableUtil.getPageSize()
     };
 
