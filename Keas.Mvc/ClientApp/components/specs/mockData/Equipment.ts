@@ -15,7 +15,7 @@ export const fakeEquipment: IEquipment[] = [
         {
           "id": 3675,
           "equipmentId": 24,
-          "key": "calskey",
+          "key": "wallKey",
           "value": "5"
         }
       ],
@@ -49,7 +49,7 @@ export const fakeEquipment: IEquipment[] = [
     },
     id: 24,
     name: 'Dell Desktop',
-    notes: 'hhh',
+    notes: 'Monitor',
     tags: '',
     teamId: 10
   },
