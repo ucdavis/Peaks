@@ -29,13 +29,13 @@ namespace Keas.Mvc.Handlers
             var team = "";
             if (context.Resource is Endpoint)
             {
-                team = _httpContext.HttpContext.Request.RouteValues["teamName"].ToString();
+                team = _httpContext.HttpContext.Request.RouteValues["teamName"]?.ToString() ?? "";
             }
 
             if (string.IsNullOrWhiteSpace(team))
             {
                 var tempData = _tempDataDictionaryFactory.GetTempData(_httpContext.HttpContext);
-                team = Convert.ToString(tempData["TeamName"]);
+                team = tempData["TeamName"]?.ToString() ?? "";
             }
 
             // user has access to team based on claims
