@@ -36,12 +36,16 @@ namespace Test.TestsController
         public void TestControllerClassAttributes()
         {
             ControllerReflection.ControllerInherits("SuperController");
-            var authAttribute = ControllerReflection.ClassExpectedAttribute<AuthorizeAttribute>(3);
+            var authAttribute = ControllerReflection.ClassExpectedAttribute<AuthorizeAttribute>(5);
             authAttribute.ElementAt(0).Roles.ShouldBe(null);
             authAttribute.ElementAt(0).Policy.ShouldBe(AccessCodes.Codes.EquipMasterAccess);
 
-            ControllerReflection.ClassExpectedAttribute<AutoValidateAntiforgeryTokenOrApiAttribute>(3);
-            ControllerReflection.ClassExpectedAttribute<ControllerAttribute>(3);
+            ControllerReflection.ClassExpectedAttribute<AutoValidateAntiforgeryTokenOrApiAttribute>(5);
+            ControllerReflection.ClassExpectedAttribute<ControllerAttribute>(5);
+            ControllerReflection.ClassExpectedAttribute<ApiControllerAttribute>(5);
+
+            var route = ControllerReflection.ClassExpectedAttribute<RouteAttribute>(5);
+            route.ElementAt(0).Template.ShouldBe("api/{teamName}/equipment/[action]");
         }
 
         #endregion Controller Class Tests
@@ -65,21 +69,28 @@ namespace Test.TestsController
 #endif
 
             //1
-            ControllerReflection.MethodExpectedNoAttribute("GetTeam", "GetTeam-1");
+            var apiVal = ControllerReflection.MethodExpectedAttribute<ApiExplorerSettingsAttribute>("GetTeam", 1, "GetTeam-1", showListOfAttributes: false);
+            apiVal.ElementAt(0).IgnoreApi.ShouldBeTrue();
             //2
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Search", 1 + countAdjustment, "Search", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Search", 2 + countAdjustment, "Search", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("Search", 2 + countAdjustment, "Search", showListOfAttributes: false);
             //3
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetEquipmentInSpace", 1 + countAdjustment, "GetEquipmentInSpace", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetEquipmentInSpace", 2 + countAdjustment, "GetEquipmentInSpace", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetEquipmentInSpace", 2 + countAdjustment, "GetEquipmentInSpace", showListOfAttributes: false);
             //4
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("CommonAttributeKeys", 1 + countAdjustment, "CommonAttributeKeys", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("CommonAttributeKeys", 2 + countAdjustment, "CommonAttributeKeys", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("CommonAttributeKeys", 2 + countAdjustment, "CommonAttributeKeys", showListOfAttributes: false);
             //5
-            ControllerReflection.MethodExpectedNoAttribute("ListEquipmentTypes", "ListEquipmentTypes");
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("ListEquipmentTypes", 1, "ListEquipmentTypes", showListOfAttributes: false);
             //6
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("ListAssigned", 1 + countAdjustment, "ListAssigned", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("ListAssigned", 2 + countAdjustment, "ListAssigned", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("ListAssigned", 2 + countAdjustment, "ListAssigned", showListOfAttributes: false);
             //7
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("List", 1 + countAdjustment, "List", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("List", 2 + countAdjustment, "List", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("List", 2 + countAdjustment, "List", showListOfAttributes: false);
             //8
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Details", 1 + countAdjustment, "Details", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Details", 2 + countAdjustment, "Details", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("Details", 2 + countAdjustment, "Details", showListOfAttributes: false);
             //9
             ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Create", 2 + countAdjustment, "Create", showListOfAttributes: false);
             ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Create", 2 + countAdjustment, "Create", showListOfAttributes: false);
@@ -96,11 +107,14 @@ namespace Test.TestsController
             ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Delete", 2 + countAdjustment, "Delete", showListOfAttributes: false);
             ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Delete", 2 + countAdjustment, "Delete", showListOfAttributes: false);
             //14
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetHistory", 1 + countAdjustment, "GetHistory", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetHistory", 2 + countAdjustment, "GetHistory", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetHistory", 2 + countAdjustment, "GetHistory", showListOfAttributes: false);
             //15
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetComputer", 1 + countAdjustment, "GetComputer", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetComputer", 2 + countAdjustment, "GetComputer", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetComputer", 2 + countAdjustment, "GetComputer", showListOfAttributes: false);
             //16
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetComputersBySearch", 1 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetComputersBySearch", 2 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetComputersBySearch", 2 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
         }
 
         #endregion
