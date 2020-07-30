@@ -14,6 +14,14 @@ let mockRouterMatch: any = {
 
 let container: Element = null;
 
+jest.mock('../History/HistoryContainer', () => {
+  return {
+    default: () => {
+      return <div id='HistoryContainer'>HistoryContainer</div>;
+    }
+  };
+});
+
 beforeEach(() => {
   // setup a DOM element as a render target
   container = document.createElement('div');
