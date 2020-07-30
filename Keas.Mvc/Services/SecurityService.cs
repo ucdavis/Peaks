@@ -120,8 +120,10 @@ namespace Keas.Mvc.Services
 
         public async Task<List<User>> GetUsersInRoles(List<Role> roles, int teamId)
         {
+            var roleIds = roles.Select(r => r.Id).ToArray();
+
             var users = await _dbContext.TeamPermissions
-                .Where(x => x.TeamId == teamId && roles.Any(r => r.Id == x.RoleId))
+                .Where(x => x.TeamId == teamId && roleIds.Contains(x.RoleId))
                 .Select(tp => tp.User)
                 .Distinct()
                 .AsNoTracking()
@@ -132,8 +134,10 @@ namespace Keas.Mvc.Services
 
         public async Task<List<User>> GetUsersInRoles(List<Role> roles, string teamSlug)
         {
+            var roleIds = roles.Select(r => r.Id).ToArray();
+
             var users = await _dbContext.TeamPermissions
-                .Where(x => x.Team.Slug == teamSlug && roles.Any(r => r.Id == x.RoleId))
+                .Where(x => x.Team.Slug == teamSlug && roleIds.Contains(x.RoleId))
                 .Select(tp => tp.User)
                 .Distinct()
                 .AsNoTracking()

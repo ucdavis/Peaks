@@ -166,8 +166,8 @@ namespace Keas.Mvc.Controllers.Api
                 .ThenInclude(x => x.Team)
                 .SingleAsync(x => x.Id == id);
 
-            _context.AccessAssignments.Remove(assignment);
             await _eventService.TrackUnAssignAccess(assignment, Team);
+            _context.AccessAssignments.Remove(assignment);
             await _context.SaveChangesAsync();
             return Json(null);
         }

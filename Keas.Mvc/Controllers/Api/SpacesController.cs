@@ -35,17 +35,18 @@ namespace Keas.Mvc.Controllers.Api
                 .Distinct()
                 .ToListAsync();
 
-            var queryWords = q.ToLower().Split(" ").ToList();
+            var queryWords = q.Split(" ").Where(w => !string.IsNullOrWhiteSpace(w)).ToArray();
 
             var space = await _context.Spaces
                 .Where(x => orgIds.Contains(x.OrgId)
-                    && ((!string.IsNullOrWhiteSpace(x.BldgName) && queryWords.Any(s => x.BldgName.ToLower().Contains(s)))
-                        || (!string.IsNullOrWhiteSpace(x.RoomName) && queryWords.Any(s => x.RoomName.ToLower().Contains(s)))
-                        || (!string.IsNullOrWhiteSpace(x.RoomNumber) && queryWords.Any(s => x.RoomNumber.ToLower().Contains(s)))))
+                            && ((!string.IsNullOrWhiteSpace(x.BldgName) && queryWords.Contains(x.BldgName))
+                                || (!string.IsNullOrWhiteSpace(x.RoomName) && queryWords.Contains(x.BldgName))
+                                || (!string.IsNullOrWhiteSpace(x.RoomNumber) && queryWords.Contains(x.BldgName))))
                 .AsNoTracking()
                 .OrderBy(x => x.RoomNumber)
                 .ToListAsync();
 
+            
             return Json(space);
         }
 

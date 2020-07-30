@@ -279,8 +279,8 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
-            _context.EquipmentAssignments.Remove(equipment.Assignment);
             await _eventService.TrackUnAssignEquipment(equipment);
+            _context.EquipmentAssignments.Remove(equipment.Assignment);
             await _context.SaveChangesAsync();
             return Json(null);
 
@@ -313,7 +313,6 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     await _eventService.TrackUnAssignEquipment(equipment); // call before we remove person info
                     _context.EquipmentAssignments.Remove(equipment.Assignment);
-                    equipment.Assignment = null;
                 }
 
                 equipment.Active = false;

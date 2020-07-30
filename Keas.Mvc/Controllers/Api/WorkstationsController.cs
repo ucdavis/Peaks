@@ -224,8 +224,8 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
-            _context.WorkstationAssignments.Remove(workstation.Assignment);
             await _eventService.TrackUnAssignWorkstation(workstation);
+            _context.WorkstationAssignments.Remove(workstation.Assignment);
             await _context.SaveChangesAsync();
             return Json(null);
         }
@@ -268,7 +268,6 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     await _eventService.TrackUnAssignWorkstation(workstation); // call before we remove person info
                     _context.WorkstationAssignments.Remove(workstation.Assignment);
-                    workstation.Assignment = null;
                 }
 
                 workstation.Active = false;

@@ -377,8 +377,10 @@ namespace Keas.Core.Services
 
         private async Task<List<User>> GetUsersInRoles(IReadOnlyCollection<Role> roles, int teamId)
         {
+            var roleIds = roles.Select(r => r.Id).ToArray();
+
             var users = await _dbContext.TeamPermissions
-                .Where(x => x.TeamId == teamId && roles.Any(r => r.Id == x.RoleId))
+                .Where(x => x.TeamId == teamId && roleIds.Contains(x.RoleId))
                 .Select(tp => tp.User)
                 .Distinct()
                 .ToListAsync();
