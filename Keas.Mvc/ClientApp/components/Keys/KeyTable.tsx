@@ -114,7 +114,8 @@ export default class KeyTable extends React.Component<IProps, {}> {
       {
         Cell: data => <span>{data.row.original.spacesCount}</span>,
         Header: 'Spaces',
-        accessor: 'spacesCount'
+        accessor: 'spacesCount',
+        disableFilters: true
       },
       {
         Cell: this.renderDropdownColumn,
@@ -123,6 +124,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
     ];
 
     const initialState: Partial<TableState<any>> = {
+      sortBy: [{ id: 'name' }],
       pageSize: ReactTableUtil.getPageSize()
     };
 

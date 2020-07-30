@@ -65,7 +65,13 @@ describe('Equipment Container', () => {
     });
 
     const headerRecord = container.querySelector('.table-row').textContent;
+<<<<<<< HEAD
     expect(headerRecord).toBe(' Serial NumberNameAssigned ToExpirationActions');
+=======
+    expect(headerRecord).toBe(
+      ' Serial NumberName 🔼Assigned ToExpirationActions'
+    );
+>>>>>>> 7656d9cb7533ef9bfecadbc3aab4b391dd465f22
   });
 
   it('Shows Add Button', async () => {

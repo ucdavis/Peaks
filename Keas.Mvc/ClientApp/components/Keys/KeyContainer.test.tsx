@@ -81,7 +81,7 @@ describe('Access Container', () => {
     });
 
     const headerRecord = container.querySelector('.table-row').textContent;
-    expect(headerRecord).toBe(' Key NameKey CodeSerials SpacesActions');
+    expect(headerRecord).toBe(' Key Name 🔼Key CodeSerials SpacesActions');
   });
 
   it('Shows Add Button', async () => {

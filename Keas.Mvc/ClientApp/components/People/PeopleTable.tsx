@@ -33,7 +33,8 @@ export default class PeopleTable extends React.Component<IProps, {}> {
       {
         Header: 'Name',
         accessor: row => row.person.lastName + ', ' + row.person.firstName,
-        filter: 'contains'
+        filter: 'contains',
+        id: 'name'
       },
       {
         Header: 'Email',

@@ -82,7 +82,7 @@ describe('Space Container', () => {
     });
 
     const headerRecord = container.querySelector('.table-row').textContent;
-    expect(headerRecord).toBe(' RoomRoom NameKeysEquipmentWorkstations ');
+    expect(headerRecord).toBe(' Room 🔼Room NameKeysEquipmentWorkstations ');
   });
 
   it('Shows spaces list', async () => {

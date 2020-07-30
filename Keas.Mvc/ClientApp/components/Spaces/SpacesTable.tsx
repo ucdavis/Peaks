@@ -91,12 +91,14 @@ export default class SpacesTable extends React.Component<IProps, {}> {
       {
         Cell: data => <span>{data.row.original.keyCount}</span>,
         Header: 'Keys',
-        accessor: 'keyCount'
+        accessor: 'keyCount',
+        disableFilters: true
       },
       {
         Cell: data => <span>{data.row.original.equipmentCount}</span>,
         Header: 'Equipment',
-        accessor: 'equipmentCount'
+        accessor: 'equipmentCount',
+        disableFilters: true
       },
       {
         Cell: row => (
@@ -126,7 +128,7 @@ export default class SpacesTable extends React.Component<IProps, {}> {
     ];
 
     const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'name' }],
+      sortBy: [{ id: 'room' }],
       pageSize: ReactTableUtil.getPageSize()
     };
 

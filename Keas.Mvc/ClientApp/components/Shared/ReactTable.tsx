@@ -58,7 +58,16 @@ export const ReactTable = ({ columns, data, initialState, filterTypes }: any) =>
           {headerGroups.map(headerGroup => (
             <tr className='table-row' {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
-                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                <th
+                  {...column.getHeaderProps(column.getSortByToggleProps())}
+                  className={`sort-${
+                    column.isSorted
+                      ? column.isSortedDesc
+                        ? 'desc'
+                        : 'asc'
+                      : 'none'
+                  }`}
+                >
                   {column.render('Header')}
                   {/* Render the columns filter UI */}
                   <span>
