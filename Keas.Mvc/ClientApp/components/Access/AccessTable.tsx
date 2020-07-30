@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IAccess } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
-import { ExpirationColumnFilter, expirationFilter } from '../../util/reactTable';
+import { ExpirationColumnFilter, expirationFilter, ReactTableExpirationUtil } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
@@ -54,11 +54,16 @@ export default class AccessTable extends React.Component<IProps, {}> {
         Header: 'Expiration',
         accessor: x =>
           DateUtil.getFirstExpiration(x.assignments.map(y => y.expiresAt)),
+        sortType: (a, b) =>
+          ReactTableExpirationUtil.sortMethod(
+            a.values.expiresAt,
+            b.values.expiresAt
+          ),
         id: 'expiresAt'
       },
       {
         Cell: this.renderDropdownColumn,
-        Header: 'Actions',
+        Header: 'Actions'
       }
     ];
     
