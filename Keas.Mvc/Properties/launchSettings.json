@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "react31": {
+    "Keas.Mvc": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
