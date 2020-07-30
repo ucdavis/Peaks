@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/Keas.Mvc/bin/Debug/netcoreapp2.0/Keas.Mvc.dll",
+            "program": "${workspaceFolder}/Keas.Mvc/bin/Debug/netcoreapp3.1/Keas.Mvc.dll",
             "args": [],
             "cwd": "${workspaceFolder}/Keas.Mvc",
             "stopAtEntry": false,
