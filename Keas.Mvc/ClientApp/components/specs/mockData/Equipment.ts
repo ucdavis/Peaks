@@ -10,12 +10,12 @@ export const fakeEquipment: IEquipment[] = [
     availabilityLevel: null,
     systemManagementId: null,
     space: null,
-    equipmentAssignmentId: 26,
+    equipmentAssignmentId: 2600,
     attributes: [
         {
           "id": 3675,
           "equipmentId": 24,
-          "key": "calskey",
+          "key": "wallKey",
           "value": "5"
         }
       ],
@@ -42,14 +42,14 @@ export const fakeEquipment: IEquipment[] = [
         notes: null,
         isSupervisor: false
       },
-      id: 26,
+      id: 2600,
       equipment: null,
       equipmentId: 24,
       expiresAt: new Date('2022-01-16T07:08:34')
     },
     id: 24,
     name: 'Dell Desktop',
-    notes: 'hhh',
+    notes: 'Monitor',
     tags: '',
     teamId: 10
   },

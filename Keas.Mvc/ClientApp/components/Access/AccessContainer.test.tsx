@@ -15,42 +15,12 @@ let mockRouterMatch: any = {
 let container: Element = null;
 
 // mock out the sub containers, at least for now
-jest.mock('../People/PeopleContainer', () => {
+jest.mock('../Access/AccessAssignmentContainer', () => {
   return {
     default: () => {
-      return <div id='PeopleContainer'>PeopleContainer</div>;
-    }
-  };
-});
-
-jest.mock('../Equipment/EquipmentContainer', () => {
-  return {
-    default: () => {
-      return <div id='EquipmentContainer'>EquipmentContainer</div>;
-    }
-  };
-});
-
-jest.mock('../Keys/KeySerialContainer', () => {
-  return {
-    default: () => {
-      return <div id='KeySerialContainer'>KeySerialContainer</div>;
-    }
-  };
-});
-
-jest.mock('../Workstations/WorkstationContainer', () => {
-  return {
-    default: () => {
-      return <div id='WorkstationContainer'>WorkstationContainer</div>;
-    }
-  };
-});
-
-jest.mock('../History/HistoryContainer', () => {
-  return {
-    default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
+      return (
+        <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>
+      );
     }
   };
 });
@@ -188,5 +158,40 @@ describe('Access Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     expect(matches.length).toBe(2);
+  });
+
+  it('Shows access details', async () => {
+    mockRouterMatch.params = {
+      containerAction: 'details',
+      containerId: 15 // test accessid
+    };
+
+    await act(async () => {
+      // spy on our context's fetch handler to return fake access
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakeAccesses));
+
+      // important to add the context provider here since it includes permissions and fetch info
+      render(
+        <Context.Provider value={contextObject}>
+          <AccessContainer
+            history={mockRouter}
+            match={mockRouterMatch}
+            location={mockRouter}
+          />
+        </Context.Provider>,
+        container
+      );
+    });
+
+    // should show access contact info
+    const accessContent = container.querySelector('.card-content h2')
+      .textContent;
+    const accessOptions = container.querySelector('.card-content').textContent;
+
+    expect(accessContent).toContain('Real Access'); // confirm name is displayed
+    expect(accessOptions).toContain('Edit Access'); // confirm edit option is displayed
+    expect(accessOptions).toContain('Delete Access'); // confirm delete option is displayed
   });
 });
