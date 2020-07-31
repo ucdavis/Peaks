@@ -30,12 +30,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using SpaCliMiddleware;
 using StackifyLib;
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Keas.Mvc
 {
@@ -108,10 +108,10 @@ namespace Keas.Mvc
                 });
             }
 
-            
+            services.AddSingleton<IConfigureOptions<CasOptions>, ConfigureCasOptions>();
 
             // add cas auth backed by a cookie signin scheme
-            services.AddAuthentication(options =>
+            var authBuilder = services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
@@ -119,46 +119,7 @@ namespace Keas.Mvc
                 {
                     options.LoginPath = new PathString("/login");
                 })
-            .AddCAS(options => {
-                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.CasServerUrlBase = Configuration["Authentication:CasBaseUrl"];
-                options.Events.OnTicketReceived = async context => {
-                    var identity = (ClaimsIdentity) context.Principal.Identity;
-                    if (identity == null)
-                    {
-                        return;
-                    }
-
-                    // kerb comes across in name & name identifier
-                    var kerb = identity?.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-                    if (string.IsNullOrWhiteSpace(kerb)) return;
-
-                    var identityService = services.BuildServiceProvider().GetService<IIdentityService>();
-
-                    var user = await identityService.GetByKerberos(kerb);
-
-                    if (user == null)
-                    {
-                        throw new InvalidOperationException("Could not retrieve user information from IAM");
-                    }
-                    
-
-                    identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier));
-                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
-
-                    identity.RemoveClaim(identity.FindFirst(ClaimTypes.Name));
-                    identity.AddClaim(new Claim(ClaimTypes.Name, user.Id));
-
-                    identity.AddClaim(new Claim(ClaimTypes.GivenName, user.FirstName));
-                    identity.AddClaim(new Claim(ClaimTypes.Surname, user.LastName));
-                    identity.AddClaim(new Claim("name", user.Name));
-                    identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
-
-                    await Task.FromResult(0); 
-                };
-            });
-
+            .AddCAS();
             services.AddAuthorization(options =>
             {
                 // Assets can be managed by role or auth token (API)
@@ -343,6 +304,63 @@ namespace Keas.Mvc
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+    }
+    public class ConfigureCasOptions : IConfigureNamedOptions<CasOptions>
+    {
+        private readonly IServiceProvider _provider;
+
+        public ConfigureCasOptions(IServiceProvider provider)
+        {
+            _provider = provider;
+        }
+
+        public void Configure(CasOptions o) => Configure("CAS", o);
+
+        public void Configure(string name, CasOptions o)
+        {
+            o.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            o.CasServerUrlBase = _provider.GetRequiredService<IOptions<AuthSettings>>().Value.CasBaseUrl;
+            o.Events.OnTicketReceived = async context =>
+            {
+                var identity = (ClaimsIdentity)context.Principal.Identity;
+                if (identity == null)
+                {
+                    return;
+                }
+
+                // kerb comes across in name & name identifier
+                var kerb = identity?.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                if (string.IsNullOrWhiteSpace(kerb)) return;
+
+                User user = null;
+
+                using (var scope = _provider.CreateScope())
+                {
+                    var identityService = scope.ServiceProvider.GetRequiredService<IIdentityService>();
+                    user = await identityService.GetByKerberos(kerb);
+                }
+
+                if (user == null)
+                {
+                    throw new InvalidOperationException("Could not retrieve user information from IAM");
+                }
+
+
+                identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier));
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+
+                identity.RemoveClaim(identity.FindFirst(ClaimTypes.Name));
+                identity.AddClaim(new Claim(ClaimTypes.Name, user.Id));
+
+                identity.AddClaim(new Claim(ClaimTypes.GivenName, user.FirstName));
+                identity.AddClaim(new Claim(ClaimTypes.Surname, user.LastName));
+                identity.AddClaim(new Claim("name", user.Name));
+                identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+
+                await Task.FromResult(0);
+            };
         }
     }
 }
