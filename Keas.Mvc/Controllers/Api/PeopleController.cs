@@ -84,7 +84,11 @@ namespace Keas.Mvc.Controllers.Api
         {
             var people = await _context.People
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (EF.Functions.Like(x.Email, $"%{q}%") || EF.Functions.Like(x.Name, $"%{q}%")))
+                (
+                    EF.Functions.Like(x.Email, $"%{q}%") 
+                    || EF.Functions.Like(x.FirstName, $"%{q}%")
+                    || EF.Functions.Like(x.LastName, $"%{q}%")
+                 ))
                 .AsNoTracking().ToListAsync();
 
             return Json(people);
