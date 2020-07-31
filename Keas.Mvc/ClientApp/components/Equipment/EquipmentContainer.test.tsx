@@ -158,6 +158,9 @@ describe('Equipment Container', () => {
   });
 
   it('Shows equipment details', async () => {
+    mockRouter.push = () => {
+      console.log('Nothing');
+    };
     mockRouterMatch.params = {
       action: 'details',
       id: 24 // test equipmentid
@@ -184,10 +187,10 @@ describe('Equipment Container', () => {
 
     const detailButton = container.querySelectorAll('button')[1];
     detailButton.click();
-  
+
     const details = document.querySelector('.modal-content').textContent;
 
-    expect(details).toContain('Dell Desktop') // confirm name is displayed
-    expect(details).toContain('Monitor') // confirm notes is displayed
+    expect(details).toContain('Dell Desktop'); // confirm name is displayed
+    expect(details).toContain('Monitor'); // confirm notes is displayed
   });
 });
