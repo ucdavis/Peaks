@@ -111,7 +111,7 @@ namespace Keas.Mvc
             services.AddSingleton<IConfigureOptions<CasOptions>, ConfigureCasOptions>();
 
             // add cas auth backed by a cookie signin scheme
-            var authBuilder = services.AddAuthentication(options =>
+            services.AddAuthentication(options =>
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
