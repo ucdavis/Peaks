@@ -2,7 +2,7 @@ import { IKeySerial } from 'ClientApp/models/KeySerials';
 
 export const fakeKeySerials: IKeySerial[] = [
   {
-    number: 'TTT',
+    number: '1312',
     status: 'Active',
     key: {
       code: 'ADD',
@@ -19,7 +19,7 @@ export const fakeKeySerials: IKeySerial[] = [
         }
       ],
       id: 24,
-      name: 'Breaks',
+      name: 'Cereal',
       notes: null,
       tags: '',
       teamId: 10
@@ -33,11 +33,11 @@ export const fakeKeySerials: IKeySerial[] = [
         active: true,
         teamId: 10,
         user: null,
-        userId: 'klanmiko',
-        firstName: 'Kaelan',
-        lastName: 'Mikowicz',
-        name: 'Kaelan Mikowicz',
-        email: 'ktmikowicz@ucdavis.edu',
+        userId: 'eElric',
+        firstName: 'Edward',
+        lastName: 'Elric',
+        name: 'Edward Elric',
+        email: 'eElric@ucdavis.edu',
         tags: 'Student',
         title: null,
         homePhone: null,

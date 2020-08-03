@@ -13,6 +13,19 @@ let mockRouterMatch: any = {
 };
 
 let container: Element = null;
+let selectedKey = {
+  code: 'ADD',
+  keyXSpaces: null,
+  serials: null,
+  title: 'Breaks',
+  id: 24,
+  name: 'Breaks',
+  notes: null,
+  tags: '',
+  team: null,
+  teamId: 10,
+  active: true
+};
 
 beforeEach(() => {
   // setup a DOM element as a render target
@@ -47,6 +60,7 @@ describe('Key Serial Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <KeySerialContainer
+            selectedKey={selectedKey}
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -56,14 +70,8 @@ describe('Key Serial Container', () => {
       );
     });
 
-    const headerRecord = container.querySelector('div');
+    const headerRecord = document.querySelector('.table-row').textContent;
 
-    const consoleSpy = jest.spyOn(console, 'log');
-
-    console.log(headerRecord);
-  
-    expect(consoleSpy).toHaveBeenCalledWith('hello');
-
-    // expect(headerRecord).toBe(' Key Name 🔼Key CodeSerials SpacesActions');
+    expect(headerRecord).toBe(' Key Code and SN 🔼Status 🔼AssignmentExpirationActions');
   });
 });

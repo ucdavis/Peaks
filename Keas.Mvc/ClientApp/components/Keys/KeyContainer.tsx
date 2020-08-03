@@ -86,6 +86,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
+    console.log(this.state.keys);
     if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
       return <Denied viewName='Keys' />;
     }
