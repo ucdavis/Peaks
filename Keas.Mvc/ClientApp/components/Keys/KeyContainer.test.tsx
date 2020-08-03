@@ -51,7 +51,7 @@ afterEach(() => {
   container = null;
 });
 
-describe('Access Container', () => {
+describe('Key Container', () => {
   const contextObject = {
     fetch: (url: any, index: any) => {},
     permissions: ['DepartmentalAdmin', 'Admin'],
