@@ -284,7 +284,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(serial);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Revoke(int id)
         {
             // find keyserial
@@ -314,7 +314,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
