@@ -11,6 +11,7 @@ using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Keas.Mvc.Models;
 using Bigfix;
+using Keas.Core.Extensions;
 using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
@@ -43,7 +44,7 @@ namespace Keas.Mvc.Controllers.Api
             var equipment =
                 from eq in _context.Equipment
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (EF.Functions.Like(x.Name,$"{q}&") || EF.Functions.Like(x.SerialNumber, $"{q}%")))
+                (EF.Functions.Like(x.Name,q.EfStartsWith()) || EF.Functions.Like(x.SerialNumber, q.EfStartsWith())))
                 .Include(x => x.Attributes)
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)

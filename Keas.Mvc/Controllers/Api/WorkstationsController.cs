@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Microsoft.AspNetCore.Cors;
@@ -32,8 +33,8 @@ namespace Keas.Mvc.Controllers.Api
         {
             var equipment = await _context.Workstations
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (EF.Functions.Like(x.Name, $"{q}%") || EF.Functions.Like(x.Space.BldgName, $"%{q}%")
-                    || EF.Functions.Like(x.Space.RoomNumber, $"{q}%")))
+                (EF.Functions.Like(x.Name, q.EfStartsWith()) || EF.Functions.Like(x.Space.BldgName, q.EfContains())
+                    || EF.Functions.Like(x.Space.RoomNumber, q.EfStartsWith())))
                 .Include(x => x.Space)
                 .Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
@@ -48,8 +49,8 @@ namespace Keas.Mvc.Controllers.Api
         {
             var equipment = await _context.Workstations
                 .Where(x => x.Team.Slug == Team && x.SpaceId == spaceId && x.Active &&
-                (EF.Functions.Like(x.Name, $"{q}%") || EF.Functions.Like(x.Space.BldgName, $"%{q}%")
-                                                                         || EF.Functions.Like(x.Space.RoomNumber, $"{q}%")))
+                (EF.Functions.Like(x.Name, q.EfStartsWith()) || EF.Functions.Like(x.Space.BldgName, q.EfContains())
+                                                                         || EF.Functions.Like(x.Space.RoomNumber, q.EfStartsWith())))
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
                 .AsNoTracking().ToListAsync();

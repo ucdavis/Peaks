@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Core.Resources;
 using Keas.Mvc.Models.KeySerialViewModels;
@@ -41,9 +42,9 @@ namespace Keas.Mvc.Controllers.Api
 
             foreach (var term in terms)
             {
-                query = query.Where(x => EF.Functions.Like(x.Key.Name, $"{term}%")
-                                         || EF.Functions.Like(x.Key.Code, $"{term}%")
-                                         || EF.Functions.Like(x.Number, $"{term}%"));
+                query = query.Where(x => EF.Functions.Like(x.Key.Name, term.EfStartsWith())
+                                         || EF.Functions.Like(x.Key.Code, term.EfStartsWith())
+                                         || EF.Functions.Like(x.Number, term.EfStartsWith()));
             }
 
             var keySerials = await query
@@ -67,9 +68,9 @@ namespace Keas.Mvc.Controllers.Api
 
             foreach (var term in terms)
             {
-                query = query.Where(x => EF.Functions.Like(x.Key.Name, $"{term}%")
-                                         || EF.Functions.Like(x.Key.Code, $"{term}%")
-                                         || EF.Functions.Like(x.Number, $"{term}%"));
+                query = query.Where(x => EF.Functions.Like(x.Key.Name, term.EfStartsWith())
+                                         || EF.Functions.Like(x.Key.Code, term.EfStartsWith())
+                                         || EF.Functions.Like(x.Number, term.EfStartsWith()));
             }
 
             var keySerials = await query

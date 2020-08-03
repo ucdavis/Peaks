@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Microsoft.AspNetCore.Cors;
@@ -40,7 +41,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person)
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                EF.Functions.Like(x.Name, $"{q}%")) //|| x.SerialNumber.StartsWith(q, comparison)))
+                EF.Functions.Like(x.Name, q.EfStartsWith())) //|| x.SerialNumber.StartsWith(q, comparison)))
                 .AsNoTracking().ToListAsync();
 
             return Json(access);

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Models.KeyViewModels;
 using Dapper;
+using Keas.Core.Extensions;
 using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
@@ -35,7 +36,7 @@ namespace Keas.Mvc.Controllers.Api
             from key in _context.Keys
                 .Where(x => x.Team.Slug == Team
                         && x.Active
-                        && (EF.Functions.Like(x.Name, $"{q}%") || EF.Functions.Like(x.Code, $"{q}%")))
+                        && (EF.Functions.Like(x.Name, q.EfStartsWith()) || EF.Functions.Like(x.Code, q.EfStartsWith())))
                 .Include(x => x.Serials)
                 .Include(x => x.KeyXSpaces)
                     .ThenInclude(xs => xs.Space)

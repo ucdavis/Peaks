@@ -84,9 +84,9 @@ namespace Keas.Mvc.Controllers.Api
             var people = await _context.People
                 .Where(x => x.Team.Slug == Team && x.Active &&
                 (
-                    EF.Functions.Like(x.Email, $"%{q}%") 
-                    || EF.Functions.Like(x.FirstName, $"%{q}%")
-                    || EF.Functions.Like(x.LastName, $"%{q}%")
+                    EF.Functions.Like(x.Email, q.EfContains()) 
+                    || EF.Functions.Like(x.FirstName, q.EfContains())
+                    || EF.Functions.Like(x.LastName, q.EfContains())
                  ))
                 .AsNoTracking().ToListAsync();
 

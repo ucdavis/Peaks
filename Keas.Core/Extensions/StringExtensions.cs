@@ -55,5 +55,20 @@ namespace Keas.Core.Extensions
 
             return value.ToLower();
         }
+
+        public static string EfContains(this string q)
+        {
+            return $"%{q}%";
+        }
+
+        public static string EfStartsWith(this string q)
+        {
+            return $"{q}%";
+        }
+
+        public static string EfEndsWith(this string q)
+        {
+            return $"%{q}";
+        }
     }
 }
