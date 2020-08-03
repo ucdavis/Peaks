@@ -9,7 +9,6 @@ using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

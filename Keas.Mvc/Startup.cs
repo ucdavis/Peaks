@@ -251,8 +251,6 @@ namespace Keas.Mvc
             app.UseSession();
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCors(); // CORS policies are specified via attribute on api controllers
-
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Peaks API v1"));
