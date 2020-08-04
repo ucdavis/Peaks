@@ -245,8 +245,10 @@ namespace Keas.Mvc
             else
             {
                 app.UseStaticFiles();
+                app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseSession();
             app.UseAuthentication();
