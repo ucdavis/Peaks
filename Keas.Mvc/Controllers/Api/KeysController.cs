@@ -10,10 +10,14 @@ using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Models.KeyViewModels;
 using Dapper;
+using Keas.Core.Extensions;
+using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
+    [ApiController]
+    [Route("api/{teamName}/keys/[action]")]
     public class KeysController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -25,15 +29,14 @@ namespace Keas.Mvc.Controllers.Api
             _eventService = eventService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
-
             var keys =
             from key in _context.Keys
                 .Where(x => x.Team.Slug == Team
                         && x.Active
-                        && (x.Name.StartsWith(q, comparison) || x.Code.StartsWith(q, comparison)))
+                        && (EF.Functions.Like(x.Name, q.EfStartsWith()) || EF.Functions.Like(x.Code, q.EfStartsWith())))
                 .Include(x => x.Serials)
                 .Include(x => x.KeyXSpaces)
                     .ThenInclude(xs => xs.Space)
@@ -53,6 +56,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         // List all keys for a team
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
@@ -82,6 +86,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         // list all keys for a space
+        [HttpGet]
         public async Task<IActionResult> GetKeysInSpace(int spaceId)
         {
             var joins = await _context.KeyXSpaces
@@ -121,7 +126,7 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
-            if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code.Equals(model.Code.Trim(), StringComparison.OrdinalIgnoreCase)))
+            if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code == model.Code.Trim()))
             {
                 return BadRequest();
                 //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
@@ -148,7 +153,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody]UpdateKeyViewModel model)
         {
             //TODO: check permissions, make sure SN isn't edited 
@@ -163,7 +168,7 @@ namespace Keas.Mvc.Controllers.Api
                         .ThenInclude(assignment => assignment.Person)
                 .SingleAsync(x => x.Id == id);
 
-            if (await _context.Keys.AnyAsync(a => a.Id != key.Id && a.Team.Slug == Team && a.Code.Equals(model.Code.Trim(), StringComparison.OrdinalIgnoreCase)))
+            if (await _context.Keys.AnyAsync(a => a.Id != key.Id && a.Team.Slug == Team && a.Code == model.Code.Trim()))
             {
                 return BadRequest();
                 //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
@@ -179,7 +184,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var key = await _context.Keys
@@ -228,7 +233,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> AssociateSpace(int id, [FromBody] AssociateKeyViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
@@ -271,7 +276,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(association);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> DisassociateSpace(int id, [FromBody] DisassociateKeyViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
@@ -307,6 +312,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(key);
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories

@@ -306,3 +306,6 @@ __pycache__/
 
 # Ignore test results meant for CI
 *.trx
+
+# VS undocumented serviceDependencies files
+**/Properties/serviceDependencies.*

@@ -11,10 +11,14 @@ using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Keas.Mvc.Models;
 using Bigfix;
+using Keas.Core.Extensions;
+using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
+    [ApiController]
+    [Route("api/{teamName}/equipment/[action]")]
     public class EquipmentController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -28,18 +32,19 @@ namespace Keas.Mvc.Controllers.Api
             this._bigfixService = bigfixService;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public string GetTeam()
         {
             return Team;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment =
                 from eq in _context.Equipment
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (x.Name.StartsWith(q, comparison) || x.SerialNumber.StartsWith(q, comparison)))
+                (EF.Functions.Like(x.Name,q.EfStartsWith()) || EF.Functions.Like(x.SerialNumber, q.EfStartsWith())))
                 .Include(x => x.Attributes)
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
@@ -52,6 +57,8 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(await equipment.ToListAsync());
         }
+
+        [HttpGet]
         public async Task<IActionResult> GetEquipmentInSpace(int spaceId)
         {
             var equipment = await _context.Equipment
@@ -66,6 +73,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipment);
         }
 
+        [HttpGet]
         public async Task<IActionResult> CommonAttributeKeys()
         {
             var keys = await _context.EquipmentAttributeKeys
@@ -76,8 +84,10 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keys);
         }
 
+        [HttpGet]
         public ActionResult ListEquipmentTypes() => Json(EquipmentTypes.Types);
 
+        [HttpGet]
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var equipmentAssignments = await _context.Equipment
@@ -93,6 +103,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         // List all equipments for a team
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             var equipments = await _context.Equipment
@@ -107,6 +118,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipments);
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var equipment = await _context.Equipment
@@ -252,7 +264,7 @@ namespace Keas.Mvc.Controllers.Api
             }
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Revoke(int id)
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
@@ -268,14 +280,14 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
-            _context.EquipmentAssignments.Remove(equipment.Assignment);
             await _eventService.TrackUnAssignEquipment(equipment);
+            _context.EquipmentAssignments.Remove(equipment.Assignment);
             await _context.SaveChangesAsync();
             return Json(null);
 
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
@@ -302,7 +314,6 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     await _eventService.TrackUnAssignEquipment(equipment); // call before we remove person info
                     _context.EquipmentAssignments.Remove(equipment.Assignment);
-                    equipment.Assignment = null;
                 }
 
                 equipment.Active = false;
@@ -314,6 +325,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
@@ -325,6 +337,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(history);
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetComputer(string id)
         {
             try 
@@ -349,7 +362,8 @@ namespace Keas.Mvc.Controllers.Api
             } 
         }
 
-         public async Task<IActionResult> GetComputersBySearch(string field, string value)
+        [HttpGet]
+        public async Task<IActionResult> GetComputersBySearch(string field, string value)
         {
             if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
             {

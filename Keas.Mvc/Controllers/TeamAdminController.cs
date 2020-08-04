@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
@@ -15,6 +16,7 @@ using System.Runtime.CompilerServices;
 using CsvHelper;
 using Microsoft.AspNetCore.Http;
 using System.Text;
+using CsvHelper.Configuration;
 using Keas.Core.Extensions;
 using Keas.Core.Resources;
 using Keas.Mvc.Extensions;
@@ -111,7 +113,7 @@ namespace Keas.Mvc.Controllers
                 return View(model);
             }
 
-            if (await _context.FISOrgs.AnyAsync(a => a.Team.Slug == Team && a.OrgCode.Equals(model.OrgCode, StringComparison.OrdinalIgnoreCase)))
+            if (await _context.FISOrgs.AnyAsync(a => a.Team.Slug == Team && a.OrgCode == model.OrgCode))
             {
                 ErrorMessage = "Org already exists for this team.";
                 return View(model);
@@ -337,7 +339,7 @@ namespace Keas.Mvc.Controllers
             if (userId == User.Identity.Name)
             {
                 if (await _context.TeamPermissions.AnyAsync(a =>
-                    a.Team.Slug == Team && a.Role.Name.Equals(Role.Codes.DepartmentalAdmin) &&
+                    a.Team.Slug == Team && a.Role.Name == Role.Codes.DepartmentalAdmin &&
                     roles.Contains(a.RoleId)))
                 {
                     ErrorMessage =
@@ -552,9 +554,11 @@ namespace Keas.Mvc.Controllers
             // Add counts
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
             using (var reader = new StreamReader(file.OpenReadStream()))
-            using (var csv = new CsvReader(reader))
+            using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
+                PrepareHeaderForMatch = (string header, int index) => header.ToLower()
+            }))
+            {
                 var record = new KeyImport();
                 var records = csv.EnumerateRecords(record);
 
@@ -593,7 +597,7 @@ namespace Keas.Mvc.Controllers
                         {
                             var key = await _context.Keys.SingleOrDefaultAsync(k =>
                                 k.Team.Slug == Team && k.Active &&
-                                k.Code.Equals(r.KeyCode.Trim(), StringComparison.OrdinalIgnoreCase));
+                                k.Code == r.KeyCode.Trim());
                             if (key == null)
                             {
                                 key = new Key();
@@ -634,8 +638,7 @@ namespace Keas.Mvc.Controllers
                             if (!string.IsNullOrWhiteSpace(r.SerialNumber))
                             {
                                 var serial = await _context.KeySerials.SingleOrDefaultAsync(s =>
-                                    s.KeyId == key.Id && s.Active && s.Number.Equals(r.SerialNumber.Trim(),
-                                        StringComparison.OrdinalIgnoreCase));
+                                    s.KeyId == key.Id && s.Active && s.Number == r.SerialNumber.Trim());
                                 if (serial == null)
                                 {
                                     serial = new KeySerial();
@@ -869,7 +872,7 @@ namespace Keas.Mvc.Controllers
                                 {
                                     var local = _context.Set<User>()
                                         .Local
-                                        .FirstOrDefault(entry => entry.Id.Equals(r.KerbUser));
+                                        .FirstOrDefault(entry => entry.Id == r.KerbUser);
 
                                     // check if local is not null 
                                     if (local != null) // I'm using a extension method
@@ -879,7 +882,7 @@ namespace Keas.Mvc.Controllers
                                     }
 
                                     var localPerson = _context.Set<Person>().Local
-                                        .FirstOrDefault(entry => entry.UserId.Equals(r.KerbUser));
+                                        .FirstOrDefault(entry => entry.UserId == r.KerbUser);
                                     if (localPerson != null) // I'm using a extension method
                                     {
                                         // detach
@@ -943,9 +946,11 @@ namespace Keas.Mvc.Controllers
             var teamKeys = await _context.EquipmentAttributeKeys.Where(a => a.TeamId == null || a.TeamId == team.Id).ToListAsync();
 
             using (var reader = new StreamReader(file.OpenReadStream()))
-            using (var csv = new CsvReader(reader))
+            using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty);
+                PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty)
+            }))
+            {
                 var record = new EquipmentImport();
                 var records = csv.EnumerateRecords(record);
                 try
@@ -1036,7 +1041,7 @@ namespace Keas.Mvc.Controllers
                                 {
                                     var local = _context.Set<User>()
                                         .Local
-                                        .FirstOrDefault(entry => entry.Id.Equals(r.KerbUser));
+                                        .FirstOrDefault(entry => entry.Id == r.KerbUser);
 
                                     // check if local is not null 
                                     if (local != null) // I'm using a extension method
@@ -1046,7 +1051,7 @@ namespace Keas.Mvc.Controllers
                                     }
 
                                     var localPerson = _context.Set<Person>().Local
-                                        .FirstOrDefault(entry => entry.UserId.Equals(r.KerbUser));
+                                        .FirstOrDefault(entry => entry.UserId == r.KerbUser);
                                     if (localPerson != null) // I'm using a extension method
                                     {
                                         // detach

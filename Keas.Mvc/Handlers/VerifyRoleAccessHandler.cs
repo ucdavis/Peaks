@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace Keas.Mvc.Handlers
 {
@@ -34,17 +35,15 @@ namespace Keas.Mvc.Handlers
         {
             // get team name from url
             var team = "";
-            if (context.Resource is AuthorizationFilterContext mvcContext)
+            if (context.Resource is Endpoint)
             {
-                if (mvcContext.RouteData.Values["teamName"] != null)
-                {
-                    team = mvcContext.RouteData.Values["teamName"].ToString();
-                }
+                team = _httpContext.HttpContext.Request.RouteValues["teamName"]?.ToString() ?? "";
             }
+            
             if (string.IsNullOrWhiteSpace(team))
             {
                 var tempData = _tempDataDictionaryFactory.GetTempData(_httpContext.HttpContext);
-                team = Convert.ToString(tempData["TeamName"]);
+                team = tempData["TeamName"]?.ToString() ?? "";
             }
 
             var userId = context.User.Identity.Name;
@@ -57,10 +56,11 @@ namespace Keas.Mvc.Handlers
 
             if(requirement.RoleStrings.Contains(Role.Codes.Admin))
             {
-                if (await _securityService.IsInAdminRoles(requirement.RoleStrings, userId)) {
-                context.Succeed(requirement);
-                return;
-            }
+                if (await _securityService.IsInAdminRoles(requirement.RoleStrings, userId))
+                {
+                    context.Succeed(requirement);
+                    return;
+                }
             }
             
         }

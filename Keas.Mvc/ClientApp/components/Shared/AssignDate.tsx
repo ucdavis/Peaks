@@ -10,7 +10,6 @@ interface IProps {
   error?: IValidationError;
 }
 
-// tslint:disable-next-line: variable-name
 export const AssignDate = (props: IProps) => {
   return (
     <FormGroup>

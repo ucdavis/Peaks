@@ -7,12 +7,16 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
+using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.AccessMasterAccess)]
+    [ApiController]
+    [Route("api/{teamName}/access/[action]")]
     public class AccessController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -26,22 +30,24 @@ namespace Keas.Mvc.Controllers.Api
             _securityService = securityService;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
         public string GetTeam()
         {
             return Team;
         }
 
-        public async Task<IActionResult> Search(string q)
+        [HttpGet]
+        public async Task<IActionResult> Search([FromQuery] string q)
         {
-            var comparison = StringComparison.OrdinalIgnoreCase;
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person)
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (x.Name.StartsWith(q, comparison))) //|| x.SerialNumber.StartsWith(q, comparison)))
+                EF.Functions.Like(x.Name, q.EfStartsWith())) //|| x.SerialNumber.StartsWith(q, comparison)))
                 .AsNoTracking().ToListAsync();
 
             return Json(access);
         }
 
+        [HttpGet]
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var assignedAccess = await _context.Access
@@ -53,6 +59,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(assignedAccess);
         }
 
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             var accessList = await _context.Access
@@ -65,6 +72,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(accessList);
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var access = await _context.Access
@@ -149,7 +157,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Revoke(int id)
         {
             var assignment = await _context.AccessAssignments
@@ -159,13 +167,13 @@ namespace Keas.Mvc.Controllers.Api
                 .ThenInclude(x => x.Team)
                 .SingleAsync(x => x.Id == id);
 
-            _context.AccessAssignments.Remove(assignment);
             await _eventService.TrackUnAssignAccess(assignment, Team);
+            _context.AccessAssignments.Remove(assignment);
             await _context.SaveChangesAsync();
             return Json(null);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var access = await _context.Access

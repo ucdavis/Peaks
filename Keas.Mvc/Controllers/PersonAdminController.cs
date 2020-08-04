@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -100,7 +101,7 @@ namespace Keas.Mvc.Controllers
                 {
                     if (!string.IsNullOrWhiteSpace(model.SupervisorEmail))
                     {
-                        var supervisor = await _context.People.Where(a => a.Team.Slug == Team && a.Email.Equals(model.SupervisorEmail, StringComparison.OrdinalIgnoreCase)).FirstOrDefaultAsync();
+                        var supervisor = await _context.People.Where(a => a.Team.Slug == Team && a.Email == model.SupervisorEmail).FirstOrDefaultAsync();
                         if (supervisor == null)
                         {
                             ErrorMessage = "Supervisor not found.";
@@ -190,10 +191,12 @@ namespace Keas.Mvc.Controllers
             var userName = User.GetNameClaim();
             var team = await _context.Teams.FirstAsync(t => t.Slug == Team);
             using (var reader = new StreamReader(model.File.OpenReadStream()))
-            using (var csv = new CsvReader(reader))
+            using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty);
-                csv.Configuration.TrimOptions = TrimOptions.Trim;
+                PrepareHeaderForMatch = (string header, int index) => header.ToLower().Replace(" ", string.Empty),
+                TrimOptions = TrimOptions.Trim
+            }))
+            {
                 var record = new PeopleImport();
                 var records = csv.EnumerateRecords(record);
 
@@ -251,7 +254,7 @@ namespace Keas.Mvc.Controllers
                         }
                         else
                         {
-                            if (!model.UpdateExistingUsers && await _context.People.AnyAsync(a => a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id))
+                            if (!model.UpdateExistingUsers && await _context.People.AnyAsync(a => a.Active && a.UserId == r.KerbId && a.TeamId == team.Id))
                             {
                                 importResult.Messages.Add($"KerbId {r.KerbId} Already active in team, no changes made.");
                                 importResult.Success = false;
@@ -264,7 +267,7 @@ namespace Keas.Mvc.Controllers
                             Person person = null;
                             if (model.UpdateExistingUsers)
                             {
-                                person = await _context.People.FirstOrDefaultAsync(a => a.Active && a.UserId.Equals(r.KerbId.ToLower()) && a.TeamId == team.Id);
+                                person = await _context.People.FirstOrDefaultAsync(a => a.Active && a.UserId == r.KerbId && a.TeamId == team.Id);
                             }
                             try
                             {
@@ -363,7 +366,7 @@ namespace Keas.Mvc.Controllers
             {
                 try
                 {
-                    var superGuy = await _context.People.FirstOrDefaultAsync(a => a.UserId.Equals(r.SupervisorKerbId.Trim().ToLower()) && a.TeamId == team.Id);
+                    var superGuy = await _context.People.FirstOrDefaultAsync(a => a.UserId == r.SupervisorKerbId.Trim() && a.TeamId == team.Id);
                     if (superGuy == null)
                     {
                         importResult.Messages.Add("Supplied SuperviorId not found in team.");

@@ -64,7 +64,7 @@ namespace Keas.Mvc.Services
                     {
                         var local = _context.Set<User>()
                             .Local
-                            .FirstOrDefault(entry => entry.Id.Equals(user.Id));
+                            .FirstOrDefault(entry => entry.Id == user.Id);
 
                         // check if local is not null 
                         if (local != null) // I'm using a extension method
@@ -74,7 +74,7 @@ namespace Keas.Mvc.Services
                         }
 
                         var localPerson = _context.Set<Person>().Local
-                            .FirstOrDefault(entry => entry.UserId.Equals(user.Id));
+                            .FirstOrDefault(entry => entry.UserId == user.Id);
                         if (localPerson != null) // I'm using a extension method
                         {
                             // detach

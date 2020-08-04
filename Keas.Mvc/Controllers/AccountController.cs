@@ -10,6 +10,7 @@ using Microsoft.Extensions.Options;
 
 namespace Keas.Mvc.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class AccountController : Controller
     {
         private readonly ITeamsManager _teamsManager;

@@ -44,7 +44,7 @@ namespace Keas.Mvc.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(newTag.Name))
                 {
-                    if (await _context.Tags.AnyAsync(a => a.TeamId == team.Id && a.Name.Equals(newTag.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
+                    if (await _context.Tags.AnyAsync(a => a.TeamId == team.Id && a.Name == newTag.Name.Trim()))
                     {
                         ModelState.AddModelError("Name", "This tag already exists (case insensitive)");
                     }
@@ -89,7 +89,7 @@ namespace Keas.Mvc.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(updatedTag.Name))
                 {
-                    if (await _context.Tags.AnyAsync(a => a.Id != id && a.Team.Slug == Team && a.Name.Equals(updatedTag.Name.Trim(), StringComparison.OrdinalIgnoreCase)))
+                    if (await _context.Tags.AnyAsync(a => a.Id != id && a.Team.Slug == Team && a.Name == updatedTag.Name.Trim()))
                     {
                         ModelState.AddModelError("Name", "This tag already exists (case insensitive)");
                     }

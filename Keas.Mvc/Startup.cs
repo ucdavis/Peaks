@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AspNetCore.Security.CAS;
 using Keas.Core.Data;
@@ -10,26 +12,36 @@ using Keas.Mvc.Handlers;
 using Keas.Mvc.Helpers;
 using Keas.Mvc.Models;
 using Keas.Mvc.Services;
+using Keas.Mvc.Swagger;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.SpaServices;
 using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using Serilog;
+using SpaCliMiddleware;
 using StackifyLib;
 
 namespace Keas.Mvc
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
@@ -48,7 +60,7 @@ namespace Keas.Mvc
 
         public IConfigurationRoot Configuration { get; }
 
-        public IHostingEnvironment Environment { get; }
+        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -83,10 +95,20 @@ namespace Keas.Mvc
             }
             else
             {
-                services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlite("Data Source=keas.db"));
+                services.AddDbContextPool<ApplicationDbContext>(o =>
+                {
+                    // Temporarily open connection to enable "server-side" case-insensitive comparisons.
+                    // As of EFCore 3.0 this is remembered for subsequent connections.
+                    var connection = new SqliteConnection("Data Source=keas.db");
+                    connection.Open();
+                    connection.CreateCollation("NOCASE", (x, y) => string.Compare(x, y, ignoreCase: true));
+                    connection.Close();
+
+                    o.UseSqlite(connection);
+                });
             }
 
-            
+            services.AddSingleton<IConfigureOptions<CasOptions>, ConfigureCasOptions>();
 
             // add cas auth backed by a cookie signin scheme
             services.AddAuthentication(options =>
@@ -97,46 +119,7 @@ namespace Keas.Mvc
                 {
                     options.LoginPath = new PathString("/login");
                 })
-            .AddCAS(options => {
-                options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.CasServerUrlBase = Configuration["Authentication:CasBaseUrl"];
-                options.Events.OnTicketReceived = async context => {
-                    var identity = (ClaimsIdentity) context.Principal.Identity;
-                    if (identity == null)
-                    {
-                        return;
-                    }
-
-                    // kerb comes across in name & name identifier
-                    var kerb = identity?.FindFirst(ClaimTypes.NameIdentifier).Value;
-
-                    if (string.IsNullOrWhiteSpace(kerb)) return;
-
-                    var identityService = services.BuildServiceProvider().GetService<IIdentityService>();
-
-                    var user = await identityService.GetByKerberos(kerb);
-
-                    if (user == null)
-                    {
-                        throw new InvalidOperationException("Could not retrieve user information from IAM");
-                    }
-                    
-
-                    identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier));
-                    identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
-
-                    identity.RemoveClaim(identity.FindFirst(ClaimTypes.Name));
-                    identity.AddClaim(new Claim(ClaimTypes.Name, user.Id));
-
-                    identity.AddClaim(new Claim(ClaimTypes.GivenName, user.FirstName));
-                    identity.AddClaim(new Claim(ClaimTypes.Surname, user.LastName));
-                    identity.AddClaim(new Claim("name", user.Name));
-                    identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
-
-                    await Task.FromResult(0); 
-                };
-            });
-
+            .AddCAS();
             services.AddAuthorization(options =>
             {
                 // Assets can be managed by role or auth token (API)
@@ -172,13 +155,60 @@ namespace Keas.Mvc
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ITeamsManager, TeamsManager>();
             services.AddScoped<IBigfixService, BigfixService>();
-            services.AddMvc().AddJsonOptions(options => {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson(options => {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "PEAKS API v1",
+                    Version = "v1",
+                    Description = "People Equipment Access Keys Space",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Application Support",
+                        Url = new Uri("https://caeshelp.ucdavis.edu/?appname=Peaks")
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "MIT",
+                        Url = new Uri("https://github.com/ucdavis/Peaks/blob/master/LICENSE")
+                    },
+                    Extensions =
+                    {
+                        { "ProjectUrl", new OpenApiString("https://github.com/ucdavis/Peaks/") }
+                    }
+                });
+
+                var xmlFilePath = Path.Combine(AppContext.BaseDirectory, "Keas.Mvc.xml");
+                c.IncludeXmlComments(xmlFilePath);
+
+                var securityScheme = new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "ApiKey"
+                    },
+                    Type = SecuritySchemeType.ApiKey,
+                    Description = "API Key Authentication",
+                    Name = "X-Auth-Token", //ApiKeyMiddleware.HeaderKey,
+                    In = ParameterLocation.Header,
+                    Scheme = "ApiKey"
+                };
+
+                c.AddSecurityDefinition("ApiKey", securityScheme);
+
+                c.OperationFilter<SecurityRequirementsOperationFilter>(securityScheme);
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, IApplicationLifetime appLifetime)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHostApplicationLifetime appLifetime)
         {
             // setup logging
             LogConfiguration.Setup(Configuration);
@@ -195,11 +225,6 @@ namespace Keas.Mvc
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
-                app.UseWebpackDevMiddleware(new WebpackDevMiddlewareOptions
-                {
-                    HotModuleReplacement = true,
-                    ReactHotModuleReplacement = true
-                });
             }
             else
             {
@@ -208,52 +233,132 @@ namespace Keas.Mvc
                 app.UseExceptionHandler("/Error/Index");
             }
 
+
             app.UseStatusCodePages("text/plain", "Status code page, status code: {0}");
 
-            app.UseStaticFiles();
-
-            app.UseAuthentication();
-
-            app.UseSession();
-
-            app.UseMvc(routes =>
+            if (env.IsDevelopment())
             {
-                routes.MapRoute(
-                    name: "API",
-                    template: "api/{teamName}/{controller}/{action}/{id?}",
-                    defaults: new { controller = "people", action = "Index" },
-                    constraints: new { controller = "(keys|keyserials|equipment|access|spaces|people|person|workstations|tags|peopleAdmin)" }
-                );
+                // dist folder will be served by webpack-dev-server
+                app.UseWhen(context => !context.Request.Path.StartsWithSegments("/dist"),
+                    appBuilder => { appBuilder.UseStaticFiles(); });
+            }
+            else
+            {
+                app.UseStaticFiles();
+            }
 
-                routes.MapRoute(
+            app.UseRouting();
+            app.UseSession();
+            app.UseAuthentication();
+            app.UseAuthorization();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Peaks API v1"));
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers(); // map api controllers via attributes - necessary for being picked up by SwaggerGen
+
+                if (env.IsDevelopment())
+                {
+                    endpoints.MapToSpaCliProxy(
+                        "/dist/{*path}",
+                        options: new SpaOptions {SourcePath = "wwwroot/dist"},
+                        npmScript: "devpack",
+                        port: 8080,
+                        regex: "Project is running",
+                        forceKill: true, // kill anything running on our webpack port
+                        useProxy: true, // proxy webpack requests back through our aspnet server
+                        runner: ScriptRunnerType.Npm
+                    );
+                }
+
+                endpoints.MapControllerRoute(
                     name: "Assets",
-                    template: "{teamName}/{asset}/{*type}",
+                    pattern: "{teamName}/{asset}/{*type}",
                     defaults: new { controller = "Asset", action = "Index" },
                     constraints: new { asset = "(keys|keyserials|equipment|access|spaces|people|person|workstations)" }
                 );
 
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "NonTeamRoutes",
-                    template: "{controller}/{action=Index}/{id?}",
+                    pattern: "{controller}/{action=Index}/{id?}",
                     defaults: null,
                     constraints: new { controller = "(admin|log)" }
                 );
 
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "GroupRoutes",
-                    template: "{controller}/{action=Index}/{id?}",
+                    pattern: "{controller}/{action=Index}/{id?}",
                     defaults: null,
                     constraints: new {controller = "(group)"}
                 );
 
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "TeamRoutes",
-                    template: "{teamName}/{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}");
 
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+    }
+    public class ConfigureCasOptions : IConfigureNamedOptions<CasOptions>
+    {
+        private readonly IServiceProvider _provider;
+
+        public ConfigureCasOptions(IServiceProvider provider)
+        {
+            _provider = provider;
+        }
+
+        public void Configure(CasOptions o) => Configure("CAS", o);
+
+        public void Configure(string name, CasOptions o)
+        {
+            o.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            o.CasServerUrlBase = _provider.GetRequiredService<IOptions<AuthSettings>>().Value.CasBaseUrl;
+            o.Events.OnTicketReceived = async context =>
+            {
+                var identity = (ClaimsIdentity)context.Principal.Identity;
+                if (identity == null)
+                {
+                    return;
+                }
+
+                // kerb comes across in name & name identifier
+                var kerb = identity?.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                if (string.IsNullOrWhiteSpace(kerb)) return;
+
+                User user = null;
+
+                using (var scope = _provider.CreateScope())
+                {
+                    var identityService = scope.ServiceProvider.GetRequiredService<IIdentityService>();
+                    user = await identityService.GetByKerberos(kerb);
+                }
+
+                if (user == null)
+                {
+                    throw new InvalidOperationException("Could not retrieve user information from IAM");
+                }
+
+
+                identity.RemoveClaim(identity.FindFirst(ClaimTypes.NameIdentifier));
+                identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, user.Id));
+
+                identity.RemoveClaim(identity.FindFirst(ClaimTypes.Name));
+                identity.AddClaim(new Claim(ClaimTypes.Name, user.Id));
+
+                identity.AddClaim(new Claim(ClaimTypes.GivenName, user.FirstName));
+                identity.AddClaim(new Claim(ClaimTypes.Surname, user.LastName));
+                identity.AddClaim(new Claim("name", user.Name));
+                identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+
+                await Task.FromResult(0);
+            };
         }
     }
 }

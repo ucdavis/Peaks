@@ -7,12 +7,16 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
+using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
+    [ApiController]
+    [Route("api/{teamName}/workstations/[action]")]
     public class WorkstationsController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -24,13 +28,13 @@ namespace Keas.Mvc.Controllers.Api
             _eventService = eventService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Search(string q)
         {
-            var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (x.Name.StartsWith(q, comparison) || x.Space.BldgName.IndexOf(q, comparison) >= 0 // case-insensitive .Contains
-                    || x.Space.RoomNumber.StartsWith(q, comparison)))
+                (EF.Functions.Like(x.Name, q.EfStartsWith()) || EF.Functions.Like(x.Space.BldgName, q.EfContains())
+                    || EF.Functions.Like(x.Space.RoomNumber, q.EfStartsWith())))
                 .Include(x => x.Space)
                 .Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
@@ -40,13 +44,13 @@ namespace Keas.Mvc.Controllers.Api
         }
 
 
+        [HttpGet]
         public async Task<IActionResult> SearchInSpace(int spaceId, string q)
         {
-            var comparison = StringComparison.OrdinalIgnoreCase;
             var equipment = await _context.Workstations
                 .Where(x => x.Team.Slug == Team && x.SpaceId == spaceId && x.Active &&
-                (x.Name.StartsWith(q, comparison) || x.Space.BldgName.IndexOf(q, comparison) >= 0 // case-insensitive .Contains
-                    || x.Space.RoomNumber.StartsWith(q, comparison)))
+                (EF.Functions.Like(x.Name, q.EfStartsWith()) || EF.Functions.Like(x.Space.BldgName, q.EfContains())
+                                                                         || EF.Functions.Like(x.Space.RoomNumber, q.EfStartsWith())))
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
                 .AsNoTracking().ToListAsync();
@@ -54,6 +58,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipment);
         }
 
+        [HttpGet]
         public async Task<IActionResult> GetWorkstationsInSpace(int spaceId)
         {
             var workstations = await _context.Workstations
@@ -66,6 +71,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstations);
         }
 
+        [HttpGet]
         public async Task<IActionResult> CommonAttributeKeys()
         {
             var keys = await _context.WorkstationAttributes
@@ -78,6 +84,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keys);
         }
 
+        [HttpGet]
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var workstationAssignments = await _context.Workstations
@@ -92,6 +99,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstationAssignments);
         }
 
+        [HttpGet]
         public async Task<IActionResult> List()
         {
             var workstations = await _context.Workstations
@@ -106,6 +114,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstations);
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var workstation = await _context.Workstations
@@ -198,7 +207,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstation);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Revoke(int id)
         {
             // TODO permission
@@ -216,8 +225,8 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
-            _context.WorkstationAssignments.Remove(workstation.Assignment);
             await _eventService.TrackUnAssignWorkstation(workstation);
+            _context.WorkstationAssignments.Remove(workstation.Assignment);
             await _context.SaveChangesAsync();
             return Json(null);
         }
@@ -242,7 +251,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(w);
         }
 
-        [HttpPost]
+        [HttpPost("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var workstation = await _context.Workstations
@@ -260,7 +269,6 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     await _eventService.TrackUnAssignWorkstation(workstation); // call before we remove person info
                     _context.WorkstationAssignments.Remove(workstation.Assignment);
-                    workstation.Assignment = null;
                 }
 
                 workstation.Active = false;
@@ -273,6 +281,7 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories

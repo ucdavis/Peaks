@@ -7,14 +7,18 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Core.Resources;
 using Keas.Mvc.Models.KeySerialViewModels;
 using Keas.Mvc.Extensions;
+using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
+    [ApiController]
+    [Route("api/{teamName}/KeySerials/[action]")]
     public class KeySerialsController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -27,21 +31,20 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         //Return Serials instead????
+        [HttpGet]
         public async Task<IActionResult> Search(string q)
         {
             // break out the query into terms
             var terms = q.Split(' ');
-
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
 
             var query = _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active);
 
             foreach (var term in terms)
             {
-                query = query.Where(x => x.Key.Name.StartsWith(term, comparison)
-                                        || x.Key.Code.StartsWith(term, comparison)
-                                        || x.Number.StartsWith(term, comparison));
+                query = query.Where(x => EF.Functions.Like(x.Key.Name, term.EfStartsWith())
+                                         || EF.Functions.Like(x.Key.Code, term.EfStartsWith())
+                                         || EF.Functions.Like(x.Number, term.EfStartsWith()));
             }
 
             var keySerials = await query
@@ -53,21 +56,21 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(keySerials);
         }
+
+        [HttpGet]
         public async Task<IActionResult> SearchInKey(int keyId, string q)
         {
             // break out the query into terms
             var terms = q.Split(' ');
-
-            var comparison = StringComparison.InvariantCultureIgnoreCase;
 
             var query = _context.KeySerials
                 .Where(x => x.Key.Team.Slug == Team && x.Key.Active && x.Active && x.Key.Id == keyId);
 
             foreach (var term in terms)
             {
-                query = query.Where(x => x.Key.Name.StartsWith(term, comparison)
-                                        || x.Key.Code.StartsWith(term, comparison)
-                                        || x.Number.StartsWith(term, comparison));
+                query = query.Where(x => EF.Functions.Like(x.Key.Name, term.EfStartsWith())
+                                         || EF.Functions.Like(x.Key.Code, term.EfStartsWith())
+                                         || EF.Functions.Like(x.Number, term.EfStartsWith()));
             }
 
             var keySerials = await query
@@ -81,6 +84,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         // list all serials for a key
+        [HttpGet]
         public async Task<IActionResult> GetForKey(int keyid)
         {
             var keys = await _context.KeySerials
@@ -96,6 +100,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         // get all the key serials attached to a person
+        [HttpGet]
         public async Task<IActionResult> GetForPerson(int personId)
         {
             var keySerials = await _context.KeySerials
@@ -110,6 +115,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerials);
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> Details(int id)
         {
             var keySerial = await _context.KeySerials
@@ -128,7 +134,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
-
+        [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateKeySerialViewModel model)
         {
             // TODO Make sure user has permissions
@@ -175,6 +181,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
+        [HttpPost("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateKeySerialViewModel model)
         {
             // TODO Make sure user has permissions
@@ -220,6 +227,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
+        [HttpPost]
         public async Task<IActionResult> Assign([FromBody] AssignKeySerialViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
@@ -277,6 +285,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(serial);
         }
 
+        [HttpPost("{id}")]
         public async Task<IActionResult> Revoke(int id)
         {
             // find keyserial
@@ -298,7 +307,6 @@ namespace Keas.Mvc.Controllers.Api
             // clear out assignment
             var assignment = keySerial.KeySerialAssignment;
             _context.KeySerialAssignments.Remove(assignment);
-            keySerial.KeySerialAssignmentId = null;
 
             await _context.SaveChangesAsync();
 
@@ -307,6 +315,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
@@ -321,6 +330,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(history);
         }
 
+        [HttpGet]
         public ActionResult ListKeySerialStatus() => Json(KeySerialStatusModel.StatusList);
     }
 }

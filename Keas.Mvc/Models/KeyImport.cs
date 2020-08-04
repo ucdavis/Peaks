@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Remotion.Linq.Parsing.ExpressionVisitors.MemberBindings;
 
 namespace Keas.Mvc.Models
 {

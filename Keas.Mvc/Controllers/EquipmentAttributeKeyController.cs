@@ -40,13 +40,13 @@ namespace Keas.Mvc.Controllers
 
             if (ModelState.IsValid)
             {
-                if (await _context.EquipmentAttributeKeys.AnyAsync(a => a.TeamId == null && a.Key.Equals(model.Key.Trim(), StringComparison.OrdinalIgnoreCase)))
+                if (await _context.EquipmentAttributeKeys.AnyAsync(a => a.TeamId == null && a.Key == model.Key.Trim()))
                 {
                     ModelState.AddModelError("Key", "This Key already exists as a global key.");
                 }
                 else
                 {
-                    if (await _context.EquipmentAttributeKeys.AnyAsync(a => a.TeamId == team.Id && a.Key.Equals(model.Key.Trim(), StringComparison.OrdinalIgnoreCase)))
+                    if (await _context.EquipmentAttributeKeys.AnyAsync(a => a.TeamId == team.Id && a.Key == model.Key.Trim()))
                     {
                         ModelState.AddModelError("Key", "This Key already exists.");
                     }
@@ -94,13 +94,13 @@ namespace Keas.Mvc.Controllers
 
             if (ModelState.IsValid)
             {
-                if (await _context.EquipmentAttributeKeys.AnyAsync(a => a.TeamId == null && a.Key.Equals(model.Key.Trim(), StringComparison.OrdinalIgnoreCase)))
+                if (await _context.EquipmentAttributeKeys.AnyAsync(a => a.TeamId == null && a.Key == model.Key.Trim()))
                 {
                     ModelState.AddModelError("Key", "This Key already exists as a global key.");
                 }
                 else
                 {
-                    if (await _context.EquipmentAttributeKeys.AnyAsync(a => a.TeamId == team.Id && a.Id != id && a.Key.Equals(model.Key.Trim(), StringComparison.OrdinalIgnoreCase)))
+                    if (await _context.EquipmentAttributeKeys.AnyAsync(a => a.TeamId == team.Id && a.Id != id && a.Key == model.Key.Trim()))
                     {
                         ModelState.AddModelError("Key", "This Key already exists.");
                     }
