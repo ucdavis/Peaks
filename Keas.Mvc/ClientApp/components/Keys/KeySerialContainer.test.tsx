@@ -1,34 +1,16 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 
-import KeyContainer from '../Keys/KeyContainer';
+import KeySerialContainer from '../Keys/KeySerialContainer';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
-import { fakeKeys } from '../specs/mockData/Key';
+import { fakeKeySerials } from '../specs/mockData/KeySerial';
 
 // mock all route elements
 let mockRouter: any = {};
 let mockRouterMatch: any = {
   params: {}
 };
-
-let container: Element = null;
-
-jest.mock('../Spaces/SpacesContainer', () => {
-  return {
-    default: () => {
-      return <div id='SpacesContainer'>SpacesContainer</div>;
-    }
-  };
-});
-
-jest.mock('../Keys/KeySerialContainer', () => {
-  return {
-    default: () => {
-      return <div id='KeySerialContainer'>KeySerialContainer</div>;
-    }
-  };
-});
 
 jest.mock('../History/HistoryContainer', () => {
   return {
@@ -37,6 +19,21 @@ jest.mock('../History/HistoryContainer', () => {
     }
   };
 });
+
+let container: Element = null;
+let selectedKey = {
+  code: 'ADD',
+  keyXSpaces: null,
+  serials: null,
+  title: 'Breaks',
+  id: 24,
+  name: 'Breaks',
+  notes: null,
+  tags: '',
+  team: null,
+  teamId: 10,
+  active: true
+};
 
 beforeEach(() => {
   // setup a DOM element as a render target
@@ -51,7 +48,7 @@ afterEach(() => {
   container = null;
 });
 
-describe('Key Container', () => {
+describe('Key Serial Container', () => {
   const contextObject = {
     fetch: (url: any, index: any) => {},
     permissions: ['DepartmentalAdmin', 'Admin'],
@@ -62,15 +59,16 @@ describe('Key Container', () => {
   it('Shows Header Record', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake keys
+      // spy on our context's fetch handler to return fake key serials
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+        .mockImplementation(() => Promise.resolve(fakeKeySerials));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
+          <KeySerialContainer
+            selectedKey={selectedKey}
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -80,22 +78,26 @@ describe('Key Container', () => {
       );
     });
 
-    const headerRecord = container.querySelector('.table-row').textContent;
-    expect(headerRecord).toBe(' Key Name 🔼Key CodeSerials SpacesActions');
+    const headerRecord = document.querySelector('.table-row').textContent;
+
+    expect(headerRecord).toBe(
+      ' Key Code and SN 🔼Status 🔼AssignmentExpirationActions'
+    );
   });
 
-  it('Shows Add Button', async () => {
+  it('Shows add button', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake keys
+      // spy on our context's fetch handler to return fake key serials
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+        .mockImplementation(() => Promise.resolve(fakeKeySerials));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
+          <KeySerialContainer
+            selectedKey={selectedKey}
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -107,21 +109,22 @@ describe('Key Container', () => {
 
     const headerRecord = container.querySelector('.card-header-keys')
       .textContent;
-    expect(headerRecord).toContain('Add Key');
+    expect(headerRecord).toContain('Add Key Serial');
   });
 
-  it('Shows key list', async () => {
+  it('Shows key serial list', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake keys
+      // spy on our context's fetch handler to return fake key serials
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+        .mockImplementation(() => Promise.resolve(fakeKeySerials));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
+          <KeySerialContainer
+            selectedKey={selectedKey}
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -136,28 +139,28 @@ describe('Key Container', () => {
     let foundIt = false;
     matches.forEach(function (match) {
       const rowContent = match.textContent;
-      if (rowContent.includes('Test')) {
+      if (rowContent.includes('ADD-1312')) {
         foundIt = true;
-        expect(rowContent).toContain('ER'); // confirm key code is displayed
-        expect(rowContent).toContain('1 / 1'); // confirm serials are displayed
+        expect(rowContent).toContain('Active'); // confirm status is displayed
       }
     });
 
     expect(foundIt).toBeTruthy();
   });
 
-  it('Shows correct number of keys', async () => {
+  it('Shows correct number of key serials', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake keys
+      // spy on our context's fetch handler to return fake key serials
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+        .mockImplementation(() => Promise.resolve(fakeKeySerials));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
+          <KeySerialContainer
+            selectedKey={selectedKey}
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -168,25 +171,30 @@ describe('Key Container', () => {
     });
     const matches = container.querySelectorAll('.rt-tr-group');
 
-    expect(matches.length).toBe(3); //Should this be 3? Or is the inactive ignored and only used when queried by the api?
+    expect(matches.length).toBe(3);
   });
 
-  it('Shows keys details', async () => {
+  it('Shows key serial details', async () => {
+    mockRouter.push = () => {
+      console.log('Nothing');
+    };
     mockRouterMatch.params = {
-      containerAction: 'details',
-      containerId: 23 // test keyid
+      action: 'details',
+      assetType: 'keyserials',
+      id: 40 // test key serial id
     };
 
     await act(async () => {
-      // spy on our context's fetch handler to return fake keys
+      // spy on our context's fetch handler to return fake key serials
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+        .mockImplementation(() => Promise.resolve(fakeKeySerials));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
+          <KeySerialContainer
+            selectedKey={selectedKey}
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -196,17 +204,13 @@ describe('Key Container', () => {
       );
     });
 
-    // should show keys info
-    const keyTitle = container.querySelector('h2.mb-3').textContent;
+    const detailButton = container.querySelectorAll('button')[1];
+    detailButton.click();
 
-    expect(keyTitle).toContain('Test'); // confirm key name is displayed
-    expect(keyTitle).toContain('ER'); // confirm key code is displayed
+    const details = document.querySelectorAll('input');
 
-    // should show the key serial container
-    const keySerialContent = container.querySelector(
-      '#KeySerialContainer'
-    ).textContent;
-
-    expect(keySerialContent).toBe('KeySerialContainer');
+    expect(details[3].value).toContain('Cereal'); // confirm key name is displayed
+    expect(details[4].value).toContain('ADD'); // confirm key code is displayed
+    expect(details[5].value).toContain('2'); // confirm key serial number is displayed
   });
 });

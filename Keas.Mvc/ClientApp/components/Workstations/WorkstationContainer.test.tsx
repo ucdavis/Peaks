@@ -1,34 +1,17 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 
-import KeyContainer from '../Keys/KeyContainer';
+import WorkstationContainer from '../Workstations/WorkstationContainer';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
-import { fakeKeys } from '../specs/mockData/Key';
+import { fakeWorkstations } from '../specs/mockData/Workstation';
+import { ISpace } from 'ClientApp/models/Spaces';
 
 // mock all route elements
 let mockRouter: any = {};
 let mockRouterMatch: any = {
   params: {}
 };
-
-let container: Element = null;
-
-jest.mock('../Spaces/SpacesContainer', () => {
-  return {
-    default: () => {
-      return <div id='SpacesContainer'>SpacesContainer</div>;
-    }
-  };
-});
-
-jest.mock('../Keys/KeySerialContainer', () => {
-  return {
-    default: () => {
-      return <div id='KeySerialContainer'>KeySerialContainer</div>;
-    }
-  };
-});
 
 jest.mock('../History/HistoryContainer', () => {
   return {
@@ -37,6 +20,20 @@ jest.mock('../History/HistoryContainer', () => {
     }
   };
 });
+
+let container: Element = null;
+let selectedSpace: ISpace = {
+  id: 3535,
+  deptName: "Dean's Office, CA&ES",
+  bldgName: 'Mrak Hall',
+  roomKey: 'DV-01-00007674',
+  roomNumber: '0003',
+  roomName: 'Storage',
+  floorName: 'Basement Floor',
+  roomCategoryName: 'Assignable Area',
+  orgId: 'AADM',
+  sqFt: '320'
+};
 
 beforeEach(() => {
   // setup a DOM element as a render target
@@ -51,7 +48,7 @@ afterEach(() => {
   container = null;
 });
 
-describe('Key Container', () => {
+describe('Workstation Container', () => {
   const contextObject = {
     fetch: (url: any, index: any) => {},
     permissions: ['DepartmentalAdmin', 'Admin'],
@@ -62,15 +59,17 @@ describe('Key Container', () => {
   it('Shows Header Record', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake keys
+      // spy on our context's fetch handler to return fake workstations
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+        .mockImplementation(() => Promise.resolve(fakeWorkstations));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
+          <WorkstationContainer
+            space={selectedSpace}
+            tags={null}
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -80,22 +79,25 @@ describe('Key Container', () => {
       );
     });
 
-    const headerRecord = container.querySelector('.table-row').textContent;
-    expect(headerRecord).toBe(' Key Name 🔼Key CodeSerials SpacesActions');
+    const headerRecord = container.querySelector('thead').textContent;
+
+    expect(headerRecord).toBe('NameSpaceAssigned ToExpirationActions');
   });
 
-  it('Shows Add Button', async () => {
+  it('Shows add button', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake keys
+      // spy on our context's fetch handler to return fake key workstations
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+        .mockImplementation(() => Promise.resolve(fakeWorkstations));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
+          <WorkstationContainer
+            space={selectedSpace}
+            tags={null}
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -105,23 +107,25 @@ describe('Key Container', () => {
       );
     });
 
-    const headerRecord = container.querySelector('.card-header-keys')
+    const headerRecord = container.querySelector('.card-header-spaces')
       .textContent;
-    expect(headerRecord).toContain('Add Key');
+    expect(headerRecord).toContain('Add Workstation');
   });
 
-  it('Shows key list', async () => {
+  it('Shows workstation list', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake keys
+      // spy on our context's fetch handler to return fake workstations
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+        .mockImplementation(() => Promise.resolve(fakeWorkstations));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
+          <WorkstationContainer
+            space={selectedSpace}
+            tags={null}
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -131,33 +135,34 @@ describe('Key Container', () => {
       );
     });
 
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('tr');
 
     let foundIt = false;
     matches.forEach(function (match) {
       const rowContent = match.textContent;
-      if (rowContent.includes('Test')) {
+      if (rowContent.includes('Desk0038')) {
         foundIt = true;
-        expect(rowContent).toContain('ER'); // confirm key code is displayed
-        expect(rowContent).toContain('1 / 1'); // confirm serials are displayed
+        expect(rowContent).toContain('Mrak Hall'); // confirm building name is displayed
       }
     });
 
     expect(foundIt).toBeTruthy();
   });
 
-  it('Shows correct number of keys', async () => {
+  it('Shows correct number of workstation', async () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
-      // spy on our context's fetch handler to return fake keys
+      // spy on our context's fetch handler to return fake workstations
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+        .mockImplementation(() => Promise.resolve(fakeWorkstations));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
+          <WorkstationContainer
+            space={selectedSpace}
+            tags={null}
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -166,27 +171,33 @@ describe('Key Container', () => {
         container
       );
     });
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('tbody tr');
 
-    expect(matches.length).toBe(3); //Should this be 3? Or is the inactive ignored and only used when queried by the api?
+    expect(matches.length).toBe(4);
   });
 
-  it('Shows keys details', async () => {
+  it('Shows workstation details', async () => {
+    mockRouter.push = () => {
+      console.log('Nothing');
+    };
     mockRouterMatch.params = {
-      containerAction: 'details',
-      containerId: 23 // test keyid
+      action: 'details',
+      assetType: 'workstations',
+      id: 17 // test workstation id
     };
 
     await act(async () => {
-      // spy on our context's fetch handler to return fake keys
+      // spy on our context's fetch handler to return fake workstations
       jest
         .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+        .mockImplementation(() => Promise.resolve(fakeWorkstations));
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
+          <WorkstationContainer
+            space={selectedSpace}
+            tags={null}
             history={mockRouter}
             match={mockRouterMatch}
             location={mockRouter}
@@ -196,17 +207,12 @@ describe('Key Container', () => {
       );
     });
 
-    // should show keys info
-    const keyTitle = container.querySelector('h2.mb-3').textContent;
+    const detailButton = document.querySelectorAll('button')[1];
+    detailButton.click();
 
-    expect(keyTitle).toContain('Test'); // confirm key name is displayed
-    expect(keyTitle).toContain('ER'); // confirm key code is displayed
+    const details = document.querySelectorAll('input');
 
-    // should show the key serial container
-    const keySerialContent = container.querySelector(
-      '#KeySerialContainer'
-    ).textContent;
-
-    expect(keySerialContent).toBe('KeySerialContainer');
+    expect(details[0].value).toContain('Desk'); // confirm name is displayed
+    expect(details[1].value).toContain('0038 Mrak Hall'); // confirm room is displayed
   });
 });
