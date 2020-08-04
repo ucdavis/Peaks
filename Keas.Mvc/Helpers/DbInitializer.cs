@@ -19,6 +19,12 @@ namespace Keas.Mvc.Helpers
             _superuserSettings = superuserSettings.Value;
         }
 
+        public DbInitializer(ApplicationDbContext context, SuperuserSettings superuserSettings)
+        {
+            _context = context;
+            _superuserSettings = superuserSettings;
+        }
+
         public void Initialize()
         {
             // Create All Roles
