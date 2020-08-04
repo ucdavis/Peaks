@@ -123,7 +123,8 @@ export default class SpacesTable extends React.Component<IProps, {}> {
             workstationsTotal: spaceInfo.workstationsTotal
           };
         },
-        id: 'workstationsCount'
+        id: 'workstationsCount',
+        disableSortBy: true
       }
     ];
 
