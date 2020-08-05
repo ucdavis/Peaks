@@ -63,7 +63,6 @@ namespace Test.Integration
             // Act
             var response = await client.GetAsync(url);
 
-            System.Console.WriteLine(response.Headers.Location);
             // Assert
             response.EnsureSuccessStatusCode();
 
