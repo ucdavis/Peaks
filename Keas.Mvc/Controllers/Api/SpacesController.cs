@@ -38,10 +38,10 @@ namespace Keas.Mvc.Controllers.Api
 
             var queryWords = q.Split(" ").Where(w => !string.IsNullOrWhiteSpace(w)).ToArray();
 
-            var theQuery = _context.Spaces.Where(a => orgIds.Contains(a.OrgId)).AsQueryable();
+            var theQuery = _context.Spaces.Where(a => orgIds.Contains(a.OrgId));
             foreach (var queryWord in queryWords)
             {
-                theQuery.Where(a => 
+                theQuery = theQuery.Where(a =>
                     EF.Functions.Like(a.BldgName, queryWord.EfContains()) ||
                     EF.Functions.Like(a.RoomName, queryWord.EfContains()) ||
                     EF.Functions.Like(a.RoomNumber, queryWord.EfContains()));
