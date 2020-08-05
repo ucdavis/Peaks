@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Test.Integration
+namespace Test.Helpers
 {
     public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
     {
@@ -17,7 +17,7 @@ namespace Test.Integration
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var claims = new[] { new Claim(ClaimTypes.Name, TestHelpers.TestUser) };
+            var claims = new[] { new Claim(ClaimTypes.Name, IntegrationTestHelpers.TestUser) };
             var identity = new ClaimsIdentity(claims, "Test");
             var principal = new ClaimsPrincipal(identity);
             var ticket = new AuthenticationTicket(principal, "Test");

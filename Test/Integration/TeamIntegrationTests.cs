@@ -1,10 +1,10 @@
 using System.Linq;
 using System.Net;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Keas.Core.Domain;
 using Keas.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Test.Helpers;
 using Xunit;
 
 namespace Test.Integration
@@ -31,7 +31,7 @@ namespace Test.Integration
                 var caes = new Team { Name = "CAESDO", Slug = "caesdo" };
                 db.Teams.Add(caes);
 
-                db.TeamPermissions.Add(new TeamPermission { Team = caes, Role = db.Roles.SingleOrDefault(r => r.Name == DepartmentalAdminRole), User = db.Users.SingleOrDefault(u => u.Id == TestHelpers.TestUser) });
+                db.TeamPermissions.Add(new TeamPermission { Team = caes, Role = db.Roles.SingleOrDefault(r => r.Name == DepartmentalAdminRole), User = db.Users.SingleOrDefault(u => u.Id == IntegrationTestHelpers.TestUser) });
 
                 db.SaveChanges();
             });
@@ -55,7 +55,7 @@ namespace Test.Integration
                 var caes = new Team { Name = "teamname", Slug = "teamname" };
                 db.Teams.Add(caes);
 
-                db.TeamPermissions.Add(new TeamPermission { Team = caes, Role = db.Roles.SingleOrDefault(r => r.Name == DepartmentalAdminRole), User = db.Users.SingleOrDefault(u => u.Id == TestHelpers.TestUser) });
+                db.TeamPermissions.Add(new TeamPermission { Team = caes, Role = db.Roles.SingleOrDefault(r => r.Name == DepartmentalAdminRole), User = db.Users.SingleOrDefault(u => u.Id == IntegrationTestHelpers.TestUser) });
 
                 db.SaveChanges();
             });

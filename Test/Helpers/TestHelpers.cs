@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Keas.Core.Data;
@@ -7,13 +8,30 @@ using Keas.Mvc.Helpers;
 using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Test.Integration
+namespace Test.Helpers
 {
-    public static class TestHelpers {
+    public static class IntegrationTestHelpers
+    {
+        private static string _TestUserInternal = null;
+
         // Id of test user
-        public static string TestUser = "tester";
+        public static string TestUser
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_TestUserInternal))
+                {
+                    // we don't get have a value for the test user, grab it from app settings
+                    var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.test.json").Build();
+                    _TestUserInternal = config.GetValue<string>("UserId");
+                }
+
+                return _TestUserInternal;
+            }
+        }
 
         // helper to get web client that all tests can use
         public static HttpClient GetKeasClient(this WebApplicationFactory<Startup> factory, Action<ApplicationDbContext> dbInitializer)
