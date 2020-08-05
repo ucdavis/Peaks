@@ -109,7 +109,8 @@ export default class KeyTable extends React.Component<IProps, {}> {
             serialsTotal: keyInfo.serialsTotalCount
           };
         },
-        id: 'serialsCount'
+        id: 'serialsCount',
+        disableSortBy: true
       },
       {
         Cell: data => <span>{data.row.original.spacesCount}</span>,
