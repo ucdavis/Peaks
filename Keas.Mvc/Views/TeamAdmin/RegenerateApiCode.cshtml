@@ -56,9 +56,18 @@
             @if (Model.ApiCode.HasValue)
             {
                 <div class="card-content">
-                    <p>People Feed:<br />@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode</p>
-                    <p>People with Workstations: <br />@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode?includeSpace=yes</p>
-                    <p>Workstations: <br />@Context.Request.Host/@Model.Slug/Feed/WorkstationFeed/@Model.ApiCode</p>
+                    <div class="card-head">
+                        <h2><a href="/swagger" target="_blank" class="btn-lg btn-info">API documentation</a></h2>
+                    </div>
+                    
+                </div>
+                <div class="card-content">
+                    <div class="card-head">
+                        <h2>(Obsolete)</h2>
+                    </div>
+                    <p>People Feed:<br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode</p>
+                    <p>People with Workstations: <br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode?includeSpace=yes</p>
+                    <p>Workstations: <br/>@Context.Request.Host/@Model.Slug/Feed/WorkstationFeed/@Model.ApiCode</p>
                     <p>Equipment: <br/>@Context.Request.Host/@Model.Slug/Feed/EquipmentFeed/@Model.ApiCode</p>
                     <p>Access: <br/>@Context.Request.Host/@Model.Slug/Feed/AccessFeed/@Model.ApiCode</p>
                     <p>Keys: <br/>@Context.Request.Host/@Model.Slug/Feed/KeyFeed/@Model.ApiCode</p>
@@ -67,7 +76,7 @@
             else
             {
                 <div class="card-content">
-                    <p>Generate an API code to see links</p>
+                    <p><a href="/swagger" target="_blank" class="btn btn-info">API documentation</a></p>
                 </div>
             }
         </div>
