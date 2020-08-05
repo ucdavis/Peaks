@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -37,11 +38,17 @@ namespace Keas.Mvc.Controllers.Api
 
             var queryWords = q.Split(" ").Where(w => !string.IsNullOrWhiteSpace(w)).ToArray();
 
-            var space = await _context.Spaces
-                .Where(x => orgIds.Contains(x.OrgId)
-                            && ((!string.IsNullOrWhiteSpace(x.BldgName) && queryWords.Contains(x.BldgName))
-                                || (!string.IsNullOrWhiteSpace(x.RoomName) && queryWords.Contains(x.BldgName))
-                                || (!string.IsNullOrWhiteSpace(x.RoomNumber) && queryWords.Contains(x.BldgName))))
+            var theQuery = _context.Spaces.Where(a => orgIds.Contains(a.OrgId));
+            foreach (var queryWord in queryWords)
+            {
+                theQuery = theQuery.Where(a =>
+                    EF.Functions.Like(a.BldgName, queryWord.EfContains()) ||
+                    EF.Functions.Like(a.RoomName, queryWord.EfContains()) ||
+                    EF.Functions.Like(a.RoomNumber, queryWord.EfContains()));
+            }
+
+
+            var space = await theQuery
                 .AsNoTracking()
                 .OrderBy(x => x.RoomNumber)
                 .ToListAsync();
