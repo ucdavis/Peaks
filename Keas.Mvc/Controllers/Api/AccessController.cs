@@ -2,6 +2,7 @@ using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,7 +11,6 @@ using System.Threading.Tasks;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
-using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -37,17 +37,18 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         public async Task<IActionResult> Search([FromQuery] string q)
         {
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person)
                 .Where(x => x.Team.Slug == Team && x.Active &&
                 EF.Functions.Like(x.Name, q.EfStartsWith())) //|| x.SerialNumber.StartsWith(q, comparison)))
                 .AsNoTracking().ToListAsync();
-
             return Json(access);
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var assignedAccess = await _context.Access
@@ -60,6 +61,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(Access), StatusCodes.Status201Created)]
         public async Task<IActionResult> List()
         {
             var accessList = await _context.Access
@@ -73,6 +75,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         public async Task<IActionResult> Details(int id)
         {
             var access = await _context.Access
@@ -92,7 +95,8 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody]Access access)
+        [ProducesResponseType(typeof(Access), StatusCodes.Status201Created)]
+        public async Task<IActionResult> Create([FromBody] Access access)
         {
             if (!ModelState.IsValid)
             {
@@ -111,6 +115,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(AccessAssignment), StatusCodes.Status201Created)]
         public async Task<IActionResult> Assign(int accessId, int personId, string date)
         {
             if (!ModelState.IsValid)
@@ -138,7 +143,8 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update([FromBody]Access access)
+        [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Update([FromBody] Access access)
         {
             if (!ModelState.IsValid)
             {
@@ -158,6 +164,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [ProducesResponseType(typeof(AccessAssignment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Revoke(int id)
         {
             var assignment = await _context.AccessAssignments
@@ -174,6 +181,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(int id)
         {
             var access = await _context.Access
