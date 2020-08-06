@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
@@ -37,7 +39,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Access>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Search([FromQuery] string q)
         {
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person)
@@ -48,7 +50,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<Access>), StatusCodes.Status200OK)]
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var assignedAccess = await _context.Access
@@ -61,7 +63,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(Access), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(IEnumerable<Access>), StatusCodes.Status200OK)]
         public async Task<IActionResult> List()
         {
             var accessList = await _context.Access
@@ -74,6 +76,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(accessList);
         }
 
+        /// <response code="404">A resource was not found for the given arguments (id)</response> 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         public async Task<IActionResult> Details(int id)
@@ -94,6 +97,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(access);
         }
 
+        /// <response code="400">ModelState is invalid or accessId is not 0</response> 
         [HttpPost]
         [ProducesResponseType(typeof(Access), StatusCodes.Status201Created)]
         public async Task<IActionResult> Create([FromBody] Access access)
@@ -114,6 +118,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(access);
         }
 
+        /// <response code="400">ModelState is invalid</response> 
         [HttpPost]
         [ProducesResponseType(typeof(AccessAssignment), StatusCodes.Status201Created)]
         public async Task<IActionResult> Assign(int accessId, int personId, string date)
@@ -142,6 +147,7 @@ namespace Keas.Mvc.Controllers.Api
             return Json(accessAssignment);
         }
 
+        /// <response code="400">ModelState is invalid</response> 
         [HttpPost]
         [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         public async Task<IActionResult> Update([FromBody] Access access)

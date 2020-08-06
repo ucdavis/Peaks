@@ -29,6 +29,7 @@
     <PackageReference Include="SpaCliMiddleware" Version="3.1.2" />
     <PackageReference Include="StackifyLib.AspNetCore" Version="2.1.1" />
     <PackageReference Include="StackifyMiddleware" Version="3.0.2" />
+    <PackageReference Include="Swashbuckle" Version="5.6.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.0" />
   </ItemGroup>
   <ItemGroup>
