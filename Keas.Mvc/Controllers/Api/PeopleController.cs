@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
@@ -9,6 +10,7 @@ using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +33,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Person>), StatusCodes.Status200OK)]
         public async Task<IActionResult> List()
         {
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
@@ -79,6 +82,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Person>), StatusCodes.Status200OK)]
         public async Task<IActionResult> SearchPeople(string q)
         {
             var people = await _context.People
@@ -94,6 +98,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(Person), StatusCodes.Status200OK)]
         public async Task<IActionResult> SearchUsers(string searchTerm)
         {
             // this will return either an existing person (regardless of if they are active or not)
@@ -143,6 +148,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(Person), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create([FromBody] Person person)
         {
             // TODO Make sure user has permission; Protect from overpost
