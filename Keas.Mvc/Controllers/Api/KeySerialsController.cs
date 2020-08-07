@@ -2,9 +2,11 @@ using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Extensions;
@@ -32,6 +34,7 @@ namespace Keas.Mvc.Controllers.Api
 
         //Return Serials instead????
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<KeySerial>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Search(string q)
         {
             // break out the query into terms
@@ -58,6 +61,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<KeySerial>), StatusCodes.Status200OK)]
         public async Task<IActionResult> SearchInKey(int keyId, string q)
         {
             // break out the query into terms
@@ -85,6 +89,7 @@ namespace Keas.Mvc.Controllers.Api
 
         // list all serials for a key
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<KeySerial>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetForKey(int keyid)
         {
             var keys = await _context.KeySerials
@@ -101,6 +106,7 @@ namespace Keas.Mvc.Controllers.Api
 
         // get all the key serials attached to a person
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<KeySerial>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetForPerson(int personId)
         {
             var keySerials = await _context.KeySerials
@@ -116,6 +122,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
         public async Task<IActionResult> Details(int id)
         {
             var keySerial = await _context.KeySerials
@@ -135,6 +142,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create([FromBody] CreateKeySerialViewModel model)
         {
             // TODO Make sure user has permissions
@@ -182,6 +190,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateKeySerialViewModel model)
         {
             // TODO Make sure user has permissions
@@ -228,6 +237,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
         public async Task<IActionResult> Assign([FromBody] AssignKeySerialViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
@@ -286,6 +296,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
         public async Task<IActionResult> Revoke(int id)
         {
             // find keyserial
@@ -316,6 +327,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
@@ -331,6 +343,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
         public ActionResult ListKeySerialStatus() => Json(KeySerialStatusModel.StatusList);
     }
 }
