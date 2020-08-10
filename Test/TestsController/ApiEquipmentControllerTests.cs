@@ -79,46 +79,76 @@ namespace Test.TestsController
             responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
             //3
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetEquipmentInSpace", 2 + countAdjustment, "GetEquipmentInSpace", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetEquipmentInSpace", 2 + countAdjustment, "GetEquipmentInSpace", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetEquipmentInSpace", 3 + countAdjustment, "GetEquipmentInSpace", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetEquipmentInSpace", 3 + countAdjustment, "GetEquipmentInSpace", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("GetEquipmentInSpace", 3 + countAdjustment, "GetEquipmentInSpace", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
             //4
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("CommonAttributeKeys", 2 + countAdjustment, "CommonAttributeKeys", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("CommonAttributeKeys", 2 + countAdjustment, "CommonAttributeKeys", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("CommonAttributeKeys", 3 + countAdjustment, "CommonAttributeKeys", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("CommonAttributeKeys", 3 + countAdjustment, "CommonAttributeKeys", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("CommonAttributeKeys", 3 + countAdjustment, "CommonAttributeKeys", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("EquipmentAttributeKey");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
             //5
-            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("ListEquipmentTypes", 1, "ListEquipmentTypes", showListOfAttributes: false);
+            // ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("ListEquipmentTypes", 2, "ListEquipmentTypes", showListOfAttributes: false);
             //6
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("ListAssigned", 2 + countAdjustment, "ListAssigned", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("ListAssigned", 2 + countAdjustment, "ListAssigned", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("ListAssigned", 3 + countAdjustment, "ListAssigned", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("ListAssigned", 3 + countAdjustment, "ListAssigned", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("ListAssigned", 3 + countAdjustment, "ListAssigned", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK); 
             //7
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("List", 2 + countAdjustment, "List", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("List", 2 + countAdjustment, "List", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("List", 3 + countAdjustment, "List", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("List", 3 + countAdjustment, "List", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("List", 3 + countAdjustment, "List", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK); 
             //8
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Details", 2 + countAdjustment, "Details", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("Details", 2 + countAdjustment, "Details", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Details", 3 + countAdjustment, "Details", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("Details", 3 + countAdjustment, "Details", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Details", 3 + countAdjustment, "Details", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK); 
             //9
-            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Create", 2 + countAdjustment, "Create", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Create", 2 + countAdjustment, "Create", showListOfAttributes: false);
-            //10
-            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Assign", 2 + countAdjustment, "Assign", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Assign", 2 + countAdjustment, "Assign", showListOfAttributes: false);
-            //11
-            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Update", 2 + countAdjustment, "Update", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Update", 2 + countAdjustment, "Update", showListOfAttributes: false);
-            //12
-            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Revoke", 2 + countAdjustment, "Revoke", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Revoke", 2 + countAdjustment, "Revoke", showListOfAttributes: false);
-            //13
-            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Delete", 2 + countAdjustment, "Delete", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Delete", 2 + countAdjustment, "Delete", showListOfAttributes: false);
-            //14
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetHistory", 2 + countAdjustment, "GetHistory", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetHistory", 2 + countAdjustment, "GetHistory", showListOfAttributes: false);
-            //15
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetComputer", 2 + countAdjustment, "GetComputer", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetComputer", 2 + countAdjustment, "GetComputer", showListOfAttributes: false);
-            //16
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetComputersBySearch", 2 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetComputersBySearch", 2 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
+            // ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Create", 3 + countAdjustment, "Create", showListOfAttributes: false);
+            // ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Create", 3 + countAdjustment, "Create", showListOfAttributes: false);
+            // responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Create", 3 + countAdjustment, "Create", showListOfAttributes: false);
+            // responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
+            // responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK); 
+            // //10
+            // ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Assign", 3 + countAdjustment, "Assign", showListOfAttributes: false);
+            // ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Assign", 3 + countAdjustment, "Assign", showListOfAttributes: false);
+            // responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Assign", 3 + countAdjustment, "Assign", showListOfAttributes: false);
+            // responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
+            // responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK); 
+            // //11
+            // ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Update", 3 + countAdjustment, "Update", showListOfAttributes: false);
+            // ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Update", 3 + countAdjustment, "Update", showListOfAttributes: false);
+            // responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Update", 3 + countAdjustment, "Update", showListOfAttributes: false);
+            // responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
+            // responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK); 
+            // //12
+            // ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Revoke", 3 + countAdjustment, "Revoke", showListOfAttributes: false);
+            // ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Revoke", 3 + countAdjustment, "Revoke", showListOfAttributes: false);
+            // responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Revoke", 3 + countAdjustment, "Revoke", showListOfAttributes: false);
+            // responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
+            // responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK); 
+            // //13
+            // ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
+            // ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
+            // responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
+            // responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
+            // responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK); 
+            // //14
+            // ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetHistory", 2 + countAdjustment, "GetHistory", showListOfAttributes: false);
+            // ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetHistory", 2 + countAdjustment, "GetHistory", showListOfAttributes: false);
+            // //15
+            // ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetComputer", 2 + countAdjustment, "GetComputer", showListOfAttributes: false);
+            // ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetComputer", 2 + countAdjustment, "GetComputer", showListOfAttributes: false);
+            // //16
+            // ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetComputersBySearch", 2 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
+            // ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetComputersBySearch", 2 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
         }
 
         #endregion
