@@ -5,12 +5,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -29,6 +31,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Workstation>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Search(string q)
         {
             var equipment = await _context.Workstations
@@ -45,6 +48,7 @@ namespace Keas.Mvc.Controllers.Api
 
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Workstation>), StatusCodes.Status200OK)]
         public async Task<IActionResult> SearchInSpace(int spaceId, string q)
         {
             var equipment = await _context.Workstations
@@ -59,6 +63,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Workstation>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetWorkstationsInSpace(int spaceId)
         {
             var workstations = await _context.Workstations
@@ -72,6 +77,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<WorkstationAttribute>), StatusCodes.Status200OK)]
         public async Task<IActionResult> CommonAttributeKeys()
         {
             var keys = await _context.WorkstationAttributes
@@ -85,6 +91,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Workstation>), StatusCodes.Status200OK)]
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var workstationAssignments = await _context.Workstations
@@ -100,6 +107,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Workstation>), StatusCodes.Status200OK)]
         public async Task<IActionResult> List()
         {
             var workstations = await _context.Workstations
@@ -115,6 +123,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
         public async Task<IActionResult> Details(int id)
         {
             var workstation = await _context.Workstations
@@ -136,6 +145,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create([FromBody] Workstation workstation)
         {
             // TODO Make sure user has permission; Protect from overpost
@@ -161,6 +171,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
         public async Task<IActionResult> Assign(int workstationId, int personId, string date)
         {
             // TODO make sure user has permission
@@ -232,6 +243,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
         public async Task<IActionResult> Update([FromBody]Workstation workstation)
         {
             //TODO: check permissions
@@ -282,6 +294,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories

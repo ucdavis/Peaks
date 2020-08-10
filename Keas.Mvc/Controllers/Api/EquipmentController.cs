@@ -2,9 +2,11 @@ using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
@@ -39,6 +41,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Search(string q)
         {
             var equipment =
@@ -59,6 +62,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetEquipmentInSpace(int spaceId)
         {
             var equipment = await _context.Equipment
@@ -74,6 +78,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<EquipmentAttributeKey>), StatusCodes.Status200OK)]
         public async Task<IActionResult> CommonAttributeKeys()
         {
             var keys = await _context.EquipmentAttributeKeys
@@ -85,9 +90,11 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Type>), StatusCodes.Status200OK)]
         public ActionResult ListEquipmentTypes() => Json(EquipmentTypes.Types);
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
         public async Task<IActionResult> ListAssigned(int personId)
         {
             var equipmentAssignments = await _context.Equipment
@@ -104,6 +111,7 @@ namespace Keas.Mvc.Controllers.Api
 
         // List all equipments for a team
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
         public async Task<IActionResult> List()
         {
             var equipments = await _context.Equipment
@@ -119,6 +127,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Details(int id)
         {
             var equipment = await _context.Equipment
@@ -139,6 +148,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create([FromBody]Equipment equipment)
         {
             if (!ModelState.IsValid)
@@ -165,6 +175,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Assign(int equipmentId, int personId, string date)
         {
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
@@ -199,6 +210,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Update([FromBody]Equipment updatedEquipment)
         {
             if (!ModelState.IsValid)
@@ -265,6 +277,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Revoke(int id)
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
@@ -288,6 +301,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(int id)
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
@@ -326,6 +340,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories
@@ -338,6 +353,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<BigfixComputerSearchResult>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetComputer(string id)
         {
             try 
@@ -363,6 +379,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<BigfixComputerSearchResult>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetComputersBySearch(string field, string value)
         {
             if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))

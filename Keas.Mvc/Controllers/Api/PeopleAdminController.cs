@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
@@ -9,6 +10,7 @@ using Keas.Mvc.Extensions;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +33,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
+        [ProducesResponseType(typeof(Person), StatusCodes.Status200OK)]
         public async Task<IActionResult> Update([FromBody]Person person)
         {
             //TODO: check permissions
@@ -103,6 +106,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetHistory(int id)
         {
             var history = await _context.Histories.Where(x => x.TargetId == id)

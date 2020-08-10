@@ -28,6 +28,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Space>), StatusCodes.Status200OK)]
         public async Task<IActionResult> SearchSpaces(string q)
         {
             var orgIds = await _context.FISOrgs
@@ -58,6 +59,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Space>), StatusCodes.Status200OK)]
         public async Task<IActionResult> List()
         {
             //TODO clean up workstations query or integrate with list query           
@@ -104,6 +106,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<KeyXSpace>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetSpacesForKey(int keyId)
         {
             var result = await _context.KeyXSpaces
@@ -125,6 +128,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Workstation>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTagsInSpace(int spaceId)
         {
             var tags = await _context.Workstations
@@ -138,6 +142,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<Space>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Details(int id)
         {
             var space = await _context.Spaces
