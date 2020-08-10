@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Shouldly;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Http;
 using TestHelpers.Helpers;
 using Xunit;
 using Xunit.Abstractions;
@@ -72,8 +73,11 @@ namespace Test.TestsController
             var apiVal = ControllerReflection.MethodExpectedAttribute<ApiExplorerSettingsAttribute>("GetTeam", 1, "GetTeam-1", showListOfAttributes: false);
             apiVal.ElementAt(0).IgnoreApi.ShouldBeTrue();
             //2
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Search", 2 + countAdjustment, "Search", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("Search", 2 + countAdjustment, "Search", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Search", 3 + countAdjustment, "Search", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("Search", 3 + countAdjustment, "Search", showListOfAttributes: true);
+            var responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Search", 3 + countAdjustment, "Search", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
             //3
             ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetEquipmentInSpace", 2 + countAdjustment, "GetEquipmentInSpace", showListOfAttributes: false);
             ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetEquipmentInSpace", 2 + countAdjustment, "GetEquipmentInSpace", showListOfAttributes: false);
