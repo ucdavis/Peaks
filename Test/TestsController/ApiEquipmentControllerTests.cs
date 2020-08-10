@@ -115,7 +115,7 @@ namespace Test.TestsController
             ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Create", 3 + countAdjustment, "Create", showListOfAttributes: false);
             responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Create", 3 + countAdjustment, "Create", showListOfAttributes: false);
             responseType.ElementAt(0).Type.Name.ShouldBe("Equipment");
-            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status201Created); 
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK); 
             //10
             ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Assign", 3 + countAdjustment, "Assign", showListOfAttributes: false);
             ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Assign", 3 + countAdjustment, "Assign", showListOfAttributes: false);

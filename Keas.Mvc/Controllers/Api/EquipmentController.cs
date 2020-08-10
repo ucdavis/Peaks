@@ -148,7 +148,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(Equipment), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create([FromBody]Equipment equipment)
         {
             if (!ModelState.IsValid)

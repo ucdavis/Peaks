@@ -97,7 +97,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(Access), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create([FromBody] Access access)
         {
             if (!ModelState.IsValid)
