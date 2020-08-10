@@ -91,7 +91,7 @@ namespace Test.TestsController
             responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("EquipmentAttributeKey");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
             //5
-            // ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("ListEquipmentTypes", 2, "ListEquipmentTypes", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("ListEquipmentTypes", 2, "ListEquipmentTypes", showListOfAttributes: false);
             //6
             ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("ListAssigned", 3 + countAdjustment, "ListAssigned", showListOfAttributes: false);
             ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("ListAssigned", 3 + countAdjustment, "ListAssigned", showListOfAttributes: false);

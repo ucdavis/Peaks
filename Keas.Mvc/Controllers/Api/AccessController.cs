@@ -117,7 +117,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(AccessAssignment), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(AccessAssignment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Assign(int accessId, int personId, string date)
         {
             if (!ModelState.IsValid)
