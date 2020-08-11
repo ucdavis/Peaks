@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
+using Keas.Core.Domain;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +20,10 @@ namespace Keas.Mvc.Controllers
             _context = context;
             _reportService = reportService;
         }
+
         public async Task<IActionResult> Index(int id)
         {
-            var group = await _context.Groups.SingleOrDefaultAsync(a =>
-                a.Id == id && a.GroupPermissions.Any(w => w.UserId == User.Identity.Name));
+            var group = await GetGroup(id);
 
             if (group == null)
             {
@@ -35,15 +36,15 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> WorkstationReport(int id)
         {
-            // TODO: create auth policy for group membership
-            var group = await _context.Groups.SingleOrDefaultAsync(a =>
-                a.Id == id && a.GroupPermissions.Any(w => w.UserId == User.Identity.Name));
+            var group = await GetGroup(id);
 
             if (group == null)
             {
                 ErrorMessage = "Group not found or no access to Group";
                 return RedirectToAction("NoAccess", "Home");
             }
+
+            ViewBag.Group = group;
 
             var worstations = await _reportService.WorkStations(group);
 
@@ -52,9 +53,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> EquipmentReport(int id)
         {
-            // TODO: create auth policy for group membership
-            var group = await _context.Groups.SingleOrDefaultAsync(a =>
-                a.Id == id && a.GroupPermissions.Any(w => w.UserId == User.Identity.Name));
+            var group = await GetGroup(id);
 
             if (group == null)
             {
@@ -62,9 +61,16 @@ namespace Keas.Mvc.Controllers
                 return RedirectToAction("NoAccess", "Home");
             }
 
+            ViewBag.Group = group;
+
             var equipment = await _reportService.EquipmentList(group);
 
             return View(equipment);
+        }
+
+        private async Task<Group> GetGroup(int id) {
+            return await _context.Groups.SingleOrDefaultAsync(a =>
+                a.Id == id && a.GroupPermissions.Any(w => w.UserId == User.Identity.Name));
         }
     }
 }
