@@ -18,6 +18,7 @@ namespace Keas.Mvc.Services
         Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug);
         List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
         Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug);
+        Task<IList<EquipmentReportModel>> EquipmentList(Group group);
         Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug);
         Task<IList<KeyReportModel>> Keys(Team team, string teamSlug, bool includeSerials = true, bool includeSpaces = true);
     }
@@ -140,14 +141,9 @@ namespace Keas.Mvc.Services
             return people;
         }
 
-        public async Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug)
+        public Expression<Func<Equipment, EquipmentReportModel>> EquipmentProjection()
         {
-            if (team == null)
-            {
-                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
-            }
-
-            var equipment = await _context.Equipment.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new EquipmentReportModel
+            return a => new EquipmentReportModel
             {
                 Name = a.Name,
                 Type = string.IsNullOrWhiteSpace(a.Type) ? EquipmentTypes.Default : a.Type,
@@ -187,8 +183,24 @@ namespace Keas.Mvc.Services
                     Key = b.Key,
                     Value = b.Value,
                 }).ToArray(),
-            }).ToListAsync();
+            };
+        }
 
+        public async Task<IList<EquipmentReportModel>> EquipmentList(Group group)
+        {
+            var equipment = await _context.Equipment.IgnoreQueryFilters().AsNoTracking().Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id)).Select(EquipmentProjection()).ToListAsync();
+
+            return equipment;
+        }
+
+        public async Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+
+            var equipment = await _context.Equipment.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(EquipmentProjection()).ToListAsync();
 
             return equipment;
         }

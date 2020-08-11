@@ -49,5 +49,22 @@ namespace Keas.Mvc.Controllers
 
             return View(worstations);
         }
+
+        public async Task<IActionResult> EquipmentReport(int id)
+        {
+            // TODO: create auth policy for group membership
+            var group = await _context.Groups.SingleOrDefaultAsync(a =>
+                a.Id == id && a.GroupPermissions.Any(w => w.UserId == User.Identity.Name));
+
+            if (group == null)
+            {
+                ErrorMessage = "Group not found or no access to Group";
+                return RedirectToAction("NoAccess", "Home");
+            }
+
+            var equipment = await _reportService.EquipmentList(group);
+
+            return View(equipment);
+        }
     }
 }
