@@ -1,0 +1,20 @@
+@model TeamsAndGroupsModel
+
+
+@{
+    ViewData["Title"] = "Select Team";
+}
+
+<div class="card">
+    <div class="card-header-primary">
+        <div class="card-head">
+            <h2>Select a Team</h2>
+        </div>
+    </div>
+    <div class="card-content">
+        @foreach (var item in Model.Teams)
+        {
+            <p><a href='@string.Format("/{0}/{1}", item.Slug, ViewBag.urlRedirect)' class="team-link">@item.Name</a></p>
+        }
+    </div>
+</div>

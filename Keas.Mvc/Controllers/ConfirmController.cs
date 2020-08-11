@@ -45,6 +45,32 @@ namespace Keas.Mvc.Controllers
             return View(viewmodel);
         }
 
+        public async Task<IActionResult> Landing()
+        {
+            var team = await _securityService.GetPerson(Team);
+            if (team != null) {
+                return Redirect("/" + Team + "/Confirm/MyStuff");
+            }
+
+            var model = new TeamsAndGroupsModel();
+            var user = await _securityService.GetUser();
+            if (user == null) 
+            {
+                return RedirectToAction("NoAccess","Home");
+            }
+            
+            var people = await _context.People.Where(p => p.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
+            var teamAdmins = await _context.TeamPermissions.Where(tp => tp.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
+            var teams = people.Union(teamAdmins, new TeamComparer());
+
+            if (teams.Count() == 1) {
+                return RedirectToAction("/" + teams.First().Slug + "/Confirm/MyStuff");
+            }
+
+            model.Teams = teams.ToList();
+            return View(model);
+        }
+
         public async Task<IActionResult> Confirm()
         {           
             var person = await _securityService.GetPerson(Team);
