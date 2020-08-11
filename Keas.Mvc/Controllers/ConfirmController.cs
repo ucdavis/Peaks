@@ -48,10 +48,7 @@ namespace Keas.Mvc.Controllers
         public async Task<IActionResult> Landing()
         {
             if (Team != null) {
-                var team = await _securityService.GetPerson(Team);
-                if (team != null) {
-                    return Redirect("/" + Team + "/Confirm/MyStuff");
-                }
+                return Redirect("/" + Team + "/Confirm/MyStuff");
             }
 
             var model = new TeamsAndGroupsModel();
