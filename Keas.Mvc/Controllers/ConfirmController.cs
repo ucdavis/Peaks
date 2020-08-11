@@ -47,9 +47,11 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> Landing()
         {
-            var team = await _securityService.GetPerson(Team);
-            if (team != null) {
-                return Redirect("/" + Team + "/Confirm/MyStuff");
+            if (Team != null) {
+                var team = await _securityService.GetPerson(Team);
+                if (team != null) {
+                    return Redirect("/" + Team + "/Confirm/MyStuff");
+                }
             }
 
             var model = new TeamsAndGroupsModel();
@@ -58,7 +60,7 @@ namespace Keas.Mvc.Controllers
             {
                 return RedirectToAction("NoAccess","Home");
             }
-            
+
             var people = await _context.People.Where(p => p.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
             var teamAdmins = await _context.TeamPermissions.Where(tp => tp.User == user).Select(a => a.Team).AsNoTracking().ToArrayAsync();
             var teams = people.Union(teamAdmins, new TeamComparer());
