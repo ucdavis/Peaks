@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30404.54
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keas.Mvc", "Keas.Mvc\Keas.Mvc.csproj", "{F4FC64F5-A41F-4DCF-9AFC-71A82DA3C34A}"
 EndProject
@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dest", "Dest", "{7980177D-8
 		emails-template\dist\keas-notification.html = emails-template\dist\keas-notification.html
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EfTestHelpers", "EfTestHelpers\EfTestHelpers.csproj", "{41CEF1AA-54C1-4A77-B639-C863F8F62CA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{37EDA0C6-8728-4DA0-A204-F5168082067D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37EDA0C6-8728-4DA0-A204-F5168082067D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37EDA0C6-8728-4DA0-A204-F5168082067D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41CEF1AA-54C1-4A77-B639-C863F8F62CA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41CEF1AA-54C1-4A77-B639-C863F8F62CA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41CEF1AA-54C1-4A77-B639-C863F8F62CA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41CEF1AA-54C1-4A77-B639-C863F8F62CA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
