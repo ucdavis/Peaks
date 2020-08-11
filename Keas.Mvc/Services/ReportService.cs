@@ -6,12 +6,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
+using System;
+using System.Linq.Expressions;
 
 namespace Keas.Mvc.Services
 {
     public interface IReportService
     {
         Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug);
+        Task<IList<WorkstationReportModel>> WorkStations(Group group);
         Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug);
         List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
         Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug);
@@ -29,21 +32,14 @@ namespace Keas.Mvc.Services
             _context = context;
         }
 
-
-        public async Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug)
-        {
-            if (team == null)
-            {
-                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
-            }
-
-            return await _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new WorkstationReportModel
+        public Expression<Func<Workstation, WorkstationReportModel>> WorkstationProjection() {
+            return a => new WorkstationReportModel
             {
                 Name = a.Name,
                 Notes = a.Notes,
                 Tags = a.Tags,
                 Active = a.Active,
-                IsAssigned = a.WorkstationAssignmentId.HasValue,                
+                IsAssigned = a.WorkstationAssignmentId.HasValue,
                 Assignment = !a.WorkstationAssignmentId.HasValue ? null : new AssignmentReportModel
                 {
                     PersonId = a.Assignment.PersonId,
@@ -63,8 +59,23 @@ namespace Keas.Mvc.Services
                     RoomCategoryName = a.Space.RoomCategoryName,
                     SqFt = a.Space.SqFt,
                 },
-            }).ToListAsync();
+            };
+        }
 
+        public async Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+
+            return await _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(WorkstationProjection()).ToListAsync();
+
+        }
+
+        public async Task<IList<WorkstationReportModel>> WorkStations(Group group)
+        {
+            return await _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id)).Select(WorkstationProjection()).ToListAsync();
         }
 
         public async Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug)
