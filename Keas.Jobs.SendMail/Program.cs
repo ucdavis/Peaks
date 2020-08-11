@@ -32,17 +32,18 @@ namespace Keas.Jobs.SendMail
 
             // setup di
             var provider = ConfigureServices();
-            var dbContext = provider.GetService<ApplicationDbContext>();
-            var emailService = provider.GetService<IEmailService>();
 
 #if DEBUG
-            SendDevEmails(dbContext, emailService);
+            SendDevEmails(provider);
 #else
-            SendEmails(dbContext, emailService);
+            SendEmails(provider);
 #endif
         }
 
-        private static void SendEmails(ApplicationDbContext dbContext, IEmailService emailService) {
+        private static void SendEmails(ServiceProvider provider) {
+            var dbContext = provider.GetService<ApplicationDbContext>();
+            var emailService = provider.GetService<IEmailService>();
+
             var counter = 0;
             var usersWithPendingNotifications = dbContext.Notifications.Where(a => a.Pending).Select(s => s.User).Distinct().ToArray();
             if (usersWithPendingNotifications.Any())
@@ -104,18 +105,23 @@ namespace Keas.Jobs.SendMail
             _log.Information("Done Email Job");
         }
 
-        private static void SendDevEmails(ApplicationDbContext dbContext, IEmailService emailService)
+        private static void SendDevEmails(ServiceProvider provider)
         {
+            var dbContext = provider.GetService<ApplicationDbContext>();
+            var emailService = provider.GetService<IEmailService>();
+
             // send one of each email, for running in development mode
             _log.Information("Sending dev emails");
 
             // send user notification email
-            
+            emailService.SendSampleNotificationMessage().GetAwaiter().GetResult();
+
             // send expiry email
 
             // send team expiry email
 
             // send person notification
+            _log.Information("Sending dev emails complete");
         }
 
         private static ServiceProvider ConfigureServices()
