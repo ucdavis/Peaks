@@ -126,6 +126,10 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipments);
         }
 
+        /// <summary>
+        /// This lists all equipment that has been deleted for the team.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
         public async Task<IActionResult> ListInactive()
