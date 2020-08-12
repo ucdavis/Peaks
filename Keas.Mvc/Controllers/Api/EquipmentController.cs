@@ -126,6 +126,23 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipments);
         }
 
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ListInactive()
+        {
+            var equipments = await _context.Equipment
+                .IgnoreQueryFilters()
+                .Where(x => x.Team.Slug == Team && !x.Active)
+                .Include(x => x.Assignment)
+                .ThenInclude(x => x.Person)
+                .Include(x => x.Space)
+                .Include(x => x.Attributes)
+                .Include(x => x.Team)
+                .AsNoTracking().ToArrayAsync();
+
+            return Json(equipments);
+        }
+
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Details(int id)
