@@ -17,7 +17,7 @@ namespace Keas.Mvc.Services
         Task<IList<WorkstationReportModel>> WorkStations(Group group);
         Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug);
         List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
-        Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug);
+        Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug, bool hideInactive = true);
         Task<IList<EquipmentReportModel>> EquipmentList(Group group);
         Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug);
         Task<IList<KeyReportModel>> Keys(Team team, string teamSlug, bool includeSerials = true, bool includeSpaces = true);
@@ -193,16 +193,20 @@ namespace Keas.Mvc.Services
             return equipment;
         }
 
-        public async Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug)
+        public async Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug, bool hideInactive = true)
         {
             if (team == null)
             {
                 team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
             }
 
-            var equipment = await _context.Equipment.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(EquipmentProjection()).ToListAsync();
+            var equipment = _context.Equipment.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(EquipmentProjection());
+            if (hideInactive)
+            {
+                equipment = equipment.Where(a => a.Active);
+            }
 
-            return equipment;
+            return await equipment.ToListAsync();
         }
 
         public async Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug)
