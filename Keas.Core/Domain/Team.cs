@@ -44,6 +44,7 @@ namespace Keas.Core.Domain
 
         public List<TeamPpsDepartment> PpsDepartments { get; set; }
 
+        [JsonIgnore]
         public List<GroupXTeam> Groups { get; set; }
        
     }
