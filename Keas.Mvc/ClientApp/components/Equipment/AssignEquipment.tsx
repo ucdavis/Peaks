@@ -126,7 +126,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                     <div className='row justify-content-between'>
                       <h3>Create New Equipment</h3>
                       <Button
-                        className='btn btn-link'
+                        color='link'
                         onClick={this._onDeselected}
                       >
                         Clear{' '}
@@ -152,7 +152,7 @@ export default class AssignEquipment extends React.Component<IProps, IState> {
                   <div className='row justify-content-between'>
                     <h3>Assign Existing Equipment</h3>
                     <Button
-                      className='btn btn-link'
+                      color='link'
                       onClick={this._onDeselected}
                     >
                       Clear{' '}

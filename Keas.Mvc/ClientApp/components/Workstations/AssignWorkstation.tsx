@@ -124,7 +124,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                       <div className='row justify-content-between'>
                         <h3>Create New Workstation</h3>
                         <Button
-                          className='btn btn-link'
+                          color='link'
                           onClick={this._onDeselected}
                         >
                           Clear{' '}
@@ -149,7 +149,7 @@ export default class AssignWorkstation extends React.Component<IProps, IState> {
                     <div className='row justify-content-between'>
                       <h3>Assign Existing Workstation</h3>
                       <Button
-                        className='btn btn-link'
+                        color='link'
                         onClick={this._onDeselected}
                       >
                         Clear{' '}

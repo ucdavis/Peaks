@@ -657,6 +657,25 @@ ol.breadcrumb {
   font-family: $sans-bold;
 }
 
+.fa-info-circle {
+  color:$primary-color;
+  .people-color &{
+    color:transparentize($people, 0.96);
+  }
+  .equipment-color &{
+    color:transparentize($equipment, 0.5);
+  }
+  .access-color &{
+    color:transparentize($access, 0.96);
+  }
+  .keys-color &{
+    color:transparentize($keys, 0.96);
+  }
+  .spaces-color &{
+    color:transparentize($spaces, 0.96);
+  }
+}
+
 // .input-group-append button {
 //   border:1px solid #ced4da !important;
 //   .people-color &{

@@ -47,7 +47,7 @@ export default class EquipmentAttributes extends React.Component<IProps, {}> {
               <tr>
                 <td colSpan={3}>
                   <Button
-                    className='btn btn-link'
+                    color='link'
                     id='add-new'
                     onClick={this._onAddAttribute}
                   >

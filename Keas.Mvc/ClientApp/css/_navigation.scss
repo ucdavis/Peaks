@@ -7,10 +7,10 @@ a.nav-link {
   font-family: $sans-bold;
   color: $primary-font;
   &:hover {
-    color: darken($secondary-color, 9);
+    color: darken($primary-color, 9);
   }
   &.active {
-    color: $secondary-color;
+    color: $primary-color;
   }
 }
 .navbar {
