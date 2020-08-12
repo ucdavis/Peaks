@@ -14,6 +14,7 @@ export function ExpirationColumnFilter({
   // Render a multi-select box
   return (
     <select
+    className="form-control"
       value={filterValue}
       style={{ width: '100%' }}
       onChange={e => {
@@ -149,6 +150,7 @@ export class ReactTableExpirationUtil {
     return (filter, onChange) => {
       return (
         <select
+        className="form-control"
           onChange={e => onChange(e.target.value)}
           style={{ width: '100%' }}
           value={filter ? filter.value : 'all'}

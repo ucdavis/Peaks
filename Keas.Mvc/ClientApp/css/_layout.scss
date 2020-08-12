@@ -13,7 +13,7 @@ html {
 }
 
 body {
-  margin: 0 0 80px;
+  margin: 0;
   background-color: $bg-color;
 }
 
@@ -152,20 +152,6 @@ h1 {
 }
 
 footer {
-  position: absolute;
-  bottom: 0;
-  display: block;
-  height: 45px;
-  @include breakpoint(sm) {
-    margin-left: 2%;
-  }
-  @include breakpoint(md) {
-    margin-left: 4%;
-  }
-  @include breakpoint(lg) {
-    margin-left: 5%;
-  }
-  @include breakpoint(xl) {
-    margin-left: 10%;
-  }
+  margin-top:3%;
+  margin-bottom:1%;
 }
