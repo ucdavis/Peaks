@@ -68,7 +68,7 @@
                         </tr>
                     }
 
-                }
+                @*  *@}
             </tbody>
         </table>
     </div>
@@ -76,7 +76,7 @@
 
 
 @section Styles {
-    @await Html.PartialAsync("_ImportResultsStylePartial")
+    @await Html.PartialAsync("_ReportStylePartial")
 }
 @section Scripts {
     @{await Html.RenderPartialAsync("_ImportJS");}
