@@ -60,7 +60,7 @@ namespace Keas.Mvc.Controllers
                 return Unauthorized();
             }
 
-            return Json(await _reportService.EquipmentList(null, Team));
+            return Json(await _reportService.EquipmentList(null, Team, false));
         }
 
         public async Task<IActionResult> AccessFeed(Guid id)
