@@ -1,0 +1,134 @@
+@using Keas.Core.Extensions
+@model System.Collections.Generic.IList<Keas.Mvc.Models.ReportModels.EquipmentReportModel>
+
+@{
+    ViewBag.Title = "Equipment";
+}
+
+<a asp-action="Index" asp-route-id="@ViewBag.Group.Id" class="btn btn-link">Back to Group Home</a>
+
+<div class="card">
+    <div class="card-header-equipment">
+        <div class="card-head">
+            <h2>@ViewBag.Group.Name Group Equipment Report</h2>
+            <small class="form-text text-muted">To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).</small>
+            <small class="form-text text-muted">If you have filtered the report with the Search feature, only the filtered results will be exported.</small>
+            <small class="form-text text-muted">You can filter the table with the data that isn't displayed on the screen (such as notes).</small>
+        </div>
+    </div>
+    <div class="card-content">
+
+        <table id="equipment" class="table dataTable">
+            <thead>
+                <tr>
+                    <th>Equip Name</th>
+                    <th>Active</th>
+                    <th>Assigned</th>
+                    <th>Space?</th>
+                    <th>Notes?</th>
+                    <th># Attributes</th>
+                    <th>Type</th>
+                    <th>Protection Level</th>
+                    <th>Availability Level</th>
+                    <th>Bigfix Id</th>
+                    <th>Serial</th>
+                    <th>Make</th>
+                    <th>Model</th>
+                    <th>Tags</th>
+                    <th>Notes</th>
+                    <th>Assigned To</th>
+                    <th>Email</th>
+                    <th>Expires</th>
+                    <th>Room Number</th>
+                    <th>Building</th>
+                    <th>Room Name</th>
+                    <th>Floor</th>
+                    <th>Category</th>
+                    <th>Footage</th>
+                    <th>Attributes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.Active.ToYesNoString()</td>
+                        <td>@item.IsAssigned.ToYesNoString()</td>
+                        <td>@item.HasSpace.ToYesNoString()</td>
+                        <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
+                        <td>@item.AttributeCount</td>
+                        <td>@item.Type</td>
+                        <td>@item.ProtectionLevel</td>
+                        <td>@item.AvailabilityLevel</td>
+                        <td>@item.SystemManagementId</td>
+                        <td>@item.SerialNumber</td>
+                        <td>@item.Make</td>
+                        <td>@item.Model</td>                        
+                        <td>@item.Tags.Replace(",",", ")</td>                        
+                        <td>@item.Notes</td>
+                        @if (item.IsAssigned)
+                        {
+                            <td>@($"{item.Assignment.FullName} ({item.Assignment.UserId})")</td>
+                            <td>@item.Assignment.Email</td>
+                            <td>@item.Assignment.ExpiryDateTime.ToPacificTime().ToShortDateString()</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        }
+                        @if (item.HasSpace)
+                        {
+                            <td>@item.Space.RoomNumber</td>
+                            <td>@item.Space.BldgName</td>
+                            <td>@item.Space.RoomName</td>
+                            <td>@item.Space.FloorName</td>
+                            <td>@item.Space.RoomCategoryName</td>
+                            <td>@item.Space.SqFt</td>
+                        }
+                        else
+                        {
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        }
+                        <td>@item.Attributes.Beautiful()</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section Styles {
+    @await Html.PartialAsync("_ImportResultsStylePartial")
+}
+
+@section Scripts {
+   @{await Html.RenderPartialAsync("_ImportJS");}  
+    
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+                "dom": 'lBfrtip',
+                "buttons": [
+                    { extend: 'copyHtml5' },
+                    { extend: 'excelHtml5' },
+                    { extend: 'csvHtml5' },
+                    { extend: 'print'},
+                ],
+                "columnDefs": [
+                    { "type": "date", "targets": [17] },
+                    { "targets" : [ 7,8,9,11,12,14,16,18,19,20,21,22,23,24], "visible" : false}
+                ]
+        });
+    </script>
+}
+
+
+

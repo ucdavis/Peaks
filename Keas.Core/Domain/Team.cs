@@ -43,6 +43,9 @@ namespace Keas.Core.Domain
         public List<FinancialOrganization> FISOrgs { get; set; }
 
         public List<TeamPpsDepartment> PpsDepartments { get; set; }
+
+        [JsonIgnore]
+        public List<GroupXTeam> Groups { get; set; }
        
     }
 }
