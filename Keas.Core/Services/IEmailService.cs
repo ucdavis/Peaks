@@ -24,6 +24,7 @@ namespace Keas.Core.Services
         Task SendSampleNotificationMessage();
         Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model);
         Task SendSampleExpiringMessage();
+        Task SendSampleTeamExpiringMessage();
         Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model);
 
         Task SendPersonNotification();
@@ -45,6 +46,54 @@ namespace Keas.Core.Services
             _client = new SmtpClient(_emailSettings.Host, _emailSettings.Port) { Credentials = new NetworkCredential(_emailSettings.UserName, _emailSettings.Password), EnableSsl = true };
         }
 
+        public async Task SendSampleTeamExpiringMessage()
+        {
+            var toEmails = new MailAddress[] {
+                new MailAddress("notifyme@ucdavis.edu", "User PEAKS")
+            }.ToList();
+            var expiringItems = new ExpiringItemsEmailModel
+            {
+                Equipment = new Equipment[] { new Equipment{
+                    Name = "Desktop",
+                    Assignment = new EquipmentAssignment { ExpiresAt = DateTime.UtcNow }
+                    }
+                }.ToArray(),
+                Workstations = new Workstation[] { new Workstation{
+                    Name = "Room",
+                    Assignment = new WorkstationAssignment { ExpiresAt = DateTime.UtcNow }
+                    }
+                }.ToArray(),
+                KeySerials = new KeySerial[] { new KeySerial{
+                    Key = new Key { Code = "Key" },
+                    KeySerialAssignment = new KeySerialAssignment { ExpiresAt = DateTime.UtcNow }
+                    }
+                }.ToArray(),
+                AccessAssignments = new AccessAssignment[] { new AccessAssignment{
+                    Access = new Access { Name = "Access" }
+                    }
+                }.ToArray(),
+                Person = new Person
+                {
+                    Email = "notifyme@ucdavis.edu",
+                    FirstName = "Expire",
+                    LastName = "Person",
+                    Team = new Team { Id = 1, Name = "Test", Slug = "Slug" }
+                }
+            };
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Team Expiration Notification"), Subject = "PEAKS Admin Expiring Items Notification" })
+            {
+                toEmails.ForEach(message.To.Add);
+
+                // body is our fallback text and we'll add an HTML view as an alternate.
+                message.Body = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
+
+                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+                message.AlternateViews.Add(htmlView);
+
+                await _client.SendMailAsync(message);
+            }
+        }
+    
         public async Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model)
         {
             if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
