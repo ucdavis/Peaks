@@ -149,17 +149,25 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, bool showDeleted = false)
         {
-            var equipment = await _context.Equipment
+
+            var equipmentQuery = _context.Equipment
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignment)
-                    .ThenInclude(x => x.Person)
+                .ThenInclude(x => x.Person)
                 .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == id);
+                .AsNoTracking();
+
+
+            if (showDeleted)
+            {
+                equipmentQuery = equipmentQuery.IgnoreQueryFilters();
+            }
+
+            var equipment = await equipmentQuery.SingleOrDefaultAsync(x => x.Id == id);
 
             if (equipment == null)
             {
