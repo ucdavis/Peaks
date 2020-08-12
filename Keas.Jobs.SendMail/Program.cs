@@ -117,6 +117,7 @@ namespace Keas.Jobs.SendMail
             emailService.SendSampleNotificationMessage().GetAwaiter().GetResult();
 
             // send expiry email
+            emailService.SendSampleExpiringMessage().GetAwaiter().GetResult();
 
             // send team expiry email
 
