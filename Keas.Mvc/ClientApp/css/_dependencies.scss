@@ -1,30 +1,15 @@
-// fonts
-@font-face {
-  font-family: 'proxima-nova-r';
-  src: url('/media/fonts/proximanova-regular-webfont.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'proxima-nova-i';
-  src: url('/media/fonts/proximanova-regularit-webfont.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'proxima-nova-b';
-  src: url('/media/fonts/proximanova-bold-webfont.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
-
-$sans-italic: 'proxima-nova-i', sans-serif;
-$sans-bold: 'proxima-nova-b', sans-serif;
-$sans-reg: 'proxima-nova-r', sans-serif;
-
-$primary-color: #1d3b5c;
-$secondary-color: #004987;
+@import "bootstrap/scss/_functions";
+@import "bootstrap/scss/_variables";
+@import '@ucdavis/gunrockin/sass/gunrockin.scss';
+$primary-color:    $gunrock;
+$secondary-color:  $quad;
 $tertiary-color: #f4bd00;
+$theme-colors: (
+ primary: $primary-color,
+ secondary: $secondary-color
+);
+@import "bootstrap/scss/bootstrap";
+@import '@ucdavis/gunrockin/sass/_typography.scss';
 
 $gold: #daaa00;
 $blue: #004987;
@@ -44,16 +29,15 @@ $borders: #e8e9ed; // border color
 $nav-active: #fff;
 $nav-secondary: $secondary-font;
 
-$people: #ba0c2f;
-$equipment: #daaa00;
-$access: #78be20;
-$keys: #00b5e2;
-$spaces: #642667;
+$people: $doubledecker;
+$equipment: $gold;
+$access: $quad;
+$keys: $tahoe;
+$spaces: $pinot;
 $history: $primary-font;
 // UC Davis Colors
 // Supplemental bright color palette for UC Davis
 
-$unitrans-red: #ba0c2f;
 $western-redbud: #c6007e;
 $california-poppy: #ed8800;
 $golden-lupine: #ffcd00;
@@ -61,18 +45,8 @@ $sunny-grass: #78be20;
 $sky-blue: #00b5e2;
 $recpool-blue: #008eaa;
 $wine-grape: #642667;
-// Supplemental neutral color palette for UC Davis
-$mu-brick: #c26e60;
-$harthall-stucco: #e6a65d;
-$sage-green: #9caf88;
-$evergreen: #00573f;
-$wintersky-gray: #5b7f95;
-$cenwalk-gray: #b1b3b3;
-$cork-oak: #aca39a;
-$shingle-brown: #4f2c1d;
 
 // Layouts
-
 $card-padding: 0.75rem 1.75rem;
 $card-thick-padding: 3rem;
 

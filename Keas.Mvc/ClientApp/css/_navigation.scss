@@ -52,6 +52,7 @@ a.nav-link {
       &.active {
         color: $spaces;
         border-bottom: 4px solid $spaces;
+        background-color:transparentize($spaces,0.9);
       }
       &:hover {
         color: darken($spaces, 10);
@@ -61,6 +62,7 @@ a.nav-link {
       &.active {
         color: $keys;
         border-bottom: 4px solid $keys;
+        background-color:transparentize($keys,0.9);
       }
       &:hover {
         color: darken($keys, 10);
@@ -70,6 +72,7 @@ a.nav-link {
       &.active {
         color: $equipment;
         border-bottom: 4px solid $equipment;
+        background-color:transparentize($equipment,0.9);
       }
       &:hover {
         color: darken($equipment, 10);
@@ -79,6 +82,7 @@ a.nav-link {
       &.active {
         color: $people;
         border-bottom: 4px solid $people;
+        background-color:transparentize($people,0.9);
       }
       &:hover {
         color: darken($people, 10);
@@ -88,6 +92,7 @@ a.nav-link {
       &.active {
         color: $access;
         border-bottom: 4px solid $access;
+        background-color:transparentize($access,0.9);
       }
       &:hover {
         color: darken($access, 10);

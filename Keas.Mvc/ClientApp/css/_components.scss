@@ -8,7 +8,14 @@
 }
 .alert {
   margin-top: 1.6rem;
+  padding: $card-padding;
+  box-shadow: $box-shadow;
+  p {
+    margin-bottom: 0px;
+    color: $secondary-font;
+  }
 }
+    
 .card-content {
   padding: $card-padding;
   padding-bottom: 2.6rem;
@@ -111,18 +118,7 @@ button {
 img.img-fluid {
   width: 100%;
 }
-.alert {
-  padding: $card-padding;
-  p {
-    margin-bottom: 0px;
-    color: $secondary-font;
-  }
-  @include fader;
-  box-shadow: $box-shadow;
-  &:hover {
-    transform: translateY(-1px);
-  }
-}
+
 .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):active,
 .show > .btn-primary.dropdown-toggle {
@@ -144,9 +140,9 @@ img.img-fluid {
   }
 }
 .alert-red {
-  background-color: transparentize($unitrans-red, 0.35);
+  background-color: transparentize($people, 0.35);
   &:hover {
-    background-color: transparentize($unitrans-red, 0.15);
+    background-color: transparentize($people, 0.15);
   }
 }
 .alert-yellow {
@@ -500,7 +496,7 @@ ol.breadcrumb {
 }
 
 .bg-unitrans {
-  background-color: $unitrans-red;
+  background-color: $people;
 }
 
 .bg-sunny-grass {
@@ -524,7 +520,7 @@ ol.breadcrumb {
 }
 
 .border-unitrans {
-  border-color: $unitrans-red;
+  border-color: $people;
 }
 
 .border-skyblue {
@@ -540,7 +536,7 @@ ol.breadcrumb {
 }
 
 .color-unitrans {
-  color: $unitrans-red !important;
+  color: $people !important;
 }
 
 .color-sunny-grass {
@@ -694,7 +690,7 @@ ol.breadcrumb {
   }
 }
 #Name-error {
-  color: $unitrans-red;
+  color: $people;
 }
 .bigfix-info {
   cursor: pointer;
@@ -715,7 +711,7 @@ ol.breadcrumb {
   background-color: $sunny-grass !important;
 }
 .Toastify__toast--error {
-  background-color: $unitrans-red !important;
+  background-color: $people !important;
 }
 .Toastify__toast-body {
   color: #fff !important;
