@@ -120,6 +120,7 @@ namespace Keas.Jobs.SendMail
             emailService.SendSampleExpiringMessage().GetAwaiter().GetResult();
 
             // send team expiry email
+            emailService.SendSampleTeamExpiringMessage().GetAwaiter().GetResult();
 
             // send person notification
             _log.Information("Sending dev emails complete");
