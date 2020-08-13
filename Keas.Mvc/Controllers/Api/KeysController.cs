@@ -89,6 +89,47 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keys);
         }
 
+        /// <summary>
+        /// Dump of the active keys. Note, status is different from active/inactive keys
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Key>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ListAll()
+        {
+            var keys = await _context.Keys
+                .Where(a => a.Team.Slug == Team)
+                .Include(a => a.Serials)
+                .ThenInclude(a => a.KeySerialAssignment)
+                .ThenInclude(a => a.Person)
+                .Include(a => a.KeyXSpaces)
+                .ThenInclude(a => a.Space)
+                .AsNoTracking().ToArrayAsync();
+
+            return Json(keys);
+        }
+
+        /// <summary>
+        /// Dump of the inactive (deleted) keys. Note, status is different from active/inactive keys
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Key>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ListAllInactive()
+        {
+            var keys = await _context.Keys
+                .IgnoreQueryFilters()
+                .Where(a => a.Team.Slug == Team && !a.Active)
+                .Include(a => a.Serials)
+                .ThenInclude(a => a.KeySerialAssignment)
+                .ThenInclude(a => a.Person)
+                .Include(a => a.KeyXSpaces)
+                .ThenInclude(a => a.Space)
+                .AsNoTracking().ToArrayAsync();
+
+            return Json(keys);
+        }
+
         // list all keys for a space
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Key>), StatusCodes.Status200OK)]
