@@ -37,10 +37,11 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List()
         {
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
+            var active = 1;
 
             var sql = PeopleQueries.List;
 
-            var result = _context.Database.GetDbConnection().Query(sql, new { teamId });
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId, active });
 
             var people = result.Select(r => new
             {
@@ -76,6 +77,56 @@ namespace Keas.Mvc.Controllers.Api
                 accessCount = r.AccessCount,
                 keyCount = r.KeyCount,
                 workstationCount = r.WorkstationCount,                
+            });
+
+            return Json(people);
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Person>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ListInactive()
+        {
+            var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
+            var active = 0;
+
+            var sql = PeopleQueries.List;
+
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId, active });
+
+            var people = result.Select(r => new
+            {
+                person = new Person
+                {
+                    Id = r.Id,
+                    FirstName = r.FirstName,
+                    LastName = r.LastName,
+                    Email = r.Email,
+                    Tags = r.Tags,
+                    TeamId = r.TeamId,
+                    Notes = r.Notes,
+                    UserId = r.UserId,
+                    Title = r.Title,
+                    HomePhone = r.HomePhone,
+                    TeamPhone = r.TeamPhone,
+                    SupervisorId = r.SupervisorId,
+                    Supervisor = r.SupervisorId == null ? null : new Person
+                    {
+                        Id = r.SupervisorId,
+                        FirstName = r.SupervisorFirstName,
+                        LastName = r.SupervisorLastName,
+                        Email = r.SupervisorEmail,
+                        UserId = r.SupervisorUserId
+                    },
+                    StartDate = r.StartDate,
+                    EndDate = r.EndDate,
+                    Category = r.Category,
+                    IsSupervisor = r.isSupervisor,
+                },
+                id = r.Id,
+                equipmentCount = r.EquipmentCount,
+                accessCount = r.AccessCount,
+                keyCount = r.KeyCount,
+                workstationCount = r.WorkstationCount,
             });
 
             return Json(people);
