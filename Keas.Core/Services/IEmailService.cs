@@ -26,7 +26,7 @@ namespace Keas.Core.Services
         Task SendSampleExpiringMessage();
         Task SendSampleTeamExpiringMessage();
         Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model);
-
+        Task SendSamplePersonNotification();
         Task SendPersonNotification();
     }
 
@@ -141,6 +141,50 @@ namespace Keas.Core.Services
                 message.AlternateViews.Add(htmlView);
 
                 await _client.SendMailAsync(message);
+            }
+        }
+        
+        public async Task SendSamplePersonNotification()
+        {
+            var personEmails = new PersonNotification [] { new PersonNotification{
+                PersonName = "User Peaks",
+                PersonEmail = "donotreply@peaks-notify.ucdavis.edu",
+                NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
+                Team = new Team { Id = 1, Name = "Test", Slug = "Slug" }
+            }
+            }.ToArray();
+
+            foreach (var personEmail in personEmails)
+            {
+                //Get the notifications to send to this user.                
+                var personNotifications = new PersonNotification [] { new PersonNotification{
+                    PersonName = "User Peaks",
+                    PersonEmail = "donotreply@peaks-notify.ucdavis.edu",
+                    NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
+                    Team = new Team { Id = 1, Name = "Test", Slug = "Slug" }
+                }
+                }.GroupBy(a => a.TeamId).ToList();
+
+                using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Person Notification"), Subject = "PEAKS People Notification" })
+                {
+                    message.To.Add(personEmail.NotificationEmail);
+
+                    // body is our fallback text and we'll add an HTML view as an alternate.
+                    message.Body = "The people in your teams have changed";
+
+                    var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications), new ContentType(MediaTypeNames.Text.Html));
+                    message.AlternateViews.Add(htmlView);
+
+                    try
+                    {
+                        await _client.SendMailAsync(message);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e.Message);
+                        continue;
+                    }
+                }
             }
         }
 

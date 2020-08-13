@@ -107,7 +107,6 @@ namespace Keas.Jobs.SendMail
 
         private static void SendDevEmails(ServiceProvider provider)
         {
-            var dbContext = provider.GetService<ApplicationDbContext>();
             var emailService = provider.GetService<IEmailService>();
 
             // send one of each email, for running in development mode
@@ -123,6 +122,7 @@ namespace Keas.Jobs.SendMail
             emailService.SendSampleTeamExpiringMessage().GetAwaiter().GetResult();
 
             // send person notification
+            emailService.SendSamplePersonNotification().GetAwaiter().GetResult();
             _log.Information("Sending dev emails complete");
         }
 
