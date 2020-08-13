@@ -11,6 +11,7 @@
     [KeySerialId]   INT            NULL,
     [TargetId]      INT            NULL,
     [WorkstationId] INT            NULL,
+    [DocumentId]    INT            NULL,
     CONSTRAINT [PK_Histories] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_Histories_Access_AccessId] FOREIGN KEY ([AccessId]) REFERENCES [dbo].[Access] ([Id]),
     CONSTRAINT [FK_Histories_Equipment_EquipmentId] FOREIGN KEY ([EquipmentId]) REFERENCES [dbo].[Equipment] ([Id]),
@@ -18,7 +19,8 @@
     CONSTRAINT [FK_Histories_KeySerials_KeySerialId] FOREIGN KEY ([KeySerialId]) REFERENCES [dbo].[KeySerials] ([Id]),
     CONSTRAINT [FK_Histories_People_TargetId] FOREIGN KEY ([TargetId]) REFERENCES [dbo].[People] ([Id]),
     CONSTRAINT [FK_Histories_Users_ActorId] FOREIGN KEY ([ActorId]) REFERENCES [dbo].[Users] ([Id]),
-    CONSTRAINT [FK_Histories_Workstations_WorkstationId] FOREIGN KEY ([WorkstationId]) REFERENCES [dbo].[Workstations] ([Id])
+    CONSTRAINT [FK_Histories_Workstations_WorkstationId] FOREIGN KEY ([WorkstationId]) REFERENCES [dbo].[Workstations] ([Id]),
+    CONSTRAINT [FK_Histories_Documents_DocumentId] FOREIGN KEY ([DocumentId]) REFERENCES [dbo].[Documents] ([Id])
 );
 
 
