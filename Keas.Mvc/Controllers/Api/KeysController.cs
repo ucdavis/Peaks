@@ -130,6 +130,32 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keys);
         }
 
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Key), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Details(int id, bool showDeleted = false)
+        {
+            var keyQuery = _context.Keys
+                .Where(a => a.Team.Slug == Team && !a.Active)
+                .Include(a => a.Serials)
+                .ThenInclude(a => a.KeySerialAssignment)
+                .ThenInclude(a => a.Person)
+                .Include(a => a.KeyXSpaces)
+                .ThenInclude(a => a.Space)
+                .AsNoTracking();
+
+            if (showDeleted)
+            {
+                keyQuery = keyQuery.IgnoreQueryFilters();
+            }
+            var keys = await keyQuery.SingleOrDefaultAsync(x => x.Id == id);
+
+            if (keys == null)
+            {
+                return NotFound();
+            }
+            return Json(keys);
+        }
+
         // list all keys for a space
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Key>), StatusCodes.Status200OK)]
