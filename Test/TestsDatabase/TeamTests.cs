@@ -44,6 +44,10 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)256)]",
             }));  
             expectedFields.Add(new NameAndType("FISOrgs", "System.Collections.Generic.List`1[Keas.Core.Domain.FinancialOrganization]", new List<string>()));
+            expectedFields.Add(new NameAndType("Groups", "System.Collections.Generic.List`1[Keas.Core.Domain.GroupXTeam]", new List<string>
+            {
+                "[Newtonsoft.Json.JsonIgnoreAttribute()]",
+            }));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.KeyAttribute()]",
@@ -66,7 +70,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("TeamPermissions", "System.Collections.Generic.ICollection`1[Keas.Core.Domain.TeamPermission]", new List<string>
             {
                 "[Newtonsoft.Json.JsonIgnoreAttribute()]",
-            }));        
+            }));
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(Team));

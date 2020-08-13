@@ -5,19 +5,18 @@
     ViewBag.Title = "Equipment";
 }
 
-
+<a asp-action="Index" asp-route-id="@Model.Group.Id" class="btn btn-link">Back to Group Home</a>
 
 <div class="card">
     <div class="card-header-equipment">
         <div class="card-head">
-            <h2>Equipment Report</h2>
+            <h2>@Model.Group.Name Group Equipment Report</h2>
             <small class="form-text text-muted">To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).</small>
             <small class="form-text text-muted">If you have filtered the report with the Search feature, only the filtered results will be exported.</small>
             <small class="form-text text-muted">You can filter the table with the data that isn't displayed on the screen (such as notes).</small>
         </div>
     </div>
     <div class="card-content">
-        
         <form asp-action="EquipmentReport" method="get">
             <div class="shade">
 
