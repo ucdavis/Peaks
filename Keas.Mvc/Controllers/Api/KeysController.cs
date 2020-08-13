@@ -135,7 +135,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Details(int id, bool showDeleted = false)
         {
             var keyQuery = _context.Keys
-                .Where(a => a.Team.Slug == Team && !a.Active)
+                .Where(a => a.Team.Slug == Team)
                 .Include(a => a.Serials)
                 .ThenInclude(a => a.KeySerialAssignment)
                 .ThenInclude(a => a.Person)
