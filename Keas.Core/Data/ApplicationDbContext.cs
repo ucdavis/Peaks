@@ -36,6 +36,8 @@ namespace Keas.Core.Data
         public virtual DbSet<WorkstationAssignment> WorkstationAssignments { get; set; }
         public virtual DbSet<WorkstationAttribute> WorkstationAttributes { get; set; }
 
+		public virtual DbSet<Document> Documents { get; set; }
+
         public virtual DbSet<Role> Roles { get; set; }
         public virtual DbSet<TeamPermission> TeamPermissions { get; set; }
         public virtual DbSet<SystemPermission> SystemPermissions { get; set; }
