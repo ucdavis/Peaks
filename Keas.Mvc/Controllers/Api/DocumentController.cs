@@ -27,13 +27,27 @@ namespace Keas.Mvc.Controllers.Api
             this._documentSigningService = documentSigningService;
         }
 
-        // List all equipments for a team
+        // List all documents for this team
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Document>), StatusCodes.Status200OK)]
         public async Task<IActionResult> List()
         {
             var documents = await _context.Documents
                 .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Team)
+                .Include(x => x.Person)
+                .AsNoTracking().ToArrayAsync();
+
+            return Json(documents);
+        }
+
+        // List all documents for the given person
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<Document>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Find(int id)
+        {
+            var documents = await _context.Documents
+                .Where(x => x.Team.Slug == Team && x.PersonId == id)
                 .Include(x => x.Team)
                 .Include(x => x.Person)
                 .AsNoTracking().ToArrayAsync();
