@@ -32,10 +32,18 @@ namespace Keas.Jobs.SendMail
 
             // setup di
             var provider = ConfigureServices();
+
+#if DEBUG
+            SendDevEmails(provider);
+#else
+            SendEmails(provider);
+#endif
+        }
+
+        private static void SendEmails(ServiceProvider provider) {
             var dbContext = provider.GetService<ApplicationDbContext>();
             var emailService = provider.GetService<IEmailService>();
 
-            //TODO: db stuff 
             var counter = 0;
             var usersWithPendingNotifications = dbContext.Notifications.Where(a => a.Pending).Select(s => s.User).Distinct().ToArray();
             if (usersWithPendingNotifications.Any())
@@ -74,7 +82,7 @@ namespace Keas.Jobs.SendMail
             }
             _log.Information("Expiring Sent {count}", counter);
 
-           
+
 
             // Email team admins who have expiring items
             counter = 0;
@@ -82,9 +90,9 @@ namespace Keas.Jobs.SendMail
             var teamIds = expiringItems.GetTeamIdList();
             _log.Information("About to write {count} Team Expiry Emails", teamIds.Count);
 
-            if(teamIds.Any())
+            if (teamIds.Any())
             {
-                foreach(var teamId in teamIds)
+                foreach (var teamId in teamIds)
                 {
                     emailService.SendTeamExpiringMessage(teamId, expiringItems).GetAwaiter().GetResult();
                     counter++;
@@ -93,9 +101,29 @@ namespace Keas.Jobs.SendMail
             _log.Information("Team Expiring Emails Sent {count}", counter);
 
             emailService.SendPersonNotification().GetAwaiter().GetResult();
-            
-            _log.Information("Done Email Job");
 
+            _log.Information("Done Email Job");
+        }
+
+        private static void SendDevEmails(ServiceProvider provider)
+        {
+            var emailService = provider.GetService<IEmailService>();
+
+            // send one of each email, for running in development mode
+            _log.Information("Sending dev emails");
+
+            // send user notification email
+            emailService.SendSampleNotificationMessage().GetAwaiter().GetResult();
+
+            // send expiry email
+            emailService.SendSampleExpiringMessage().GetAwaiter().GetResult();
+
+            // send team expiry email
+            emailService.SendSampleTeamExpiringMessage().GetAwaiter().GetResult();
+
+            // send person notification
+            emailService.SendSamplePersonNotification().GetAwaiter().GetResult();
+            _log.Information("Sending dev emails complete");
         }
 
         private static ServiceProvider ConfigureServices()
