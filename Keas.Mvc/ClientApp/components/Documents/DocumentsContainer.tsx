@@ -62,7 +62,7 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
         </div>
       </div>
       <div className='card-content'>
-        <DocumentsList documents={documents}></DocumentsList>
+        <DocumentsList documents={documents} downloadUrl={`/api/${ctx.team.slug}/documents/get`}></DocumentsList>
       </div>
     </div>
   );

@@ -52,7 +52,37 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Person)
                 .AsNoTracking().ToArrayAsync();
 
+            var envelopeIds = documents.Select(d => d.EnvelopeId).ToArray();
+
+            var docusignEnvelopeInfo = await _documentSigningService.GetEnvelopes(envelopeIds);
+
+            foreach (var doc in documents)
+            {
+                // find the matching envelopeId for this document and update the status
+                var envelope = docusignEnvelopeInfo.Envelopes.FirstOrDefault(e => e.EnvelopeId == doc.EnvelopeId);
+
+                if (envelope == null) {
+                    doc.Status = "missing";
+                } else {
+                    doc.Status = envelope.Status;
+                }
+            }
+
             return Json(documents);
+        }
+
+        // Get a specific document's combined pdf
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<Document>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Get(int id)
+        {
+            var document = await _context.Documents
+                .Where(x => x.Team.Slug == Team && x.Id == id)
+                .SingleAsync();
+
+            var fileStream = await _documentSigningService.DownloadEnvelope(document.EnvelopeId);
+
+            return File(fileStream, "application/pdf", document.Name + ".pdf");
         }
     }
 }

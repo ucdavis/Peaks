@@ -3,6 +3,7 @@ import { IDocument } from '../../models/Document';
 
 interface IProps {
   documents: IDocument[];
+  downloadUrl: string;
 }
 
 export const DocumentsList = (props: IProps): JSX.Element => {
@@ -21,7 +22,7 @@ export const DocumentsList = (props: IProps): JSX.Element => {
             <tr key={doc.id}>
               <td>{doc.name}</td>
               <td>{doc.status}</td>
-              <td>link to doc</td>
+              <td><a href={`${props.downloadUrl}/${doc.id}`}>Download</a></td>
             </tr>
           ))}
         </tbody>

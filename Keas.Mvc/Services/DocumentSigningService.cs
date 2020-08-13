@@ -14,6 +14,7 @@ namespace Keas.Mvc.Services
     {
         Task<Stream> DownloadEnvelope(string envelopeId);
         Task<EnvelopesInformation> GetEnvelopes(string email);
+        Task<EnvelopesInformation> GetEnvelopes(string[] envelopeIds);
         Task<string> SendTemplate(string signerEmail, string signerName, string templateId);
     }
 
@@ -52,6 +53,15 @@ namespace Keas.Mvc.Services
             var options = new EnvelopesApi.ListStatusChangesOptions();
             options.fromDate = DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd");
             options.userName = email;
+
+            return await envelopesApi.ListStatusChangesAsync(_documentSigningSettings.AccountId, options);
+        }
+
+        public async Task<EnvelopesInformation> GetEnvelopes(string[] envelopeIds)
+        {
+            var envelopesApi = new EnvelopesApi(GetApiClient());
+            var options = new EnvelopesApi.ListStatusChangesOptions();
+            options.envelopeIds = string.Join(",", envelopeIds);
 
             return await envelopesApi.ListStatusChangesAsync(_documentSigningSettings.AccountId, options);
         }
