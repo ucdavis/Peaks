@@ -56,7 +56,7 @@ namespace Test.TestsController
         [Fact]
         public void TestControllerContainsExpectedNumberOfPublicMethods()
         {
-            ControllerReflection.ControllerPublicMethods(16);
+            ControllerReflection.ControllerPublicMethods(17);
         }
 
         [Fact]
@@ -157,6 +157,12 @@ namespace Test.TestsController
             ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetComputersBySearch", 3 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
             responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("GetComputersBySearch", 3 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
             responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("BigfixComputerSearchResult");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
+            //17
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("ListInactive", 3 + countAdjustment, "ListInactive", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("ListInactive", 3 + countAdjustment, "ListInactive", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("ListInactive", 3 + countAdjustment, "ListInactive", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
         }
 
