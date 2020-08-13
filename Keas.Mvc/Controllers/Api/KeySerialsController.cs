@@ -123,16 +123,21 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, bool showDeleted = false)
         {
-            var keySerial = await _context.KeySerials
+            var keySerialQuery = _context.KeySerials
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.KeySerialAssignment)
-                    .ThenInclude(x => x.Person)
+                .ThenInclude(x => x.Person)
                 .Include(x => x.Key)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == id);
+                .AsNoTracking();
 
+            if (showDeleted)
+            {
+                keySerialQuery = keySerialQuery.IgnoreQueryFilters();
+            }
+
+            var keySerial = await keySerialQuery.SingleOrDefaultAsync(x => x.Id == id);
             if (keySerial == null)
             {
                 return NotFound();
@@ -326,6 +331,11 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
+        /// <summary>
+        /// Takes the top 5 history records
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetHistory(int id)
@@ -336,6 +346,28 @@ namespace Keas.Mvc.Controllers.Api
                         && x.KeySerial.Id == id)
                 .OrderByDescending(x => x.ActedDate)
                 .Take(5)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Json(history);
+        }
+
+
+        /// <summary>
+        /// Return all history records
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetFullHistory(int id)
+        {
+            var history = await _context.Histories
+                .IgnoreQueryFilters()
+                .Where(x => x.KeySerial.Key.Team.Slug == Team
+                            && x.AssetType == "KeySerial"
+                            && x.KeySerial.Id == id)
+                .OrderByDescending(x => x.ActedDate)
                 .AsNoTracking()
                 .ToListAsync();
 
