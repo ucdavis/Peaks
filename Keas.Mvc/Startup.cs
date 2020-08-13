@@ -70,6 +70,7 @@ namespace Keas.Mvc
             services.Configure<BigfixSettings>(Configuration.GetSection("Bigfix"));
             services.Configure<SuperuserSettings>(Configuration.GetSection("Superuser"));
             services.Configure<ApiSettings>(Configuration.GetSection("Api"));
+            services.Configure<DocumentSigningSettings>(Configuration.GetSection("DocumentSigning"));
 
             // setup services
             services.AddScoped<IIdentityService, IdentityService>();
@@ -146,6 +147,9 @@ namespace Keas.Mvc
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
             services.Configure<SparkpostSettings>(Configuration.GetSection("Sparkpost"));
+
+            // Singleton allows authentication to be reused until expiration
+            services.AddSingleton<IDocumentSigningService, DocumentSigningService>();
 
             services.AddScoped<IHistoryService, HistoryService>();
             services.AddScoped<INotificationService, NotificationService>();
