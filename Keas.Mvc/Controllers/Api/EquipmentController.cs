@@ -126,19 +126,48 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipments);
         }
 
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Details(int id)
+        /// <summary>
+        /// This lists all equipment that has been deleted for the team.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ListInactive()
         {
-            var equipment = await _context.Equipment
-                .Where(x => x.Team.Slug == Team)
+            var equipments = await _context.Equipment
+                .IgnoreQueryFilters()
+                .Where(x => x.Team.Slug == Team && !x.Active)
                 .Include(x => x.Assignment)
-                    .ThenInclude(x => x.Person)
+                .ThenInclude(x => x.Person)
                 .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == id);
+                .AsNoTracking().ToArrayAsync();
+
+            return Json(equipments);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Details(int id, bool showDeleted = false)
+        {
+
+            var equipmentQuery = _context.Equipment
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignment)
+                .ThenInclude(x => x.Person)
+                .Include(x => x.Space)
+                .Include(x => x.Attributes)
+                .Include(x => x.Team)
+                .AsNoTracking();
+
+
+            if (showDeleted)
+            {
+                equipmentQuery = equipmentQuery.IgnoreQueryFilters();
+            }
+
+            var equipment = await equipmentQuery.SingleOrDefaultAsync(x => x.Id == id);
 
             if (equipment == null)
             {
