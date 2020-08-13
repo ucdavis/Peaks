@@ -6,6 +6,7 @@ CREATE TABLE [dbo].[Documents] (
     [TemplateId]            NVARCHAR (64)  NOT NULL,
     [Status]                NVARCHAR (64)  NOT NULL,
     [PersonId]              INT            NULL,
+    [Notes]					NVARCHAR(MAX)  NULL, 
     [Tags]                  NVARCHAR (MAX) NULL,
     [TeamId]                INT            NOT NULL,
     CONSTRAINT [PK_Documents] PRIMARY KEY CLUSTERED ([Id] ASC),
