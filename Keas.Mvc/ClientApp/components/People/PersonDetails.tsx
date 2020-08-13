@@ -14,6 +14,7 @@ import WorkstationContainer from '../Workstations/WorkstationContainer';
 import BioContainer from './BioContainer';
 import DeletePerson from './DeletePerson';
 import EditPerson from './EditPerson';
+import { DocumentsContainer } from '../Documents/DocumentsContainer';
 
 interface IProps {
   router: RouteChildrenProps<IMatchParams>;
@@ -127,6 +128,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
           tags={this.props.tags}
           assetInUseUpdated={this.props.inUseUpdated}
         />
+        <DocumentsContainer person={this.props.selectedPersonInfo.person}></DocumentsContainer>
         {canEdit && (
           <HistoryContainer
             controller='peopleAdmin'
