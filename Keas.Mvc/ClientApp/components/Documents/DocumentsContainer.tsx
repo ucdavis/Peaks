@@ -45,7 +45,7 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
   }
 
   if (loading) {
-    return <span>loading...</span>;
+    return <div>Loading Documents...</div>;
   }
 
   return (
