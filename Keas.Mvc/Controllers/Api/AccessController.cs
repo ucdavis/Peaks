@@ -76,18 +76,42 @@ namespace Keas.Mvc.Controllers.Api
             return Json(accessList);
         }
 
+        /// <summary>
+        /// Lists all Access items that have been deleted for the team
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Access>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ListInactive()
+        {
+            var accessList = await _context.Access
+                .IgnoreQueryFilters()
+                .Where(x => x.Team.Slug == Team && !x.Active)
+                .Include(x => x.Assignments)
+                .ThenInclude(x => x.Person)
+                .Include(x => x.Team)
+                .AsNoTracking().ToArrayAsync();
+
+            return Json(accessList);
+        }
+
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, bool showDeleted = false)
         {
-            var access = await _context.Access
+            var accessQuery = _context.Access
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignments)
-                    .ThenInclude(x => x.Person)
+                .ThenInclude(x => x.Person)
                 .Include(x => x.Team)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == id);
+                .AsNoTracking();
 
+            if (showDeleted)
+            {
+                accessQuery = accessQuery.IgnoreQueryFilters();
+            }
+
+            var access = await accessQuery.SingleOrDefaultAsync(x => x.Id == id);
             if (access == null)
             {
                 return NotFound();
@@ -212,6 +236,44 @@ namespace Keas.Mvc.Controllers.Api
                 return Json(null);
             }
 
+        }
+
+        /// <summary>
+        /// Return history records
+        /// Defaults to a max of 5 records returned
+        /// </summary>
+        /// <param name="id"></param>
+        /// <para name="max">the max number of record to take. Defaults to 5</para>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetHistory(int id, int max = 5)
+        {
+            var history = await _context.Histories
+                .Where(x => x.AssetType == "Access" && x.Access.Team.Slug == Team && x.AccessId == id)
+                .OrderByDescending(x => x.ActedDate)
+                .Take(max)
+                .AsNoTracking().ToListAsync();
+
+            return Json(history);
+        }
+
+        /// <summary>
+        /// Return all history records
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetFullHistory(int id)
+        {
+            var history = await _context.Histories
+                .IgnoreQueryFilters()
+                .Where(x => x.AssetType == "Access" && x.Access.Team.Slug == Team && x.AccessId == id)
+                .OrderByDescending(x => x.ActedDate)
+                .AsNoTracking().ToListAsync();
+
+            return Json(history);
         }
     }
 }

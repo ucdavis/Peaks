@@ -368,6 +368,11 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
+        /// <summary>
+        /// Takes the top 5 history records
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetHistory(int id)
@@ -376,6 +381,24 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.AssetType == "Equipment" && x.Equipment.Team.Slug == Team && x.EquipmentId == id)
                 .OrderByDescending(x => x.ActedDate)
                 .Take(5)
+                .AsNoTracking().ToListAsync();
+
+            return Json(history);
+        }
+
+        /// <summary>
+        /// Return all history records
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetFullHistory(int id)
+        {
+            var history = await _context.Histories
+                .IgnoreQueryFilters()
+                .Where(x => x.AssetType == "Equipment" && x.Equipment.Team.Slug == Team && x.EquipmentId == id)
+                .OrderByDescending(x => x.ActedDate)
                 .AsNoTracking().ToListAsync();
 
             return Json(history);
