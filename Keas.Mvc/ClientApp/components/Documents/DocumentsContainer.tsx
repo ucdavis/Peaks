@@ -7,6 +7,7 @@ import { useContext, useEffect, useState, useMemo } from 'react';
 import { IDocument } from '../../models/Document';
 import { DocumentsList } from './DocumentsList';
 import { Button } from 'reactstrap';
+import { AssignDocument } from './AssignDocument';
 
 interface IProps {
   person: IPerson;
@@ -17,6 +18,7 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
 
   const [documents, setDocuments] = useState<IDocument[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [assign, setAssign] = useState<boolean>(false);
 
   const canView = useMemo(() => {
     // TODO: replace with document permissions
@@ -55,14 +57,18 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
           <h2>
             <i className='fas fa-briefcase fa-xs' /> Documents
           </h2>
-          <Button color='link' onClick={() => this._openCreateModal()}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add
-            Document
+          <Button color='link' onClick={() => setAssign(true)}>
+            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Document
           </Button>
         </div>
       </div>
       <div className='card-content'>
-        <DocumentsList documents={documents} downloadUrl={`/api/${ctx.team.slug}/documents/get`}></DocumentsList>
+        <DocumentsList
+          documents={documents}
+          downloadUrl={`/api/${ctx.team.slug}/documents/get`}
+        ></DocumentsList>
+
+        {assign && <AssignDocument></AssignDocument>}
       </div>
     </div>
   );
