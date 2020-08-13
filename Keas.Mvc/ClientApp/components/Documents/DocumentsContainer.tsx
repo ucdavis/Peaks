@@ -5,12 +5,14 @@ import { Context } from '../../Context';
 import { AppContext } from '../../models/Shared';
 import { useContext, useEffect, useState, useMemo } from 'react';
 import { IDocument } from '../../models/Document';
+import { DocumentsList } from './DocumentsList';
+import { Button } from 'reactstrap';
 
-interface Props {
+interface IProps {
   person: IPerson;
 }
 
-export const DocumentsContainer = (props: Props): JSX.Element => {
+export const DocumentsContainer = (props: IProps): JSX.Element => {
   const ctx = useContext<AppContext>(Context);
 
   const [documents, setDocuments] = useState<IDocument[]>([]);
@@ -39,12 +41,29 @@ export const DocumentsContainer = (props: Props): JSX.Element => {
   }, [canView, ctx, props.person]);
 
   if (!canView) {
-      return;
+    return;
   }
 
   if (loading) {
     return <span>loading...</span>;
   }
 
-  return <span>You have {documents.length} documents</span>;
+  return (
+    <div className='card spaces-color'>
+      <div className='card-header-spaces'>
+        <div className='card-head row justify-content-between'>
+          <h2>
+            <i className='fas fa-briefcase fa-xs' /> Documents
+          </h2>
+          <Button color='link' onClick={() => this._openCreateModal()}>
+            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add
+            Document
+          </Button>
+        </div>
+      </div>
+      <div className='card-content'>
+        <DocumentsList documents={documents}></DocumentsList>
+      </div>
+    </div>
+  );
 };
