@@ -12,6 +12,7 @@ namespace Keas.Core.Models
             public const string EquipMasterAccess = "EquipMasterAccess";
             public const string AccessMasterAccess = "AccessMasterAccess";
             public const string SpaceMasterAccess = "SpaceMasterAccess";
+            public const string DocumentMasterAccess = "DocumentMasterAccess";
             public const string DepartmentAdminAccess = "DepartmentAdminAccess";
             public const string AnyRole = "AnyRole";
             public const string SystemAdminAccess = "SystemAdminAccess";

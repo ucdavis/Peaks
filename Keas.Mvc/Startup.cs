@@ -128,6 +128,7 @@ namespace Keas.Mvc
                 options.AddPolicy(AccessCodes.Codes.KeyMasterAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.AccessMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.SpaceMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.SpaceMaster,Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy(AccessCodes.Codes.DocumentMasterAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.DocumentMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.PersonManagerAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.PersonManager, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.AnyRole, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.SpaceMaster, Role.Codes.DepartmentalAdmin, Role.Codes.AccessMaster, Role.Codes.EquipmentMaster, Role.Codes.KeyMaster, Role.Codes.PersonManager)));
 

@@ -22,9 +22,13 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
   const [assign, setAssign] = useState<boolean>(false);
 
   const canView = useMemo(() => {
-    // TODO: replace with document permissions
-    return PermissionsUtil.canViewWorkstations(ctx.permissions);
-  }, [ctx.permissions]);
+    // TODO: once testing is done, turn on access for all teams 
+    return (
+      ctx.team.slug === 'caes-cru' &&
+      PermissionsUtil.canViewDocuments(ctx.permissions)
+    );
+    // return PermissionsUtil.canViewDocuments(ctx.permissions);
+  }, [ctx]);
 
   useEffect(() => {
     const loadDocuments = async () => {

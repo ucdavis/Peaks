@@ -28,6 +28,7 @@ namespace Keas.Core.Domain
             public const string EquipmentMaster = "EquipMaster";
             public const string AccessMaster = "AccessMaster";
             public const string SpaceMaster = "SpaceMaster";
+            public const string DocumentMaster = "DocumentMaster";
             public const string Admin = "Admin";
 
             public const string PersonManager = "PersonManager";
