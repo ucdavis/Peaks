@@ -61,9 +61,12 @@ namespace Keas.Mvc.Controllers.Api
                 // find the matching envelopeId for this document and update the status
                 var envelope = docusignEnvelopeInfo.Envelopes.FirstOrDefault(e => e.EnvelopeId == doc.EnvelopeId);
 
-                if (envelope == null) {
+                if (envelope == null)
+                {
                     doc.Status = "missing";
-                } else {
+                }
+                else
+                {
                     doc.Status = envelope.Status;
                 }
             }
@@ -83,6 +86,49 @@ namespace Keas.Mvc.Controllers.Api
             var fileStream = await _documentSigningService.DownloadEnvelope(document.EnvelopeId);
 
             return File(fileStream, "application/pdf", document.Name + ".pdf");
+        }
+
+        // Get a specific document's combined pdf
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<TeamDocumentSetting>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> TeamSettings()
+        {
+            var teamSettings = await _context.TeamDocumentSettings
+                .Where(x => x.Team.Slug == Team)
+                .OrderBy(x => x.Name)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return Json(teamSettings);
+        }
+
+        [HttpPost]
+        [ProducesResponseType(typeof(Document), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Create([FromBody] Document document)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var envelopeId = await _documentSigningService.SendTemplate(document.Person.Email, document.Person.Name, document.TemplateId);
+
+            var newDocument = new Document
+            {
+                Name = document.Name,
+                PersonId = document.PersonId,
+                TeamId = document.TeamId,
+                EnvelopeId = envelopeId,
+                TemplateId = document.TemplateId,
+                Active = true,
+                Status = "sent"
+            };
+
+            await _context.Documents.AddAsync(newDocument);
+            // TODO: track create in event service
+            await _context.SaveChangesAsync();
+
+            return Json(newDocument);
         }
     }
 }

@@ -3,11 +3,12 @@ import { IPerson } from '../../models/People';
 import { PermissionsUtil } from '../../util/permissions';
 import { Context } from '../../Context';
 import { AppContext } from '../../models/Shared';
-import { useContext, useEffect, useState, useMemo } from 'react';
-import { IDocument } from '../../models/Document';
+import { useContext, useEffect, useState, useMemo, useCallback } from 'react';
+import { IDocument, IDocumentTemplate } from '../../models/Document';
 import { DocumentsList } from './DocumentsList';
 import { Button } from 'reactstrap';
 import { AssignDocument } from './AssignDocument';
+import { toast } from 'react-toastify';
 
 interface IProps {
   person: IPerson;
@@ -26,8 +27,6 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
   }, [ctx.permissions]);
 
   useEffect(() => {
-    console.log('fetching documents for ', props.person);
-
     const loadDocuments = async () => {
       const result = await ctx.fetch(
         `/api/${ctx.team.slug}/documents/find/${props.person.id}`
@@ -41,6 +40,40 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
       loadDocuments();
     }
   }, [canView, ctx, props.person]);
+
+  const sendDocument = useCallback(
+    async (template: IDocumentTemplate) => {
+      // make the new document we want to create
+      const newDocument: Partial<IDocument> = {
+        person: props.person,
+        personId: props.person.id,
+        team: ctx.team,
+        teamId: ctx.team.id,
+        name: template.name,
+        templateId: template.templateId,
+        status: 'sent'
+      };
+
+      try {
+        const result: IDocument = await ctx.fetch(
+          `/api/${ctx.team.slug}/documents/create`,
+          {
+            body: JSON.stringify(newDocument),
+            method: 'POST'
+          }
+        );
+
+        // add newly created document to the list
+        setDocuments([result, ...documents]);
+        setAssign(false); // close the assign modal
+        toast.success('Document successfully sent for signing!');
+      } catch (e) {
+        toast.error('Error sending document');
+        throw new Error(); // throw error so modal doesn't close
+      }
+    },
+    [ctx, documents, props.person]
+  );
 
   if (!canView) {
     return;
@@ -68,7 +101,12 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
           downloadUrl={`/api/${ctx.team.slug}/documents/get`}
         ></DocumentsList>
 
-        {assign && <AssignDocument></AssignDocument>}
+        <AssignDocument
+          person={props.person}
+          sendDocument={sendDocument}
+          show={assign}
+          setShow={setAssign}
+        ></AssignDocument>
       </div>
     </div>
   );
