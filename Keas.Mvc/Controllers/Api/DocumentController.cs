@@ -20,11 +20,13 @@ namespace Keas.Mvc.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IDocumentSigningService _documentSigningService;
+        private readonly IEventService _eventService;
 
-        public DocumentsController(ApplicationDbContext context, IDocumentSigningService documentSigningService)
+        public DocumentsController(ApplicationDbContext context, IDocumentSigningService documentSigningService, IEventService eventService)
         {
             this._context = context;
             this._documentSigningService = documentSigningService;
+            this._eventService = eventService;
         }
 
         // List all documents for this team
@@ -125,7 +127,7 @@ namespace Keas.Mvc.Controllers.Api
             };
 
             await _context.Documents.AddAsync(newDocument);
-            // TODO: track create in event service
+            await _eventService.TrackCreateDocument(newDocument);
             await _context.SaveChangesAsync();
 
             return Json(newDocument);

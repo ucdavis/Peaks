@@ -44,8 +44,7 @@ namespace Keas.Mvc.Services
         Task<History> AccessAssignmentUpdated(AccessAssignment accessAssignment);
         Task<History> EquipmentAssignmentUpdated(Equipment equipment);
         Task<History> WorkstationAssignmentUpdated(Workstation workstation);
-
-
+        Task<History> DocumentCreated(Document document);
     }
 
     public class HistoryService : IHistoryService
@@ -588,6 +587,22 @@ namespace Keas.Mvc.Services
                 ActionType = "AssignmentUpdated",
                 Workstation = workstation,
                 TargetId = workstation.Assignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+
+        public async Task<History> DocumentCreated(Document document)
+        {
+            var person = await _securityService.GetPerson(document.TeamId);
+            var sentTo = await _context.People.SingleOrDefaultAsync(p => p.Id == document.PersonId && p.TeamId == document.TeamId);
+            var historyEntry = new History
+            {
+                Description = document.GetDescription(nameof(Document), document.Name, person, "Sent to " + person.Name),
+                ActorId = person.UserId,
+                AssetType = "Document",
+                ActionType = "Created",
+                Document = document,
             };
             _context.Histories.Add(historyEntry);
             return historyEntry;
