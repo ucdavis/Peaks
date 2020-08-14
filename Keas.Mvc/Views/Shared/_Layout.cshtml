@@ -52,31 +52,7 @@
 
                 </div>
                 <div class="col-sm-3">
-                    <div class="dropdown teamwrapper">
-                        <h3>Team</h3>
-                        <button class="btn-team dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <div class="row justify-content-between align-items-center">
-                                <div class="teamname">
-                                    @if (!string.IsNullOrWhiteSpace(TempData["TeamName"] as string))
-                                    {
-                                        @TempData["TeamName"]
-                                    }
-                                </div>
-                                <i class="fas fa-caret-down fa-lg"></i>
-                            </div>
-
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            @foreach (var teamItem in await TeamsManager.GetMyTeams())
-                            {
-                                <a class="dropdown-item" href='@string.Format("/{0}/home/index", teamItem.Key)' class="team-link">@teamItem.Value</a>
-                            }
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh Permissions</a>
-                        </div>
-                    </div>
+                    UC Davis Logo
                 </div>
 
             </div>
@@ -96,7 +72,7 @@
                 <span>Menu</span>
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav peaks-nav">
                     @if (TempData["TeamName"] != null)
                     {
                         if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded)
@@ -154,13 +130,43 @@
                             </li>
                         }
 
-                        <li class="nav-item">
+                        <li class="nav-item mr-auto">
                             <a class="nav-link" asp-controller="Help" asp-action="Index">Help</a>
                         </li>
                     }
+                    <li class="nav-item dropdown">
+                        <button class="btn-team dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <div class="row justify-content-between align-items-center">
+                                <div class="teamname">
+                                    @if (!string.IsNullOrWhiteSpace(TempData["TeamName"] as string))
+                                    {
+                                        @TempData["TeamName"]
+                                    }
+                                </div>
+                                <i class="fas fa-caret-down fa-lg"></i>
+                            </div>
+
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @foreach (var teamItem in await TeamsManager.GetMyTeams())
+                            {
+                                <a class="dropdown-item" href='@string.Format("/{0}/home/index", teamItem.Key)' class="team-link">@teamItem.Value</a>
+                            }
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh Permissions</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+
+                    </li>
                 </ul>
-                    <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
-                        <span>Welcome @User.GetNameClaim()</span>
+                    <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0 profile-nav">
+
+                    </div>
+                    <div style="flex-shrink: 0" class="profile-nav">
+                        <label>@User.GetNameClaim()</label>
                         <form class="flexer" asp-area="" asp-controller="Account" asp-action="Logout2" method="post" id="logoutForm">
                             <button type="submit" class="btn btn-link btn-border" style="margin-left: 8px;">Sign out</button>
                         </form>

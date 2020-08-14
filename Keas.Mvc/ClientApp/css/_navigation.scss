@@ -2,6 +2,9 @@ nav {
   background-color: white;
   box-shadow: $box-shadow;
 }
+.peaks-nav {
+  width:100%;
+}
 a.nav-link {
   font-size: 2rem;
   font-family: $sans-bold;
@@ -26,6 +29,7 @@ a.nav-link {
     margin-left: 2px;
   }
 }
+
 // React Tabs
 
 .react-tabs {
