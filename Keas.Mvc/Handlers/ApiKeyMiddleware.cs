@@ -45,15 +45,17 @@ namespace Keas.Mvc.Handlers
             }
 
             // lookup team that this API key has acess to
-            var teamAccess = dbContext.Teams.FirstOrDefault(t => t.ApiCode == headerGuidValue);
-
-            if (teamAccess == null)
+            var teamApi = dbContext.TeamApiCodes.Include(a => a.Team).FirstOrDefault(a => a.ApiCode == headerGuidValue);
+            if (teamApi == null || teamApi.Team == null)
             {
                 // no team found with your auth token, fail
                 context.Response.StatusCode = 401; //UnAuthorized
                 await context.Response.WriteAsync(InvalidApiKeyMessage);
                 return;
             }
+
+            var teamAccess = teamApi.Team;
+
 
             // make sure we have an API user ready to go for this team
             var apiPersonExists = dbContext.People.IgnoreQueryFilters().Any(p => p.UserId == apiSettings.UserId && p.TeamId == teamAccess.Id);
