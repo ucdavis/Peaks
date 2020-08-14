@@ -70,8 +70,9 @@ table {
 
   ul {
     list-style-type: none;
-    padding-left: 0px;
-
+    padding-left: 15px;
+    border-left:4px solid $borders;
+    margin-left:6px;
     li {
       font-family: $sans-bold;
       line-height: 2;
@@ -88,36 +89,54 @@ table {
 }
 
 .report-list.people-color {
+  ul {
+    border-color:$people;
+  }
   h3 i {
     color: $people;
   }
 }
 
 .report-list.equipment-color {
+  ul {
+    border-color:$equipment;
+  }
   h3 i {
     color: $equipment;
   }
 }
 
 .report-list.access-color {
+  ul {
+    border-color:$access;
+  }
   h3 i {
     color: $access;
   }
 }
 
 .report-list.keys-color {
+  ul {
+    border-color:$keys;
+  }
   h3 i {
     color: $keys
   }
 }
 
 .report-list.spaces-color {
+  ul {
+    border-color:$spaces;
+  }
   h3 i {
     color: $spaces;
   }
 }
 
 .report-list.general-color {
+  ul {
+    border-color:$history;
+  }
   h3 i {
     color: $history;
   }
