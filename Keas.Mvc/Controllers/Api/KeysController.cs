@@ -190,7 +190,6 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
-        [ProducesResponseType(typeof(KeyInfo), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(int id)
         {
             var key = await _context.Keys

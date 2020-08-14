@@ -1,8 +1,7 @@
-using System.Collections.Generic;
+using Keas.Core.Domain;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
 
-namespace Keas.Core.Domain
+namespace Keas.Core.Models
 {
     public class KeyInfo
     {
