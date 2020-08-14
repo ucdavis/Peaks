@@ -46,6 +46,8 @@ namespace Keas.Core.Domain
 
         [JsonIgnore]
         public List<GroupXTeam> Groups { get; set; }
+
+        public TeamApiCode TeamApiCode { get; set; }
        
     }
 }
