@@ -7,6 +7,10 @@ interface IProps {
 }
 
 export const DocumentsList = (props: IProps): JSX.Element => {
+  if (props.documents.length === 0) {
+    return <div>No Documents Found</div>;
+  }
+  
   return (
     <div className='table'>
       <table className='table'>

@@ -54,6 +54,10 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Person)
                 .AsNoTracking().ToArrayAsync();
 
+            if (!documents.Any()) {
+                return Json(documents);
+            }
+
             var envelopeIds = documents.Select(d => d.EnvelopeId).ToArray();
 
             var docusignEnvelopeInfo = await _documentSigningService.GetEnvelopes(envelopeIds);
