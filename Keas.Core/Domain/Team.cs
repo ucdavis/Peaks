@@ -25,7 +25,7 @@ namespace Keas.Core.Domain
 
         public const string SlugRegex = "^([a-z0-9]+[a-z0-9\\-]?)+[a-z0-9]$";
 
-        public Guid? ApiCode { get; set; }
+        //public Guid? ApiCode { get; set; } //Replaced with new table
 
         /// <summary>
         /// If has value, notify it when people are added/deleted/activated.
