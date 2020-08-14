@@ -45,7 +45,7 @@ namespace Keas.Mvc.Handlers
             }
 
             // lookup team that this API key has acess to
-            var teamAccess = dbContext.Teams.Include(a => a.TeamApiCode).FirstOrDefault(a => a.TeamApiCode != null && a.TeamApiCode.ApiCode == headerGuidValue);
+            var teamAccess = dbContext.Teams.FirstOrDefault(a => a.TeamApiCode != null && a.TeamApiCode.ApiCode == headerGuidValue);
             if (teamAccess == null)
             {
                 // no team found with your auth token, fail
