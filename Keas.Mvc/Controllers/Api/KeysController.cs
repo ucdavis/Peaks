@@ -1,5 +1,6 @@
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Core.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Keas.Core.Models;
 using Keas.Mvc.Models.KeyViewModels;
 using Dapper;
 using Keas.Core.Extensions;
@@ -30,7 +30,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<KeyInfo>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<KeyPartial>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Search(string q)
         {
             var keys =
@@ -58,7 +58,7 @@ namespace Keas.Mvc.Controllers.Api
 
         // List all keys for a team
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<KeyInfo>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<KeyPartial>), StatusCodes.Status200OK)]
         public async Task<IActionResult> List()
         {
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
@@ -89,7 +89,7 @@ namespace Keas.Mvc.Controllers.Api
 
         // list all keys for a space
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<KeyInfo>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<KeyPartial>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetKeysInSpace(int spaceId)
         {
             var joins = await _context.KeyXSpaces
@@ -121,7 +121,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(KeyInfo), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(KeyPartial), StatusCodes.Status200OK)]
         public async Task<IActionResult> Create([FromBody]CreateKeyViewModel model)
         {
             // TODO Make sure user has permissions
@@ -158,7 +158,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
-        [ProducesResponseType(typeof(KeyInfo), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(KeyPartial), StatusCodes.Status200OK)]
         public async Task<IActionResult> Update(int id, [FromBody]UpdateKeyViewModel model)
         {
             //TODO: check permissions, make sure SN isn't edited 
@@ -190,7 +190,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
-        [ProducesResponseType(typeof(KeyInfo), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(int id)
         {
             var key = await _context.Keys
@@ -284,7 +284,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
-        [ProducesResponseType(typeof(KeyInfo), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(KeyPartial), StatusCodes.Status200OK)]
         public async Task<IActionResult> DisassociateSpace(int id, [FromBody] DisassociateKeyViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team

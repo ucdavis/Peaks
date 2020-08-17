@@ -47,7 +47,6 @@ export const ReactTable = ({ columns, data, initialState, filterTypes }: any) =>
     useSortBy,
     usePagination
   );
-
   return (
     <>
       <table
