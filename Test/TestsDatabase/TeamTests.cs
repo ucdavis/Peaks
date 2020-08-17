@@ -36,7 +36,6 @@ namespace Test.TestsDatabase
         {
             #region Arrange
             var expectedFields = new List<NameAndType>();
-            expectedFields.Add(new NameAndType("ApiCode", "System.Nullable`1[System.Guid]", new List<string>()));
             expectedFields.Add(new NameAndType("BoardingNotificationEmail", "System.String", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"Notification Email\")]",
@@ -67,10 +66,12 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)40, MinimumLength = 3, ErrorMessage = \"Slug must be between 3 and 40 characters\")]",
             }));
+            expectedFields.Add(new NameAndType("TeamApiCode", "Keas.Core.Domain.TeamApiCode", new List<string>()));
             expectedFields.Add(new NameAndType("TeamPermissions", "System.Collections.Generic.ICollection`1[Keas.Core.Domain.TeamPermission]", new List<string>
             {
                 "[Newtonsoft.Json.JsonIgnoreAttribute()]",
             }));
+            
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(Team));
