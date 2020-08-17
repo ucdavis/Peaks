@@ -21,10 +21,12 @@ namespace Keas.Core.Services
     public interface IEmailService
     {
         Task SendNotificationMessage(User user);
+        Task SendSampleNotificationMessage();
         Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model);
-
+        Task SendSampleExpiringMessage();
+        Task SendSampleTeamExpiringMessage();
         Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model);
-
+        Task SendSamplePersonNotification();
         Task SendPersonNotification();
     }
 
@@ -44,6 +46,54 @@ namespace Keas.Core.Services
             _client = new SmtpClient(_emailSettings.Host, _emailSettings.Port) { Credentials = new NetworkCredential(_emailSettings.UserName, _emailSettings.Password), EnableSsl = true };
         }
 
+        public async Task SendSampleTeamExpiringMessage()
+        {
+            var toEmails = new MailAddress[] {
+                new MailAddress("notifyme@ucdavis.edu", "User PEAKS")
+            }.ToList();
+            var expiringItems = new ExpiringItemsEmailModel
+            {
+                Equipment = new Equipment[] { new Equipment{
+                    Name = "Desktop",
+                    Assignment = new EquipmentAssignment { ExpiresAt = DateTime.UtcNow }
+                    }
+                }.ToArray(),
+                Workstations = new Workstation[] { new Workstation{
+                    Name = "Room",
+                    Assignment = new WorkstationAssignment { ExpiresAt = DateTime.UtcNow }
+                    }
+                }.ToArray(),
+                KeySerials = new KeySerial[] { new KeySerial{
+                    Key = new Key { Code = "Key" },
+                    KeySerialAssignment = new KeySerialAssignment { ExpiresAt = DateTime.UtcNow }
+                    }
+                }.ToArray(),
+                AccessAssignments = new AccessAssignment[] { new AccessAssignment{
+                    Access = new Access { Name = "Access" }
+                    }
+                }.ToArray(),
+                Person = new Person
+                {
+                    Email = "notifyme@ucdavis.edu",
+                    FirstName = "Expire",
+                    LastName = "Person",
+                    Team = new Team { Id = 1, Name = "Test", Slug = "Slug" }
+                }
+            };
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Team Expiration Notification"), Subject = "PEAKS Admin Expiring Items Notification" })
+            {
+                toEmails.ForEach(message.To.Add);
+
+                // body is our fallback text and we'll add an HTML view as an alternate.
+                message.Body = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
+
+                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+                message.AlternateViews.Add(htmlView);
+
+                await _client.SendMailAsync(message);
+            }
+        }
+    
         public async Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model)
         {
             if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
@@ -64,15 +114,15 @@ namespace Keas.Core.Services
 
             if (!expiringItems.AccessAssignments.Any() && !expiringItems.KeySerials.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
             {
-                return;                
+                return;
             }
 
             var toUsers = await _dbContext.TeamPermissions.Where(
-                t => t.TeamId == teamId && 
-                ((t.Role.Name == Role.Codes.DepartmentalAdmin) || 
+                t => t.TeamId == teamId &&
+                ((t.Role.Name == Role.Codes.DepartmentalAdmin) ||
                 (t.Role.Name == Role.Codes.KeyMaster && expiringItems.KeySerials.Any()) ||
-                (t.Role.Name == Role.Codes.AccessMaster && expiringItems.AccessAssignments.Any()) || 
-                (t.Role.Name == Role.Codes.EquipmentMaster && expiringItems.Equipment.Any()) || 
+                (t.Role.Name == Role.Codes.AccessMaster && expiringItems.AccessAssignments.Any()) ||
+                (t.Role.Name == Role.Codes.EquipmentMaster && expiringItems.Equipment.Any()) ||
                 (t.Role.Name == Role.Codes.SpaceMaster && expiringItems.Workstations.Any()))).Select(t => t.User).ToListAsync();
 
             var toEmails = toUsers
@@ -80,7 +130,8 @@ namespace Keas.Core.Services
                  .Select(u => new MailAddress(u.Email, u.Name))
                  .ToList();
 
-            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Admin Expiring Items Notification" }) {
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Admin Expiring Items Notification" })
+            {
                 toEmails.ForEach(message.To.Add);
 
                 // body is our fallback text and we'll add an HTML view as an alternate.
@@ -90,6 +141,50 @@ namespace Keas.Core.Services
                 message.AlternateViews.Add(htmlView);
 
                 await _client.SendMailAsync(message);
+            }
+        }
+        
+        public async Task SendSamplePersonNotification()
+        {
+            var personEmails = new PersonNotification [] { new PersonNotification{
+                PersonName = "User Peaks",
+                PersonEmail = "donotreply@peaks-notify.ucdavis.edu",
+                NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
+                Team = new Team { Id = 1, Name = "Test", Slug = "Slug" }
+            }
+            }.ToArray();
+
+            foreach (var personEmail in personEmails)
+            {
+                //Get the notifications to send to this user.                
+                var personNotifications = new PersonNotification [] { new PersonNotification{
+                    PersonName = "User Peaks",
+                    PersonEmail = "donotreply@peaks-notify.ucdavis.edu",
+                    NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
+                    Team = new Team { Id = 1, Name = "Test", Slug = "Slug" }
+                }
+                }.GroupBy(a => a.TeamId).ToList();
+
+                using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Person Notification"), Subject = "PEAKS People Notification" })
+                {
+                    message.To.Add(personEmail.NotificationEmail);
+
+                    // body is our fallback text and we'll add an HTML view as an alternate.
+                    message.Body = "The people in your teams have changed";
+
+                    var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications), new ContentType(MediaTypeNames.Text.Html));
+                    message.AlternateViews.Add(htmlView);
+
+                    try
+                    {
+                        await _client.SendMailAsync(message);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e.Message);
+                        continue;
+                    }
+                }
             }
         }
 
@@ -116,11 +211,12 @@ namespace Keas.Core.Services
             {
                 //Get the notifications to send to this user.                
                 var personNotifications = await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail == personEmail).Include(a => a.Team).OrderBy(a => a.TeamId).ThenBy(a => a.ActionDate).GroupBy(a => a.TeamId).ToListAsync();
-                
+
                 //Send the Email
                 Log.Information($"Sending person notification email to {personEmail}");
 
-                using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS People Notification" }) {
+                using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS People Notification" })
+                {
                     message.To.Add(personEmail);
 
                     // body is our fallback text and we'll add an HTML view as an alternate.
@@ -159,6 +255,53 @@ namespace Keas.Core.Services
             return;
         }
 
+        public async Task SendSampleExpiringMessage()
+        {
+            var person = new Person
+            {
+                Email = "notifyme@ucdavis.edu",
+                FirstName = "Expire",
+                LastName = "Person",
+                Team = new Team { Id = 1, Name = "Test", Slug = "Slug" }
+            };
+            var expiringItems = new ExpiringItemsEmailModel
+            {
+                Equipment = new Equipment[] { new Equipment{
+                    Name = "Desktop",
+                    Assignment = new EquipmentAssignment { ExpiresAt = DateTime.UtcNow }
+                    }
+                }.ToArray(),
+                Workstations = new Workstation[] { new Workstation{
+                    Name = "Room",
+                    Assignment = new WorkstationAssignment { ExpiresAt = DateTime.UtcNow }
+                    }
+                }.ToArray(),
+                KeySerials = new KeySerial[] { new KeySerial{
+                    Key = new Key { Code = "Key" },
+                    KeySerialAssignment = new KeySerialAssignment { ExpiresAt = DateTime.UtcNow }
+                    }
+                }.ToArray(),
+                AccessAssignments = new AccessAssignment[] { new AccessAssignment{
+                    Access = new Access { Name = "Access" }
+                    }
+                }.ToArray(),
+                Person = person
+            };
+
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Expiring Items" })
+            {
+                message.To.Add(new MailAddress(person.Email, person.Name));
+
+                // body is our fallback text and we'll add an HTML view as an alternate.
+                message.Body = BuildExpiringTextMessage(expiringItems);
+
+                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+                message.AlternateViews.Add(htmlView);
+
+                await _client.SendMailAsync(message);
+            }
+        }
+
         public async Task SendExpiringMessage(int personId, ExpiringItemsEmailModel model)
         {
             if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
@@ -170,18 +313,19 @@ namespace Keas.Core.Services
 
             // build model
             var expiringItems = ExpiringItemsEmailModel.Create(
-                model.AccessAssignments.Where(a => a.PersonId == personId).ToList(), 
-                model.KeySerials.Where(a => a.KeySerialAssignment != null && a.KeySerialAssignment.PersonId == personId).ToList(), 
-                model.Equipment.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(), 
+                model.AccessAssignments.Where(a => a.PersonId == personId).ToList(),
+                model.KeySerials.Where(a => a.KeySerialAssignment != null && a.KeySerialAssignment.PersonId == personId).ToList(),
+                model.Equipment.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(),
                 model.Workstations.Where(a => a.Assignment != null && a.Assignment.PersonId == personId).ToList(),
                 person);
-            
+
             if (!expiringItems.AccessAssignments.Any() && !expiringItems.KeySerials.Any() && !expiringItems.Equipment.Any() && !expiringItems.Workstations.Any())
             {
-                return;                
+                return;
             }
 
-            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Expiring Items" }) {
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Expiring Items" })
+            {
                 message.To.Add(new MailAddress(person.Email, person.Name));
 
                 // body is our fallback text and we'll add an HTML view as an alternate.
@@ -225,7 +369,7 @@ namespace Keas.Core.Services
         {
             var message = new StringBuilder();
             var count = expiringItems.KeySerials.Count() + expiringItems.Equipment.Count() + expiringItems.Workstations.Count() + expiringItems.AccessAssignments.Count();
-            var helplink = "https://peaks.ucdavis.edu/" + expiringItems.Person.Team.Slug +"/Help";
+            var helplink = "https://peaks.ucdavis.edu/" + expiringItems.Person.Team.Slug + "/Help";
 
             var plural = "item";
             if (count > 1)
@@ -304,7 +448,7 @@ namespace Keas.Core.Services
                     message.AppendLine($"{notification.Details}, {notification.DateTimeCreated.ToPacificTime():g}");
                 }
             }
-            
+
             message.AppendLine();
             message.AppendLine("This email was automatically generated please do not reply to it as the mailbox is not monitored.");
             return message.ToString();
@@ -335,6 +479,33 @@ namespace Keas.Core.Services
             assignment.NextNotificationDate = DateTime.UtcNow.Date.AddDays(1);
         }
 
+        public async Task SendSampleNotificationMessage()
+        {
+            var user = new User { Email = "notifyme@ucdavis.edu", FirstName = "Notify", LastName = "Person" };
+            var notifications = new Notification[] { new Notification {
+                TeamId = 1,
+                User = user,
+                Details = "This is our details",
+                DateTimeCreated = DateTime.UtcNow,
+                Team = new Team { Id = 1, Name = "Test" }
+                }
+            }.GroupBy(g => g.TeamId).ToArray();
+
+            //TODO: Do something with these notifications to build them into a single email.
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Notification" })
+            {
+                message.To.Add(new MailAddress(user.Email, user.Name));
+
+                // body is our fallback text and we'll add an HTML view as an alternate.
+                message.Body = BuildNotificationTextMessage(notifications.ToList());
+
+                var htmlView = AlternateView.CreateAlternateViewFromString(await GetRazorEngine().CompileRenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList()), new ContentType(MediaTypeNames.Text.Html));
+                message.AlternateViews.Add(htmlView);
+
+                await _client.SendMailAsync(message);
+            }
+        }
+
         public async Task SendNotificationMessage(User user)
         {
             if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
@@ -350,7 +521,8 @@ namespace Keas.Core.Services
             }
 
             //TODO: Do something with these notifications to build them into a single email.
-            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Notification" }) {
+            using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Notification" })
+            {
                 message.To.Add(new MailAddress(user.Email, user.Name));
 
                 // body is our fallback text and we'll add an HTML view as an alternate.
@@ -368,7 +540,7 @@ namespace Keas.Core.Services
                 {
                     notification.Pending = false;
                     notification.DateTimeSent = DateTime.UtcNow;
-                    _dbContext.Notifications.Update(notification);                
+                    _dbContext.Notifications.Update(notification);
                 }
             }
 

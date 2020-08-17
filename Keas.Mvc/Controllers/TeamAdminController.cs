@@ -434,7 +434,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> RegenerateApiCode()
         {
-            var team = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
+            var team = await _context.Teams.Include(a => a.TeamApiCode).SingleOrDefaultAsync(x => x.Slug == Team);
             if (team == null)
             {
                 return NotFound();
@@ -445,12 +445,17 @@ namespace Keas.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> RegenerateApiCode(Team team)
         {
-            var teamToEdit = await _context.Teams.SingleOrDefaultAsync(x => x.Slug == Team);
+            var teamToEdit = await _context.Teams.Include(a => a.TeamApiCode).SingleOrDefaultAsync(x => x.Slug == Team);
             if (teamToEdit == null)
             {
                 return NotFound();
             }
-            teamToEdit.ApiCode = Guid.NewGuid();
+
+            if (teamToEdit.TeamApiCode == null)
+            {
+                teamToEdit.TeamApiCode = new TeamApiCode();
+            }
+            teamToEdit.TeamApiCode.ApiCode = Guid.NewGuid();
             await _context.SaveChangesAsync();
             Message = "API Code updated";
 

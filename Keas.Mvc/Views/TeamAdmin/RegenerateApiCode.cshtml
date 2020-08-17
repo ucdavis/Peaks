@@ -8,7 +8,7 @@
             <div class="card">
                 <div class="card-header-primary">
                     <div class="card-head">
-                        @if (Model.ApiCode.HasValue)
+                        @if (Model.TeamApiCode != null)
                         {
                             <h2>Regenerate API Code</h2>
                             <small class="form-text text-muted">Note, if you change the API code, make sure you update any of your external processes that may be using the old one.</small>
@@ -21,15 +21,15 @@
                         }
                     </div>
                 </div>
-                @if (Model.ApiCode.HasValue)
+                @if (Model.TeamApiCode != null)
                 {
                     <div class="card-content">
                         <p><b>Current API Code:</b></p>
-                        <p>@Html.DisplayFor(model => model.ApiCode)</p>
+                        <p>@Html.DisplayFor(model => model.TeamApiCode.ApiCode)</p>
                     </div>
                 }
                 <div style="padding: 19px 20px 20px;">
-                    @if (Model.ApiCode.HasValue)
+                    @if (Model.TeamApiCode != null)
                     {
                         <button type="submit" class="btn btn-primary">
                             <i class="icon-save button-icon"></i>
@@ -53,7 +53,7 @@
                     <h2>API Links</h2>
                 </div>
             </div>
-            @if (Model.ApiCode.HasValue)
+            @if (Model.TeamApiCode != null)
             {
                 <div class="card-content">
                     <div class="card-head">
@@ -65,12 +65,12 @@
                     <div class="card-head">
                         <h2>(Obsolete)</h2>
                     </div>
-                    <p>People Feed:<br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode</p>
-                    <p>People with Workstations: <br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.ApiCode?includeSpace=yes</p>
-                    <p>Workstations: <br/>@Context.Request.Host/@Model.Slug/Feed/WorkstationFeed/@Model.ApiCode</p>
-                    <p>Equipment: <br/>@Context.Request.Host/@Model.Slug/Feed/EquipmentFeed/@Model.ApiCode</p>
-                    <p>Access: <br/>@Context.Request.Host/@Model.Slug/Feed/AccessFeed/@Model.ApiCode</p>
-                    <p>Keys: <br/>@Context.Request.Host/@Model.Slug/Feed/KeyFeed/@Model.ApiCode</p>
+                    <p>People Feed:<br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.TeamApiCode.ApiCode</p>
+                    <p>People with Workstations: <br/>@Context.Request.Host/@Model.Slug/Feed/TeamFeed/@Model.TeamApiCode.ApiCode?includeSpace=yes</p>
+                    <p>Workstations: <br/>@Context.Request.Host/@Model.Slug/Feed/WorkstationFeed/@Model.TeamApiCode.ApiCode</p>
+                    <p>Equipment: <br/>@Context.Request.Host/@Model.Slug/Feed/EquipmentFeed/@Model.TeamApiCode.ApiCode</p>
+                    <p>Access: <br/>@Context.Request.Host/@Model.Slug/Feed/AccessFeed/@Model.TeamApiCode.ApiCode</p>
+                    <p>Keys: <br/>@Context.Request.Host/@Model.Slug/Feed/KeyFeed/@Model.TeamApiCode.ApiCode</p>
                 </div>
             }
             else
