@@ -17,7 +17,10 @@ a.nav-link {
   }
 }
 .navbar {
-  padding: 0.8rem 0rem;
+  padding: 0;
+  .nav-item {
+    align-self:center;
+  }
 }
 .navbar-toggler {
   color: $primary-font !important;
@@ -29,6 +32,26 @@ a.nav-link {
     margin-left: 2px;
   }
 }
+
+.nav-actions {
+  text-align:left;
+  border-left:1px solid $borders;
+  padding: 0.8rem 1.6rem;
+  label {
+    font-size:1.8rem;
+    font-family: $sans-bold;
+    margin-bottom:0;
+  }
+  button {
+    border:none;
+    box-shadow:none;
+    color:$secondary-font;
+    text-decoration:underline;
+    padding:0;
+    font-size:1.6rem;
+  }
+}
+
 
 // React Tabs
 

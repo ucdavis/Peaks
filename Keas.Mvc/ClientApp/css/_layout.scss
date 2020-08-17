@@ -24,6 +24,7 @@ body {
   padding: 0;
   width: 98%;
   max-width: 1440px;
+  min-width:360px;
   @include breakpoint(sm) {
     width: 96%;
     max-width: 1440px;
@@ -41,23 +42,23 @@ body {
     max-width: 1440px;
   }
 }
-
-.logo {
-  margin-top: 7px;
-
-  g#logocolor {
-    fill: $primary-color;
-  }
-}
 header {
   background-color: white;
   padding: 8px 0px;
-  .logowrapper {
-    margin-left: 10px;
-    @include breakpoint(xsm) {
-      text-align: center;
-      margin-left: 0px;
-      margin-bottom: 8px;
+  @include breakpoint(xsm) {
+    text-align: center;
+    margin-left: 0px;
+    margin-bottom: 8px;
+  }
+  .col-ucdavis {
+    text-align:right;
+    align-self: center;
+     @include breakpoint(xsm) {
+      text-align:center;
+      img {
+        margin-top:8px;
+        width:25%;
+      }
     }
   }
 }
