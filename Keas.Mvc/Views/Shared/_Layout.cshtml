@@ -133,11 +133,11 @@
                             </li>
                         }
 
-                        <li class="nav-item mr-auto">
+                        <li class="nav-item">
                             <a class="nav-link" asp-controller="Help" asp-action="Index">Help</a>
                         </li>
                     }
-                    <li class="nav-item dropdown nav-actions">
+                    <li class="ml-auto nav-item dropdown nav-actions">
                         <label>
                             @if (!string.IsNullOrWhiteSpace(TempData["TeamName"] as string))
                                     {

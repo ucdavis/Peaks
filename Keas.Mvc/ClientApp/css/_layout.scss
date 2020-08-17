@@ -52,7 +52,9 @@ header {
   }
   .col-ucdavis {
     text-align:right;
-    align-self: center;
+    img {
+      width:66%;
+    }
      @include breakpoint(xsm) {
       text-align:center;
       img {
