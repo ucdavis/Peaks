@@ -35,6 +35,9 @@
 </head>
 
 <body>
+    <div class="page-wrap">
+
+ 
   <header>
     @if (Configuration["Environment:ShowTestBanner"] == "Yes")
     {
@@ -199,7 +202,7 @@
     <main role="main" class="main-content-wrapper container">
         @RenderBody()
     </main>
-
+</div>
     <footer class="container">
         <p>Copyright &copy; <span id="copywrite-year"></span> The Regents of the University of California, Davis campus. All rights reserved.</p>
     </footer>
