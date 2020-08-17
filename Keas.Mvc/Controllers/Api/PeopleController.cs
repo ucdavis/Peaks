@@ -127,6 +127,7 @@ namespace Keas.Mvc.Controllers.Api
                 accessCount = r.AccessCount,
                 keyCount = r.KeyCount,
                 workstationCount = r.WorkstationCount,
+                active = r.Active, //This should always be false....
             });
 
             return Json(people);
