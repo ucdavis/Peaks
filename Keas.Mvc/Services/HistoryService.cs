@@ -598,7 +598,7 @@ namespace Keas.Mvc.Services
             var sentTo = await _context.People.SingleOrDefaultAsync(p => p.Id == document.PersonId && p.TeamId == document.TeamId);
             var historyEntry = new History
             {
-                Description = document.GetDescription(nameof(Document), document.Name, person, "Sent to " + person.Name),
+                Description = document.GetDescription(nameof(Document), document.Name, person, "Sent to " + sentTo.Name),
                 ActorId = person.UserId,
                 AssetType = "Document",
                 ActionType = "Created",
