@@ -166,6 +166,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> GetFullHistory(int id)
         {
             var history = await _context.Histories.Where(x => x.TargetId == id)
+                .IgnoreQueryFilters()
                 .OrderByDescending(x => x.ActedDate)
                 .AsNoTracking().ToListAsync();
 

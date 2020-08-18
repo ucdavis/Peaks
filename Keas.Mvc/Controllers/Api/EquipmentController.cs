@@ -372,15 +372,16 @@ namespace Keas.Mvc.Controllers.Api
         /// Takes the top 5 history records
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="max">Defaults to 5</param>
         /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetHistory(int id)
+        public async Task<IActionResult> GetHistory(int id, int max = 5)
         {
             var history = await _context.Histories
                 .Where(x => x.AssetType == "Equipment" && x.Equipment.Team.Slug == Team && x.EquipmentId == id)
                 .OrderByDescending(x => x.ActedDate)
-                .Take(5)
+                .Take(max)
                 .AsNoTracking().ToListAsync();
 
             return Json(history);
