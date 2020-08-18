@@ -55,7 +55,7 @@ namespace Test.TestsController
         [Fact]
         public void TestControllerContainsExpectedNumberOfPublicMethods()
         {
-            ControllerReflection.ControllerPublicMethods(10);
+            ControllerReflection.ControllerPublicMethods(13);
         }
 
         [Fact]
@@ -124,6 +124,24 @@ namespace Test.TestsController
             ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
             responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
             responseType.ElementAt(0).Type.Name.ShouldBe("Access");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
+            //11
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("ListInactive", 3 + countAdjustment, "ListInactive", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("ListInactive", 3 + countAdjustment, "ListInactive", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("ListInactive", 3 + countAdjustment, "List", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Access");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
+            //12
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetHistory", 3 + countAdjustment, "GetHistory", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetHistory", 3 + countAdjustment, "GetHistory", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("GetHistory", 3 + countAdjustment, "GetHistory", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("History");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
+            //13
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetFullHistory", 3 + countAdjustment, "GetFullHistory", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetFullHistory", 3 + countAdjustment, "GetFullHistory", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("GetFullHistory", 3 + countAdjustment, "GetFullHistory", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("History");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
         }
 
