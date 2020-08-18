@@ -243,7 +243,7 @@ namespace Keas.Mvc.Controllers.Api
         /// Defaults to a max of 5 records returned
         /// </summary>
         /// <param name="id"></param>
-        /// <para name="max">the max number of record to take. Defaults to 5</para>
+        /// <param name="max">the max number of record to take. Defaults to 5</param>
         /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
