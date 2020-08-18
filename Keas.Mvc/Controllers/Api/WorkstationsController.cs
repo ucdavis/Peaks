@@ -122,19 +122,42 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstations);
         }
 
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Details(int id)
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Workstation>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ListInactive()
         {
-            var workstation = await _context.Workstations
-                .Where(w => w.Team.Slug == Team)
+            var workstations = await _context.Workstations
+                .IgnoreQueryFilters()
+                .Where(w => w.Team.Slug == Team && !w.Active )
                 .Include(w => w.Assignment)
-                    .ThenInclude(w => w.Person)
+                .ThenInclude(w => w.Person)
                 .Include(w => w.Space)
                 .Include(w => w.Attributes)
                 .Include(w => w.Team)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(w => w.Id == id);
+                .AsNoTracking().ToArrayAsync();
+
+            return Json(workstations);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Details(int id, bool showDeleted = false)
+        {
+            var workstationQuery = _context.Workstations
+                .Where(w => w.Team.Slug == Team)
+                .Include(w => w.Assignment)
+                .ThenInclude(w => w.Person)
+                .Include(w => w.Space)
+                .Include(w => w.Attributes)
+                .Include(w => w.Team)
+                .AsNoTracking();
+
+            if (showDeleted)
+            {
+                workstationQuery = workstationQuery.IgnoreQueryFilters();
+            }
+
+            var workstation = await workstationQuery.SingleOrDefaultAsync(w => w.Id == id);
 
             if (workstation == null)
             {
@@ -293,14 +316,39 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
+        /// <summary>
+        /// Return history records
+        /// Defaults to a max of 5 records returned
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="max">Defaults to 5</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetHistory(int id)
+        public async Task<IActionResult> GetHistory(int id, int max = 5)
         {
             var history = await _context.Histories
                 .Where(h => h.AssetType == "Workstation" && h.Workstation.Team.Slug == Team && h.WorkstationId == id)
                 .OrderByDescending(x => x.ActedDate)
-                .Take(5)
+                .Take(max)
+                .AsNoTracking().ToListAsync();
+
+            return Json(history);
+        }
+
+        /// <summary>
+        /// Return all history records
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetFullHistory(int id)
+        {
+            var history = await _context.Histories
+                .IgnoreQueryFilters()
+                .Where(h => h.AssetType == "Workstation" && h.Workstation.Team.Slug == Team && h.WorkstationId == id)
+                .OrderByDescending(x => x.ActedDate)
                 .AsNoTracking().ToListAsync();
 
             return Json(history);
