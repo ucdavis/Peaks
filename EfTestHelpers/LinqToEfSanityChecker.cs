@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Buildalyzer;
@@ -8,6 +9,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.FindSymbols;
+using Microsoft.CodeAnalysis.Text;
 using Microsoft.EntityFrameworkCore;
 
 namespace EfTestHelpers
@@ -19,10 +21,14 @@ namespace EfTestHelpers
 
         private readonly LinqToEfSanityCheckerOptions _options;
 
+        private readonly List<TextSpan> _topLevelSpans;
+
+
         public LinqToEfSanityChecker(string solutionPath, LinqToEfSanityCheckerOptions options)
         {
             _solutionPath = solutionPath;
             _options = options;
+            _topLevelSpans = new List<TextSpan>();
         }
 
         public async IAsyncEnumerable<LinqToEfSanityCheckerContext> CheckEfQueries()
@@ -35,6 +41,8 @@ namespace EfTestHelpers
 
         private async IAsyncEnumerable<LinqToEfSanityCheckerContext> GetLinqToEfCalls()
         {
+            _topLevelSpans.Clear();
+
             var analyzerManager = new AnalyzerManager(_solutionPath, new AnalyzerManagerOptions
             {
 
@@ -45,33 +53,39 @@ namespace EfTestHelpers
 
             var context = new LinqToEfSanityCheckerContext();
 
-            if (!_options.SolutionFilter(context, workspace.CurrentSolution))
-                yield break;
-
             context = context.SetSolution(workspace.CurrentSolution);
+
+            var relativePathBase = Path.Combine(_solutionPath, "..");
 
             var uniqueInvocationExpressions = new HashSet<string>();
 
             foreach (var p in context.Solution.Projects
-                .Where(p => _options.ProjectFilter(context, p, p.Name)))
+                .Where(p => _options.ProjectFilter(context, p, p.Name))
+                .OrderBy(p => p.Name))
             {
                 context = context.SetProject(p);
-
                 context = context.SetCompilation(await context.Project.GetCompilationAsync());
 
-                context = context.SetQueryableExtensionsSymbol(context.Compilation.GetTypeByMetadataName(
-                        "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions"));
+                var efQueryableExtensionsSymbol = context.Compilation.GetTypeByMetadataName(
+                        "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions");
+                var linqQueryableExtensionsSymbol = context.Compilation.GetTypeByMetadataName(
+                    "System.Linq.Queryable");
 
-                if (context.QueryableExtensionsSymbol == null)
-                    continue; // EntityFrameworkQueryableExtensions not referenced from this project
+                if (efQueryableExtensionsSymbol == null && linqQueryableExtensionsSymbol == null)
+                    continue; // No IQueryable extension methods referenced from this project
 
-                var methodSymbols = context.QueryableExtensionsSymbol.GetMethods()
-                    .Where(m => m.IsExtensionMethod && m.Parameters.FirstOrDefault()?.Type.Name == "IQueryable")
+                // Find all extension methods that might be used against an Ef Queryable
+                var methodSymbols = efQueryableExtensionsSymbol.GetMethods()
+                    .Union(efQueryableExtensionsSymbol.GetMethods())
+                    .Where(m => m.IsExtensionMethod && (m.Parameters.FirstOrDefault()?.Type.Name.Contains("Queryable") ?? false))
                     .ToArray();
 
                 var callerInfos = methodSymbols
                     .SelectMany(m => SymbolFinder.FindCallersAsync(m, context.Solution).GetAwaiter().GetResult())
                     .Where(s => _options.CallerInfoFilter(context, s))
+                    // make ordering consistent from one run to the next
+                    .OrderBy(c => context.Project.GetDocument(c.CallingSymbol.DeclaringSyntaxReferences[0].GetSyntax().SyntaxTree).FilePath)
+                    .ThenBy(c => c.CallingSymbol.DeclaringSyntaxReferences[0].Span.Start)
                     .ToArray();
 
                 foreach (var callerInfo in callerInfos)
@@ -82,46 +96,60 @@ namespace EfTestHelpers
 
                     var document = context.Project.GetDocument(callerSyntax.SyntaxTree);
 
-                    if (!_options.DocumentFilter(context, document))
+                    if (document == null || !_options.DocumentFilter(context, document))
                         continue;
 
                     context = context.SetDocument(document);
+                    context = context.SetFilePath(Path.GetRelativePath(relativePathBase, document.FilePath));
+                    context = context.SetLineNumber(callerSyntax.GetLineNumber());
+                    context = context.SetMethodName(callerInfo.CallingSymbol.Name);
 
-                    var model = context.Compilation.GetSemanticModel(await context.Document.GetSyntaxTreeAsync());
+                    var model = await document.GetSemanticModelAsync();
 
                     var context1 = context; // to avoid access to modified closure
                     var invocationSyntaxes = callerSyntax.DescendantNodes()
                         .OfType<InvocationExpressionSyntax>()
                         .Where(i => _options.InvocationSyntaxFilter(context1, i));
 
-                    foreach (var invocationSyntax in invocationSyntaxes)
+                    foreach (var invocationSyntax in invocationSyntaxes.OrderBy(s => s.Span.Start))
                     {
-                        context = context.SetInvocationSyntax(invocationSyntax);
-
-                        // make sure the methodSymbol actually is from EntityFrameworkQueryableExtensions 
-                        var efMethodSymbol = model.GetSymbolInfo(context.InvocationSyntax).Symbol as IMethodSymbol;
-                        if (!SymbolEqualityComparer.Default.Equals(efMethodSymbol?.ContainingSymbol, context.QueryableExtensionsSymbol))
+                        // We don't want to return a different context for any nested expressions since they are
+                        // already encapsulated in the top-level expressions for a given Caller
+                        if (_topLevelSpans.Any(s => s.Contains(invocationSyntax.Span)))
                             continue;
 
-                        if (!_options.MethodSymbolFilter(context, efMethodSymbol))
+                        context = context.SetExtensionMethodInvocation(invocationSyntax);
+
+                        // make sure the methodSymbol actually is an Ef or Linq Queryable extension method
+                        var methodSymbol = model.GetSymbolInfo(context.ExtensionMethodInvocation).Symbol as IMethodSymbol;
+
+                        if (SymbolEqualityComparer.Default.Equals(methodSymbol?.ContainingSymbol, efQueryableExtensionsSymbol))
+                            context = context.SetExtensionMethodOwner(QueryableExtensionsOwner.Ef);
+                        else if (SymbolEqualityComparer.Default.Equals(methodSymbol?.ContainingSymbol,
+                            linqQueryableExtensionsSymbol))
+                            context = context.SetExtensionMethodOwner(QueryableExtensionsOwner.Linq);
+                        else
                             continue;
 
-                        context = context.SetDataFlowAnalysis(model.AnalyzeDataFlow(context.InvocationSyntax));
-                        if (!context.DataFlowAnalysis.Succeeded)
+                        if (!_options.MethodSymbolFilter(context, methodSymbol))
+                            continue;
+
+                        context = context.SetExtensionMethod(methodSymbol);
+                        context = context.SetInvocationSetDataFlowAnalysis(model.AnalyzeDataFlow(context.ExtensionMethodInvocation));
+
+                        _topLevelSpans.Add(context.ExtensionMethodInvocation.Span);
+
+                        if (!context.InvocationDataFlowAnalysis.Succeeded)
                         {
                             yield return context.AddErrorMessage("DataFlowAnalysis did not succeed.");
                             continue;
                         }
 
-                        if (uniqueInvocationExpressions.Add(context.InvocationSyntax.ToString()))
+                        if (uniqueInvocationExpressions.Add(context.ExtensionMethodInvocation.ToString()))
                             yield return context;
                     }
                 }
             }
-
-            // look into https://github.com/Testura/Testura.Code
-
-
         }
 
     }

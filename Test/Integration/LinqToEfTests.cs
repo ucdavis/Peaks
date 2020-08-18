@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 using System.Text;
 using System.Threading.Tasks;
 using Buildalyzer;
@@ -19,6 +20,7 @@ using Microsoft.CodeAnalysis.CSharp.Extensions;
 using Microsoft.CodeAnalysis.FindSymbols;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.VisualBasic.Syntax;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -50,11 +52,16 @@ namespace Test.Integration
             var slnPath =
                 Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), $"..", "..", "..", "..", "Keas.sln"));
 
-            var relativePathBase = Path.Combine(slnPath, "..");
+            
 
-            var options = new LinqToEfSanityCheckerOptions()
-                .ExcludeProjectsByName("Test", "Keas.Sql", "Keas.Jobs.Core")
-                .IncludeAllEntityFrameworkQueryableExtensions();
+            var options = LinqToEfSanityCheckerOptions
+                .CreateDefault("Test", "Keas.Sql", "Keas.Jobs.Core", "Keas.Jobs.SendMail")
+                .AddOutputWriter(message => _output.WriteLine(message));
+
+            AssemblyLoadContext.Default.Resolving += (context, name) =>
+            {
+                return null;
+            };
 
             var sanityChecker = new LinqToEfSanityChecker(slnPath, options);
 
@@ -63,11 +70,18 @@ namespace Test.Integration
 
             foreach (var c in contexts)
             {
-                var path = Path.GetRelativePath(relativePathBase, c.Document.FilePath);
-                var lineNumber = c.InvocationSyntax.SyntaxTree.GetLineSpan(c.InvocationSyntax.Span).StartLinePosition.Line;
-                var callingMethod = c.CallerInfo.CallingSymbol.Name;
+                _output.WriteLine($"**********{Environment.NewLine}Expression {++itemNum}, Line {c.LineNumber} of {c.FilePath}, method {c.MethodName}");
 
-                _output.WriteLine($"Expression {++itemNum}, Line {lineNumber} of {path}, method {callingMethod} {Environment.NewLine}{c.InvocationSyntax}{Environment.NewLine}");
+                var builder = new EfQueryableBuilder(contexts[0], options);
+                try
+                {
+                    builder.Visit(c.ExtensionMethodInvocation);
+                }
+                catch (ArgumentException e) when (e.Message.Contains("'''Syntax node is not within syntax tree"))
+                {
+                    _output.WriteLine(e.Message);
+
+                }
             }
 
             //var client = _factory.GetKeasClient(db =>

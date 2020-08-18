@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -9,33 +10,57 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EfTestHelpers
 {
+    public enum QueryableExtensionsOwner
+    {
+        None = 0,
+        Ef = 1,
+        Linq = 2
+    }
+
+    /// <summary>
+    /// Provides details about the state of solution analysis
+    /// </summary>
+    /// <remarks>
+    /// Implements an immutable pattern to ensure state at time of creation is accurately represented
+    /// </remarks>
+    [DebuggerDisplay("{FilePath}, {MethodName,nq}, Line {LineNumber}, {ExtensionMethodOwner}.{ExtensionMethod}")]
     public class LinqToEfSanityCheckerContext
     {
         public Solution Solution { get; private set; }
         public Project Project { get; private set; }
         public Compilation Compilation { get; private set; }
-        public INamedTypeSymbol QueryableExtensionsSymbol { get; private set; }
         public Document Document { get; private set; }
         public SymbolCallerInfo CallerInfo { get; private set; }
-        public InvocationExpressionSyntax InvocationSyntax { get; private set; }
-        public IMethodSymbol MethodSymbol { get; private set; }
-        public DataFlowAnalysis DataFlowAnalysis { get; private set; }
-        public ImmutableList<string> ErrorMessages { get; private set; }
+        public InvocationExpressionSyntax ExtensionMethodInvocation { get; private set; }
+        public IMethodSymbol ExtensionMethod { get; private set; }
+        public QueryableExtensionsOwner ExtensionMethodOwner { get; private set; }
+        public DataFlowAnalysis InvocationDataFlowAnalysis { get; private set; }
+        public ImmutableList<string> ErrorMessages { get; private set; } = ImmutableList<string>.Empty;
+        public string FilePath { get; private set; }
+        public int LineNumber { get; private set; }
+        public string MethodName { get; private set; }
+
+        internal LinqToEfSanityCheckerContext()
+        {
+        }
 
         private LinqToEfSanityCheckerContext Copy()
         {
             return new LinqToEfSanityCheckerContext
             {
                 Solution = Solution,
-                CallerInfo = CallerInfo,
-                Compilation = Compilation,
-                DataFlowAnalysis = DataFlowAnalysis,
-                Document = Document,
-                ErrorMessages = ErrorMessages,
-                InvocationSyntax = InvocationSyntax,
-                MethodSymbol = MethodSymbol,
                 Project = Project,
-                QueryableExtensionsSymbol = QueryableExtensionsSymbol
+                Compilation = Compilation,
+                Document = Document,
+                CallerInfo = CallerInfo,
+                ExtensionMethodInvocation = ExtensionMethodInvocation,
+                ExtensionMethod = ExtensionMethod,
+                ExtensionMethodOwner = ExtensionMethodOwner,
+                InvocationDataFlowAnalysis = InvocationDataFlowAnalysis,
+                ErrorMessages = ErrorMessages,
+                FilePath = FilePath,
+                LineNumber = LineNumber,
+                MethodName = MethodName
             };
         }
 
@@ -60,13 +85,6 @@ namespace EfTestHelpers
             return copy;
         }
 
-        public LinqToEfSanityCheckerContext SetQueryableExtensionsSymbol(INamedTypeSymbol queryableExtensionsSymbol)
-        {
-            var copy = Copy();
-            copy.QueryableExtensionsSymbol = queryableExtensionsSymbol;
-            return copy;
-        }
-
         public LinqToEfSanityCheckerContext SetDocument(Document document)
         {
             var copy = Copy();
@@ -81,24 +99,31 @@ namespace EfTestHelpers
             return copy;
         }
 
-        public LinqToEfSanityCheckerContext SetInvocationSyntax(InvocationExpressionSyntax invocationSyntax)
+        public LinqToEfSanityCheckerContext SetExtensionMethodInvocation(InvocationExpressionSyntax extensionMethodInvocation)
         {
             var copy = Copy();
-            copy.InvocationSyntax = invocationSyntax;
+            copy.ExtensionMethodInvocation = extensionMethodInvocation;
             return copy;
         }
 
-        public LinqToEfSanityCheckerContext SetMethodSymbol(IMethodSymbol methodSymbol)
+        public LinqToEfSanityCheckerContext SetExtensionMethod(IMethodSymbol extensionMethod)
         {
             var copy = Copy();
-            copy.MethodSymbol = methodSymbol;
+            copy.ExtensionMethod = extensionMethod;
             return copy;
         }
 
-        public LinqToEfSanityCheckerContext SetDataFlowAnalysis(DataFlowAnalysis dataFlowAnalysis)
+        public LinqToEfSanityCheckerContext SetExtensionMethodOwner(QueryableExtensionsOwner owner)
         {
             var copy = Copy();
-            copy.DataFlowAnalysis = dataFlowAnalysis;
+            copy.ExtensionMethodOwner = owner;
+            return copy;
+        }
+
+        public LinqToEfSanityCheckerContext SetInvocationSetDataFlowAnalysis(DataFlowAnalysis invocationDataFlowAnalysis)
+        {
+            var copy = Copy();
+            copy.InvocationDataFlowAnalysis = invocationDataFlowAnalysis;
             return copy;
         }
 
@@ -106,6 +131,27 @@ namespace EfTestHelpers
         {
             var copy = Copy();
             copy.ErrorMessages = ErrorMessages.Add(errorMessage);
+            return copy;
+        }
+
+        public LinqToEfSanityCheckerContext SetFilePath(string filePath)
+        {
+            var copy = Copy();
+            copy.FilePath = filePath;
+            return copy;
+        }
+
+        public LinqToEfSanityCheckerContext SetLineNumber(int lineNumber)
+        {
+            var copy = Copy();
+            copy.LineNumber = lineNumber;
+            return copy;
+        }
+
+        public LinqToEfSanityCheckerContext SetMethodName(string methodName)
+        {
+            var copy = Copy();
+            copy.MethodName = methodName;
             return copy;
         }
     }

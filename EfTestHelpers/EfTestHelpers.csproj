@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Buildalyzer.Workspaces" Version="3.0.1" />
+    <PackageReference Include="Gu.Roslyn.AnalyzerExtensions" Version="0.12.8-dev" />
     <PackageReference Include="Microsoft.Build" Version="16.6.0" />
     <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.6.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.6.0" />
