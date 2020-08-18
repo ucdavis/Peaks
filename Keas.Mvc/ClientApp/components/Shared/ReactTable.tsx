@@ -7,10 +7,15 @@ import {
   usePagination
 } from 'react-table';
 import { ColumnFilterHeaders, DefaultColumnFilter } from './Filtering';
-import { Pagination, PaginationItem, PaginationLink } from 'reactstrap';
+import { PaginationItem, PaginationLink } from 'reactstrap';
 import { ReactTableUtil } from '../../util/tableUtil';
 
-export const ReactTable = ({ columns, data, initialState, filterTypes }: any) => {
+export const ReactTable = ({
+  columns,
+  data,
+  initialState,
+  filterTypes
+}: any) => {
   const defaultColumn = React.useMemo(
     () => ({
       Filter: DefaultColumnFilter
@@ -51,12 +56,12 @@ export const ReactTable = ({ columns, data, initialState, filterTypes }: any) =>
   return (
     <>
       <table
-        className='table table-bordered table-striped'
+        className="table table-bordered table-striped"
         {...getTableProps()}
       >
         <thead>
           {headerGroups.map(headerGroup => (
-            <tr className='table-row' {...headerGroup.getHeaderGroupProps()}>
+            <tr className="table-row" {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map(column => (
                 <th
                   {...column.getHeaderProps(column.getSortByToggleProps())}
@@ -71,11 +76,15 @@ export const ReactTable = ({ columns, data, initialState, filterTypes }: any) =>
                   {column.render('Header')}
                   {/* Render the columns filter UI */}
                   <span>
-                    {column.isSorted
-                      ? column.isSortedDesc
-                        ? <i className="fas fa-long-arrow-alt-down"></i>
-                        : <i className="fas fa-long-arrow-alt-up"></i>
-                      : ''}
+                    {column.isSorted ? (
+                      column.isSortedDesc ? (
+                        <i className="fas fa-long-arrow-alt-down" />
+                      ) : (
+                        <i className="fas fa-long-arrow-alt-up" />
+                      )
+                    ) : (
+                      ''
+                    )}
                   </span>
                 </th>
               ))}
@@ -87,7 +96,7 @@ export const ReactTable = ({ columns, data, initialState, filterTypes }: any) =>
           {page.map(row => {
             prepareRow(row);
             return (
-              <tr className='rt-tr-group' {...row.getRowProps()}>
+              <tr className="rt-tr-group" {...row.getRowProps()}>
                 {row.cells.map(cell => {
                   return (
                     <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
@@ -98,11 +107,16 @@ export const ReactTable = ({ columns, data, initialState, filterTypes }: any) =>
           })}
         </tbody>
       </table>
-      <div className='pagination justify-content-center'>
-        <PaginationItem className="align-self-center" onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+      <div className="pagination justify-content-center">
+        <PaginationItem
+          className="align-self-center"
+          onClick={() => gotoPage(0)}
+          disabled={!canPreviousPage}
+        >
           <PaginationLink first />
         </PaginationItem>
-        <PaginationItem className="align-self-center"
+        <PaginationItem
+          className="align-self-center"
           onClick={() => previousPage()}
           disabled={!canPreviousPage}
         >
@@ -119,8 +133,8 @@ export const ReactTable = ({ columns, data, initialState, filterTypes }: any) =>
             <span>
               | Go to page:{' '}
               <input
-              className="form-control d-inline"
-                type='number'
+                className="form-control d-inline"
+                type="number"
                 defaultValue={pageIndex + 1}
                 onChange={e => {
                   const page = e.target.value ? Number(e.target.value) - 1 : 0;
@@ -133,7 +147,7 @@ export const ReactTable = ({ columns, data, initialState, filterTypes }: any) =>
         </PaginationItem>
         <PaginationItem>
           <PaginationLink>
-          <select
+            <select
               className="form-control"
               value={pageSize}
               onChange={e => {
@@ -149,10 +163,15 @@ export const ReactTable = ({ columns, data, initialState, filterTypes }: any) =>
             </select>{' '}
           </PaginationLink>
         </PaginationItem>
-        <PaginationItem className="align-self-center" onClick={() => nextPage()} disabled={!canNextPage}>
+        <PaginationItem
+          className="align-self-center"
+          onClick={() => nextPage()}
+          disabled={!canNextPage}
+        >
           <PaginationLink next />
         </PaginationItem>
-        <PaginationItem className="align-self-center"
+        <PaginationItem
+          className="align-self-center"
           onClick={() => gotoPage(pageCount - 1)}
           disabled={!canNextPage}
         >

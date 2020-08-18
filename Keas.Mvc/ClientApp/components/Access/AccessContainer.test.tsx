@@ -19,7 +19,7 @@ jest.mock('../Access/AccessAssignmentContainer', () => {
   return {
     default: () => {
       return (
-        <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>
+        <div id="AccessAssignmentContainer">AccessAssignmentContainer</div>
       );
     }
   };
@@ -69,7 +69,7 @@ describe('Access Container', () => {
 
     const headerRecord = container.querySelector('.table-row').textContent;
     expect(headerRecord).toBe(
-      ' Name 🔼Number of AssignmentsAssigned ToExpirationActions'
+      ' NameNumber of AssignmentsAssigned ToExpirationActions'
     );
   });
 
@@ -123,7 +123,7 @@ describe('Access Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function (match) {
+    matches.forEach(function(match) {
       const rowContent = match.textContent;
       if (rowContent.includes('Real Access')) {
         foundIt = true;
