@@ -15,6 +15,7 @@ namespace Keas.Mvc.Services
         Task<Stream> DownloadEnvelope(string envelopeId);
         Task<EnvelopesInformation> GetEnvelopes(string email);
         Task<EnvelopesInformation> GetEnvelopes(string[] envelopeIds);
+        Task<EnvelopeTemplate> GetTemplate(string templateId);
         Task<string> SendTemplate(string signerEmail, string signerName, string templateId);
     }
 
@@ -45,6 +46,14 @@ namespace Keas.Mvc.Services
             var result = await envelopesApi.CreateEnvelopeAsync(_documentSigningSettings.AccountId, envelope);
 
             return result.EnvelopeId;
+        }
+
+        public async Task<EnvelopeTemplate> GetTemplate(string templateId)
+        {
+            var templatesApi = new TemplatesApi(GetApiClient());
+            var templateInfo = await templatesApi.GetAsync(_documentSigningSettings.AccountId, templateId);
+
+            return templateInfo;
         }
 
         public async Task<EnvelopesInformation> GetEnvelopes(string email)
