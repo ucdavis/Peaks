@@ -60,7 +60,6 @@ namespace Keas.Mvc.Controllers
             {
                 newDocSetting.Team = team;
                 newDocSetting.Name = newDocSetting.Name.Trim();
-                newDocSetting.TemplateId = newDocSetting.TemplateId;
                 _context.TeamDocumentSettings.Add(newDocSetting);
                 await _context.SaveChangesAsync();
                 Message = "Document Template Linked";
