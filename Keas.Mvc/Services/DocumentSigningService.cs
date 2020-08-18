@@ -16,7 +16,7 @@ namespace Keas.Mvc.Services
         Task<EnvelopesInformation> GetEnvelopes(string email);
         Task<EnvelopesInformation> GetEnvelopes(string[] envelopeIds);
         Task<EnvelopeTemplate> GetTemplate(string templateId);
-        Task<string> SendTemplate(string signerEmail, string signerName, string templateId);
+        Task<EnvelopeSummary> SendTemplate(string signerEmail, string signerName, string templateId);
     }
 
     public class DocumentSigningService : IDocumentSigningService
@@ -33,7 +33,7 @@ namespace Keas.Mvc.Services
             _documentSigningSettings = documentSigningSettings.Value;
         }
 
-        public async Task<string> SendTemplate(string signerEmail, string signerName, string templateId)
+        public async Task<EnvelopeSummary> SendTemplate(string signerEmail, string signerName, string templateId)
         {
             var envelopesApi = new EnvelopesApi(GetApiClient());
             var envelope = new EnvelopeDefinition { TemplateId = templateId };
@@ -43,9 +43,7 @@ namespace Keas.Mvc.Services
             envelope.TemplateRoles = new List<TemplateRole> { signer };
             envelope.Status = "sent";
 
-            var result = await envelopesApi.CreateEnvelopeAsync(_documentSigningSettings.AccountId, envelope);
-
-            return result.EnvelopeId;
+            return await envelopesApi.CreateEnvelopeAsync(_documentSigningSettings.AccountId, envelope);
         }
 
         public async Task<EnvelopeTemplate> GetTemplate(string templateId)

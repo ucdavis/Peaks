@@ -117,14 +117,14 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
-            var envelopeId = await _documentSigningService.SendTemplate(document.Person.Email, document.Person.Name, document.TemplateId);
+            var envelope = await _documentSigningService.SendTemplate(document.Person.Email, document.Person.Name, document.TemplateId);
 
             var newDocument = new Document
             {
                 Name = document.Name,
                 PersonId = document.PersonId,
                 TeamId = document.TeamId,
-                EnvelopeId = envelopeId,
+                EnvelopeId = envelope.EnvelopeId,
                 TemplateId = document.TemplateId,
                 Active = true,
                 Status = "sent"
