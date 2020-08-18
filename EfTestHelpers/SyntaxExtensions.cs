@@ -16,9 +16,12 @@ namespace EfTestHelpers
         private static readonly ConcurrentDictionary<SyntaxTree, SemanticModel> MapTreesToModels =
             new ConcurrentDictionary<SyntaxTree, SemanticModel>();
 
+        /// <summary>
+        /// Get 1-based line number
+        /// </summary>
         public static int GetLineNumber(this SyntaxNode syntaxNode)
         {
-            return syntaxNode.SyntaxTree.GetLineSpan(syntaxNode.Span).StartLinePosition.Line;
+            return syntaxNode.SyntaxTree.GetLineSpan(syntaxNode.Span).StartLinePosition.Line + 1;
         }
 
         public static SymbolNodePair GetSymbolNodePair(this SyntaxNode node, Solution solution)

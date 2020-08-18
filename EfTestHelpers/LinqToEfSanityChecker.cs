@@ -101,7 +101,6 @@ namespace EfTestHelpers
 
                     context = context.SetDocument(document);
                     context = context.SetFilePath(Path.GetRelativePath(relativePathBase, document.FilePath));
-                    context = context.SetLineNumber(callerSyntax.GetLineNumber());
                     context = context.SetMethodName(callerInfo.CallingSymbol.Name);
 
                     var model = await document.GetSemanticModelAsync();
@@ -136,6 +135,7 @@ namespace EfTestHelpers
 
                         context = context.SetExtensionMethod(methodSymbol);
                         context = context.SetInvocationSetDataFlowAnalysis(model.AnalyzeDataFlow(context.ExtensionMethodInvocation));
+                        context = context.SetLineNumber(invocationSyntax.GetLineNumber());
 
                         _topLevelSpans.Add(context.ExtensionMethodInvocation.Span);
 
