@@ -58,24 +58,20 @@ namespace Test.Integration
                 .CreateDefault("Test", "Keas.Sql", "Keas.Jobs.Core", "Keas.Jobs.SendMail")
                 .AddOutputWriter(message => _output.WriteLine(message));
 
-            AssemblyLoadContext.Default.Resolving += (context, name) =>
-            {
-                return null;
-            };
-
             var sanityChecker = new LinqToEfSanityChecker(slnPath, options);
-
 
             var contexts = await sanityChecker.CheckEfQueries().ToListAsync();
 
+            var builder = new EfQueryableBuilder2(options);
+
+            var i = 0;
+
             foreach (var c in contexts)
             {
-                _output.WriteLine($"**********{Environment.NewLine}Expression {++itemNum}, Line {c.LineNumber} of {c.FilePath}, method {c.MethodName}");
-
-                var builder = new EfQueryableBuilder(contexts[0], options);
+                _output.WriteLine($"{Environment.NewLine}{++i:D4} ************ {c}");
                 try
                 {
-                    builder.Visit(c.ExtensionMethodInvocation);
+                    builder.GetQueryable(null, c);
                 }
                 catch (ArgumentException e) when (e.Message.Contains("'''Syntax node is not within syntax tree"))
                 {

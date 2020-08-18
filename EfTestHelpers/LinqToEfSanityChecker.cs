@@ -124,10 +124,10 @@ namespace EfTestHelpers
                         var methodSymbol = model.GetSymbolInfo(context.ExtensionMethodInvocation).Symbol as IMethodSymbol;
 
                         if (SymbolEqualityComparer.Default.Equals(methodSymbol?.ContainingSymbol, efQueryableExtensionsSymbol))
-                            context = context.SetExtensionMethodOwner(QueryableExtensionsOwner.Ef);
+                            context = context.SetExtensionMethodOwner(QueryableExtensionsOwner.EfQueryableExtensions);
                         else if (SymbolEqualityComparer.Default.Equals(methodSymbol?.ContainingSymbol,
                             linqQueryableExtensionsSymbol))
-                            context = context.SetExtensionMethodOwner(QueryableExtensionsOwner.Linq);
+                            context = context.SetExtensionMethodOwner(QueryableExtensionsOwner.LinqEnumerableExtensions);
                         else
                             continue;
 

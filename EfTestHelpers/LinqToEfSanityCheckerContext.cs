@@ -13,8 +13,8 @@ namespace EfTestHelpers
     public enum QueryableExtensionsOwner
     {
         None = 0,
-        Ef = 1,
-        Linq = 2
+        EfQueryableExtensions = 1,
+        LinqEnumerableExtensions = 2
     }
 
     /// <summary>
@@ -154,5 +154,9 @@ namespace EfTestHelpers
             copy.MethodName = methodName;
             return copy;
         }
+
+        public override string ToString() =>
+            $"{FilePath}, {MethodName}, Line {LineNumber}, {ExtensionMethodOwner} {ExtensionMethod.ToDisplayString(SymbolDisplayFormat.CSharpShortErrorMessageFormat)}";
+    
     }
 }

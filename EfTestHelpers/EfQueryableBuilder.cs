@@ -14,9 +14,26 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EfTestHelpers
 {
-    public class EfQueryableBuilder: CSharpSyntaxRewriter
+    public class EfQueryableBuilder2 : IEfQueryableBuilder
     {
-        private readonly LinqToEfSanityCheckerContext _context;
+        private LinqToEfSanityCheckerOptions _options;
+
+        public EfQueryableBuilder2(LinqToEfSanityCheckerOptions options)
+        {
+            _options = options;
+
+        }
+
+        public IQueryable GetQueryable(DbContext dbContext, LinqToEfSanityCheckerContext context)
+        {
+            _options.OutputWriteLine($"{context.ExtensionMethodInvocation}");
+            return null;
+        }
+    }
+
+    public class EfQueryableBuilder: CSharpSyntaxRewriter, IEfQueryableBuilder
+    {
+        private LinqToEfSanityCheckerContext _context;
         private string _outputIndent = "";
 
         private readonly Stack<LinqExpressionContext> _expressionContexts;
@@ -31,18 +48,22 @@ namespace EfTestHelpers
         //for api consumer to provide a DbSet based on rootDbContextType and rootDbSetPropertName?
         private Func<DbContext, IQueryable> _getRootQueryable;
 
-        public EfQueryableBuilder(LinqToEfSanityCheckerContext context, LinqToEfSanityCheckerOptions options)
+        public EfQueryableBuilder(LinqToEfSanityCheckerOptions options)
         {
-            _context = context;
             _options = options;
             _expressionContexts = new Stack<LinqExpressionContext>();
 
             //AssemblyLoadContext.Default
         }
 
-        public IQueryable GetQueryable(DbContext dbContext)
+        public IQueryable GetQueryable(DbContext dbContext, LinqToEfSanityCheckerContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
+
+            Visit(context.ExtensionMethodInvocation);
+
+            //not there yet
+            return null;
         }
 
 #nullable enable
@@ -186,5 +207,10 @@ namespace EfTestHelpers
             return visitedNode;
         }
 #nullable disable
+    }
+
+    public interface IEfQueryableBuilder
+    {
+        public IQueryable GetQueryable(DbContext dbContext, LinqToEfSanityCheckerContext context);
     }
 }
