@@ -80,7 +80,7 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
   );
 
   if (!canView) {
-    return;
+    return null;
   }
 
   if (loading) {
