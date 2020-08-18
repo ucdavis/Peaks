@@ -149,38 +149,6 @@ namespace Keas.Mvc.Controllers.Api
             return Json(people);
         }
 
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(IEnumerable<Person>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Details(int id, bool showDeleted = false, bool showAssignments = false)
-        {
-            var peopleQuery = _context.People
-                .Where(a => a.Team.Slug == Team)
-                .Include(a => a.User)
-                .Include(a => a.Supervisor)
-                .AsNoTracking();
-            if (showDeleted)
-            {
-                peopleQuery = peopleQuery.IgnoreQueryFilters();
-            }
-
-            if (showAssignments)
-            {
-                peopleQuery = peopleQuery
-                    .Include(a => a.AccessAssignments)
-                    .ThenInclude(a => a.Access)
-                    .Include(a => a.KeySerialAssignments)
-                    .ThenInclude(a => a.KeySerial)
-                    .ThenInclude(a => a.Key)
-                    .Include(a => a.EquipmentAssignments)
-                    .ThenInclude(a => a.Equipment)
-                    .Include(a => a.WorkstationAssignments)
-                    .ThenInclude(a => a.Workstation);
-            }
-
-            var people = await peopleQuery.SingleOrDefaultAsync(x => x.Id == id);
-
-            return Json(people);
-        }
 
         [HttpGet]
         [ProducesResponseType(typeof(Person), StatusCodes.Status200OK)]

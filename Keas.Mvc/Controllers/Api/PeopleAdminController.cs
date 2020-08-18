@@ -106,12 +106,68 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<Person>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Details(int id, bool showDeleted = false, bool showAssignments = false)
+        {
+            var peopleQuery = _context.People
+                .Where(a => a.Team.Slug == Team)
+                .Include(a => a.User)
+                .Include(a => a.Supervisor)
+                .AsNoTracking();
+            if (showDeleted)
+            {
+                peopleQuery = peopleQuery.IgnoreQueryFilters();
+            }
+
+            if (showAssignments)
+            {
+                peopleQuery = peopleQuery
+                    .Include(a => a.AccessAssignments)
+                    .ThenInclude(a => a.Access)
+                    .Include(a => a.KeySerialAssignments)
+                    .ThenInclude(a => a.KeySerial)
+                    .ThenInclude(a => a.Key)
+                    .Include(a => a.EquipmentAssignments)
+                    .ThenInclude(a => a.Equipment)
+                    .Include(a => a.WorkstationAssignments)
+                    .ThenInclude(a => a.Workstation);
+            }
+
+            var people = await peopleQuery.SingleOrDefaultAsync(x => x.Id == id);
+
+            return Json(people);
+        }
+
+        /// <summary>
+        /// Return history records
+        /// Defaults to a max of 5 records returned
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="max">the max number of record to take. Defaults to 5</param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetHistory(int id)
+        public async Task<IActionResult> GetHistory(int id, int max = 5)
         {
             var history = await _context.Histories.Where(x => x.TargetId == id)
                 .OrderByDescending(x => x.ActedDate)
-                .Take(5).AsNoTracking().ToListAsync();
+                .Take(max).AsNoTracking().ToListAsync();
+
+            return Json(history);
+        }
+
+        /// <summary>
+        /// Return all history records
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetFullHistory(int id)
+        {
+            var history = await _context.Histories.Where(x => x.TargetId == id)
+                .OrderByDescending(x => x.ActedDate)
+                .AsNoTracking().ToListAsync();
 
             return Json(history);
         }
