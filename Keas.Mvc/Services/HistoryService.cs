@@ -600,6 +600,7 @@ namespace Keas.Mvc.Services
             {
                 Description = document.GetDescription(nameof(Document), document.Name, person, "Sent to " + sentTo.Name),
                 ActorId = person.UserId,
+                TargetId = document.PersonId,
                 AssetType = "Document",
                 ActionType = "Created",
                 Document = document,
