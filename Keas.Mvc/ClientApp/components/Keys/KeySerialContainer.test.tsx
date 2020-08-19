@@ -15,7 +15,7 @@ let mockRouterMatch: any = {
 jest.mock('../History/HistoryContainer', () => {
   return {
     default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
+      return <div id="HistoryContainer">HistoryContainer</div>;
     }
   };
 });
@@ -81,7 +81,7 @@ describe('Key Serial Container', () => {
     const headerRecord = document.querySelector('.table-row').textContent;
 
     expect(headerRecord).toBe(
-      ' Key Code and SN 🔼Status 🔼AssignmentExpirationActions'
+      ' Key Code and SNStatusAssignmentExpirationActions'
     );
   });
 
@@ -137,7 +137,7 @@ describe('Key Serial Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function (match) {
+    matches.forEach(function(match) {
       const rowContent = match.textContent;
       if (rowContent.includes('ADD-1312')) {
         foundIt = true;

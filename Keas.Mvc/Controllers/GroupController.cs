@@ -2,6 +2,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Mvc.Models.ReportModels;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +52,7 @@ namespace Keas.Mvc.Controllers
             return View(worstations);
         }
 
-        public async Task<IActionResult> EquipmentReport(int id)
+        public async Task<IActionResult> EquipmentReport(int id, bool hideInactive = true)
         {
             var group = await GetGroup(id);
 
@@ -61,11 +62,14 @@ namespace Keas.Mvc.Controllers
                 return RedirectToAction("NoAccess", "Home");
             }
 
-            ViewBag.Group = group;
+            var model = new EquipmentReportViewModel
+            {
+                HideInactive = hideInactive,
+                Group = group,
+                EquipmentList = await _reportService.EquipmentList(group, hideInactive)
+            };
 
-            var equipment = await _reportService.EquipmentList(group);
-
-            return View(equipment);
+            return View(model);
         }
 
         private async Task<Group> GetGroup(int id) {

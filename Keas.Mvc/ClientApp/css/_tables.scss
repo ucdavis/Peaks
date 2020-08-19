@@ -1,0 +1,54 @@
+
+.table-striped {
+  thead {
+    th {
+      span {
+        float:right;
+        i {
+          .people-color &{
+            color:$people;
+          }
+          .equipment-color &{
+            color:$equipment;
+          }
+          .access-color &{
+            color:$access;
+          }
+          .keys-color &{
+            color:$keys;
+          }
+          .spaces-color &{
+            color:$spaces;
+          }
+        }
+        }
+    }
+    tr {
+      input {
+        border-color:$borders;
+      }
+    }
+  }
+  tbody {
+    td {
+      vertical-align: middle;
+    }
+    tr:nth-of-type(odd) {
+      .people-color &{
+        background-color:transparentize($people, 0.96);
+      }
+      .equipment-color &{
+        background-color:transparentize($equipment, 0.96);
+      }
+      .access-color &{
+        background-color:transparentize($access, 0.96);
+      }
+      .keys-color &{
+        background-color:transparentize($keys, 0.96);
+      }
+      .spaces-color &{
+        background-color:transparentize($spaces, 0.96);
+      }
+    }
+  }
+}

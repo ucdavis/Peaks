@@ -21,8 +21,8 @@ namespace Keas.Mvc.Controllers
              _reportService = reportService;
          }
         public async Task<IActionResult> TeamFeed(Guid id, string includeSpace)
-        {            
-             var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
+        {
+            var validKey = await _context.Teams.Include(a => a.TeamApiCode).Where(t => t.Slug == Team && t.TeamApiCode != null && t.TeamApiCode.ApiCode == id).AnyAsync();
 
             if(!validKey){
                return Unauthorized();
@@ -41,7 +41,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> WorkstationFeed(Guid id)
         {
-            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
+            var validKey = await _context.Teams.Include(a => a.TeamApiCode).Where(t => t.Slug == Team && t.TeamApiCode != null && t.TeamApiCode.ApiCode == id).AnyAsync();
 
             if (!validKey)
             {
@@ -53,19 +53,19 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> EquipmentFeed(Guid id)
         {
-            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
+            var validKey = await _context.Teams.Include(a => a.TeamApiCode).Where(t => t.Slug == Team && t.TeamApiCode != null && t.TeamApiCode.ApiCode == id).AnyAsync();
 
             if (!validKey)
             {
                 return Unauthorized();
             }
 
-            return Json(await _reportService.EquipmentList(null, Team));
+            return Json(await _reportService.EquipmentList(null, Team, false));
         }
 
         public async Task<IActionResult> AccessFeed(Guid id)
         {
-            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
+            var validKey = await _context.Teams.Include(a => a.TeamApiCode).Where(t => t.Slug == Team && t.TeamApiCode != null && t.TeamApiCode.ApiCode == id).AnyAsync();
 
             if (!validKey)
             {
@@ -77,7 +77,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> KeyFeed(Guid id)
         {
-            var validKey = await _context.Teams.Where(t => t.Slug == Team && t.ApiCode == id).AnyAsync();
+            var validKey = await _context.Teams.Include(a => a.TeamApiCode).Where(t => t.Slug == Team && t.TeamApiCode != null && t.TeamApiCode.ApiCode == id).AnyAsync();
 
             if (!validKey)
             {

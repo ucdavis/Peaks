@@ -22,7 +22,7 @@ namespace Test.TestsDatabase
             #region Arrange
             var expectedFields = new List<NameAndType>();
             expectedFields.Add(new NameAndType("Access", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Access]", new List<string>()));
-            expectedFields.Add(new NameAndType("AccessAssignments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.AccessAssignment]", new List<string>()));            
+            expectedFields.Add(new NameAndType("AccessAssignments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.AccessAssignment]", new List<string>()));
             expectedFields.Add(new NameAndType("ChangeTracker", "Microsoft.EntityFrameworkCore.ChangeTracking.ChangeTracker", new List<string>()));
             expectedFields.Add(new NameAndType("ContextId", "Microsoft.EntityFrameworkCore.DbContextId", new List<string>()));
             expectedFields.Add(new NameAndType("Database", "Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade", new List<string>()));
@@ -50,6 +50,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("SystemPermissions", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.SystemPermission]", new List<string>()));
             expectedFields.Add(new NameAndType("Tags", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Tag]", new List<string>()));
             expectedFields.Add(new NameAndType("TeamDocumentSettings", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.TeamDocumentSetting]", new List<string>()));
+            expectedFields.Add(new NameAndType("TeamApiCodes", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.TeamApiCode]", new List<string>()));
             expectedFields.Add(new NameAndType("TeamPermissions", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.TeamPermission]", new List<string>()));
             expectedFields.Add(new NameAndType("TeamPpsDepartments", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.TeamPpsDepartment]", new List<string>()));
             expectedFields.Add(new NameAndType("Teams", "Microsoft.EntityFrameworkCore.DbSet`1[Keas.Core.Domain.Team]", new List<string>()));

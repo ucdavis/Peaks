@@ -19,6 +19,7 @@ const SpaceWorkstationColumnFilter = ({
   // Render a multi-select box
   return (
     <select
+    className="form-control"
       value={filterValue}
       style={{ width: '100%' }}
       onChange={e => {

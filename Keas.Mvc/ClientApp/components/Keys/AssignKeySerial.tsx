@@ -133,7 +133,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                     <div className='row justify-content-between'>
                       <h3>Create New Serial</h3>
                       <Button
-                        className='btn btn-link'
+                        color='link'
                         onClick={this._onDeselected}
                       >
                         Clear{' '}
@@ -167,7 +167,7 @@ export default class AssignKey extends React.Component<IProps, IState> {
                   <div className='row justify-content-between'>
                     <h3>Assign Existing Serial</h3>
                     <Button
-                      className='btn btn-link'
+                      color='link'
                       onClick={this._onDeselected}
                     >
                       Clear{' '}

@@ -43,7 +43,7 @@ export default class AccessDetails extends React.Component<IProps, {}> {
           <h2>Details for {access.name}</h2>
           <div>
             <Button
-              className='btn btn-link'
+              color='link'
               onClick={() => {
                 this.props.openEditModal(access);
               }}
@@ -52,7 +52,7 @@ export default class AccessDetails extends React.Component<IProps, {}> {
               Edit Access
             </Button>
             <Button
-              className='btn btn-link'
+              color='link'
               onClick={() => {
                 this.props.openDeleteModal(access);
               }}
