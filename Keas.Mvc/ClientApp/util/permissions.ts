@@ -18,6 +18,7 @@
     const permissionArray = [
       'EquipMaster',
       'KeyMaster',
+      'DocumentMaster',
       'AccessMaster',
       'SpaceMaster',
       'DepartmentalAdmin',

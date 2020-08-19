@@ -12,8 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Mvc.Controllers.Api
 {
-    // TODO: change to allow access to new document role
-    [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
+    [Authorize(Policy = AccessCodes.Codes.DocumentMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/documents/[action]")]
     public class DocumentsController : SuperController
