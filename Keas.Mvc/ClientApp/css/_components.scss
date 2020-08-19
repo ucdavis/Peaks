@@ -5,6 +5,15 @@
   overflow: hidden;
   margin-bottom: 16px;
   border: none;
+  .card-head {
+    padding: $card-padding;
+    padding-top: 1.8rem;
+  }
+  .card-content {
+    padding: $card-padding;
+    padding-bottom: 2.6rem;
+    padding-top: 2.6rem;
+  }
 }
 .alert {
   margin-top: 1.6rem;
@@ -15,16 +24,7 @@
     color: $secondary-font;
   }
 }
-    
-.card-content {
-  padding: $card-padding;
-  padding-bottom: 2.6rem;
-  padding-top: 2.6rem;
-}
-.card-head {
-  padding: $card-padding;
-  padding-top: 1.8rem;
-}
+
 .team-link {
   white-space: nowrap;
   display: inline-block;
@@ -84,8 +84,18 @@
   );
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr= '$gradient-one',endColorstr='$gradient-two',GradientType=1);
 }
-.card-header-spaces {
-  border-bottom: 4px solid $spaces;
+.input-group-append {
+  .btn-outline-secondary:not(:disabled):not(.disabled):active:focus,
+  .btn-outline-secondary:not(:disabled):not(.disabled).active:focus,
+  .show > .btn-outline-secondary.dropdown-toggle:focus {
+    box-shadow: none;
+  }
+  .btn-outline-secondary {
+    box-shadow: none;
+    &:hover {
+      color: $primary-font;
+    }
+  }
 }
 .card-header-primary {
   border-bottom: 2px solid $borders;
@@ -93,20 +103,8 @@
 .card-header-primary-thick {
   border-bottom: 4px solid $borders;
 }
-.card-header-keys {
-  border-bottom: 4px solid $keys;
-}
-.card-header-access {
-  border-bottom: 4px solid $access;
-}
-.card-header-equipment {
-  border-bottom: 4px solid $equipment;
-}
 .card-header-other {
   border-bottom: 2px solid $blue;
-}
-.card-header-people {
-  border-bottom: 4px solid $people;
 }
 .card-foot {
   padding: $card-padding;
@@ -114,31 +112,10 @@
 }
 button {
   cursor: pointer;
-  background-color:inherit;
+  background-color: inherit;
 }
 img.img-fluid {
   width: 100%;
-}
-
-.btn-primary:not(:disabled):not(.disabled).active,
-.btn-primary:not(:disabled):not(.disabled):active,
-.show > .btn-primary.dropdown-toggle {
-  border-color: rgba(255, 255, 255, 0.9999) !important;
-  .people-color & {
-    background-color: $people;
-  }
-  .keys-color & {
-    background-color: $keys;
-  }
-  .spaces-color & {
-    background-color: $spaces;
-  }
-  .access-color & {
-    background-color: $access;
-  }
-  .equipment-color & {
-    background-color: $equipment;
-  }
 }
 .alert-red {
   background-color: transparentize($people, 0.35);
@@ -179,7 +156,7 @@ img.img-fluid {
     color: $primary-color;
     font-size: 1.6rem;
     font-family: $sans-bold;
-    box-shadow:none;
+    box-shadow: none;
     border: none;
     cursor: pointer;
     &:hover {
@@ -242,82 +219,6 @@ img.img-fluid {
   border: 1px solid #c7c8cc !important;
   color: $secondary-font !important;
 }
-.people-color {
-  .fa-ellipsis-h:before {
-    color: $people;
-  }
-}
-.access-color {
-  .fa-ellipsis-h:before {
-    color: $access;
-  }
-}
-.keys-color {
-  .fa-ellipsis-h:before {
-    color: $keys;
-  }
-}
-.spaces-color {
-  .fa-ellipsis-h:before {
-    color: $spaces;
-  }
-}
-.equipment-color {
-  .fa-ellipsis-h:before {
-    color: $equipment;
-  }
-}
-
-.keys-color .btn-primary {
-  background-color: $keys;
-  &:active,
-  &:focus {
-    background-color: darken($keys, 5);
-  }
-  &:hover {
-    background-color: lighten($keys, 5);
-  }
-}
-.equipment-color .btn-primary {
-  background-color: $equipment;
-  &:active,
-  &:focus {
-    background-color: darken($equipment, 5);
-  }
-  &:hover {
-    background-color: lighten($equipment, 5);
-  }
-}
-.access-color .btn-primary {
-  background-color: $access;
-  &:active,
-  &:focus {
-    background-color: darken($access, 5);
-  }
-  &:hover {
-    background-color: lighten($access, 5);
-  }
-}
-.spaces-color .btn-primary {
-  background-color: $spaces;
-  &:active,
-  &:focus {
-    background-color: darken($spaces, 5);
-  }
-  &:hover {
-    background-color: lighten($spaces, 5);
-  }
-}
-.people-color .btn-primary {
-  background-color: $people;
-  &:active,
-  &:focus {
-    background-color: darken($people, 5);
-  }
-  &:hover {
-    background-color: lighten($people, 5);
-  }
-}
 .media {
   margin-bottom: 16px;
 
@@ -325,31 +226,7 @@ img.img-fluid {
     margin-right: 20px;
   }
 }
-.keys-report {
-  i {
-    color: $keys;
-  }
-}
-.equipment-report {
-  i {
-    color: $equipment;
-  }
-}
-.access-report {
-  i {
-    color: $access;
-  }
-}
-.people-report {
-  i {
-    color: $people;
-  }
-}
-.spaces-report {
-  i {
-    color: $spaces;
-  }
-}
+
 ol.breadcrumb {
   display: inline-block;
   list-style: none;
@@ -644,25 +521,10 @@ ol.breadcrumb {
 }
 
 .fa-info-circle {
-  color:$primary-color;
-  .people-color &{
-    color:transparentize($people, 0.96);
-  }
-  .equipment-color &{
-    color:transparentize($equipment, 0.5);
-  }
-  .access-color &{
-    color:transparentize($access, 0.96);
-  }
-  .keys-color &{
-    color:transparentize($keys, 0.96);
-  }
-  .spaces-color &{
-    color:transparentize($spaces, 0.96);
-  }
+  color: $primary-color;
 }
 button:focus {
-  outline:none;
+  outline: none;
 }
 // .input-group-append button {
 //   border:1px solid #ced4da !important;
@@ -682,3 +544,11 @@ button:focus {
 //     background-color:transparentize($spaces, 0.96);
 //   }
 // }
+
+// datepicker hack
+
+.input-group-append {
+  .btn-outline-secondary {
+    color: inherit;
+  }
+}

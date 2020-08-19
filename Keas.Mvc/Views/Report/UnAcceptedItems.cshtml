@@ -6,8 +6,8 @@
 
 
 <form asp-action="UnAcceptedItems" method="get">
-    <div class="card">
-      <div class="card-header-primary-thick">
+    <div class="card history-color">
+      <div class="card-header-history">
         <div class="card-head">
           <h2>Items Pending Acceptance</h2>
 
@@ -16,28 +16,23 @@
         <div class="card-content">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-              <div class="shade">
+              
 
 
                   <div class="row align-items-end">                     
-                      <div class="col-sm">
+                      <div class="col-sm-4">
                           <h3>Filters</h3>
                           <div class="form-group">
                               <label asp-for="ShowType" class="control-label"></label>
                               <br>
-                              <select asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
+                              <select class="form-control" asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
                           </div>
-                      </div>
-                      <div class="col-sm">
-                          <div class="form-group">
+                           <div class="form-group">
                             <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
                           </div>
                       </div>
                   </div>
 
-              </div>
-<br>
-<br>
 <table id="dtExpiringItems" class="table dataTable">
         <thead>
         <tr>
