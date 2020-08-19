@@ -4,33 +4,39 @@
     ViewBag.Title = "title";
 }
 
-<h2>Welcome to the @Model.Name Group</h2>
+<div class="card">
+    <div class="card-header-primary">
+        <div class="row justify-content-between">
+          <div class="card-head">
+            <h2><i class="fas fa-tasks fa-xs"></i> Reports for group: @Model.Name</h2>
+          </div>
+        </div>
+      </div>
+      <div class="card-content">
+        <div class="row">
 
-<div class="row justify-content-between">
-    <div class="col-md-6">
-        <div class="card equipment-color">
-            <div class="card-header-equipment">
-                <div class="card-head">
-                    <h2>Equipment List</h2>
-                </div>
+            <div class="report-list equipment-color col-md-3">
+                <h3><i class="fas fa-hdd fa-xs"></i> Equipment Reports</h3>
+                <ul>
+                    <li>
+                        <a asp-action="EquipmentReport" asp-route-id="@Model.Id">View All Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+   
+                </ul>
             </div>
-            <div class="card-content">
-                <a asp-action="EquipmentReport" asp-route-id="@Model.Id" class="btn btn-link">All Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+
+
+            <div class="report-list spaces-color col-md-3">
+                <h3><i class="fas fa-building fa-xs"></i> Workstations Reports</h3>
+                    <ul>
+                        <li>
+                        <a asp-action="WorkstationReport" asp-route-id="@Model.Id">View All Workstations <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        </li>
+                    </ul> 
             </div>
+
         </div>
-    </div>
-    <div class="col-md-6">
-        <div class="card spaces-color">
-            <div class="card-header-spaces">
-                <div class="card-head">
-                    <h2>Workstations</h2>
-                </div>
-            </div>
-            <div class="card-content">
-                <a asp-action="WorkstationReport" asp-route-id="@Model.Id" class="btn btn-link">Workstation Information <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-            </div>
-        </div>
-    </div>
+      </div>
 </div>
 
 
