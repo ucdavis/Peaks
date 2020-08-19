@@ -41,9 +41,9 @@ namespace Keas.Mvc.Controllers
             {
                 if (!string.IsNullOrWhiteSpace(newDocSetting.TemplateId))
                 {
-                    if (await _context.Tags.AnyAsync(a => a.TeamId == team.Id && a.Name == newDocSetting.TemplateId))
+                    if (await _context.TeamDocumentSettings.AnyAsync(a => a.TeamId == team.Id && (a.Name == newDocSetting.Name || a.TemplateId == newDocSetting.TemplateId)))
                     {
-                        ModelState.AddModelError("Name", "This tag already exists (case insensitive)");
+                        ModelState.AddModelError("Name", "This template Id or Name already exists (case insensitive)");
                     }
                 }
             }
