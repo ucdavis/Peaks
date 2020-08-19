@@ -47,6 +47,9 @@ namespace Test.TestsDatabase
             {
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
             }));
+
+            expectedFields.Add(new NameAndType("Document", "Keas.Core.Domain.Document", new List<string>()));
+            expectedFields.Add(new NameAndType("DocumentId", "System.Nullable`1[System.Int32]", new List<string>()));
             expectedFields.Add(new NameAndType("Equipment", "Keas.Core.Domain.Equipment", new List<string>()));
             expectedFields.Add(new NameAndType("EquipmentId", "System.Nullable`1[System.Int32]", new List<string>()));
             expectedFields.Add(new NameAndType("Id", "System.Int32", new List<string>()));
