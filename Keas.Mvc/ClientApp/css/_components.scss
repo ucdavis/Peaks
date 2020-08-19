@@ -8,7 +8,14 @@
 }
 .alert {
   margin-top: 1.6rem;
+  padding: $card-padding;
+  box-shadow: $box-shadow;
+  p {
+    margin-bottom: 0px;
+    color: $secondary-font;
+  }
 }
+    
 .card-content {
   padding: $card-padding;
   padding-bottom: 2.6rem;
@@ -107,22 +114,12 @@
 }
 button {
   cursor: pointer;
+  background-color:inherit;
 }
 img.img-fluid {
   width: 100%;
 }
-.alert {
-  padding: $card-padding;
-  p {
-    margin-bottom: 0px;
-    color: $secondary-font;
-  }
-  @include fader;
-  box-shadow: $box-shadow;
-  &:hover {
-    transform: translateY(-1px);
-  }
-}
+
 .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):active,
 .show > .btn-primary.dropdown-toggle {
@@ -144,41 +141,27 @@ img.img-fluid {
   }
 }
 .alert-red {
-  background-color: transparentize($unitrans-red, 0.35);
+  background-color: transparentize($people, 0.35);
   &:hover {
-    background-color: transparentize($unitrans-red, 0.15);
+    background-color: transparentize($people, 0.15);
   }
 }
 .alert-yellow {
-  background-color: transparentize($golden-lupine, 0.35);
+  background-color: transparentize($equipment, 0.35);
   &:hover {
-    background-color: transparentize($golden-lupine, 0.15);
+    background-color: transparentize($equipment, 0.15);
   }
 }
 .alert-green {
-  background-color: transparentize($sunny-grass, 0.35);
+  background-color: transparentize($access, 0.35);
   &:hover {
-    background-color: transparentize($sunny-grass, 0.15);
+    background-color: transparentize($access, 0.15);
   }
 }
 .alert-blue {
   background-color: transparentize($sky-blue, 0.35);
   &:hover {
     background-color: transparentize($sky-blue, 0.15);
-  }
-}
-.btn-team {
-  background-color: #fff;
-  border: 1px solid #c7c8cc;
-  padding: 0.6rem 1.2rem;
-  border-radius: 3px;
-  .teamname {
-    text-align: right;
-    max-width: 200px;
-    margin-right: 16px;
-  }
-  i {
-    color: #c7c8cc;
   }
 }
 .dropdown-toggle::after {
@@ -196,6 +179,7 @@ img.img-fluid {
     color: $primary-color;
     font-size: 1.6rem;
     font-family: $sans-bold;
+    box-shadow:none;
     border: none;
     cursor: pointer;
     &:hover {
@@ -339,9 +323,6 @@ img.img-fluid {
 
   img {
     margin-right: 20px;
-  }
-
-  .media-body {
   }
 }
 .keys-report {
@@ -500,15 +481,15 @@ ol.breadcrumb {
 }
 
 .bg-unitrans {
-  background-color: $unitrans-red;
+  background-color: $people;
 }
 
-.bg-sunny-grass {
-  background-color: $sunny-grass;
+.bg-access {
+  background-color: $access;
 }
 
-.bg-golden-lupine {
-  background-color: $golden-lupine;
+.bg-equipment {
+  background-color: $equipment;
 }
 
 .bg-recpool {
@@ -520,39 +501,39 @@ ol.breadcrumb {
 }
 
 .bg-winegrape {
-  background-color: $wine-grape;
+  background-color: $pinot;
 }
 
 .border-unitrans {
-  border-color: $unitrans-red;
+  border-color: $people;
 }
 
 .border-skyblue {
   border-color: $sky-blue;
 }
 
-.border-sunny-grass {
-  border-color: $sunny-grass;
+.border-access {
+  border-color: $access;
 }
 
-.border-golden-lupine {
-  border-color: $golden-lupine;
+.border-equipment {
+  border-color: $equipment;
 }
 
 .color-unitrans {
-  color: $unitrans-red !important;
+  color: $people !important;
 }
 
-.color-sunny-grass {
-  color: $sunny-grass;
+.color-access {
+  color: $access;
 }
 
-.color-golden-lupine {
-  color: $golden-lupine;
+.color-equipment {
+  color: $equipment;
 }
 
 .color-winegrape {
-  color: $wine-grape;
+  color: $pinot;
 }
 
 .color-western-redbud {
@@ -569,10 +550,6 @@ ol.breadcrumb {
 
 .primary-color {
   color: $primary-color;
-}
-
-.secondary-color {
-  color: $secondary-color;
 }
 
 .a-color {
@@ -618,63 +595,7 @@ ol.breadcrumb {
     margin-bottom: 0px;
   }
 }
-.ReactTable .rt-thead .rt-th.-sort-asc,
-.ReactTable .rt-thead .rt-td.-sort-asc {
-  .people-color & {
-    box-shadow: inset 0 3px 0 0 $people;
-  }
-  .keys-color & {
-    box-shadow: inset 0 3px 0 0 $keys;
-  }
-  .spaces-color & {
-    box-shadow: inset 0 3px 0 0 $spaces;
-  }
-  .access-color & {
-    box-shadow: inset 0 3px 0 0 $access;
-  }
-  .equipment-color & {
-    box-shadow: inset 0 3px 0 0 $equipment;
-  }
-}
-.ReactTable .rt-thead .rt-th.-sort-desc,
-.ReactTable .rt-thead .rt-td.-sort-desc {
-  .people-color & {
-    box-shadow: inset 0 -3px 0 0 $people;
-  }
-  .keys-color & {
-    box-shadow: inset 0 -3px 0 0 $keys;
-  }
-  .spaces-color & {
-    box-shadow: inset 0 -3px 0 0 $spaces;
-  }
-  .access-color & {
-    box-shadow: inset 0 -3px 0 0 $access;
-  }
-  .equipment-color & {
-    box-shadow: inset 0 -3px 0 0 $equipment;
-  }
-}
-.-btn {
-  color: #fff !important;
-  font-family: $sans-bold;
-  width: 66% !important;
-  display: inline !important;
-  .people-color & {
-    background-color: lighten($people, 5) !important;
-  }
-  .keys-color & {
-    background-color: $keys !important;
-  }
-  .spaces-color & {
-    background-color: $spaces !important;
-  }
-  .access-color & {
-    background-color: $access !important;
-  }
-  .equipment-color & {
-    background-color: transparentize($equipment, 0.2) !important;
-  }
-}
+
 .-previous {
   text-align: left !important;
 }
@@ -694,7 +615,7 @@ ol.breadcrumb {
   }
 }
 #Name-error {
-  color: $unitrans-red;
+  color: $people;
 }
 .bigfix-info {
   cursor: pointer;
@@ -712,12 +633,52 @@ ol.breadcrumb {
   border-style: none;
 }
 .Toastify__toast--success {
-  background-color: $sunny-grass !important;
+  background-color: $access !important;
 }
 .Toastify__toast--error {
-  background-color: $unitrans-red !important;
+  background-color: $people !important;
 }
 .Toastify__toast-body {
   color: #fff !important;
   font-family: $sans-bold;
 }
+
+.fa-info-circle {
+  color:$primary-color;
+  .people-color &{
+    color:transparentize($people, 0.96);
+  }
+  .equipment-color &{
+    color:transparentize($equipment, 0.5);
+  }
+  .access-color &{
+    color:transparentize($access, 0.96);
+  }
+  .keys-color &{
+    color:transparentize($keys, 0.96);
+  }
+  .spaces-color &{
+    color:transparentize($spaces, 0.96);
+  }
+}
+button:focus {
+  outline:none;
+}
+// .input-group-append button {
+//   border:1px solid #ced4da !important;
+//   .people-color &{
+//     background-color:transparentize($people, 0.96);
+//   }
+//   .equipment-color &{
+//     background-color:transparentize($equipment, 0.96);
+//   }
+//   .access-color &{
+//     background-color:transparentize($access, 0.96);
+//   }
+//   .keys-color &{
+//     background-color:transparentize($keys, 0.96);
+//   }
+//   .spaces-color &{
+//     background-color:transparentize($spaces, 0.96);
+//   }
+// }

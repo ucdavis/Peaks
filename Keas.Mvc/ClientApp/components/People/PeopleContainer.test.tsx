@@ -19,7 +19,7 @@ jest.mock('../Access/AccessAssignmentContainer', () => {
   return {
     default: () => {
       return (
-        <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>
+        <div id="AccessAssignmentContainer">AccessAssignmentContainer</div>
       );
     }
   };
@@ -28,7 +28,7 @@ jest.mock('../Access/AccessAssignmentContainer', () => {
 jest.mock('../Equipment/EquipmentContainer', () => {
   return {
     default: () => {
-      return <div id='EquipmentContainer'>EquipmentContainer</div>;
+      return <div id="EquipmentContainer">EquipmentContainer</div>;
     }
   };
 });
@@ -36,7 +36,7 @@ jest.mock('../Equipment/EquipmentContainer', () => {
 jest.mock('../Keys/KeySerialContainer', () => {
   return {
     default: () => {
-      return <div id='KeySerialContainer'>KeySerialContainer</div>;
+      return <div id="KeySerialContainer">KeySerialContainer</div>;
     }
   };
 });
@@ -44,7 +44,7 @@ jest.mock('../Keys/KeySerialContainer', () => {
 jest.mock('../Workstations/WorkstationContainer', () => {
   return {
     default: () => {
-      return <div id='WorkstationContainer'>WorkstationContainer</div>;
+      return <div id="WorkstationContainer">WorkstationContainer</div>;
     }
   };
 });
@@ -52,7 +52,7 @@ jest.mock('../Workstations/WorkstationContainer', () => {
 jest.mock('../History/HistoryContainer', () => {
   return {
     default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
+      return <div id="HistoryContainer">HistoryContainer</div>;
     }
   };
 });
@@ -101,7 +101,7 @@ describe('People Container', () => {
 
     const headerRecord = container.querySelector('.table-row').textContent;
     expect(headerRecord).toBe(
-      ' Name 🔼EmailSupervisorKeysEquipmentAccessWorkstations'
+      ' NameEmailSupervisorKeysEquipmentAccessWorkstations'
     );
   });
 

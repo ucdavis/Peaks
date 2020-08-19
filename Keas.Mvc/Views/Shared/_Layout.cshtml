@@ -35,6 +35,7 @@
 </head>
 
 <body>
+    <div class="page-wrap">
   <header>
     @if (Configuration["Environment:ShowTestBanner"] == "Yes")
     {
@@ -42,41 +43,19 @@
     }
     <div class="container">
       <div class="row justify-content-between align-items-end">
-        <div class="col-sm-9">
-          <div class="logowrapper">
+        <div class="col-sm-8 col-md-5 col-xl-4">
+          
             <a asp-area="" asp-controller="Home" asp-action="Index">
               <h1>PEAKS</h1>
               <p class="subtitle">People, Equipment, Access, Keys and Space</p>
             </a>
-          </div>
+         
 
                 </div>
-                <div class="col-sm-3">
-                    <div class="dropdown teamwrapper">
-                        <h3>Team</h3>
-                        <button class="btn-team dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <div class="row justify-content-between align-items-center">
-                                <div class="teamname">
-                                    @if (!string.IsNullOrWhiteSpace(TempData["TeamName"] as string))
-                                    {
-                                        @TempData["TeamName"]
-                                    }
-                                </div>
-                                <i class="fas fa-caret-down fa-lg"></i>
-                            </div>
-
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            @foreach (var teamItem in await TeamsManager.GetMyTeams())
-                            {
-                                <a class="dropdown-item" href='@string.Format("/{0}/home/index", teamItem.Key)' class="team-link">@teamItem.Value</a>
-                            }
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh Permissions</a>
-                        </div>
-                    </div>
+                <div class="col-sm-3 col-xl-2 col-ucdavis">
+                    <a target="blank" href="https://ucdavis.edu">
+                        <img class="img-fluid" src="/media/ucdavisbluelogo.svg" alt="UC Davis Logo">
+                    </a>
                 </div>
 
             </div>
@@ -96,7 +75,7 @@
                 <span>Menu</span>
             </button>
             <div class="collapse navbar-collapse" id="navbarText">
-                <ul class="navbar-nav mr-auto">
+                <ul class="navbar-nav peaks-nav">
                     @if (TempData["TeamName"] != null)
                     {
                         if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded)
@@ -158,13 +137,34 @@
                             <a class="nav-link" asp-controller="Help" asp-action="Index">Help</a>
                         </li>
                     }
-                </ul>
-                    <div style="flex-shrink: 0" class="form-inline mt-2 mt-md-0">
-                        <span>Welcome @User.GetNameClaim()</span>
+                    <li class="ml-auto nav-item dropdown nav-actions">
+                        <label>
+                            @if (!string.IsNullOrWhiteSpace(TempData["TeamName"] as string))
+                                    {
+                                        @TempData["TeamName"]
+                                    }
+                        </label>
+                        <button style="display:block;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Change Team
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @foreach (var teamItem in await TeamsManager.GetMyTeams())
+                            {
+                                <a class="dropdown-item" href='@string.Format("/{0}/home/index", teamItem.Key)' class="team-link">@teamItem.Value</a>
+                            }
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh Permissions</a>
+                        </div>
+                    </li>
+                    <li class="nav-item nav-actions" style="border-right:1px solid #c7c8cc">
+                        <label>@User.GetNameClaim()</label>
                         <form class="flexer" asp-area="" asp-controller="Account" asp-action="Logout2" method="post" id="logoutForm">
-                            <button type="submit" class="btn btn-link btn-border" style="margin-left: 8px;">Sign out</button>
+                            <button type="submit">Sign out</button>
                         </form>
-                    </div>
+                    </li>
+                </ul>
                     </div>
                     </div>
                 </nav>
@@ -172,7 +172,9 @@
     {
         <div class="container">
             <div class="alert alert-danger">
-                <button type="button" class="close" data-dismiss="alert">×</button> @TempData["ErrorMessage"]
+                <button type="button" class="close" data-dismiss="alert">
+                <i class="fas fa-times"></i>
+                </button> @TempData["ErrorMessage"]
             </div>
         </div>
     }
@@ -180,7 +182,9 @@
     {
         <div class="container">
             <div class="alert alert-info">
-                <button type="button" class="close" data-dismiss="alert">×</button> @TempData["Message"]
+                <button type="button" class="close" data-dismiss="alert">
+                <i class="fas fa-times"></i>
+                </button> @TempData["Message"]
             </div>
         </div>
     }
@@ -189,8 +193,8 @@
     <main role="main" class="main-content-wrapper container">
         @RenderBody()
     </main>
-
-    <footer>
+</div>
+    <footer class="container">
         <p>Copyright &copy; <span id="copywrite-year"></span> The Regents of the University of California, Davis campus. All rights reserved.</p>
     </footer>
 

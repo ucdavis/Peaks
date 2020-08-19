@@ -32,7 +32,7 @@
                         <h3>Filters</h3>
                           <div class="form-group">
                               <label asp-for="ExpiresBefore" class="control-label"></label>
-                              <input style="height:34px" asp-for="ExpiresBefore" class="form-control datepicker" height="34px" width="276" />
+                              <input asp-for="ExpiresBefore" class="form-control datepicker"/>
                               <span asp-validation-for="ExpiresBefore" class="text-danger"></span>
                           </div>
                       </div>
@@ -40,7 +40,7 @@
                           <div class="form-group">
                               <label asp-for="ShowType" class="control-label"></label>
                               <br>
-                              <select asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
+                              <select class="form-control" asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
                           </div>
                       </div>                      
                       <div class="col-sm">

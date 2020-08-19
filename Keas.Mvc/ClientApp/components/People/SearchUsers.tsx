@@ -52,7 +52,7 @@ export default class SearchUsers extends React.Component<IProps, IState> {
             onKeyPress={e => this._handleKeyPress(e)}
           />
           <InputGroupAddon addonType='append'>
-            <Button className='btn btn-link' onClick={this._loadUser}>
+            <Button color='link' onClick={this._loadUser}>
               {this.state.loading ? (
                 <i className='fas fa-spin fa-spinner' />
               ) : (

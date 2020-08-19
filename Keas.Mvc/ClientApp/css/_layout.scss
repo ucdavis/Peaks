@@ -8,19 +8,23 @@
 
 html {
   position: relative;
-  min-height: 100%;
-  height: inherit;
+  height: 100%;
 }
 
 body {
-  margin: 0 0 80px;
+  height:100%;
+  display: flex;
+  flex-direction: column;
   background-color: $bg-color;
 }
-
+.page-wrap {
+  flex:1 0 auto;
+}
 .container {
   padding: 0;
   width: 98%;
   max-width: 1440px;
+  min-width:360px;
   @include breakpoint(sm) {
     width: 96%;
     max-width: 1440px;
@@ -38,56 +42,27 @@ body {
     max-width: 1440px;
   }
 }
-
-.logo {
-  margin-top: 7px;
-
-  g#logocolor {
-    fill: $primary-color;
-  }
-}
 header {
   background-color: white;
   padding: 8px 0px;
-  .logowrapper {
-    margin-left: 10px;
-    @include breakpoint(xsm) {
-      text-align: center;
-      margin-left: 0px;
-      margin-bottom: 8px;
+  @include breakpoint(xsm) {
+    text-align: center;
+    margin-left: 0px;
+    margin-bottom: 8px;
+  }
+  .col-ucdavis {
+    text-align:right;
+    img {
+      width:66%;
+    }
+     @include breakpoint(xsm) {
+      text-align:center;
+      img {
+        margin-top:8px;
+        width:25%;
+      }
     }
   }
-  .teamwrapper {
-    text-align: right;
-    @include breakpoint(xsm) {
-      text-align: center;
-      margin-top: 0.8rem;
-    }
-  }
-  // .teamwrapper {
-  //   border:1px solid #c7c8cc;
-  //   padding:.6rem 1.2rem;
-  //   border-radius: 3px;
-  // }
-  // .team {
-  //   border-right:1px solid #c7c8cc;
-  //   padding-right:1.1rem;
-  //   margin-right:1.1rem;
-  //   h3 {
-  //     margin-bottom:0px;
-  //     font-size: 1.6rem;
-  //   }
-  //   p {
-  //     margin-bottom:0px;
-  //     padding-bottom:0px;
-  //     font-size:1.4rem;
-  //   }
-  // }
-  // .teamchanger {
-  //   i {
-  //     color:#c7c8cc;
-  //   }
-  // }
 }
 h1 {
   .fas {
@@ -152,20 +127,7 @@ h1 {
 }
 
 footer {
-  position: absolute;
-  bottom: 0;
-  display: block;
-  height: 45px;
-  @include breakpoint(sm) {
-    margin-left: 2%;
-  }
-  @include breakpoint(md) {
-    margin-left: 4%;
-  }
-  @include breakpoint(lg) {
-    margin-left: 5%;
-  }
-  @include breakpoint(xl) {
-    margin-left: 10%;
-  }
+  margin-top:3%;
+  margin-bottom:1%;
+  flex-shrink: 0;
 }

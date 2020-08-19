@@ -4,130 +4,95 @@
 @{
     ViewData["Title"] = "Reports";
 }
-<div class="row justify-content-between">
-    <div class="col-md-6">
-        <div class="card primary-color">
-            <div class="card-header-primary-thick">
-                <div class="card-head">
-                    <h2>Expiring Items</h2>
-                </div>
+<div class="card">
+    <div class="card-header-primary">
+        <div class="row justify-content-between">
+          <div class="card-head">
+            <h2><i class="fas fa-tasks fa-xs"></i> Reports</h2>
+          </div>
+        </div>
+      </div>
+      <div class="card-content">
+        <div class="row">
+            @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
+            {
+            <div class="report-list equipment-color col-md-3">
+                <h3><i class="fas fa-hdd fa-xs"></i> Equipment Reports</h3>
+                <ul>
+                    <li>
+                        <a asp-action="EquipmentReport">View All Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                    <li>
+                        <a asp-action="KeyValues">Key/Value Pairs in Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>      
+                </ul>
             </div>
-            <div class="card-content">
-                <a asp-action="ExpiringItems" class="btn btn-link">Expiring Items <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+        }
+        <div class="report-list people-color col-md-3">
+            <h3><i class="fas fa-users fa-xs"></i> People Reports</h3>
+            <ul>
+                <li>
+                    <a asp-action="SupervisorDirectReports">Direct Reports by Supervisor <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                </li>
+                <li>
+                    <a asp-action="PersonActions">Actions Taken Against People in Team <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                </li>      
+            </ul>
+        </div>
+        @if (Model.Contains(Role.Codes.SpaceMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
+        {
+            <div class="report-list spaces-color col-md-3">
+                <h3><i class="fas fa-building fa-xs"></i> Workstations Reports</h3>
+                    <ul>
+                        <li>
+                        <a asp-action="WorkstationReport">View All Workstations <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        </li>
+                    </ul> 
+            </div>
+        }
+        @if (Model.Contains(Role.Codes.AccessMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
+        {
+            <div class="report-list access-color col-md-3">
+                <h3><i class="fas fa-id-card fa-xs"></i> Access Reports</h3>
+                <ul>
+                    <li>
+                        <a asp-action="AccessReport">View All Access <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                </ul>
+            </div>
+        }
+        
+        @if (Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
+        {
+            <div class="report-list keys-color col-md-3">
+                <h3><i class="fas fa-key fa-xs"></i> Keys Reports</h3>
+                <ul>
+                    <li>
+                        <a asp-action="KeyReport">View All Keys <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                    <li>
+                        <a asp-action="KeyWithSerialReport">Keys With Serials <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                    <li>
+                        <a asp-action="KeyWithSpaceReport">Keys With Spaces <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                </ul>
+            </div>
+        }
+        <div class="report-list general-color col-md-3">
+            <h3><i class="fas fa-list fa-xs"></i> General Reports</h3>
+            <ul>
+                <li>
+                    <a asp-action="ExpiringItems">Expiring Items <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                </li>
+                @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin) || Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.SpaceMaster))
+                {
+                    <li>
+                        <a asp-action="UnAcceptedItems">Items Pending Acceptance <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                }
+            </ul>
             </div>
         </div>
+      </div>
     </div>
-    <div class="col-md-6">
-        <div class="card people-color">
-            <div class="card-header-people">
-                <div class="card-head">
-                    <h2>Supervisor's Direct Reports</h2>
-                </div>
-            </div>
-            <div class="card-content">
-                <a asp-action="SupervisorDirectReports" class="btn btn-link">Direct Reports by Supervisor <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-            </div>
-        </div>
-    </div>
-    @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin) || Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.SpaceMaster))
-    {
-        <div class="col-md-6">
-            <div class="card primary-color">
-                <div class="card-header-primary-thick">
-                    <div class="card-head">
-                        <h2>Items Pending Acceptance</h2>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <a asp-action="UnAcceptedItems" class="btn btn-link">Items Pending Acceptance <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                </div>
-            </div>
-        </div>
-    }
-    @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
-    {
-        <div class="col-md-6">
-            <div class="card equipment-color">
-                <div class="card-header-equipment">
-                    <div class="card-head">
-                        <h2>Equipment Attributes</h2>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <a asp-action="KeyValues" class="btn btn-link">Key/Value Pairs in Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card equipment-color">
-                <div class="card-header-equipment">
-                    <div class="card-head">
-                        <h2>Equipment List</h2>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <a asp-action="EquipmentReport" class="btn btn-link">All Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                </div>
-            </div>
-        </div>
-    }
-    <div class="col-md-6">
-        <div class="card people-color">
-            <div class="card-header-people">
-                <div class="card-head">
-                    <h2>Actions Against the People</h2>
-                </div>
-            </div>
-            <div class="card-content">
-                <a asp-action="PersonActions" class="btn btn-link">Actions taken against people in team <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-            </div>
-        </div>
-    </div>
-    @if (Model.Contains(Role.Codes.SpaceMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
-    {
-        <div class="col-md-6">
-            <div class="card spaces-color">
-                <div class="card-header-spaces">
-                    <div class="card-head">
-                        <h2>Workstations</h2>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <a asp-action="WorkstationReport" class="btn btn-link">Workstation Information <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                </div>
-            </div>
-        </div>
-    }
-    @if (Model.Contains(Role.Codes.AccessMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
-    {
-        <div class="col-md-6">
-            <div class="card access-color">
-                <div class="card-header-access">
-                    <div class="card-head">
-                        <h2>Access List</h2>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <a asp-action="AccessReport" class="btn btn-link">All Access <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                </div>
-            </div>
-        </div>
-    }
-    @if (Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
-    {
-        <div class="col-md-6">
-            <div class="card keys-color">
-                <div class="card-header-keys">
-                    <div class="card-head">
-                        <h2>Keys</h2>
-                    </div>
-                </div>
-                <div class="card-content">
-                    <a asp-action="KeyReport" class="btn btn-link">Just Keys <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a><br/>
-                    <a asp-action="KeyWithSerialReport" class="btn btn-link">Keys With Serials <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a><br/>
-                    <a asp-action="KeyWithSpaceReport" class="btn btn-link">Keys With Spaces <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                </div>
-            </div>
-        </div>
-    }
-</div>

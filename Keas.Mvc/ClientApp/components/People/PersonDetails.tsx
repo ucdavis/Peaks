@@ -74,7 +74,7 @@ export default class PersonDetails extends React.Component<IProps, {}> {
                       target='_blank'
                       rel='noopener noreferrer'
                     >
-                      <Button className='btn btn-link'>
+                      <Button color='link'>
                         <i
                           className='fas fa-search fa-sm fa-fw mr-2'
                           aria-hidden='true'

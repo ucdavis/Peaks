@@ -2,19 +2,25 @@ nav {
   background-color: white;
   box-shadow: $box-shadow;
 }
+.peaks-nav {
+  width:100%;
+}
 a.nav-link {
   font-size: 2rem;
   font-family: $sans-bold;
   color: $primary-font;
   &:hover {
-    color: darken($secondary-color, 9);
+    color: darken($primary-color, 9);
   }
   &.active {
-    color: $secondary-color;
+    color: $primary-color;
   }
 }
 .navbar {
-  padding: 0.8rem 0rem;
+  padding: 0;
+  .nav-item {
+    align-self:center;
+  }
 }
 .navbar-toggler {
   color: $primary-font !important;
@@ -26,6 +32,27 @@ a.nav-link {
     margin-left: 2px;
   }
 }
+
+.nav-actions {
+  text-align:left;
+  border-left:1px solid $borders;
+  padding: 0.8rem 1.6rem;
+  label {
+    font-size:1.8rem;
+    font-family: $sans-bold;
+    margin-bottom:0;
+  }
+  button {
+    border:none;
+    box-shadow:none;
+    color:$secondary-font;
+    text-decoration:underline;
+    padding:0;
+    font-size:1.6rem;
+  }
+}
+
+
 // React Tabs
 
 .react-tabs {
@@ -52,6 +79,7 @@ a.nav-link {
       &.active {
         color: $spaces;
         border-bottom: 4px solid $spaces;
+        background-color:transparentize($spaces,0.9);
       }
       &:hover {
         color: darken($spaces, 10);
@@ -61,6 +89,7 @@ a.nav-link {
       &.active {
         color: $keys;
         border-bottom: 4px solid $keys;
+        background-color:transparentize($keys,0.9);
       }
       &:hover {
         color: darken($keys, 10);
@@ -70,6 +99,7 @@ a.nav-link {
       &.active {
         color: $equipment;
         border-bottom: 4px solid $equipment;
+        background-color:transparentize($equipment,0.9);
       }
       &:hover {
         color: darken($equipment, 10);
@@ -79,6 +109,7 @@ a.nav-link {
       &.active {
         color: $people;
         border-bottom: 4px solid $people;
+        background-color:transparentize($people,0.9);
       }
       &:hover {
         color: darken($people, 10);
@@ -88,6 +119,7 @@ a.nav-link {
       &.active {
         color: $access;
         border-bottom: 4px solid $access;
+        background-color:transparentize($access,0.9);
       }
       &:hover {
         color: darken($access, 10);
