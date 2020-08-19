@@ -110,6 +110,8 @@
     <Build Include="dbo\Views\vExtendedPersonViews.sql" />
     <Build Include="dbo\Tables\EquipmentAttributeKeys.sql" />
     <Build Include="dbo\Tables\TeamApiCodes.sql" />
+    <Build Include="dbo\Tables\Documents.sql" />
+    <Build Include="dbo\Tables\TeamDocumentSettings.sql" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Compare\ProjectToSqlExpress.scmp" />
