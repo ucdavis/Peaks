@@ -7,6 +7,7 @@ namespace Keas.Core.Models
         public int Id { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
+        public string Notes { get; set; }
         public int TeamId { get; set; }
         public string Tags { get; set; }
     }
