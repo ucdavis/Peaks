@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
+using Keas.Mvc.Models;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -31,6 +32,7 @@ namespace Keas.Mvc.Controllers.Api
             _eventService = eventService;
             _securityService = securityService;
         }
+
 
         [ApiExplorerSettings(IgnoreApi = true)]
         public string GetTeam()
@@ -62,56 +64,57 @@ namespace Keas.Mvc.Controllers.Api
             return Json(assignedAccess);
         }
 
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Access>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> List()
-        {
-            var accessList = await _context.Access
-                .Where(x => x.Team.Slug == Team)
-                .Include(x => x.Assignments)
-                .ThenInclude(x => x.Person)
-                .Include(x => x.Team)
-                .AsNoTracking().ToArrayAsync();
-
-            return Json(accessList);
-        }
 
         /// <summary>
-        /// Lists all Access items that have been deleted for the team
+        /// List Access
         /// </summary>
+        /// <param name="filter">0 = ShowActive, 1 = ShowInactive, 2 = ShowAll. Defaults to Show Active</param>
         /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Access>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> ListInactive()
+        public async Task<IActionResult> List(ApiParameterModels.Filter filter = ApiParameterModels.Filter.ShowActive)
         {
-            var accessList = await _context.Access
-                .IgnoreQueryFilters()
-                .Where(x => x.Team.Slug == Team && !x.Active)
-                .Include(x => x.Assignments)
-                .ThenInclude(x => x.Person)
-                .Include(x => x.Team)
-                .AsNoTracking().ToArrayAsync();
-
-            return Json(accessList);
-        }
-
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Details(int id, bool showDeleted = false)
-        {
-            var accessQuery = _context.Access
+            var accessListQuery = _context.Access
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignments)
                 .ThenInclude(x => x.Person)
                 .Include(x => x.Team)
                 .AsNoTracking();
 
-            if (showDeleted)
+            switch (filter)
             {
-                accessQuery = accessQuery.IgnoreQueryFilters();
+                case ApiParameterModels.Filter.ShowActive:
+                    //Use defaults
+                    break;
+                case ApiParameterModels.Filter.ShowInactive:
+                    accessListQuery = accessListQuery.IgnoreQueryFilters().Where(a => !a.Active);
+                    break;
+                case ApiParameterModels.Filter.ShowAll:
+                    accessListQuery = accessListQuery.IgnoreQueryFilters();
+                    break;
+                default:
+                    throw new Exception("Unknown filter value");
             }
 
-            var access = await accessQuery.SingleOrDefaultAsync(x => x.Id == id);
+            var accessList = await accessListQuery.ToArrayAsync();
+
+            return Json(accessList);
+        }
+
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Details(int id)
+        {
+            var access = await _context.Access
+                .IgnoreQueryFilters()
+                .Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignments)
+                .ThenInclude(x => x.Person)
+                .Include(x => x.Team)
+                .AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
+
+
             if (access == null)
             {
                 return NotFound();
@@ -253,24 +256,6 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.AssetType == "Access" && x.Access.Team.Slug == Team && x.AccessId == id)
                 .OrderByDescending(x => x.ActedDate)
                 .Take(max)
-                .AsNoTracking().ToListAsync();
-
-            return Json(history);
-        }
-
-        /// <summary>
-        /// Return all history records
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetFullHistory(int id)
-        {
-            var history = await _context.Histories
-                .IgnoreQueryFilters()
-                .Where(x => x.AssetType == "Access" && x.Access.Team.Slug == Team && x.AccessId == id)
-                .OrderByDescending(x => x.ActedDate)
                 .AsNoTracking().ToListAsync();
 
             return Json(history);
