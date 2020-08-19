@@ -82,7 +82,7 @@ namespace Keas.Mvc.Controllers.Api
 
         // Get a specific document's combined pdf
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(IEnumerable<Document>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get(int id)
         {
             var document = await _context.Documents
