@@ -109,43 +109,45 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipmentAssignments);
         }
 
-        // List all equipments for a team
+        /// <summary>
+        /// List all equipments for a team
+        /// </summary>
+        /// <param name="filter">0 = ShowActive, 1 = ShowInactive, 2 = ShowAll. Defaults to Show Active</param>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(ApiParameterModels.Filter filter = ApiParameterModels.Filter.ShowActive)
         {
-            var equipments = await _context.Equipment
+            var equipmentQuery = _context.Equipment
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person)
                 .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
-                .AsNoTracking().ToArrayAsync();
+                .AsNoTracking();
+
+            switch (filter)
+            {
+                case ApiParameterModels.Filter.ShowActive:
+                    //Use defaults
+                    break;
+                case ApiParameterModels.Filter.ShowInactive:
+                    equipmentQuery = equipmentQuery.IgnoreQueryFilters().Where(a => !a.Active);
+                    break;
+                case ApiParameterModels.Filter.ShowAll:
+                    equipmentQuery = equipmentQuery.IgnoreQueryFilters();
+                    break;
+                default:
+                    throw new Exception("Unknown filter value");
+            }
+
+            var equipments = await equipmentQuery.ToArrayAsync();
+
 
             return Json(equipments);
         }
 
-        /// <summary>
-        /// This lists all equipment that has been deleted for the team.
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> ListInactive()
-        {
-            var equipments = await _context.Equipment
-                .IgnoreQueryFilters()
-                .Where(x => x.Team.Slug == Team && !x.Active)
-                .Include(x => x.Assignment)
-                .ThenInclude(x => x.Person)
-                .Include(x => x.Space)
-                .Include(x => x.Attributes)
-                .Include(x => x.Team)
-                .AsNoTracking().ToArrayAsync();
-
-            return Json(equipments);
-        }
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
