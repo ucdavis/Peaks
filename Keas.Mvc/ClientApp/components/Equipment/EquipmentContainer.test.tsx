@@ -17,7 +17,7 @@ let container: Element = null;
 jest.mock('../History/HistoryContainer', () => {
   return {
     default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
+      return <div id="HistoryContainer">HistoryContainer</div>;
     }
   };
 });
@@ -65,9 +65,7 @@ describe('Equipment Container', () => {
     });
 
     const headerRecord = container.querySelector('.table-row').textContent;
-    expect(headerRecord).toBe(
-      ' Serial NumberName 🔼Assigned ToExpirationActions'
-    );
+    expect(headerRecord).toBe(' Serial NumberNameAssigned ToExpirationActions');
   });
 
   it('Shows Add Button', async () => {
@@ -120,7 +118,7 @@ describe('Equipment Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function (match) {
+    matches.forEach(function(match) {
       const rowContent = match.textContent;
       if (rowContent.includes('Dell Desktop')) {
         foundIt = true;

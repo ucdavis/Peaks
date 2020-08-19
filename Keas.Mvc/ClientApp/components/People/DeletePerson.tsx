@@ -35,7 +35,7 @@ export default class DeletePerson extends React.Component<IProps, IState> {
     }
     return (
       <div>
-        <Button className='btn btn-link' onClick={this._toggleModal}>
+        <Button color='link' onClick={this._toggleModal}>
           <i className='fas fa-trash fa-sm fa-fw mr-2' aria-hidden='true' />
           Delete Person
         </Button>

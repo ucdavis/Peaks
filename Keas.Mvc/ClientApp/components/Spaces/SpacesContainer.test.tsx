@@ -18,7 +18,7 @@ let container: Element = null;
 jest.mock('../Equipment/EquipmentContainer', () => {
   return {
     default: () => {
-      return <div id='EquipmentContainer'>EquipmentContainer</div>;
+      return <div id="EquipmentContainer">EquipmentContainer</div>;
     }
   };
 });
@@ -26,7 +26,7 @@ jest.mock('../Equipment/EquipmentContainer', () => {
 jest.mock('../Keys/KeyContainer', () => {
   return {
     default: () => {
-      return <div id='KeyContainer'>KeyContainer</div>;
+      return <div id="KeyContainer">KeyContainer</div>;
     }
   };
 });
@@ -34,7 +34,7 @@ jest.mock('../Keys/KeyContainer', () => {
 jest.mock('../Workstations/WorkstationContainer', () => {
   return {
     default: () => {
-      return <div id='WorkstationContainer'>WorkstationContainer</div>;
+      return <div id="WorkstationContainer">WorkstationContainer</div>;
     }
   };
 });
@@ -82,7 +82,7 @@ describe('Space Container', () => {
     });
 
     const headerRecord = container.querySelector('.table-row').textContent;
-    expect(headerRecord).toBe(' Room 🔼Room NameKeysEquipmentWorkstations ');
+    expect(headerRecord).toBe(' RoomRoom NameKeysEquipmentWorkstations ');
   });
 
   it('Shows spaces list', async () => {
@@ -109,7 +109,7 @@ describe('Space Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function (match) {
+    matches.forEach(function(match) {
       const rowContent = match.textContent;
       if (rowContent.includes('IPO - Open Office 3')) {
         foundIt = true;
@@ -180,6 +180,6 @@ describe('Space Container', () => {
 
     const spaceContent = container.querySelector('.card-text').textContent;
 
-    expect(spaceContent).toContain('562 Sq Feet')
+    expect(spaceContent).toContain('562 Sq Feet');
   });
 });

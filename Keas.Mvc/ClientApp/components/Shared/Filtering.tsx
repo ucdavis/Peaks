@@ -12,7 +12,7 @@ export const GlobalFilter = ({
   return (
     <span>
       Search:{' '}
-      <input
+      <input className="form-control"
         value={globalFilter || ''}
         onChange={e => {
           setGlobalFilter(e.target.value || undefined); // Set undefined to remove the filter entirely
@@ -29,7 +29,7 @@ export const DefaultColumnFilter = ({
 }) => {
 
   return (
-    <input
+    <input className="form-control"
       value={filterValue || ''}
       onChange={e => {
         setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
@@ -55,7 +55,7 @@ export const SelectColumnFilter = ({
 
   // Render a multi-select box
   return (
-    <select
+    <select className="form-control"
       value={filterValue}
       onChange={e => {
         setFilter(e.target.value || undefined);

@@ -17,7 +17,7 @@ let container: Element = null;
 jest.mock('../Spaces/SpacesContainer', () => {
   return {
     default: () => {
-      return <div id='SpacesContainer'>SpacesContainer</div>;
+      return <div id="SpacesContainer">SpacesContainer</div>;
     }
   };
 });
@@ -25,7 +25,7 @@ jest.mock('../Spaces/SpacesContainer', () => {
 jest.mock('../Keys/KeySerialContainer', () => {
   return {
     default: () => {
-      return <div id='KeySerialContainer'>KeySerialContainer</div>;
+      return <div id="KeySerialContainer">KeySerialContainer</div>;
     }
   };
 });
@@ -33,7 +33,7 @@ jest.mock('../Keys/KeySerialContainer', () => {
 jest.mock('../History/HistoryContainer', () => {
   return {
     default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
+      return <div id="HistoryContainer">HistoryContainer</div>;
     }
   };
 });
@@ -81,7 +81,7 @@ describe('Key Container', () => {
     });
 
     const headerRecord = container.querySelector('.table-row').textContent;
-    expect(headerRecord).toBe(' Key Name 🔼Key CodeSerials SpacesActions');
+    expect(headerRecord).toBe(' Key NameKey CodeSerials SpacesActions');
   });
 
   it('Shows Add Button', async () => {
@@ -134,7 +134,7 @@ describe('Key Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function (match) {
+    matches.forEach(function(match) {
       const rowContent = match.textContent;
       if (rowContent.includes('Test')) {
         foundIt = true;
@@ -203,9 +203,8 @@ describe('Key Container', () => {
     expect(keyTitle).toContain('ER'); // confirm key code is displayed
 
     // should show the key serial container
-    const keySerialContent = container.querySelector(
-      '#KeySerialContainer'
-    ).textContent;
+    const keySerialContent = container.querySelector('#KeySerialContainer')
+      .textContent;
 
     expect(keySerialContent).toBe('KeySerialContainer');
   });
