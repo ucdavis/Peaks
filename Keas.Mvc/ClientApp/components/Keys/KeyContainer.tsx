@@ -386,6 +386,7 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         body: JSON.stringify(request),
         method: 'POST'
       });
+      console.log(key);
       toast.success('Key updated successfully!');
     } catch (err) {
       toast.error('Error updating key.');
