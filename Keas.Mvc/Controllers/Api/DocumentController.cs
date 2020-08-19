@@ -116,6 +116,11 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
+            // make sure the given person is actually part of the current team
+            if (!await _context.People.AnyAsync(p => p.Team.Slug == Team && p.Id == document.PersonId)) {
+                return NotFound();
+            }
+
             var envelope = await _documentSigningService.SendTemplate(document.Person.Email, document.Person.Name, document.TemplateId);
 
             var newDocument = new Document
