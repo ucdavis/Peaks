@@ -46,8 +46,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
       return (
         <div>
           No documents are available to send. Have a team administrator create
-          documents by following the instructions on{' '}
-          <a href='google.com'>our help page</a>
+          documents through the Team DocuSign Settings menu.
         </div>
       );
     }
