@@ -9,6 +9,7 @@ import { DocumentsList } from './DocumentsList';
 import { Button } from 'reactstrap';
 import { AssignDocument } from './AssignDocument';
 import { toast } from 'react-toastify';
+import Denied from '../Shared/Denied';
 
 interface IProps {
   person: IPerson;
@@ -80,7 +81,7 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
   );
 
   if (!canView) {
-    return null;
+    return <Denied viewName='Documents' />;
   }
 
   if (loading) {
