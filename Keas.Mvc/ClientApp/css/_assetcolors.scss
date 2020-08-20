@@ -86,6 +86,9 @@
   }
 }
 .people-color {
+  p a {
+    color: $people;
+  }
   .fa-info-circle {
     color: transparentize($people, 0.96);
   }
