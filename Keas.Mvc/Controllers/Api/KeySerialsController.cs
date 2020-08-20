@@ -123,19 +123,16 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Details(int id, bool showDeleted = false)
+        public async Task<IActionResult> Details(int id)
         {
             var keySerialQuery = _context.KeySerials
+                .IgnoreQueryFilters()
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.KeySerialAssignment)
                 .ThenInclude(x => x.Person)
                 .Include(x => x.Key)
                 .AsNoTracking();
 
-            if (showDeleted)
-            {
-                keySerialQuery = keySerialQuery.IgnoreQueryFilters();
-            }
 
             var keySerial = await keySerialQuery.SingleOrDefaultAsync(x => x.Id == id);
             if (keySerial == null)
@@ -353,27 +350,6 @@ namespace Keas.Mvc.Controllers.Api
             return Json(history);
         }
 
-
-        /// <summary>
-        /// Return all history records
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetFullHistory(int id)
-        {
-            var history = await _context.Histories
-                .IgnoreQueryFilters()
-                .Where(x => x.KeySerial.Key.Team.Slug == Team
-                            && x.AssetType == "KeySerial"
-                            && x.KeySerial.Id == id)
-                .OrderByDescending(x => x.ActedDate)
-                .AsNoTracking()
-                .ToListAsync();
-
-            return Json(history);
-        }
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
