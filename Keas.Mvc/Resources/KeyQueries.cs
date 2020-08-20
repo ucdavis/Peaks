@@ -16,7 +16,7 @@ from (select Keys.Id, count(S2.Id) as SpacesCount
                                left join KeySerials S3 on Keys.Id = S3.KeyId and S3.TeamId = @teamid and S3.Active = 1
                         group by Keys.Id) t3 on t1.Id = t3.Id
        left outer join Keys on Keys.Id = t1.Id
-where Keys.Active = 1
+where (Keys.Active = @active1 or Keys.Active = @active2)
   and Keys.TeamId = @teamid;
     ";
 }

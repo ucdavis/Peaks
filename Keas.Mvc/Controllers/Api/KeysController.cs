@@ -13,6 +13,7 @@ using Keas.Core.Models;
 using Keas.Mvc.Models.KeyViewModels;
 using Dapper;
 using Keas.Core.Extensions;
+using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
@@ -58,16 +59,39 @@ namespace Keas.Mvc.Controllers.Api
             return Json(await keys.ToListAsync());
         }
 
-        // List all keys for a team
+        /// <summary>
+        /// List all keys for a team
+        /// </summary>
+        /// <param name="filter">0 = ShowActive, 1 = ShowInactive, 2 = ShowAll. Defaults to Show Active</param>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Key>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(ApiParameterModels.Filter filter = ApiParameterModels.Filter.ShowActive)
         {
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
 
             var sql = KeyQueries.List;
+            int active1 = 1;
+            int active2 = 1;
 
-            var result = _context.Database.GetDbConnection().Query(sql, new { teamId });
+            switch (filter)
+            {
+                case ApiParameterModels.Filter.ShowActive:
+                    //Use defaults
+                    break;
+                case ApiParameterModels.Filter.ShowInactive:
+                    active1 = 0;
+                    active2 = 0;
+                    break;
+                case ApiParameterModels.Filter.ShowAll:
+                    active1 = 1;
+                    active2 = 0;
+                    break;
+                default:
+                    throw new Exception("Unknown filter value");
+            }
+
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId, active1, active2 });
 
             var keys = result.Select(r => new
             {
@@ -78,7 +102,8 @@ namespace Keas.Mvc.Controllers.Api
                     Name = r.Name,
                     Notes = r.Notes,
                     TeamId = r.TeamId,
-                    Tags = r.Tags
+                    Tags = r.Tags,
+                    Active = r.Active
                 },
                 id = r.Id,
                 SpacesCount = r.SpacesCount,
@@ -90,63 +115,36 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         /// <summary>
-        /// Dump of the active keys. Note, status is different from active/inactive keys
+        /// Show details of a key
         /// </summary>
+        /// <param name="id">The Key Id</param>
+        /// <param name="includeSerial">Includes serials any related assignments, and the person</param>
+        /// <param name="includeSpace">Include any related spaces</param>
         /// <returns></returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Key>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> ListAll()
-        {
-            var keys = await _context.Keys
-                .Where(a => a.Team.Slug == Team)
-                .Include(a => a.Serials)
-                .ThenInclude(a => a.KeySerialAssignment)
-                .ThenInclude(a => a.Person)
-                .Include(a => a.KeyXSpaces)
-                .ThenInclude(a => a.Space)
-                .AsNoTracking().ToArrayAsync();
-
-            return Json(keys);
-        }
-
-        /// <summary>
-        /// Dump of the inactive (deleted) keys. Note, status is different from active/inactive keys
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Key>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> ListAllInactive()
-        {
-            var keys = await _context.Keys
-                .IgnoreQueryFilters()
-                .Where(a => a.Team.Slug == Team && !a.Active)
-                .Include(a => a.Serials)
-                .ThenInclude(a => a.KeySerialAssignment)
-                .ThenInclude(a => a.Person)
-                .Include(a => a.KeyXSpaces)
-                .ThenInclude(a => a.Space)
-                .AsNoTracking().ToArrayAsync();
-
-            return Json(keys);
-        }
-
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Key), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Details(int id, bool showDeleted = false)
+        public async Task<IActionResult> Details(int id, bool includeSerial = false, bool includeSpace = false)
         {
             var keyQuery = _context.Keys
+                .IgnoreQueryFilters()
                 .Where(a => a.Team.Slug == Team)
-                .Include(a => a.Serials)
-                .ThenInclude(a => a.KeySerialAssignment)
-                .ThenInclude(a => a.Person)
-                .Include(a => a.KeyXSpaces)
-                .ThenInclude(a => a.Space)
                 .AsNoTracking();
 
-            if (showDeleted)
+            if (includeSerial)
             {
-                keyQuery = keyQuery.IgnoreQueryFilters();
+                keyQuery = keyQuery
+                    .Include(a => a.Serials)
+                    .ThenInclude(a => a.KeySerialAssignment)
+                    .ThenInclude(a => a.Person);
             }
+
+            if (includeSpace)
+            {
+                keyQuery = keyQuery
+                    .Include(a => a.KeyXSpaces)
+                    .ThenInclude(a => a.Space);
+            }
+
             var keys = await keyQuery.SingleOrDefaultAsync(x => x.Id == id);
 
             if (keys == null)
@@ -405,27 +403,6 @@ namespace Keas.Mvc.Controllers.Api
                     && x.KeyId == id)
                 .OrderByDescending(x => x.ActedDate)
                 .Take(max)
-                .AsNoTracking()
-                .ToListAsync();
-
-            return Json(history);
-        }
-
-        /// <summary>
-        /// Return all history records
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetFullHistory(int id)
-        {
-            var history = await _context.Histories
-                .IgnoreQueryFilters()
-                .Where(x => x.Key.Team.Slug == Team
-                            && x.AssetType == "Key"
-                            && x.KeyId == id)
-                .OrderByDescending(x => x.ActedDate)
                 .AsNoTracking()
                 .ToListAsync();
 
