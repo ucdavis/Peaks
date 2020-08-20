@@ -10,6 +10,7 @@ namespace Keas.Mvc.Services
     {
         Task<History> KeyCreated(Key key);
         Task<History> SpaceAssignKey(Key key, Space space);
+        Task<History> SpaceUnassignKey(Key key, Space space);
         Task<History> KeySerialCreated(KeySerial keySerial);
         Task<History> AccessCreated(Access access);
         Task<History> EquipmentCreated(Equipment equipment);
@@ -479,6 +480,21 @@ namespace Keas.Mvc.Services
                 ActorId = person.UserId,
                 AssetType = "Key",
                 ActionType = "Assigned",
+                Key = key
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+
+        public async Task<History> SpaceUnassignKey(Key key, Space space)
+        {
+            var person = await _securityService.GetPerson(key.TeamId);
+            var historyEntry = new History
+            {
+                Description = key.GetDescription(nameof(Key), key.Title, person, "Unassigned to " + space.RoomNumber + " " + space.BldgName),
+                ActorId = person.UserId,
+                AssetType = "Key",
+                ActionType = "Unassigned",
                 Key = key
             };
             _context.Histories.Add(historyEntry);
