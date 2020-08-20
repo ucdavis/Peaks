@@ -389,24 +389,6 @@ namespace Keas.Mvc.Controllers.Api
             return Json(history);
         }
 
-        /// <summary>
-        /// Return all history records
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetFullHistory(int id)
-        {
-            var history = await _context.Histories
-                .IgnoreQueryFilters()
-                .Where(x => x.AssetType == "Equipment" && x.Equipment.Team.Slug == Team && x.EquipmentId == id)
-                .OrderByDescending(x => x.ActedDate)
-                .AsNoTracking().ToListAsync();
-
-            return Json(history);
-        }
-
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<BigfixComputerSearchResult>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetComputer(string id)
