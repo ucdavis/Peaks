@@ -1,0 +1,71 @@
+@model Keas.Core.Domain.TeamDocumentSetting
+
+@{
+    ViewData["Title"] = "Create Document Signing Setting";
+}
+
+
+<div class="card">
+  <div class="card-header-primary">
+    <div class="card-head">
+    <div class="row justify-content-between">
+      <h2>Create DocuSign Template Setting</h2>
+        <a class="btn btn-link" asp-action="Index"><i class="fas fa-arrow-left fa-xs"></i> Back to List</a>
+        </div>
+    </div>
+  </div>
+  <div class="card-content">
+      <div class="row">
+          <div class="col-md-8">
+            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseInstructions" aria-expanded="false" aria-controls="collapseInstructions">
+                Show Instructions
+            </button>
+            </p>
+            <div class="collapse" id="collapseInstructions">
+                <div class="card card-body">
+                    <ol>
+                        <li>
+                            Login to <a href="https://app.docusign.com/home" target="_blank">docusign.com</a> and choose "Templates" from the top menu. 
+                            If you do not see that option, <a href="https://itcatalog.ucdavis.edu/service/docusign-pilot" target="_blank">request access here</a>
+                        </li>
+                        <li>Click "New" and create a tempate</li>
+                        <li>Give the template and name and then add the documents that need signing</li>
+                        <li>In the "Add Recipients" section, <strong> in the "Role" field type "signer"</strong>. Do not fill in name or email, and do not add any more recipients</li>
+                        <li>If you would like to you can customize the email subject and message that will be sent out when the system requests their signature</li>
+                        <li>Click "Next" and setup the document for signing as desired, ex: placing their signature and date signed at the bottom</li>
+                        <li>Click "Save and Close"</li>
+                        <li>Back at the list of templates, select the dropdown next to your template and choose "Share with Users" and <strong>search for "PEAKS Document Service Account" and click share</strong></li>
+                        <li>And finally, click on the template name to navigate to the template details page.  Copy the last part of the URL to get the TemplateId.  It will be an identifier in this format: 6fc845c3-f23f-4325-9298-a845ea50a814.</li>
+                    </ol>
+                </div>
+            </div>
+          </div>
+      </div>
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="TemplateId" class="control-label"></label>
+                    <input asp-for="TemplateId" class="form-control" />
+                    <span asp-validation-for="TemplateId" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

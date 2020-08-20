@@ -33,10 +33,7 @@ namespace Keas.Mvc.Services
         Task TrackEquipmentAssignmentUpdated(Equipment equipment);
         Task TrackWorkstationAssignmentUpdated(Workstation workstation);
         Task TrackCreateKeySerial(KeySerial keySerial);
-
-
-
-
+        Task TrackCreateDocument(Document document);
     }
     public class EventService : IEventService
     {
@@ -212,7 +209,10 @@ namespace Keas.Mvc.Services
             var history = await _historyService.WorkstationAssignmentUpdated(workstation);
             await _notificationService.WorkstationAssigned(workstation, history);
         }
-
+        public async Task TrackCreateDocument(Document document)
+        {
+            await _historyService.DocumentCreated(document);
+        }
     }
 }
 

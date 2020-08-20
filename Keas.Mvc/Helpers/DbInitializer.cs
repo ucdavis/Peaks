@@ -33,6 +33,7 @@ namespace Keas.Mvc.Helpers
             CreateOrFindRole(new Role { Name = "DepartmentalAdmin" });
             CreateOrFindRole(new Role { Name = "AccessMaster" });
             CreateOrFindRole(new Role { Name = "SpaceMaster" });
+            CreateOrFindRole(new Role { Name = "DocumentMaster" });
             var admin = CreateOrFindRole(new Role { Name = "Admin", IsAdmin = true });
             CreateOrFindRole(new Role { Name = "PersonManager"});
 

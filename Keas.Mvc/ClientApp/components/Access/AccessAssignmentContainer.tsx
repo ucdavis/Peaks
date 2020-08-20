@@ -10,6 +10,8 @@ import AssignmentTable from './AccessAssignmentTable';
 import AccessList from './AccessList';
 import AssignAccess from './AssignAccess';
 import RevokeAccess from './RevokeAccess';
+import { PermissionsUtil } from '../../util/permissions';
+import Denied from '../Shared/Denied';
 
 // List of assignments passed by props, since this container can be in multiple places
 interface IProps extends RouteChildrenProps<IMatchParams> {
@@ -69,6 +71,9 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   }
 
   public async componentDidMount() {
+    if (!PermissionsUtil.canViewAccess(this.context.permissions)) {
+      return;
+    }
     if (this.state.assignments.length === 0 && this.props.person) {
       const assignments = await this.fetchAssignments();
       this.setState({
@@ -81,6 +86,9 @@ class AssignmentContainer extends React.Component<IProps, IState> {
   }
 
   public render() {
+    if (!PermissionsUtil.canViewAccess(this.context.permissions)) {
+      return <Denied viewName='Access' />;
+    }
     const { action, assetType } = this.props.match.params;
     const isRevokeModalShown =
       assetType === 'accessAssignment' && action === 'revoke';
