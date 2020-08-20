@@ -170,7 +170,6 @@ namespace Keas.Mvc.Services
         public async Task TrackAssignKeySpace(Key key, Space space)
         {
             var history = await _historyService.SpaceAssignKey(key, space);
-            await _notificationService.SpaceAssignKey(key, history);
         }
 
         public async Task TrackKeyDeleted(Key key)
