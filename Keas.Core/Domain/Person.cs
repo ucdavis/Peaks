@@ -91,6 +91,8 @@ namespace Keas.Core.Domain
 
         public List<WorkstationAssignment> WorkstationAssignments { get; set; }
 
+        public List<Document> Documents { get; set; }
+
         protected internal  static void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Person>().HasQueryFilter(a => a.Active);

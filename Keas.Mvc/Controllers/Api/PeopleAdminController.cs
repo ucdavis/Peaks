@@ -107,30 +107,46 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<Person>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Details(int id, bool showDeleted = false, bool showAssignments = false)
+        public async Task<IActionResult> Details(int id, bool showAccessAssignments = false, bool showKeySerialAssignments = false, bool showEquipmentAssignments = false, bool showWorkstationAssignments = false, bool showDocuments = false)
         {
             var peopleQuery = _context.People
+                .IgnoreQueryFilters()
                 .Where(a => a.Team.Slug == Team)
                 .Include(a => a.User)
                 .Include(a => a.Supervisor)
                 .AsNoTracking();
-            if (showDeleted)
-            {
-                peopleQuery = peopleQuery.IgnoreQueryFilters();
-            }
 
-            if (showAssignments)
+
+            if (showAccessAssignments)
             {
                 peopleQuery = peopleQuery
                     .Include(a => a.AccessAssignments)
-                    .ThenInclude(a => a.Access)
+                    .ThenInclude(a => a.Access);
+            }
+            if (showKeySerialAssignments)
+            {
+                peopleQuery = peopleQuery
                     .Include(a => a.KeySerialAssignments)
                     .ThenInclude(a => a.KeySerial)
-                    .ThenInclude(a => a.Key)
+                    .ThenInclude(a => a.Key);
+            }
+            if (showEquipmentAssignments)
+            {
+                peopleQuery = peopleQuery
                     .Include(a => a.EquipmentAssignments)
-                    .ThenInclude(a => a.Equipment)
+                    .ThenInclude(a => a.Equipment);
+            }
+            if (showWorkstationAssignments)
+            {
+                peopleQuery = peopleQuery
                     .Include(a => a.WorkstationAssignments)
                     .ThenInclude(a => a.Workstation);
+            }
+
+            if (showDocuments)
+            {
+                peopleQuery = peopleQuery
+                    .Include(a => a.Documents);
             }
 
             var people = await peopleQuery.SingleOrDefaultAsync(x => x.Id == id);
