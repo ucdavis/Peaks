@@ -160,15 +160,21 @@ namespace Keas.Mvc.Controllers.Api
         /// </summary>
         /// <param name="id"></param>
         /// <param name="max">the max number of record to take. Defaults to 5</param>
+        /// <param name="showDeleted">Will show the history of a person who has been removed</param>
         /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetHistory(int id, int max = 5)
+        public async Task<IActionResult> GetHistory(int id, int max = 5, bool showDeleted = false)
         {
-            var history = await _context.Histories.Where(x => x.TargetId == id)
+            var historyQuery = _context.Histories.Where(x => x.TargetId == id)
                 .OrderByDescending(x => x.ActedDate)
-                .Take(max).AsNoTracking().ToListAsync();
+                .Take(max).AsNoTracking();
 
+            if (showDeleted)
+            {
+                historyQuery = historyQuery.IgnoreQueryFilters();
+            }
+            var history = await historyQuery.ToListAsync();
             return Json(history);
         }
     }
