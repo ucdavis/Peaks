@@ -1,5 +1,5 @@
 ﻿CREATE TABLE [dbo].[LoadingSpaces] (
-    [DeptKey]          VARCHAR (11)  NOT NULL,
+    [DeptKey]          VARCHAR (20)  NOT NULL,
     [BldgKey]          VARCHAR (12)  NOT NULL,
     [FloorKey]         VARCHAR (13)  NOT NULL,
     [RoomKey]          VARCHAR (14)  NOT NULL,
@@ -17,6 +17,8 @@
     [Active]           BIT           NULL,
     CONSTRAINT [PK_LoadingSpace] PRIMARY KEY CLUSTERED ([DeptKey] ASC, [RoomKey] ASC)
 );
+
+
 
 
 
