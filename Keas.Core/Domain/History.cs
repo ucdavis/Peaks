@@ -42,7 +42,8 @@ namespace Keas.Core.Domain {
 
         public Workstation Workstation { get; set; }
         public int? WorkstationId { get; set; }
-        
 
+        public Document Document { get; set; }
+        public int? DocumentId { get; set; }
     }
 }

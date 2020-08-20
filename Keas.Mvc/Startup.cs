@@ -70,6 +70,7 @@ namespace Keas.Mvc
             services.Configure<BigfixSettings>(Configuration.GetSection("Bigfix"));
             services.Configure<SuperuserSettings>(Configuration.GetSection("Superuser"));
             services.Configure<ApiSettings>(Configuration.GetSection("Api"));
+            services.Configure<DocumentSigningSettings>(Configuration.GetSection("DocumentSigning"));
 
             // setup services
             services.AddScoped<IIdentityService, IdentityService>();
@@ -127,8 +128,9 @@ namespace Keas.Mvc
                 options.AddPolicy(AccessCodes.Codes.KeyMasterAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.AccessMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.SpaceMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.SpaceMaster,Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy(AccessCodes.Codes.DocumentMasterAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.DocumentMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.PersonManagerAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.PersonManager, Role.Codes.DepartmentalAdmin)));
-                options.AddPolicy(AccessCodes.Codes.AnyRole, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.SpaceMaster, Role.Codes.DepartmentalAdmin, Role.Codes.AccessMaster, Role.Codes.EquipmentMaster, Role.Codes.KeyMaster, Role.Codes.PersonManager)));
+                options.AddPolicy(AccessCodes.Codes.AnyRole, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.SpaceMaster, Role.Codes.DepartmentalAdmin, Role.Codes.AccessMaster, Role.Codes.DocumentMaster, Role.Codes.EquipmentMaster, Role.Codes.KeyMaster, Role.Codes.PersonManager)));
 
                 // these require direct role access (no API access)
                 options.AddPolicy(AccessCodes.Codes.DepartmentAdminAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin)));
@@ -146,6 +148,9 @@ namespace Keas.Mvc
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
             services.Configure<SparkpostSettings>(Configuration.GetSection("Sparkpost"));
+
+            // Singleton allows authentication to be reused until expiration
+            services.AddSingleton<IDocumentSigningService, DocumentSigningService>();
 
             services.AddScoped<IHistoryService, HistoryService>();
             services.AddScoped<INotificationService, NotificationService>();
