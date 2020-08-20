@@ -9,6 +9,7 @@ namespace Keas.Mvc.Services
     public interface INotificationService
     {
         Task KeyCreatedUpdatedInactive(Key key, History history);
+        Task SpaceAssignKey(Key key, History history);
         Task KeySerialCreatedUpdatedInactive(KeySerial keySerial, History history);
         Task EquipmentCreatedUpdatedInactive(Equipment equipment, History history);
         Task AccessCreatedUpdatedInactive(Access access, History history);
@@ -107,6 +108,24 @@ namespace Keas.Mvc.Services
                     History = history,
                     Details = history.Description,
                     TeamId = access.TeamId,
+                };
+                _dbContext.Notifications.Add(notification);
+            }
+        }
+        
+        public async Task SpaceAssignKey(Key key, History history)
+        {
+            var roles = await _dbContext.Roles
+                    .Where(r => r.Name == Role.Codes.DepartmentalAdmin || r.Name == Role.Codes.KeyMaster).ToListAsync();
+            var users = await _securityService.GetUsersInRoles(roles, key.TeamId);
+            foreach (var user in users)
+            {
+                var notification = new Notification
+                {
+                    UserId = user.Id,
+                    History = history,
+                    Details = history.Description,
+                    TeamId = key.TeamId,
                 };
                 _dbContext.Notifications.Add(notification);
             }

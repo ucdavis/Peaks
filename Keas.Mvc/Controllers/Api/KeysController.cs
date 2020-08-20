@@ -281,6 +281,7 @@ namespace Keas.Mvc.Controllers.Api
             _context.KeyXSpaces.Add(association);
             //await _eventService.TrackAssignKeySerial(serial);
 
+            await _eventService.TrackAssignKeySpace(key, space);
             await _context.SaveChangesAsync();
             return Json(association);
         }
