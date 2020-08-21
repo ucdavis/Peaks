@@ -34,6 +34,7 @@ namespace Keas.Mvc.Services
         Task TrackWorkstationAssignmentUpdated(Workstation workstation);
         Task TrackCreateKeySerial(KeySerial keySerial);
         Task TrackCreateDocument(Document document);
+        Task TrackDocumentStatusChange(Document document);
     }
     public class EventService : IEventService
     {
@@ -212,6 +213,10 @@ namespace Keas.Mvc.Services
         public async Task TrackCreateDocument(Document document)
         {
             await _historyService.DocumentCreated(document);
+        }
+        public async Task TrackDocumentStatusChange(Document document)
+        {
+            await _historyService.DocumentStatusChange(document);
         }
     }
 }

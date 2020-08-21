@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using DocuSign.eSign.Api;
 using DocuSign.eSign.Client;
@@ -38,9 +39,21 @@ namespace Keas.Mvc.Services
             var envelopesApi = new EnvelopesApi(GetApiClient());
             var envelope = new EnvelopeDefinition { TemplateId = templateId };
 
-            // TODO: be able to handle other role names?  or at least document why we need this one
+            // Only handle templtes with single role named "signer"
             var signer = new TemplateRole { Email = signerEmail, Name = signerName, RoleName = "signer" };
             envelope.TemplateRoles = new List<TemplateRole> { signer };
+
+            // get webhook callbacks for completion events
+            var events = new[] {
+                new EnvelopeEvent { EnvelopeEventStatusCode = "completed" },
+                new EnvelopeEvent { EnvelopeEventStatusCode = "declined" },
+                new EnvelopeEvent { EnvelopeEventStatusCode = "voided" }
+            };
+            envelope.EventNotification = new EventNotification { 
+                Url = _documentSigningSettings.CallbackUrlBase + "/" + _documentSigningSettings.CallbackUrlSecret, 
+                EnvelopeEvents = events.ToList() 
+            };
+
             envelope.Status = "sent";
 
             return await envelopesApi.CreateEnvelopeAsync(_documentSigningSettings.AccountId, envelope);

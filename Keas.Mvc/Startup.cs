@@ -162,6 +162,7 @@ namespace Keas.Mvc
             services.AddScoped<IBigfixService, BigfixService>();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddXmlSerializerFormatters()
                 .AddNewtonsoftJson(options => {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 });

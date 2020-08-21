@@ -8,6 +8,8 @@ namespace Keas.Mvc.Models
         public string ApiBasePath { get; set; }
         public string AuthServer { get; set; }
         public string ClientId { get; set; }
+        public string CallbackUrlBase { get; set; }
+        public string CallbackUrlSecret { get; set; }
         public string ImpersonatedUserId { get; set; }
         public string PrivateKeyBase64 { get; set; }
 

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -52,29 +53,6 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Team)
                 .Include(x => x.Person)
                 .AsNoTracking().ToArrayAsync();
-
-            if (!documents.Any()) {
-                return Json(documents);
-            }
-
-            var envelopeIds = documents.Select(d => d.EnvelopeId).ToArray();
-
-            var docusignEnvelopeInfo = await _documentSigningService.GetEnvelopes(envelopeIds);
-
-            foreach (var doc in documents)
-            {
-                // find the matching envelopeId for this document and update the status
-                var envelope = docusignEnvelopeInfo.Envelopes.FirstOrDefault(e => e.EnvelopeId == doc.EnvelopeId);
-
-                if (envelope == null)
-                {
-                    doc.Status = "missing";
-                }
-                else
-                {
-                    doc.Status = envelope.Status;
-                }
-            }
 
             return Json(documents);
         }
@@ -131,7 +109,8 @@ namespace Keas.Mvc.Controllers.Api
                 EnvelopeId = envelope.EnvelopeId,
                 TemplateId = document.TemplateId,
                 Active = true,
-                Status = "sent"
+                Status = "sent",
+                CreatedAt = DateTime.UtcNow
             };
 
             await _context.Documents.AddAsync(newDocument);
