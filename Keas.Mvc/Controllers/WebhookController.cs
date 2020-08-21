@@ -50,7 +50,21 @@ namespace Keas.Mvc.Controllers
 
             await _eventService.TrackCreateDocument(document);
             await _context.SaveChangesAsync();
-            return StatusCode(200);
+
+            // return the envelopeID to acknowledge receipt.  If docusign doesn't get this, they will retry the callback
+            // see: https://stackoverflow.com/questions/28733094/how-to-acknowledge-a-docusign-connect-event
+            var ackContent = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+                <soap:Envelope xmlns:soap = ""http://schemas.xmlsoap.org/soap/envelope/"">
+                    <soap:Body>
+                        <soap:response>
+                            <EnvelopeID>{{envelopeid}}</EnvelopeID>
+                        </soap:response>
+                    </soap:Body>
+                </soap:Envelope>";
+
+            ackContent = ackContent.Replace("{{envelopeid}}", data.EnvelopeStatus.EnvelopeID);
+
+            return Content(ackContent, "application/xml");
         }
     }
 

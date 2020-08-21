@@ -50,7 +50,8 @@ namespace Keas.Mvc.Services
                 new EnvelopeEvent { EnvelopeEventStatusCode = "voided" }
             };
             envelope.EventNotification = new EventNotification { 
-                Url = _documentSigningSettings.CallbackUrlBase + "/" + _documentSigningSettings.CallbackUrlSecret, 
+                Url = _documentSigningSettings.CallbackUrlBase + "/" + _documentSigningSettings.CallbackUrlSecret,
+                RequireAcknowledgment = "true",
                 EnvelopeEvents = events.ToList() 
             };
 
