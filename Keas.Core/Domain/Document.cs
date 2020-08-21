@@ -1,3 +1,5 @@
+using System;
+
 namespace Keas.Core.Domain
 {
     public class Document : AssetBase {
@@ -7,5 +9,7 @@ namespace Keas.Core.Domain
         // template that creates this envelope, for grouping documents
         public string TemplateId { get; set; }
         public string Status { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? CompletedAt { get; set; }
     }
 }
