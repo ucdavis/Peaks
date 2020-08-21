@@ -106,12 +106,68 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<Person>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Details(int id, bool showAccessAssignments = false, bool showKeySerialAssignments = false, bool showEquipmentAssignments = false, bool showWorkstationAssignments = false, bool showDocuments = false)
+        {
+            var peopleQuery = _context.People
+                .IgnoreQueryFilters()
+                .Where(a => a.Team.Slug == Team)
+                .Include(a => a.User)
+                .Include(a => a.Supervisor)
+                .AsNoTracking();
+
+
+            if (showAccessAssignments)
+            {
+                peopleQuery = peopleQuery
+                    .Include(a => a.AccessAssignments)
+                    .ThenInclude(a => a.Access);
+            }
+            if (showKeySerialAssignments)
+            {
+                peopleQuery = peopleQuery
+                    .Include(a => a.KeySerialAssignments)
+                    .ThenInclude(a => a.KeySerial)
+                    .ThenInclude(a => a.Key);
+            }
+            if (showEquipmentAssignments)
+            {
+                peopleQuery = peopleQuery
+                    .Include(a => a.EquipmentAssignments)
+                    .ThenInclude(a => a.Equipment);
+            }
+            if (showWorkstationAssignments)
+            {
+                peopleQuery = peopleQuery
+                    .Include(a => a.WorkstationAssignments)
+                    .ThenInclude(a => a.Workstation);
+            }
+
+            if (showDocuments)
+            {
+                peopleQuery = peopleQuery
+                    .Include(a => a.Documents);
+            }
+
+            var people = await peopleQuery.SingleOrDefaultAsync(x => x.Id == id);
+
+            return Json(people);
+        }
+
+        /// <summary>
+        /// Return history records
+        /// Defaults to a max of 5 records returned
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="max">the max number of record to take. Defaults to 5</param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetHistory(int id)
+        public async Task<IActionResult> GetHistory(int id, int max = 5)
         {
             var history = await _context.Histories.Where(x => x.TargetId == id)
                 .OrderByDescending(x => x.ActedDate)
-                .Take(5).AsNoTracking().ToListAsync();
+                .Take(max).AsNoTracking().ToListAsync();
 
             return Json(history);
         }

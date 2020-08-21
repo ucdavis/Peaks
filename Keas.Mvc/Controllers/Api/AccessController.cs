@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
+using Keas.Mvc.Models;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -31,6 +32,7 @@ namespace Keas.Mvc.Controllers.Api
             _eventService = eventService;
             _securityService = securityService;
         }
+
 
         [ApiExplorerSettings(IgnoreApi = true)]
         public string GetTeam()
@@ -62,31 +64,56 @@ namespace Keas.Mvc.Controllers.Api
             return Json(assignedAccess);
         }
 
+
+        /// <summary>
+        /// List Access
+        /// </summary>
+        /// <param name="filter">0 = ShowActive, 1 = ShowInactive, 2 = ShowAll. Defaults to Show Active</param>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Access>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(ApiParameterModels.Filter filter = ApiParameterModels.Filter.ShowActive)
         {
-            var accessList = await _context.Access
+            var accessListQuery = _context.Access
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignments)
                 .ThenInclude(x => x.Person)
                 .Include(x => x.Team)
-                .AsNoTracking().ToArrayAsync();
+                .AsNoTracking();
+
+            switch (filter)
+            {
+                case ApiParameterModels.Filter.ShowActive:
+                    //Use defaults
+                    break;
+                case ApiParameterModels.Filter.ShowInactive:
+                    accessListQuery = accessListQuery.IgnoreQueryFilters().Where(a => !a.Active);
+                    break;
+                case ApiParameterModels.Filter.ShowAll:
+                    accessListQuery = accessListQuery.IgnoreQueryFilters();
+                    break;
+                default:
+                    throw new Exception("Unknown filter value");
+            }
+
+            var accessList = await accessListQuery.ToArrayAsync();
 
             return Json(accessList);
         }
+
 
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         public async Task<IActionResult> Details(int id)
         {
             var access = await _context.Access
+                .IgnoreQueryFilters()
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignments)
-                    .ThenInclude(x => x.Person)
+                .ThenInclude(x => x.Person)
                 .Include(x => x.Team)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(x => x.Id == id);
+                .AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
+
 
             if (access == null)
             {
@@ -212,6 +239,26 @@ namespace Keas.Mvc.Controllers.Api
                 return Json(null);
             }
 
+        }
+
+        /// <summary>
+        /// Return history records
+        /// Defaults to a max of 5 records returned
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="max">the max number of record to take. Defaults to 5</param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetHistory(int id, int max = 5)
+        {
+            var history = await _context.Histories
+                .Where(x => x.AssetType == "Access" && x.Access.Team.Slug == Team && x.AccessId == id)
+                .OrderByDescending(x => x.ActedDate)
+                .Take(max)
+                .AsNoTracking().ToListAsync();
+
+            return Json(history);
         }
     }
 }

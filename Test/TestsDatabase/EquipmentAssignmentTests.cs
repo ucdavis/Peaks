@@ -38,6 +38,7 @@ namespace Test.TestsDatabase
             var expectedFields = new List<NameAndType>();
             expectedFields.Add(new NameAndType("ApprovedAt", "System.Nullable`1[System.DateTime]", new List<string>()));
             expectedFields.Add(new NameAndType("ConfirmedAt", "System.Nullable`1[System.DateTime]", new List<string>()));
+            expectedFields.Add(new NameAndType("Equipment", "Keas.Core.Domain.Equipment", new List<string>()));
             expectedFields.Add(new NameAndType("ExpiresAt", "System.DateTime", new List<string> 
             {
                 "[System.ComponentModel.DataAnnotations.DisplayFormatAttribute(DataFormatString = \"{0:d}\", ApplyFormatInEditMode = True)]",
@@ -54,7 +55,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("RequestedBy", "Keas.Core.Domain.User", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedById", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedByName", "System.String", new List<string>()));
-
+            
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(EquipmentAssignment));

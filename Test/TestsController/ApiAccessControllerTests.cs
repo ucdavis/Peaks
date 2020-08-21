@@ -55,7 +55,7 @@ namespace Test.TestsController
         [Fact]
         public void TestControllerContainsExpectedNumberOfPublicMethods()
         {
-            ControllerReflection.ControllerPublicMethods(10);
+            ControllerReflection.ControllerPublicMethods(11);
         }
 
         [Fact]
@@ -125,6 +125,13 @@ namespace Test.TestsController
             responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
             responseType.ElementAt(0).Type.Name.ShouldBe("Access");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
+            //11
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetHistory", 3 + countAdjustment, "GetHistory", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetHistory", 3 + countAdjustment, "GetHistory", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("GetHistory", 3 + countAdjustment, "GetHistory", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("History");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
+
         }
 
         #endregion

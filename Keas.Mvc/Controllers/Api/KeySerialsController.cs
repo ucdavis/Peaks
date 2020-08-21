@@ -126,12 +126,14 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Details(int id)
         {
             var keySerial = await _context.KeySerials
+                .IgnoreQueryFilters()
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.KeySerialAssignment)
-                    .ThenInclude(x => x.Person)
+                .ThenInclude(x => x.Person)
                 .Include(x => x.Key)
                 .AsNoTracking()
                 .SingleOrDefaultAsync(x => x.Id == id);
+
 
             if (keySerial == null)
             {
@@ -326,21 +328,28 @@ namespace Keas.Mvc.Controllers.Api
             return Json(keySerial);
         }
 
+        /// <summary>
+        /// Takes the top 5 history records
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="max">Defaults to 5</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetHistory(int id)
+        public async Task<IActionResult> GetHistory(int id, int max = 5)
         {
             var history = await _context.Histories
                 .Where(x => x.KeySerial.Key.Team.Slug == Team
                         && x.AssetType == "KeySerial"
                         && x.KeySerial.Id == id)
                 .OrderByDescending(x => x.ActedDate)
-                .Take(5)
+                .Take(max)
                 .AsNoTracking()
                 .ToListAsync();
 
             return Json(history);
         }
+
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status200OK)]
