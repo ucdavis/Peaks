@@ -9,6 +9,8 @@ namespace Keas.Mvc.Services
     public interface IHistoryService
     {
         Task<History> KeyCreated(Key key);
+        Task<History> SpaceAssignKey(Key key, Space space);
+        Task<History> SpaceUnassignKey(Key key, Space space);
         Task<History> KeySerialCreated(KeySerial keySerial);
         Task<History> AccessCreated(Access access);
         Task<History> EquipmentCreated(Equipment equipment);
@@ -464,6 +466,36 @@ namespace Keas.Mvc.Services
                 ActionType = "Accepted",
                 Workstation = workstation,
                 TargetId = workstation.Assignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+
+        public async Task<History> SpaceAssignKey(Key key, Space space)
+        {
+            var person = await _securityService.GetPerson(key.TeamId);
+            var historyEntry = new History
+            {
+                Description = key.GetDescription(nameof(Key), key.Title, person, "Assigned to " + space.RoomNumber + " " + space.BldgName),
+                ActorId = person.UserId,
+                AssetType = "Key",
+                ActionType = "Assigned",
+                Key = key
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+
+        public async Task<History> SpaceUnassignKey(Key key, Space space)
+        {
+            var person = await _securityService.GetPerson(key.TeamId);
+            var historyEntry = new History
+            {
+                Description = key.GetDescription(nameof(Key), key.Title, person, "Unassigned to " + space.RoomNumber + " " + space.BldgName),
+                ActorId = person.UserId,
+                AssetType = "Key",
+                ActionType = "Unassigned",
+                Key = key
             };
             _context.Histories.Add(historyEntry);
             return historyEntry;
