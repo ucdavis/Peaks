@@ -647,7 +647,7 @@ namespace Keas.Mvc.Services
             var signer = await _context.People.SingleOrDefaultAsync(p => p.Id == document.PersonId && p.TeamId == document.TeamId);
             var historyEntry = new History
             {
-                Description = $"Document {document.Name} status changed to {document.Status}",
+                Description = $"Document ({document.Name}) status changed to {document.Status}",
                 ActorId = signer.UserId,
                 TargetId = document.PersonId,
                 AssetType = "Document",
