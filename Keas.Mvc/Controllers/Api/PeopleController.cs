@@ -81,7 +81,7 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(people);
         }
-
+        TODO: 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Person>), StatusCodes.Status200OK)]
         public async Task<IActionResult> ListInactive()
