@@ -25,6 +25,9 @@ from (select People.Id, count(E.Id) as EquipmentCount
       left join WorkstationAssignments WA on People.Id = WA.PersonId
       group by People.Id
     ) t4 on t1.Id = t4.Id
-    left outer join People SUP on People.SupervisorId = SUP.Id
-where (People.Active = @active1 or People.Active = @active2) and People.TeamId = @teamId;";
+    left outer join People SUP on People.SupervisorId = SUP.Id ";
+
+    public static string ListWhereAll = @" where People.TeamId = @teamId;";
+    public static string ListWhereActive = @" where People.Active = 1 and People.TeamId = @teamId;";
+    public static string ListWhereInactive = @" where People.Active = 0 and People.TeamId = @teamId;";
 }

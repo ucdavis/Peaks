@@ -43,29 +43,27 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> List(ApiParameterModels.Filter filter = ApiParameterModels.Filter.ShowActive)
         {
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
-            var active1 = 1;
-            var active2 = 1;
+            var sql = PeopleQueries.List;
 
             switch (filter)
             {
                 case ApiParameterModels.Filter.ShowActive:
                     //Use defaults
+                    sql = $"{sql}{PeopleQueries.ListWhereActive}";
                     break;
                 case ApiParameterModels.Filter.ShowInactive:
-                    active1 = 0;
-                    active2 = 0;
+                    sql = $"{sql}{PeopleQueries.ListWhereInactive}";
                     break;
                 case ApiParameterModels.Filter.ShowAll:
-                    active1 = 1;
-                    active2 = 0;
+                    sql = $"{sql}{PeopleQueries.ListWhereAll}";
                     break;
                 default:
                     throw new Exception("Unknown filter value");
             }
 
-            var sql = PeopleQueries.List;
+            
 
-            var result = _context.Database.GetDbConnection().Query(sql, new { teamId, active1, active2 });
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId});
 
             var people = result.Select(r => new
             {
