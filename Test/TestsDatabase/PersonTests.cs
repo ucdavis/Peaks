@@ -39,6 +39,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("AccessAssignments", "System.Collections.Generic.List`1[Keas.Core.Domain.AccessAssignment]", new List<string>()));
             expectedFields.Add(new NameAndType("Active", "System.Boolean", new List<string>()));
             expectedFields.Add(new NameAndType("Category", "System.String", new List<string>()));
+            expectedFields.Add(new NameAndType("Documents", "System.Collections.Generic.List`1[Keas.Core.Domain.Document]", new List<string>()));
             expectedFields.Add(new NameAndType("Email", "System.String", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.EmailAddressAttribute()]",
