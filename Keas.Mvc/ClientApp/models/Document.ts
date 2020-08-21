@@ -13,6 +13,8 @@ export interface IDocument {
   teamId: number;
   team: ITeam;
   notes: string;
+  createdAt: Date;
+  completedAt: Date;
 }
 
 export interface IDocumentTemplate {
