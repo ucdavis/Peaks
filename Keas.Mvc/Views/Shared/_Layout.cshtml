@@ -7,7 +7,7 @@
 @inject IConfiguration Configuration
 <!DOCTYPE html>
 <html>
-
+@{var currentController = this.ViewContext.RouteData.Values["controller"].ToString();}
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -80,26 +80,27 @@
                     {
                         if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded)
                         {
-                            <li class="nav-item">
+                            <li class='@(currentController == "Asset" ? "nav-item nav-active" : "nav-item")'>
                                 <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"], "People")'>Assets</a>
                             </li>
-                            <li class="nav-item">
+                            <li class='@(currentController == "Confirm" ? "nav-item nav-active" : "nav-item")'>
                                 <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
                             </li>
-                            <li class="nav-item">
+                
+                            <li class='@(currentController == "Report" ? "nav-item nav-active" : "nav-item")'>
                                 <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
                             </li>
                         }
                         else
                         {
-                            <li class="nav-item">
+                            <li class="nav-item nav-active">
                                 <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
                             </li>
                         }
 
                         if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded || (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.PersonManagerAccess)).Succeeded)
                         {
-                            <li class="nav-item">
+                            <li class='@(currentController == "TeamAdmin" ? "nav-item nav-active" : "nav-item")'>
                                 <div class="dropdown">
                                     <a class="dropdown-toggle nav-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Admin <i class="fas fa-caret-down fa-lg"></i>
