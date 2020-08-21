@@ -125,16 +125,16 @@ namespace Keas.Mvc.Controllers.Api
         [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
         public async Task<IActionResult> Details(int id)
         {
-            var keySerialQuery = _context.KeySerials
+            var keySerial = await _context.KeySerials
                 .IgnoreQueryFilters()
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.KeySerialAssignment)
                 .ThenInclude(x => x.Person)
                 .Include(x => x.Key)
-                .AsNoTracking();
+                .AsNoTracking()
+                .SingleOrDefaultAsync(x => x.Id == id);
 
 
-            var keySerial = await keySerialQuery.SingleOrDefaultAsync(x => x.Id == id);
             if (keySerial == null)
             {
                 return NotFound();
