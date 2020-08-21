@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Serilog;
 
 namespace Keas.Mvc.Controllers
 {
@@ -32,6 +33,8 @@ namespace Keas.Mvc.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Docusign(string id, [FromBody]DocuSignEnvelopeInformation data) {
+            Log.ForContext("envelopeInfo", data).Debug("Webhook received from DocuSign for envelope " + data.EnvelopeStatus.EnvelopeID);
+
             if (!string.Equals(id, _documentSigningSettings.CallbackUrlSecret, StringComparison.OrdinalIgnoreCase)) {
                 return Unauthorized();
             }
@@ -48,7 +51,7 @@ namespace Keas.Mvc.Controllers
                 document.CompletedAt = data.EnvelopeStatus.Completed.Value;
             }
 
-            await _eventService.TrackCreateDocument(document);
+            await _eventService.TrackDocumentStatusChange(document);
             await _context.SaveChangesAsync();
 
             // return the envelopeID to acknowledge receipt.  If docusign doesn't get this, they will retry the callback
