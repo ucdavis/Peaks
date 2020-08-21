@@ -8,6 +8,7 @@ using Keas.Core.Domain;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
+using Keas.Mvc.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,66 +33,39 @@ namespace Keas.Mvc.Controllers.Api
             _notificationService = notificationService;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filter">0 = ShowActive, 1 = ShowInactive, 2 = ShowAll. Defaults to Show Active</param>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Person>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(ApiParameterModels.Filter filter = ApiParameterModels.Filter.ShowActive)
         {
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
-            var active = 1;
+            var active1 = 1;
+            var active2 = 1;
 
-            var sql = PeopleQueries.List;
-
-            var result = _context.Database.GetDbConnection().Query(sql, new { teamId, active });
-
-            var people = result.Select(r => new
+            switch (filter)
             {
-                person = new Person
-                {
-                    Id = r.Id,
-                    FirstName = r.FirstName,
-                    LastName = r.LastName,
-                    Email = r.Email,
-                    Tags = r.Tags,
-                    TeamId = r.TeamId,
-                    Notes = r.Notes,
-                    UserId = r.UserId,
-                    Title = r.Title,
-                    HomePhone = r.HomePhone,
-                    TeamPhone = r.TeamPhone,
-                    SupervisorId = r.SupervisorId,
-                    Supervisor = r.SupervisorId == null ? null : new Person
-                    {
-                        Id = r.SupervisorId,
-                        FirstName = r.SupervisorFirstName,
-                        LastName = r.SupervisorLastName,
-                        Email = r.SupervisorEmail,
-                        UserId = r.SupervisorUserId
-                    },
-                    StartDate = r.StartDate,
-                    EndDate = r.EndDate,
-                    Category = r.Category,
-                    IsSupervisor = r.isSupervisor,
-                },
-                id = r.Id,
-                equipmentCount = r.EquipmentCount,
-                accessCount = r.AccessCount,
-                keyCount = r.KeyCount,
-                workstationCount = r.WorkstationCount,                
-            });
-
-            return Json(people);
-        }
-        TODO: 
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Person>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> ListInactive()
-        {
-            var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
-            var active = 0;
+                case ApiParameterModels.Filter.ShowActive:
+                    //Use defaults
+                    break;
+                case ApiParameterModels.Filter.ShowInactive:
+                    active1 = 0;
+                    active2 = 0;
+                    break;
+                case ApiParameterModels.Filter.ShowAll:
+                    active1 = 1;
+                    active2 = 0;
+                    break;
+                default:
+                    throw new Exception("Unknown filter value");
+            }
 
             var sql = PeopleQueries.List;
 
-            var result = _context.Database.GetDbConnection().Query(sql, new { teamId, active });
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId, active1, active2 });
 
             var people = result.Select(r => new
             {
@@ -127,11 +101,12 @@ namespace Keas.Mvc.Controllers.Api
                 accessCount = r.AccessCount,
                 keyCount = r.KeyCount,
                 workstationCount = r.WorkstationCount,
-                active = r.Active, //This should always be false....
+                active = r.Active,
             });
 
             return Json(people);
         }
+        
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Person>), StatusCodes.Status200OK)]

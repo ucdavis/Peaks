@@ -26,5 +26,5 @@ from (select People.Id, count(E.Id) as EquipmentCount
       group by People.Id
     ) t4 on t1.Id = t4.Id
     left outer join People SUP on People.SupervisorId = SUP.Id
-where People.Active = @active and People.TeamId = @teamId;";
+where (People.Active = @active1 or People.Active = @active2) and People.TeamId = @teamId;";
 }
