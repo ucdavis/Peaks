@@ -24,7 +24,6 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
     if (!this.props.selectedEquipment) {
       return;
     }
-    this._fetchDetails(this.props.selectedEquipment.id);
   }
 
   public render() {
@@ -63,26 +62,4 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
       </div>
     );
   }
-
-  private _fetchDetails = async (id: number) => {
-    const url = `/api/${this.context.team.slug}/equipment/details/${id}`;
-    let equipment: IEquipment = null;
-    try {
-      equipment = await this.context.fetch(url);
-    } catch (err) {
-      if (err.message === 'Not Found') {
-        toast.error(
-          'The equipment you were trying to view could not be found. It may have been deleted.'
-        );
-        this.props.updateSelectedEquipment(null, id);
-        this.props.closeModal();
-      } else {
-        toast.error(
-          'Error fetching equipment details. Please refresh the page to try again.'
-        );
-      }
-      return;
-    }
-    this.props.updateSelectedEquipment(equipment);
-  };
 }
