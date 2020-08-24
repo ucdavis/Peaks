@@ -1,5 +1,4 @@
 ﻿import * as React from 'react';
-import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
 import { Context } from '../../Context';
 import { IEquipment } from '../../models/Equipment';
