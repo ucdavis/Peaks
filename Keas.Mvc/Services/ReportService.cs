@@ -168,6 +168,7 @@ namespace Keas.Mvc.Services
                     ExpiryDateTime = a.Assignment.ExpiresAt,
                     IsConfirmed = a.Assignment.IsConfirmed,
                     ConfirmedAt = a.Assignment.ConfirmedAt,
+                    RequestedAt = a.Assignment.RequestedAt,
                 },
                 Space = !a.SpaceId.HasValue ? null : new SpaceReportModel
                 {

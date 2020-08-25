@@ -24,5 +24,39 @@ namespace Keas.Mvc.Extensions
 
             return string.Join(',', rtValue);
         }
+
+        public static string SafeKey(this AttributeReportModel[] value, int index)
+        {
+            if (value == null || value.Length <= index)
+            {
+                return string.Empty;
+            }
+
+            return value[index].Key;
+        }
+        public static string SafeValue(this AttributeReportModel[] value, int index)
+        {
+            if (value == null || value.Length <= index)
+            {
+                return string.Empty;
+            }
+
+            return value[index].Value;
+        }
+        public static string Beautiful(this AttributeReportModel[] value, int startIndex)
+        {
+            if (value == null || value.Length <= startIndex)
+            {
+                return string.Empty;
+            }
+
+            var rtValue = new List<string>();
+            for (int i = startIndex; i < value.Length; i++)
+            {
+                rtValue.Add($"{value[i].Key}={value[i].Value}");
+            }
+
+            return string.Join(',', rtValue);
+        }
     }
 }
