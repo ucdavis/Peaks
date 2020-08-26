@@ -45,7 +45,8 @@ export const ReactTable = ({
       data,
       defaultColumn,
       initialState: { ...initialState, pageIndex: 0 },
-      filterTypes
+      filterTypes,
+      autoResetSortBy: false,
     },
     useFilters, // useFilters!
     useGlobalFilter, // useGlobalFilter!
