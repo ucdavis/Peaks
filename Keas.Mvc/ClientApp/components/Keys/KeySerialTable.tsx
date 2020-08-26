@@ -60,7 +60,6 @@ const statusFilter = (rows: any[], id, filterValue) => {
 
 const getRowStatus = (row: any) => row.original?.status;
 
-// export default class KeySerialTable extends React.Component<IProps, {}> {
 const KeySerialTable = (props: IProps) => {
   const renderDropdownColumn = data => {
     const keySerial = data.row.original;
