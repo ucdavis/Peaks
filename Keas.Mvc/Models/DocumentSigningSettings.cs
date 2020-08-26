@@ -7,6 +7,7 @@ namespace Keas.Mvc.Models
         public string AccountId { get; set; }
         public string ApiBasePath { get; set; }
         public string AuthServer { get; set; }
+        public string BrandId { get; set; }
         public string ClientId { get; set; }
         public string CallbackUrlBase { get; set; }
         public string CallbackUrlSecret { get; set; }
