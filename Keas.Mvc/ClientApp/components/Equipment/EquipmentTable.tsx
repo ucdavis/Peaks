@@ -97,7 +97,7 @@ const EquipmentTable = (props: IProps) => {
     []
   );
 
-  const equipmentData = React.useMemo(() => props.equipment, []);
+  const equipmentData = React.useMemo(() => props.equipment, [props.equipment]);
 
   const initialState: Partial<TableState<any>> = {
     sortBy: [{ id: 'name' }],
