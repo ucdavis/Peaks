@@ -136,7 +136,7 @@ const KeySerialTable = (props: IProps) => {
     []
   );
 
-  const keySerialData = React.useMemo(() => keySerials, []);
+  const keySerialData = React.useMemo(() => keySerials, [keySerials]);
 
   const initialState: Partial<TableState<any>> = {
     sortBy: [{ id: 'status' }, { id: 'keyCodeSN' }],
