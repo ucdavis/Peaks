@@ -49,7 +49,7 @@ const statusFilter = (rows: any[], id, filterValue) => {
   }
   if (filterValue === 'inactive') {
     return rows.filter(
-      r => getRowStatus(r) === 'Lost' || getRowStatus(r) === 'Destroyed'
+      r => getRowStatus(r) === 'Lost' || getRowStatus(r) === 'Destroyed' || getRowStatus(r) === 'Dog ate'
     );
   }
   if (filterValue === 'special') {
