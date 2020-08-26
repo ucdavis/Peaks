@@ -20,14 +20,44 @@ interface IProps {
   onEdit?: (equipment: IEquipment) => void;
 }
 
-export default class EquipmentTable extends React.Component<IProps, {}> {
-  public render() {
-    const columns: Column<IEquipment>[] = [
+const EquipmentTable = (props: IProps) => {
+  const renderDropdownColumn = data => {
+    const equipmentEntity: IEquipment = data.row.original;
+    const hasAssignment = !!equipmentEntity.assignment;
+
+    const actions: IAction[] = [];
+
+    if (!!props.onAdd && !hasAssignment) {
+      actions.push({
+        onClick: () => props.onAdd(equipmentEntity),
+        title: 'Assign'
+      });
+    }
+
+    if (!!props.onRevoke && hasAssignment) {
+      actions.push({
+        onClick: () => props.onRevoke(equipmentEntity),
+        title: 'Revoke'
+      });
+    }
+
+    if (!!props.onDelete) {
+      actions.push({
+        onClick: () => props.onDelete(equipmentEntity),
+        title: 'Delete'
+      });
+    }
+
+    return <ListActionsDropdown actions={actions} />;
+  };
+
+  const columns: Column<IEquipment>[] = React.useMemo(
+    () => [
       {
         Cell: data => (
           <Button
             color='link'
-            onClick={() => this.props.showDetails(data.row.original)}
+            onClick={() => props.showDetails(data.row.original)}
           >
             Details
           </Button>
@@ -59,54 +89,32 @@ export default class EquipmentTable extends React.Component<IProps, {}> {
         id: 'expiresAt'
       },
       {
-        Cell: this.renderDropdownColumn,
+        Cell: renderDropdownColumn,
         Header: 'Actions',
         defaultCanFilter: false
       }
-    ];
+    ],
+    []
+  );
 
-    const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'name' }],
-      pageSize: ReactTableUtil.getPageSize()
-    };
+  const equipmentData = React.useMemo(
+    () => props.equipment,
+    [],
+  );
 
-    return (
-      <ReactTable
-        data={this.props.equipment}
-        columns={columns}
-        initialState={initialState}
-        filterTypes={{ expiration: expirationFilter }}
-      />
-    );
-  }
-
-  private renderDropdownColumn = data => {
-    const equipmentEntity: IEquipment = data.row.original;
-    const hasAssignment = !!equipmentEntity.assignment;
-
-    const actions: IAction[] = [];
-
-    if (!!this.props.onAdd && !hasAssignment) {
-      actions.push({
-        onClick: () => this.props.onAdd(equipmentEntity),
-        title: 'Assign'
-      });
-    }
-
-    if (!!this.props.onRevoke && hasAssignment) {
-      actions.push({
-        onClick: () => this.props.onRevoke(equipmentEntity),
-        title: 'Revoke'
-      });
-    }
-
-    if (!!this.props.onDelete) {
-      actions.push({
-        onClick: () => this.props.onDelete(equipmentEntity),
-        title: 'Delete'
-      });
-    }
-
-    return <ListActionsDropdown actions={actions} />;
+  const initialState: Partial<TableState<any>> = {
+    sortBy: [{ id: 'name' }],
+    pageSize: ReactTableUtil.getPageSize()
   };
-}
+
+  return (
+    <ReactTable
+      data={equipmentData}
+      columns={columns}
+      initialState={initialState}
+      filterTypes={{ expiration: expirationFilter }}
+    />
+  );
+};
+
+export default EquipmentTable;
