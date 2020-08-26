@@ -70,9 +70,12 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
 
         // add newly created document to the list
         setDocuments([result, ...documents]);
+        setLoading(false);  // turn loading off since we have success
         setAssign(false); // close the assign modal
+ 
         toast.success('Document successfully sent for signing!');
       } catch (e) {
+        setLoading(false);
         toast.error('Error sending document');
         throw new Error(); // throw error so modal doesn't close
       }
