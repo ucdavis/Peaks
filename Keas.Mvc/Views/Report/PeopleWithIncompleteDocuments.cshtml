@@ -42,7 +42,7 @@
                         @Html.DisplayFor(modelItem => item.IncompleteDocumentCount)
                     </td>
                     <td>
-                        <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.PersonId)'>Details</a>
+                        <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.PersonId)' target="_blank">Details</a>
                     </td>
                 </tr>
             }
