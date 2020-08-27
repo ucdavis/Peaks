@@ -94,6 +94,12 @@
                         <a asp-action="UnAcceptedItems">Items Pending Acceptance <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                 }
+                @if (Model.Contains(Role.Codes.DocumentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
+                {
+                    <li>
+                        <a asp-action="PeopleWithIncompleteDocuments">People with Unsigned Documents <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                }
             </ul>
             </div>
         </div>

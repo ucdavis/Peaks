@@ -167,5 +167,13 @@ namespace Keas.Mvc.Controllers
 
             return View(keys);
         }
+
+        [Authorize(Policy = AccessCodes.Codes.DocumentMasterAccess)]
+        public async Task<IActionResult> PeopleWithIncompleteDocuments()
+        {
+            var incompleteDocs = await _reportService.IncompleteDocuments(null, Team);
+
+            return View(incompleteDocs);
+        }
     }
 }

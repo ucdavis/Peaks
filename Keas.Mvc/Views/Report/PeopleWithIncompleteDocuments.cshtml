@@ -1,0 +1,50 @@
+@model System.Collections.Generic.IList<Keas.Mvc.Models.ReportModels.IncompleteDocumentReportModel>
+
+@{
+    ViewData["Title"] = "PeopleWithIncompleteDocuments";
+}
+
+<h2>PeopleWithIncompleteDocuments</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Incomplete Document Count
+            </th>
+            <th>
+                Id
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IncompleteDocumentCount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersonId)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
