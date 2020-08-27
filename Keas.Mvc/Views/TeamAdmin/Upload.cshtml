@@ -2,37 +2,40 @@
 @{
     ViewData["Title"] = "Upload CSV";
 }
-
-        <div class="card keys-color">
-            <div class="card-header-keys">
-                <div class="card-head">
-                    <h2>Upload Keys</h2>
-                </div>
+<div class="card">
+    <div class="card-header-primary">
+        <div class="card-head">
+            <h2><i class="fas fa-upload fa-xs"></i> Upload CSV Reports</h2>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="row justify-content-betwee">
+            <div class="report-list col-md-3 equipment-color">
+                <h3><i class="fas fa-hdd fa-xs"></i> Equipment Uploads</h3>
+                <ul>
+                    <li>
+                        <a asp-controller="TeamAdmin" asp-action="UploadEquipment">Upload Equipment from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                </ul>
             </div>
-            <div class="card-content">
-                <a asp-action="UploadKeys" class="btn btn-link">Upload Keys from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+            <div class="report-list col-md-3 keys-color">
+                <h3><i class="fas fa-key fa-xs"></i> Keys Uploads</h3>
+                <ul>
+                    <li>
+                        <a asp-action="UploadKeys">Upload Keys from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="report-list col-md-3 people-color">
+                <h3><i class="fas fa-users fa-xs"></i> People Uploads</h3>
+                <ul>
+                    <li>
+                        <a asp-controller="PersonAdmin" asp-action="UploadPeople">Upload People from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                </ul>
             </div>
         </div>
-        <div class="card equipment-color">
-            <div class="card-header-equipment">
-                <div class="card-head">
-                    <h2>Upload Equipment</h2>
-                </div>
-            </div>
-            <div class="card-content">
-                <a asp-controller="TeamAdmin" asp-action="UploadEquipment" class="btn btn-link">Upload Equipment from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-            </div>
-        </div>
-        <div class="card people-color">
-            <div class="card-header-people">
-                <div class="card-head">
-                    <h2>Upload People</h2>
-                </div>
-            </div>
-            <div class="card-content">
-                <a asp-controller="PersonAdmin" asp-action="UploadPeople" class="btn btn-link">Load people from CSV <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-            </div>
-        </div>
-
+    </div>
+</div>
 
 
