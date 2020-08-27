@@ -141,3 +141,13 @@ table {
     color: $history;
   }
 }
+
+.report-list.documents-color {
+    ul {
+        border-color: $documents;
+    }
+
+    h3 i {
+        color: $documents;
+    }
+}
