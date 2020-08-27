@@ -5,6 +5,7 @@ import { Context } from '../../Context';
 import { IAccess } from '../../models/Access';
 import SearchTags from '../Tags/SearchTags';
 import AccessAssignmentContainer from './AccessAssignmentContainer';
+import HistoryContainer from '../History/HistoryContainer';
 
 interface IProps {
   goBack: () => void;
@@ -99,6 +100,7 @@ export default class AccessDetails extends React.Component<IProps, {}> {
             this.props.updateSelectedAccess(access);
           }}
         />
+        <HistoryContainer controller='access' id={access.id} />
       </div>
     );
   }
