@@ -1,14 +1,14 @@
-@import "bootstrap/scss/_functions";
-@import "bootstrap/scss/_variables";
+@import 'bootstrap/scss/_functions';
+@import 'bootstrap/scss/_variables';
 @import '@ucdavis/gunrockin/sass/gunrockin.scss';
-$primary-color:    $gunrock;
-$secondary-color:  $quad;
+$primary-color: $gunrock;
+$secondary-color: $quad;
 $tertiary-color: #f4bd00;
 $theme-colors: (
- primary: $primary-color,
- secondary: $secondary-color
+  primary: $primary-color,
+  secondary: $secondary-color
 );
-@import "bootstrap/scss/bootstrap";
+@import 'bootstrap/scss/bootstrap';
 @import '@ucdavis/gunrockin/sass/_typography.scss';
 
 $gold: #daaa00;
@@ -35,6 +35,7 @@ $access: $quad;
 $keys: $tahoe;
 $spaces: $pinot;
 $history: $tertiary-font;
+$documents: $poppy;
 
 // UC Davis Colors
 // Supplemental bright color palette for UC Davis

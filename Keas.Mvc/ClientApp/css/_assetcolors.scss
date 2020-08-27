@@ -152,6 +152,35 @@
     }
   }
 }
+.documents-color {
+  .card-header-documents {
+    border-bottom: 4px solid $documents;
+  }
+  .btn-primary {
+    background-color: $documents;
+    &:active,
+    &:focus {
+      background-color: darken($documents, 5);
+    }
+    &:hover {
+      background-color: lighten($documents, 5);
+    }
+  }
+  i.fa-sync-alt {
+    color: $documents;
+  }
+  .input-group-append {
+    .btn-outline-secondary:not(:disabled):not(.disabled):active,
+    .btn-outline-secondary:not(:disabled):not(.disabled).active,
+    .show > .btn-outline-secondary.dropdown-toggle {
+      background-color: $documents;
+      border-color: $documents;
+    }
+    .btn-outline-secondary {
+      color: $documents;
+    }
+  }
+}
 
 //
 .btn-primary:not(:disabled):not(.disabled).active,
