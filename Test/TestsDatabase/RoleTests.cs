@@ -39,7 +39,7 @@ namespace Test.TestsDatabase
         {
             var scType = typeof(Role.Codes);
             var props = scType.GetFields();
-            props.Length.ShouldBe(7);
+            props.Length.ShouldBe(8);
 
             //1
             Role.Codes.AccessMaster.ShouldBe("AccessMaster");
@@ -54,6 +54,8 @@ namespace Test.TestsDatabase
             //6
             Role.Codes.SpaceMaster.ShouldBe("SpaceMaster");
             //7
+            Role.Codes.DocumentMaster.ShouldBe("DocumentMaster");
+            //8
             Role.Codes.PersonManager.ShouldBe("PersonManager");
         }
 

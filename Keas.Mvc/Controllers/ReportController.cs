@@ -126,6 +126,17 @@ namespace Keas.Mvc.Controllers
 
             return View(model);
         }
+        [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
+        public async Task<IActionResult> EquipmentReportV2(bool hideInactive = true)
+        {
+            var model = new EquipmentReportViewModel
+            {
+                HideInactive = hideInactive,
+                EquipmentList = await _reportService.EquipmentList(null, Team, hideInactive)
+            };
+
+            return View(model);
+        }
 
         public async Task<IActionResult> AccessReport()
         {

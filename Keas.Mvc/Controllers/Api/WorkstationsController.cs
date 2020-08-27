@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
+using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 
@@ -106,35 +107,107 @@ namespace Keas.Mvc.Controllers.Api
             return Json(workstationAssignments);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="filter">0 = ShowActive, 1 = ShowInactive, 2 = ShowAll. Defaults to Show Active</param>
+        /// <param name="includeAssignment"></param>
+        /// <param name="includeSpace"></param>
+        /// <param name="includeAttributes"></param>
+        /// <param name="includeTeam"></param>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Workstation>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(ApiParameterModels.Filter filter = ApiParameterModels.Filter.ShowActive, bool includeAssignment = true, bool includeSpace = true, bool includeAttributes  = true, bool includeTeam = true)
         {
-            var workstations = await _context.Workstations
+            var workstationsQuery = _context.Workstations
                 .Where(w => w.Team.Slug == Team)
-                .Include(w => w.Assignment)
-                .ThenInclude(w => w.Person)
-                .Include(w => w.Space)
-                .Include(w => w.Attributes)
-                .Include(w => w.Team)
-                .AsNoTracking().ToArrayAsync();
+                .AsNoTracking();
+
+            switch (filter)
+            {
+                case ApiParameterModels.Filter.ShowActive:
+                    //Use defaults
+                    break;
+                case ApiParameterModels.Filter.ShowInactive:
+                    workstationsQuery = workstationsQuery.IgnoreQueryFilters().Where(a => !a.Active);
+                    break;
+                case ApiParameterModels.Filter.ShowAll:
+                    workstationsQuery = workstationsQuery.IgnoreQueryFilters();
+                    break;
+                default:
+                    throw new Exception("Unknown filter value");
+            }
+
+            if (includeAssignment)
+            {
+                workstationsQuery = workstationsQuery
+                    .Include(w => w.Assignment)
+                    .ThenInclude(w => w.Person);
+            }
+
+            if (includeSpace)
+            {
+                workstationsQuery = workstationsQuery
+                    .Include(w => w.Space);
+            }
+            if (includeAttributes)
+            {
+                workstationsQuery = workstationsQuery
+                    .Include(w => w.Attributes);
+            }
+            if (includeTeam)
+            {
+                workstationsQuery = workstationsQuery
+                    .Include(w => w.Team);
+            }
+            var workstations = await workstationsQuery.ToArrayAsync();
 
             return Json(workstations);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="includeAssignment"></param>
+        /// <param name="includeSpace"></param>
+        /// <param name="includeAttributes"></param>
+        /// <param name="includeTeam"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int id, bool includeAssignment = true, bool includeSpace = true, bool includeAttributes = true, bool includeTeam = true)
         {
-            var workstation = await _context.Workstations
+            var workstationQuery = _context.Workstations
+                .IgnoreQueryFilters()
                 .Where(w => w.Team.Slug == Team)
-                .Include(w => w.Assignment)
-                    .ThenInclude(w => w.Person)
-                .Include(w => w.Space)
-                .Include(w => w.Attributes)
-                .Include(w => w.Team)
-                .AsNoTracking()
-                .SingleOrDefaultAsync(w => w.Id == id);
+                .AsNoTracking();
+
+            if (includeAssignment)
+            {
+                workstationQuery = workstationQuery
+                    .Include(w => w.Assignment)
+                    .ThenInclude(w => w.Person);
+            }
+
+            if (includeSpace)
+            {
+                workstationQuery = workstationQuery
+                    .Include(w => w.Space);
+            }
+            if (includeAttributes)
+            {
+                workstationQuery = workstationQuery
+                    .Include(w => w.Attributes);
+            }
+            if (includeTeam)
+            {
+                workstationQuery = workstationQuery
+                    .Include(w => w.Team);
+            }
+
+            var workstation = await workstationQuery.SingleOrDefaultAsync(w => w.Id == id);
 
             if (workstation == null)
             {
@@ -293,14 +366,21 @@ namespace Keas.Mvc.Controllers.Api
 
         }
 
+        /// <summary>
+        /// Return history records
+        /// Defaults to a max of 5 records returned
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="max">Defaults to 5</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetHistory(int id)
+        public async Task<IActionResult> GetHistory(int id, int max = 5)
         {
             var history = await _context.Histories
                 .Where(h => h.AssetType == "Workstation" && h.Workstation.Team.Slug == Team && h.WorkstationId == id)
                 .OrderByDescending(x => x.ActedDate)
-                .Take(5)
+                .Take(max)
                 .AsNoTracking().ToListAsync();
 
             return Json(history);

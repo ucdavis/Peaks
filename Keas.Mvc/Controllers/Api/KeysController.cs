@@ -13,6 +13,7 @@ using Keas.Core.Models;
 using Keas.Mvc.Models.KeyViewModels;
 using Dapper;
 using Keas.Core.Extensions;
+using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
@@ -58,16 +59,39 @@ namespace Keas.Mvc.Controllers.Api
             return Json(await keys.ToListAsync());
         }
 
-        // List all keys for a team
+        /// <summary>
+        /// List all keys for a team
+        /// </summary>
+        /// <param name="filter">0 = ShowActive, 1 = ShowInactive, 2 = ShowAll. Defaults to Show Active</param>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Key>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(ApiParameterModels.Filter filter = ApiParameterModels.Filter.ShowActive)
         {
             var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
 
             var sql = KeyQueries.List;
+            int active1 = 1;
+            int active2 = 1;
 
-            var result = _context.Database.GetDbConnection().Query(sql, new { teamId });
+            switch (filter)
+            {
+                case ApiParameterModels.Filter.ShowActive:
+                    //Use defaults
+                    break;
+                case ApiParameterModels.Filter.ShowInactive:
+                    active1 = 0;
+                    active2 = 0;
+                    break;
+                case ApiParameterModels.Filter.ShowAll:
+                    active1 = 1;
+                    active2 = 0;
+                    break;
+                default:
+                    throw new Exception("Unknown filter value");
+            }
+
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId, active1, active2 });
 
             var keys = result.Select(r => new
             {
@@ -78,7 +102,8 @@ namespace Keas.Mvc.Controllers.Api
                     Name = r.Name,
                     Notes = r.Notes,
                     TeamId = r.TeamId,
-                    Tags = r.Tags
+                    Tags = r.Tags,
+                    Active = r.Active
                 },
                 id = r.Id,
                 SpacesCount = r.SpacesCount,
@@ -86,6 +111,46 @@ namespace Keas.Mvc.Controllers.Api
                 SerialsTotalCount = r.SerialsTotalCount
             });
 
+            return Json(keys);
+        }
+
+        /// <summary>
+        /// Show details of a key
+        /// </summary>
+        /// <param name="id">The Key Id</param>
+        /// <param name="includeSerial">Includes serials any related assignments, and the person</param>
+        /// <param name="includeSpace">Include any related spaces</param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Key), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Details(int id, bool includeSerial = false, bool includeSpace = false)
+        {
+            var keyQuery = _context.Keys
+                .IgnoreQueryFilters()
+                .Where(a => a.Team.Slug == Team)
+                .AsNoTracking();
+
+            if (includeSerial)
+            {
+                keyQuery = keyQuery
+                    .Include(a => a.Serials)
+                    .ThenInclude(a => a.KeySerialAssignment)
+                    .ThenInclude(a => a.Person);
+            }
+
+            if (includeSpace)
+            {
+                keyQuery = keyQuery
+                    .Include(a => a.KeyXSpaces)
+                    .ThenInclude(a => a.Space);
+            }
+
+            var keys = await keyQuery.SingleOrDefaultAsync(x => x.Id == id);
+
+            if (keys == null)
+            {
+                return NotFound();
+            }
             return Json(keys);
         }
 
@@ -279,8 +344,8 @@ namespace Keas.Mvc.Controllers.Api
             };
 
             _context.KeyXSpaces.Add(association);
-            //await _eventService.TrackAssignKeySerial(serial);
 
+            await _eventService.TrackAssignKeySpace(key, space);
             await _context.SaveChangesAsync();
             return Json(association);
         }
@@ -316,22 +381,28 @@ namespace Keas.Mvc.Controllers.Api
             }
 
             _context.KeyXSpaces.Remove(association);
-            //await _eventService.TrackUnAssignKeySerial(serial);
 
+            await _eventService.TrackUnassignKeySpace(key, space);
             await _context.SaveChangesAsync();
             return Json(key);
         }
 
+        /// <summary>
+        /// Takes the top 5 history records
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="max">Defaults to 5</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<History>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetHistory(int id)
+        public async Task<IActionResult> GetHistory(int id, int max = 5)
         {
             var history = await _context.Histories
                 .Where(x => x.Key.Team.Slug == Team
                     && x.AssetType == "Key"
                     && x.KeyId == id)
                 .OrderByDescending(x => x.ActedDate)
-                .Take(5)
+                .Take(max)
                 .AsNoTracking()
                 .ToListAsync();
 

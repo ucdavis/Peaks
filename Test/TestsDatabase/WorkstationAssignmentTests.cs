@@ -54,7 +54,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("RequestedBy", "Keas.Core.Domain.User", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedById", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("RequestedByName", "System.String", new List<string>()));
-
+            expectedFields.Add(new NameAndType("Workstation", "Keas.Core.Domain.Workstation", new List<string>()));
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(WorkstationAssignment));

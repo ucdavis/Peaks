@@ -9,6 +9,8 @@ namespace Keas.Mvc.Services
     public interface IHistoryService
     {
         Task<History> KeyCreated(Key key);
+        Task<History> SpaceAssignKey(Key key, Space space);
+        Task<History> SpaceUnassignKey(Key key, Space space);
         Task<History> KeySerialCreated(KeySerial keySerial);
         Task<History> AccessCreated(Access access);
         Task<History> EquipmentCreated(Equipment equipment);
@@ -44,8 +46,8 @@ namespace Keas.Mvc.Services
         Task<History> AccessAssignmentUpdated(AccessAssignment accessAssignment);
         Task<History> EquipmentAssignmentUpdated(Equipment equipment);
         Task<History> WorkstationAssignmentUpdated(Workstation workstation);
-
-
+        Task<History> DocumentCreated(Document document);
+        Task<History> DocumentStatusChange(Document document);
     }
 
     public class HistoryService : IHistoryService
@@ -470,6 +472,36 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
+        public async Task<History> SpaceAssignKey(Key key, Space space)
+        {
+            var person = await _securityService.GetPerson(key.TeamId);
+            var historyEntry = new History
+            {
+                Description = key.GetDescription(nameof(Key), key.Title, person, "Assigned to " + space.RoomNumber + " " + space.BldgName),
+                ActorId = person.UserId,
+                AssetType = "Key",
+                ActionType = "Assigned",
+                Key = key
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+
+        public async Task<History> SpaceUnassignKey(Key key, Space space)
+        {
+            var person = await _securityService.GetPerson(key.TeamId);
+            var historyEntry = new History
+            {
+                Description = key.GetDescription(nameof(Key), key.Title, person, "Unassigned to " + space.RoomNumber + " " + space.BldgName),
+                ActorId = person.UserId,
+                AssetType = "Key",
+                ActionType = "Unassigned",
+                Key = key
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+
         public async Task<History> KeyDeleted(Key key)
         {
             var person = await _securityService.GetPerson(key.TeamId);
@@ -588,6 +620,39 @@ namespace Keas.Mvc.Services
                 ActionType = "AssignmentUpdated",
                 Workstation = workstation,
                 TargetId = workstation.Assignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+
+        public async Task<History> DocumentCreated(Document document)
+        {
+            var person = await _securityService.GetPerson(document.TeamId);
+            var sentTo = await _context.People.SingleOrDefaultAsync(p => p.Id == document.PersonId && p.TeamId == document.TeamId);
+            var historyEntry = new History
+            {
+                Description = document.GetDescription(nameof(Document), document.Name, person, "Sent to " + sentTo.Name),
+                ActorId = person.UserId,
+                TargetId = document.PersonId,
+                AssetType = "Document",
+                ActionType = "Created",
+                Document = document,
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+
+        public async Task<History> DocumentStatusChange(Document document)
+        {
+            var signer = await _context.People.SingleOrDefaultAsync(p => p.Id == document.PersonId && p.TeamId == document.TeamId);
+            var historyEntry = new History
+            {
+                Description = $"Document ({document.Name}) status changed to {document.Status}",
+                ActorId = signer.UserId,
+                TargetId = document.PersonId,
+                AssetType = "Document",
+                ActionType = "Updated",
+                Document = document,
             };
             _context.Histories.Add(historyEntry);
             return historyEntry;

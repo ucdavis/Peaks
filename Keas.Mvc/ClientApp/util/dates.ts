@@ -2,21 +2,29 @@ import { format, min } from 'date-fns';
 import { IHasExpiration } from '../models/Shared';
 
 export class DateUtil {
-  public static formatExpiration(expiration: Date) {
+  public static formatDate(date: Date): string {
+    if (date === null) {
+      return '';
+    }
+
+    return format(new Date(date), 'MM/dd/yyyy');
+  }
+
+  public static formatExpiration(expiration: Date): string {
     if (expiration === null) {
       return '';
     }
     return format(new Date(expiration), 'MM/dd/yyyy');
   }
 
-  public static formatAssignmentExpiration(assignment: IHasExpiration) {
+  public static formatAssignmentExpiration(assignment: IHasExpiration): string {
     if (!assignment || !assignment.expiresAt) {
       return '';
     }
     return format(new Date(assignment.expiresAt), 'MM/dd/yyyy');
   }
 
-  public static formatFirstExpiration(expirations: Date[]) {
+  public static formatFirstExpiration(expirations: Date[]): string {
     if (expirations.length === 0) {
       return '';
     }
@@ -24,7 +32,7 @@ export class DateUtil {
     return format(min(dates), 'MM/dd/yyyy');
   }
 
-  public static getFirstExpiration(expirations: Date[]) {
+  public static getFirstExpiration(expirations: Date[]): Date | string {
     if (expirations.length === 0) {
       return '';
     }

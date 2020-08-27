@@ -49,7 +49,7 @@ const statusFilter = (rows: any[], id, filterValue) => {
   }
   if (filterValue === 'inactive') {
     return rows.filter(
-      r => getRowStatus(r) === 'Lost' || getRowStatus(r) === 'Destroyed'
+      r => getRowStatus(r) === 'Lost' || getRowStatus(r) === 'Destroyed' || getRowStatus(r) === 'Dog ate'
     );
   }
   if (filterValue === 'special') {
@@ -60,15 +60,36 @@ const statusFilter = (rows: any[], id, filterValue) => {
 
 const getRowStatus = (row: any) => row.original?.status;
 
-export default class KeySerialTable extends React.Component<IProps, {}> {
-  public render() {
-    const { keySerials } = this.props;
-    const columns: Column<IKeySerial>[] = [
+const KeySerialTable = (props: IProps) => {
+  const renderDropdownColumn = data => {
+    const keySerial = data.row.original;
+
+    const actions: IAction[] = [];
+    if (!!props.onAssign && !keySerial.keySerialAssignment) {
+      actions.push({
+        onClick: () => props.onAssign(keySerial),
+        title: 'Assign'
+      });
+    }
+
+    if (!!props.onRevoke && !!keySerial.keySerialAssignment) {
+      actions.push({
+        onClick: () => props.onRevoke(keySerial),
+        title: 'Revoke'
+      });
+    }
+
+    return <ListActionsDropdown actions={actions} />;
+  };
+
+  const { keySerials } = props;
+  const columns: Column<IKeySerial>[] = React.useMemo(
+    () => [
       {
         Cell: data => (
           <Button
             color='link'
-            onClick={() => this.props.showDetails(data.row.original)}
+            onClick={() => props.showDetails(data.row.original)}
           >
             Details
           </Button>
@@ -108,44 +129,28 @@ export default class KeySerialTable extends React.Component<IProps, {}> {
         id: 'expiresAt'
       },
       {
-        Cell: this.renderDropdownColumn,
+        Cell: renderDropdownColumn,
         Header: 'Actions'
       }
-    ];
+    ],
+    []
+  );
 
-    const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'status' }, { id: 'keyCodeSN'}],
-      pageSize: ReactTableUtil.getPageSize()
-    };
+  const keySerialData = React.useMemo(() => keySerials, [keySerials]);
 
-    return (
-      <ReactTable
-        data={keySerials}
-        columns={columns}
-        initialState={initialState}
-        filterTypes={{ expiration: expirationFilter, status: statusFilter }}
-      />
-    );
-  }
-
-  private renderDropdownColumn = data => {
-    const keySerial = data.row.original;
-
-    const actions: IAction[] = [];
-    if (!!this.props.onAssign && !keySerial.keySerialAssignment) {
-      actions.push({
-        onClick: () => this.props.onAssign(keySerial),
-        title: 'Assign'
-      });
-    }
-
-    if (!!this.props.onRevoke && !!keySerial.keySerialAssignment) {
-      actions.push({
-        onClick: () => this.props.onRevoke(keySerial),
-        title: 'Revoke'
-      });
-    }
-
-    return <ListActionsDropdown actions={actions} />;
+  const initialState: Partial<TableState<any>> = {
+    sortBy: [{ id: 'status' }, { id: 'keyCodeSN' }],
+    pageSize: ReactTableUtil.getPageSize()
   };
-}
+
+  return (
+    <ReactTable
+      data={keySerialData}
+      columns={columns}
+      initialState={initialState}
+      filterTypes={{ expiration: expirationFilter, status: statusFilter }}
+    />
+  );
+};
+
+export default KeySerialTable;

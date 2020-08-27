@@ -30,14 +30,18 @@ export const keySerialSchema = yup.object<IKeySerial>().shape({
       function test(value) {
         const context: any = this.options.context;
         // on people page, keyId is pulled from searching
-        // on key serials page, key obj is passed in 
+        // on key serials page, key obj is passed in
         const keyId = this.parent.key ? this.parent.key.id : this.parent.keyId;
-        return context.checkIfKeySerialNumberIsValid(keyId,value, this.parent.id);
+        return context.checkIfKeySerialNumberIsValid(
+          keyId,
+          value,
+          this.parent.id
+        );
       }
     ),
   status: yup
     .string()
-    .oneOf(['Active', 'Lost', 'Destroyed', 'Special'])
+    .oneOf(['Active', 'Lost', 'Destroyed', 'Special', 'Dog ate'])
     .default('Active')
     .required()
 });

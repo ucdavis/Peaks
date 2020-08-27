@@ -191,6 +191,35 @@
             </div>
         </div>
     }
+    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.DocumentMaster, StringComparison.OrdinalIgnoreCase)))
+    {
+        <div class="card-content">
+            <div class="card equipment-color">
+                <div class="card-header-equipment">
+                    <div class="card-head">
+                        <h2><i class="fas fa-building fa-xs"></i> Document (DocuSign) Admin</h2>
+                    </div>
+                </div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.DocumentMaster, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            <tr>
+                                <td>@item.User.Name</td>
+                                <td>@Html.DisplayFor(a => item.User.Email)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 </div>
 
 

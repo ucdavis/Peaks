@@ -24,6 +24,8 @@ namespace Keas.Mvc.Services
         Task TrackAcceptKeySerial(KeySerial keySerial);
         Task TrackAcceptEquipment(Equipment equipment);
         Task TrackAcceptWorkstation(Workstation workstation);
+        Task TrackAssignKeySpace(Key key, Space space);
+        Task TrackUnassignKeySpace(Key key, Space space);
         Task TrackKeyDeleted(Key key);
         Task TrackAccessDeleted(Access access);
         Task TrackEquipmentDeleted(Equipment equipment);
@@ -33,10 +35,8 @@ namespace Keas.Mvc.Services
         Task TrackEquipmentAssignmentUpdated(Equipment equipment);
         Task TrackWorkstationAssignmentUpdated(Workstation workstation);
         Task TrackCreateKeySerial(KeySerial keySerial);
-
-
-
-
+        Task TrackCreateDocument(Document document);
+        Task TrackDocumentStatusChange(Document document);
     }
     public class EventService : IEventService
     {
@@ -162,13 +162,24 @@ namespace Keas.Mvc.Services
             var history = await _historyService.EquipmentAccepted(equipment);
             await _notificationService.EquipmentAccepted(equipment, history);
         }
+
         public async Task TrackAcceptWorkstation(Workstation workstation)
         {
             var history = await _historyService.WorkstationAccepted(workstation);
             await _notificationService.WorkstationAccepted(workstation, history);
         }
 
-         public async Task TrackKeyDeleted(Key key)
+        public async Task TrackAssignKeySpace(Key key, Space space)
+        {
+            await _historyService.SpaceAssignKey(key, space);
+        }
+
+        public async Task TrackUnassignKeySpace(Key key, Space space)
+        {
+            await _historyService.SpaceUnassignKey(key, space);
+        }
+
+        public async Task TrackKeyDeleted(Key key)
         {
             var history = await _historyService.KeyDeleted(key);
             await _notificationService.KeyCreatedUpdatedInactive(key, history);
@@ -212,7 +223,14 @@ namespace Keas.Mvc.Services
             var history = await _historyService.WorkstationAssignmentUpdated(workstation);
             await _notificationService.WorkstationAssigned(workstation, history);
         }
-
+        public async Task TrackCreateDocument(Document document)
+        {
+            await _historyService.DocumentCreated(document);
+        }
+        public async Task TrackDocumentStatusChange(Document document)
+        {
+            await _historyService.DocumentStatusChange(document);
+        }
     }
 }
 

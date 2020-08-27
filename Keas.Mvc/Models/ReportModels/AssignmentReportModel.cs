@@ -12,5 +12,7 @@ namespace Keas.Mvc.Models.ReportModels
         public DateTime ExpiryDateTime { get; set; }
         public bool IsConfirmed { get; set; }
         public DateTime? ConfirmedAt { get; set; }
+
+        public DateTime RequestedAt { get; set; } //Just used for the equipment report V2
     }
 }

@@ -1,0 +1,179 @@
+@using Keas.Core.Extensions
+@model Keas.Mvc.Models.ReportModels.EquipmentReportViewModel
+
+@{
+    ViewBag.Title = "Equipment";
+}
+
+
+
+<div class="card">
+    <div class="card-header-equipment">
+        <div class="card-head">
+            <h2>Equipment Report V2</h2>
+            <small class="form-text">This report is formatted to be exactly the same as the import format except it has an Active column.</small>
+            <small class="form-text text-muted">To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).</small>
+            <small class="form-text text-muted">If you have filtered the report with the Search feature, only the filtered results will be exported.</small>
+            <small class="form-text text-muted">You can filter the table with the data that isn't displayed on the screen (such as notes).</small>
+        </div>
+    </div>
+    <div class="card-content">
+        
+        <form asp-action="EquipmentReport" method="get">
+            <div class="shade">
+
+
+                <div class="row align-items-end">
+                    <div class="col-sm">
+                        <h3>Filters</h3>
+                        <div class="form-group">
+                            <label asp-for="HideInactive" class="control-label"></label>
+                            <input style="height:34px" asp-for="HideInactive" class="form-control " height="34px" width="276" />
+
+
+                        </div>
+                    </div>
+                  
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+        <br/><br/>
+
+        <table id="equipment" class="table dataTable">
+            <thead>
+            <tr>
+                <th>Active</th>
+                <th>EquipmentName</th>
+                <th>SerialNumber</th>
+                <th>Make</th>
+                <th>Model</th>
+                <th>KerbUser</th>
+                <th>DateIssued</th>
+                <th>DateDue</th>
+                <th>Tag</th>
+                <th>Type</th>
+                <th>ProtectionLevel</th>
+                <th>AvailabilityLevel</th>
+                <th>BigfixId</th>
+                <th>Notes</th>
+                <th>Key1</th>
+                <th>Value1</th>
+                <th>Key2</th>
+                <th>Value2</th>
+                <th>Key3</th>
+                <th>Value3</th>
+                <th>Key4</th>
+                <th>Value4</th>
+                <th>Key5</th>
+                <th>Value5</th>
+                <th>Key6</th>
+                <th>Value6</th>
+                <th>Key7</th>
+                <th>Value7</th>
+                <th>Key8</th>
+                <th>Value8</th>
+                <th>Key9</th>
+                <th>Value9</th>
+                <th>Key10</th>
+                <th>Value10</th>
+                <th>Key11</th>
+                <th>Value11</th>
+                <th>Key12</th>
+                <th>Value12</th>
+                <th>GenericKeyValues</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.EquipmentList)
+            {
+                <tr>
+                    <td>@item.Active.ToYesNoString()</td>
+                    <td>@item.Name</td>
+                    <td>@item.SerialNumber</td>
+                    <td>@item.Make</td>
+                    <td>@item.Model</td>
+                    @if (item.IsAssigned)
+                    {
+                        <td>@item.Assignment.UserId</td>
+                        <td>@item.Assignment.RequestedAt.ToPacificTime().ToShortDateString()</td>
+                        <td>@item.Assignment.ExpiryDateTime.ToPacificTime().ToShortDateString()</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    }
+                    <td>@item.Tags.Replace(",", ", ")</td>
+                    <td>@item.Type</td>
+                    <td>@item.ProtectionLevel</td>
+                    <td>@item.AvailabilityLevel</td>
+                    <td>@item.SystemManagementId</td>
+                    <td>@item.Notes</td>
+                    <td>@item.Attributes.SafeKey(0)</td>
+                    <td>@item.Attributes.SafeValue(0)</td>
+                    <td>@item.Attributes.SafeKey(1)</td>
+                    <td>@item.Attributes.SafeValue(1)</td>
+                    <td>@item.Attributes.SafeKey(2)</td>
+                    <td>@item.Attributes.SafeValue(2)</td>
+                    <td>@item.Attributes.SafeKey(3)</td>
+                    <td>@item.Attributes.SafeValue(3)</td>
+                    <td>@item.Attributes.SafeKey(4)</td>
+                    <td>@item.Attributes.SafeValue(4)</td>
+                    <td>@item.Attributes.SafeKey(5)</td>
+                    <td>@item.Attributes.SafeValue(5)</td>
+                    <td>@item.Attributes.SafeKey(6)</td>
+                    <td>@item.Attributes.SafeValue(6)</td>
+                    <td>@item.Attributes.SafeKey(7)</td>
+                    <td>@item.Attributes.SafeValue(7)</td>
+                    <td>@item.Attributes.SafeKey(8)</td>
+                    <td>@item.Attributes.SafeValue(8)</td>
+                    <td>@item.Attributes.SafeKey(9)</td>
+                    <td>@item.Attributes.SafeValue(9)</td>
+                    <td>@item.Attributes.SafeKey(10)</td>
+                    <td>@item.Attributes.SafeValue(10)</td>
+                    <td>@item.Attributes.SafeKey(11)</td>
+                    <td>@item.Attributes.SafeValue(11)</td>
+
+
+                    <td>@item.Attributes.Beautiful(12)</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+   @{await Html.RenderPartialAsync("_ImportJS");}  
+    
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+                "dom": 'lBfrtip',
+                "buttons": [
+                    { extend: 'copyHtml5' },
+                    { extend: 'excelHtml5' },
+                    { extend: 'csvHtml5' },
+                    { extend: 'print'},
+                ],
+                "columnDefs": [
+                    { "type": "date", "targets": [7,8] },
+                    { "targets" : [12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38], "visible" : false}
+                ]
+        });
+    </script>
+}
+
+
+
