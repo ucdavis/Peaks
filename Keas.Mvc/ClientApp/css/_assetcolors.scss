@@ -1,99 +1,11 @@
-.keys-color {
-  .fa-info-circle {
-    color: transparentize($keys, 0.6);
-  }
-  .card-header-keys {
-    border-bottom: 4px solid $keys;
-  }
-  .btn-primary {
-    background-color: $keys;
-    &:active,
-    &:focus {
-      background-color: darken($keys, 5);
-    }
-    &:hover {
-      background-color: lighten($keys, 5);
-    }
-  }
-  .fa-ellipsis-h:before {
-    color: $keys;
-  }
-}
-.equipment-color {
-  .fa-info-circle {
-    color: transparentize($equipment, 0.5);
-  }
-  .card-header-equipment {
-    border-bottom: 4px solid $equipment;
-  }
-  .btn-primary {
-    background-color: $equipment;
-    &:active,
-    &:focus {
-      background-color: darken($equipment, 5);
-    }
-    &:hover {
-      background-color: lighten($equipment, 5);
-    }
-  }
-  .fa-ellipsis-h:before {
-    color: $equipment;
-  }
-  i.fa-sync-alt {
-    color: $equipment;
-  }
-}
-.access-color {
-  .fa-info-circle {
-    color: transparentize($access, 0.6);
-  }
-  .card-header-access {
-    border-bottom: 4px solid $access;
-  }
-  .btn-primary {
-    background-color: $access;
-    &:active,
-    &:focus {
-      background-color: darken($access, 5);
-    }
-    &:hover {
-      background-color: lighten($access, 5);
-    }
-  }
-  .fa-ellipsis-h:before {
-    color: $access;
-  }
-}
-.spaces-color {
-  .fa-info-circle {
-    color: transparentize($spaces, 0.4);
-  }
-  .card-header-spaces {
-    border-bottom: 4px solid $spaces;
-  }
-  .btn-primary {
-    background-color: $spaces;
-    &:active,
-    &:focus {
-      background-color: darken($spaces, 5);
-    }
-    &:hover {
-      background-color: lighten($spaces, 5);
-    }
-  }
-  .fa-ellipsis-h:before {
-    color: $spaces;
-  }
-}
 .people-color {
-  p a {
+  .btn-link {
     color: $people;
-  }
-  .fa-info-circle {
-    color: transparentize($people, 0.96);
-  }
-  .card-header-people {
-    border-bottom: 4px solid $people;
+    border-color: $people;
+    &:hover {
+      color: (darken($people, 10));
+      text-decoration: none;
+    }
   }
   .btn-primary {
     background-color: $people;
@@ -105,6 +17,17 @@
       background-color: lighten($people, 5);
     }
   }
+
+  p a {
+    color: $people;
+  }
+  .fa-info-circle {
+    color: transparentize($people, 0.96);
+  }
+  .card-header-people {
+    border-bottom: 4px solid $people;
+  }
+
   .fa-ellipsis-h:before {
     color: $people;
   }
@@ -123,7 +46,141 @@
     }
   }
 }
+.keys-color {
+  .btn-link {
+    color: $keys;
+    border-color: $keys;
+    &:hover {
+      color: (darken($keys, 10));
+      text-decoration: none;
+    }
+  }
+  .btn-primary {
+    background-color: $keys;
+    &:active,
+    &:focus {
+      background-color: darken($keys, 5);
+    }
+    &:hover {
+      background-color: lighten($keys, 5);
+    }
+  }
+
+  .fa-info-circle {
+    color: transparentize($keys, 0.6);
+  }
+  .card-header-keys {
+    border-bottom: 4px solid $keys;
+  }
+  .fa-ellipsis-h:before {
+    color: $keys;
+  }
+}
+.spaces-color {
+  .btn-link {
+    color: $spaces;
+    border-color: $spaces;
+    &:hover {
+      color: (darken($spaces, 10));
+      text-decoration: none;
+    }
+  }
+  .btn-primary {
+    background-color: $spaces;
+    &:active,
+    &:focus {
+      background-color: darken($spaces, 5);
+    }
+    &:hover {
+      background-color: lighten($spaces, 5);
+    }
+  }
+
+  .fa-info-circle {
+    color: transparentize($spaces, 0.4);
+  }
+  .card-header-spaces {
+    border-bottom: 4px solid $spaces;
+  }
+
+  .fa-ellipsis-h:before {
+    color: $spaces;
+  }
+}
+.equipment-color {
+  .btn-link {
+    color: $equipment;
+    border-color: $equipment;
+    &:hover {
+      color: (darken($equipment, 10));
+      text-decoration: none;
+    }
+  }
+  .btn.btn-primary {
+    background-color: $equipment;
+    &:active,
+    &:focus {
+      background-color: darken($equipment, 5);
+    }
+    &:hover {
+      background-color: lighten($equipment, 5);
+    }
+  }
+  .fa-info-circle {
+    color: transparentize($equipment, 0.5);
+  }
+  .card-header-equipment {
+    border-bottom: 4px solid $equipment;
+  }
+
+  .fa-ellipsis-h:before {
+    color: $equipment;
+  }
+  i.fa-sync-alt {
+    color: $equipment;
+  }
+}
+.access-color {
+  .btn-link {
+    color: $access;
+    border-color: $access;
+    &:hover {
+      color: (darken($access, 10));
+      text-decoration: none;
+    }
+  }
+  .btn-primary {
+    background-color: $access;
+    &:active,
+    &:focus {
+      background-color: darken($access, 5);
+    }
+    &:hover {
+      background-color: lighten($access, 5);
+    }
+  }
+
+  .fa-info-circle {
+    color: transparentize($access, 0.6);
+  }
+  .card-header-access {
+    border-bottom: 4px solid $access;
+  }
+
+  .fa-ellipsis-h:before {
+    color: $access;
+  }
+}
+
 .history-color {
+  .btn-link {
+    color: $history;
+    border-color: $history;
+    &:hover {
+      color: (darken($history, 10));
+      text-decoration: none;
+    }
+  }
   .card-header-history {
     border-bottom: 4px solid $history;
   }
@@ -153,6 +210,17 @@
   }
 }
 .documents-color {
+  td a {
+    color: $documents;
+  }
+  .btn-link {
+    color: $documents;
+    border-color: $documents;
+    &:hover {
+      color: (darken($documents, 10));
+      text-decoration: none;
+    }
+  }
   .card-header-documents {
     border-bottom: 4px solid $documents;
   }

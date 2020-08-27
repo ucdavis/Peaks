@@ -60,7 +60,9 @@ export const AssignDocument = (props: IProps): JSX.Element => {
             e.preventDefault();
             setLoading(true);
             try {
-              await props.sendDocument(templates.find(t => t.id === selectedTemplate));
+              await props.sendDocument(
+                templates.find(t => t.id === selectedTemplate)
+              );
             } catch {
               // on error show the loaded ui so the user can try again
               setLoading(false);
@@ -94,7 +96,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
         isOpen={show}
         toggle={() => setShow(false)}
         size='lg'
-        className='spaces-color'
+        className='documents-color'
       >
         <div className='modal-header row justify-content-between'>
           <h2>Assign Document for Signature</h2>
