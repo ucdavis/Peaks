@@ -23,7 +23,7 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
   const [assign, setAssign] = useState<boolean>(false);
 
   const canView = useMemo(() => {
-    // TODO: once testing is done, turn on access for all teams 
+    // TODO: once testing is done, turn on access for all teams
     return (
       ctx.team.slug === 'caes-cru' &&
       PermissionsUtil.canViewDocuments(ctx.permissions)
@@ -71,7 +71,7 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
         // add newly created document to the list
         setDocuments([result, ...documents]);
         setAssign(false); // close the assign modal
- 
+
         toast.success('Document successfully sent for signing!');
       } catch (e) {
         toast.error('Error sending document');
@@ -90,11 +90,11 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
   }
 
   return (
-    <div className='card spaces-color'>
-      <div className='card-header-spaces'>
+    <div className='card documents-color'>
+      <div className='card-header-documents'>
         <div className='card-head row justify-content-between'>
           <h2>
-            <i className='fas fa-briefcase fa-xs' /> Documents
+            <i className='fas fa-file-alt fa-xs' /> Documents
           </h2>
           <Button color='link' onClick={() => setAssign(true)}>
             <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Document

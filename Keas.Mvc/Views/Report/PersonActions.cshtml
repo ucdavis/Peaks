@@ -4,10 +4,7 @@
     ViewData["Title"] = "Person Actions";
 }
 
-
-
-
-    <div class="card">
+    <div class="card people-color">
       <div class="card-header-people">
         <div class="card-head">
           <h2>Person Actions</h2>
@@ -15,40 +12,31 @@
         </div>
       </div>
         <div class="card-content">
-            <form asp-action="PersonActions" method="get">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-              <div class="shade">
-
-
-                  <div class="row align-items-end">
-                      <div class="col-sm">
+        <div class="row align-items-end">
+            <div class="col-sm-4">
+            <form asp-action="PersonActions" method="get">
+                      
                         <h3>Filters</h3>
                           <div class="form-group">
                               <label asp-for="StartDate" class="control-label"></label>
-                              <input id="start" style="height:34px" asp-for="StartDate" class="form-control datepicker" height="34px" width="276" />
+                              <input id="start" asp-for="StartDate" class="form-control" />
                               <span asp-validation-for="StartDate" class="text-danger"></span>
                           </div>
-                      </div>
-                      <div class="col-sm">
-                          <div class="form-group">
+                           <div class="form-group">
                               <label asp-for="EndDate" class="control-label"></label>
-                              <input id="end" style="height:34px" asp-for="EndDate" class="form-control datepicker" height="34px" width="276" />
+                              <input id="end" asp-for="EndDate" class="form-control" />
                               <span asp-validation-for="EndDate" class="text-danger"></span>
                           </div>
-                      </div>                      
-                      <div class="col-sm">
                           <div class="form-group">
                             <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
                           </div>
-                      </div>
-                  </div>
+                          </form>
+                          </div>
+                      
 
-              </div>
-                </form>
-<br>
-<br>
-<table id="persons-acted-on" class="table dataTable">
+                </div>
+                <table id="persons-acted-on" class="table dataTable">
         <thead>
         <tr>
             <th>Person</th>

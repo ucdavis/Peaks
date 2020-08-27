@@ -1,7 +1,7 @@
 @model Keas.Mvc.Models.ReportModels.SupervisorReportViewModel
 
 <form asp-action="SupervisorDirectReports" method="get">
-    <div class="card">
+    <div class="card people-color">
       <div class="card-header-people">
         <div class="card-head">
           <h2>Supervisor Direct Reports</h2>
@@ -10,24 +10,22 @@
 
         <div class="card-content">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="shade people-color report-spaces">
                 <div class="row align-items-end">
                     <div class="col-sm">
                         <h3>Filters</h3>
                         <div class="form-group">
                             <label asp-for="PersonId" class="control-label"></label>
                              <select asp-for="PersonId" class="form-control" asp-items="@(new SelectList(Model.Supervisors, "Id", "Name"))"></select>
+                             <div class="form-group">
+                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                        </div>
                         </div>
                     </div>                    
                     <div class="col-sm">
-                        <div class="form-group">
-                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
-                        </div>
+                        
                     </div>
                 </div>
-            </div>
-            <br>
-            <br>
+
            <table id="dtDirectReports" class="table dataTable">
         <thead>
         <tr>            
