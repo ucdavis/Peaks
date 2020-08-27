@@ -12,5 +12,8 @@ namespace Keas.Mvc.Models.ReportModels
         public int IncompleteDocumentCount { get; set; }
 
         public int PersonId { get; set; }
+
+        public string TeamName { get; set; }
+        public string TeamSlug { get; set; }
     }
 }

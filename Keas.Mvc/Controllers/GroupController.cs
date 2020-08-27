@@ -72,6 +72,25 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> IncompleteDocumentsReport(int id)
+        {
+            var group = await GetGroup(id);
+
+            if (group == null)
+            {
+                ErrorMessage = "Group not found or no access to Group";
+                return RedirectToAction("NoAccess", "Home");
+            }
+
+            var model = new DocumentReportGroupViewModel
+            {
+                Group = group,
+                IncompleteDocuments = await _reportService.IncompleteDocuments(group)
+            };
+
+            return View(model);
+        }
+
         private async Task<Group> GetGroup(int id) {
             return await _context.Groups.SingleOrDefaultAsync(a =>
                 a.Id == id && a.GroupPermissions.Any(w => w.UserId == User.Identity.Name));
