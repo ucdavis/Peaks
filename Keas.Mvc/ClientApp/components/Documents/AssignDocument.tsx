@@ -63,6 +63,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
               await props.sendDocument(
                 templates.find(t => t.id === selectedTemplate)
               );
+              setLoading(false);
             } catch {
               // on error show the loaded ui so the user can try again
               setLoading(false);
@@ -107,7 +108,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
 
         <ModalBody>
           <div className='container-fluid'>
-            {loading && <div>Loading</div>}
+            {loading && <div>Processing...</div>}
             {!loading && renderTemplates()}
           </div>
         </ModalBody>
