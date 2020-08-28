@@ -37,6 +37,7 @@ namespace Keas.Mvc.Services
         Task TrackCreateKeySerial(KeySerial keySerial);
         Task TrackCreateDocument(Document document);
         Task TrackDocumentStatusChange(Document document);
+        Task TrackDocumentDeleted(Document document);
     }
     public class EventService : IEventService
     {
@@ -230,6 +231,12 @@ namespace Keas.Mvc.Services
         public async Task TrackDocumentStatusChange(Document document)
         {
             await _historyService.DocumentStatusChange(document);
+        }
+
+        public Task TrackDocumentDeleted(Document document)
+        {
+            var history = await _historyService.DocumentDeleted(document);
+            //await _notificationService.DocumentCreatedUpdatedInactive(document, history);
         }
     }
 }

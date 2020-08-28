@@ -48,6 +48,7 @@ namespace Keas.Mvc.Services
         Task<History> WorkstationAssignmentUpdated(Workstation workstation);
         Task<History> DocumentCreated(Document document);
         Task<History> DocumentStatusChange(Document document);
+        Task<History> DocumentDeleted(Document document);
     }
 
     public class HistoryService : IHistoryService
@@ -656,6 +657,11 @@ namespace Keas.Mvc.Services
             };
             _context.Histories.Add(historyEntry);
             return historyEntry;
+        }
+
+        public Task<History> DocumentDeleted(Document document)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
