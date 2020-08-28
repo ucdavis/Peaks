@@ -1,0 +1,71 @@
+@model System.Collections.Generic.IList<Keas.Mvc.Models.ReportModels.IncompleteDocumentReportModel>
+
+@{
+    ViewData["Title"] = "People With Incomplete Documents";
+}
+
+<div class="card documents-color">
+    <div class="card-header-documents">
+        <div class="card-head">
+            <h2>People With Incomplete Documents</h2>
+        </div>
+    </div>
+    <div class="card-content">
+
+
+
+        <table class="table dataTable">
+            <thead>
+            <tr>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Incomplete Document Count
+                </th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model) {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.IncompleteDocumentCount)
+                    </td>
+                    <td>
+                        <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.PersonId)' target="_blank">Details</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ImportJS");}
+
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+            "dom": 'lBfrtip',
+            "buttons": [
+                { extend: 'copyHtml5' },
+                { extend: 'excelHtml5' },
+                { extend: 'csvHtml5' },
+                { extend: 'print' },
+            ]
+        });
+    </script>
+}

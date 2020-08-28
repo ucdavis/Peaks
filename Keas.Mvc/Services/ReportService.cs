@@ -21,6 +21,9 @@ namespace Keas.Mvc.Services
         Task<IList<EquipmentReportModel>> EquipmentList(Group group, bool hideInactive = true);
         Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug);
         Task<IList<KeyReportModel>> Keys(Team team, string teamSlug, bool includeSerials = true, bool includeSpaces = true);
+
+        Task<IList<IncompleteDocumentReportModel>> IncompleteDocuments(Team team, string teamSlug);
+        Task<IList<IncompleteDocumentReportModel>> IncompleteDocuments(Group group);
     }
 
 
@@ -290,6 +293,45 @@ namespace Keas.Mvc.Services
             }).ToListAsync();
 
             return keys;
+        }
+
+        public async Task<IList<IncompleteDocumentReportModel>> IncompleteDocuments(Team team, string teamSlug)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+
+            var people = await _context.People.AsNoTracking().Include(a => a.Documents)
+                .Where(a => a.TeamId == team.Id && a.Documents.Any(x => x.Active && x.Status != "Completed"))
+                .Select(s => new IncompleteDocumentReportModel()
+                {
+                    Name = s.Name,
+                    Email = s.Email,
+                    PersonId = s.Id,
+                    IncompleteDocumentCount = s.Documents.Count(w => w.Active && w.Status != "Completed"),
+                }).ToListAsync();
+
+
+            return people;
+        }
+
+        public async Task<IList<IncompleteDocumentReportModel>> IncompleteDocuments(Group group)
+        {
+            var people = await _context.People.AsNoTracking().Include(a => a.Team).Include(a => a.Documents)
+                .Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id) && a.Documents.Any(x => x.Active && x.Status != "Completed"))
+                .Select(s => new IncompleteDocumentReportModel()
+                {
+                    Name = s.Name,
+                    Email = s.Email,
+                    PersonId = s.Id,
+                    IncompleteDocumentCount = s.Documents.Count(w => w.Active && w.Status != "Completed"),
+                    TeamName = s.Team.Name,
+                    TeamSlug = s.Team.Slug,
+                }).ToListAsync();
+
+
+            return people;
         }
     }
 }

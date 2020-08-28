@@ -82,6 +82,17 @@
                 </ul>
             </div>
         }
+        @if (Model.Contains(Role.Codes.DocumentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
+        {
+            <div class="report-list documents-color col-md-3">
+                <h3><i class="fas fa-file-alt fa-xs"></i> Documents Reports</h3>
+                <ul>
+                    <li>
+                        <a asp-action="PeopleWithIncompleteDocuments">People with Unsigned Documents <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                </ul>
+            </div>
+        }
         <div class="report-list general-color col-md-3">
             <h3><i class="fas fa-list fa-xs"></i> General Reports</h3>
             <ul>
@@ -94,6 +105,7 @@
                         <a asp-action="UnAcceptedItems">Items Pending Acceptance <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                 }
+
             </ul>
             </div>
         </div>

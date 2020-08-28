@@ -1,4 +1,5 @@
 using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace Keas.Core.Domain
 {
@@ -11,5 +12,10 @@ namespace Keas.Core.Domain
         public string Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? CompletedAt { get; set; }
+
+        protected internal static void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<Document>().HasQueryFilter(a => a.Active);
+        }
     }
 }

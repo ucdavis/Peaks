@@ -28,11 +28,20 @@
 
             <div class="report-list spaces-color col-md-3">
                 <h3><i class="fas fa-building fa-xs"></i> Workstations Reports</h3>
-                    <ul>
-                        <li>
+                <ul>
+                    <li>
                         <a asp-action="WorkstationReport" asp-route-id="@Model.Id">View All Workstations <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
-                        </li>
-                    </ul> 
+                    </li>
+                </ul> 
+            </div>
+
+            <div class="report-list documents-color col-md-3">
+                <h3><i class="fas fa-file-alt fa-xs"></i> Incomplete Documents Reports</h3>
+                <ul>
+                    <li>
+                        <a asp-action="IncompleteDocumentsReport" asp-route-id="@Model.Id">View All Incomplete Docs <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                </ul> 
             </div>
 
         </div>

@@ -119,5 +119,34 @@ namespace Keas.Mvc.Controllers.Api
 
             return Json(newDocument);
         }
+
+        [HttpPost("{id}")]
+        [ProducesResponseType(typeof(Document), StatusCodes.Status200OK)]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var document = await _context.Documents.Where(x => x.Team.Slug == Team)
+                .Include(x => x.Team)
+                .SingleAsync(x => x.Id == id);
+
+            if (document == null)
+            {
+                return NotFound();
+            }
+
+            if (!document.Active)
+            {
+                return BadRequest(ModelState);
+            }
+
+            using (var transaction = _context.Database.BeginTransaction())
+            {
+                document.Active = false;
+                await _eventService.TrackDocumentDeleted(document);
+                await _context.SaveChangesAsync();
+                transaction.Commit();
+                return Json(null);
+            }
+
+        }
     }
 }

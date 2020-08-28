@@ -48,6 +48,7 @@ namespace Keas.Mvc.Services
         Task<History> WorkstationAssignmentUpdated(Workstation workstation);
         Task<History> DocumentCreated(Document document);
         Task<History> DocumentStatusChange(Document document);
+        Task<History> DocumentDeleted(Document document);
     }
 
     public class HistoryService : IHistoryService
@@ -652,6 +653,22 @@ namespace Keas.Mvc.Services
                 TargetId = document.PersonId,
                 AssetType = "Document",
                 ActionType = "Updated",
+                Document = document,
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+
+        public async Task<History> DocumentDeleted(Document document)
+        {
+            var person = await _securityService.GetPerson(document.TeamId);
+            var historyEntry = new History
+            {
+                Description = document.GetDescription(nameof(Document), document.Title, person, "Deleted"),
+                ActorId = person.UserId,
+                TargetId = document.PersonId,
+                AssetType = "Document",
+                ActionType = "Deleted",
                 Document = document,
             };
             _context.Histories.Add(historyEntry);
