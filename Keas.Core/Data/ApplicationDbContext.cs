@@ -72,6 +72,7 @@ namespace Keas.Core.Data
             Person.OnModelCreating(builder);
             Space.OnModelCreating(builder);
             Workstation.OnModelCreating(builder);
+            Document.OnModelCreating(builder);
         }
     }
 }
