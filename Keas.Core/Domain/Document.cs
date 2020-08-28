@@ -15,7 +15,7 @@ namespace Keas.Core.Domain
 
         protected internal static void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Equipment>().HasQueryFilter(a => a.Active);
+            builder.Entity<Document>().HasQueryFilter(a => a.Active);
         }
     }
 }
