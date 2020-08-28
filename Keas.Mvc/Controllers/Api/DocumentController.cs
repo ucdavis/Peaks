@@ -140,10 +140,6 @@ namespace Keas.Mvc.Controllers.Api
 
             using (var transaction = _context.Database.BeginTransaction())
             {
-
-                _context.Documents.Update(document);
-
-
                 document.Active = false;
                 await _eventService.TrackDocumentDeleted(document);
                 await _context.SaveChangesAsync();
