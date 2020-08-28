@@ -659,9 +659,20 @@ namespace Keas.Mvc.Services
             return historyEntry;
         }
 
-        public Task<History> DocumentDeleted(Document document)
+        public async Task<History> DocumentDeleted(Document document)
         {
-            throw new System.NotImplementedException();
+            var person = await _securityService.GetPerson(document.TeamId);
+            var historyEntry = new History
+            {
+                Description = document.GetDescription(nameof(Document), document.Title, person, "Deleted"),
+                ActorId = person.UserId,
+                TargetId = document.PersonId,
+                AssetType = "Document",
+                ActionType = "Deleted",
+                Document = document,
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
         }
     }
 }
