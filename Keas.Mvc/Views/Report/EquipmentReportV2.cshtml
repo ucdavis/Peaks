@@ -7,41 +7,43 @@
 
 
 
-<div class="card">
+<div class="card equipment-color">
     <div class="card-header-equipment">
         <div class="card-head">
             <h2>Equipment Report V2</h2>
-            <small class="form-text">This report is formatted to be exactly the same as the import format except it has an Active column.</small>
-            <small class="form-text text-muted">To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).</small>
-            <small class="form-text text-muted">If you have filtered the report with the Search feature, only the filtered results will be exported.</small>
-            <small class="form-text text-muted">You can filter the table with the data that isn't displayed on the screen (such as notes).</small>
         </div>
     </div>
     <div class="card-content">
         
-        <form asp-action="EquipmentReport" method="get">
-            <div class="shade">
-
-
-                <div class="row align-items-end">
-                    <div class="col-sm">
-                        <h3>Filters</h3>
-                        <div class="form-group">
-                            <label asp-for="HideInactive" class="control-label"></label>
-                            <input style="height:34px" asp-for="HideInactive" class="form-control " height="34px" width="276" />
-
-
-                        </div>
-                    </div>
-                  
-                    <div class="col-sm">
-                        <div class="form-group">
-                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
-                        </div>
-                    </div>
+        <form asp-action="EquipmentReportV2" method="get">
+            <div class="row align-items-start">
+                <div class="col-md-6 col-lg-4">
+                    <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
+                    <ul>
+                        <li>
+                            This report is formatted to be exactly the same as the import format except it has an Active column
+                        </li>
+                        <li>
+                            To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).
+                        </li>
+                        <li>
+                            If you have filtered the report with the Search feature, only the filtered results will be exported.
+                        </li>
+                        <li>
+                            You can filter the table with the data that isn't displayed on the screen (such as notes).
+                        </li>
+                    </ul>
                 </div>
-
+                <div class="col-md-6 col-lg-4">
+                    <h3>Filters</h3>
+                    <div class="form-group">
+                        <label asp-for="HideInactive" class="form-check-label"></label>
+                        <input asp-for="HideInactive" class="peaks-checkbox" />
+                    </div>
+                    <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                </div>
             </div>
+
         </form>
         <br/><br/>
 
