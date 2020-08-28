@@ -235,8 +235,7 @@ namespace Keas.Mvc.Services
 
         public async Task TrackDocumentDeleted(Document document)
         {
-            var history = await _historyService.DocumentDeleted(document);
-            //await _notificationService.DocumentCreatedUpdatedInactive(document, history);
+            await _historyService.DocumentDeleted(document);
         }
     }
 }
