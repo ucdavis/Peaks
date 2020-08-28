@@ -39,7 +39,7 @@ namespace Keas.Mvc.Controllers
                 return Unauthorized();
             }
 
-            var document = await _context.Documents.SingleOrDefaultAsync(doc => doc.EnvelopeId == data.EnvelopeStatus.EnvelopeID);
+            var document = await _context.Documents.IgnoreQueryFilters().SingleOrDefaultAsync(doc => doc.EnvelopeId == data.EnvelopeStatus.EnvelopeID);
 
             if (document == null) {
                 return NotFound();
