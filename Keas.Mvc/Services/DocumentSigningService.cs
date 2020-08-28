@@ -22,7 +22,7 @@ namespace Keas.Mvc.Services
 
     public class DocumentSigningService : IDocumentSigningService
     {
-        private static readonly string ReminderFrequency = "2";
+        private static readonly string ReminderFrequency = "7"; // send reminders once a week
         private DateTime _authExpires = DateTime.UtcNow;
         private DocuSign.eSign.Client.Auth.OAuth.OAuthToken _authToken;
         protected static ApiClient _apiClient { get; private set; }
