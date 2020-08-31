@@ -10,8 +10,10 @@ import AssignmentTable from './AccessAssignmentTable';
 import AccessList from './AccessList';
 import AssignAccess from './AssignAccess';
 import RevokeAccess from './RevokeAccess';
+import UpdateAccess from './UpdateAccess';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
+import { stringify } from 'querystring';
 
 // List of assignments passed by props, since this container can be in multiple places
 interface IProps extends RouteChildrenProps<IMatchParams> {
@@ -92,6 +94,8 @@ class AssignmentContainer extends React.Component<IProps, IState> {
     const { action, assetType } = this.props.match.params;
     const isRevokeModalShown =
       assetType === 'accessAssignment' && action === 'revoke';
+    const isEditModalShown =
+      assetType === 'accessAssignment' && action === 'update';
     const isAssignModalShown = assetType === 'access' && action === 'assign';
     const assignments = this.state.assignments;
 
@@ -102,6 +106,13 @@ class AssignmentContainer extends React.Component<IProps, IState> {
             assignment={this.state.selectedAssignment}
             revoke={this.callRevoke}
             cancelRevoke={this.hideModals}
+          />
+        )}
+        {isEditModalShown && (
+          <UpdateAccess
+            assignment={this.state.selectedAssignment}
+            update={this.callUpdate}
+            cancelUpdate={this.hideModals}
           />
         )}
         {isAssignModalShown && (
@@ -136,6 +147,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
             <AssignmentTable
               assignments={assignments}
               onRevoke={this.showRevokeModal}
+              onEdit={this.showEditModal}
             />
           )}
         </AccessAssignmentCard>
@@ -149,6 +161,15 @@ class AssignmentContainer extends React.Component<IProps, IState> {
     });
     this.props.history.push(
       `${this._getBaseUrl()}/accessAssignment/revoke/${assignment.id}`
+    );
+  };
+
+  private showEditModal = (assignment: IAccessAssignment) => {
+    this.setState({
+      selectedAssignment: assignment
+    });
+    this.props.history.push(
+      `${this._getBaseUrl()}/accessAssignment/update/${assignment.id}`
     );
   };
 
@@ -181,6 +202,26 @@ class AssignmentContainer extends React.Component<IProps, IState> {
     if (this.props.onRevokeSuccess) {
       this.props.onRevokeSuccess(assignment);
     }
+  };
+
+  private callUpdate = async assignment => {
+    await this.context.fetch(
+      `/api/${this.context.team.slug}/access/updateassignment/${assignment.id}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(assignment)
+      }
+    );
+
+    toast.success('Assignment updated sucessfully!');
+
+    const assignments = this.state.assignments;
+
+    this.setState({
+      assignments
+    });
+
+    this.hideModals();
   };
 
   private _openAssignModal = () => {
