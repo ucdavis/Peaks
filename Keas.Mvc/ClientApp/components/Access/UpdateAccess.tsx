@@ -44,7 +44,7 @@ export default class UpdateAccess extends React.Component<IProps, IState> {
           <Button
             color='primary'
             onClick={this._callUpdate}
-            disabled={this.state.submitting}
+            disabled={this.state.submitting || this.state.dateError !== null}
           >
             Update{' '}
             {this.state.submitting && (
