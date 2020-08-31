@@ -194,6 +194,22 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(AccessAssignment), StatusCodes.Status200OK)]
+        public async Task<IActionResult> UpdateAssignment([FromBody] AccessAssignment accessAssignment)
+        {
+            var assignment = await _context.AccessAssignments
+                .Where(x => x.Access.Team.Slug == Team)
+                .Include(x => x.Person)
+                .Include(x => x.Access)
+                .ThenInclude(x => x.Team)
+                .SingleAsync(x => x.Id == accessAssignment.Id);
+
+            assignment.ExpiresAt = accessAssignment.ExpiresAt;
+            await _context.SaveChangesAsync();
+            return Json(null);
+        }
+
+        [HttpPost("{id}")]
+        [ProducesResponseType(typeof(AccessAssignment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Revoke(int id)
         {
             var assignment = await _context.AccessAssignments
