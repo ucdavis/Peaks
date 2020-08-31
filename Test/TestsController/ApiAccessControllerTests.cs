@@ -55,7 +55,7 @@ namespace Test.TestsController
         [Fact]
         public void TestControllerContainsExpectedNumberOfPublicMethods()
         {
-            ControllerReflection.ControllerPublicMethods(11);
+            ControllerReflection.ControllerPublicMethods(12);
         }
 
         [Fact]
@@ -114,18 +114,24 @@ namespace Test.TestsController
             responseType.ElementAt(0).Type.Name.ShouldBe("Access");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
             //9
+            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("UpdateAssignment", 3 + countAdjustment, "UpdateAssignment", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("UpdateAssignment", 3 + countAdjustment, "UpdateAssignment", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("UpdateAssignment", 3 + countAdjustment, "UpdateAssignment", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.Name.ShouldBe("AccessAssignment");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
+            //10
             ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Revoke", 3 + countAdjustment, "Revoke", showListOfAttributes: false);
             ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Revoke", 3 + countAdjustment, "Revoke", showListOfAttributes: false);
             responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Revoke", 3 + countAdjustment, "Revoke", showListOfAttributes: false);
             responseType.ElementAt(0).Type.Name.ShouldBe("AccessAssignment");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
-            //10
+            //11
             ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
             ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
             responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
             responseType.ElementAt(0).Type.Name.ShouldBe("Access");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
-            //11
+            //12
             ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetHistory", 3 + countAdjustment, "GetHistory", showListOfAttributes: false);
             ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetHistory", 3 + countAdjustment, "GetHistory", showListOfAttributes: false);
             responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("GetHistory", 3 + countAdjustment, "GetHistory", showListOfAttributes: false);
