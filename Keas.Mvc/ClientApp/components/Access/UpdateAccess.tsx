@@ -3,6 +3,7 @@ import DatePicker from 'react-date-picker';
 import { Alert, Button } from 'reactstrap';
 import { IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
+import { startOfDay } from 'date-fns';
 import SearchTags from '../Tags/SearchTags';
 import AccessModal from './AccessModal';
 
@@ -16,6 +17,7 @@ interface IState {
   submitting: boolean;
   date?: Date;
   error?: string;
+  dateError?: string;
 }
 
 export default class UpdateAccess extends React.Component<IProps, IState> {
@@ -73,10 +75,12 @@ export default class UpdateAccess extends React.Component<IProps, IState> {
           required={true}
           clearIcon={null}
           value={new Date(this.props.assignment.expiresAt)}
-          minDate={new Date()}
           onChange={this._changeDate}
         />
         <p>Expires At {DateUtil.formatExpiration(assignment.expiresAt)}</p>
+        {this.state.dateError && (
+          <div className='invalid-feedback d-block'>{this.state.dateError}</div>
+        )}
       </AccessModal>
     ) : (
       <AccessModal
@@ -100,7 +104,13 @@ export default class UpdateAccess extends React.Component<IProps, IState> {
   };
 
   private _changeDate = (newDate: Date) => {
-    this.setState({ date: newDate });
-    this.props.assignment.expiresAt = newDate;
+    const now = new Date();
+
+    if (newDate > now) {
+      this.setState({ date: startOfDay(new Date(newDate)), dateError: null });
+      this.props.assignment.expiresAt = newDate;
+    } else {
+      this.setState({ dateError: 'You must choose a date after today' });
+    }
   };
 }
