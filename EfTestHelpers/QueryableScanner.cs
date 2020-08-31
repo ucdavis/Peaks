@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,23 +16,23 @@ using Microsoft.EntityFrameworkCore;
 namespace EfTestHelpers
 {
 
-    public class LinqToEfSanityChecker
+    public class QueryableScanner
     {
         private readonly string _solutionPath;
 
-        private readonly LinqToEfSanityCheckerOptions _options;
+        private readonly QueryableScannerOptions _options;
 
         private readonly List<TextSpan> _topLevelSpans;
 
 
-        public LinqToEfSanityChecker(string solutionPath, LinqToEfSanityCheckerOptions options)
+        public QueryableScanner(string solutionPath, QueryableScannerOptions options)
         {
             _solutionPath = solutionPath;
             _options = options;
             _topLevelSpans = new List<TextSpan>();
         }
 
-        public async IAsyncEnumerable<LinqToEfSanityCheckerContext> CheckEfQueries()
+        public async IAsyncEnumerable<QueryableExpressionContext> ScanForEfQueries()
         {
             await foreach (var context in GetLinqToEfCalls())
             {
@@ -39,7 +40,7 @@ namespace EfTestHelpers
             }
         }
 
-        private async IAsyncEnumerable<LinqToEfSanityCheckerContext> GetLinqToEfCalls()
+        private async IAsyncEnumerable<QueryableExpressionContext> GetLinqToEfCalls()
         {
             _topLevelSpans.Clear();
 
@@ -51,7 +52,7 @@ namespace EfTestHelpers
 
             var workspace = analyzerManager.GetWorkspace();
 
-            var context = new LinqToEfSanityCheckerContext();
+            var context = new QueryableExpressionContext();
 
             context = context.SetSolution(workspace.CurrentSolution);
 
@@ -68,21 +69,21 @@ namespace EfTestHelpers
 
                 var efQueryableExtensionsSymbol = context.Compilation.GetTypeByMetadataName(
                         "Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions");
-                var linqQueryableExtensionsSymbol = context.Compilation.GetTypeByMetadataName(
-                    "System.Linq.Queryable");
 
-                if (efQueryableExtensionsSymbol == null && linqQueryableExtensionsSymbol == null)
+                if (efQueryableExtensionsSymbol == null)
                     continue; // No IQueryable extension methods referenced from this project
 
                 // Find all extension methods that might be used against an Ef Queryable
-                var methodSymbols = efQueryableExtensionsSymbol.GetMethods()
-                    .Union(efQueryableExtensionsSymbol.GetMethods())
+                var extensionMethods = efQueryableExtensionsSymbol.GetMethods()
                     .Where(m => m.IsExtensionMethod && (m.Parameters.FirstOrDefault()?.Type.Name.Contains("Queryable") ?? false))
-                    .ToArray();
+                    .GroupBy(s => s.Name)
+                    .ToImmutableDictionary(g => g.Key, g => g.ToImmutableArray());
 
-                var callerInfos = methodSymbols
+                context = context.SetExtensionMethods(extensionMethods);
+
+                var callerInfos = extensionMethods
+                    .SelectMany(g => g.Value)
                     .SelectMany(m => SymbolFinder.FindCallersAsync(m, context.Solution).GetAwaiter().GetResult())
-                    .Where(s => _options.CallerInfoFilter(context, s))
                     // make ordering consistent from one run to the next
                     .OrderBy(c => context.Project.GetDocument(c.CallingSymbol.DeclaringSyntaxReferences[0].GetSyntax().SyntaxTree).FilePath)
                     .ThenBy(c => c.CallingSymbol.DeclaringSyntaxReferences[0].Span.Start)
@@ -103,6 +104,9 @@ namespace EfTestHelpers
                     context = context.SetFilePath(Path.GetRelativePath(relativePathBase, document.FilePath));
                     context = context.SetMethodName(callerInfo.CallingSymbol.Name);
 
+                    if (!_options.CallerInfoFilter(context, callerInfo))
+                        continue;
+
                     var model = await document.GetSemanticModelAsync();
 
                     var context1 = context; // to avoid access to modified closure
@@ -122,15 +126,7 @@ namespace EfTestHelpers
                         // make sure the methodSymbol actually is an Ef or Linq Queryable extension method
                         var methodSymbol = model.GetSymbolInfo(context.ExtensionMethodInvocation).Symbol as IMethodSymbol;
 
-                        if (SymbolEqualityComparer.Default.Equals(methodSymbol?.ContainingSymbol, efQueryableExtensionsSymbol))
-                            context = context.SetExtensionMethodOwner(QueryableExtensionsOwner.EfQueryableExtensions);
-                        else if (SymbolEqualityComparer.Default.Equals(methodSymbol?.ContainingSymbol,
-                            linqQueryableExtensionsSymbol))
-                            context = context.SetExtensionMethodOwner(QueryableExtensionsOwner.LinqEnumerableExtensions);
-                        else
-                            continue;
-
-                        if (!_options.MethodSymbolFilter(context, methodSymbol))
+                        if (!SymbolEqualityComparer.Default.Equals(methodSymbol?.ContainingSymbol, efQueryableExtensionsSymbol))
                             continue;
 
                         context = context.SetExtensionMethod(methodSymbol);

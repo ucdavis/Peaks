@@ -9,8 +9,21 @@ using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace EfTestHelpers
 {
-    public static class EfQueryableExtensions
+    public static class QueryableExtensions
     {
+        public static string ToSql(this IQueryable query)
+        {
+            // TODO: Make this faster
+            var entityType = query.GetType().GetGenericArguments()[0];
+            IQueryable<string> dummy = default;
+            var methodInfo = LinqOp.MethodOf(() => ToSql(dummy));
+            return (string) methodInfo
+                .GetGenericMethodDefinition()
+                .MakeGenericMethod(entityType)
+                .Invoke(null, new object[] {query});
+        }
+
+
         public static string ToSql<TEntity>(this IQueryable<TEntity> query)
         {
             var version = query.GetEfCoreVersionInfo();
