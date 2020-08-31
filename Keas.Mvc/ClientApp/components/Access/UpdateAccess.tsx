@@ -73,6 +73,7 @@ export default class UpdateAccess extends React.Component<IProps, IState> {
           required={true}
           clearIcon={null}
           value={new Date(this.props.assignment.expiresAt)}
+          minDate={new Date()}
           onChange={this._changeDate}
         />
         <p>Expires At {DateUtil.formatExpiration(assignment.expiresAt)}</p>
@@ -98,8 +99,8 @@ export default class UpdateAccess extends React.Component<IProps, IState> {
     }
   };
 
-  private _changeDate = (date: Date) => {
-    this.setState({ date: date });
-    this.props.assignment.expiresAt = date;
+  private _changeDate = (newDate: Date) => {
+    this.setState({ date: newDate });
+    this.props.assignment.expiresAt = newDate;
   };
 }

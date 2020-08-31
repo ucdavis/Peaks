@@ -13,7 +13,6 @@ import RevokeAccess from './RevokeAccess';
 import UpdateAccess from './UpdateAccess';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
-import { stringify } from 'querystring';
 
 // List of assignments passed by props, since this container can be in multiple places
 interface IProps extends RouteChildrenProps<IMatchParams> {
