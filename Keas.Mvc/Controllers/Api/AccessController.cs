@@ -152,23 +152,34 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
-            var access = await _context.Access.Where(x => x.Team.Slug == Team)
-                .Include(x => x.Assignments).SingleAsync(x => x.Id == accessId);
+            var assignment = await _context.AccessAssignments.Where(x => x.AccessId == accessId && x.PersonId == personId)
+                .SingleAsync();
 
-            var accessAssignment = new AccessAssignment
+            if (assignment != null) 
             {
-                AccessId = accessId,
-                PersonId = personId,
-                RequestedById = User.Identity.Name,
-                RequestedByName = User.GetNameClaim(),
-                ExpiresAt = DateTime.Parse(date),
-            };
+                assignment.ExpiresAt = DateTime.Parse(date);
+                await _eventService.TrackAssignAccess(assignment, Team);
+            } else 
+            {
+                var access = await _context.Access.Where(x => x.Team.Slug == Team)
+                    .Include(x => x.Assignments).SingleAsync(x => x.Id == accessId);
 
-            accessAssignment.Person = await _context.People.SingleAsync(p => p.Id == personId);
-            access.Assignments.Add(accessAssignment);
-            await _eventService.TrackAssignAccess(accessAssignment, Team);
+                 assignment = new AccessAssignment
+                {
+                    AccessId = accessId,
+                    PersonId = personId,
+                    RequestedById = User.Identity.Name,
+                    RequestedByName = User.GetNameClaim(),
+                    ExpiresAt = DateTime.Parse(date),
+                };
+
+                assignment.Person = await _context.People.SingleAsync(p => p.Id == personId);
+                access.Assignments.Add(assignment);
+                await _eventService.TrackAssignAccess(assignment, Team);
+            }
+
             await _context.SaveChangesAsync();
-            return Json(accessAssignment);
+            return Json(assignment);
         }
 
         [HttpPost]

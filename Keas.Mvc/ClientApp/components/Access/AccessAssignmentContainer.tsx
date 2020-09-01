@@ -109,6 +109,7 @@ class AssignmentContainer extends React.Component<IProps, IState> {
         )}
         {isEditModalShown && (
           <UpdateAccess
+            person={this.props.person}
             assignment={this.state.selectedAssignment}
             update={this.callUpdate}
             cancelUpdate={this.hideModals}
@@ -203,14 +204,23 @@ class AssignmentContainer extends React.Component<IProps, IState> {
     }
   };
 
-  private callUpdate = async assignment => {
-    await this.context.fetch(
-      `/api/${this.context.team.slug}/access/updateassignment/${assignment.id}`,
-      {
-        method: 'POST',
-        body: JSON.stringify(assignment)
-      }
-    );
+  private callUpdate = async (access: IAccess, date: any, person: IPerson) => {
+    const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
+    let accessAssignment: IAccessAssignment = null;
+    try {
+      accessAssignment = await this.context.fetch(assignUrl, {
+        method: 'POST'
+      });
+
+      accessAssignment.access = {
+        ...access,
+        assignments: [...access.assignments, accessAssignment]
+      };
+      toast.success('Access assigned successfully!');
+    } catch (err) {
+      toast.error('Error assigning access.');
+      throw new Error(); // throw error so modal doesn't close
+    }
 
     toast.success('Assignment updated sucessfully!');
 

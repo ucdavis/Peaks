@@ -1,7 +1,8 @@
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import { Alert, Button } from 'reactstrap';
-import { IAccessAssignment } from '../../models/Access';
+import { IAccess, IAccessAssignment } from '../../models/Access';
+import { IPerson } from '../../models/People';
 import { DateUtil } from '../../util/dates';
 import { startOfDay } from 'date-fns';
 import SearchTags from '../Tags/SearchTags';
@@ -9,8 +10,9 @@ import AccessModal from './AccessModal';
 
 interface IProps {
   assignment?: IAccessAssignment;
-  update: (accessAssignment: IAccessAssignment) => Promise<void>;
+  update: (access: IAccess, date: any, person: IPerson) => Promise<void>;
   cancelUpdate: () => void;
+  person?: IPerson;
 }
 
 interface IState {
@@ -92,9 +94,14 @@ export default class UpdateAccess extends React.Component<IProps, IState> {
   }
 
   private _callUpdate = () => {
+    console.log(this.props.person)
     this.setState({ submitting: true });
     try {
-      this.props.update(this.props.assignment);
+      this.props.update(
+        this.props.assignment.access,
+        this.state.date,
+        this.props.person
+      );
     } catch (e) {
       this.setState({
         error: 'Error -- ' + e.message + ' -- Please try again later',
