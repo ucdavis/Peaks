@@ -22,6 +22,7 @@ namespace Keas.Mvc.Services
 
     public class DocumentSigningService : IDocumentSigningService
     {
+        private static readonly string ReminderFrequency = "7"; // send reminders once a week
         private DateTime _authExpires = DateTime.UtcNow;
         private DocuSign.eSign.Client.Auth.OAuth.OAuthToken _authToken;
         protected static ApiClient _apiClient { get; private set; }
@@ -52,7 +53,17 @@ namespace Keas.Mvc.Services
             envelope.EventNotification = new EventNotification { 
                 Url = _documentSigningSettings.CallbackUrlBase + "/" + _documentSigningSettings.CallbackUrlSecret,
                 RequireAcknowledgment = "true",
+
                 EnvelopeEvents = events.ToList() 
+            };
+
+            envelope.Notification = new Notification {
+                UseAccountDefaults = "false", // we want to customize notifications
+                Reminders = new Reminders {
+                    ReminderEnabled = "true",
+                    ReminderDelay = ReminderFrequency, // first reminder will be sent after N days
+                    ReminderFrequency = ReminderFrequency // keep sending reminders every N days after delay
+                }
             };
 
             envelope.Status = "sent";
