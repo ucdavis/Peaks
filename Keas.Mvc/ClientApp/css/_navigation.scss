@@ -33,7 +33,7 @@ a.nav-link {
   }
 }
 .nav-active {
-  a {
+  a.nav-link {
     border-bottom: 3px solid $borders;
   }
 }
