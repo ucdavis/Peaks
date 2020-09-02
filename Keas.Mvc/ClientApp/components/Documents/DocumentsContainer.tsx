@@ -15,7 +15,7 @@ interface IProps {
   person: IPerson;
 }
 
-export const DocumentsContainer = (props: IProps): JSX.Element => {
+const DocumentsContainer = (props: IProps): JSX.Element => {
   const ctx = useContext<AppContext>(Context);
 
   const [documents, setDocuments] = useState<IDocument[]>([]);
@@ -118,3 +118,5 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
     </div>
   );
 };
+
+export default DocumentsContainer;

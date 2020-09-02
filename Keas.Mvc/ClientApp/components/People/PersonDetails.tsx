@@ -14,7 +14,7 @@ import WorkstationContainer from '../Workstations/WorkstationContainer';
 import BioContainer from './BioContainer';
 import DeletePerson from './DeletePerson';
 import EditPerson from './EditPerson';
-import { DocumentsContainer } from '../Documents/DocumentsContainer';
+import DocumentsContainer from '../Documents/DocumentsContainer';
 
 interface IProps {
   router: RouteChildrenProps<IMatchParams>;
