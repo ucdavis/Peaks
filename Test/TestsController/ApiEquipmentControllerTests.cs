@@ -37,15 +37,25 @@ namespace Test.TestsController
         public void TestControllerClassAttributes()
         {
             ControllerReflection.ControllerInherits("SuperController");
-            var authAttribute = ControllerReflection.ClassExpectedAttribute<AuthorizeAttribute>(5);
+            var authAttribute = ControllerReflection.ClassExpectedAttribute<AuthorizeAttribute>(7);
             authAttribute.ElementAt(0).Roles.ShouldBe(null);
             authAttribute.ElementAt(0).Policy.ShouldBe(AccessCodes.Codes.EquipMasterAccess);
 
-            ControllerReflection.ClassExpectedAttribute<AutoValidateAntiforgeryTokenOrApiAttribute>(5);
-            ControllerReflection.ClassExpectedAttribute<ControllerAttribute>(5);
-            ControllerReflection.ClassExpectedAttribute<ApiControllerAttribute>(5);
+            ControllerReflection.ClassExpectedAttribute<AutoValidateAntiforgeryTokenOrApiAttribute>(7);
+            ControllerReflection.ClassExpectedAttribute<ControllerAttribute>(7);
+            ControllerReflection.ClassExpectedAttribute<ApiControllerAttribute>(7);
 
-            var route = ControllerReflection.ClassExpectedAttribute<RouteAttribute>(5);
+            var attribConsumes = ControllerReflection.ClassExpectedAttribute<ConsumesAttribute>(7);
+            attribConsumes.ElementAt(0).ContentTypes.ElementAt(0).ShouldBe("application/json");
+            attribConsumes.Count().ShouldBe(1);
+            attribConsumes.ElementAt(0).ContentTypes.Count.ShouldBe(1);
+
+            var attribProduces = ControllerReflection.ClassExpectedAttribute<ProducesAttribute>(7);
+            attribProduces.ElementAt(0).ContentTypes.ElementAt(0).ShouldBe("application/json");
+            attribProduces.Count().ShouldBe(1);
+            attribProduces.ElementAt(0).ContentTypes.Count.ShouldBe(1);
+
+            var route = ControllerReflection.ClassExpectedAttribute<RouteAttribute>(7);
             route.ElementAt(0).Template.ShouldBe("api/{teamName}/equipment/[action]");
         }
 
