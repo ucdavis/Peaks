@@ -1,5 +1,6 @@
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
+import { useState } from 'react';
 import { Alert, Button } from 'reactstrap';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
@@ -14,108 +15,99 @@ interface IProps {
   cancelUpdate: () => void;
 }
 
-interface IState {
-  submitting: boolean;
-  date?: Date;
-  error?: string;
-  dateError?: string;
-}
+const UpdateAccess = (props: IProps) => {
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [dateError, setDateError] = useState<string>(null);
+  const [error, setError] = useState<string>('');
+  const [date, setDate] = useState<Date>(new Date(props.assignment?.expiresAt));
 
-export default class UpdateAccess extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
+  const valid = !!props.assignment;
+  const assignment = props.assignment;
+  const { person } = assignment || { person: null };
 
-    this.state = { submitting: false, date: this.props.assignment.expiresAt };
-  }
+  const _callUpdate = () => {
+    setSubmitting(true);
+    try {
+      props.update(
+        props.assignment.access,
+        format(date, 'MM/dd/yyyy'),
+        props.assignment.person
+      );
+    } catch (e) {
+      setError('Error -- ' + e.message + ' -- Please try again later');
+      setSubmitting(false);
+    }
+  };
 
-  public render() {
-    const valid = !!this.props.assignment;
-    const assignment = this.props.assignment;
-    const { person } = assignment || { person: null };
-    return valid ? (
+  const _changeDate = (newDate: Date) => {
+    const now = new Date();
+
+    if (newDate > now) {
+      setDateError(null);
+      setDate(startOfDay(new Date(newDate)));
+      props.assignment.expiresAt = newDate;
+    } else {
+      setDateError('You must choose a date after today');
+    }
+  };
+
+  if (!valid) {
+    return (
       <AccessModal
         isOpen={true}
-        closeModal={this.props.cancelUpdate}
-        header={
-          <h1>
-            Edit Access for {person.firstName} {person.lastName}
-          </h1>
-        }
-        footer={
-          <Button
-            color='primary'
-            onClick={this._callUpdate}
-            disabled={this.state.submitting || this.state.dateError !== null}
-          >
-            Update{' '}
-            {this.state.submitting && (
-              <i className='fas fa-circle-notch fa-spin' />
-            )}
-          </Button>
-        }
-      >
-        {this.state.error && <Alert color='danger'>{this.state.error}</Alert>}
-        <h1>Access Name: {assignment.access.name}</h1>
-        <h2>Notes: </h2>
-        <p>{assignment.access.notes}</p>
-        {assignment.access.tags.length > 0 && (
-          <>
-            <p>
-              <b>Tags</b>
-            </p>
-            <SearchTags
-              tags={[]}
-              disabled={true}
-              onSelect={() => {}}
-              selected={assignment.access.tags.split(',')}
-            />
-          </>
-        )}
-        <DatePicker
-          format='MM/dd/yyyy'
-          required={true}
-          clearIcon={null}
-          value={new Date(this.props.assignment.expiresAt)}
-          onChange={this._changeDate}
-        />
-        <p>Expires At {DateUtil.formatExpiration(assignment.expiresAt)}</p>
-        {this.state.dateError && (
-          <div className='invalid-feedback d-block'>{this.state.dateError}</div>
-        )}
-      </AccessModal>
-    ) : (
-      <AccessModal
-        isOpen={true}
-        closeModal={this.props.cancelUpdate}
+        closeModal={props.cancelUpdate}
         header={<h1>Assignment not found</h1>}
       />
     );
   }
 
-  private _callUpdate = () => {
-    this.setState({ submitting: true });
-    try {
-      this.props.update(
-        this.props.assignment.access,
-        format(this.state.date, 'MM/dd/yyyy'),
-        this.props.assignment.person
-      );
-    } catch (e) {
-      this.setState({
-        error: 'Error -- ' + e.message + ' -- Please try again later',
-        submitting: false
-      });
-    }
-  };
+  return (
+    <AccessModal
+      isOpen={true}
+      closeModal={props.cancelUpdate}
+      header={
+        <h1>
+          Edit Access for {person.firstName} {person.lastName}
+        </h1>
+      }
+      footer={
+        <Button
+          color='primary'
+          onClick={_callUpdate}
+          disabled={submitting || dateError !== null}
+        >
+          Update {submitting && <i className='fas fa-circle-notch fa-spin' />}
+        </Button>
+      }
+    >
+      {error && <Alert color='danger'>{error}</Alert>}
+      <h1>Access Name: {assignment.access.name}</h1>
+      <h2>Notes: </h2>
+      <p>{assignment.access.notes}</p>
+      {assignment.access.tags.length > 0 && (
+        <>
+          <p>
+            <b>Tags</b>
+          </p>
+          <SearchTags
+            tags={[]}
+            disabled={true}
+            onSelect={() => {}}
+            selected={assignment.access.tags.split(',')}
+          />
+        </>
+      )}
+      <DatePicker
+        format='MM/dd/yyyy'
+        required={true}
+        clearIcon={null}
+        value={new Date(props.assignment.expiresAt)}
+        onChange={_changeDate}
+      />
+      <p>Expires At {DateUtil.formatExpiration(assignment.expiresAt)}</p>
+      {dateError && <div className='invalid-feedback d-block'>{dateError}</div>}
+    </AccessModal>
+  );
+};
 
-  private _changeDate = (newDate: Date) => {
-    const now = new Date();
-
-    if (newDate > now) {
-      this.setState({ date: startOfDay(new Date(newDate)), dateError: null });
-      this.props.assignment.expiresAt = newDate;
-    } else {
-      this.setState({ dateError: 'You must choose a date after today' });
-    }
-  };
-}
+export default UpdateAccess;
