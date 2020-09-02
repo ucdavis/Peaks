@@ -20,6 +20,8 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/workstations/[action]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class WorkstationsController : SuperController
     {
         private readonly ApplicationDbContext _context;

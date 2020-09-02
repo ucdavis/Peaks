@@ -21,6 +21,8 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/KeySerials/[action]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class KeySerialsController : SuperController
     {
         private readonly ApplicationDbContext _context;

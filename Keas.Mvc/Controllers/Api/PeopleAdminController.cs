@@ -19,6 +19,8 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.PersonManagerAccess)]
     [ApiController]
     [Route("api/{teamName}/peopleadmin/[action]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class PeopleAdminController : SuperController
     {
         private readonly ApplicationDbContext _context;
