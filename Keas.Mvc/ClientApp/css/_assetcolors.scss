@@ -1,4 +1,7 @@
 .people-color {
+  td a {
+    color: $people;
+  }
   .btn-link {
     color: $people;
     border-color: $people;
@@ -47,6 +50,9 @@
   }
 }
 .keys-color {
+  td a {
+    color: $keys;
+  }
   .btn-link {
     color: $keys;
     border-color: $keys;
@@ -77,6 +83,9 @@
   }
 }
 .spaces-color {
+  td a {
+    color: $spaces;
+  }
   .btn-link {
     color: $spaces;
     border-color: $spaces;
@@ -108,6 +117,9 @@
   }
 }
 .equipment-color {
+  td a {
+    color: $equipment;
+  }
   .btn-link {
     color: $equipment;
     border-color: $equipment;
@@ -141,6 +153,9 @@
   }
 }
 .access-color {
+  td a {
+    color: $access;
+  }
   .btn-link {
     color: $access;
     border-color: $access;
@@ -173,6 +188,9 @@
 }
 
 .history-color {
+  td a {
+    color: $history;
+  }
   .btn-link {
     color: $history;
     border-color: $history;
