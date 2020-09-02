@@ -14,6 +14,7 @@ namespace Keas.Mvc.Services
     public interface IDocumentSigningService
     {
         Task<Stream> DownloadEnvelope(string envelopeId);
+        string GetEnvelopePath(string envelopeId);
         Task<EnvelopesInformation> GetEnvelopes(string email);
         Task<EnvelopesInformation> GetEnvelopes(string[] envelopeIds);
         Task<EnvelopeTemplate> GetTemplate(string templateId);
@@ -117,6 +118,10 @@ namespace Keas.Mvc.Services
             config.AddDefaultHeader("Authorization", "Bearer " + token.access_token);
 
             return config;
+        }
+
+        public string GetEnvelopePath(string envelopeId) {
+            return _documentSigningSettings.WebBasePath + envelopeId;
         }
 
         // Returns a valid oauth token
