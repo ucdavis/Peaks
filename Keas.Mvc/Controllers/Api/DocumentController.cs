@@ -16,6 +16,8 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.DocumentMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/documents/[action]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class DocumentsController : SuperController
     {
         private readonly ApplicationDbContext _context;

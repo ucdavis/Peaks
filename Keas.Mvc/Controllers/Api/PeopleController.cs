@@ -20,6 +20,8 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.AnyRole)]
     [ApiController]
     [Route("api/{teamName}/people/[action]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class PeopleController : SuperController
     {
         private readonly ApplicationDbContext _context;

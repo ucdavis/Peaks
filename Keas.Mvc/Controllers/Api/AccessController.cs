@@ -20,6 +20,8 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.AccessMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/access/[action]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class AccessController : SuperController
     {
         private readonly ApplicationDbContext _context;

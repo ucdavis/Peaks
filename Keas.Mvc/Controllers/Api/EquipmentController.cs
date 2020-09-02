@@ -21,6 +21,8 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/equipment/[action]")]
+    [Consumes("application/json")]
+    [Produces("application/json")]
     public class EquipmentController : SuperController
     {
         private readonly ApplicationDbContext _context;
