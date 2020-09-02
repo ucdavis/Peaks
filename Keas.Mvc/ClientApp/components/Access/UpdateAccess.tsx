@@ -4,7 +4,7 @@ import { Alert, Button } from 'reactstrap';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
 import { DateUtil } from '../../util/dates';
-import { startOfDay } from 'date-fns';
+import { format, startOfDay } from 'date-fns';
 import SearchTags from '../Tags/SearchTags';
 import AccessModal from './AccessModal';
 
@@ -12,7 +12,6 @@ interface IProps {
   assignment?: IAccessAssignment;
   update: (access: IAccess, date: any, person: IPerson) => Promise<void>;
   cancelUpdate: () => void;
-  person?: IPerson;
 }
 
 interface IState {
@@ -94,13 +93,12 @@ export default class UpdateAccess extends React.Component<IProps, IState> {
   }
 
   private _callUpdate = () => {
-    console.log(this.props.person)
     this.setState({ submitting: true });
     try {
       this.props.update(
         this.props.assignment.access,
-        this.state.date,
-        this.props.person
+        format(this.state.date, 'MM/dd/yyyy'),
+        this.props.assignment.person
       );
     } catch (e) {
       this.setState({

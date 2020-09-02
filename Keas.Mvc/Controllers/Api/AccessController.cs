@@ -153,12 +153,13 @@ namespace Keas.Mvc.Controllers.Api
             }
 
             var assignment = await _context.AccessAssignments.Where(x => x.AccessId == accessId && x.PersonId == personId)
+                .Include(x => x.Person)
                 .SingleAsync();
 
             if (assignment != null) 
             {
                 assignment.ExpiresAt = DateTime.Parse(date);
-                await _eventService.TrackAssignAccess(assignment, Team);
+                await _eventService.TrackAssignAccessUpdate(assignment, Team);
             } else 
             {
                 var access = await _context.Access.Where(x => x.Team.Slug == Team)
@@ -201,22 +202,6 @@ namespace Keas.Mvc.Controllers.Api
             await _context.SaveChangesAsync();
             return Json(access);
 
-        }
-
-        [HttpPost("{id}")]
-        [ProducesResponseType(typeof(AccessAssignment), StatusCodes.Status200OK)]
-        public async Task<IActionResult> UpdateAssignment([FromBody] AccessAssignment accessAssignment)
-        {
-            var assignment = await _context.AccessAssignments
-                .Where(x => x.Access.Team.Slug == Team)
-                .Include(x => x.Person)
-                .Include(x => x.Access)
-                .ThenInclude(x => x.Team)
-                .SingleAsync(x => x.Id == accessAssignment.Id);
-
-            assignment.ExpiresAt = accessAssignment.ExpiresAt;
-            await _context.SaveChangesAsync();
-            return Json(null);
         }
 
         [HttpPost("{id}")]

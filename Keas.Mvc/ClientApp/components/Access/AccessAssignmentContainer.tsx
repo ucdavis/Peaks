@@ -109,7 +109,6 @@ class AssignmentContainer extends React.Component<IProps, IState> {
         )}
         {isEditModalShown && (
           <UpdateAccess
-            person={this.props.person}
             assignment={this.state.selectedAssignment}
             update={this.callUpdate}
             cancelUpdate={this.hideModals}
@@ -216,13 +215,11 @@ class AssignmentContainer extends React.Component<IProps, IState> {
         ...access,
         assignments: [...access.assignments, accessAssignment]
       };
-      toast.success('Access assigned successfully!');
+      toast.success('Access updated successfully!');
     } catch (err) {
       toast.error('Error assigning access.');
       throw new Error(); // throw error so modal doesn't close
     }
-
-    toast.success('Assignment updated sucessfully!');
 
     const assignments = this.state.assignments;
 
