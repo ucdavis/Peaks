@@ -164,8 +164,8 @@
     @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.SpaceMaster, StringComparison.OrdinalIgnoreCase)))
     {
         <div class="card-content">
-            <div class="card equipment-color">
-                <div class="card-header-equipment">
+            <div class="card spaces-color">
+                <div class="card-header-spaces">
                     <div class="card-head">
                         <h2><i class="fas fa-building fa-xs"></i> Space/Workstation Admin</h2>
                     </div>
@@ -193,10 +193,10 @@
     @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.DocumentMaster, StringComparison.OrdinalIgnoreCase)))
     {
         <div class="card-content">
-            <div class="card equipment-color">
-                <div class="card-header-equipment">
+            <div class="card documents-color">
+                <div class="card-header-documents">
                     <div class="card-head">
-                        <h2><i class="fas fa-building fa-xs"></i> Document (DocuSign) Admin</h2>
+                        <h2><i class="fas fa-file-alt fa-xs"></i> Document (DocuSign) Admin</h2>
                     </div>
                 </div>
                 <table class="table">
