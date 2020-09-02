@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Mvc.Services;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Keas.Mvc.Models
 {
@@ -14,6 +15,8 @@ namespace Keas.Mvc.Models
         public List<Equipment> Equipment { get; set; }
         public List<Access> Access { get; set; }
         public List<Workstation> Workstations { get; set; }
+        public List<Document> Documents { get; set; }
+        public Func<string, string> DocumentUrlResolver { get; set; }
         public List<History> Histories { get; set; }
         public bool PendingItems { get; set; }
         public IEnumerable<Team> TeamsWithPendingAssignments { get; set; }
@@ -43,6 +46,7 @@ namespace Keas.Mvc.Models
                     })
                     .AsNoTracking().ToListAsync(),
                 Workstations = await context.Workstations.Include(w=> w.Assignment).Include(w=> w.Space).Where(w=> w.Assignment.Person==person).AsNoTracking().ToListAsync(),
+                Documents = await context.Documents.Where(d => d.Person == person).AsNoTracking().ToListAsync(),
                 Histories = await context.Histories.Where(x => x.Target == person)
                     .OrderByDescending(x => x.ActedDate)
                     .Take(10).AsNoTracking().ToListAsync()

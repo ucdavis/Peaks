@@ -16,14 +16,16 @@ namespace Keas.Mvc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ISecurityService _securityService;
+        private readonly IDocumentSigningService _documentSigningService;
         private readonly IEventService _eventService;
         private readonly ITeamsManager _teamsManager;
 
 
-        public ConfirmController(ApplicationDbContext context, ISecurityService _securityService, IEventService _eventService, ITeamsManager teamsManager)
+        public ConfirmController(ApplicationDbContext context, ISecurityService _securityService, IDocumentSigningService _documentSigningService, IEventService _eventService, ITeamsManager teamsManager)
         {
             _context = context;
             this._securityService = _securityService;
+            this._documentSigningService = _documentSigningService;
             this._eventService = _eventService;
             _teamsManager = teamsManager;
         }
@@ -42,6 +44,8 @@ namespace Keas.Mvc.Controllers
                 return RedirectToAction("NoAccess","Home");
             }
             var viewmodel = await MyStuffListModel.Create(_context, person);
+            viewmodel.DocumentUrlResolver = s => _documentSigningService.GetEnvelopePath(s);
+
             return View(viewmodel);
         }
 

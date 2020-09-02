@@ -179,6 +179,43 @@
 
       </div>
     </div>
+
+    <div class="card documents-color">
+      <div class="card-header-documents">
+        <div class="card-head">
+          <h2><i class="fas fa-briefcase fa-xs"></i> Documents</h2></div>
+      </div>
+      <div class="card-content">
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var document in Model.Documents) {
+            <tr>
+              <td>@document.Name</td>
+              <td>@document.Status</td>
+              <td>@(document.CompletedAt.HasValue ? document.CompletedAt : document.CreatedAt)</td>
+              <td><a href="@Model.DocumentUrlResolver(document.EnvelopeId)" target="_blank">View</a></td>
+            </tr>
+            }
+            @if(!Model.Workstations.Any()){
+              <tr>
+                <td colspan="4">You have no workstations assigned.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
     <div class="card history-color">
       <div class="card-head">
         <h2><i class="fas fa-history fa-xs"></i> History</h2></div>

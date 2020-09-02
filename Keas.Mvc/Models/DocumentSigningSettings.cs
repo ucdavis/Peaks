@@ -13,6 +13,7 @@ namespace Keas.Mvc.Models
         public string CallbackUrlSecret { get; set; }
         public string ImpersonatedUserId { get; set; }
         public string PrivateKeyBase64 { get; set; }
+        public string WebBasePath { get; set; }
 
         public byte[] PrivateKeyBytes {
             get {
