@@ -57,6 +57,14 @@ jest.mock('../History/HistoryContainer', () => {
   };
 });
 
+jest.mock('../Documents/DocumentsContainer', () => {
+  return {
+    default: () => {
+      return <div id="DocumentsContainer">DocumentsContainer</div>;
+    }
+  };
+});
+
 beforeEach(() => {
   // setup a DOM element as a render target
   container = document.createElement('div');

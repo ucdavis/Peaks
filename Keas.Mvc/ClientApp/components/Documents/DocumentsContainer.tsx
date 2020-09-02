@@ -15,36 +15,37 @@ interface IProps {
   person: IPerson;
 }
 
-export const DocumentsContainer = (props: IProps): JSX.Element => {
+const DocumentsContainer = (props: IProps): JSX.Element => {
   const ctx = useContext<AppContext>(Context);
 
   const [documents, setDocuments] = useState<IDocument[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [assign, setAssign] = useState<boolean>(false);
 
-  const canView = useMemo(() => {
-    // TODO: once testing is done, turn on access for all teams
-    return (
-      ctx.team.slug === 'caes-cru' &&
-      PermissionsUtil.canViewDocuments(ctx.permissions)
-    );
-    // return PermissionsUtil.canViewDocuments(ctx.permissions);
-  }, [ctx]);
+  const canView = useMemo(
+    () => {
+      return PermissionsUtil.canViewDocuments(ctx.permissions);
+    },
+    [ctx]
+  );
 
-  useEffect(() => {
-    const loadDocuments = async () => {
-      const result = await ctx.fetch(
-        `/api/${ctx.team.slug}/documents/find/${props.person.id}`
-      );
+  useEffect(
+    () => {
+      const loadDocuments = async () => {
+        const result = await ctx.fetch(
+          `/api/${ctx.team.slug}/documents/find/${props.person.id}`
+        );
 
-      setDocuments(result as IDocument[]);
-      setLoading(false);
-    };
+        setDocuments(result as IDocument[]);
+        setLoading(false);
+      };
 
-    if (canView) {
-      loadDocuments();
-    }
-  }, [canView, ctx, props.person]);
+      if (canView) {
+        loadDocuments();
+      }
+    },
+    [canView, ctx, props.person]
+  );
 
   const sendDocument = useCallback(
     async (template: IDocumentTemplate) => {
@@ -82,7 +83,7 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
   );
 
   if (!canView) {
-    return <Denied viewName='Documents' />;
+    return <Denied viewName="Documents" />;
   }
 
   if (loading) {
@@ -90,30 +91,32 @@ export const DocumentsContainer = (props: IProps): JSX.Element => {
   }
 
   return (
-    <div className='card documents-color'>
-      <div className='card-header-documents'>
-        <div className='card-head row justify-content-between'>
+    <div className="card documents-color">
+      <div className="card-header-documents">
+        <div className="card-head row justify-content-between">
           <h2>
-            <i className='fas fa-file-alt fa-xs' /> Documents
+            <i className="fas fa-file-alt fa-xs" /> Documents
           </h2>
-          <Button color='link' onClick={() => setAssign(true)}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Document
+          <Button color="link" onClick={() => setAssign(true)}>
+            <i className="fas fa-plus fa-sm" aria-hidden="true" /> Add Document
           </Button>
         </div>
       </div>
-      <div className='card-content'>
+      <div className="card-content">
         <DocumentsList
           documents={documents}
           downloadUrl={`/api/${ctx.team.slug}/documents/get`}
-        ></DocumentsList>
+        />
 
         <AssignDocument
           person={props.person}
           sendDocument={sendDocument}
           show={assign}
           setShow={setAssign}
-        ></AssignDocument>
+        />
       </div>
     </div>
   );
 };
+
+export default DocumentsContainer;
