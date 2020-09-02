@@ -17,7 +17,7 @@ namespace Keas.Mvc.Models
 
         public byte[] PrivateKeyBytes {
             get {
-                return Convert.FromBase64String(PrivateKeyBase64);
+                return string.IsNullOrEmpty(PrivateKeyBase64) ? new byte[0] : Convert.FromBase64String(PrivateKeyBase64);
             }
         }
     }
