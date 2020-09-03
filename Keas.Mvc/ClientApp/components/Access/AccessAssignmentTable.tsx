@@ -13,6 +13,7 @@ import { Column, TableState } from 'react-table';
 interface IProps {
   assignments: IAccessAssignment[];
   onRevoke?: (assignment: IAccessAssignment) => void;
+  onEdit?: (assignment: IAccessAssignment) => void;
   disableEditing?: boolean;
 }
 
@@ -24,7 +25,6 @@ const accessAssignTable: React.FunctionComponent<IProps> = (
     options.findIndex(v => v.value === 'unassigned'),
     1
   );
-
   const columns: Column<IAccessAssignment>[] = [
     {
       Header: 'Name',
@@ -41,23 +41,40 @@ const accessAssignTable: React.FunctionComponent<IProps> = (
     },
     {
       Cell: row => (
-        <button
-          type='button'
-          className='btn btn-outline-danger'
-          disabled={props.disableEditing || !props.onRevoke}
-          onClick={() =>
-            props.onRevoke &&
-            props.onRevoke(
-              props.assignments.find(
-                (el: IAccessAssignment) => row.value === el.personId
+        <div>
+          <button
+            type='button'
+            className='btn btn-outline-danger'
+            disabled={props.disableEditing || !props.onRevoke}
+            onClick={() =>
+              props.onRevoke &&
+              props.onRevoke(
+                props.assignments.find(
+                  (el: IAccessAssignment) => row.value === el.personId
+                )
               )
-            )
-          }
-        >
-          <i className='fas fa-trash' />
-        </button>
+            }
+          >
+            <i className='fas fa-trash' />
+          </button>
+          <button
+            type='button'
+            className='btn btn-outline-primary'
+            disabled={props.disableEditing || !props.onEdit}
+            onClick={() =>
+              props.onEdit &&
+              props.onEdit(
+                props.assignments.find(
+                  (el: IAccessAssignment) => row.value === el.personId
+                )
+              )
+            }
+          >
+            <i className='fas fa-edit' />
+          </button>
+        </div>
       ),
-      Header: 'Revoke',
+      Header: 'Actions',
       accessor: 'personId'
     }
   ];
