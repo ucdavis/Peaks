@@ -10,14 +10,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Net.Mime;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.DocumentMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/documents/[action]")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
     public class DocumentsController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -34,6 +33,8 @@ namespace Keas.Mvc.Controllers.Api
         // List all documents for this team
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Document>), StatusCodes.Status200OK)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> List()
         {
             var documents = await _context.Documents
@@ -48,6 +49,8 @@ namespace Keas.Mvc.Controllers.Api
         // List all documents for the given person
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(IEnumerable<Document>), StatusCodes.Status200OK)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Find(int id)
         {
             var documents = await _context.Documents
@@ -62,6 +65,7 @@ namespace Keas.Mvc.Controllers.Api
         // Get a specific document's combined pdf
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
+        [Produces(MediaTypeNames.Application.Pdf)]
         public async Task<IActionResult> Get(int id)
         {
             var document = await _context.Documents
@@ -76,6 +80,8 @@ namespace Keas.Mvc.Controllers.Api
         // Get a specific document's combined pdf
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<TeamDocumentSetting>), StatusCodes.Status200OK)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> TeamSettings()
         {
             var teamSettings = await _context.TeamDocumentSettings
@@ -89,6 +95,8 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Document), StatusCodes.Status200OK)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody] Document document)
         {
             if (!ModelState.IsValid)
@@ -124,6 +132,8 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Document), StatusCodes.Status200OK)]
+        [Produces(MediaTypeNames.Application.Json)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Delete(int id)
         {
             var document = await _context.Documents.Where(x => x.Team.Slug == Team)
