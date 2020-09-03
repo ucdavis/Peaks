@@ -19,7 +19,7 @@
             <div class="col-md-4">
                 <form asp-action="Create">
                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                     @Html.Partial("_EquipmentAttributeKeyForm")
+                     @await Html.PartialAsync("_EquipmentAttributeKeyForm")
                     <div class="form-group">
                         <input type="submit" value="Create" class="btn btn-primary" />
                     </div>
