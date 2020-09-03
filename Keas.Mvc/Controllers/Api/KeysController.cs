@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Models.KeyViewModels;
@@ -21,8 +22,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/keys/[action]")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
     public class KeysController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -191,6 +191,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Key), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody]CreateKeyViewModel model)
         {
             // TODO Make sure user has permissions
@@ -228,6 +229,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Key), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Update(int id, [FromBody]UpdateKeyViewModel model)
         {
             //TODO: check permissions, make sure SN isn't edited 
@@ -260,6 +262,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Key), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Delete(int id)
         {
             var key = await _context.Keys
@@ -310,6 +313,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(KeyXSpace), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> AssociateSpace(int id, [FromBody] AssociateKeyViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
@@ -354,6 +358,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Key), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> DisassociateSpace(int id, [FromBody] DisassociateKeyViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team

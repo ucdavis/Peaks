@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Dapper;
 using Keas.Core.Data;
@@ -18,8 +19,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.AnyRole)]
     [ApiController]
     [Route("api/{teamName}/spaces/[action]")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
     public class SpacesController : SuperController
     {
         private readonly ApplicationDbContext _context;

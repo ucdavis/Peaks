@@ -10,14 +10,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Net.Mime;
 
 namespace Keas.Mvc.Controllers.Api
 {
     [Authorize(Policy = AccessCodes.Codes.DocumentMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/documents/[action]")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
     public class DocumentsController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -62,6 +62,7 @@ namespace Keas.Mvc.Controllers.Api
         // Get a specific document's combined pdf
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK)]
+        [Produces(MediaTypeNames.Application.Pdf)]
         public async Task<IActionResult> Get(int id)
         {
             var document = await _context.Documents
@@ -89,6 +90,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Document), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody] Document document)
         {
             if (!ModelState.IsValid)
@@ -124,6 +126,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Document), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Delete(int id)
         {
             var document = await _context.Documents.Where(x => x.Team.Slug == Team)

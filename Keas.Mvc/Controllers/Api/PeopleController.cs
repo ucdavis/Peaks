@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Dapper;
 using Keas.Core.Data;
@@ -20,8 +21,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.AnyRole)]
     [ApiController]
     [Route("api/{teamName}/people/[action]")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
     public class PeopleController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -179,6 +179,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Person), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody] Person person)
         {
             // TODO Make sure user has permission; Protect from overpost

@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
@@ -21,8 +22,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.KeyMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/KeySerials/[action]")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
     public class KeySerialsController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -147,6 +147,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody] CreateKeySerialViewModel model)
         {
             // TODO Make sure user has permissions
@@ -195,6 +196,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateKeySerialViewModel model)
         {
             // TODO Make sure user has permissions
@@ -242,6 +244,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Assign([FromBody] AssignKeySerialViewModel model)
         {
             // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
@@ -301,6 +304,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Revoke(int id)
         {
             // find keyserial

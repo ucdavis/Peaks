@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
@@ -21,8 +22,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/equipment/[action]")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
     public class EquipmentController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -182,6 +182,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody]Equipment equipment)
         {
             if (!ModelState.IsValid)
@@ -209,6 +210,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Assign(int equipmentId, int personId, string date)
         {
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
@@ -244,6 +246,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Update([FromBody]Equipment updatedEquipment)
         {
             if (!ModelState.IsValid)
@@ -311,6 +314,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Revoke(int id)
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
@@ -335,6 +339,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Delete(int id)
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)

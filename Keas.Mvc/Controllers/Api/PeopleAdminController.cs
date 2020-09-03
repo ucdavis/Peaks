@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
@@ -19,8 +20,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.PersonManagerAccess)]
     [ApiController]
     [Route("api/{teamName}/peopleadmin/[action]")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
     public class PeopleAdminController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -36,6 +36,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Person), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Update([FromBody]Person person)
         {
             //TODO: check permissions
@@ -71,6 +72,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Delete(int id)
         {
             var person = await _context.People

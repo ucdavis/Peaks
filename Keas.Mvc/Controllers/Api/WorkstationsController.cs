@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
@@ -20,8 +21,7 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/workstations/[action]")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
+    [Produces(MediaTypeNames.Application.Json)]
     public class WorkstationsController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -221,6 +221,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody] Workstation workstation)
         {
             // TODO Make sure user has permission; Protect from overpost
@@ -247,6 +248,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Assign(int workstationId, int personId, string date)
         {
             // TODO make sure user has permission
@@ -294,6 +296,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Revoke(int id)
         {
             // TODO permission
@@ -319,6 +322,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Update([FromBody]Workstation workstation)
         {
             //TODO: check permissions
@@ -339,6 +343,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Delete(int id)
         {
             var workstation = await _context.Workstations
