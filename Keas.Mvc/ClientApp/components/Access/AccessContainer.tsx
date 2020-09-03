@@ -92,9 +92,6 @@ export default class AccessContainer extends React.Component<
             (containerAction === 'assign' || containerAction === 'create') &&
             this._renderAssignModal(selectedId, detailAccess)}
           {activeAsset &&
-            containerAction === 'edit' &&
-            this._renderEditModal(selectedId, detailAccess)}
-          {activeAsset &&
             containerAction === 'delete' &&
             this._renderDeleteModal(selectedId, detailAccess)}
         </div>
@@ -198,22 +195,9 @@ export default class AccessContainer extends React.Component<
         selectedAccess={access}
         modal={!!access}
         closeModal={this._closeModals}
-        openEditModal={this._openEditModal}
+        editAccess={this._editAccess}
         openDeleteModal={this._openDeleteModal}
         updateSelectedAccess={this._updateAccessFromDetails}
-      />
-    );
-  };
-
-  private _renderEditModal = (selectedId: number, access: IAccess) => {
-    return (
-      <EditAccess
-        key={`edit-access-${selectedId}`}
-        onEdit={this._editAccess}
-        closeModal={this._closeModals}
-        modal={!!access}
-        selectedAccess={access}
-        tags={this.context.tags}
       />
     );
   };

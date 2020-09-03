@@ -1,5 +1,6 @@
 ﻿import * as React from 'react';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -7,26 +8,29 @@ import { IAccess } from '../../models/Access';
 import SearchTags from '../Tags/SearchTags';
 import AccessAssignmentContainer from './AccessAssignmentContainer';
 import HistoryContainer from '../History/HistoryContainer';
+import EditAccess from './EditAccess';
 
 interface IProps {
   goBack: () => void;
   modal: boolean;
   closeModal: () => void;
   selectedAccess: IAccess;
-  openEditModal: (access: IAccess) => void;
+  editAccess: (accaess: IAccess) => void;
   openDeleteModal: (access: IAccess) => void;
   updateSelectedAccess: (access: IAccess, id?: number) => void;
 }
 
 const AccessDetails = (props: IProps) => {
   const context = useContext(Context);
+  const history = useHistory();
+  const [shouldOpenEditModal, setEditModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (!props.selectedAccess) {
       return;
     }
     _fetchDetails(props.selectedAccess.id);
-  });
+  }, [props.selectedAccess.id]);
 
   if (!props.selectedAccess) {
     return null;
@@ -56,8 +60,27 @@ const AccessDetails = (props: IProps) => {
     props.updateSelectedAccess(access);
   };
 
+  const _closeModals = () => {
+    setEditModal(false);
+    history.push(`${_getBaseUrl()}/access/details/${props.selectedAccess.id}`);
+  };
+
+  const _getBaseUrl = () => {
+    return `/${context.team.slug}`;
+  };
+
   return (
     <div>
+      {shouldOpenEditModal ? (
+        <EditAccess
+          key={`edit-access-${props.selectedAccess.id}`}
+          onEdit={props.editAccess}
+          closeModal={_closeModals}
+          modal={!!access}
+          selectedAccess={access}
+          tags={context.tags}
+        />
+      ) : null}
       <div className='mb-3'>
         <Button color='link' onClick={props.goBack}>
           <i className='fas fa-arrow-left fa-xs' /> Return to Table
@@ -69,7 +92,7 @@ const AccessDetails = (props: IProps) => {
           <Button
             color='link'
             onClick={() => {
-              props.openEditModal(access);
+              setEditModal(true);
             }}
           >
             <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
