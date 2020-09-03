@@ -3,6 +3,7 @@ using Keas.Core.Data;
 using Keas.Core.Domain;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Keas.Mvc.Services
 {
@@ -23,6 +24,7 @@ namespace Keas.Mvc.Services
         Task<History> EquipmentInactivated(Equipment equipment);
         Task<History> KeySerialAssigned(KeySerial keySerial);
         Task<History> AccessAssigned(AccessAssignment accessAssignment);
+        Task<History> AccessAssignedUpdate(AccessAssignment accessAssignment);
         Task<History> EquipmentAssigned(Equipment equipment);
         Task<History> KeySerialUnassigned(KeySerial keySerial);
         Task<History> AccessUnassigned(AccessAssignment accessAssignment);
@@ -252,6 +254,23 @@ namespace Keas.Mvc.Services
             var historyEntry = new History
             {
                 Description = accessAssignment.GetDescription(nameof(Access), access.Title, person, "Assigned to"),
+                ActorId = person.UserId,
+                AssetType = "Access",
+                ActionType = "Assigned",
+                AccessId = accessAssignment.AccessId,
+                TargetId = accessAssignment.PersonId
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+        public async Task<History> AccessAssignedUpdate(AccessAssignment accessAssignment)
+        {
+            var access = await _context.Access.Where(a => a.Id == accessAssignment.AccessId).Include(t => t.Team).SingleAsync();
+            var person = await _securityService.GetPerson(access.Team.Slug);
+
+            var historyEntry = new History
+            {
+                Description = accessAssignment.GetDescription(nameof(Access), access.Title, person, "Assignment updated by"),
                 ActorId = person.UserId,
                 AssetType = "Access",
                 ActionType = "Assigned",

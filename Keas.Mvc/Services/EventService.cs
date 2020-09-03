@@ -16,6 +16,7 @@ namespace Keas.Mvc.Services
         Task TrackUpdateEquipment(Equipment equipment);
         Task TrackCreateAccess(Access access);
         Task TrackAssignAccess(AccessAssignment accessAssignment, string teamName);
+        Task TrackAssignAccessUpdate(AccessAssignment accessAssignment, string teamName);
         Task TrackUnAssignAccess(AccessAssignment accessAssignment, string teamName);
         Task TrackUpdateAccess(Access access);
         Task TrackCreateWorkstation(Workstation workstation);
@@ -121,6 +122,11 @@ namespace Keas.Mvc.Services
             var history = await _historyService.AccessAssigned(accessAssignment);
             await _notificationService.AccessAssigned(accessAssignment, history, teamName);
 
+        }
+
+        public async Task TrackAssignAccessUpdate(AccessAssignment accessAssignment, string teamName)
+        {
+            await _historyService.AccessAssignedUpdate(accessAssignment);
         }
 
         public async Task TrackUnAssignAccess(AccessAssignment accessAssignment, string teamName)
