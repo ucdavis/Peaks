@@ -19,7 +19,6 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.AnyRole)]
     [ApiController]
     [Route("api/{teamName}/spaces/[action]")]
-    [Consumes(MediaTypeNames.Application.Json)]
     [Produces(MediaTypeNames.Application.Json)]
     public class SpacesController : SuperController
     {
