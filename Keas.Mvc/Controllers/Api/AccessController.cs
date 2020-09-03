@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Keas.Core.Extensions;
 using Keas.Core.Models;
@@ -20,8 +21,8 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.AccessMasterAccess)]
     [ApiController]
     [Route("api/{teamName}/access/[action]")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
     public class AccessController : SuperController
     {
         private readonly ApplicationDbContext _context;

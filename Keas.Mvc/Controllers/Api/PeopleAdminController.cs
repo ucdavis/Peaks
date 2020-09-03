@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
@@ -19,8 +20,8 @@ namespace Keas.Mvc.Controllers.Api
     [Authorize(Policy = AccessCodes.Codes.PersonManagerAccess)]
     [ApiController]
     [Route("api/{teamName}/peopleadmin/[action]")]
-    [Consumes("application/json")]
-    [Produces("application/json")]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
     public class PeopleAdminController : SuperController
     {
         private readonly ApplicationDbContext _context;
