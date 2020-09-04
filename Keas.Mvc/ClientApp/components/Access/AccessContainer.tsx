@@ -13,7 +13,6 @@ import AccessDetails from './AccessDetails';
 import AccessTable from './AccessTable';
 import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
-import EditAccess from './EditAccess';
 
 interface IState {
   accesses: IAccess[]; // either access assigned to this person, or all team access
