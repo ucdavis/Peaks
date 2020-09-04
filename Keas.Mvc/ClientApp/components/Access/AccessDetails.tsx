@@ -29,8 +29,8 @@ const AccessDetails = (props: IProps) => {
     if (!props.selectedAccess) {
       return;
     }
-    _fetchDetails(props.selectedAccess.id);
-  }, [props.selectedAccess.id]);
+    fetchDetails(props.selectedAccess.id);
+  }, [props.selectedAccess]);
 
   if (!props.selectedAccess) {
     return null;
@@ -38,7 +38,7 @@ const AccessDetails = (props: IProps) => {
 
   const access = props.selectedAccess;
 
-  const _fetchDetails = async (id: number) => {
+  const fetchDetails = async (id: number) => {
     const url = `/api/${context.team.slug}/access/details/${id}`;
     let access: IAccess = null;
     try {
@@ -60,12 +60,12 @@ const AccessDetails = (props: IProps) => {
     props.updateSelectedAccess(access);
   };
 
-  const _closeModals = () => {
+  const closeModals = () => {
     setEditModal(false);
-    history.push(`${_getBaseUrl()}/access/details/${props.selectedAccess.id}`);
+    history.push(`${getBaseUrl()}/access/details/${props.selectedAccess.id}`);
   };
 
-  const _getBaseUrl = () => {
+  const getBaseUrl = () => {
     return `/${context.team.slug}`;
   };
 
@@ -75,7 +75,7 @@ const AccessDetails = (props: IProps) => {
         <EditAccess
           key={`edit-access-${props.selectedAccess.id}`}
           onEdit={props.editAccess}
-          closeModal={_closeModals}
+          closeModal={closeModals}
           modal={!!access}
           selectedAccess={access}
           tags={context.tags}

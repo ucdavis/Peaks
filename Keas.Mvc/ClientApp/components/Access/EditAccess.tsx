@@ -1,130 +1,116 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { Context } from '../../Context';
 import { accessSchema, IAccess } from '../../models/Access';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import AccessEditValues from './AccessEditValues';
 
 interface IProps {
   onEdit: (access: IAccess) => void;
-  modal: boolean;
   closeModal: () => void;
-  selectedAccess: IAccess;
+  modal: boolean;
   tags: string[];
+  selectedAccess: IAccess;
 }
 
-interface IState {
-  error: IValidationError;
-  access: IAccess;
-  submitting: boolean;
-  validState: boolean;
-}
+const EditAccess = (props: IProps) => {
+  const [access, setAccess] = useState<IAccess>(props.selectedAccess);
+  const [submitting, setSubmit] = useState<boolean>(false);
+  const [validState, setValidState] = useState<boolean>(false);
+  const [error, setError] = useState<IValidationError>({
+    message: '',
+    path: ''
+  });
 
-export default class EditAccess extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+  useEffect(() => {
+    validateState();
+  }, [access]);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      access: this.props.selectedAccess,
-      error: {
-        message: '',
-        path: ''
-      },
-      submitting: false,
-      validState: false
-    };
-  }
-
-  public render() {
-    if (!this.state.access) {
-      return null;
+  // assign the selected access even if we have to create it
+  const editSelected = async () => {
+    if (!validState || submitting) {
+      return;
     }
-    return (
-      <Modal
-        isOpen={this.props.modal}
-        toggle={this._confirmClose}
-        size='lg'
-        className='access-color'
-      >
-        <div className='modal-header row justify-content-between'>
-          <h2>Edit Access</h2>
-          <Button color='link' onClick={this._closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
-        <ModalBody>
-          <div className='container-fluid'>
-            <form>
-              <AccessEditValues
-                selectedAccess={this.state.access}
-                disableEditing={false}
-                onAccessUpdate={access =>
-                  this.setState({ access }, this._validateState)
-                }
-                tags={this.props.tags}
-                error={this.state.error}
-              />
-            </form>
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            color='primary'
-            onClick={this._editSelected}
-            disabled={!this.state.validState || this.state.submitting}
-          >
-            Go!{' '}
-            {this.state.submitting && (
-              <i className='fas fa-circle-notch fa-spin' />
-            )}
-          </Button>{' '}
-        </ModalFooter>
-      </Modal>
-    );
-  }
+
+    setSubmit(true);
+    try {
+      await props.onEdit(access);
+    } catch (err) {
+      setSubmit(false);
+      return;
+    }
+    closeModal();
+  };
 
   // clear everything out on close
-  private _confirmClose = () => {
+  const confirmClose = () => {
     if (!confirm('Please confirm you want to close!')) {
       return;
     }
-
-    this._closeModal();
+    closeModal();
   };
 
-  private _closeModal = () => {
-    this.setState({
-      access: null,
-      error: {
-        message: '',
-        path: ''
-      },
-      submitting: false,
-      validState: false
-    });
-    this.props.closeModal();
+  const closeModal = () => {
+    setAccess(null);
+    setError({ message: '', path: '' });
+    setSubmit(false);
+    setValidState(false);
+    props.closeModal();
   };
 
-  // assign the selected access even if we have to create it
-  private _editSelected = async () => {
-    if (!this.state.validState || this.state.submitting) {
-      return;
-    }
-
-    this.setState({ submitting: true });
-    try {
-      await this.props.onEdit(this.state.access);
-    } catch (err) {
-      this.setState({ submitting: false });
-      return;
-    }
-    this._closeModal();
+  const validateState = () => {
+    const error = yupAssetValidation(accessSchema, access);
+    setError(error);
+    setValidState(error.message === '');
   };
 
-  private _validateState = () => {
-    const error = yupAssetValidation(accessSchema, this.state.access);
-    this.setState({ error, validState: error.message === '' });
-  };
-}
+  if (!access) {
+    return null;
+  }
+
+  return (
+    <Modal
+      isOpen={props.modal}
+      toggle={confirmClose}
+      size='lg'
+      className='access-color'
+    >
+      <div className='modal-header row justify-content-between'>
+        <h2>Edit Access</h2>
+        <Button color='link' onClick={closeModal}>
+          <i className='fas fa-times fa-lg' />
+        </Button>
+      </div>
+      <ModalBody>
+        <div className='container-fluid'>
+          <form>
+            <AccessEditValues
+              selectedAccess={access}
+              disableEditing={false}
+              onAccessUpdate={
+                access => {
+                  setAccess(access);
+                  setValidState(true);
+                }
+                // this.setState({ access }, validateState)
+              }
+              tags={props.tags}
+              error={error}
+            />
+          </form>
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          color='primary'
+          onClick={editSelected}
+          disabled={!validState || submitting}
+        >
+          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+        </Button>{' '}
+      </ModalFooter>
+    </Modal>
+  );
+};
+
+export default EditAccess;
