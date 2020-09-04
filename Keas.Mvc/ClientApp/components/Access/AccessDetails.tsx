@@ -30,7 +30,7 @@ const AccessDetails = (props: IProps) => {
       return;
     }
     fetchDetails(props.selectedAccess.id);
-  }, [props.selectedAccess]);
+  }, [props.selectedAccess.id]);
 
   if (!props.selectedAccess) {
     return null;
