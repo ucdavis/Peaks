@@ -23,7 +23,7 @@ interface IProps {
 const AccessDetails = (props: IProps) => {
   const context = useContext(Context);
   const history = useHistory();
-  const [shouldOpenEditModal, setEditModal] = useState<boolean>(false);
+  const [shouldOpenEditModal, setShouldOpenEditModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (!props.selectedAccess) {
@@ -61,7 +61,7 @@ const AccessDetails = (props: IProps) => {
   };
 
   const closeModals = () => {
-    setEditModal(false);
+    setShouldOpenEditModal(false);
     history.push(`${getBaseUrl()}/access/details/${props.selectedAccess.id}`);
   };
 
@@ -92,7 +92,7 @@ const AccessDetails = (props: IProps) => {
           <Button
             color='link'
             onClick={() => {
-              setEditModal(true);
+              setShouldOpenEditModal(true);
             }}
           >
             <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
