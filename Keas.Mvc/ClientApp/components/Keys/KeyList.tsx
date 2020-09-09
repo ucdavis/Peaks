@@ -12,50 +12,50 @@ interface IProps {
   onDelete?: (key: IKey) => void;
 }
 
-export default class KeyList extends React.Component<IProps, {}> {
-  public render() {
-    const { keysInfo } = this.props;
-    const keys =
-      !keysInfo || keysInfo.length < 1 ? (
-        <tr>
-          <td colSpan={4}>No Keys Found</td>
-        </tr>
-      ) : (
-        keysInfo.map(this.renderItem)
-      );
-
-    return (
-      <table className='table'>
-        <thead>
-          <tr>
-            <th />
-            <th>Key Name</th>
-            <th>Key Code</th>
-            <th>
-              Serials <i id='serialTooltip' className='fas fa-info-circle' />
-              <UncontrolledTooltip placement='right' target='serialTooltip'>
-                In Use / Total
-              </UncontrolledTooltip>
-            </th>
-            <th className='list-actions'>Actions</th>
-          </tr>
-        </thead>
-        <tbody>{keys}</tbody>
-      </table>
-    );
-  }
-
-  private renderItem = keyInfo => {
+const KeyList = (props: IProps) => {
+  const renderItem = keyInfo => {
     return (
       <KeyListItem
         key={keyInfo.id}
         keyInfo={keyInfo}
-        onDisassociate={this.props.onDisassociate}
-        onAdd={this.props.onAdd}
-        onDelete={this.props.onDelete}
-        showDetails={this.props.showDetails}
-        onEdit={this.props.onEdit}
+        onDisassociate={props.onDisassociate}
+        onAdd={props.onAdd}
+        onDelete={props.onDelete}
+        showDetails={props.showDetails}
+        onEdit={props.onEdit}
       />
     );
   };
-}
+
+  const { keysInfo } = props;
+  const keys =
+    !keysInfo || keysInfo.length < 1 ? (
+      <tr>
+        <td colSpan={4}>No Keys Found</td>
+      </tr>
+    ) : (
+      keysInfo.map(renderItem)
+    );
+
+  return (
+    <table className='table'>
+      <thead>
+        <tr>
+          <th />
+          <th>Key Name</th>
+          <th>Key Code</th>
+          <th>
+            Serials <i id='serialTooltip' className='fas fa-info-circle' />
+            <UncontrolledTooltip placement='right' target='serialTooltip'>
+              In Use / Total
+            </UncontrolledTooltip>
+          </th>
+          <th className='list-actions'>Actions</th>
+        </tr>
+      </thead>
+      <tbody>{keys}</tbody>
+    </table>
+  );
+};
+
+export default KeyList;
