@@ -13,7 +13,6 @@ import AssociateSpace from './AssociateSpace';
 import CreateKey from './CreateKey';
 import DeleteKey from './DeleteKey';
 import DisassociateSpace from './DisassociateSpace';
-import EditKey from './EditKey';
 import KeyDetailContainer from './KeyDetailContainer';
 import KeyList from './KeyList';
 import KeyTable from './KeyTable';
@@ -108,7 +107,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
       ? parseInt(containerId, 10)
       : parseInt(id, 10);
     const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
-    const selectedKey = selectedKeyInfo ? selectedKeyInfo.key : null;
 
     const shouldRenderDetailsView =
       !onSpaceTab && containerAction === 'details';
@@ -150,8 +148,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         <div className='card-content'>
           {shouldRenderTableView && this._renderTableOrListView(selectedKeyId)}
           {shouldRenderDetailsView && this._renderDetailsView()}
-          {containerAction === 'edit' &&
-            this._renderEditModal(selectedKeyId, selectedKey)}
           {(containerAction === 'delete' || action === 'delete') &&
             this._renderDeleteModal(selectedKeyId, selectedKeyInfo)}
         </div>
@@ -242,6 +238,8 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         serialTotalUpdated={this._serialTotalUpdated}
         spacesTotalUpdated={this._spacesTotalUpdated}
         openEditModal={this._openEditModal}
+        checkValidKeyCodeOnEdit={this._checkIfKeyCodeIsValidOnEdit}
+        editKey={this._editKey}
       />
     );
   }
@@ -272,20 +270,6 @@ export default class KeyContainer extends React.Component<IProps, IState> {
         onDisassociate={this._disassociateSpace}
         isModalOpen={!!selectedKeyInfo}
         closeModal={this._closeModals}
-      />
-    );
-  };
-
-  private _renderEditModal = (selectedId: number, key: IKey) => {
-    return (
-      <EditKey
-        key={`edit-key-${selectedId}`}
-        onEdit={this._editKey}
-        closeModal={this._closeModals}
-        modal={!!key}
-        selectedKey={key}
-        searchableTags={this.context.tags}
-        checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValidOnEdit}
       />
     );
   };
