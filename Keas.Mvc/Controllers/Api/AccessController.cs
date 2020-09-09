@@ -156,7 +156,7 @@ namespace Keas.Mvc.Controllers.Api
 
             var assignment = await _context.AccessAssignments.Where(x => x.AccessId == accessId && x.PersonId == personId)
                 .Include(x => x.Person)
-                .SingleAsync();
+                .SingleOrDefaultAsync();
 
             if (assignment != null) 
             {
