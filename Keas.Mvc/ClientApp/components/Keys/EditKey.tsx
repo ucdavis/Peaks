@@ -1,151 +1,123 @@
 import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { Context } from '../../Context';
 import { IKey, keySchema } from '../../models/Keys';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import KeyEditValues from './KeyEditValues';
 
 interface IProps {
-  onEdit: (key: IKey) => void;
   modal: boolean;
-  closeModal: () => void;
   selectedKey: IKey;
   searchableTags: string[];
+  onEdit: (key: IKey) => void;
+  closeModal: () => void;
   checkIfKeyCodeIsValid: (code: string, id: number) => boolean;
 }
 
-interface IState {
-  error: IValidationError;
-  key: IKey;
-  submitting: boolean;
-  validState: boolean;
-}
+const EditKey = (props: IProps) => {
+  const [error, setError] = useState<IValidationError>({
+    message: '',
+    path: ''
+  });
+  const [key, setKey] = useState<IKey>(props.selectedKey);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [validState, setValidState] = useState<boolean>(false);
+  const formRef: React.RefObject<HTMLFormElement> = useRef(null);
 
-export default class EditKey extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+  const validateState = () => {
+    const checkIfKeyCodeIsValid = props.checkIfKeyCodeIsValid;
+    const error = yupAssetValidation(keySchema, key, {
+      context: { checkIfKeyCodeIsValid }
+    });
+    setError(error);
+    setValidState(error.message === '');
+  };
 
-  private _formRef: React.RefObject<HTMLFormElement>;
+  useEffect(() => {
+    validateState();
+  }, [key]);
 
-  constructor(props) {
-    super(props);
-
-    this._formRef = React.createRef();
-
-    this.state = {
-      error: {
-        message: '',
-        path: ''
-      },
-      key: this.props.selectedKey,
-      submitting: false,
-      validState: false
-    };
+  if (!key) {
+    return null;
   }
 
-  public render() {
-    if (!this.state.key) {
-      return null;
-    }
-
-    const { searchableTags } = this.props;
-
-    return (
-      <Modal
-        isOpen={this.props.modal}
-        toggle={this._confirmClose}
-        size='lg'
-        className='keys-color'
-      >
-        <div className='modal-header row justify-content-between'>
-          <h2>Edit Key</h2>
-          <Button color='link' onClick={this._closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
-        <ModalBody>
-          <div className='container-fluid'>
-            <form ref={this._formRef}>
-              <KeyEditValues
-                selectedKey={this.state.key}
-                changeProperty={this._changeProperty}
-                disableEditing={false}
-                searchableTags={searchableTags}
-                error={this.state.error}
-              />
-            </form>
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            color='primary'
-            onClick={this._editSelected}
-            disabled={!this.state.validState || this.state.submitting}
-          >
-            Go!{' '}
-            {this.state.submitting && (
-              <i className='fas fa-circle-notch fa-spin' />
-            )}
-          </Button>{' '}
-        </ModalFooter>
-      </Modal>
-    );
-  }
-
-  private _changeProperty = (property: string, value: string) => {
-    this.setState(
-      prevState => ({
-        key: {
-          ...prevState.key,
-          [property]: value
-        }
-      }),
-      this._validateState
-    );
+  const { searchableTags } = props;
+  const changeProperty = (property: string, value: string) => {
+    key[property] = value;
+    setKey(key);
   };
 
   // clear everything out on close
-  private _confirmClose = () => {
+  const confirmClose = () => {
     if (!confirm('Please confirm you want to close!')) {
       return;
     }
 
-    this._closeModal();
+    closeModal();
   };
 
-  private _closeModal = () => {
-    this.setState({
-      error: {
-        message: '',
-        path: ''
-      },
-      key: null,
-      submitting: false,
-      validState: false
+  const closeModal = () => {
+    setError({
+      message: '',
+      path: ''
     });
-    this.props.closeModal();
+    setKey(null);
+    setSubmitting(false);
+    setValidState(false);
+    props.closeModal();
   };
 
-  private _editSelected = async () => {
-    if (!this.state.validState || this.state.submitting) {
+  const editSelected = async () => {
+    if (!validState || submitting) {
       return;
     }
-
-    this.setState({ submitting: true });
+    setSubmitting(true);
     try {
-      await this.props.onEdit(this.state.key);
+      await props.onEdit(key);
     } catch (err) {
-      this.setState({ submitting: false });
+      setSubmitting(false);
       return;
     }
-    this._closeModal();
+    closeModal();
   };
 
-  private _validateState = () => {
-    const checkIfKeyCodeIsValid = this.props.checkIfKeyCodeIsValid;
-    const error = yupAssetValidation(keySchema, this.state.key, {
-      context: { checkIfKeyCodeIsValid }
-    });
-    this.setState({ error, validState: error.message === '' });
-  };
-}
+  return (
+    <Modal
+      isOpen={props.modal}
+      toggle={confirmClose}
+      size='lg'
+      className='keys-color'
+    >
+      <div className='modal-header row justify-content-between'>
+        <h2>Edit Key</h2>
+        <Button color='link' onClick={closeModal}>
+          <i className='fas fa-times fa-lg' />
+        </Button>
+      </div>
+      <ModalBody>
+        <div className='container-fluid'>
+          <form ref={formRef}>
+            <KeyEditValues
+              selectedKey={key}
+              changeProperty={changeProperty}
+              disableEditing={false}
+              searchableTags={searchableTags}
+              error={error}
+            />
+          </form>
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          color='primary'
+          onClick={editSelected}
+          disabled={!validState || submitting}
+        >
+          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+        </Button>{' '}
+      </ModalFooter>
+    </Modal>
+  );
+};
+
+export default EditKey;
