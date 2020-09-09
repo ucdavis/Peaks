@@ -43,8 +43,7 @@ const EditKey = (props: IProps) => {
 
   const { searchableTags } = props;
   const changeProperty = (property: string, value: string) => {
-    key[property] = value;
-    setKey(key);
+    setKey({...key, [property]: value})
   };
 
   // clear everything out on close
