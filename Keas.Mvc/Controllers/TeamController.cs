@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Models;
+using Keas.Mvc.Models.GroupModels;
 using Keas.Mvc.Services;
 
 namespace Keas.Mvc.Controllers
