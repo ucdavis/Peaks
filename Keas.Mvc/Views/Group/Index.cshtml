@@ -1,4 +1,4 @@
-@model Keas.Core.Domain.Group
+@model Keas.Mvc.Models.GroupModels.GroupIndexViewModel
 
 @{
     ViewBag.Title = "title";
@@ -7,19 +7,19 @@
 <div class="card">
     <div class="card-header-primary">
         <div class="row justify-content-between">
-          <div class="card-head">
-            <h2><i class="fas fa-tasks fa-xs"></i> Reports for group: @Model.Name</h2>
-          </div>
+            <div class="card-head">
+                <h2><i class="fas fa-tasks fa-xs"></i> Reports for group: @Model.Group.Name</h2>
+            </div>
         </div>
-      </div>
-      <div class="card-content">
+    </div>
+    <div class="card-content">
         <div class="row">
 
             <div class="report-list equipment-color col-md-3">
                 <h3><i class="fas fa-hdd fa-xs"></i> Equipment Reports</h3>
                 <ul>
                     <li>
-                        <a asp-action="EquipmentReport" asp-route-id="@Model.Id">View All Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="EquipmentReport" asp-route-id="@Model.Group.Id">View All Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
    
                 </ul>
@@ -30,7 +30,7 @@
                 <h3><i class="fas fa-building fa-xs"></i> Workstations Reports</h3>
                 <ul>
                     <li>
-                        <a asp-action="WorkstationReport" asp-route-id="@Model.Id">View All Workstations <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="WorkstationReport" asp-route-id="@Model.Group.Id">View All Workstations <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                 </ul> 
             </div>
@@ -39,7 +39,7 @@
                 <h3><i class="fas fa-building fa-xs"></i> Key Reports</h3>
                 <ul>
                     <li>
-                        <a asp-action="KeySerialsWithSpacesReport" asp-route-id="@Model.Id">View Key Serials with Spaces <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="KeySerialsWithSpacesReport" asp-route-id="@Model.Group.Id">View Key Serials with Spaces <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                 </ul> 
             </div>
@@ -48,13 +48,82 @@
                 <h3><i class="fas fa-file-alt fa-xs"></i> Incomplete Documents Reports</h3>
                 <ul>
                     <li>
-                        <a asp-action="IncompleteDocumentsReport" asp-route-id="@Model.Id">View All Incomplete Docs <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="IncompleteDocumentsReport" asp-route-id="@Model.Group.Id">View All Incomplete Docs <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                 </ul> 
             </div>
 
         </div>
-      </div>
+    </div>
 </div>
+<div class="card">
+    <div class="card-header-primary">
+        <div class="row justify-content-between">
+            <div class="card-head">
+                <h2><i class="fas fa-tasks fa-xs"></i> Teams in group: @Model.Group.Name</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-content">
+        <table id="teams-in-group" class="table dataTable">
+            <thead>
+            <tr>
+                <th>Team Name</th>
+                <th>Team Slug</th>
+                <th>Contact</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.TeamContact.Where(a => a.InGroup))
+            {
+                <tr>
+                    <td>@item.TeamName</td>
+                    <td>@item.TeamSlug</td>
+                    <td>@item.FirstDeptAdmin</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header-primary">
+        <div class="row justify-content-between">
+            <div class="card-head">
+                <h2><i class="fas fa-tasks fa-xs"></i> Teams NOT in group: @Model.Group.Name</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-content">
+        <table id="teams-in-group" class="table dataTable">
+            <thead>
+            <tr>
+                <th>Team Name</th>
+                <th>Team Slug</th>
+                <th>Contact</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.TeamContact.Where(a => !a.InGroup))
+            {
+                <tr>
+                    <td>@item.TeamName</td>
+                    <td>@item.TeamSlug</td>
+                    <td>@item.FirstDeptAdmin</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ReportScriptsPartial");}
+}
+
 
 
