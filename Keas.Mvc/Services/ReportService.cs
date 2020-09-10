@@ -21,6 +21,7 @@ namespace Keas.Mvc.Services
         Task<IList<EquipmentReportModel>> EquipmentList(Group group, bool hideInactive = true);
         Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug);
         Task<IList<KeyReportModel>> Keys(Team team, string teamSlug, bool includeSerials = true, bool includeSpaces = true);
+        Task<IList<KeyReportModel>> Keys(Group group, bool includeSerials = true, bool includeSpaces = true);
 
         Task<IList<IncompleteDocumentReportModel>> IncompleteDocuments(Team team, string teamSlug);
         Task<IList<IncompleteDocumentReportModel>> IncompleteDocuments(Group group);
@@ -246,14 +247,9 @@ namespace Keas.Mvc.Services
             return access;
         }
 
-        public async Task<IList<KeyReportModel>> Keys(Team team, string teamSlug, bool includeSerials = true, bool includeSpaces = true)
+        public Expression<Func<Key, KeyReportModel>> KeysProjection(bool includeSerials = true, bool includeSpaces = true)
         {
-            if (team == null)
-            {
-                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
-            }
-
-            var keys = await _context.Keys.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(a => new KeyReportModel()
+            return a => new KeyReportModel()
             {
                 KeyName = a.Name,
                 Code = a.Code,
@@ -290,9 +286,22 @@ namespace Keas.Mvc.Services
                     RoomCategoryName = c.Space.RoomCategoryName,
                     SqFt = c.Space.SqFt,
                 }).ToArray(),
-            }).ToListAsync();
+            };
+        }
 
-            return keys;
+        public async Task<IList<KeyReportModel>> Keys(Group group, bool includeSerials = true, bool includeSpaces = true)
+        {
+            return await _context.Keys.IgnoreQueryFilters().AsNoTracking().Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id)).Select(KeysProjection()).ToListAsync();
+        }
+
+        public async Task<IList<KeyReportModel>> Keys(Team team, string teamSlug, bool includeSerials = true, bool includeSpaces = true)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+
+            return await _context.Keys.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(KeysProjection(includeSerials, includeSpaces)).ToListAsync();
         }
 
         public async Task<IList<IncompleteDocumentReportModel>> IncompleteDocuments(Team team, string teamSlug)
