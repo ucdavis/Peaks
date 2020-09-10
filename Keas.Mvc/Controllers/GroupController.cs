@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
+using Keas.Mvc.Models.GroupModels;
 using Keas.Mvc.Models.ReportModels;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -31,8 +33,25 @@ namespace Keas.Mvc.Controllers
                 ErrorMessage = "Group not found or no access to Group";
                 return RedirectToAction("NoAccess", "Home");
             }
+            
 
-            return View(group);
+
+            var model = new GroupIndexViewModel {Group = group};
+            model.TeamContact = new List<GroupTeamContactInfo>();
+            foreach (var groupXTeam in group.Teams)
+            {
+                var gtci = new GroupTeamContactInfo();
+                gtci.TeamName = groupXTeam.Team.Name;
+                gtci.TeamSlug = groupXTeam.Team.Slug;
+                var dude = await _context.TeamPermissions.Include(a => a.User).Where(a => a.TeamId == groupXTeam.TeamId && a.Role != null && a.Role.Name == "DepartmentalAdmin").FirstOrDefaultAsync();
+                if (dude != null)
+                {
+                    gtci.FirstDeptAdmin = $"{dude.User.FirstName} {dude.User.LastName} - ({dude.User.Id}) - {dude.User.Email}";
+                }
+                model.TeamContact.Add(gtci);
+            }
+
+            return View(model);
         }
 
         public async Task<IActionResult> WorkstationReport(int id)
@@ -109,7 +128,7 @@ namespace Keas.Mvc.Controllers
         }
 
         private async Task<Group> GetGroup(int id) {
-            return await _context.Groups.SingleOrDefaultAsync(a =>
+            return await _context.Groups.Include(a => a.Teams).ThenInclude(a => a.Team).SingleOrDefaultAsync(a =>
                 a.Id == id && a.GroupPermissions.Any(w => w.UserId == User.Identity.Name));
         }
     }
