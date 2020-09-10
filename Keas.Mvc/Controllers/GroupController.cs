@@ -72,7 +72,7 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> KeyReport(int id)
+        public async Task<IActionResult> KeySerialsWithSpacesReport(int id)
         {
             var group = await GetGroup(id);
 
@@ -84,9 +84,9 @@ namespace Keas.Mvc.Controllers
 
             ViewBag.Group = group;
 
-            var worstations = await _reportService.WorkStations(group);
+            var model = await _reportService.Keys(group);
 
-            return View(worstations);
+            return View(model);
         }
 
         public async Task<IActionResult> IncompleteDocumentsReport(int id)
