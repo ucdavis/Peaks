@@ -86,6 +86,36 @@
         </table>
     </div>
 </div>
+<div class="card">
+    <div class="card-header-primary">
+        <div class="row justify-content-between">
+            <div class="card-head">
+                <h2><i class="fas fa-tasks fa-xs"></i> Teams NOT in group: @Model.Group.Name</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-content">
+        <table id="teams-in-group" class="table dataTable">
+            <thead>
+            <tr>
+                <th>Team Name</th>
+                <th>Team Slug</th>
+                <th>Contact</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.TeamContact.Where(a => !a.InGroup))
+            {
+                <tr>
+                    <td>@item.TeamName</td>
+                    <td>@item.TeamSlug</td>
+                    <td>@item.FirstDeptAdmin</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
 
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")

@@ -34,19 +34,27 @@ namespace Keas.Mvc.Controllers
                 return RedirectToAction("NoAccess", "Home");
             }
             
-
+            var allTeams = await _context.TeamPermissions.Include(a => a.Team).Include(a => a.Role).Include(a => a.User).Where(a => a.Role != null && a.Role.Name == "DepartmentalAdmin").ToListAsync();
 
             var model = new GroupIndexViewModel {Group = group};
             model.TeamContact = new List<GroupTeamContactInfo>();
-            foreach (var groupXTeam in group.Teams)
+
+            var teamIds = group.Teams.Select(a => a.TeamId).ToArray();
+            foreach (var teamPermission in allTeams)
             {
                 var gtci = new GroupTeamContactInfo();
-                gtci.TeamName = groupXTeam.Team.Name;
-                gtci.TeamSlug = groupXTeam.Team.Slug;
-                var dude = await _context.TeamPermissions.Include(a => a.User).Where(a => a.TeamId == groupXTeam.TeamId && a.Role != null && a.Role.Name == "DepartmentalAdmin").FirstOrDefaultAsync();
+                gtci.TeamName = teamPermission.Team.Name;
+                gtci.TeamSlug = teamPermission.Team.Slug;
+                var dude = allTeams.FirstOrDefault(a => a.TeamId == teamPermission.TeamId);
                 if (dude != null)
                 {
                     gtci.FirstDeptAdmin = $"{dude.User.FirstName} {dude.User.LastName} - ({dude.User.Id}) - {dude.User.Email}";
+                }
+
+                gtci.InGroup = teamIds.Contains(teamPermission.TeamId);
+                if(model.TeamContact.Any(a => a.TeamSlug == gtci.TeamSlug))
+                {
+                    continue;
                 }
                 model.TeamContact.Add(gtci);
             }
