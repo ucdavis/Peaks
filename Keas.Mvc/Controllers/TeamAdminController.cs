@@ -55,6 +55,7 @@ namespace Keas.Mvc.Controllers
             var team = await _context.Teams
                 .Include(o => o.FISOrgs)
                 .Include(i => i.PpsDepartments)
+                .Include(a => a.Groups).ThenInclude(a => a.Group).ThenInclude(a => a.GroupPermissions).ThenInclude(a => a.User)
                 .SingleOrDefaultAsync(x => x.Slug == Team);
 
             return View(team);

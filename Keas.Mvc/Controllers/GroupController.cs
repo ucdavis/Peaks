@@ -42,6 +42,10 @@ namespace Keas.Mvc.Controllers
             var teamIds = group.Teams.Select(a => a.TeamId).ToArray();
             foreach (var teamPermission in allTeams)
             {
+                if (model.TeamContact.Any(a => a.TeamSlug == teamPermission.Team.Slug))
+                {
+                    continue;
+                }
                 var gtci = new GroupTeamContactInfo();
                 gtci.TeamName = teamPermission.Team.Name;
                 gtci.TeamSlug = teamPermission.Team.Slug;
@@ -52,10 +56,7 @@ namespace Keas.Mvc.Controllers
                 }
 
                 gtci.InGroup = teamIds.Contains(teamPermission.TeamId);
-                if(model.TeamContact.Any(a => a.TeamSlug == gtci.TeamSlug))
-                {
-                    continue;
-                }
+
                 model.TeamContact.Add(gtci);
             }
 
