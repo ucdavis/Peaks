@@ -1,4 +1,5 @@
 ﻿import * as React from 'react';
+import { useContext, useState } from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
@@ -10,59 +11,25 @@ interface IProps {
   isRequired?: boolean;
 }
 
-interface IState {
-  isSearchLoading: boolean;
-  spaces: ISpace[];
-}
-
 // TODO: need a way to clear out selected space
 // Assign a space via search lookup, unless a space is already provided
-export default class SearchSpaces extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const SearchSpaces = (props: IProps) => {
+  const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
+  const [spaces, setSpaces] = useState<ISpace[]>([]);
+  const context = useContext(Context);
+  const { defaultSpace } = props;
 
-  constructor(props: IProps) {
-    super(props);
-
-    this.state = {
-      isSearchLoading: false,
-      spaces: []
-    };
-  }
-
-  public render() {
-    const { defaultSpace } = this.props;
-
-    return (
-      <AsyncTypeahead
-        id='searchSpaces' // for accessibility
-        isInvalid={this.props.isRequired && !this.props.defaultSpace}
-        clearButton={true}
-        isLoading={this.state.isSearchLoading}
-        minLength={2}
-        placeholder='Search for space'
-        defaultSelected={defaultSpace ? [defaultSpace] : []}
-        labelKey={(option: ISpace) => `${option.roomNumber} ${option.bldgName}`}
-        filterBy={() => true}
-        renderMenuItemChildren={this.renderItem}
-        onSearch={this.onSearch}
-        onChange={this.onChange}
-        options={this.state.spaces}
-      />
-    );
-  }
-
-  private renderItem = (option, props, index) => {
+  const renderItem = (option, propsData, index) => {
     return (
       <div>
         <div>
           {!!option.roomNumber && (
-            <Highlighter key='roomNumber' search={props.text}>
+            <Highlighter key='roomNumber' search={propsData.text}>
               {option.roomNumber}
             </Highlighter>
           )}{' '}
           {!!option.bldgName && (
-            <Highlighter key='bldgName' search={props.text}>
+            <Highlighter key='bldgName' search={propsData.text}>
               {option.bldgName}
             </Highlighter>
           )}
@@ -70,7 +37,7 @@ export default class SearchSpaces extends React.Component<IProps, IState> {
         {!!option.roomName && (
           <div>
             <small>
-              <Highlighter key='roomName' search={props.text}>
+              <Highlighter key='roomName' search={propsData.text}>
                 {option.roomName}
               </Highlighter>
             </small>
@@ -80,30 +47,48 @@ export default class SearchSpaces extends React.Component<IProps, IState> {
     );
   };
 
-  private onSearch = async query => {
-    this.setState({ isSearchLoading: true });
+  const onSearch = async query => {
+    setIsSearchLoading(true);
     let spaces: ISpace[] = null;
     try {
-      spaces = await this.context.fetch(
-        `/api/${this.context.team.slug}/spaces/searchSpaces?q=${query}`
+      spaces = await context.fetch(
+        `/api/${context.team.slug}/spaces/searchSpaces?q=${query}`
       );
     } catch (err) {
       toast.error('Error searching spaces.');
-      this.setState({ isSearchLoading: false });
+      setIsSearchLoading(false);
       return;
     }
-    this.setState({
-      isSearchLoading: false,
-      spaces
-    });
+    setIsSearchLoading(false);
+    setSpaces(spaces);
   };
 
-  private onChange = selected => {
+  const onChange = selected => {
     if (selected && selected.length === 1) {
-      this.props.onSelect(selected[0]);
+      props.onSelect(selected[0]);
       return;
     }
 
-    this.props.onSelect(null);
+    props.onSelect(null);
   };
-}
+
+  return (
+    <AsyncTypeahead
+      id='searchSpaces' // for accessibility
+      isInvalid={props.isRequired && !props.defaultSpace}
+      clearButton={true}
+      isLoading={isSearchLoading}
+      minLength={2}
+      placeholder='Search for space'
+      defaultSelected={defaultSpace ? [defaultSpace] : []}
+      labelKey={(option: ISpace) => `${option.roomNumber} ${option.bldgName}`}
+      filterBy={() => true}
+      renderMenuItemChildren={renderItem}
+      onSearch={onSearch}
+      onChange={onChange}
+      options={spaces}
+    />
+  );
+};
+
+export default SearchSpaces;

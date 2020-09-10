@@ -190,7 +190,6 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
         {action === 'disassociate' &&
           this._renderDisassociateModal(selectedId, selectedSpace)}
         <SpacesList
-          selectedKeyInfo={selectedKeyInfo}
           spaces={spaces}
           showDetails={this._openDetails}
           onDisassociate={this._openDisassociateModal}
