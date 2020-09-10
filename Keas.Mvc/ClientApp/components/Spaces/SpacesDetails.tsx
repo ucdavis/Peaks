@@ -28,50 +28,50 @@ interface IProps {
   tags: string[];
 }
 
-export default class SpacesDetails extends React.Component<IProps, {}> {
-  public render() {
-    if (!this.props.selectedSpaceInfo) {
-      return null;
-    }
-    return (
-      <div>
-        <div>
-          <Button color='link' onClick={this.props.goBack}>
-            <i className='fas fa-arrow-left fa-xs' /> Return to Table
-          </Button>
-        </div>
-        <br />
-        <div>
-          {this.props.selectedSpaceInfo && (
-            <SpaceDetailContainer
-              space={this.props.selectedSpaceInfo.space}
-              tags={this.props.selectedSpaceInfo.tags}
-            />
-          )}
-          <KeyContainer
-            {...this.props.route}
-            space={this.props.selectedSpaceInfo.space}
-            assetInUseUpdated={this.props.inUseUpdated}
-            assetTotalUpdated={this.props.totalUpdated}
-            assetEdited={this.props.edited}
-          />
-          <EquipmentContainer
-            {...this.props.route}
-            space={this.props.selectedSpaceInfo.space}
-            assetInUseUpdated={this.props.inUseUpdated}
-            assetTotalUpdated={this.props.totalUpdated}
-            assetEdited={this.props.edited}
-          />
-          <WorkstationContainer
-            {...this.props.route}
-            space={this.props.selectedSpaceInfo.space}
-            tags={this.props.tags}
-            assetInUseUpdated={this.props.inUseUpdated}
-            assetTotalUpdated={this.props.totalUpdated}
-            assetEdited={this.props.edited}
-          />
-        </div>
-      </div>
-    );
+const SpacesDetails = (props: IProps) => {
+  if (!props.selectedSpaceInfo) {
+    return null;
   }
-}
+  return (
+    <div>
+      <div>
+        <Button color='link' onClick={props.goBack}>
+          <i className='fas fa-arrow-left fa-xs' /> Return to Table
+        </Button>
+      </div>
+      <br />
+      <div>
+        {props.selectedSpaceInfo && (
+          <SpaceDetailContainer
+            space={props.selectedSpaceInfo.space}
+            tags={props.selectedSpaceInfo.tags}
+          />
+        )}
+        <KeyContainer
+          {...props.route}
+          space={props.selectedSpaceInfo.space}
+          assetInUseUpdated={props.inUseUpdated}
+          assetTotalUpdated={props.totalUpdated}
+          assetEdited={props.edited}
+        />
+        <EquipmentContainer
+          {...props.route}
+          space={props.selectedSpaceInfo.space}
+          assetInUseUpdated={props.inUseUpdated}
+          assetTotalUpdated={props.totalUpdated}
+          assetEdited={props.edited}
+        />
+        <WorkstationContainer
+          {...props.route}
+          space={props.selectedSpaceInfo.space}
+          tags={props.tags}
+          assetInUseUpdated={props.inUseUpdated}
+          assetTotalUpdated={props.totalUpdated}
+          assetEdited={props.edited}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default SpacesDetails;
