@@ -6,37 +6,30 @@ interface IProps {
   tags: string;
 }
 
-export default class SpacesDetailContainer extends React.Component<IProps, {}> {
-  public render() {
-    return (
+const SpacesDetailContainer = (props: IProps) => {
+  return (
+    <div>
       <div>
-        <div>
-          <h2 className='card-title'>
-            {this.props.space.roomNumber} {this.props.space.bldgName}
-          </h2>
-          <div className='card-text'>
-            {this.props.space.roomCategoryName && (
-              <div>{this.props.space.roomCategoryName}</div>
-            )}
-            {this.props.space.roomName && (
-              <div>{this.props.space.roomName}</div>
-            )}
-            {this.props.space.floorName && (
-              <div>{this.props.space.floorName}</div>
-            )}
-            {this.props.space.sqFt && (
-              <div>{this.props.space.sqFt} Sq Feet</div>
-            )}
-            {this.props.tags && (
-              <p className='card-text'>
-                <i className='fas fa-tags' aria-hidden='true' />{' '}
-                {this.props.tags}
-              </p>
-            )}
-          </div>
+        <h2 className='card-title'>
+          {props.space.roomNumber} {props.space.bldgName}
+        </h2>
+        <div className='card-text'>
+          {props.space.roomCategoryName && (
+            <div>{props.space.roomCategoryName}</div>
+          )}
+          {props.space.roomName && <div>{props.space.roomName}</div>}
+          {props.space.floorName && <div>{props.space.floorName}</div>}
+          {props.space.sqFt && <div>{props.space.sqFt} Sq Feet</div>}
+          {props.tags && (
+            <p className='card-text'>
+              <i className='fas fa-tags' aria-hidden='true' /> {props.tags}
+            </p>
+          )}
         </div>
-        <br />
       </div>
-    );
-  }
-}
+      <br />
+    </div>
+  );
+};
+
+export default SpacesDetailContainer;
