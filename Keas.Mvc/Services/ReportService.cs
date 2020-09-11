@@ -285,13 +285,13 @@ namespace Keas.Mvc.Services
                     FloorName = c.Space.FloorName,
                     RoomCategoryName = c.Space.RoomCategoryName,
                     SqFt = c.Space.SqFt,
-                }).ToArray(),
+                }).ToArray(), 
             };
         }
 
         public async Task<IList<KeyReportModel>> Keys(Group group, bool includeSerials = true, bool includeSpaces = true)
         {
-            return await _context.Keys.IgnoreQueryFilters().AsNoTracking().Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id)).Select(KeysProjection()).ToListAsync();
+            return await _context.Keys.IgnoreQueryFilters().AsNoTracking().Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id)).Select(KeysProjection(includeSerials, includeSpaces)).ToListAsync();
         }
 
         public async Task<IList<KeyReportModel>> Keys(Team team, string teamSlug, bool includeSerials = true, bool includeSpaces = true)
