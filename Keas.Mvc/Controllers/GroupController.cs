@@ -117,6 +117,23 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> KeySerialsReport(int id)
+        {
+            var group = await GetGroup(id);
+
+            if (group == null)
+            {
+                ErrorMessage = "Group not found or no access to Group";
+                return RedirectToAction("NoAccess", "Home");
+            }
+
+            ViewBag.Group = group;
+
+            var model = await _reportService.Keys(group, includeSpaces: false);
+
+            return View(model);
+        }
+
         public async Task<IActionResult> IncompleteDocumentsReport(int id)
         {
             var group = await GetGroup(id);
