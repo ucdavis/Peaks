@@ -383,7 +383,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
     const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${keyInfo.id}`;
     try {
-      const result = await this.context.fetch(disassociateUrl, {
+      await this.context.fetch(disassociateUrl, {
         body: JSON.stringify(request),
         method: 'POST'
       });
