@@ -40,7 +40,6 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
       tagFilters: []
     };
   }
-
   public async componentDidMount() {
     if (!PermissionsUtil.canViewSpaces(this.context.permissions)) {
       return;

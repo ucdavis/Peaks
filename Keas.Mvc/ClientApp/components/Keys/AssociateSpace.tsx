@@ -160,8 +160,8 @@ const AssociateSpace = (props: IProps) => {
 
     // check for existing association
     if (
-      selectedKeyInfo.key.keyXSpaces &&
-      selectedKeyInfo.key.keyXSpaces.length
+      selectedKeyInfo?.key.keyXSpaces &&
+      selectedKeyInfo?.key.keyXSpaces.length
     ) {
       const isDuplicate = selectedKeyInfo.key.keyXSpaces.some(
         x => x.spaceId === selectedSpace.id
