@@ -17,7 +17,6 @@ const SearchSpaces = (props: IProps) => {
   const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
   const [spaces, setSpaces] = useState<ISpace[]>([]);
   const context = useContext(Context);
-  const { defaultSpace } = props;
 
   const renderItem = (option, propsData, index) => {
     return (
@@ -49,9 +48,9 @@ const SearchSpaces = (props: IProps) => {
 
   const onSearch = async query => {
     setIsSearchLoading(true);
-    let spaces: ISpace[] = null;
+    let newSpaces: ISpace[] = null;
     try {
-      spaces = await context.fetch(
+      newSpaces = await context.fetch(
         `/api/${context.team.slug}/spaces/searchSpaces?q=${query}`
       );
     } catch (err) {
@@ -59,8 +58,8 @@ const SearchSpaces = (props: IProps) => {
       setIsSearchLoading(false);
       return;
     }
+    setSpaces(newSpaces);
     setIsSearchLoading(false);
-    setSpaces(spaces);
   };
 
   const onChange = selected => {
@@ -80,7 +79,7 @@ const SearchSpaces = (props: IProps) => {
       isLoading={isSearchLoading}
       minLength={2}
       placeholder='Search for space'
-      defaultSelected={defaultSpace ? [defaultSpace] : []}
+      defaultSelected={props.defaultSpace ? [props.defaultSpace] : []}
       labelKey={(option: ISpace) => `${option.roomNumber} ${option.bldgName}`}
       filterBy={() => true}
       renderMenuItemChildren={renderItem}
