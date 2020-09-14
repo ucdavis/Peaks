@@ -1,7 +1,7 @@
-import { addYears, format, isBefore, startOfDay } from 'date-fns';
+import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { Context } from '../../Context';
 import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';
@@ -24,258 +24,212 @@ interface IProps {
   tags: string[];
 }
 
-interface IState {
-  date: Date;
-  workstation: IWorkstation;
-  error: IValidationError;
-  person: IPerson;
-  submitting: boolean;
-  validState: boolean;
-}
+const AssignWorkstation = (props: IProps) => {
+  const [date, setDate] = useState<Date>(
+    !!props.selectedWorkstation && !!props.selectedWorkstation.assignment
+      ? new Date(props.selectedWorkstation.assignment.expiresAt)
+      : addYears(startOfDay(new Date()), 3)
+  );
+  const [error, setError] = useState<IValidationError>({
+    message: '',
+    path: ''
+  });
+  const [person, setPerson] = useState<IPerson>(
+    !!props.selectedWorkstation && !!props.selectedWorkstation.assignment
+      ? props.selectedWorkstation.assignment.person
+      : props.person
+  );
+  const [workstation, setWorkstation] = useState<IWorkstation>(
+    props.selectedWorkstation
+  );
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [validState, setValidState] = useState<boolean>(false);
 
-export default class AssignWorkstation extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      date:
-        !!this.props.selectedWorkstation &&
-        !!this.props.selectedWorkstation.assignment
-          ? new Date(this.props.selectedWorkstation.assignment.expiresAt)
-          : addYears(startOfDay(new Date()), 3),
-      error: {
-        message: '',
-        path: ''
-      },
-      person:
-        !!this.props.selectedWorkstation &&
-        !!this.props.selectedWorkstation.assignment
-          ? this.props.selectedWorkstation.assignment.person
-          : this.props.person,
-      submitting: false,
-      validState: false,
-      workstation: this.props.selectedWorkstation
+  useEffect(() => {
+    const validateState = () => {
+      const error = yupAssetValidation(
+        workstationSchema,
+        workstation,
+        {}, // no context
+        { date: date, person: person }
+      );
+      setError(error);
+      setValidState(error.message === '');
     };
-  }
 
-  public render() {
-    return (
-      <div>
-        <Modal
-          isOpen={this.props.modal}
-          toggle={this._confirmClose}
-          size='lg'
-          className='spaces-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>
-              {this.props.selectedWorkstation || this.props.person
-                ? 'Assign Workstation'
-                : 'Add Workstation'}
-            </h2>
-            <Button color='link' onClick={this._closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
+    validateState();
+  }, [workstation, person, date]);
 
-          <ModalBody>
-            <div className='container-fluid'>
-              <form>
-                <AssignPerson
-                  disabled={
-                    !!this.props.person ||
-                    (!!this.props.selectedWorkstation &&
-                      !!this.props.selectedWorkstation.assignment)
-                  } // disable if we are on person page or updating
-                  person={this.props.person || this.state.person}
-                  label='Assign To'
-                  onSelect={this._onSelectPerson}
-                  isRequired={
-                    this.state.workstation &&
-                    this.state.workstation.teamId !== 0
-                  }
-                  error={this.state.error}
+  const changeProperty = (property: string, value: string) => {
+    setWorkstation({ ...workstation, [property]: value });
+  };
+
+  // clear everything out on close
+  const confirmClose = () => {
+    if (!confirm('Please confirm you want to close!')) {
+      return;
+    }
+
+    closeModal();
+  };
+
+  const closeModal = () => {
+    setDate(addYears(startOfDay(new Date()), 3));
+    setError({
+      message: '',
+      path: ''
+    });
+    setPerson(null);
+    setWorkstation(null);
+    setSubmitting(false);
+    setValidState(false);
+    props.closeModal();
+  };
+
+  // assign the selected workstation even if we have to create it
+  const assignSelected = async () => {
+    if (!validState || submitting) {
+      return;
+    }
+
+    setSubmitting(true);
+    const personData = props.person ? props.person : person;
+
+    try {
+      await props.onCreate(personData, workstation, format(date, 'MM/dd/yyyy'));
+    } catch (err) {
+      setSubmitting(false);
+      return;
+    }
+    closeModal();
+  };
+
+  // once we have either selected or created the workstation we care about
+  const onSelected = (workstation: IWorkstation) => {
+    setWorkstation(workstation);
+  };
+
+  const onDeselected = () => {
+    setError({
+      message: '',
+      path: ''
+    });
+    setWorkstation(null);
+  };
+
+  const onSelectPerson = (person: IPerson) => {
+    setPerson(person);
+  };
+
+  const changeDate = (newDate: Date) => {
+    setDate(newDate);
+  };
+
+  return (
+    <div>
+      <Modal
+        isOpen={props.modal}
+        toggle={confirmClose}
+        size='lg'
+        className='spaces-color'
+      >
+        <div className='modal-header row justify-content-between'>
+          <h2>
+            {props.selectedWorkstation || props.person
+              ? 'Assign Workstation'
+              : 'Add Workstation'}
+          </h2>
+          <Button color='link' onClick={closeModal}>
+            <i className='fas fa-times fa-lg' />
+          </Button>
+        </div>
+
+        <ModalBody>
+          <div className='container-fluid'>
+            <form>
+              <AssignPerson
+                disabled={
+                  !!props.person ||
+                  (!!props.selectedWorkstation &&
+                    !!props.selectedWorkstation.assignment)
+                } // disable if we are on person page or updating
+                person={props.person || person}
+                label='Assign To'
+                onSelect={onSelectPerson}
+                isRequired={workstation && workstation.teamId !== 0}
+                error={error}
+              />
+              {(!!person || !!props.person) && (
+                <AssignDate
+                  date={date}
+                  isRequired={true}
+                  error={error}
+                  onChangeDate={changeDate}
                 />
-                {(!!this.state.person || !!this.props.person) && (
-                  <AssignDate
-                    date={this.state.date}
-                    isRequired={true}
-                    error={this.state.error}
-                    onChangeDate={this._changeDate}
+              )}
+              {!workstation && (
+                <div className='form-group'>
+                  <SearchWorkstations
+                    selectedWorkstation={workstation}
+                    onSelect={onSelected}
+                    onDeselect={onDeselected}
+                    space={props.space}
+                    openDetailsModal={props.openDetailsModal}
                   />
-                )}
-                {!this.state.workstation && (
-                  <div className='form-group'>
-                    <SearchWorkstations
-                      selectedWorkstation={this.state.workstation}
-                      onSelect={this._onSelected}
-                      onDeselect={this._onDeselected}
-                      space={this.props.space}
-                      openDetailsModal={this.props.openDetailsModal}
-                    />
-                  </div>
-                )}
-                {this.state.workstation &&
-                !this.state.workstation.teamId && ( // if we are creating a new workstation, edit properties
-                    <div>
-                      <div className='row justify-content-between'>
-                        <h3>Create New Workstation</h3>
-                        <Button
-                          color='link'
-                          onClick={this._onDeselected}
-                        >
-                          Clear{' '}
-                          <i
-                            className='fas fa-times fa-sm'
-                            aria-hidden='true'
-                          />
-                        </Button>
-                      </div>
-                      <WorkstationEditValues
-                        tags={this.props.tags}
-                        selectedWorkstation={this.state.workstation}
-                        changeProperty={this._changeProperty}
-                        disableEditing={false}
-                        disableSpaceEditing={false}
-                        error={this.state.error}
-                      />
-                    </div>
-                  )}
-                {!!this.state.workstation && !!this.state.workstation.teamId && (
+                </div>
+              )}
+              {workstation &&
+              !workstation.teamId && ( // if we are creating a new workstation, edit properties
                   <div>
                     <div className='row justify-content-between'>
-                      <h3>Assign Existing Workstation</h3>
-                      <Button
-                        color='link'
-                        onClick={this._onDeselected}
-                      >
+                      <h3>Create New Workstation</h3>
+                      <Button color='link' onClick={onDeselected}>
                         Clear{' '}
                         <i className='fas fa-times fa-sm' aria-hidden='true' />
                       </Button>
                     </div>
                     <WorkstationEditValues
-                      selectedWorkstation={this.state.workstation}
-                      disableEditing={true}
-                      openEditModal={this.props.openEditModal}
-                      disableSpaceEditing={true}
+                      tags={props.tags}
+                      selectedWorkstation={workstation}
+                      changeProperty={changeProperty}
+                      disableEditing={false}
+                      disableSpaceEditing={false}
+                      error={error}
                     />
                   </div>
                 )}
-              </form>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color='primary'
-              onClick={this._assignSelected}
-              disabled={!this.state.validState || this.state.submitting}
-            >
-              Go!{' '}
-              {this.state.submitting && (
-                <i className='fas fa-circle-notch fa-spin' />
+              {!!workstation && !!workstation.teamId && (
+                <div>
+                  <div className='row justify-content-between'>
+                    <h3>Assign Existing Workstation</h3>
+                    <Button color='link' onClick={onDeselected}>
+                      Clear{' '}
+                      <i className='fas fa-times fa-sm' aria-hidden='true' />
+                    </Button>
+                  </div>
+                  <WorkstationEditValues
+                    selectedWorkstation={workstation}
+                    disableEditing={true}
+                    openEditModal={props.openEditModal}
+                    disableSpaceEditing={true}
+                  />
+                </div>
               )}
-            </Button>
-          </ModalFooter>
-        </Modal>
-      </div>
-    );
-  }
+            </form>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color='primary'
+            onClick={assignSelected}
+            disabled={!validState || submitting}
+          >
+            Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </div>
+  );
+};
 
-  private _changeProperty = (property: string, value: string) => {
-    this.setState(
-      prevState => ({
-        workstation: {
-          ...prevState.workstation,
-          [property]: value
-        }
-      }),
-      this._validateState
-    );
-  };
-
-  // clear everything out on close
-  private _confirmClose = () => {
-    if (!confirm('Please confirm you want to close!')) {
-      return;
-    }
-
-    this._closeModal();
-  };
-
-  private _closeModal = () => {
-    this.setState({
-      date: addYears(startOfDay(new Date()), 3),
-      error: {
-        message: '',
-        path: ''
-      },
-      person: null,
-      submitting: false,
-      validState: false,
-      workstation: null
-    });
-    this.props.closeModal();
-  };
-
-  // assign the selected workstation even if we have to create it
-  private _assignSelected = async () => {
-    if (!this.state.validState || this.state.submitting) {
-      return;
-    }
-
-    this.setState({ submitting: true });
-    const person = this.props.person ? this.props.person : this.state.person;
-    const workstation = this.state.workstation;
-
-    try {
-      await this.props.onCreate(
-        person,
-        workstation,
-        format(this.state.date, 'MM/dd/yyyy')
-      );
-    } catch (err) {
-      this.setState({ submitting: false });
-      return;
-    }
-    this._closeModal();
-  };
-
-  // once we have either selected or created the workstation we care about
-  private _onSelected = (workstation: IWorkstation) => {
-    this.setState({ workstation }, this._validateState);
-  };
-
-  private _onDeselected = () => {
-    this.setState(
-      {
-        error: {
-          message: '',
-          path: ''
-        },
-        workstation: null
-      },
-      this._validateState
-    );
-  };
-
-  private _onSelectPerson = (person: IPerson) => {
-    this.setState({ person }, this._validateState);
-  };
-
-  private _validateState = () => {
-    const error = yupAssetValidation(
-      workstationSchema,
-      this.state.workstation,
-      {}, // no context
-      { date: this.state.date, person: this.state.person }
-    );
-    this.setState({ error, validState: error.message === '' });
-  };
-
-  private _changeDate = (newDate: Date) => {
-    this.setState({ date: startOfDay(new Date(newDate)) }, this._validateState);
-  };
-}
+export default AssignWorkstation;
