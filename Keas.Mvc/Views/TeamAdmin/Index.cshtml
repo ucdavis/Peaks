@@ -50,6 +50,28 @@
                 </div>
             </div>
         </div>
+        @if (Model.Groups.Any())
+        {
+            <div class="card">
+                <div class="card-header-primary">
+                    <div class="card-head">
+                        <h2>Groups your team belongs to</h2>
+                        <small class="form-text text-muted">What is a Group?</small>
+                        <small class="form-text text-muted">It is a way to report across multiple teams. Access is limited to reporting unless they have permissions in the team.</small>
+                    </div>
+                </div>
+                <div class="card-content">
+                    @foreach (var grp in Model.Groups)
+                    {
+                        <h4>Group Name:</h4>
+                        <p>@grp.Group.Name</p>
+                        <h4>Contact:</h4>
+                        <p>@grp.Group.GroupPermissions.First().User.Email</p>
+                        <hr/>
+                    }
+                </div>
+            </div>
+        }
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
