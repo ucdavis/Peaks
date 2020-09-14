@@ -78,11 +78,9 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     const {
       containerAction,
       containerId,
-      assetType,
       action,
       id
     } = this.props.match.params;
-    const activeWorkstationAsset = assetType === 'workstations';
     const onKeysTab = !!this.props.selectedKeyInfo;
     // if on keys tab, should be id
     // if on spaces tab, should be container id
@@ -180,7 +178,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
   private _renderTableList = (selectedId: number) => {
     // flatten the space info for simple space
     const spaces = this.state.spaces.map(s => s.space);
-    const { containerId, action, id } = this.props.match.params;
+    const { action } = this.props.match.params;
     const selectedSpace = spaces.find(k => k.id === selectedId);
     return (
       <div>
@@ -349,7 +347,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
     const associateUrl = `/api/${team.slug}/keys/associateSpace/${keyInfo.id}`;
     try {
-      const result = await this.context.fetch(associateUrl, {
+      await this.context.fetch(associateUrl, {
         body: JSON.stringify(request),
         method: 'POST'
       });
