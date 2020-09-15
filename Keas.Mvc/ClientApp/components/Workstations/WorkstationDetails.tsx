@@ -1,4 +1,5 @@
 ﻿import * as React from 'react';
+import { useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
 import { Context } from '../../Context';
@@ -16,66 +17,33 @@ interface IProps {
   updateSelectedWorkstation: (workstation: IWorkstation, id?: number) => void;
 }
 
-export default class WorkstationDetails extends React.Component<IProps, {}> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const WorkstationDetails = (props: IProps) => {
+  const context = useContext(Context);
+  const workstation = props.selectedWorkstation;
 
-  public componentDidMount() {
-    if (!this.props.selectedWorkstation) {
+  useEffect(() => {
+    if (!props.selectedWorkstation) {
       return;
     }
-    this._fetchDetails(this.props.selectedWorkstation.id);
+    fetchDetails(props.selectedWorkstation.id);
+  });
+
+  if (!props.selectedWorkstation) {
+    return null;
   }
 
-  public render() {
-    if (!this.props.selectedWorkstation) {
-      return null;
-    }
-    const workstation = this.props.selectedWorkstation;
-    return (
-      <div>
-        <Modal
-          isOpen={this.props.modal}
-          toggle={this.props.closeModal}
-          size='lg'
-          className='spaces-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>Details for {workstation.name}</h2>
-            <Button color='link' onClick={this.props.closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
-          <ModalBody>
-            <WorkstationEditValues
-              selectedWorkstation={workstation}
-              disableEditing={true}
-              disableSpaceEditing={true}
-              openEditModal={this.props.openEditModal}
-            />
-            <WorkstationAssignmentValues
-              selectedWorkstation={workstation}
-              openUpdateModal={this.props.openUpdateModal}
-            />
-            <HistoryContainer controller='workstations' id={workstation.id} />
-          </ModalBody>
-        </Modal>
-      </div>
-    );
-  }
-
-  private _fetchDetails = async (id: number) => {
-    const url = `/api/${this.context.team.slug}/workstations/details/${id}`;
+  const fetchDetails = async (id: number) => {
+    const url = `/api/${context.team.slug}/workstations/details/${id}`;
     let workstation: IWorkstation = null;
     try {
-      workstation = await this.context.fetch(url);
+      workstation = await context.fetch(url);
     } catch (err) {
       if (err.message === 'Not Found') {
         toast.error(
           'The workstation you were trying to view could not be found. It may have been deleted.'
         );
-        this.props.updateSelectedWorkstation(null, id);
-        this.props.closeModal();
+        props.updateSelectedWorkstation(null, id);
+        props.closeModal();
       } else {
         toast.error(
           'Error fetching workstation details. Please refresh the page to try again.'
@@ -83,6 +51,39 @@ export default class WorkstationDetails extends React.Component<IProps, {}> {
       }
       return;
     }
-    this.props.updateSelectedWorkstation(workstation);
+    props.updateSelectedWorkstation(workstation);
   };
-}
+
+  return (
+    <div>
+      <Modal
+        isOpen={props.modal}
+        toggle={props.closeModal}
+        size='lg'
+        className='spaces-color'
+      >
+        <div className='modal-header row justify-content-between'>
+          <h2>Details for {workstation.name}</h2>
+          <Button color='link' onClick={props.closeModal}>
+            <i className='fas fa-times fa-lg' />
+          </Button>
+        </div>
+        <ModalBody>
+          <WorkstationEditValues
+            selectedWorkstation={workstation}
+            disableEditing={true}
+            disableSpaceEditing={true}
+            openEditModal={props.openEditModal}
+          />
+          <WorkstationAssignmentValues
+            selectedWorkstation={workstation}
+            openUpdateModal={props.openUpdateModal}
+          />
+          <HistoryContainer controller='workstations' id={workstation.id} />
+        </ModalBody>
+      </Modal>
+    </div>
+  );
+};
+
+export default WorkstationDetails;
