@@ -13,68 +13,66 @@ interface IProps {
   onDelete?: (workstation: IWorkstation) => void;
 }
 
-export default class WorkstationListItem extends React.Component<IProps, {}> {
-  public render() {
-    const { workstationEntity } = this.props;
-    const hasAssignment = !!this.props.workstationEntity.assignment;
+const WorkstationListItem = (props: IProps) => {
+  const { workstationEntity } = props;
+  const hasAssignment = !!props.workstationEntity.assignment;
 
-    const actions: IAction[] = [];
+  const actions: IAction[] = [];
 
-    if (!!this.props.onAdd && !hasAssignment) {
-      actions.push({
-        title: 'Assign',
-        onClick: () => this.props.onAdd(workstationEntity)
-      });
-    }
-
-    if (!!this.props.onRevoke && hasAssignment) {
-      actions.push({
-        onClick: () => this.props.onRevoke(workstationEntity),
-        title: 'Revoke'
-      });
-    }
-
-    if (!!this.props.onDelete) {
-      actions.push({
-        onClick: () => this.props.onDelete(workstationEntity),
-        title: 'Delete'
-      });
-    }
-
-    return (
-      <tr>
-        <td>
-          <Button
-            color='link'
-            onClick={() => this.props.showDetails(this.props.workstationEntity)}
-          >
-            Details
-          </Button>
-        </td>
-        <td>{this.props.workstationEntity.name}</td>
-        <td>
-          {this.props.workstationEntity.space
-            ? this.props.workstationEntity.space.roomNumber +
-              ' ' +
-              this.props.workstationEntity.space.bldgName
-            : ''}
-        </td>
-        <td>
-          {hasAssignment
-            ? this.props.workstationEntity.assignment.person.name
-            : ''}
-        </td>
-        <td>
-          {hasAssignment
-            ? DateUtil.formatExpiration(
-                this.props.workstationEntity.assignment.expiresAt
-              )
-            : ''}
-        </td>
-        <td>
-          <ListActionsDropdown actions={actions} />
-        </td>
-      </tr>
-    );
+  if (!!props.onAdd && !hasAssignment) {
+    actions.push({
+      title: 'Assign',
+      onClick: () => props.onAdd(workstationEntity)
+    });
   }
-}
+
+  if (!!props.onRevoke && hasAssignment) {
+    actions.push({
+      onClick: () => props.onRevoke(workstationEntity),
+      title: 'Revoke'
+    });
+  }
+
+  if (!!props.onDelete) {
+    actions.push({
+      onClick: () => props.onDelete(workstationEntity),
+      title: 'Delete'
+    });
+  }
+
+  return (
+    <tr>
+      <td>
+        <Button
+          color='link'
+          onClick={() => props.showDetails(props.workstationEntity)}
+        >
+          Details
+        </Button>
+      </td>
+      <td>{props.workstationEntity.name}</td>
+      <td>
+        {props.workstationEntity.space
+          ? props.workstationEntity.space.roomNumber +
+            ' ' +
+            props.workstationEntity.space.bldgName
+          : ''}
+      </td>
+      <td>
+        {hasAssignment ? props.workstationEntity.assignment.person.name : ''}
+      </td>
+      <td>
+        {hasAssignment
+          ? DateUtil.formatExpiration(
+              props.workstationEntity.assignment.expiresAt
+            )
+          : ''}
+      </td>
+      <td>
+        <ListActionsDropdown actions={actions} />
+      </td>
+    </tr>
+  );
+};
+
+export default WorkstationListItem;
