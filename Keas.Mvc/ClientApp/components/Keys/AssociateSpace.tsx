@@ -102,7 +102,13 @@ const AssociateSpace = (props: IProps) => {
   };
 
   const changeProperty = (property: string, value: string) => {
-    setSelectedKeyInfo({ ...selectedKeyInfo, [property]: value });
+    setSelectedKeyInfo({
+      ...selectedKeyInfo,
+      key: {
+        ...selectedKeyInfo.key,
+        [property]: value
+      }
+    });
   };
 
   // default everything out on close

@@ -59,75 +59,79 @@ const getRowWorkstationsInUse = (row: any) => row.original?.workstationsInUse;
 const getRowWorkstationsTotal = (row: any) => row.original?.workstationsTotal;
 
 const SpacesTable = (props: IProps) => {
-  // export default class SpacesTable extends React.Component<IProps, {}> {
-  const columns: Column<ISpaceInfo>[] = [
-    {
-      Cell: data => (
-        <Button
-          color='link'
-          onClick={() => props.showDetails(data.row.original.space)}
-        >
-          Details
-        </Button>
-      ),
-      Header: ' ',
-      maxWidth: 150
-    },
-    {
-      Cell: data => (
-        <span>
-          {data.row.original.space.roomNumber}{' '}
-          {data.row.original.space.bldgName}
-        </span>
-      ),
-      Header: 'Room',
-      accessor: row => row.space.roomNumber + ' ' + row.space.bldgName,
-      id: 'room'
-    },
-    {
-      Cell: data => <span>{data.row.original.space.roomName}</span>,
-      Header: 'Room Name',
-      accessor: key => key.space?.roomName
-    },
-    {
-      Cell: data => <span>{data.row.original.keyCount}</span>,
-      Header: 'Keys',
-      accessor: 'keyCount',
-      disableFilters: true
-    },
-    {
-      Cell: data => <span>{data.row.original.equipmentCount}</span>,
-      Header: 'Equipment',
-      accessor: 'equipmentCount',
-      disableFilters: true
-    },
-    {
-      Cell: row => (
-        <span>
-          {row.value.workstationsInUse} / {row.value.workstationsTotal}
-        </span>
-      ),
-      Filter: SpaceWorkstationColumnFilter,
-      filter: 'workstation',
-      Header: header => (
-        <div>
-          Workstations{' '}
-          <i id='workstationsTooltip' className='fas fa-info-circle' />
-          <UncontrolledTooltip placement='right' target='workstationsTooltip'>
-            In Use / Total
-          </UncontrolledTooltip>
-        </div>
-      ),
-      accessor: spaceInfo => {
-        return {
-          workstationsInUse: spaceInfo.workstationsInUse,
-          workstationsTotal: spaceInfo.workstationsTotal
-        };
+  const columns: Column<ISpaceInfo>[] = React.useMemo(
+    () => [
+      {
+        Cell: data => (
+          <Button
+            color='link'
+            onClick={() => props.showDetails(data.row.original.space)}
+          >
+            Details
+          </Button>
+        ),
+        Header: ' ',
+        maxWidth: 150
       },
-      id: 'workstationsCount',
-      disableSortBy: true
-    }
-  ];
+      {
+        Cell: data => (
+          <span>
+            {data.row.original.space.roomNumber}{' '}
+            {data.row.original.space.bldgName}
+          </span>
+        ),
+        Header: 'Room',
+        accessor: row => row.space.roomNumber + ' ' + row.space.bldgName,
+        id: 'room'
+      },
+      {
+        Cell: data => <span>{data.row.original.space.roomName}</span>,
+        Header: 'Room Name',
+        accessor: key => key.space?.roomName
+      },
+      {
+        Cell: data => <span>{data.row.original.keyCount}</span>,
+        Header: 'Keys',
+        accessor: 'keyCount',
+        disableFilters: true
+      },
+      {
+        Cell: data => <span>{data.row.original.equipmentCount}</span>,
+        Header: 'Equipment',
+        accessor: 'equipmentCount',
+        disableFilters: true
+      },
+      {
+        Cell: row => (
+          <span>
+            {row.value.workstationsInUse} / {row.value.workstationsTotal}
+          </span>
+        ),
+        Filter: SpaceWorkstationColumnFilter,
+        filter: 'workstation',
+        Header: header => (
+          <div>
+            Workstations{' '}
+            <i id='workstationsTooltip' className='fas fa-info-circle' />
+            <UncontrolledTooltip placement='right' target='workstationsTooltip'>
+              In Use / Total
+            </UncontrolledTooltip>
+          </div>
+        ),
+        accessor: spaceInfo => {
+          return {
+            workstationsInUse: spaceInfo.workstationsInUse,
+            workstationsTotal: spaceInfo.workstationsTotal
+          };
+        },
+        id: 'workstationsCount',
+        disableSortBy: true
+      }
+    ],
+    []
+  );
+
+  const spacesData = React.useMemo(() => props.spaces, [props.spaces]);
 
   const initialState: Partial<TableState<any>> = {
     sortBy: [{ id: 'room' }],
@@ -136,7 +140,7 @@ const SpacesTable = (props: IProps) => {
 
   return (
     <ReactTable
-      data={props.spaces}
+      data={spacesData}
       columns={columns}
       initialState={initialState}
       filterTypes={{ workstation: workstationFilter }}
