@@ -26,7 +26,7 @@ const WorkstationDetails = (props: IProps) => {
       return;
     }
     fetchDetails(props.selectedWorkstation.id);
-  });
+  }, []);
 
   if (!props.selectedWorkstation) {
     return null;
