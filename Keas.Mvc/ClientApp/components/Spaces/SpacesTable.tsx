@@ -19,7 +19,7 @@ const SpaceWorkstationColumnFilter = ({
   // Render a multi-select box
   return (
     <select
-    className="form-control"
+      className='form-control'
       value={filterValue}
       style={{ width: '100%' }}
       onChange={e => {
@@ -58,14 +58,14 @@ const workstationFilter = (rows: any[], id, filterValue) => {
 const getRowWorkstationsInUse = (row: any) => row.original?.workstationsInUse;
 const getRowWorkstationsTotal = (row: any) => row.original?.workstationsTotal;
 
-export default class SpacesTable extends React.Component<IProps, {}> {
-  public render() {
-    const columns: Column<ISpaceInfo>[] = [
+const SpacesTable = (props: IProps) => {
+  const columns: Column<ISpaceInfo>[] = React.useMemo(
+    () => [
       {
         Cell: data => (
           <Button
             color='link'
-            onClick={() => this.props.showDetails(data.row.original.space)}
+            onClick={() => props.showDetails(data.row.original.space)}
           >
             Details
           </Button>
@@ -127,20 +127,25 @@ export default class SpacesTable extends React.Component<IProps, {}> {
         id: 'workstationsCount',
         disableSortBy: true
       }
-    ];
+    ],
+    []
+  );
 
-    const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'room' }],
-      pageSize: ReactTableUtil.getPageSize()
-    };
+  const spacesData = React.useMemo(() => props.spaces, [props.spaces]);
 
-    return (
-      <ReactTable
-        data={this.props.spaces}
-        columns={columns}
-        initialState={initialState}
-        filterTypes={{ workstation: workstationFilter }}
-      />
-    );
-  }
-}
+  const initialState: Partial<TableState<any>> = {
+    sortBy: [{ id: 'room' }],
+    pageSize: ReactTableUtil.getPageSize()
+  };
+
+  return (
+    <ReactTable
+      data={spacesData}
+      columns={columns}
+      initialState={initialState}
+      filterTypes={{ workstation: workstationFilter }}
+    />
+  );
+};
+
+export default SpacesTable;

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { IKeyInfo } from '../../models/Keys';
 import { ISpace } from '../../models/Spaces';
@@ -13,48 +14,48 @@ interface IProps {
   selectedSpace: ISpace;
 }
 
-interface IState {
-  submitting: boolean;
-}
+const DisassociateSpace = (props: IProps) => {
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
-export default class DisassociateSpace extends React.Component<IProps, IState> {
-  constructor(props: IProps) {
-    super(props);
-
-    this.state = {
-      submitting: false
-    };
-  }
-
-  public render() {
-    const className = this.props.selectedKeyInfo ? '' : 'keys-anomaly'; // purple on keys/details
-    return <div>{this.renderModal()}</div>;
-  }
-
-  private renderModal() {
-    const { isModalOpen, selectedKeyInfo, selectedSpace } = this.props;
-    if (!selectedKeyInfo || !selectedSpace) {
+  // default everything out on close
+  const disassociateKeyAndSpace = async () => {
+    setSubmitting(false);
+    try {
+      await props.onDisassociate(props.selectedKeyInfo, props.selectedSpace);
+    } catch (err) {
+      setSubmitting(false);
       return;
     }
-    const { submitting } = this.state;
+    closeModal();
+  };
+
+  const closeModal = () => {
+    setSubmitting(false);
+    props.closeModal();
+  };
+
+  const renderModal = () => {
+    if (!props.selectedKeyInfo || !props.selectedSpace) {
+      return;
+    }
 
     return (
       <Modal
-        isOpen={isModalOpen}
-        toggle={this._closeModal}
+        isOpen={props.isModalOpen}
+        toggle={closeModal}
         size='lg'
         className='keys-color'
       >
         <div className='modal-header row justify-content-between'>
           <h2>Disassociate Key and Space</h2>
-          <Button color='link' onClick={this._closeModal}>
+          <Button color='link' onClick={closeModal}>
             <i className='fas fa-times fa-lg' />
           </Button>
         </div>
         <ModalBody>
           <h2>Key</h2>
           <KeyEditValues
-            selectedKey={selectedKeyInfo.key}
+            selectedKey={props.selectedKeyInfo.key}
             disableEditing={true}
           />
           <h2>Space</h2>
@@ -64,7 +65,11 @@ export default class DisassociateSpace extends React.Component<IProps, IState> {
               <input
                 className='form-control'
                 disabled={true}
-                value={selectedSpace.roomNumber + ' ' + selectedSpace.bldgName}
+                value={
+                  props.selectedSpace.roomNumber +
+                  ' ' +
+                  props.selectedSpace.bldgName
+                }
               />
             </div>
             <div className='form-group'>
@@ -72,7 +77,11 @@ export default class DisassociateSpace extends React.Component<IProps, IState> {
               <input
                 className='form-control'
                 disabled={true}
-                value={selectedSpace.roomName ? selectedSpace.roomName : ''}
+                value={
+                  props.selectedSpace.roomName
+                    ? props.selectedSpace.roomName
+                    : ''
+                }
               />
             </div>
           </div>
@@ -80,7 +89,7 @@ export default class DisassociateSpace extends React.Component<IProps, IState> {
         <ModalFooter>
           <Button
             color='primary'
-            onClick={this._disassociateKeyAndSpace}
+            onClick={disassociateKeyAndSpace}
             disabled={submitting}
           >
             Go!
@@ -89,27 +98,9 @@ export default class DisassociateSpace extends React.Component<IProps, IState> {
         </ModalFooter>
       </Modal>
     );
-  }
-
-  // default everything out on close
-  private _disassociateKeyAndSpace = async () => {
-    this.setState({
-      submitting: false
-    });
-    try {
-      await this.props.onDisassociate(
-        this.props.selectedKeyInfo,
-        this.props.selectedSpace
-      );
-    } catch (err) {
-      this.setState({ submitting: false });
-      return;
-    }
-    this._closeModal();
   };
 
-  private _closeModal = () => {
-    this.setState({ submitting: false });
-    this.props.closeModal();
-  };
-}
+  return <div>{renderModal()}</div>;
+};
+
+export default DisassociateSpace;
