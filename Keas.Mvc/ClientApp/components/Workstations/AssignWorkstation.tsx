@@ -122,7 +122,7 @@ const AssignWorkstation = (props: IProps) => {
   };
 
   const changeDate = (newDate: Date) => {
-    setDate(newDate);
+    setDate(startOfDay(new Date(newDate)));
   };
 
   return (
