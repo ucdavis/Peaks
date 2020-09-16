@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { Button } from 'reactstrap';
 import { IPerson, IPersonInfo } from '../../models/People';
 import { ReactTableUtil } from '../../util/tableUtil';
@@ -15,14 +16,14 @@ interface IProps {
   updateFilters: (filters: any[]) => void;
 }
 
-export default class PeopleTable extends React.Component<IProps, {}> {
-  public render() {
-    const columns: Column<IPersonInfo>[] = [
+const PeopleTable = (props: IProps) => {
+  const columns: Column<IPersonInfo>[] = useMemo(
+    () => [
       {
         Cell: data => (
           <Button
             color='link'
-            onClick={() => this.props.showDetails(data.row.original)}
+            onClick={() => props.showDetails(data.row.original)}
           >
             Details
           </Button>
@@ -64,19 +65,24 @@ export default class PeopleTable extends React.Component<IProps, {}> {
         accessor: 'workstationCount',
         disableFilters: true
       }
-    ];
+    ],
+    []
+  );
 
-    const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'name' }],
-      pageSize: ReactTableUtil.getPageSize()
-    };
+  const peopleData = useMemo(() => props.people, [props.people]);
 
-    return (
-      <ReactTable
-        columns={columns}
-        data={this.props.people}
-        initialState={initialState}
-      />
-    );
-  }
-}
+  const initialState: Partial<TableState<any>> = {
+    sortBy: [{ id: 'name' }],
+    pageSize: ReactTableUtil.getPageSize()
+  };
+
+  return (
+    <ReactTable
+      columns={columns}
+      data={peopleData}
+      initialState={initialState}
+    />
+  );
+};
+
+export default PeopleTable;
