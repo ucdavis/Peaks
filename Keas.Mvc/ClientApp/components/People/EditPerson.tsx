@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
 import { IPerson, personSchema } from '../../models/People';
@@ -20,157 +21,128 @@ interface IState {
   validState: boolean;
 }
 
-export default class EditPerson extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const EditPerson = (props: IProps) => {
+  const [error, setError] = useState<IValidationError>({
+    message: '',
+    path: ''
+  });
+  const [modal, setModal] = useState<boolean>(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [validState, setValidState] = useState<boolean>(false);
+  const [person, setPerson] = useState<IPerson>(props.selectedPerson);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: {
-        message: '',
-        path: ''
-      },
-      modal: false,
-      person: this.props.selectedPerson,
-      submitting: false,
-      validState: false
+  useEffect(() => {
+    const validateState = () => {
+      const error = yupAssetValidation(personSchema, person, {
+        context: { validateEmail }
+      });
+      setError(error);
+      setValidState(error.message === '');
     };
+
+    validateState();
+  }, [person]);
+
+  if (!person) {
+    return null;
   }
 
-  // make sure we change the key we are updating if the parent changes selected key
-  public componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedPerson.id !== this.props.selectedPerson.id) {
-      this.setState({ person: nextProps.selectedPerson });
-    }
-  }
-
-  public render() {
-    if (!this.state.person) {
-      return null;
-    }
-    return (
-      <div>
-        <Button color='link' onClick={this._toggleModal}>
-          <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
-          Edit Person
-        </Button>
-        <Modal
-          isOpen={this.state.modal}
-          toggle={this._confirmClose}
-          size='lg'
-          className='people-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>Edit Person</h2>
-            <Button color='link' onClick={this._closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
-          <ModalBody>
-            <div className='container-fluid'>
-              <form>
-                <PersonEditValues
-                  selectedPerson={this.state.person}
-                  changeProperty={this._changeProperty}
-                  changeSupervisor={this._changeSupervisor}
-                  disableEditing={false}
-                  tags={this.props.tags}
-                  error={this.state.error}
-                  isDeleting={false}
-                />
-              </form>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color='primary'
-              onClick={this._editSelected}
-              disabled={!this.state.validState || this.state.submitting}
-            >
-              Go!{' '}
-              {this.state.submitting && (
-                <i className='fas fa-circle-notch fa-spin' />
-              )}
-            </Button>
-          </ModalFooter>
-        </Modal>
-      </div>
-    );
-  }
-
-  private _changeProperty = (property: string, value: any) => {
-    this.setState(
-      prevState => ({
-        person: {
-          ...prevState.person,
-          [property]: value
-        }
-      }),
-      this._validateState
-    );
+  const changeProperty = (property: string, value: any) => {
+    setPerson({ ...person, [property]: value });
   };
 
-  private _changeSupervisor = (supervisor: IPerson) => {
-    this.setState(
-      prevState => ({
-        person: {
-          ...prevState.person,
-          supervisor,
-          supervisorId: supervisor !== null ? supervisor.id : null
-        }
-      }),
-      this._validateState
-    );
+  const changeSupervisor = (supervisor: IPerson) => {
+    setPerson({
+      ...person,
+      supervisor: supervisor,
+      supervisorId: supervisor !== null ? supervisor.id : null
+    });
   };
 
   // clear everything out on close
-  private _confirmClose = () => {
+  const confirmClose = () => {
     if (!confirm('Please confirm you want to close!')) {
       return;
     }
 
-    this._closeModal();
+    closeModal();
   };
 
-  private _closeModal = () => {
-    this.setState({
-      error: {
-        message: '',
-        path: ''
-      },
-      modal: false,
-      submitting: false,
-      validState: false
+  const closeModal = () => {
+    setError({
+      message: '',
+      path: ''
     });
+    setModal(false);
+    setSubmitting(false);
+    setValidState(false);
   };
 
-  private _toggleModal = () => {
-    this.setState({
-      modal: !this.state.modal
-    });
+  const toggleModal = () => {
+    setModal(!modal);
   };
 
   // assign the selected key even if we have to create it
-  private _editSelected = async () => {
-    if (!this.state.validState || this.state.submitting) {
+  const editSelected = async () => {
+    if (!validState || submitting) {
       return;
     }
 
-    this.setState({ submitting: true });
+    setSubmitting(true);
     try {
-      await this.props.onEdit(this.state.person);
+      await props.onEdit(person);
     } catch (err) {
-      this.setState({ submitting: false });
+      setSubmitting(false);
       return;
     }
-    this._closeModal();
+    closeModal();
   };
 
-  private _validateState = () => {
-    const error = yupAssetValidation(personSchema, this.state.person, {
-      context: { validateEmail }
-    });
-    this.setState({ error, validState: error.message === '' });
-  };
-}
+  return (
+    <div>
+      <Button color='link' onClick={toggleModal}>
+        <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
+        Edit Person
+      </Button>
+      <Modal
+        isOpen={modal}
+        toggle={confirmClose}
+        size='lg'
+        className='people-color'
+      >
+        <div className='modal-header row justify-content-between'>
+          <h2>Edit Person</h2>
+          <Button color='link' onClick={closeModal}>
+            <i className='fas fa-times fa-lg' />
+          </Button>
+        </div>
+        <ModalBody>
+          <div className='container-fluid'>
+            <form>
+              <PersonEditValues
+                selectedPerson={person}
+                changeProperty={changeProperty}
+                changeSupervisor={changeSupervisor}
+                disableEditing={false}
+                tags={props.tags}
+                error={error}
+                isDeleting={false}
+              />
+            </form>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color='primary'
+            onClick={editSelected}
+            disabled={!validState || submitting}
+          >
+            Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </div>
+  );
+};
+
+export default EditPerson;
