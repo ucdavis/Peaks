@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import { Context } from '../../Context';
+import { useState } from 'react';
+import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { IWorkstation } from '../../models/Workstations';
 import WorkstationEditValues from './WorkstationEditValues';
 
@@ -11,76 +11,61 @@ interface IProps {
   selectedWorkstation: IWorkstation;
 }
 
-interface IState {
-  submitting: boolean;
-}
+const RevokeWorkstation = (props: IProps) => {
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
-export default class RevokeWorkstation extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      submitting: false
-    };
+  if (!props.selectedWorkstation || !props.selectedWorkstation.assignment) {
+    return null;
   }
 
-  public render() {
-    if (
-      !this.props.selectedWorkstation ||
-      !this.props.selectedWorkstation.assignment
-    ) {
+  const revokeWorkstation = async () => {
+    if (!props.selectedWorkstation) {
       return null;
     }
-    return (
-      <div>
-        <Modal
-          isOpen={this.props.modal}
-          toggle={this.props.closeModal}
-          size='lg'
-          className='spaces-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>Revoke {this.props.selectedWorkstation.name}</h2>
-            <Button color='link' onClick={this.props.closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
-          <ModalBody>
-            <WorkstationEditValues
-              selectedWorkstation={this.props.selectedWorkstation}
-              disableEditing={true}
-              disableSpaceEditing={true}
-            />
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color='primary'
-              onClick={this._revokeWorkstation}
-              disabled={this.state.submitting}
-            >
-              Revoke
-            </Button>
-          </ModalFooter>
-        </Modal>{' '}
-      </div>
-    );
-  }
-
-  private _revokeWorkstation = async () => {
-    if (!this.props.selectedWorkstation) {
-      return null;
-    }
-    this.setState({ submitting: true });
+    setSubmitting(true);
     try {
-      await this.props.revokeWorkstation(this.props.selectedWorkstation);
+      await props.revokeWorkstation(props.selectedWorkstation);
     } catch (err) {
-      this.setState({ submitting: false });
+      setSubmitting(false);
       return;
     }
-    this.setState({ submitting: false });
-    this.props.closeModal();
+    setSubmitting(false);
+    props.closeModal();
   };
-}
+
+  return (
+    <div>
+      <Modal
+        isOpen={props.modal}
+        toggle={props.closeModal}
+        size='lg'
+        className='spaces-color'
+      >
+        <div className='modal-header row justify-content-between'>
+          <h2>Revoke {props.selectedWorkstation.name}</h2>
+          <Button color='link' onClick={props.closeModal}>
+            <i className='fas fa-times fa-lg' />
+          </Button>
+        </div>
+        <ModalBody>
+          <WorkstationEditValues
+            selectedWorkstation={props.selectedWorkstation}
+            disableEditing={true}
+            disableSpaceEditing={true}
+          />
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color='primary'
+            onClick={revokeWorkstation}
+            disabled={submitting}
+          >
+            Revoke
+          </Button>
+        </ModalFooter>
+      </Modal>{' '}
+    </div>
+  );
+};
+
+export default RevokeWorkstation;
