@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { Context } from '../../Context';
 import { IPerson, personSchema } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { validateEmail } from '../../util/email';
