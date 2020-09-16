@@ -7,13 +7,13 @@ interface IProps {
   teamName: string;
 }
 
-export default class PeopleListItem extends React.Component<IProps, {}> {
-  public render() {
-    const personUrl = `/${this.props.teamName}/person/details/${this.props.person.id}`;
-    return (
-      <div>
-        <NavLink to={personUrl}>{this.props.person.name}</NavLink>
-      </div>
-    );
-  }
-}
+const PeopleListItem = (props: IProps) => {
+  const personUrl = `/${props.teamName}/person/details/${props.person.id}`;
+  return (
+    <div>
+      <NavLink to={personUrl}>{props.person.name}</NavLink>
+    </div>
+  );
+};
+
+export default PeopleListItem;
