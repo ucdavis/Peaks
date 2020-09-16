@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext, useState } from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
@@ -14,52 +15,29 @@ interface IProps {
   onDeselect: () => void;
 }
 
-interface IState {
-  isSearchLoading: boolean;
-  workstations: IWorkstation[];
-}
-
 // Search for existing workstation then send selection back to parent
-export default class SearchWorkstations extends React.Component<
-  IProps,
-  IState
-> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const SearchWorkstations = (props: IProps) => {
+  const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
+  const [workstations, setWorkstations] = useState<IWorkstation[]>([]);
+  const context = useContext(Context);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      isSearchLoading: false,
-      workstations: []
-    };
-  }
-
-  public render() {
-    if (this.props.selectedWorkstation != null) {
-      return this._renderExistingWorkstation();
-    } else {
-      return this._renderSelectWorkstation();
-    }
-  }
-
-  private _renderSelectWorkstation = () => {
+  const renderSelectWorkstation = () => {
     return (
       <div>
         <label>Pick a workstation to assign</label>
         <div>
           <AsyncTypeahead
             id='searchWorkstations' // for accessibility
-            isLoading={this.state.isSearchLoading}
+            isLoading={isSearchLoading}
             minLength={3}
             placeholder='Search for workstation by name or room'
             labelKey='name'
             filterBy={() => true} // don't filter on top of our search
             allowNew={false}
-            renderMenuItemChildren={(option, props, index) => (
+            renderMenuItemChildren={(option, propsData, index) => (
               <div className={!!option.assignment ? 'disabled' : ''}>
                 <div>
-                  <Highlighter key='name' search={props.text}>
+                  <Highlighter key='name' search={propsData.text}>
                     {option.name}
                   </Highlighter>
                 </div>
@@ -67,32 +45,32 @@ export default class SearchWorkstations extends React.Component<
                 <div>
                   <small>
                     Space:
-                    <Highlighter key='space.roomNumber' search={props.text}>
+                    <Highlighter key='space.roomNumber' search={propsData.text}>
                       {option.space.roomNumber}
                     </Highlighter>
-                    <Highlighter key='space.bldgName' search={props.text}>
+                    <Highlighter key='space.bldgName' search={propsData.text}>
                       {option.space.bldgName}
                     </Highlighter>
                   </small>
                 </div>
               </div>
             )}
-            onSearch={this._onSearch}
+            onSearch={onSearch}
             onChange={selected => {
               if (selected && selected.length === 1) {
                 if (!!selected[0] && !!selected[0].assignment) {
-                  this.props.openDetailsModal(selected[0]);
+                  props.openDetailsModal(selected[0]);
                 } else {
-                  this._onSelected(selected[0]);
+                  onSelected(selected[0]);
                 }
               }
             }}
-            options={this.state.workstations}
+            options={workstations}
           />
         </div>
         <div>or</div>
         <div>
-          <Button color='link' onClick={this._createNew}>
+          <Button color='link' onClick={createNew}>
             <i className='fas fa-plus fa-sm' aria-hidden='true' /> Create New
             Workstation
           </Button>
@@ -101,54 +79,61 @@ export default class SearchWorkstations extends React.Component<
     );
   };
 
-  private _onSearch = async (query: string) => {
-    const searchUrl = this.props.space
-      ? `/api/${this.context.team.slug}/workstations/searchInSpace?spaceId=${this.props.space.id}&q=`
-      : `/api/${this.context.team.slug}/workstations/search?q=`;
+  const onSearch = async (query: string) => {
+    const searchUrl = props.space
+      ? `/api/${context.team.slug}/workstations/searchInSpace?spaceId=${props.space.id}&q=`
+      : `/api/${context.team.slug}/workstations/search?q=`;
 
-    this.setState({ isSearchLoading: true });
-    let workstations: IWorkstation[] = null;
+    setIsSearchLoading(true);
+    let newWorkstations: IWorkstation[] = null;
     try {
-      workstations = await this.context.fetch(searchUrl + query);
+      newWorkstations = await context.fetch(searchUrl + query);
     } catch (err) {
       toast.error('Error searching workstations.');
-      this.setState({ isSearchLoading: false });
+      setIsSearchLoading(false);
       return;
     }
-    this.setState({
-      isSearchLoading: false,
-      workstations
-    });
+    setWorkstations(newWorkstations);
+    setIsSearchLoading(false);
   };
-  private _renderExistingWorkstation = () => {
+
+  const renderExistingWorkstation = () => {
     return (
       <input
         type='text'
         className='form-control'
-        value={this.props.selectedWorkstation.name}
+        value={props.selectedWorkstation.name}
         disabled={true}
       />
     );
   };
 
-  private _onSelected = (workstation: IWorkstation) => {
+  const onSelected = (workstation: IWorkstation) => {
     // onChange is called when deselected
     if (!workstation || !workstation.name) {
-      this.props.onDeselect();
+      props.onDeselect();
     } else {
       // if teamId is not set, this is a new workstation
-      this.props.onSelect(workstation);
+      props.onSelect(workstation);
     }
   };
 
-  private _createNew = () => {
-    this.props.onSelect({
+  const createNew = () => {
+    props.onSelect({
       id: 0,
       name: '',
       notes: '',
-      space: this.props.space ? this.props.space : null, // if we are on spaces tab, auto to the right space
+      space: props.space ? props.space : null, // if we are on spaces tab, auto to the right space
       tags: '',
       teamId: 0
     });
   };
-}
+
+  if (props.selectedWorkstation != null) {
+    return renderExistingWorkstation();
+  } else {
+    return renderSelectWorkstation();
+  }
+};
+
+export default SearchWorkstations;
