@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext } from 'react';
 import { RouteChildrenProps } from 'react-router';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -32,110 +33,99 @@ interface IProps {
   goToKeyDetails: (key: IKey) => void;
 }
 
-export default class PersonDetails extends React.Component<IProps, {}> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  public render() {
-    if (
-      !this.props.selectedPersonInfo ||
-      !this.props.selectedPersonInfo.person
-    ) {
-      return null;
-    }
-    const canEdit = PermissionsUtil.canEditPeople(this.context.permissions);
-    return (
-      <div>
-        <div>
-          <Button color='link' onClick={this.props.goBack}>
-            <i className='fas fa-arrow-left fa-xs' /> Return to Table
-          </Button>
-        </div>
-        <br />
-        <div className='card'>
-          <div className='card-header-people'>
-            <div className='card-head row justify-content-between'>
-              <h2>{this.props.selectedPersonInfo.person.name}</h2>
-              {canEdit && (
-                <div className='row justify-content-between'>
-                  <EditPerson
-                    key={`edit-person-${this.props.selectedPersonInfo.id}`}
-                    onEdit={this.props.onEdit}
-                    selectedPerson={this.props.selectedPersonInfo.person}
-                    tags={this.props.tags}
-                  />
-                  <DeletePerson
-                    key={`delete-person-${this.props.selectedPersonInfo.id}`}
-                    selectedPersonInfo={this.props.selectedPersonInfo}
-                    onDelete={this.props.onDelete}
-                  />
-                  <div>
-                    <a
-                      href={`/${this.context.team.slug}/Report/PersonTeamList/?personId=${this.props.selectedPersonInfo.id}`}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                    >
-                      <Button color='link'>
-                        <i
-                          className='fas fa-search fa-sm fa-fw mr-2'
-                          aria-hidden='true'
-                        />
-                        Lookup Teams
-                      </Button>
-                    </a>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <BioContainer person={this.props.selectedPersonInfo.person} />
-        </div>
-
-        <KeySerialContainer
-          {...this.props.router}
-          selectedPerson={this.props.selectedPersonInfo.person}
-          assetInUseUpdated={this.props.inUseUpdated}
-          goToKeyDetails={this.props.goToKeyDetails}
-        />
-        <EquipmentContainer
-          {...this.props.router}
-          person={this.props.selectedPersonInfo.person}
-          assetInUseUpdated={this.props.inUseUpdated}
-        />
-        <AssignmentContainer
-          person={this.props.selectedPersonInfo.person}
-          onRevokeSuccess={() =>
-            this.props.inUseUpdated(
-              'access',
-              0,
-              this.props.selectedPersonInfo.id,
-              -1
-            )
-          }
-          onAssignSuccess={() =>
-            this.props.inUseUpdated(
-              'access',
-              0,
-              this.props.selectedPersonInfo.id,
-              1
-            )
-          }
-        />
-        <WorkstationContainer
-          {...this.props.router}
-          person={this.props.selectedPersonInfo.person}
-          tags={this.props.tags}
-          assetInUseUpdated={this.props.inUseUpdated}
-        />
-        <DocumentsContainer person={this.props.selectedPersonInfo.person}></DocumentsContainer>
-        {canEdit && (
-          <HistoryContainer
-            controller='peopleAdmin'
-            id={this.props.selectedPersonInfo.person.id}
-          />
-        )}
-      </div>
-    );
+const PersonDetails = (props: IProps) => {
+  const context = useContext(Context);
+  if (!props.selectedPersonInfo || !props.selectedPersonInfo.person) {
+    return null;
   }
-}
+
+  const canEdit = PermissionsUtil.canEditPeople(context.permissions);
+
+  return (
+    <div>
+      <div>
+        <Button color='link' onClick={props.goBack}>
+          <i className='fas fa-arrow-left fa-xs' /> Return to Table
+        </Button>
+      </div>
+      <br />
+      <div className='card'>
+        <div className='card-header-people'>
+          <div className='card-head row justify-content-between'>
+            <h2>{props.selectedPersonInfo.person.name}</h2>
+            {canEdit && (
+              <div className='row justify-content-between'>
+                <EditPerson
+                  key={`edit-person-${props.selectedPersonInfo.id}`}
+                  onEdit={props.onEdit}
+                  selectedPerson={props.selectedPersonInfo.person}
+                  tags={props.tags}
+                />
+                <DeletePerson
+                  key={`delete-person-${props.selectedPersonInfo.id}`}
+                  selectedPersonInfo={props.selectedPersonInfo}
+                  onDelete={props.onDelete}
+                />
+                <div>
+                  <a
+                    href={`/${context.team.slug}/Report/PersonTeamList/?personId=${props.selectedPersonInfo.id}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                  >
+                    <Button color='link'>
+                      <i
+                        className='fas fa-search fa-sm fa-fw mr-2'
+                        aria-hidden='true'
+                      />
+                      Lookup Teams
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <BioContainer person={props.selectedPersonInfo.person} />
+      </div>
+
+      <KeySerialContainer
+        {...props.router}
+        selectedPerson={props.selectedPersonInfo.person}
+        assetInUseUpdated={props.inUseUpdated}
+        goToKeyDetails={props.goToKeyDetails}
+      />
+      <EquipmentContainer
+        {...props.router}
+        person={props.selectedPersonInfo.person}
+        assetInUseUpdated={props.inUseUpdated}
+      />
+      <AssignmentContainer
+        person={props.selectedPersonInfo.person}
+        onRevokeSuccess={() =>
+          props.inUseUpdated('access', 0, props.selectedPersonInfo.id, -1)
+        }
+        onAssignSuccess={() =>
+          props.inUseUpdated('access', 0, props.selectedPersonInfo.id, 1)
+        }
+      />
+      <WorkstationContainer
+        {...props.router}
+        person={props.selectedPersonInfo.person}
+        tags={props.tags}
+        assetInUseUpdated={props.inUseUpdated}
+      />
+      <DocumentsContainer
+        person={props.selectedPersonInfo.person}
+      ></DocumentsContainer>
+      {canEdit && (
+        <HistoryContainer
+          controller='peopleAdmin'
+          id={props.selectedPersonInfo.person.id}
+        />
+      )}
+    </div>
+  );
+};
+
+export default PersonDetails;

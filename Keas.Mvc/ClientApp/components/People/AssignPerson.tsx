@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { useContext, useState } from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Button, FormFeedback, FormGroup, Label } from 'reactstrap';
+import { Button, FormGroup, Label } from 'reactstrap';
 import { Context } from '../../Context';
 import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
@@ -16,86 +17,70 @@ interface IProps {
   error?: IValidationError;
 }
 
-interface IState {
-  isSearchLoading: boolean;
-  people: IPerson[];
-}
-
 // TODO: need a way to clear out selected person
 // Assign a person via search lookup, unless a person is already provided
-export default class AssignPerson extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const AssignPerson = (props: IProps) => {
+  const context = useContext(Context);
+  const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
+  const [people, setPeople] = useState<IPerson[]>([]);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      isSearchLoading: false,
-      people: []
-    };
-  }
-
-  public render() {
-    return this._renderFindPerson();
-  }
-
-  private _renderFindPerson = () => {
+  const renderFindPerson = () => {
     const isInvalid =
-      (this.props.isRequired && !this.props.person) ||
-      (this.props.error && this.props.error.path === 'person');
+      (props.isRequired && !props.person) ||
+      (props.error && props.error.path === 'person');
     // call onSelect when a user is found
     return (
       <div>
         <FormGroup>
-          <Label for='searchPeople'>{this.props.label}</Label>
+          <Label for='searchPeople'>{props.label}</Label>
           <AsyncTypeahead
             id='searchPeople' // for accessibility
             inputProps={{
               className: isInvalid ? 'form-control is-invalid' : ''
             }}
             isInvalid={isInvalid}
-            disabled={this.props.disabled}
-            isLoading={this.state.isSearchLoading}
+            disabled={props.disabled}
+            isLoading={isSearchLoading}
             minLength={3}
-            defaultSelected={this.props.person ? [this.props.person] : []}
+            defaultSelected={props.person ? [props.person] : []}
             placeholder='Search for person by name or email'
             labelKey={(option: IPerson) => `${option.name} (${option.email})`}
             filterBy={() => true} // don't filter on top of our search
-            renderMenuItemChildren={(option, props, index) => (
+            renderMenuItemChildren={(option, propsData, index) => (
               <div>
                 <div>
-                  <Highlighter key='name' search={props.text}>
+                  <Highlighter key='name' search={propsData.text}>
                     {option.name}
                   </Highlighter>
                 </div>
                 <div>
-                  <Highlighter key='email' search={props.text}>
+                  <Highlighter key='email' search={propsData.text}>
                     {option.email}
                   </Highlighter>
                 </div>
               </div>
             )}
-            onSearch={this._onSearch}
+            onSearch={onSearch}
             onChange={selected => {
               if (selected && selected.length === 1) {
-                this.props.onSelect(selected[0]);
+                props.onSelect(selected[0]);
               }
               if (selected && selected.length === 0) {
-                this.props.onSelect(null);
+                props.onSelect(null);
               }
             }}
-            options={this.state.people}
+            options={people}
           />
-          {this.props.error && this.props.error.path === 'person' && (
+          {props.error && props.error.path === 'person' && (
             <div className='invalid-feedback d-block'>
-              {this.props.error.message}
+              {props.error.message}
             </div>
           )}
         </FormGroup>
         <div>
-          {this.props.disabled ? null : (
+          {props.disabled ? null : (
             <Link
-              to={`/${this.context.team.slug}/people/create`}
+              to={`/${context.team.slug}/people/create`}
               target='_blank'
               rel='noopener noreferrer'
             >
@@ -110,21 +95,22 @@ export default class AssignPerson extends React.Component<IProps, IState> {
     );
   };
 
-  private _onSearch = async (query: string) => {
-    this.setState({ isSearchLoading: true });
-    let people: IPerson[] = null;
+  const onSearch = async (query: string) => {
+    setIsSearchLoading(true);
+    let newPeople: IPerson[] = null;
     try {
-      people = await this.context.fetch(
-        `/api/${this.context.team.slug}/people/searchPeople?q=${query}`
+        newPeople = await context.fetch(
+        `/api/${context.team.slug}/people/searchPeople?q=${query}`
       );
     } catch (err) {
       toast.error('Error searching people.');
-      this.setState({ isSearchLoading: false });
+      setIsSearchLoading(false);
       return;
     }
-    this.setState({
-      isSearchLoading: false,
-      people
-    });
+    setPeople(newPeople);
+    setIsSearchLoading(false);
   };
-}
+  return renderFindPerson();
+};
+
+export default AssignPerson;
