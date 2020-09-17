@@ -1,6 +1,6 @@
 ﻿import * as React from 'react';
+import { useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { Context } from '../../Context';
 import { IEquipment } from '../../models/Equipment';
 import EquipmentAssignmentValues from './EquipmentAssignmentValues';
 import EquipmentEditValues from './EquipmentEditValues';
@@ -14,92 +14,71 @@ interface IProps {
   selectedEquipment: IEquipment;
 }
 
-interface IState {
-  submitting: boolean;
-}
+const RevokeEquipment = (props: IProps) => {
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
-export default class RevokeEquipment extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      submitting: false
-    };
+  if (!props.selectedEquipment || !props.selectedEquipment.assignment) {
+    return null;
   }
-
-  public render() {
-    if (
-      !this.props.selectedEquipment ||
-      !this.props.selectedEquipment.assignment
-    ) {
-      return null;
-    }
-    return (
-      <div>
-        <Modal
-          isOpen={this.props.modal}
-          toggle={this.props.closeModal}
-          size='lg'
-          className='equipment-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>Revoke {this.props.selectedEquipment.name}</h2>
-            <Button color='link' onClick={this.props.closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
-
-          <ModalBody>
-            <EquipmentEditValues
-              selectedEquipment={this.props.selectedEquipment}
-              disableEditing={true}
-              openEditModal={this.props.openEditModal}
-            />
-            <EquipmentAssignmentValues
-              selectedEquipment={this.props.selectedEquipment}
-              openUpdateModal={this.props.openUpdateModal}
-            />
-            {!this._isValidToRevoke() && (
-              <div>
-                The equipment you have chosen does not have an assignment
-              </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color='primary'
-              onClick={() => this._revokeEquipment()}
-              disabled={!this._isValidToRevoke() || this.state.submitting}
-            >
-              Revoke{' '}
-              {this.state.submitting && (
-                <i className='fas fa-circle-notch fa-spin' />
-              )}
-            </Button>{' '}
-          </ModalFooter>
-        </Modal>
-      </div>
-    );
-  }
-
-  private _revokeEquipment = async () => {
-    if (!this._isValidToRevoke()) {
+  const revokeEquipment = async () => {
+    if (!isValidToRevoke()) {
       return;
     }
-    this.setState({ submitting: true });
+    setSubmitting(true);
     try {
-      await this.props.revokeEquipment(this.props.selectedEquipment);
+      await props.revokeEquipment(props.selectedEquipment);
     } catch (err) {
-      this.setState({ submitting: false });
+      setSubmitting(false);
       return;
     }
-    this.setState({ submitting: false });
-    this.props.closeModal();
+    setSubmitting(false);
+    props.closeModal();
   };
 
-  private _isValidToRevoke = () => {
-    return this.props.selectedEquipment.assignment !== null;
+  const isValidToRevoke = () => {
+    return props.selectedEquipment.assignment !== null;
   };
-}
+  return (
+    <div>
+      <Modal
+        isOpen={props.modal}
+        toggle={props.closeModal}
+        size='lg'
+        className='equipment-color'
+      >
+        <div className='modal-header row justify-content-between'>
+          <h2>Revoke {props.selectedEquipment.name}</h2>
+          <Button color='link' onClick={props.closeModal}>
+            <i className='fas fa-times fa-lg' />
+          </Button>
+        </div>
+
+        <ModalBody>
+          <EquipmentEditValues
+            selectedEquipment={props.selectedEquipment}
+            disableEditing={true}
+            openEditModal={props.openEditModal}
+          />
+          <EquipmentAssignmentValues
+            selectedEquipment={props.selectedEquipment}
+            openUpdateModal={props.openUpdateModal}
+          />
+          {!isValidToRevoke() && (
+            <div>The equipment you have chosen does not have an assignment</div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color='primary'
+            onClick={() => revokeEquipment()}
+            disabled={!isValidToRevoke() || submitting}
+          >
+            Revoke {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          </Button>{' '}
+        </ModalFooter>
+      </Modal>
+    </div>
+  );
+};
+
+export default RevokeEquipment;
