@@ -8,22 +8,10 @@ interface IProps {
   disableEditing: boolean;
 }
 
-export default class EquipmentBigFix extends React.Component<IProps, {}> {
-  public render() {
-    return (
-      <>
-        <div className='d-flex'>
-          <label> Bigfix Id</label>
-          <span />
-          {this._renderBigFixInfoOrSearchId()}
-        </div>
-      </>
-    );
-  }
-
-  private _renderBigFixInfoOrSearchId = () => {
-    if (!this.props.bigfixId) {
-      if (this.props.disableEditing) {
+const EquipmentBigFix = (props: IProps) => {
+  const renderBigFixInfoOrSearchId = () => {
+    if (!props.bigfixId) {
+      if (props.disableEditing) {
         return (
           <span className='ml-3'>
             ( Click Edit Equipment above to search for Bigfix Id )
@@ -31,10 +19,22 @@ export default class EquipmentBigFix extends React.Component<IProps, {}> {
         );
       }
       // if editing is enabled
-      return <EquipmentBigFixSearchId addBigFixId={this.props.addBigFixId} />;
+      return <EquipmentBigFixSearchId addBigFixId={props.addBigFixId} />;
     }
 
     // if Bigfix Id exists
-    return <EquipmentBigFixInfo bigfixId={this.props.bigfixId} />;
+    return <EquipmentBigFixInfo bigfixId={props.bigfixId} />;
   };
-}
+
+  return (
+    <>
+      <div className='d-flex'>
+        <label> Bigfix Id</label>
+        <span />
+        {renderBigFixInfoOrSearchId()}
+      </div>
+    </>
+  );
+};
+
+export default EquipmentBigFix;

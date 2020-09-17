@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody, Table } from 'reactstrap';
 import { Context } from '../../Context';
@@ -7,51 +8,22 @@ interface IProps {
   bigfixId: string;
 }
 
-interface IState {
-  bigfixModal: boolean;
-  computerInfo: object;
-  isFetched: boolean;
-  isValidRequest: boolean;
-  isFound: boolean;
-  isForbidden: boolean;
-}
+const EquipmentBigFixInfo = (props: IProps) => {
+  const [bigfixModal, setBigfixModal] = useState<boolean>(false);
+  const [computerInfo, setComputerInfo] = useState<object>({});
+  const [isFetched, setIsFetched] = useState<boolean>(false);
+  const [isFound, setIsFound] = useState<boolean>(true);
+  const [isForbidden, setIsForbidden] = useState<boolean>(false);
+  const [isValidRequest, setIsValidRequest] = useState<boolean>(true);
+  const context = useContext(Context);
 
-export default class EquipmentBigFixInfo extends React.Component<
-  IProps,
-  IState
-> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      bigfixModal: false,
-      computerInfo: {},
-      isFetched: false,
-      isFound: true,
-      isForbidden: false,
-      isValidRequest: true
-    };
-  }
-
-  public render() {
-    return (
-      <>
-        {this._renderInfoIcon()}
-
-        {this._renderBigFixModal()}
-      </>
-    );
-  }
-
-  private _renderInfoIcon = () => {
+  const renderInfoIcon = () => {
     return (
       <a
         className='bigfix-info'
         onClick={() => {
-          this._modalToggle();
-          this._getBigFixComputerInfo(this.props.bigfixId || '');
+          modalToggle();
+          getBigFixComputerInfo(props.bigfixId || '');
         }}
       >
         <i className='fas fa-info-circle ml-2' />
@@ -59,40 +31,40 @@ export default class EquipmentBigFixInfo extends React.Component<
     );
   };
 
-  private _renderBigFixModal = () => {
+  const renderBigFixModal = () => {
     return (
       <Modal
-        isOpen={this.state.bigfixModal}
-        toggle={this._modalToggle}
+        isOpen={bigfixModal}
+        toggle={modalToggle}
         size='lg'
         className='equipment-color'
       >
         <div className='modal-header row justify-content-between'>
           <h2>Computer Details</h2>
-          <Button color='link' onClick={this._modalToggle}>
+          <Button color='link' onClick={modalToggle}>
             <i className='fas fa-times fa-lg' />
           </Button>
         </div>
 
         <ModalBody className='d-flex justify-content-center'>
-          {this._renderModalBody()}
+          {renderModalBody()}
         </ModalBody>
       </Modal>
     );
   };
 
-  private _renderModalBody = () => {
-    if (this.state.isFetched) {
-      return this._renderComputerInfo();
+  const renderModalBody = () => {
+    if (isFetched) {
+      return renderComputerInfo();
     } else {
       return <i className='fas fa-3x fa-spinner fa-pulse' />;
     }
   };
 
-  private _renderComputerInfo = () => {
-    if (this.state.isValidRequest) {
+  const renderComputerInfo = () => {
+    if (isValidRequest) {
       // if found
-      if (this.state.isFound) {
+      if (isFound) {
         return (
           <Table>
             <thead>
@@ -102,21 +74,19 @@ export default class EquipmentBigFixInfo extends React.Component<
               </tr>
             </thead>
             <tbody>
-              {Object.keys(this.state.computerInfo).map(key => {
+              {Object.keys(computerInfo).map(key => {
                 return (
                   <tr key={key}>
                     <td>{key}</td>
-                    <td>{this.state.computerInfo[key]}</td>
+                    <td>{computerInfo[key]}</td>
                   </tr>
                 );
               })}
             </tbody>
           </Table>
         );
-      } else if (this.state.isForbidden) {
-        return (
-          <p>Error fetching Computer details due to permissions issue.</p>
-        );
+      } else if (isForbidden) {
+        return <p>Error fetching Computer details due to permissions issue.</p>;
       } else {
         return (
           <p>
@@ -129,29 +99,23 @@ export default class EquipmentBigFixInfo extends React.Component<
     return <p>No data to present</p>;
   };
 
-  private _getBigFixComputerInfo = async (id: string) => {
+  const getBigFixComputerInfo = async (id: string) => {
     let response = null;
     try {
-      response = await this.context.fetch(
-        `/api/${this.context.team.slug}/equipment/GetComputer/${id}`
+      response = await context.fetch(
+        `/api/${context.team.slug}/equipment/GetComputer/${id}`
       );
     } catch (err) {
       if (err.message === 'Not Found') {
-        this.setState({
-          isFetched: true,
-          isFound: false
-        });
+        setIsFetched(true);
+        setIsFound(false);
       } else if (err.message === 'Forbidden') {
-        this.setState({
-          isFetched: true,
-          isFound: false,
-          isForbidden: true
-        });
+        setIsFetched(true);
+        setIsFound(false);
+        setIsForbidden(true);
       } else {
-        this.setState({
-          isFetched: true,
-          isValidRequest: false
-        });
+        setIsFetched(true);
+        setIsValidRequest(false);
         toast.error(
           'Error fetching Computer details. Please refresh the page to try again.'
         );
@@ -167,20 +131,26 @@ export default class EquipmentBigFixInfo extends React.Component<
         return accumulator;
       }, {});
 
-    this.setState({
-      computerInfo: sortedResult,
-      isFetched: true
-    });
+    setComputerInfo(sortedResult);
+    setIsFetched(true);
   };
 
-  private _modalToggle = () => {
+  const modalToggle = () => {
     // reset the states to its initial values.
-    this.setState(prevState => ({
-      bigfixModal: !prevState.bigfixModal,
-      isFetched: false,
-      isFound: true,
-      isForbidden: false,
-      isValidRequest: true
-    }));
+    setBigfixModal(prevModal => !prevModal);
+    setIsFetched(false);
+    setIsFound(true);
+    setIsForbidden(false);
+    setIsValidRequest(true);
   };
-}
+
+  return (
+    <>
+      {renderInfoIcon()}
+
+      {renderBigFixModal()}
+    </>
+  );
+};
+
+export default EquipmentBigFixInfo;
