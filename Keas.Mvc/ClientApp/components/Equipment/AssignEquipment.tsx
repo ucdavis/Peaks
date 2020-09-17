@@ -2,8 +2,6 @@ import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button, Form, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { serialize } from 'v8';
-import { Context } from '../../Context';
 import {
   equipmentSchema,
   IEquipment,
