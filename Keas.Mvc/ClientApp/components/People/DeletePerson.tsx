@@ -1,4 +1,4 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import { useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { IPerson, IPersonInfo } from '../../models/People';
@@ -48,20 +48,20 @@ const DeletePerson = (props: IProps) => {
 
   return (
     <div>
-      <Button color='link' onClick={toggleModal}>
-        <i className='fas fa-trash fa-sm fa-fw mr-2' aria-hidden='true' />
+      <Button color="link" onClick={toggleModal}>
+        <i className="fas fa-trash fa-sm fa-fw mr-2" aria-hidden="true" />
         Delete Person
       </Button>
       <Modal
         isOpen={modal}
         toggle={toggleModal}
-        size='lg'
-        className='person-color'
+        size="lg"
+        className="people-color"
       >
-        <div className='modal-header row justify-content-between'>
+        <div className="modal-header row justify-content-between">
           <h2>Delete {props.selectedPersonInfo.person.name}</h2>
-          <Button color='link' onClick={toggleModal}>
-            <i className='fas fa-times fa-lg' />
+          <Button color="link" onClick={toggleModal}>
+            <i className="fas fa-times fa-lg" />
           </Button>
         </div>
 
@@ -80,14 +80,11 @@ const DeletePerson = (props: IProps) => {
         </ModalBody>
         <ModalFooter>
           <Button
-            color='primary'
+            color="primary"
             onClick={deletePerson}
             disabled={submitting || !checkValidToDelete()}
           >
-            Go!{' '}
-            {submitting && (
-              <i className='fas fa-circle-notch fa-spin' />
-            )}
+            Go! {submitting && <i className="fas fa-circle-notch fa-spin" />}
           </Button>{' '}
         </ModalFooter>
       </Modal>
