@@ -11,63 +11,25 @@ interface IProps {
   onRemove: (i: number) => void;
 }
 
-export default class EquipmentAttribute extends React.Component<IProps, {}> {
-  public render() {
-    return (
-      <tbody>
-        <tr key={`attribute-${this.props.index}`}>
-          <td>
-            {this.props.disabledEdit && this._renderDisabled()}
-            {!this.props.disabledEdit && this._renderTypeahead()}
-          </td>
-          <td>
-            <input
-              type='text'
-              className='form-control'
-              disabled={this.props.disabledEdit}
-              value={this.props.attribute.value}
-              onChange={e =>
-                this.props.changeProperty(
-                  this.props.index,
-                  'value',
-                  e.target.value
-                )
-              }
-            />
-          </td>
-          {!this.props.disabledEdit && (
-            <td>
-              <button
-                type='button'
-                className='btn btn-outline-danger'
-                onClick={() => this.props.onRemove(this.props.index)}
-              >
-                <i className='fas fa-trash' />
-              </button>
-            </td>
-          )}
-        </tr>
-      </tbody>
-    );
-  }
-
-  private _renderTypeahead = () => {
+const EquipmentAttribute = (props: IProps) => {
+  // export default class EquipmentAttribute extends React.Component<IProps, {}> {
+  const renderTypeahead = () => {
     const style =
-      !!this.props.attribute.value && !this.props.attribute.key
+      !!props.attribute.value && !props.attribute.key
         ? 'form-control is-invalid'
         : 'form-control';
     return (
       <Typeahead
-        id={`attribute-${this.props.index}`} // for accessibility
+        id={`attribute-${props.index}`} // for accessibility
         allowNew={false}
-        disabled={this.props.disabledEdit}
-        options={this.props.commonKeys}
-        selected={this.props.attribute.key ? [this.props.attribute.key] : []}
+        disabled={props.disabledEdit}
+        options={props.commonKeys}
+        selected={props.attribute.key ? [props.attribute.key] : []}
         onChange={selected => {
           if (selected && selected.length === 1) {
-            this.props.changeProperty(this.props.index, 'key', selected[0]);
+            props.changeProperty(props.index, 'key', selected[0]);
           } else {
-            this.props.changeProperty(this.props.index, 'key', null);
+            props.changeProperty(props.index, 'key', null);
           }
         }}
         inputProps={{
@@ -77,14 +39,53 @@ export default class EquipmentAttribute extends React.Component<IProps, {}> {
     );
   };
 
-  private _renderDisabled = () => {
+  const renderDisabled = () => {
     return (
       <input
         type='text'
         className='form-control'
-        disabled={this.props.disabledEdit}
-        value={this.props.attribute.key}
+        disabled={props.disabledEdit}
+        value={props.attribute.key}
       />
     );
   };
-}
+
+  return (
+    <tbody>
+      <tr key={`attribute-${props.index}`}>
+        <td>
+          {props.disabledEdit && renderDisabled()}
+          {!props.disabledEdit && renderTypeahead()}
+        </td>
+        <td>
+          <input
+            type='text'
+            className='form-control'
+            disabled={props.disabledEdit}
+            value={props.attribute.value}
+            onChange={e =>
+              props.changeProperty(
+                props.index,
+                'value',
+                e.target.value
+              )
+            }
+          />
+        </td>
+        {!props.disabledEdit && (
+          <td>
+            <button
+              type='button'
+              className='btn btn-outline-danger'
+              onClick={() => props.onRemove(props.index)}
+            >
+              <i className='fas fa-trash' />
+            </button>
+          </td>
+        )}
+      </tr>
+    </tbody>
+  );
+};
+
+export default EquipmentAttribute;
