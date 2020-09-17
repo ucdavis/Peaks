@@ -10,24 +10,24 @@ interface IProps {
   placeHolder: string;
 }
 
-export default class SearchEquipmentType extends React.Component<IProps, {}> {
-  public render() {
-    return (
-      <div>
-        <Typeahead
-          id='searchEquipmentType' // for accessibility
-          options={this.props.disabled ? [] : this.props.equipmentTypes}
-          disabled={this.props.disabled}
-          multiple={true}
-          clearButton={true}
-          onChange={selected => {
-            this.props.onSelect(selected);
-          }}
-          selected={this.props.selected}
-          highlightOnlyResult={true}
-          placeholder={this.props.placeHolder}
-        />
-      </div>
-    );
-  }
-}
+const SearchEquipmentType = (props: IProps) => {
+  return (
+    <div>
+      <Typeahead
+        id='searchEquipmentType' // for accessibility
+        options={props.disabled ? [] : props.equipmentTypes}
+        disabled={props.disabled}
+        multiple={true}
+        clearButton={true}
+        onChange={selected => {
+          props.onSelect(selected);
+        }}
+        selected={props.selected}
+        highlightOnlyResult={true}
+        placeholder={props.placeHolder}
+      />
+    </div>
+  );
+};
+
+export default SearchEquipmentType;

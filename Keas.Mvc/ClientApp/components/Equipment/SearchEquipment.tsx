@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext, useState } from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
@@ -14,36 +15,20 @@ interface IProps {
   space: ISpace; // used to set default space if we are on spaces tab
 }
 
-interface IState {
-  equipment: IEquipmentLabel[];
-  isSearchLoading: boolean;
-}
-
 // Search for existing equipment then send selection back to parent
-export default class SearchEquipment extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const SearchEquipment = (props: IProps) => {
+  const [equipment, setEquipment] = useState<IEquipmentLabel[]>([]);
+  const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
+  const context = useContext(Context);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      equipment: [],
-      isSearchLoading: false
-    };
-  }
-
-  public render() {
-    return this._renderSelectEquipment();
-  }
-
-  private _renderSelectEquipment = () => {
+  const renderSelectEquipment = () => {
     return (
       <div>
         <label>Pick an equipment to assign</label>
         <div>
           <AsyncTypeahead
             id='searchEquipment' // for accessibility
-            isLoading={this.state.isSearchLoading}
+            isLoading={isSearchLoading}
             minLength={3}
             placeholder='Search for equipment by name or by serial number'
             labelKey='label'
@@ -72,25 +57,25 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
                 </div>
               </div>
             )}
-            onSearch={this._onSearch}
+            onSearch={onSearch}
             onChange={selected => {
               if (selected && selected.length === 1) {
                 if (
                   !!selected[0].equipment &&
                   !!selected[0].equipment.assignment
                 ) {
-                  this.props.openDetailsModal(selected[0].equipment);
+                  props.openDetailsModal(selected[0].equipment);
                 } else {
-                  this._onSelected(selected[0]);
+                  onSelected(selected[0]);
                 }
               }
             }}
-            options={this.state.equipment}
+            options={equipment}
           />
         </div>
         <div>or</div>
         <div>
-          <Button color='link' onClick={this._createNew}>
+          <Button color='link' onClick={createNew}>
             <i className='fas fa-plus fa-sm' aria-hidden='true' /> Create New
             Equipment
           </Button>
@@ -99,37 +84,35 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
     );
   };
 
-  private _onSearch = async (query: string) => {
-    this.setState({ isSearchLoading: true });
-    let equipment: IEquipmentLabel[] = null;
+  const onSearch = async (query: string) => {
+    setIsSearchLoading(true);
+    let equipmentData: IEquipmentLabel[] = null;
     try {
-      equipment = await this.context.fetch(
-        `/api/${this.context.team.slug}/equipment/search?q=${query}`
+      equipmentData = await context.fetch(
+        `/api/${context.team.slug}/equipment/search?q=${query}`
       );
     } catch (err) {
       toast.error('Error searching equipment.');
-      this.setState({ isSearchLoading: false });
+      setIsSearchLoading(false);
       return;
     }
-    this.setState({
-      equipment,
-      isSearchLoading: false
-    });
+    setEquipment(equipmentData);
+    setIsSearchLoading(false);
   };
 
-  private _onSelected = (equipmentLabel: IEquipmentLabel) => {
+  const onSelected = (equipmentLabel: IEquipmentLabel) => {
     // onChange is called when deselected
     if (!equipmentLabel || !equipmentLabel.label) {
-      this.props.onDeselect();
+      props.onDeselect();
     } else {
-      this.props.onSelect({
+      props.onSelect({
         ...equipmentLabel.equipment
       });
     }
   };
 
-  private _createNew = () => {
-    this.props.onSelect({
+  const createNew = () => {
+    props.onSelect({
       attributes: [
         {
           equipmentId: 0,
@@ -145,11 +128,15 @@ export default class SearchEquipment extends React.Component<IProps, IState> {
       notes: '',
       protectionLevel: '',
       serialNumber: '',
-      space: this.props.space ? this.props.space : null, // if we are on spaces tab, auto to the right space
+      space: props.space ? props.space : null, // if we are on spaces tab, auto to the right space
       systemManagementId: '',
       tags: '',
       teamId: 0,
       type: ''
     });
   };
-}
+
+  return renderSelectEquipment();
+};
+
+export default SearchEquipment;
