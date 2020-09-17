@@ -20,24 +20,7 @@ interface IProps {
   addBigFixId: (property: string, id: string) => void;
 }
 
-interface IState {
-  isFetched: boolean;
-  isFound: boolean;
-  isSearching: boolean;
-  isValidSearch: boolean;
-  searchModal: boolean;
-  selectedField: string;
-  valueToBeSearched: string;
-  listOfComputers: IBigFixSearchedName[];
-}
-
 const EquipmentBigFixSearchId = (props: IProps) => {
-  // export default class EquipmentBigFixSearchId extends React.Component<
-  //   IProps,
-  //   IState
-  // > {
-  //   public static contextType = Context;
-  //   public context!: React.ContextType<typeof Context>;
   const [isFetched, setIsFetched] = useState<boolean>(false);
   const [isFound, setIsFound] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);

@@ -12,7 +12,6 @@ interface IProps {
 }
 
 const EquipmentAttribute = (props: IProps) => {
-  // export default class EquipmentAttribute extends React.Component<IProps, {}> {
   const renderTypeahead = () => {
     const style =
       !!props.attribute.value && !props.attribute.key
