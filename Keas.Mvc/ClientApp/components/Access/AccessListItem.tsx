@@ -13,55 +13,55 @@ interface IProps {
   showDetails: (access: IAccess) => void;
 }
 
-export default class AccessListItem extends React.Component<IProps, {}> {
-  public render() {
-    const hasAssignment = this.props.accessEntity.assignments.length > 0;
-    const canAdd = !this.props.personView || !hasAssignment;
-    const dates = this.props.accessEntity.assignments.map(x => x.expiresAt);
-    const expirationDate = hasAssignment
-      ? DateUtil.formatFirstExpiration(dates)
-      : '';
+const AccessListItem = (props: IProps) => {
+  const hasAssignment = props.accessEntity.assignments.length > 0;
+  const canAdd = !props.personView || !hasAssignment;
+  const dates = props.accessEntity.assignments.map(x => x.expiresAt);
+  const expirationDate = hasAssignment
+    ? DateUtil.formatFirstExpiration(dates)
+    : '';
 
-    const actions: IAction[] = [];
-    if (!!this.props.onAdd && canAdd) {
-      actions.push({
-        onClick: () => this.props.onAdd(this.props.accessEntity),
-        title: 'Assign'
-      });
-    }
-
-    if (!!this.props.onDelete) {
-      actions.push({
-        onClick: () => this.props.onDelete(this.props.accessEntity),
-        title: 'Delete'
-      });
-    }
-
-    if (!!this.props.onRevoke && hasAssignment) {
-      actions.push({
-        onClick: () => this.props.onRevoke(this.props.accessEntity),
-        title: 'Revoke'
-      });
-    }
-
-    return (
-      <tr>
-        <td>
-          <Button
-            color='link'
-            onClick={() => this.props.showDetails(this.props.accessEntity)}
-          >
-            Details
-          </Button>
-        </td>
-        <td>{this.props.accessEntity.name}</td>
-        <td>{hasAssignment ? 'Assigned' : 'Unassigned'}</td>
-        <td>{this.props.accessEntity.assignments.length}</td>
-        <td>{expirationDate}</td>
-        <td>
-          <ListActionsDropdown actions={actions} />
-        </td>
-      </tr>
-    );
+  const actions: IAction[] = [];
+  if (!!props.onAdd && canAdd) {
+    actions.push({
+      onClick: () => props.onAdd(props.accessEntity),
+      title: 'Assign'
+    });
   }
-}
+
+  if (!!props.onDelete) {
+    actions.push({
+      onClick: () => props.onDelete(props.accessEntity),
+      title: 'Delete'
+    });
+  }
+
+  if (!!props.onRevoke && hasAssignment) {
+    actions.push({
+      onClick: () => props.onRevoke(props.accessEntity),
+      title: 'Revoke'
+    });
+  }
+
+  return (
+    <tr>
+      <td>
+        <Button
+          color='link'
+          onClick={() => props.showDetails(props.accessEntity)}
+        >
+          Details
+        </Button>
+      </td>
+      <td>{props.accessEntity.name}</td>
+      <td>{hasAssignment ? 'Assigned' : 'Unassigned'}</td>
+      <td>{props.accessEntity.assignments.length}</td>
+      <td>{expirationDate}</td>
+      <td>
+        <ListActionsDropdown actions={actions} />
+      </td>
+    </tr>
+  );
+};
+
+export default AccessListItem;
