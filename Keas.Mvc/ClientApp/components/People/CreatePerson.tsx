@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { Context } from '../../Context';
 import { IPerson, personSchema } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { validateEmail } from '../../util/email';
@@ -24,194 +24,154 @@ interface IState {
   validState: boolean;
 }
 
-export default class CreatePerson extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const CreatePerson = (props: IProps) => {
+  const [error, setError] = useState<IValidationError>({
+    message: '',
+    path: ''
+  });
+  const [moreInfoString, setMoreInfoString] = useState<string>('');
+  const [person, setPerson] = useState<IPerson>(null);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [validState, setValidState] = useState<boolean>(false);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: {
-        message: '',
-        path: ''
-      },
-      moreInfoString: '',
-      person: null,
-      submitting: false,
-      validState: false
+  useEffect(() => {
+    const validateState = () => {
+      const error = yupAssetValidation(personSchema, person, {
+        context: { validateEmail }
+      });
+      setError(error);
+      setValidState(error.message === '');
     };
-  }
 
-  public render() {
-    return (
-      <div>
-        <Button color='link' onClick={this.props.onAddNew}>
-          <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Person
-        </Button>
-        <Modal
-          isOpen={this.props.modal}
-          toggle={this._confirmClose}
-          size='lg'
-          className='people-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>Add Person</h2>
-            <Button color='link' onClick={this._closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
-          <ModalBody>
-            <div className='container-fluid'>
-              <div className='form-group'>
-                <SearchUsers updatePerson={this._onSelectPerson} />
-              </div>
+    validateState();
+  }, [person, moreInfoString]);
 
-              <div className='form-group'>
-                <PersonEditValues
-                  selectedPerson={this.state.person}
-                  changeProperty={this._changeProperty}
-                  changeSupervisor={this._changeSupervisor}
-                  disableEditing={false}
-                  tags={this.props.tags}
-                  error={this.state.error}
-                  isDeleting={false}
-                />
-              </div>
-
-              {this.state.moreInfoString}
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              color='primary'
-              onClick={this._createSelected}
-              disabled={!this.state.validState || this.state.submitting}
-            >
-              Add{' '}
-              {this.state.submitting && (
-                <i className='fas fa-circle-notch fa-spin' />
-              )}
-            </Button>{' '}
-          </ModalFooter>
-        </Modal>
-      </div>
-    );
-  }
-
-  private _changeProperty = (property: string, value: string) => {
-    this.setState(
-      prevState => ({
-        person: {
-          ...prevState.person,
-          [property]: value
-        }
-      }),
-      this._validateState
-    );
+  const changeProperty = (property: string, value: string) => {
+    setPerson({ ...person, [property]: value });
   };
 
-  private _changeSupervisor = (supervisor: IPerson) => {
-    this.setState(
-      prevState => ({
-        person: {
-          ...prevState.person,
-          supervisor,
-          supervisorId: supervisor !== null ? supervisor.id : null
-        }
-      }),
-      this._validateState
-    );
+  const changeSupervisor = (supervisor: IPerson) => {
+    setPerson({
+      ...person,
+      supervisor: supervisor,
+      supervisorId: supervisor !== null ? supervisor.id : null
+    });
   };
 
   // clear everything out on close
-  private _confirmClose = () => {
+  const confirmClose = () => {
     if (!confirm('Please confirm you want to close!')) {
       return;
     }
 
-    this._closeModal();
+    closeModal();
   };
 
-  private _closeModal = () => {
-    this.setState({
-      error: {
-        message: '',
-        path: ''
-      },
-      moreInfoString: '',
-      person: null,
-      submitting: false,
-      validState: false
+  const closeModal = () => {
+    setError({
+      message: '',
+      path: ''
     });
-    this.props.closeModal();
+    setMoreInfoString('');
+    setPerson(null);
+    setSubmitting(false);
+    setValidState(false);
+    props.closeModal();
   };
 
-  private _createSelected = async () => {
-    if (!this.state.validState || this.state.submitting) {
+  const createSelected = async () => {
+    if (!validState || submitting) {
       return;
     }
 
-    this.setState({ submitting: true });
+    setSubmitting(true);
     try {
-      await this.props.onCreate(this.state.person);
+      await props.onCreate(person);
     } catch (err) {
-      this.setState({
-        submitting: false
-      });
+      setSubmitting(false);
       return;
     }
-    this._closeModal();
+    closeModal();
   };
 
   // once we have selected a user from SearchUser
-  private _onSelectPerson = (person: IPerson) => {
-    if (person === null) {
+  const onSelectPerson = (selectedPerson: IPerson) => {
+    if (selectedPerson === null) {
       // if there was a 404, person will be null
       // on other errors, SearchUsers will make a toast
-      this.setState(
-        {
-          moreInfoString:
-            'The user could not be found. Please make sure you are searching the correct kerberos or email.',
-          person: null
-        },
-        this._validateState
+      setMoreInfoString(
+        'The user could not be found. Please make sure you are searching the correct kerberos or email.'
       );
+      setPerson(null);
     } else if (
-      this.props.userIds.findIndex(x => x === person.userId) !== -1 ||
-      (person.active && person.teamId !== 0)
+      props.userIds.findIndex(x => x === selectedPerson.userId) !== -1 ||
+      (selectedPerson.active && selectedPerson.teamId !== 0)
     ) {
-      this.setState(
-        {
-          moreInfoString:
-            'The user you have chosen is already active in this team.',
-          person: null
-        },
-        this._validateState
+      setMoreInfoString(
+        'The user you have chosen is already active in this team.'
       );
-    } else if (person.active && person.teamId === 0) {
-      this.setState(
-        {
-          moreInfoString: 'You are creating a new person.',
-          person
-        },
-        this._validateState
-      );
+      setPerson(null);
+    } else if (selectedPerson.active && selectedPerson.teamId === 0) {
+      setMoreInfoString('You are creating a new person.');
+      setPerson(selectedPerson);
     } else {
-      this.setState(
-        {
-          moreInfoString:
-            'This person was set to inactive. Continuing will set them to active.',
-          person
-        },
-        this._validateState
+      setMoreInfoString(
+        'This person was set to inactive. Continuing will set them to active.'
       );
+      setPerson(selectedPerson);
     }
   };
 
-  private _validateState = () => {
-    const error = yupAssetValidation(personSchema, this.state.person, {
-      context: { validateEmail }
-    });
-    this.setState({ error, validState: error.message === '' });
-  };
-}
+  return (
+    <div>
+      <Button color='link' onClick={props.onAddNew}>
+        <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Person
+      </Button>
+      <Modal
+        isOpen={props.modal}
+        toggle={confirmClose}
+        size='lg'
+        className='people-color'
+      >
+        <div className='modal-header row justify-content-between'>
+          <h2>Add Person</h2>
+          <Button color='link' onClick={closeModal}>
+            <i className='fas fa-times fa-lg' />
+          </Button>
+        </div>
+        <ModalBody>
+          <div className='container-fluid'>
+            <div className='form-group'>
+              <SearchUsers updatePerson={onSelectPerson} />
+            </div>
+
+            <div className='form-group'>
+              <PersonEditValues
+                selectedPerson={person}
+                changeProperty={changeProperty}
+                changeSupervisor={changeSupervisor}
+                disableEditing={false}
+                tags={props.tags}
+                error={error}
+                isDeleting={false}
+              />
+            </div>
+
+            {moreInfoString}
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color='primary'
+            onClick={createSelected}
+            disabled={!validState || submitting}
+          >
+            Add {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          </Button>{' '}
+        </ModalFooter>
+      </Modal>
+    </div>
+  );
+};
+
+export default CreatePerson;
