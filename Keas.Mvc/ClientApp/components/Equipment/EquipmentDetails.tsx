@@ -1,4 +1,5 @@
 ﻿import * as React from 'react';
+import { useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
 import { Context } from '../../Context';
@@ -16,66 +17,35 @@ interface IProps {
   updateSelectedEquipment: (equipment: IEquipment, id?: number) => void;
 }
 
-export default class EquipmentDetails extends React.Component<IProps, {}> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const EquipmentDetails = (props: IProps) => {
+  const context = useContext(Context);
 
-  public componentDidMount() {
-    if (!this.props.selectedEquipment) {
+  useEffect(() => {
+    if (!props.selectedEquipment) {
       return;
     }
-    this._fetchDetails(this.props.selectedEquipment.id);
+
+    fetchDetails(props.selectedEquipment.id);
+  }, []);
+
+  if (!props.selectedEquipment) {
+    return null;
   }
 
-  public render() {
-    if (!this.props.selectedEquipment) {
-      return null;
-    }
-    const equipment = this.props.selectedEquipment;
-    return (
-      <div>
-        <Modal
-          isOpen={this.props.modal}
-          toggle={this.props.closeModal}
-          size='lg'
-          className='equipment-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>Details for {equipment.name}</h2>
-            <Button color='link' onClick={this.props.closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
+  const equipment = props.selectedEquipment;
 
-          <ModalBody>
-            <EquipmentEditValues
-              selectedEquipment={equipment}
-              disableEditing={true}
-              openEditModal={this.props.openEditModal}
-            />
-            <EquipmentAssignmentValues
-              selectedEquipment={equipment}
-              openUpdateModal={this.props.openUpdateModal}
-            />
-            <HistoryContainer controller='equipment' id={equipment.id} />
-          </ModalBody>
-        </Modal>
-      </div>
-    );
-  }
-
-  private _fetchDetails = async (id: number) => {
-    const url = `/api/${this.context.team.slug}/equipment/details/${id}`;
+  const fetchDetails = async (id: number) => {
+    const url = `/api/${context.team.slug}/equipment/details/${id}`;
     let equipment: IEquipment = null;
     try {
-      equipment = await this.context.fetch(url);
+      equipment = await context.fetch(url);
     } catch (err) {
       if (err.message === 'Not Found') {
         toast.error(
           'The equipment you were trying to view could not be found. It may have been deleted.'
         );
-        this.props.updateSelectedEquipment(null, id);
-        this.props.closeModal();
+        props.updateSelectedEquipment(null, id);
+        props.closeModal();
       } else {
         toast.error(
           'Error fetching equipment details. Please refresh the page to try again.'
@@ -83,6 +53,39 @@ export default class EquipmentDetails extends React.Component<IProps, {}> {
       }
       return;
     }
-    this.props.updateSelectedEquipment(equipment);
+    props.updateSelectedEquipment(equipment);
   };
-}
+
+  return (
+    <div>
+      <Modal
+        isOpen={props.modal}
+        toggle={props.closeModal}
+        size='lg'
+        className='equipment-color'
+      >
+        <div className='modal-header row justify-content-between'>
+          <h2>Details for {equipment.name}</h2>
+          <Button color='link' onClick={props.closeModal}>
+            <i className='fas fa-times fa-lg' />
+          </Button>
+        </div>
+
+        <ModalBody>
+          <EquipmentEditValues
+            selectedEquipment={equipment}
+            disableEditing={true}
+            openEditModal={props.openEditModal}
+          />
+          <EquipmentAssignmentValues
+            selectedEquipment={equipment}
+            openUpdateModal={props.openUpdateModal}
+          />
+          <HistoryContainer controller='equipment' id={equipment.id} />
+        </ModalBody>
+      </Modal>
+    </div>
+  );
+};
+
+export default EquipmentDetails;

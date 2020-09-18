@@ -8,26 +8,26 @@ interface IProps {
   selected: string[];
 }
 
-export default class SearchAttributes extends React.Component<IProps, {}> {
-  public render() {
-    return (
-      <div>
-        <Typeahead
-          id='searchAttributes' // for accessibility
-          options={[]}
-          disabled={this.props.disabled}
-          multiple={true}
-          clearButton={true}
-          onChange={selected => {
-            this.props.onSelect(selected);
-          }}
-          selected={this.props.selected}
-          placeholder='Search for Attributes'
-          allowNew={true}
-          emptyLabel={''}
-          newSelectionPrefix='Search for: '
-        />
-      </div>
-    );
-  }
-}
+const SearchAttributes = (props: IProps) => {
+  return (
+    <div>
+      <Typeahead
+        id='searchAttributes' // for accessibility
+        options={[]}
+        disabled={props.disabled}
+        multiple={true}
+        clearButton={true}
+        onChange={selected => {
+          props.onSelect(selected);
+        }}
+        selected={props.selected}
+        placeholder='Search for Attributes'
+        allowNew={true}
+        emptyLabel={''}
+        newSelectionPrefix='Search for: '
+      />
+    </div>
+  );
+};
+
+export default SearchAttributes;
