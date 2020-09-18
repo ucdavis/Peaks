@@ -1,6 +1,6 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { Context } from '../../Context';
 import {
   equipmentSchema,
   IEquipment,
@@ -23,152 +23,124 @@ interface IProps {
   tags: string[];
 }
 
-interface IState {
-  error: IValidationError;
-  equipment: IEquipment;
-  submitting: boolean;
-  validState: boolean;
-}
-
-export default class EditEquipment extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      equipment: this.props.selectedEquipment
-        ? {
-            ...this.props.selectedEquipment,
-            attributes: [...this.props.selectedEquipment.attributes]
-          }
-        : null,
-      error: {
-        message: '',
-        path: ''
-      },
-      submitting: false,
-      validState: false
-    };
-  }
-
-  public render() {
-    if (!this.state.equipment) {
-      return null;
-    }
-    return (
-      <Modal
-        isOpen={this.props.modal}
-        toggle={this._confirmClose}
-        size='lg'
-        className='equipment-color'
-      >
-        <div className='modal-header row justify-content-between'>
-          <h2>Edit Equipment</h2>
-          <Button color='link' onClick={this._closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
-        <ModalBody>
-          <div className='container-fluid'>
-            <EquipmentEditValues
-              selectedEquipment={this.state.equipment}
-              changeProperty={this._changeProperty}
-              disableEditing={false}
-              updateAttributes={this._updateAttributes}
-              commonAttributeKeys={this.props.commonAttributeKeys}
-              equipmentTypes={this.props.equipmentTypes}
-              tags={this.props.tags}
-              space={this.props.space}
-              error={this.state.error}
-            />
-            <EquipmentAssignmentValues
-              selectedEquipment={this.props.selectedEquipment}
-              openUpdateModal={this.props.openUpdateModal}
-            />
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            color='primary'
-            onClick={this._editSelected}
-            disabled={!this.state.validState || this.state.submitting}
-          >
-            Go!{' '}
-            {this.state.submitting && (
-              <i className='fas fa-circle-notch fa-spin' />
-            )}
-          </Button>{' '}
-        </ModalFooter>
-      </Modal>
-    );
-  }
-
-  private _changeProperty = (property: string, value: string) => {
-    this.setState(
-      prevState => ({
-        equipment: {
-          ...prevState.equipment,
-          [property]: value
+const EditEquipment = (props: IProps) => {
+  const [equipment, setEquipment] = useState<IEquipment>(
+    props.selectedEquipment
+      ? {
+          ...props.selectedEquipment,
+          attributes: [...props.selectedEquipment.attributes]
         }
-      }),
-      this._validateState
-    );
+      : null
+  );
+  const [error, setError] = useState<IValidationError>({
+    message: '',
+    path: ''
+  });
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [validState, setValidtState] = useState<boolean>(false);
+
+  useEffect(() => {
+    const validateState = () => {
+      const error = yupAssetValidation(equipmentSchema, equipment);
+      setError(error);
+      setValidtState(error.message === '');
+    };
+
+    validateState();
+  }, [equipment]);
+
+  if (!equipment) {
+    return null;
+  }
+
+  const changeProperty = (property: string, value: string) => {
+    setEquipment({ ...equipment, [property]: value });
   };
 
   // clear everything out on close
-  private _confirmClose = () => {
+  const confirmClose = () => {
     if (!confirm('Please confirm you want to close!')) {
       return;
     }
 
-    this._closeModal();
+    closeModal();
   };
 
-  private _closeModal = () => {
-    this.setState({
-      equipment: null,
-      error: {
-        message: '',
-        path: ''
-      },
-      submitting: false,
-      validState: false
+  const closeModal = () => {
+    setEquipment(null);
+    setError({
+      message: '',
+      path: ''
     });
-    this.props.closeModal();
+    setSubmitting(false);
+    setValidtState(false);
+    props.closeModal();
   };
 
-  private _updateAttributes = (attributes: IEquipmentAttribute[]) => {
-    this.setState(
-      prevState => ({
-        equipment: {
-          ...prevState.equipment,
-          attributes
-        }
-      }),
-      this._validateState
-    );
+  const updateAttributes = (attributes: IEquipmentAttribute[]) => {
+    setEquipment({ ...equipment, attributes: attributes });
   };
 
   // assign the selected key even if we have to create it
-  private _editSelected = async () => {
-    if (!this.state.validState || this.state.submitting) {
+  const editSelected = async () => {
+    if (!validState || submitting) {
       return;
     }
-    this.setState({ submitting: true });
-    const equipment = this.state.equipment;
-    equipment.attributes = equipment.attributes.filter(x => !!x.key);
+    setSubmitting(true);
+    const equipmentData = equipment;
+    equipmentData.attributes = equipmentData.attributes.filter(x => !!x.key);
     try {
-      await this.props.onEdit(equipment);
+      await props.onEdit(equipmentData);
     } catch (e) {
-      this.setState({ submitting: false });
+      setSubmitting(false);
       return;
     }
-    this._closeModal();
+    closeModal();
   };
 
-  private _validateState = () => {
-    const error = yupAssetValidation(equipmentSchema, this.state.equipment);
-    this.setState({ error, validState: error.message === '' });
-  };
-}
+  return (
+    <Modal
+      isOpen={props.modal}
+      toggle={confirmClose}
+      size='lg'
+      className='equipment-color'
+    >
+      <div className='modal-header row justify-content-between'>
+        <h2>Edit Equipment</h2>
+        <Button color='link' onClick={closeModal}>
+          <i className='fas fa-times fa-lg' />
+        </Button>
+      </div>
+      <ModalBody>
+        <div className='container-fluid'>
+          <EquipmentEditValues
+            selectedEquipment={equipment}
+            changeProperty={changeProperty}
+            disableEditing={false}
+            updateAttributes={updateAttributes}
+            commonAttributeKeys={props.commonAttributeKeys}
+            equipmentTypes={props.equipmentTypes}
+            tags={props.tags}
+            space={props.space}
+            error={error}
+          />
+          <EquipmentAssignmentValues
+            selectedEquipment={props.selectedEquipment}
+            openUpdateModal={props.openUpdateModal}
+          />
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          color='primary'
+          onClick={editSelected}
+          disabled={!validState || submitting}
+        >
+          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+        </Button>{' '}
+      </ModalFooter>
+    </Modal>
+  );
+};
+
+export default EditEquipment;

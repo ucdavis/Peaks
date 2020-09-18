@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import {
   Button,
@@ -19,54 +20,26 @@ interface IProps {
   addBigFixId: (property: string, id: string) => void;
 }
 
-interface IState {
-  isFetched: boolean;
-  isFound: boolean;
-  isSearching: boolean;
-  isValidSearch: boolean;
-  searchModal: boolean;
-  selectedField: string;
-  valueToBeSearched: string;
-  listOfComputers: IBigFixSearchedName[];
-}
+const EquipmentBigFixSearchId = (props: IProps) => {
+  const [isFetched, setIsFetched] = useState<boolean>(false);
+  const [isFound, setIsFound] = useState<boolean>(true);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [isValidSearch, setIsValidSearch] = useState<boolean>(true);
+  const [searchModal, setSearchModal] = useState<boolean>(false);
+  const [selectedField, setSelectedField] = useState<string>('Name');
+  const [valueToBeSearched, setValueToBeSearched] = useState<string>('');
+  const [listOfComputers, setListOfComputers] = useState<
+    IBigFixSearchedName[]
+  >();
+  const context = useContext(Context);
 
-export default class EquipmentBigFixSearchId extends React.Component<
-  IProps,
-  IState
-> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      isFetched: false,
-      isFound: true,
-      isSearching: false,
-      isValidSearch: true,
-      listOfComputers: [],
-      searchModal: false,
-      selectedField: 'Name',
-      valueToBeSearched: ''
-    };
-  }
-
-  public render() {
-    return (
-      <>
-        {this._renderInfoIcon()}
-        {this._renderSearchModal()}
-      </>
-    );
-  }
-
-  private _renderInfoIcon = () => {
+  const renderInfoIcon = () => {
     return (
       <Button
         color='link'
         className='ml-1 mb-3 pt-0'
         onClick={() => {
-          this._modalToggle();
+          modalToggle();
         }}
       >
         <i className='fas fa-search fa-xs mr-2' />
@@ -75,30 +48,30 @@ export default class EquipmentBigFixSearchId extends React.Component<
     );
   };
 
-  private _renderSearchModal = () => {
+  const renderSearchModal = () => {
     return (
       <Modal
-        isOpen={this.state.searchModal}
-        toggle={this._modalToggle}
+        isOpen={searchModal}
+        toggle={modalToggle}
         size='lg'
         className='equipment-color'
       >
         <div className='modal-header row justify-content-between'>
           <h2>Search Computer Id</h2>
-          <Button color='link' onClick={this._modalToggle}>
+          <Button color='link' onClick={modalToggle}>
             <i className='fas fa-times fa-lg' />
           </Button>
         </div>
 
         <ModalBody className='d-flex justify-content-center'>
-          {this._renderModalBody()}
+          {renderModalBody()}
         </ModalBody>
-        <ModalFooter>{this._renderSearchButton()}</ModalFooter>
+        <ModalFooter>{renderSearchButton()}</ModalFooter>
       </Modal>
     );
   };
 
-  private _renderModalBody = () => {
+  const renderModalBody = () => {
     return (
       <Form className='w-75'>
         <FormGroup className='mb-5'>
@@ -107,25 +80,25 @@ export default class EquipmentBigFixSearchId extends React.Component<
             type='select'
             name='select'
             id='field-select'
-            onChange={e => this._changeSelectedInput(e.target.value)}
-            value={this.state.selectedField}
+            onChange={e => changeSelectedInput(e.target.value)}
+            value={selectedField}
           >
             <option value='Name'>Name</option>
           </Input>
         </FormGroup>
 
         <FormGroup>
-          {this._renderInputSearch()}
+          {renderInputSearch()}
           <FormFeedback>Computer name is required</FormFeedback>
         </FormGroup>
 
-        {this._renderNameTable()}
+        {renderNameTable()}
       </Form>
     );
   };
 
-  private _renderInputSearch = () => {
-    if (this.state.selectedField === 'Name') {
+  const renderInputSearch = () => {
+    if (selectedField === 'Name') {
       return (
         <>
           <label>Name</label>
@@ -134,21 +107,19 @@ export default class EquipmentBigFixSearchId extends React.Component<
             name='name'
             id='computer-name'
             placeholder='Enter Computer Name'
-            invalid={this.state.valueToBeSearched.length < 1}
+            invalid={valueToBeSearched.length < 1}
             onKeyPress={e => {
               if (e.key === 'Enter') {
                 e.preventDefault();
               }
             }}
             onChange={e => {
-              this.setState({
-                valueToBeSearched: e.target.value
-              });
+              setValueToBeSearched(e.target.value);
             }}
           />
         </>
       );
-    } else if (this.state.selectedField === 'Id') {
+    } else if (selectedField === 'Id') {
       return (
         <Input
           type='text'
@@ -157,7 +128,7 @@ export default class EquipmentBigFixSearchId extends React.Component<
           placeholder='Enter Computer Id'
         />
       );
-    } else if (this.state.selectedField === 'Company') {
+    } else if (selectedField === 'Company') {
       return (
         <Input
           type='text'
@@ -169,23 +140,23 @@ export default class EquipmentBigFixSearchId extends React.Component<
     }
   };
 
-  private _renderNameTable = () => {
+  const renderNameTable = () => {
     // after request, if fetched
-    if (this.state.isFetched) {
+    if (isFetched) {
       // if no error occured except Not Found
-      if (this.state.isValidSearch) {
+      if (isValidSearch) {
         // if not NotFound error.
-        if (this.state.isFound) {
+        if (isFound) {
           return (
             <Table>
               <tbody>
-                {this.state.listOfComputers.map(computer => {
+                {listOfComputers.map(computer => {
                   return (
                     <tr key={computer.id} className='bigfix-info border-bottom'>
                       <Button
                         color='link'
                         onClick={() =>
-                          this.props.addBigFixId(
+                          props.addBigFixId(
                             'systemManagementId',
                             computer.id
                           )
@@ -210,8 +181,8 @@ export default class EquipmentBigFixSearchId extends React.Component<
     return null;
   };
 
-  private _renderSearchButton = () => {
-    if (this.state.isSearching) {
+  const renderSearchButton = () => {
+    if (isSearching) {
       return (
         <Button color='primary' disabled={false}>
           {' '}
@@ -220,46 +191,37 @@ export default class EquipmentBigFixSearchId extends React.Component<
       );
     } else {
       return (
-        <Button color='primary' disabled={false} onClick={this._onSearch}>
+        <Button color='primary' disabled={false} onClick={onSearch}>
           Search!
         </Button>
       );
     }
   };
 
-  private _onSearch = () => {
-    this.setState({
-      isSearching: true,
-      isFetched: false,
-      isFound: true,
-      isValidSearch: true,
-      listOfComputers: []
-    });
-    this._getComputersBySearchId(
-      this.state.selectedField,
-      this.state.valueToBeSearched
-    );
+  const onSearch = () => {
+    setIsSearching(true);
+    setIsFetched(false);
+    setIsFound(true);
+    setIsValidSearch(true);
+    setListOfComputers([]);
+    getComputersBySearchId(selectedField, valueToBeSearched);
   };
 
-  private _getComputersBySearchId = async (field: string, value: string) => {
+  const getComputersBySearchId = async (field: string, value: string) => {
     let response = null;
     try {
-      response = await this.context.fetch(
-        `/api/${this.context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`
+      response = await context.fetch(
+        `/api/${context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`
       );
     } catch (err) {
       if (err.message === 'Not Found') {
-        this.setState({
-          isFetched: true,
-          isSearching: false,
-          isFound: false
-        });
+        setIsFetched(true);
+        setIsSearching(false);
+        setIsFound(false);
       } else {
-        this.setState({
-          isFetched: true,
-          isSearching: false,
-          isValidSearch: false
-        });
+        setIsFetched(true);
+        setIsSearching(false);
+        setIsValidSearch(false);
         toast.error(
           'Error fetching Names. Please refresh the page to try again.'
         );
@@ -269,32 +231,35 @@ export default class EquipmentBigFixSearchId extends React.Component<
     }
 
     const firstFiveName = response.slice(0, 5);
-    this.setState({
-      isFetched: true,
-      isSearching: false,
-      listOfComputers: firstFiveName
-    });
+    setIsFetched(true);
+    setIsSearching(false);
+    setListOfComputers(firstFiveName);
   };
 
-  private _changeSelectedInput = value => {
-    this.setState({
-      isFetched: false,
-      isFound: true,
-      isValidSearch: true,
-      isSearching: false,
-      listOfComputers: [],
-      selectedField: value
-    });
+  const changeSelectedInput = value => {
+    setIsFetched(false);
+    setIsFound(true);
+    setIsValidSearch(true);
+    setIsSearching(false);
+    setListOfComputers([]);
+    setSelectedField(value);
   };
 
-  private _modalToggle = () => {
-    this.setState(prevState => ({
-      isFetched: false,
-      isFound: true,
-      isValidSearch: true,
-      listOfComputers: [],
-      valueToBeSearched: '',
-      searchModal: !prevState.searchModal
-    }));
+  const modalToggle = () => {
+      setIsFetched(false);
+      setIsFound(true);
+      setIsValidSearch(true);
+      setListOfComputers([]);
+      setValueToBeSearched('');
+      setSearchModal(prevModal => !prevModal);
   };
-}
+
+  return (
+    <>
+      {renderInfoIcon()}
+      {renderSearchModal()}
+    </>
+  );
+};
+
+export default EquipmentBigFixSearchId;
