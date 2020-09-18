@@ -34,13 +34,13 @@ const HistoryContainer = (props: IProps) => {
   };
   
   useEffect(() => {
-    const retireveHistories = async () => {
+    const retrieveHistories = async () => {
       const historyData = await getHistories();
       setHistories(historyData);
       setLoading(false);
     };
     setLoading(true);
-    retireveHistories();
+    retrieveHistories();
   }, []);
 
   if (loading) {
