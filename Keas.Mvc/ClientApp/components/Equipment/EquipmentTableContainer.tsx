@@ -35,36 +35,6 @@ const EquipmentTableContainer = (props: IProps) => {
   );
   const [tagFilters, setTagFilters] = useState<string[]>([]);
 
-  let filteredEquipment = props.equipment;
-  if (tagFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkTagFilters(x, tagFilters)
-    );
-  }
-  if (attributeFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkAttributeFilters(x, attributeFilters)
-    );
-  }
-  if (equipmentTypeFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkEquipmentTypeFilters(x)
-    );
-  }
-  if (equipmentProtectionFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkEquipmentProtectionFilters(x)
-    );
-  }
-  if (equipmentAvailabilityFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkEquipmentAvailabilityFilters(x)
-    );
-  }
-  if (bigfixFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x => checkBigfixFilters(x));
-  }
-
   const filterTags = (filters: string[]) => {
     setTagFilters(filters);
   };
@@ -145,6 +115,36 @@ const EquipmentTableContainer = (props: IProps) => {
         equipment.systemManagementId.includes(f)
     );
   };
+  
+  let filteredEquipment = props.equipment;
+  if (tagFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkTagFilters(x, tagFilters)
+    );
+  }
+  if (attributeFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkAttributeFilters(x, attributeFilters)
+    );
+  }
+  if (equipmentTypeFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkEquipmentTypeFilters(x)
+    );
+  }
+  if (equipmentProtectionFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkEquipmentProtectionFilters(x)
+    );
+  }
+  if (equipmentAvailabilityFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkEquipmentAvailabilityFilters(x)
+    );
+  }
+  if (bigfixFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x => checkBigfixFilters(x));
+  }
 
   return (
     <div>
