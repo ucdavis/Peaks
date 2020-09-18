@@ -1,7 +1,7 @@
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Form, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { Context } from '../../Context';
 import {
   equipmentSchema,
   IEquipment,
@@ -30,278 +30,230 @@ interface IProps {
   equipmentTypes: string[];
 }
 
-interface IState {
-  date: Date;
-  equipment: IEquipment;
-  error: IValidationError;
-  person: IPerson;
-  submitting: boolean;
-  validState: boolean;
-}
+const AssignEquipment = (props: IProps) => {
+  const [date, setDate] = useState<Date>(
+    !!props.selectedEquipment && !!props.selectedEquipment.assignment
+      ? new Date(props.selectedEquipment.assignment.expiresAt)
+      : addYears(startOfDay(new Date()), 3)
+  );
+  const [equipment, setEquipment] = useState<IEquipment>(
+    props.selectedEquipment
+  );
+  const [error, setError] = useState<IValidationError>({
+    message: '',
+    path: ''
+  });
+  const [person, setPerson] = useState<IPerson>(
+    !!props.selectedEquipment && !!props.selectedEquipment.assignment
+      ? props.selectedEquipment.assignment.person
+      : props.person
+  );
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [validState, setValidState] = useState<boolean>(false);
 
-export default class AssignEquipment extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      date:
-        !!this.props.selectedEquipment &&
-        !!this.props.selectedEquipment.assignment
-          ? new Date(this.props.selectedEquipment.assignment.expiresAt)
-          : addYears(startOfDay(new Date()), 3),
-      equipment: this.props.selectedEquipment,
-      error: {
-        message: '',
-        path: ''
-      },
-      person:
-        !!this.props.selectedEquipment &&
-        !!this.props.selectedEquipment.assignment
-          ? this.props.selectedEquipment.assignment.person
-          : this.props.person,
-      submitting: false,
-      validState: false
+  useEffect(() => {
+    const validateState = () => {
+      const error = yupAssetValidation(
+        equipmentSchema,
+        equipment,
+        {}, // no context
+        { date: date, person: person }
+      );
+      setError(error);
+      setValidState(error.message === '');
     };
-  }
 
-  public render() {
-    return (
-      <Modal
-        isOpen={this.props.modal}
-        toggle={this._confirmClose}
-        size='lg'
-        className='equipment-color'
-      >
-        <div className='modal-header row justify-content-between'>
-          <h2>
-            {this.props.selectedEquipment || this.props.person
-              ? 'Assign Equipment'
-              : 'Add Equipment'}
-          </h2>
-          <Button color='link' onClick={this._closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
-        <ModalBody>
-          <div className='container-fluid'>
-            <Form>
-              <AssignPerson
-                person={this.state.person}
-                label='Assign To'
-                onSelect={this._onSelectPerson}
-                isRequired={
-                  this.state.equipment && this.state.equipment.teamId !== 0
-                }
-                disabled={
-                  !!this.props.person ||
-                  (!!this.props.selectedEquipment &&
-                    !!this.props.selectedEquipment.assignment)
-                } // disable if we are on person page or updating
-                error={this.state.error}
+    validateState();
+  }, [date, equipment, person]);
+
+  const changeProperty = (property: string, value: string) => {
+    setEquipment({ ...equipment, [property]: value });
+  };
+
+  const updateAttributes = (attributes: IEquipmentAttribute[]) => {
+    setEquipment({ ...equipment, attributes: attributes });
+  };
+
+  // clear everything out on close
+  const confirmClose = () => {
+    if (!confirm('Please confirm you want to close!')) {
+      return;
+    }
+
+    closeModal();
+  };
+
+  const closeModal = () => {
+    setDate(addYears(startOfDay(new Date()), 3));
+    setEquipment(null);
+    setError({
+      message: '',
+      path: ''
+    });
+    setPerson(null);
+    setSubmitting(false);
+    setValidState(false);
+    props.closeModal();
+  };
+
+  // assign the selected equipment even if we have to create it
+  const assignSelected = async () => {
+    if (!validState || submitting) {
+      return;
+    }
+
+    setSubmitting(true);
+    const personData = props.person ? props.person : person;
+    const equipmentData = equipment;
+    equipmentData.attributes = equipmentData.attributes.filter(x => !!x.key);
+
+    try {
+      await props.onCreate(
+        personData,
+        equipmentData,
+        format(date, 'MM/dd/yyyy')
+      );
+    } catch (e) {
+      setSubmitting(false);
+      return;
+    }
+    closeModal();
+  };
+
+  // once we have either selected or created the equipment we care about
+  const onSelected = (selectedEquipment: IEquipment) => {
+    setEquipment(selectedEquipment);
+  };
+
+  const onDeselected = () => {
+    setEquipment(null);
+    setError({
+      message: '',
+      path: ''
+    });
+  };
+
+  const onSelectPerson = (selectedPerson: IPerson) => {
+    setPerson(selectedPerson);
+  };
+
+  const changeDate = (newDate: Date) => {
+    setDate(new Date(newDate));
+    setError({
+      message: '',
+      path: ''
+    });
+  };
+
+  return (
+    <Modal
+      isOpen={props.modal}
+      toggle={confirmClose}
+      size='lg'
+      className='equipment-color'
+    >
+      <div className='modal-header row justify-content-between'>
+        <h2>
+          {props.selectedEquipment || props.person
+            ? 'Assign Equipment'
+            : 'Add Equipment'}
+        </h2>
+        <Button color='link' onClick={closeModal}>
+          <i className='fas fa-times fa-lg' />
+        </Button>
+      </div>
+      <ModalBody>
+        <div className='container-fluid'>
+          <Form>
+            <AssignPerson
+              person={person}
+              label='Assign To'
+              onSelect={onSelectPerson}
+              isRequired={equipment && equipment.teamId !== 0}
+              disabled={
+                !!props.person ||
+                (!!props.selectedEquipment &&
+                  !!props.selectedEquipment.assignment)
+              } // disable if we are on person page or updating
+              error={error}
+            />
+            {(!!person || !!props.person) && (
+              <AssignDate
+                date={date}
+                isRequired={true}
+                error={error}
+                onChangeDate={changeDate}
               />
-              {(!!this.state.person || !!this.props.person) && (
-                <AssignDate
-                  date={this.state.date}
-                  isRequired={true}
-                  error={this.state.error}
-                  onChangeDate={this._changeDate}
+            )}
+            {!equipment && (
+              <div className='form-group'>
+                <SearchEquipment
+                  selectedEquipment={equipment}
+                  onSelect={onSelected}
+                  onDeselect={onDeselected}
+                  space={props.space}
+                  openDetailsModal={props.openDetailsModal}
                 />
-              )}
-              {!this.state.equipment && (
-                <div className='form-group'>
-                  <SearchEquipment
-                    selectedEquipment={this.state.equipment}
-                    onSelect={this._onSelected}
-                    onDeselect={this._onDeselected}
-                    space={this.props.space}
-                    openDetailsModal={this.props.openDetailsModal}
-                  />
-                </div>
-              )}
-              {this.state.equipment &&
-              !this.state.equipment.teamId && ( // if we are creating a new equipment, edit properties
-                  <div>
-                    <div className='row justify-content-between'>
-                      <h3>Create New Equipment</h3>
-                      <Button
-                        color='link'
-                        onClick={this._onDeselected}
-                      >
-                        Clear{' '}
-                        <i className='fas fa-times fa-sm' aria-hidden='true' />
-                      </Button>
-                    </div>
-
-                    <EquipmentEditValues
-                      selectedEquipment={this.state.equipment}
-                      commonAttributeKeys={this.props.commonAttributeKeys}
-                      changeProperty={this._changeProperty}
-                      disableEditing={false}
-                      updateAttributes={this._updateAttributes}
-                      space={this.props.space}
-                      tags={this.props.tags}
-                      equipmentTypes={this.props.equipmentTypes}
-                      error={this.state.error}
-                    />
-                  </div>
-                )}
-              {this.state.equipment && !!this.state.equipment.teamId && (
+              </div>
+            )}
+            {equipment &&
+            !equipment.teamId && ( // if we are creating a new equipment, edit properties
                 <div>
                   <div className='row justify-content-between'>
-                    <h3>Assign Existing Equipment</h3>
-                    <Button
-                      color='link'
-                      onClick={this._onDeselected}
-                    >
+                    <h3>Create New Equipment</h3>
+                    <Button color='link' onClick={onDeselected}>
                       Clear{' '}
                       <i className='fas fa-times fa-sm' aria-hidden='true' />
                     </Button>
                   </div>
 
                   <EquipmentEditValues
-                    selectedEquipment={this.state.equipment}
-                    commonAttributeKeys={this.props.commonAttributeKeys}
-                    disableEditing={true}
-                    openEditModal={this.props.openEditModal}
-                    tags={this.props.tags}
-                    error={this.state.error}
+                    selectedEquipment={equipment}
+                    commonAttributeKeys={props.commonAttributeKeys}
+                    changeProperty={changeProperty}
+                    disableEditing={false}
+                    updateAttributes={updateAttributes}
+                    space={props.space}
+                    tags={props.tags}
+                    equipmentTypes={props.equipmentTypes}
+                    error={error}
                   />
                 </div>
               )}
-            </Form>
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            color='primary'
-            onClick={this._assignSelected}
-            disabled={!this.state.validState || this.state.submitting}
-          >
-            Go!{' '}
-            {this.state.submitting && (
-              <i className='fas fa-circle-notch fa-spin' />
+            {equipment && !!equipment.teamId && (
+              <div>
+                <div className='row justify-content-between'>
+                  <h3>Assign Existing Equipment</h3>
+                  <Button color='link' onClick={onDeselected}>
+                    Clear{' '}
+                    <i className='fas fa-times fa-sm' aria-hidden='true' />
+                  </Button>
+                </div>
+
+                <EquipmentEditValues
+                  selectedEquipment={equipment}
+                  commonAttributeKeys={props.commonAttributeKeys}
+                  disableEditing={true}
+                  openEditModal={props.openEditModal}
+                  tags={props.tags}
+                  error={error}
+                />
+              </div>
             )}
-          </Button>{' '}
-        </ModalFooter>
-      </Modal>
-    );
-  }
+          </Form>
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          color='primary'
+          onClick={assignSelected}
+          disabled={!validState || submitting}
+        >
+          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+        </Button>{' '}
+      </ModalFooter>
+    </Modal>
+  );
+};
 
-  private _changeProperty = (property: string, value: string) => {
-    this.setState(
-      prevState => ({
-        equipment: {
-          ...prevState.equipment,
-          [property]: value
-        }
-      }),
-      this._validateState
-    );
-  };
-
-  private _updateAttributes = (attributes: IEquipmentAttribute[]) => {
-    this.setState(
-      prevState => ({
-        equipment: {
-          ...prevState.equipment,
-          attributes
-        }
-      }),
-      this._validateState
-    );
-  };
-
-  // clear everything out on close
-  private _confirmClose = () => {
-    if (!confirm('Please confirm you want to close!')) {
-      return;
-    }
-
-    this._closeModal();
-  };
-
-  private _closeModal = () => {
-    this.setState({
-      date: addYears(startOfDay(new Date()), 3),
-      equipment: null,
-      error: {
-        message: '',
-        path: ''
-      },
-      person: null,
-      submitting: false,
-      validState: false
-    });
-    this.props.closeModal();
-  };
-
-  // assign the selected equipment even if we have to create it
-  private _assignSelected = async () => {
-    if (!this.state.validState || this.state.submitting) {
-      return;
-    }
-
-    this.setState({ submitting: true });
-    const person = this.props.person ? this.props.person : this.state.person;
-    const equipment = this.state.equipment;
-    equipment.attributes = equipment.attributes.filter(x => !!x.key);
-    try {
-      await this.props.onCreate(
-        person,
-        equipment,
-        format(this.state.date, 'MM/dd/yyyy')
-      );
-    } catch (e) {
-      this.setState({ submitting: false });
-      return;
-    }
-    this._closeModal();
-  };
-
-  // once we have either selected or created the equipment we care about
-  private _onSelected = (equipment: IEquipment) => {
-    this.setState({ equipment }, this._validateState);
-  };
-
-  private _onDeselected = () => {
-    this.setState(
-      {
-        equipment: null,
-        error: {
-          message: '',
-          path: ''
-        }
-      },
-      this._validateState
-    );
-  };
-
-  private _onSelectPerson = (person: IPerson) => {
-    this.setState({ person }, this._validateState);
-  };
-
-  private _validateState = () => {
-    const error = yupAssetValidation(
-      equipmentSchema,
-      this.state.equipment,
-      {}, // no context
-      { date: this.state.date, person: this.state.person }
-    );
-    this.setState({ error, validState: error.message === '' });
-  };
-
-  private _changeDate = (newDate: Date) => {
-    this.setState(
-      {
-        date: startOfDay(new Date(newDate)),
-        error: {
-          message: '',
-          path: ''
-        }
-      },
-      this._validateState
-    );
-  };
-}
+export default AssignEquipment;

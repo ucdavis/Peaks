@@ -8,14 +8,10 @@ interface IProps {
   openUpdateModal: (equipment: IEquipment) => void;
 }
 
-export default class EquipmentAssignmentValues extends React.Component<
-  IProps,
-  {}
-> {
-  public render() {
+const EquipmentAssignmentValues = (props: IProps) => {
     if (
-      !this.props.selectedEquipment ||
-      !this.props.selectedEquipment.assignment
+      !props.selectedEquipment ||
+      !props.selectedEquipment.assignment
     ) {
       return null;
     }
@@ -26,7 +22,7 @@ export default class EquipmentAssignmentValues extends React.Component<
           <Button
             color='link'
             onClick={() =>
-              this.props.openUpdateModal(this.props.selectedEquipment)
+              props.openUpdateModal(props.selectedEquipment)
             }
           >
             <i className='fas fa-edit fa-xs' /> Update Assignment
@@ -39,7 +35,7 @@ export default class EquipmentAssignmentValues extends React.Component<
               type='text'
               className='form-control'
               disabled={true}
-              value={this.props.selectedEquipment.assignment.person.name}
+              value={props.selectedEquipment.assignment.person.name}
             />
           </div>
           <div className='form-group'>
@@ -49,12 +45,13 @@ export default class EquipmentAssignmentValues extends React.Component<
               className='form-control'
               disabled={true}
               value={DateUtil.formatExpiration(
-                this.props.selectedEquipment.assignment.expiresAt
+                props.selectedEquipment.assignment.expiresAt
               )}
             />
           </div>
         </div>
       </div>
     );
-  }
 }
+
+export default EquipmentAssignmentValues;

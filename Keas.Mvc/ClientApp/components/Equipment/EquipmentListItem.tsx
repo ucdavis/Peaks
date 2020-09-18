@@ -13,60 +13,58 @@ interface IProps {
   onEdit?: (equipment: IEquipment) => void;
 }
 
-export default class EquipmentListItem extends React.Component<IProps, {}> {
-  public render() {
-    const hasAssignment = !!this.props.equipmentEntity.assignment;
+const EquipmentListItem = (props: IProps) => {
+  const hasAssignment = !!props.equipmentEntity.assignment;
 
-    const actions: IAction[] = [];
-    if (!!this.props.onAdd && !hasAssignment) {
-      actions.push({
-        onClick: () => this.props.onAdd(this.props.equipmentEntity),
-        title: 'Assign'
-      });
-    }
-
-    if (!!this.props.onRevoke && hasAssignment) {
-      actions.push({
-        onClick: () => this.props.onRevoke(this.props.equipmentEntity),
-        title: 'Revoke'
-      });
-    }
-
-    if (!!this.props.onDelete) {
-      actions.push({
-        onClick: () => this.props.onDelete(this.props.equipmentEntity),
-        title: 'Delete'
-      });
-    }
-
-    return (
-      <tr>
-        <td>
-          <Button
-            color='link'
-            onClick={() => this.props.showDetails(this.props.equipmentEntity)}
-          >
-            Details
-          </Button>
-        </td>
-        <td>{this.props.equipmentEntity.serialNumber}</td>
-        <td>{this.props.equipmentEntity.name}</td>
-        <td>
-          {hasAssignment
-            ? this.props.equipmentEntity.assignment.person.name
-            : ''}
-        </td>
-        <td>
-          {hasAssignment
-            ? DateUtil.formatExpiration(
-                this.props.equipmentEntity.assignment.expiresAt
-              )
-            : ''}
-        </td>
-        <td>
-          <ListActionsDropdown actions={actions} />
-        </td>
-      </tr>
-    );
+  const actions: IAction[] = [];
+  if (!!props.onAdd && !hasAssignment) {
+    actions.push({
+      onClick: () => props.onAdd(props.equipmentEntity),
+      title: 'Assign'
+    });
   }
-}
+
+  if (!!props.onRevoke && hasAssignment) {
+    actions.push({
+      onClick: () => props.onRevoke(props.equipmentEntity),
+      title: 'Revoke'
+    });
+  }
+
+  if (!!props.onDelete) {
+    actions.push({
+      onClick: () => props.onDelete(props.equipmentEntity),
+      title: 'Delete'
+    });
+  }
+
+  return (
+    <tr>
+      <td>
+        <Button
+          color='link'
+          onClick={() => props.showDetails(props.equipmentEntity)}
+        >
+          Details
+        </Button>
+      </td>
+      <td>{props.equipmentEntity.serialNumber}</td>
+      <td>{props.equipmentEntity.name}</td>
+      <td>
+        {hasAssignment ? props.equipmentEntity.assignment.person.name : ''}
+      </td>
+      <td>
+        {hasAssignment
+          ? DateUtil.formatExpiration(
+              props.equipmentEntity.assignment.expiresAt
+            )
+          : ''}
+      </td>
+      <td>
+        <ListActionsDropdown actions={actions} />
+      </td>
+    </tr>
+  );
+};
+
+export default EquipmentListItem;

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Context } from '../../Context';
+import { useState } from 'react';
 import { IEquipment } from '../../models/Equipment';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentTable from './EquipmentTable';
@@ -20,145 +20,47 @@ interface IProps {
   openEditModal?: (equipment: IEquipment) => void;
 }
 
-interface IState {
-  attributeFilters: string[];
-  bigfixFilters: string[];
-  equipmentAvailabilityFilters: string[];
-  equipmentProtectionFilters: string[];
-  equipmentTypeFilters: string[];
-  tagFilters: string[];
-}
+const EquipmentTableContainer = (props: IProps) => {
+  const [attributeFilters, setAttributeFilters] = useState<string[]>([]);
+  const [bigfixFilters, setBigfixFilters] = useState<string[]>([]);
+  const [
+    equipmentAvailabilityFilters,
+    setEquipmentAvailabilityFilters
+  ] = useState<string[]>([]);
+  const [equipmentProtectionFilters, setEquipmentProtectionFilters] = useState<
+    string[]
+  >([]);
+  const [equipmentTypeFilters, setEquipmentTypeFilters] = useState<string[]>(
+    []
+  );
+  const [tagFilters, setTagFilters] = useState<string[]>([]);
 
-export default class EquipmentTableContainer extends React.Component<
-  IProps,
-  IState
-> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      attributeFilters: [],
-      bigfixFilters: [],
-      equipmentAvailabilityFilters: [],
-      equipmentProtectionFilters: [],
-      equipmentTypeFilters: [],
-      tagFilters: []
-    };
-  }
-
-  public render() {
-    let filteredEquipment = this.props.equipment;
-    if (this.state.tagFilters.length > 0) {
-      filteredEquipment = filteredEquipment.filter(x =>
-        this._checkTagFilters(x, this.state.tagFilters)
-      );
-    }
-    if (this.state.attributeFilters.length > 0) {
-      filteredEquipment = filteredEquipment.filter(x =>
-        this._checkAttributeFilters(x, this.state.attributeFilters)
-      );
-    }
-    if (this.state.equipmentTypeFilters.length > 0) {
-      filteredEquipment = filteredEquipment.filter(x =>
-        this._checkEquipmentTypeFilters(x)
-      );
-    }
-    if (this.state.equipmentProtectionFilters.length > 0) {
-      filteredEquipment = filteredEquipment.filter(x =>
-        this._checkEquipmentProtectionFilters(x)
-      );
-    }
-    if (this.state.equipmentAvailabilityFilters.length > 0) {
-      filteredEquipment = filteredEquipment.filter(x =>
-        this._checkEquipmentAvailabilityFilters(x)
-      );
-    }
-    if (this.state.bigfixFilters.length > 0) {
-      filteredEquipment = filteredEquipment.filter(x =>
-        this._checkBigfixFilters(x)
-      );
-    }
-    return (
-      <div>
-        <div className='row'>
-          <SearchTags
-            tags={this.props.tags}
-            selected={this.state.tagFilters}
-            onSelect={this._filterTags}
-            disabled={false}
-          />
-          <SearchAttributes
-            selected={this.state.attributeFilters}
-            onSelect={this._filterAttributes}
-            disabled={false}
-          />
-          <SearchEquipmentType
-            equipmentTypes={this.props.equipmentTypes}
-            selected={this.state.equipmentTypeFilters}
-            onSelect={this._filterEquipmentType}
-            disabled={false}
-            placeHolder='Search for Equipment Types'
-          />
-          <SearchEquipmentType
-            equipmentTypes={this.props.equipmentProtectionLevels}
-            selected={this.state.equipmentProtectionFilters}
-            onSelect={this._filterEquipmentProtection}
-            disabled={false}
-            placeHolder='Search Protection Level'
-          />
-          <SearchEquipmentType
-            equipmentTypes={this.props.equipmentAvailabilityLevels}
-            selected={this.state.equipmentAvailabilityFilters}
-            onSelect={this._filterEquipmentAvailability}
-            disabled={false}
-            placeHolder='Search Availability Level'
-          />
-          <SearchBigfix
-            selected={this.state.bigfixFilters}
-            onSelect={this._filterBigfix}
-            disabled={false}
-          />
-        </div>
-        <EquipmentTable
-          equipment={filteredEquipment}
-          onRevoke={this.props.openRevokeModal}
-          onDelete={this.props.openDeleteModal}
-          onAdd={this.props.openAssignModal}
-          showDetails={this.props.openDetailsModal}
-          onEdit={this.props.openEditModal}
-        />
-      </div>
-    );
-  }
-
-  private _filterTags = (filters: string[]) => {
-    this.setState({ tagFilters: filters });
+  const filterTags = (filters: string[]) => {
+    setTagFilters(filters);
   };
-  private _filterAttributes = (filters: string[]) => {
-    this.setState({ attributeFilters: filters });
+  const filterAttributes = (filters: string[]) => {
+    setAttributeFilters(filters);
   };
-  private _filterEquipmentType = (filters: string[]) => {
-    this.setState({ equipmentTypeFilters: filters });
+  const filterEquipmentType = (filters: string[]) => {
+    setEquipmentTypeFilters(filters);
   };
-  private _filterEquipmentProtection = (filters: string[]) => {
-    this.setState({ equipmentProtectionFilters: filters });
+  const filterEquipmentProtection = (filters: string[]) => {
+    setEquipmentProtectionFilters(filters);
   };
-  private _filterEquipmentAvailability = (filters: string[]) => {
-    this.setState({ equipmentAvailabilityFilters: filters });
+  const filterEquipmentAvailability = (filters: string[]) => {
+    setEquipmentAvailabilityFilters(filters);
   };
-  private _filterBigfix = (filters: string[]) => {
-    this.setState({ bigfixFilters: filters });
+  const filterBigfix = (filters: string[]) => {
+    setBigfixFilters(filters);
   };
 
-  private _checkTagFilters = (equipment: IEquipment, filters: string[]) => {
+  const checkTagFilters = (equipment: IEquipment, filters: string[]) => {
     return filters.every(
       f => !!equipment && !!equipment.tags && equipment.tags.includes(f)
     );
   };
 
-  private _checkAttributeFilters = (equipment: IEquipment, filters) => {
+  const checkAttributeFilters = (equipment: IEquipment, filters) => {
     for (const filter of filters) {
       if (
         !equipment.attributes ||
@@ -175,8 +77,8 @@ export default class EquipmentTableContainer extends React.Component<
     return true;
   };
 
-  private _checkEquipmentTypeFilters = (equipment: IEquipment) => {
-    const filters = this.state.equipmentTypeFilters;
+  const checkEquipmentTypeFilters = (equipment: IEquipment) => {
+    const filters = equipmentTypeFilters;
     return filters.some(
       f =>
         (equipment && !!equipment.type && equipment.type === f) ||
@@ -184,8 +86,8 @@ export default class EquipmentTableContainer extends React.Component<
     );
   };
 
-  private _checkEquipmentProtectionFilters = (equipment: IEquipment) => {
-    const filters = this.state.equipmentProtectionFilters;
+  const checkEquipmentProtectionFilters = (equipment: IEquipment) => {
+    const filters = equipmentProtectionFilters;
     return filters.some(
       f =>
         equipment &&
@@ -194,8 +96,8 @@ export default class EquipmentTableContainer extends React.Component<
     );
   };
 
-  private _checkEquipmentAvailabilityFilters = (equipment: IEquipment) => {
-    const filters = this.state.equipmentAvailabilityFilters;
+  const checkEquipmentAvailabilityFilters = (equipment: IEquipment) => {
+    const filters = equipmentAvailabilityFilters;
     return filters.some(
       f =>
         equipment &&
@@ -204,8 +106,8 @@ export default class EquipmentTableContainer extends React.Component<
     );
   };
 
-  private _checkBigfixFilters = (equipment: IEquipment) => {
-    const filters = this.state.bigfixFilters;
+  const checkBigfixFilters = (equipment: IEquipment) => {
+    const filters = bigfixFilters;
     return filters.some(
       f =>
         equipment &&
@@ -213,4 +115,88 @@ export default class EquipmentTableContainer extends React.Component<
         equipment.systemManagementId.includes(f)
     );
   };
-}
+  
+  let filteredEquipment = props.equipment;
+  if (tagFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkTagFilters(x, tagFilters)
+    );
+  }
+  if (attributeFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkAttributeFilters(x, attributeFilters)
+    );
+  }
+  if (equipmentTypeFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkEquipmentTypeFilters(x)
+    );
+  }
+  if (equipmentProtectionFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkEquipmentProtectionFilters(x)
+    );
+  }
+  if (equipmentAvailabilityFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkEquipmentAvailabilityFilters(x)
+    );
+  }
+  if (bigfixFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x => checkBigfixFilters(x));
+  }
+
+  return (
+    <div>
+      <div className='row'>
+        <SearchTags
+          tags={props.tags}
+          selected={tagFilters}
+          onSelect={filterTags}
+          disabled={false}
+        />
+        <SearchAttributes
+          selected={attributeFilters}
+          onSelect={filterAttributes}
+          disabled={false}
+        />
+        <SearchEquipmentType
+          equipmentTypes={props.equipmentTypes}
+          selected={equipmentTypeFilters}
+          onSelect={filterEquipmentType}
+          disabled={false}
+          placeHolder='Search for Equipment Types'
+        />
+        <SearchEquipmentType
+          equipmentTypes={props.equipmentProtectionLevels}
+          selected={equipmentProtectionFilters}
+          onSelect={filterEquipmentProtection}
+          disabled={false}
+          placeHolder='Search Protection Level'
+        />
+        <SearchEquipmentType
+          equipmentTypes={props.equipmentAvailabilityLevels}
+          selected={equipmentAvailabilityFilters}
+          onSelect={filterEquipmentAvailability}
+          disabled={false}
+          placeHolder='Search Availability Level'
+        />
+        <SearchBigfix
+          selected={bigfixFilters}
+          onSelect={filterBigfix}
+          disabled={false}
+        />
+      </div>
+      <EquipmentTable
+        equipment={filteredEquipment}
+        onRevoke={props.openRevokeModal}
+        onDelete={props.openDeleteModal}
+        onAdd={props.openAssignModal}
+        showDetails={props.openDetailsModal}
+        onEdit={props.openEditModal}
+      />
+    </div>
+  );
+};
+
+export default EquipmentTableContainer;
