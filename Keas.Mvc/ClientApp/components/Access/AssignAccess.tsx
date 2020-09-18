@@ -1,7 +1,7 @@
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
-import { Context } from '../../Context';
 import { accessSchema, IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
@@ -21,245 +21,100 @@ interface IProps {
   tags: string[];
 }
 
-interface IState {
-  access?: IAccess;
-  date: Date;
-  error: IValidationError;
-  person?: IPerson;
-  submitting: boolean;
-  validState: boolean;
-}
+const AssignAccess = (props: IProps) => {
+  const [access, setAccess] = useState<IAccess>(props.selectedAccess);
+  const [person, setPerson] = useState<IPerson>(null);
+  const [date, setDate] = useState<Date>(addYears(startOfDay(new Date()), 3));
+  const [error, setError] = useState<IValidationError>({
+    message: '',
+    path: ''
+  });
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [validState, setValidState] = useState<boolean>(false);
 
-export default class AssignAccess extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+  useEffect(() => {
+    const validateState = () => {
+      const personData = props.person ? props.person : person;
+      const personId = personData ? personData.id : null;
+      const error = yupAssetValidation(
+        accessSchema,
+        access,
+        {
+          context: { checkValidAssignmentToPerson, personId }
+        },
+        { date: date, person }
+      );
+      // duplicate assignments are checked on access.assignments
+      // but we want it to show up under the person input
+      if (error.path === 'assignments') {
+        error.path = 'person';
+      }
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      access: this.props.selectedAccess,
-      date: addYears(startOfDay(new Date()), 3),
-      error: {
-        message: '',
-        path: ''
-      },
-      submitting: false,
-      validState: false
+      setError(error);
+      setValidState(error.message === '');
     };
-  }
 
-  public render() {
-    return (
-      <Modal
-        isOpen={this.props.modal}
-        toggle={this._confirmClose}
-        size='lg'
-        className='access-color'
-      >
-        <div className='modal-header row justify-content-between'>
-          <h2>
-            {this.props.selectedAccess || this.props.person
-              ? 'Assign Access'
-              : 'Add Access'}
-          </h2>
-          <Button color='link' onClick={this._closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
-        <ModalBody>
-          <div className='container-fluid'>
-            <form>
-              <div className='form-group'>
-                <AssignPerson
-                  disabled={!!this.props.person}
-                  person={this.props.person || this.state.person}
-                  onSelect={this._onSelectPerson}
-                  label='Assign To'
-                  isRequired={
-                    this.state.access && this.state.access.teamId !== 0
-                  }
-                  error={this.state.error}
-                />
-              </div>
-              {(!!this.state.person || !!this.props.person) && (
-                <AssignDate
-                  date={this.state.date}
-                  isRequired={true}
-                  error={this.state.error}
-                  onChangeDate={this._changeDate}
-                />
-              )}
-              {!this.state.access && (
-                <div className='form-group'>
-                  <SearchAccess
-                    onSelect={this._onSelected}
-                    onDeselect={this._onDeselected}
-                  />
-                </div>
-              )}
-              {!!this.state.access &&
-              !this.state.access.teamId && ( // if we are creating a new access, edit properties
-                  <div>
-                    <div className='row justify-content-between'>
-                      <h3>Create New Access</h3>
-                      <Button
-                        color='link'
-                        onClick={this._onDeselected}
-                      >
-                        Clear{' '}
-                        <i className='fas fa-times fa-sm' aria-hidden='true' />
-                      </Button>
-                    </div>
-                    <AccessEditValues
-                      selectedAccess={this.state.access}
-                      disableEditing={false}
-                      onAccessUpdate={access =>
-                        this.setState({ access }, this._validateState)
-                      }
-                      tags={this.props.tags}
-                      error={this.state.error}
-                    />
-                  </div>
-                )}
-              {!!this.state.access && !!this.state.access.teamId && (
-                <div>
-                  <div className='row justify-content-between'>
-                    <h3>Assign Exisiting Access</h3>
-                    <Button
-                      color='link'
-                      onClick={this._onDeselected}
-                    >
-                      Clear{' '}
-                      <i className='fas fa-times fa-sm' aria-hidden='true' />
-                    </Button>
-                  </div>
-                  <AccessEditValues
-                    selectedAccess={this.state.access}
-                    disableEditing={true}
-                    tags={this.props.tags}
-                    error={this.state.error}
-                  >
-                    <AccessAssignmentCard disableEditing={true}>
-                      <AccessAssignmentTable
-                        assignments={this.state.access.assignments}
-                      />
-                    </AccessAssignmentCard>
-                  </AccessEditValues>
-                </div>
-              )}
-            </form>
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            color='primary'
-            onClick={this._assignSelected}
-            disabled={!this.state.validState || this.state.submitting}
-          >
-            Go!{' '}
-            {this.state.submitting && (
-              <i className='fas fa-circle-notch fa-spin' />
-            )}
-          </Button>{' '}
-        </ModalFooter>
-      </Modal>
-    );
-  }
+    validateState();
+  }, [access, date, person]);
 
   // clear everything out on close
-  private _confirmClose = () => {
+  const confirmClose = () => {
     if (!confirm('Please confirm you want to close!')) {
       return;
     }
 
-    this._closeModal();
+    closeModal();
   };
 
-  private _closeModal = () => {
-    this.setState({
-      access: null,
-      date: addYears(startOfDay(new Date()), 3),
-      error: {
-        message: '',
-        path: ''
-      },
-      person: null,
-      submitting: false,
-      validState: false
+  const closeModal = () => {
+    setAccess(null);
+    setDate(addYears(startOfDay(new Date()), 3));
+    setError({
+      message: '',
+      path: ''
     });
-    this.props.closeModal();
+    setPerson(null);
+    setSubmitting(false);
+    setValidState(false);
+    props.closeModal();
   };
 
   // assign the selected access even if we have to create it
-  private _assignSelected = async () => {
-    if (!this.state.validState || this.state.submitting) {
+  const assignSelected = async () => {
+    if (!validState || submitting) {
       return;
     }
 
-    this.setState({ submitting: true });
-    const person = this.props.person ? this.props.person : this.state.person;
+    setSubmitting(true);
+    const personData = props.person ? props.person : person;
 
     try {
-      await this.props.onCreate(
-        this.state.access,
-        format(this.state.date, 'MM/dd/yyyy'),
-        person
-      );
+      await props.onCreate(access, format(date, 'MM/dd/yyyy'), personData);
     } finally {
-      this.setState({ submitting: false });
+      setSubmitting(false);
     }
 
-    this._closeModal();
+    closeModal();
   };
 
   // once we have either selected or created the access we care about
-  private _onSelected = (access: IAccess) => {
-    this.setState(
-      {
-        access
-      },
-      this._validateState
-    );
+  const onSelected = (selectedAccess: IAccess) => {
+    setAccess(selectedAccess);
   };
 
-  private _onDeselected = () => {
-    this.setState(
-      {
-        access: null,
-        error: {
-          message: '',
-          path: ''
-        }
-      },
-      this._validateState
-    );
+  const onDeselected = () => {
+    setAccess(null);
+    setError({
+      message: '',
+      path: ''
+    });
   };
 
-  private _onSelectPerson = (person: IPerson) => {
-    this.setState({ person }, this._validateState);
+  const onSelectPerson = (selectedPerson: IPerson) => {
+    setPerson(selectedPerson);
   };
 
-  private _validateState = () => {
-    const checkValidAssignmentToPerson = this._checkValidAssignmentToPerson;
-    const person = this.props.person ? this.props.person : this.state.person;
-    const personId = person ? person.id : null;
-    const error = yupAssetValidation(
-      accessSchema,
-      this.state.access,
-      {
-        context: { checkValidAssignmentToPerson, personId }
-      },
-      { date: this.state.date, person }
-    );
-    // duplicate assignments are checked on access.assignments
-    // but we want it to show up under the person input
-    if (error.path === 'assignments') {
-      error.path = 'person';
-    }
-    this.setState({ error, validState: error.message === '' });
-  };
-
-  private _checkValidAssignmentToPerson = (
+  const checkValidAssignmentToPerson = (
     assignments: IAccessAssignment[],
     personId: number
   ) => {
@@ -273,7 +128,107 @@ export default class AssignAccess extends React.Component<IProps, IState> {
     return valid;
   };
 
-  private _changeDate = (newDate: Date) => {
-    this.setState({ date: startOfDay(new Date(newDate)) }, this._validateState);
+  const changeDate = (newDate: Date) => {
+    setDate(startOfDay(new Date(newDate)));
   };
-}
+
+  return (
+    <Modal
+      isOpen={props.modal}
+      toggle={confirmClose}
+      size='lg'
+      className='access-color'
+    >
+      <div className='modal-header row justify-content-between'>
+        <h2>
+          {props.selectedAccess || props.person
+            ? 'Assign Access'
+            : 'Add Access'}
+        </h2>
+        <Button color='link' onClick={closeModal}>
+          <i className='fas fa-times fa-lg' />
+        </Button>
+      </div>
+      <ModalBody>
+        <div className='container-fluid'>
+          <form>
+            <div className='form-group'>
+              <AssignPerson
+                disabled={!!props.person}
+                person={props.person || person}
+                onSelect={onSelectPerson}
+                label='Assign To'
+                isRequired={access && access.teamId !== 0}
+                error={error}
+              />
+            </div>
+            {(!!person || !!props.person) && (
+              <AssignDate
+                date={date}
+                isRequired={true}
+                error={error}
+                onChangeDate={changeDate}
+              />
+            )}
+            {!access && (
+              <div className='form-group'>
+                <SearchAccess onSelect={onSelected} onDeselect={onDeselected} />
+              </div>
+            )}
+            {!!access &&
+            !access.teamId && ( // if we are creating a new access, edit properties
+                <div>
+                  <div className='row justify-content-between'>
+                    <h3>Create New Access</h3>
+                    <Button color='link' onClick={onDeselected}>
+                      Clear{' '}
+                      <i className='fas fa-times fa-sm' aria-hidden='true' />
+                    </Button>
+                  </div>
+                  <AccessEditValues
+                    selectedAccess={access}
+                    disableEditing={false}
+                    onAccessUpdate={selectedAccess => setAccess(selectedAccess)}
+                    tags={props.tags}
+                    error={error}
+                  />
+                </div>
+              )}
+            {!!access && !!access.teamId && (
+              <div>
+                <div className='row justify-content-between'>
+                  <h3>Assign Exisiting Access</h3>
+                  <Button color='link' onClick={onDeselected}>
+                    Clear{' '}
+                    <i className='fas fa-times fa-sm' aria-hidden='true' />
+                  </Button>
+                </div>
+                <AccessEditValues
+                  selectedAccess={access}
+                  disableEditing={true}
+                  tags={props.tags}
+                  error={error}
+                >
+                  <AccessAssignmentCard disableEditing={true}>
+                    <AccessAssignmentTable assignments={access.assignments} />
+                  </AccessAssignmentCard>
+                </AccessEditValues>
+              </div>
+            )}
+          </form>
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          color='primary'
+          onClick={assignSelected}
+          disabled={!validState || submitting}
+        >
+          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+        </Button>{' '}
+      </ModalFooter>
+    </Modal>
+  );
+};
+
+export default AssignAccess;
