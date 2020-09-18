@@ -110,3 +110,5 @@ const AccessTable = (props: IProps) => {
     />
   );
 };
+
+export default AccessTable;
