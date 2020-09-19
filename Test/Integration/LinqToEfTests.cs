@@ -113,12 +113,17 @@ namespace Test.Integration
                 {
                     _output.WriteLine($"{Environment.NewLine}{++i:D4} ************ {c}");
 
-                    var queryable = Should.NotThrow(() => builder.GetQueryable(db, c), "Failed to build queryable");
+                    var queryable = /*Should.NotThrow(() =>*/ builder.GetQueryable(db, c);//, "Failed to build queryable");
 
-                    var sql = Should.NotThrow(() => queryable.ToSql(), "Failed to generate sql");
+                    var sql = /*Should.NotThrow(() => */queryable.ToSql();//, "Failed to generate sql");
                 }
             });
         }
+    }
+
+    public class DummyClass
+    {
+        public static readonly int _int01 = 1;
     }
 
     public class TestDbService
@@ -128,6 +133,7 @@ namespace Test.Integration
         private static readonly int _int01 = 1;
 
         private IQueryable<Workstation> _expField000;
+        private IQueryable<Workstation> _expField001;
 
         public TestDbService(ApplicationDbContext dbContext)
         {
@@ -135,9 +141,12 @@ namespace Test.Integration
 
             _expField000 = dbContext.Workstations.AsQueryable()
                 .Where(w => w.Assignment.PersonId == _int01 && w.Team.Slug == _string01);
+
+            _expField001 = dbContext.Workstations.AsQueryable()
+                .Where(w => w.Assignment.PersonId == DummyClass._int01 && w.Team.Slug == _string01);
         }
 
-        public void TestExpression01()
+        public void TestExpression000()
         {
             // this query...
             var exp000 = _dbContext.Workstations.AsQueryable()
@@ -151,13 +160,16 @@ namespace Test.Integration
                 Expression.AndAlso(
                     Expression.Equal(
                         Expression.Property(
-                            Expression.Property(parameterExpression,
+                            Expression.Property(
+                                parameterExpression, 
                                 LinqOp.PropertyOf(() => default(Workstation).Assignment)),
                             LinqOp.PropertyOf(() => default(AssignmentBase).PersonId)),
                         Expression.Field(null, LinqOp.FieldOf(() => TestDbService._int01))),
                     Expression.Equal(
                         Expression.Property(
-                            Expression.Property(parameterExpression, LinqOp.PropertyOf(() => default(AssetBase).Team)),
+                            Expression.Property(
+                                parameterExpression,
+                                LinqOp.PropertyOf(() => default(AssetBase).Team)),
                             LinqOp.PropertyOf(() => default(Team).Slug)),
                         Expression.Field(null, LinqOp.FieldOf(() => TestDbService._string01)))),
                 new[]
@@ -165,6 +177,39 @@ namespace Test.Integration
                     parameterExpression
                 }));//.ToArrayAsync(default(CancellationToken));
         }
+
+        //public void TestExpression001()
+        //{
+        //    // this query...
+        //    var exp001 = _dbContext.Workstations.AsQueryable()
+        //        .Where(w => w.Assignment.PersonId == DummyClass._int01 && w.Team.Slug == _string01)
+        //        .ToArrayAsync();
+
+        //    // ...is compiled to something pretty closely resempling this...
+        //    IQueryable<Workstation> source = this._dbContext.Workstations.AsQueryable();
+        //    ParameterExpression parameterExpression = Expression.Parameter(typeof(Workstation), "w");
+        //    IQueryable < Workstation > tmp = source.Where(Expression.Lambda<Func<Workstation, bool>>(
+        //        Expression.AndAlso(
+        //            Expression.Equal(
+        //                Expression.Property(
+        //                    Expression.Property(
+        //                        parameterExpression,
+        //                        LinqOp.PropertyOf(() => default(Workstation).Assignment)),
+        //                    LinqOp.PropertyOf(() => default(AssignmentBase).PersonId)),
+        //                Expression.Field(null, LinqOp.FieldOf(() => DummyClass._int01))),
+        //            Expression.Equal(
+        //                Expression.Property(
+        //                    Expression.Property(
+        //                        parameterExpression,
+        //                        LinqOp.PropertyOf(() => default(AssetBase).Team)),
+        //                    LinqOp.PropertyOf(() => default(Team).Slug)), 
+        //                Expression.Field(null, LinqOp.FieldOf(() => TestDbService._string01)))),
+        //        new ParameterExpression[]
+        //        {
+        //            parameterExpression
+        //        })); //.ToArrayAsync(default(CancellationToken));
+        //}
+
     }
 
 

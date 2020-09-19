@@ -129,14 +129,19 @@ namespace EfTestHelpers
         internal static ISymbol GetSymbol(this SyntaxNode node, Solution solution)
         {
             var model = node.GetModel(solution);
-            var info = ModelExtensions.GetSymbolInfo(model, node);
-            return info.Symbol;
-        }
+            SymbolInfo info;
+            ISymbol symbol; 
+            switch (node)
+            {
+                case ParameterSyntax p:
+                    symbol = model.GetDeclaredSymbol(p);
+                    break;
+                default:
+                    symbol = model.GetSymbolInfo(node).Symbol;
+                    break;
+            }
 
-        internal static T GetSymbol<T>(this SyntaxNode node, Solution solution)
-            where T : ISymbol
-        {
-            return (T)node.GetSymbol(solution);
+            return symbol;
         }
 
         internal static SemanticModel GetModel(this SyntaxNode node, Solution solution)

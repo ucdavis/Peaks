@@ -15,8 +15,8 @@ namespace EfTestHelpers
     {
         public QueryableExpressionContext ExpressionContext { get; set; }
         public ISymbol Symbol { get; set; }
-        public SyntaxNode OriginalNode { get; set; }
-        public SyntaxNode ReplacementNode { get; set; }
+        public SyntaxNode SyntaxNode { get; set; }
+        //public SyntaxNode ReplacementNode { get; set; }
         public SemanticModel Model { get; set; }
         public Type Type { get; set; }
         public Expression Expression { get; set; }
@@ -24,13 +24,13 @@ namespace EfTestHelpers
         public SyntaxNodeContext ParentContext { get; set; }
         public Dictionary<SyntaxNode, SyntaxNodeContext> AllContexts { get; set; }
 
-        public SyntaxNodeContext(SyntaxNode originalNode, QueryableExpressionContext expressionContext,
+        public SyntaxNodeContext(SyntaxNode syntaxNode, QueryableExpressionContext expressionContext,
             Dictionary<SyntaxNode, SyntaxNodeContext> allContexts, SyntaxNode replacementNode = null)
         {
             ComponentContexts = new Stack<SyntaxNodeContext>();
-            OriginalNode = originalNode;
-            Symbol = originalNode?.GetSymbol(expressionContext.Solution);
-            Model = originalNode?.GetModel(expressionContext.Solution);
+            SyntaxNode = syntaxNode;
+            Symbol = syntaxNode?.GetSymbol(expressionContext.Solution);
+            Model = syntaxNode?.GetModel(expressionContext.Solution);
             Type = Symbol?.GetClrType(Model);
             AllContexts = allContexts;
         }
@@ -43,10 +43,10 @@ namespace EfTestHelpers
         public string ToString(bool includeComponentContexts)
         {
             if (!includeComponentContexts || !ComponentContexts.Any())
-                return ReplacementNode?.ToString() ?? OriginalNode.ToString();
+                return/* ReplacementNode?.ToString() ??*/ SyntaxNode.ToString();
 
             var sb = new StringBuilder();
-            sb.Append($"{ReplacementNode ?? OriginalNode}{Environment.NewLine}    [{ComponentContexts.First()}");
+            sb.Append($"{/*ReplacementNode ??*/ SyntaxNode}{Environment.NewLine}    [{ComponentContexts.First()}");
 
             foreach (var component in ComponentContexts.Skip(1))
             {
@@ -75,8 +75,17 @@ namespace EfTestHelpers
 
         public static MemberInfo GetMemberInfo(this SyntaxNodeContext nodeContext)
         {
-            throw new NotImplementedException();
+            switch (nodeContext.Symbol)
+            {
+                case IPropertySymbol s:
+                    var containingType = s.ContainingType.GetClrType(nodeContext.Model);
+                    return containingType.GetProperty(s.Name);
+                case IFieldSymbol s:
+                    containingType = s.ContainingType.GetClrType(nodeContext.Model);
+                    return containingType.GetField(s.Name);
+                default:
+                    throw new InvalidOperationException();
+            }
         }
-
     }
 }

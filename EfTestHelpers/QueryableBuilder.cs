@@ -21,6 +21,18 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace EfTestHelpers
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>
+    /// Challenges:
+    ///  * Roslyn has no concept of Linq expressions, so they must be constructed based on what
+    ///    extension methods they are passed into. If an extension method takes a bool predicate in
+    ///    addition to a IQueryable, an additional EntityFrameworkQueryableExtensions.Where() call
+    ///    needs to be applied for that predicate.
+    ///  * Roslyn does not provide any mechanism for mapping SemanticModel symbols to actual types
+    ///    in the executing runtime, so they must be manually mapped via reflection
+    /// </remarks>
     public class QueryableBuilder<T>: IEfQueryableBuilder<T>
         where T: DbContext
     {
@@ -66,7 +78,7 @@ namespace EfTestHelpers
         {
             _options.OutputWriteLine($"ORIGINAL EXPRESSION:{Environment.NewLine}{baseQueryableExpression}");
 
-            var generator = SyntaxGenerator.GetGenerator(context.Solution.Workspace, baseQueryableExpression.Language);
+            //var generator = SyntaxGenerator.GetGenerator(context.Solution.Workspace, baseQueryableExpression.Language);
             
             var nodeContexts = new Dictionary<SyntaxNode, SyntaxNodeContext>();
 
@@ -75,90 +87,91 @@ namespace EfTestHelpers
                 nodeContexts.Add(node, new SyntaxNodeContext(node, _context, nodeContexts));
             }
 
-            // replace all expressions referencing captured variables with constants/default values
+            //// replace all expressions referencing captured variables with constants/default values
             var model = baseQueryableExpression.GetModel(_context.Solution);
-            var analysis = model.AnalyzeDataFlow(baseQueryableExpression);
+            //var analysis = model.AnalyzeDataFlow(baseQueryableExpression);
 
-            // As we generate and replace nodes in the SyntaxTree, we can no longer reference original nodes.
+            //// As we generate and replace nodes in the SyntaxTree, we can no longer reference original nodes.
 
-            var identifierNodes = baseQueryableExpression.DescendantNodes().OfType<IdentifierNameSyntax>().ToArray();
+            //var identifierNodes = baseQueryableExpression.DescendantNodes().OfType<IdentifierNameSyntax>().ToArray();
 
-            var rootNode = generator.ValueReturningLambdaExpression("dbContext", baseQueryableExpression);
+            //var rootNode = generator.ValueReturningLambdaExpression("dbContext", baseQueryableExpression);
 
-            //wrap expression with a lambda taking a paramater named dbContext
-            var rootNodeContext = SetReplacementNode(baseQueryableExpression, rootNode);
+            ////wrap expression with a lambda taking a paramater named dbContext
+            //var rootNodeContext = SetReplacementNode(baseQueryableExpression, rootNode);
+            var rootNodeContext = nodeContexts[baseQueryableExpression];
 
 
-            // ensure all references to instance of DbContext are renamed to "dbContext"
-            foreach (var identifier in identifierNodes
-                .Where(node => node.GetSymbol(_context.Solution).GetClrType(node.GetModel(_context.Solution)) == typeof(T)))
-            {
-                SetReplacementNode(identifier, generator.IdentifierName("dbContext"));
-            }
+            //// ensure all references to instance of DbContext are renamed to "dbContext"
+            //foreach (var identifier in identifierNodes
+            //    .Where(node => node.GetSymbol(_context.Solution).GetClrType(node.GetModel(_context.Solution)) == typeof(T)))
+            //{
+            //    SetReplacementNode(identifier, generator.IdentifierName("dbContext"));
+            //}
 
-            foreach (var capturedSymbol in analysis.Captured.Where(s => s.CanBeReferencedByName))
-            {
-                foreach (var identifierNameSyntax in identifierNodes
-                    .Where(node => SymbolEqualityComparer.Default.Equals(node.GetSymbol(_context.Solution), capturedSymbol)))
-                {
-                    var capturedExpression = identifierNameSyntax.AncestorsAndSelf()
-                        .FirstOrDefault(node =>
-                        {
-                            // Use .Ancestors() instead of .Parent to ensure we don't get a trivia node
-                            var parent = node.Ancestors().FirstOrDefault();
-                            return parent is InvocationExpressionSyntax || parent is BinaryExpressionSyntax || parent is ArgumentListSyntax;
-                        });
+            //foreach (var capturedSymbol in analysis.Captured.Where(s => s.CanBeReferencedByName))
+            //{
+            //    foreach (var identifierNameSyntax in identifierNodes
+            //        .Where(node => SymbolEqualityComparer.Default.Equals(node.GetSymbol(_context.Solution), capturedSymbol)))
+            //    {
+            //        var capturedExpression = identifierNameSyntax.AncestorsAndSelf()
+            //            .FirstOrDefault(node =>
+            //            {
+            //                // Use .Ancestors() instead of .Parent to ensure we don't get a trivia node
+            //                var parent = node.Ancestors().FirstOrDefault();
+            //                return parent is InvocationExpressionSyntax || parent is BinaryExpressionSyntax || parent is ArgumentListSyntax;
+            //            });
 
-                    if (capturedExpression == null)
-                        throw new InvalidOperationException("Unable to find a SyntaxNode for captured expression replacement");
+            //        if (capturedExpression == null)
+            //            throw new InvalidOperationException("Unable to find a SyntaxNode for captured expression replacement");
 
-                    var type = GetCapturedExpressionClrType(capturedExpression, model);
+            //        var type = GetCapturedExpressionClrType(capturedExpression, model);
 
-                    if (type.IsClass && _context.Solution.Projects.Any(p => type.Assembly.FullName.StartsWith(p.AssemblyName)))
-                        continue;
+            //        if (type.IsClass && _context.Solution.Projects.Any(p => type.Assembly.FullName.StartsWith(p.AssemblyName)))
+            //            continue;
 
-                    var value = type.Instantiate();
+            //        var value = type.Instantiate();
 
-                    SyntaxNode replacementExpression = generator.LiteralExpression(value);
+            //        SyntaxNode replacementExpression = generator.LiteralExpression(value);
 
-                    switch (capturedExpression.Ancestors().First())
-                    {
-                        case ArgumentListSyntax argumentList:
-                            replacementExpression = generator.Argument(replacementExpression.GetName(), RefKind.None, replacementExpression);
-                            break;
-                        case InvocationExpressionSyntax invocation:
-                            break;
-                        case BinaryExpressionSyntax binary:
-                            break;
-                        default:
-                            throw new InvalidOperationException();
-                    }
+            //        switch (capturedExpression.Ancestors().First())
+            //        {
+            //            case ArgumentListSyntax argumentList:
+            //                replacementExpression = generator.Argument(replacementExpression.GetName(), RefKind.None, replacementExpression);
+            //                break;
+            //            case InvocationExpressionSyntax invocation:
+            //                break;
+            //            case BinaryExpressionSyntax binary:
+            //                break;
+            //            default:
+            //                throw new InvalidOperationException();
+            //        }
 
-                    SetReplacementNode(capturedExpression, replacementExpression);
-                }
-            }
+            //        SetReplacementNode(capturedExpression, replacementExpression);
+            //    }
+            //}
 
-            var walker = new Walker(_options, _context, nodeContexts, rootNodeContext);
+            var walker = new Walker(_options, _context, nodeContexts);//, rootNodeContext);
             walker.Visit(baseQueryableExpression);
 
             return rootNodeContext;
 
-            SyntaxNodeContext SetReplacementNode(SyntaxNode originalNode, SyntaxNode replacementNode)
-            {
-                var originalNodeContext = nodeContexts[originalNode];
-                originalNodeContext.ReplacementNode = replacementNode;
-                nodeContexts[replacementNode] = originalNodeContext;
+            //SyntaxNodeContext SetReplacementNode(SyntaxNode originalNode, SyntaxNode replacementNode)
+            //{
+            //    var originalNodeContext = nodeContexts[originalNode];
+            //    originalNodeContext.ReplacementNode = replacementNode;
+            //    nodeContexts[replacementNode] = originalNodeContext;
 
-                //// TODO: Nodes created by SyntaxGenerator can contain descendant nodes. Determine if those descendant nodes also need to be mapped
-                //foreach (var node in replacementNode.DescendantNodes())
-                //{
-                //    var nodeContext = new SyntaxNodeContext(null, _context, nodeContexts, node);
-                //    nodeContext.OriginalOrReplacementNode = replacementNode;
-                //    nodeContexts[replacementNode] = nodeContext;
-                //}
+            //    //// TODO: Nodes created by SyntaxGenerator can contain descendant nodes. Determine if those descendant nodes also need to be mapped
+            //    //foreach (var node in replacementNode.DescendantNodes())
+            //    //{
+            //    //    var nodeContext = new SyntaxNodeContext(null, _context, nodeContexts, node);
+            //    //    nodeContext.OriginalOrReplacementNode = replacementNode;
+            //    //    nodeContexts[replacementNode] = nodeContext;
+            //    //}
 
-                return originalNodeContext;
-            }
+            //    return originalNodeContext;
+            //}
         }
 
         private Type GetCapturedExpressionClrType(SyntaxNode capturedExpression, SemanticModel model)
@@ -257,10 +270,14 @@ namespace EfTestHelpers
             return type;
         }
 
+        //TODO: Climb expression until we get to DbSet, extracting chain of calls after we are outside of what will be converted to Linq expression tree
+        //TODO: Then construct a delegate that takes a DbContext and calls those methods on the given DbSet,
+
         private static ExpressionSyntax ExtractQueryableArgumentExpression(QueryableExpressionContext context)
         {
             // get IQueryable expression from argument to invocation of method in EntityFrameworkQueryableExtensions
             ExpressionSyntax baseQueryableExpression = null;
+            ExpressionSyntax predicateExpression = null;
 
             switch (context.ExtensionMethodInvocation.Expression)
             {
@@ -268,7 +285,8 @@ namespace EfTestHelpers
                     switch (s.Expression)
                     {
                         case InvocationExpressionSyntax s2:
-                            baseQueryableExpression = s2;
+                            baseQueryableExpression = s2.ArgumentList.Arguments.FirstOrDefault()?.Expression ?? s2;
+                            predicateExpression = s2.ArgumentList.Arguments.Skip(1).FirstOrDefault()?.Expression as SimpleLambdaExpressionSyntax;
                             break;
                         case MemberAccessExpressionSyntax s2:
                             baseQueryableExpression = s2;
@@ -297,21 +315,21 @@ namespace EfTestHelpers
             private readonly Stack<SyntaxNodeContext> _nodeContextStack;
             private readonly QueryableScannerOptions _options;
             private readonly Dictionary<SyntaxNode, SyntaxNodeContext> _nodeContexts;
-            private readonly SyntaxNodeContext _rootNodeContext;
+            //private readonly SyntaxNodeContext _rootNodeContext;
 
             public Walker(QueryableScannerOptions options, QueryableExpressionContext context,
-                Dictionary<SyntaxNode, SyntaxNodeContext> nodeContexts, SyntaxNodeContext rootNodeContext)
+                Dictionary<SyntaxNode, SyntaxNodeContext> nodeContexts)//, SyntaxNodeContext rootNodeContext)
             {
                 _options = options;
                 _context = context;
                 _nodeContexts = nodeContexts;
                 _nodeContextStack = new Stack<SyntaxNodeContext>();
-                _rootNodeContext = rootNodeContext;
+                //_rootNodeContext = rootNodeContext;
             }
 
             private void LogVisitation(string s)
             {
-                //_options.OutputWriteLine(s);
+                _options.OutputWriteLine(s);
             }
 
 #nullable enable
@@ -319,27 +337,10 @@ namespace EfTestHelpers
             public override void Visit(SyntaxNode node)
             {
                 _outputIndent = _outputIndent + "    ";
-                var nodeContext = _nodeContexts[node];
-                // only visit node if it is not being replaced
-                if (nodeContext.ReplacementNode == null || nodeContext == _rootNodeContext)
+                //var nodeContext = _nodeContexts[node];
+                //// only visit node if it is not being replaced
+                //if (nodeContext.ReplacementNode == null || nodeContext == _rootNodeContext)
                     base.Visit(node);
-                //// Don't visit node if it is not found in _nodeContexts, which will occur with descendants of replacement nodes
-                //if (_nodeContexts.TryGetValue(node, out var nodeContext))
-                //{
-                //    // avoid visiting nodes that have been replaced...
-                //    base.Visit(nodeContext.OriginalOrReplacementNode != node
-                //        ? nodeContext.OriginalOrReplacementNode
-                //        : node);
-                //}
-                //else
-                //{
-                //    // This node was likely created as a descendant of something generated by SyntaxGenerator.
-                //    // Since the new nodeContext will not have an OriginalNode from the current compilation, available
-                //    // info about it will be limited...
-                //    var newNodeContext = new SyntaxNodeContext(null, _context, _nodeContexts, node);
-                //    _nodeContexts.Add(node, newNodeContext);
-                //    base.Visit(node);
-                //}
                 _outputIndent = _outputIndent.Substring(0, _outputIndent.Length - 4);
             }
 
@@ -349,9 +350,10 @@ namespace EfTestHelpers
                 LogVisitation($"{_outputIndent}VisitDefaultExpression: {node}");
 
                 var nodeContext = _nodeContexts[node];
-                _nodeContextStack.Push(nodeContext);
-
                 nodeContext.Expression = Expression.Default(nodeContext.Type);
+                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
+
+                _nodeContextStack.Push(nodeContext);
             }
 
             public override void VisitArgumentList(ArgumentListSyntax node)
@@ -363,8 +365,8 @@ namespace EfTestHelpers
 
                 _nodeContextStack.TryPeek(out var potentialArgumentNodeContext);
 
-                if (!(potentialArgumentNodeContext?.ReplacementNode is ArgumentSyntax ||
-                      potentialArgumentNodeContext?.ReplacementNode is MemberAccessExpressionSyntax))
+                if (!(potentialArgumentNodeContext?.SyntaxNode is ArgumentSyntax ||
+                      potentialArgumentNodeContext?.SyntaxNode is MemberAccessExpressionSyntax))
                     throw new InvalidOperationException(
                         $"{nameof(ArgumentListSyntax)} {nameof(node)} should have at least one argument");
 
@@ -375,7 +377,7 @@ namespace EfTestHelpers
 
                 // subsequent nodes should all be ArgumentSyntax
                 while (_nodeContextStack.TryPeek(out potentialArgumentNodeContext) &&
-                       potentialArgumentNodeContext.ReplacementNode is ArgumentSyntax)
+                       potentialArgumentNodeContext.SyntaxNode is ArgumentSyntax)
                 {
                     _nodeContextStack.Pop();
 
@@ -411,11 +413,16 @@ namespace EfTestHelpers
 
                 var nodeContext = _nodeContexts[node];
 
-                if (_nodeContextStack.TryPeek(out var parameterExpressioNodeContext) && parameterExpressioNodeContext.ReplacementNode is IdentifierNameSyntax)
+                if (_nodeContextStack.TryPeek(out var parameterExpressioNodeContext) && parameterExpressioNodeContext.SyntaxNode is IdentifierNameSyntax)
                 {
                     nodeContext.AddComponentContext(parameterExpressioNodeContext);
                     _nodeContextStack.Pop();
                 }
+
+                nodeContext.Expression = Expression.Parameter(
+                    nodeContext.Symbol.GetClrType(nodeContext.Model),
+                    nodeContext.Symbol.Name);
+                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
 
                 _nodeContextStack.Push(nodeContext);
             }
@@ -438,14 +445,12 @@ namespace EfTestHelpers
 
                 nodeContext.AddComponentContext(methodOrDelegateNodeContext);
 
-                _nodeContextStack.Push(nodeContext);
-
                 var argumentListContext = nodeContext.ComponentContexts
                     .Skip(1)
                     .FirstOrDefault();
 
                 var argumentExpressions =
-                    argumentListContext?.ReplacementNode is ArgumentListSyntax l
+                    argumentListContext?.SyntaxNode is ArgumentListSyntax l
                         ? argumentListContext.ComponentContexts
                             .Select(c => c.Expression)
                             .ToArray()
@@ -455,8 +460,10 @@ namespace EfTestHelpers
                 var methodInfo = methodOrDelegateNodeContext.GetMethodInfo();
 
                 nodeContext.Expression = Expression.Call(instanceExpression, methodInfo, argumentExpressions);
+                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
                 //TODO: Do we ever need to use Expression.Invoke()?
 
+                _nodeContextStack.Push(nodeContext);
             }
 
             public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
@@ -466,6 +473,9 @@ namespace EfTestHelpers
 
                 var nodeContext = _nodeContexts[node];
 
+                if (!(nodeContext.Symbol is IPropertySymbol || nodeContext.Symbol is IFieldSymbol))
+                    return; // Only properties and fields are considered for MemberAccess as far as linq expressions is concerned
+
                 if (!_nodeContextStack.TryPop(out var memberNodeContext))
                     throw new InvalidOperationException(
                         $"No {nameof(memberNodeContext)} found for {nameof(MemberAccessExpressionSyntax)} {node}");
@@ -474,16 +484,29 @@ namespace EfTestHelpers
                     throw new InvalidOperationException(
                         $"No {nameof(containingNodeContext)} found for {nameof(MemberAccessExpressionSyntax)} {node}");
 
+
+                //if (!_nodeContextStack.TryPeek(out var containingNodeContext) &&
+                //    containingNodeContext.Symbol is IParameterSymbol)
+                //{
+                //    _nodeContextStack.Pop();
+                //    nodeContext.AddComponentContext(containingNodeContext);
+                //}
+                //else
+                //{
+                //    containingNodeContext = null;
+
+                //}
+
                 nodeContext.AddComponentContext(containingNodeContext);
                 nodeContext.AddComponentContext(memberNodeContext);
 
                 _nodeContextStack.Push(nodeContext);
 
-                var containingType = containingNodeContext.Type;
                 var memberInfo = memberNodeContext.GetMemberInfo();
 
-                nodeContext.Expression =
-                    Expression.MakeMemberAccess(containingNodeContext.Expression, memberInfo);
+                nodeContext.Expression = Expression.MakeMemberAccess(containingNodeContext.Expression, memberInfo);
+
+                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
             }
 
 
@@ -495,34 +518,29 @@ namespace EfTestHelpers
 
                 var nodeContext = _nodeContexts[node];
 
-                if (!_nodeContextStack.TryPop(out var argumentListContext))
-                    throw new InvalidOperationException(
-                        $"No {nameof(argumentListContext)} found for {nameof(SimpleLambdaExpressionSyntax)} {node}");
-
                 if (!_nodeContextStack.TryPop(out var lambdaBodyContext))
                     throw new InvalidOperationException(
                         $"No {nameof(lambdaBodyContext)} found for {nameof(SimpleLambdaExpressionSyntax)} {node}");
 
+                if (!_nodeContextStack.TryPop(out var parameterContext))
+                    throw new InvalidOperationException(
+                        $"No {nameof(parameterContext)} found for {nameof(SimpleLambdaExpressionSyntax)} {node}");
+
+                nodeContext.AddComponentContext(parameterContext);
                 nodeContext.AddComponentContext(lambdaBodyContext);
-                nodeContext.AddComponentContext(argumentListContext);
+
+                var parameterExpressions = parameterContext?.SyntaxNode switch
+                {
+                    ParameterListSyntax s => s.Parameters
+                        .Select(p => Expression.Parameter(_nodeContexts[p].Type, _nodeContexts[p].Symbol.Name)).ToArray(),
+                    ParameterSyntax s => new[] {Expression.Parameter(parameterContext.Type, _nodeContexts[s].Symbol.Name) },
+                    _ => new ParameterExpression[] { }
+                };
+
+                nodeContext.Expression = Expression.Lambda(lambdaBodyContext.Expression, false, parameterExpressions);
+                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
 
                 _nodeContextStack.Push(nodeContext);
-
-                var bodyExpression = lambdaBodyContext.Expression;
-
-                argumentListContext = nodeContext.ComponentContexts
-                    .Skip(1)
-                    .FirstOrDefault();
-
-                var parameterExpressions =
-                    argumentListContext?.ReplacementNode is ArgumentListSyntax
-                        ? argumentListContext.ComponentContexts
-                            .Select(c => Expression.Parameter(c.Type, c.ReplacementNode.GetName()))
-                            .ToArray()
-                        : new ParameterExpression[] { };
-
-                nodeContext.Expression = Expression.Lambda(bodyExpression, false, parameterExpressions);
-
             }
 
             public override void VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
@@ -543,8 +561,6 @@ namespace EfTestHelpers
                 nodeContext.AddComponentContext(lambdaBodyContext);
                 nodeContext.AddComponentContext(argumentListContext);
 
-                _nodeContextStack.Push(nodeContext);
-
                 var bodyExpression = lambdaBodyContext.Expression;
 
                 argumentListContext = nodeContext.ComponentContexts
@@ -552,14 +568,16 @@ namespace EfTestHelpers
                     .FirstOrDefault();
 
                 var parameterExpressions =
-                    argumentListContext?.ReplacementNode is ArgumentListSyntax
+                    argumentListContext?.SyntaxNode is ArgumentListSyntax
                         ? argumentListContext.ComponentContexts
-                            .Select(c => Expression.Parameter(c.Type, c.ReplacementNode.GetName()))
+                            .Select(c => Expression.Parameter(c.Type, c.SyntaxNode.GetName()))
                             .ToArray()
                         : new ParameterExpression[] { };
 
                 nodeContext.Expression = Expression.Lambda(bodyExpression, false, parameterExpressions);
+                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
 
+                _nodeContextStack.Push(nodeContext);
             }
 
             public override void VisitBinaryExpression(BinaryExpressionSyntax node)
@@ -582,9 +600,12 @@ namespace EfTestHelpers
 
                 _nodeContextStack.Push(nodeContext);
 
-                //ExpressionType expressionType = nodeContext.Symbol as Ibin
+                var expressionType = GetOpExpressionType(node.Kind());
 
-                //Expression.MakeBinary()
+                
+
+                nodeContext.Expression = Expression.MakeBinary(expressionType, leftNodeContext.Expression,
+                    rightNodeContext.Expression);
             }
 
             public override void VisitIdentifierName(IdentifierNameSyntax node)
@@ -593,27 +614,58 @@ namespace EfTestHelpers
                 LogVisitation($"{_outputIndent}VisitIdentifierName: {node}");
 
                 var nodeContext = _nodeContexts[node];
-                _nodeContextStack.Push(nodeContext);
-
-                if (nodeContext.Type?.ImplementsOrDerives(typeof(DbContext)) ?? false)
-                {
-                    nodeContext.Expression = Expression.Parameter(nodeContext.Type, node.Identifier.Text);
-                    return;
-                }
 
                 switch (nodeContext.Symbol)
                 {
-                    case IFieldSymbol _:
-                    case IPropertySymbol _:
-                        var parentNode = nodeContext.OriginalNode.Ancestors().First();
-                        var parentSyntax = nodeContext.AllContexts[parentNode];
-                        var containingExpression = parentSyntax.Expression;
-                        nodeContext.Expression =
-                            Expression.PropertyOrField(containingExpression, node.Identifier.Text);
+                    case ILocalSymbol s:
+                        nodeContext.Expression = Expression.Parameter(
+                            s.GetClrType(nodeContext.Model),
+                            s.Name);
                         break;
-                    default:
-                        throw new InvalidOperationException();
+                    case IParameterSymbol s:
+                        nodeContext.Expression = Expression.Parameter(
+                            s.GetClrType(nodeContext.Model),
+                            s.Name);
+                        break;
+                    case IPropertySymbol s:
+                        if (s.IsStatic)
+                        {
+                            nodeContext.Expression = Expression.Property(null,
+                                s.ContainingType.GetClrType(nodeContext.Model).GetProperty(s.Name,
+                                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static));
+                        }
+                        else
+                        {
+                            if (!_nodeContextStack.TryPeek(out var containingNodeContext))
+                                throw new InvalidOperationException("No nodeContext found for containing expression");
+
+                            nodeContext.Expression = Expression.Property(containingNodeContext?.Expression, s.Name);
+                            nodeContext.ComponentContexts.Push(containingNodeContext);
+                        }
+
+
+                        break;
+                    case IFieldSymbol s:
+                        if (s.IsStatic)
+                        {
+                            nodeContext.Expression = Expression.Field(null,
+                                s.ContainingType.GetClrType(nodeContext.Model).GetField(s.Name,
+                                    BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static));
+                        }
+                        else
+                        {
+                            if (!_nodeContextStack.TryPeek(out var containingNodeContext))
+                                throw new InvalidOperationException("No nodeContext found for containing expression");
+
+                            nodeContext.Expression = Expression.Field(containingNodeContext?.Expression, s.Name);
+                            nodeContext.ComponentContexts.Push(containingNodeContext);
+                        }
+
+                        break;
                 }
+                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
+
+                _nodeContextStack.Push(nodeContext);
             }
 
             public override void VisitLiteralExpression(LiteralExpressionSyntax node)
@@ -622,12 +674,58 @@ namespace EfTestHelpers
                 LogVisitation($"{_outputIndent}VisitLiteralExpression: {node}");
 
                 var nodeContext = _nodeContexts[node];
-                _nodeContextStack.Push(nodeContext);
-
 
                 nodeContext.Expression = Expression.Constant(node.Token.Value);
+                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
+
+                _nodeContextStack.Push(nodeContext);
             }
 #nullable disable
+
+ 
+            private static ExpressionType GetOpExpressionType(SyntaxKind kind)
+            {
+                return kind switch
+                {
+                    SyntaxKind.AddExpression => ExpressionType.Add,
+                    SyntaxKind.SubtractExpression => ExpressionType.Subtract,
+                    SyntaxKind.MultiplyExpression=> ExpressionType.Multiply,
+                    SyntaxKind.DivideExpression=> ExpressionType.Divide,
+                    SyntaxKind.ModuloExpression => ExpressionType.Modulo,
+                    SyntaxKind.ExclusiveOrExpression => ExpressionType.ExclusiveOr,
+                    SyntaxKind.BitwiseAndExpression => ExpressionType.And,
+                    SyntaxKind.BitwiseOrExpression => ExpressionType.Or,
+                    SyntaxKind.LogicalAndExpression => ExpressionType.AndAlso,
+                    SyntaxKind.LogicalOrExpression => ExpressionType.OrElse,
+                    SyntaxKind.SimpleAssignmentExpression => ExpressionType.Assign,
+                    SyntaxKind.LeftShiftExpression => ExpressionType.LeftShift,
+                    SyntaxKind.RightShiftExpression => ExpressionType.RightShift,
+                    SyntaxKind.EqualsExpression => ExpressionType.Equal,
+                    SyntaxKind.NotEqualsExpression => ExpressionType.NotEqual,
+                    SyntaxKind.GreaterThanExpression => ExpressionType.GreaterThan,
+                    SyntaxKind.LessThanExpression => ExpressionType.LessThan,
+                    SyntaxKind.GreaterThanOrEqualExpression => ExpressionType.GreaterThanOrEqual,
+                    SyntaxKind.LessThanOrEqualExpression => ExpressionType.LessThanOrEqual,
+                    SyntaxKind.MultiplyAssignmentExpression => ExpressionType.MultiplyAssign,
+                    SyntaxKind.SubtractAssignmentExpression => ExpressionType.SubtractAssign,
+                    SyntaxKind.ExclusiveOrAssignmentExpression => ExpressionType.ExclusiveOrAssign,
+                    SyntaxKind.LeftShiftAssignmentExpression => ExpressionType.LeftShiftAssign,
+                    SyntaxKind.ModuloAssignmentExpression => ExpressionType.ModuloAssign,
+                    SyntaxKind.AddAssignmentExpression => ExpressionType.AddAssign,
+                    SyntaxKind.AndAssignmentExpression => ExpressionType.AndAssign,
+                    SyntaxKind.OrAssignmentExpression => ExpressionType.OrAssign,
+                    SyntaxKind.DivideAssignmentExpression => ExpressionType.DivideAssign,
+                    SyntaxKind.PostDecrementExpression => ExpressionType.PostDecrementAssign,
+                    SyntaxKind.PreDecrementExpression => ExpressionType.PreDecrementAssign,
+                    SyntaxKind.PostIncrementExpression => ExpressionType.PostIncrementAssign,
+                    SyntaxKind.PreIncrementExpression => ExpressionType.PreIncrementAssign,
+                    SyntaxKind.UnaryMinusExpression => ExpressionType.Negate,
+                    SyntaxKind.UnaryPlusExpression => ExpressionType.UnaryPlus,
+                    _ => throw new NotSupportedException()
+
+                };
+            }
+
         }
     }
 

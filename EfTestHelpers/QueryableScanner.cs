@@ -129,7 +129,7 @@ namespace EfTestHelpers
                         if (!SymbolEqualityComparer.Default.Equals(methodSymbol?.ContainingSymbol, efQueryableExtensionsSymbol))
                             continue;
 
-                        context = context.SetExtensionMethod(methodSymbol);
+                        context = context.SetExtensionMethod(methodSymbol.ReducedFrom ?? methodSymbol);
                         context = context.SetInvocationSetDataFlowAnalysis(model.AnalyzeDataFlow(context.ExtensionMethodInvocation));
                         context = context.SetLineNumber(invocationSyntax.GetLineNumber());
 
