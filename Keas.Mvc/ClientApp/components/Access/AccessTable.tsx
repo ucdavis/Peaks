@@ -91,7 +91,7 @@ const AccessTable = (props: IProps) => {
         Header: 'Actions'
       }
     ],
-    []
+    [props]
   );
 
   const accessData = React.useMemo(() => props.accesses, [props.accesses]);
