@@ -12,46 +12,46 @@ interface IProps {
   onDelete?: (key: IKey) => void;
 }
 
-export default class KeyListItem extends React.Component<IProps, {}> {
-  public render() {
-    const { keyInfo } = this.props;
+const KeyListItem = (props: IProps) => {
+  const { keyInfo } = props;
 
-    const actions: IAction[] = [];
-    if (!!this.props.onDisassociate) {
-      actions.push({
-        onClick: () => this.props.onDisassociate(keyInfo),
-        title: 'Disassociate'
-      });
-    }
-
-    if (!!this.props.onDelete) {
-      actions.push({
-        title: 'Delete',
-        onClick: () => this.props.onDelete(keyInfo.key)
-      });
-    }
-
-    return (
-      <tr>
-        <td>
-          <Button
-            className='keys-anomaly'
-            color='link'
-            onClick={() => this.props.showDetails(this.props.keyInfo.key)}
-          >
-            Details
-          </Button>
-        </td>
-        <td>{keyInfo.key.name}</td>
-        <td>{keyInfo.key.code}</td>
-        <td className=''>
-          <i className='fas fa-key' /> {keyInfo.serialsInUseCount} /{' '}
-          {keyInfo.serialsTotalCount}
-        </td>
-        <td>
-          <ListActionsDropdown actions={actions} className='keys-anomaly' />
-        </td>
-      </tr>
-    );
+  const actions: IAction[] = [];
+  if (!!props.onDisassociate) {
+    actions.push({
+      onClick: () => props.onDisassociate(keyInfo),
+      title: 'Disassociate'
+    });
   }
-}
+
+  if (!!props.onDelete) {
+    actions.push({
+      title: 'Delete',
+      onClick: () => props.onDelete(keyInfo.key)
+    });
+  }
+
+  return (
+    <tr>
+      <td>
+        <Button
+          className='keys-anomaly'
+          color='link'
+          onClick={() => props.showDetails(props.keyInfo.key)}
+        >
+          Details
+        </Button>
+      </td>
+      <td>{keyInfo.key.name}</td>
+      <td>{keyInfo.key.code}</td>
+      <td className=''>
+        <i className='fas fa-key' /> {keyInfo.serialsInUseCount} /{' '}
+        {keyInfo.serialsTotalCount}
+      </td>
+      <td>
+        <ListActionsDropdown actions={actions} className='keys-anomaly' />
+      </td>
+    </tr>
+  );
+};
+
+export default KeyListItem;
