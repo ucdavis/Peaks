@@ -88,8 +88,7 @@ const AccessEditValues = (props: IProps) => {
                 : []
             }
             onSelect={e => {
-              access.tags = e.join(',');
-              props.onAccessUpdate(access);
+              props.onAccessUpdate({...access, tags:e.join(',')});
             }}
           />
           <FormFeedback>
