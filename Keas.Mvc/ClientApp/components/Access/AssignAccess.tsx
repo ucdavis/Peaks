@@ -13,12 +13,12 @@ import AccessEditValues from './AccessEditValues';
 import SearchAccess from './SearchAccess';
 
 interface IProps {
-  closeModal: () => void;
   modal: boolean;
-  onCreate: (access: IAccess, date: any, person: IPerson) => Promise<void>;
   person?: IPerson;
   selectedAccess?: IAccess;
   tags: string[];
+  closeModal: () => void;
+  onCreate: (access: IAccess, date: any, person: IPerson) => Promise<void>;
 }
 
 const AssignAccess = (props: IProps) => {
