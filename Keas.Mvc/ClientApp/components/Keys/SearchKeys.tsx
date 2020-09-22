@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext, useState } from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
@@ -16,90 +17,60 @@ interface IState {
   keysInfo: IKeyInfo[];
 }
 
-function noopTrue() {
+const noopTrue = () => {
   return true;
-}
+};
 
 // Search for existing key then send selection back to parent
-export default class SearchKeys extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const SearchKeys = (props: IProps) => {
+  const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
+  const [keysInfo, setKeysInfo] = useState<IKeyInfo[]>([]);
+  const context = useContext(Context);
 
-  constructor(props) {
-    super(props);
+  const { defaultKeyInfo } = props;
 
-    this.state = {
-      isSearchLoading: false,
-      keysInfo: []
-    };
-  }
-
-  public render() {
-    const { defaultKeyInfo } = this.props;
-    const { isSearchLoading, keysInfo } = this.state;
-
-    return (
-      <AsyncTypeahead
-        id='searchKeys' // for accessibility
-        defaultSelected={defaultKeyInfo ? [defaultKeyInfo] : []}
-        isLoading={isSearchLoading}
-        minLength={2}
-        placeholder='Search for key by name or by serial number'
-        labelKey='code'
-        filterBy={noopTrue} // don't filter on top of our search
-        allowNew={this.props.allowNew}
-        renderMenuItemChildren={this.renderItem}
-        onSearch={this.onSearch}
-        onChange={this.onChange}
-        options={keysInfo}
-      />
-    );
-  }
-
-  private renderItem = (option: IKeyInfo, props, index) => {
+  const renderItem = (option: IKeyInfo, propsData, index) => {
     return (
       <div>
         <div>
-          <Highlighter search={props.text}>{option.key.name}</Highlighter>
+          <Highlighter search={propsData.text}>{option.key.name}</Highlighter>
         </div>
         <div>
           <small>
             Key Code:
-            <Highlighter search={props.text}>{option.key.code}</Highlighter>
+            <Highlighter search={propsData.text}>{option.key.code}</Highlighter>
           </small>
         </div>
       </div>
     );
   };
 
-  private onSearch = async query => {
-    const { team } = this.context;
+  const onSearch = async query => {
+    const { team } = context;
 
-    this.setState({ isSearchLoading: true });
+    setIsSearchLoading(true);
 
     let keysInfo: IKeyInfo[] = null;
     try {
-      keysInfo = await this.context.fetch(
+      keysInfo = await context.fetch(
         `/api/${team.slug}/keys/search?q=${query}`
       );
     } catch (err) {
       toast.error('Error searchhing keys.');
-      this.setState({ isSearchLoading: false });
+      setIsSearchLoading(false);
       return;
     }
 
-    this.setState({
-      isSearchLoading: false,
-      keysInfo
-    });
+    setKeysInfo(keysInfo);
+    setIsSearchLoading(false);
   };
 
-  private onChange = (selected: any[]) => {
+  const onChange = (selected: any[]) => {
     let keyInfo: IKeyInfo;
 
     // check for empty
     if (!selected || selected.length <= 0) {
-      this.props.onDeselect();
+      props.onDeselect();
     }
 
     // check for new selection
@@ -123,7 +94,26 @@ export default class SearchKeys extends React.Component<IProps, IState> {
       keyInfo = selected[0];
     }
 
-    this.props.onSelect(keyInfo);
+    props.onSelect(keyInfo);
     return;
   };
-}
+
+  return (
+    <AsyncTypeahead
+      id='searchKeys' // for accessibility
+      defaultSelected={defaultKeyInfo ? [defaultKeyInfo] : []}
+      isLoading={isSearchLoading}
+      minLength={2}
+      placeholder='Search for key by name or by serial number'
+      labelKey='code'
+      filterBy={noopTrue} // don't filter on top of our search
+      allowNew={props.allowNew}
+      renderMenuItemChildren={renderItem}
+      onSearch={onSearch}
+      onChange={onChange}
+      options={keysInfo}
+    />
+  );
+};
+
+export default SearchKeys;
