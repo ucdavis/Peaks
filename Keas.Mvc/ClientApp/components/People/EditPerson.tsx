@@ -12,14 +12,6 @@ interface IProps {
   tags: string[];
 }
 
-interface IState {
-  error: IValidationError;
-  modal: boolean;
-  person: IPerson;
-  submitting: boolean;
-  validState: boolean;
-}
-
 const EditPerson = (props: IProps) => {
   const [error, setError] = useState<IValidationError>({
     message: '',
