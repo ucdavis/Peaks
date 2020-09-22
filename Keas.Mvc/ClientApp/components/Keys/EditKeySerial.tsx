@@ -23,7 +23,6 @@ interface IProps {
 }
 
 const EditKeySerial = (props: IProps) => {
-  // export default class EditKeySerial extends React.Component<IProps, IState> {
   const [error, setError] = useState<IValidationError>({
     message: '',
     path: ''
