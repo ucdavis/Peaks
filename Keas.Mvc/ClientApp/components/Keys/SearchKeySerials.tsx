@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext, useState } from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
@@ -14,68 +15,46 @@ interface IProps {
   openDetailsModal: (keySerial: IKeySerial) => void;
 }
 
-interface IState {
-  isSearchLoading: boolean;
-  keySerials: IKeySerial[];
-}
-
 // Search for existing key then send selection back to parent
-export default class SearchKeySerials extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const SearchKeySerials = (props: IProps) => {
+  const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
+  const [keySerials, setKeySerials] = useState<IKeySerial[]>([]);
+  const context = useContext(Context);
 
-  constructor(props: IProps) {
-    super(props);
-
-    this.state = {
-      isSearchLoading: false,
-      keySerials: []
-    };
-  }
-
-  public render() {
-    if (this.props.selectedKeySerial != null) {
-      return this._renderExistingKey();
-    }
-
-    return this._renderSelectKey();
-  }
-
-  private _renderExistingKey = () => {
+  const renderExistingKey = () => {
     return (
       <input
         type='text'
         className='form-control'
-        value={this.props.selectedKeySerial.number}
+        value={props.selectedKeySerial.number}
         disabled={true}
       />
     );
   };
 
-  private _renderSelectKey = () => {
-    const { isSearchLoading, keySerials } = this.state;
+  const renderSelectKey = () => {
     return (
       <div>
         <label>Pick a key serial to assign</label>
         <div>
           <AsyncTypeahead
             id='searchKeySerials' // for accessibility
-            isInvalid={!this.props.selectedKey || !this.props.selectedKeySerial}
+            isInvalid={!props.selectedKey || !props.selectedKeySerial}
             isLoading={isSearchLoading}
             minLength={1}
             placeholder='Search for key by name or by serial number'
             labelKey='number'
             filterBy={() => true} // don't filter on top of our search
             allowNew={false}
-            renderMenuItemChildren={this.renderItem}
-            onSearch={this.onSearch}
-            onChange={this.onChange}
+            renderMenuItemChildren={renderItem}
+            onSearch={onSearch}
+            onChange={onChange}
             options={keySerials}
           />
         </div>
         <div>or</div>
         <div>
-          <Button color='link' onClick={this._createNew}>
+          <Button color='link' onClick={createNew}>
             <i className='fas fa-plus fa-sm' aria-hidden='true' /> Create New
             Serial
           </Button>
@@ -84,7 +63,7 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
     );
   };
 
-  private renderItem = (option: IKeySerial, props, index) => {
+  const renderItem = (option: IKeySerial, props, index) => {
     return (
       <div className={!!option.keySerialAssignment ? 'disabled' : ''}>
         <div>
@@ -107,66 +86,71 @@ export default class SearchKeySerials extends React.Component<IProps, IState> {
     );
   };
 
-  private onSearch = async query => {
-    const { team } = this.context;
+  const onSearch = async query => {
+    const { team } = context;
+    setIsSearchLoading(true);
 
-    this.setState({ isSearchLoading: true });
-
-    const searchUrl = this.props.selectedKey
-      ? `/api/${team.slug}/keySerials/searchInKey?keyId=${this.props.selectedKey.id}&q=${query}`
+    const searchUrl = props.selectedKey
+      ? `/api/${team.slug}/keySerials/searchInKey?keyId=${props.selectedKey.id}&q=${query}`
       : `/api/${team.slug}/keySerials/search?q=${query}`;
 
     let keySerials: IKeySerial[] = null;
     try {
-      keySerials = await this.context.fetch(searchUrl);
+      keySerials = await context.fetch(searchUrl);
     } catch (err) {
       toast.error('Error searching key serials.');
-      this.setState({ isSearchLoading: false });
+      setIsSearchLoading(false);
       return;
     }
-    this.setState({
-      isSearchLoading: false,
-      keySerials
-    });
+    setKeySerials(keySerials);
+    setIsSearchLoading(false);
   };
 
-  private onChange = (selected: any[]) => {
+  const onChange = (selected: any[]) => {
     let keySerial: IKeySerial;
 
     // check for empty
     if (!selected || selected.length <= 0) {
-      this.props.onDeselect();
+      props.onDeselect();
     }
 
     // check for new selection
     if (selected[0].customOption) {
       keySerial = {
         id: 0,
-        key: this.props.selectedKey,
+        key: props.selectedKey,
         notes: '',
         number: selected[0].number,
         status: 'Active'
       };
-      this.props.onSelect(keySerial);
+      props.onSelect(keySerial);
     } else if (!!selected[0].keySerialAssignment) {
-      this.props.openDetailsModal(selected[0]);
+      props.openDetailsModal(selected[0]);
     } else {
       keySerial = selected[0];
-      this.props.onSelect(keySerial);
+      props.onSelect(keySerial);
     }
 
     return;
   };
 
-  private _createNew = () => {
+  const createNew = () => {
     const keySerial = {
       id: 0,
-      key: this.props.selectedKey,
+      key: props.selectedKey,
       notes: '',
       number: '',
       status: 'Active',
       tags: ''
     };
-    this.props.onSelect(keySerial);
+    props.onSelect(keySerial);
   };
-}
+
+  if (props.selectedKeySerial != null) {
+    return renderExistingKey();
+  }
+
+  return renderSelectKey();
+};
+
+export default SearchKeySerials;
