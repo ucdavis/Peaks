@@ -12,11 +12,6 @@ interface IProps {
   allowNew: boolean;
 }
 
-interface IState {
-  isSearchLoading: boolean;
-  keysInfo: IKeyInfo[];
-}
-
 const noopTrue = () => {
   return true;
 };
