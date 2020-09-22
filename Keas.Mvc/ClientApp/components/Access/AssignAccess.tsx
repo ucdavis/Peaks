@@ -6,7 +6,7 @@ import { accessSchema, IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import AssignPerson from '../People/AssignPerson';
-import { AssignDate } from '../Shared/AssignDate';
+import AssignDate from '../Shared/AssignDate';
 import AccessAssignmentCard from './AccessAssignmentCard';
 import AccessAssignmentTable from './AccessAssignmentTable';
 import AccessEditValues from './AccessEditValues';

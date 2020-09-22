@@ -15,7 +15,7 @@ import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
 import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import AssignPerson from '../People/AssignPerson';
-import { AssignDate } from '../Shared/AssignDate';
+import AssignDate from '../Shared/AssignDate';
 import KeySerialEditValues from './KeySerialEditValues';
 import SearchKeys from './SearchKeys';
 import SearchKeySerial from './SearchKeySerials';
