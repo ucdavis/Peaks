@@ -44,7 +44,7 @@ const DeleteKey = (props: IProps) => {
         isOpen={props.modal}
         toggle={props.closeModal}
         size='lg'
-        className='key-color'
+        className='keys-color'
       >
         <div className='modal-header row justify-content-between'>
           <h2>Delete {props.selectedKeyInfo.key.name}</h2>
