@@ -16,17 +16,15 @@ interface IProps {
 }
 
 const AccessEditValues = (props: IProps) => {
-  useEffect(() => {
-    if (!props.disableEditing && !props.onAccessUpdate) {
-      throw new Error(
-        'If the access is editable then a callback must be provided'
-      );
-    }
-  });
+  if (!props.disableEditing && !props.onAccessUpdate) {
+    throw new Error(
+      'If the access is editable then a callback must be provided'
+    );
+  }
 
   const access = props.selectedAccess;
   const error = props.error;
-  
+
   return (
     <div>
       {props.disableEditing && props.openEditModal && (
@@ -88,7 +86,7 @@ const AccessEditValues = (props: IProps) => {
                 : []
             }
             onSelect={e => {
-              props.onAccessUpdate({...access, tags:e.join(',')});
+              props.onAccessUpdate({ ...access, tags: e.join(',') });
             }}
           />
           <FormFeedback>

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext, useState } from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
@@ -11,55 +12,39 @@ interface IProps {
   onDeselect: () => void;
 }
 
-interface IState {
-  isSearchLoading: boolean;
-  accesses: IAccess[];
-}
-
 // Search for existing access then send selection back to parent
-export default class SearchAccess extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const SearchAccess = (props: IProps) => {
+  const [accesses, setAccesses] = useState<IAccess[]>([]);
+  const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
+  const context = useContext(Context);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      accesses: [],
-      isSearchLoading: false
-    };
-  }
-
-  public render() {
-    return this._renderSelectAccess();
-  }
-
-  private _renderSelectAccess = () => {
+  const renderSelectAccess = () => {
     return (
       <div>
         <label>Pick an access to assign</label>
         <div>
           <AsyncTypeahead
             id='searchAccesses' // for accessibility
-            isLoading={this.state.isSearchLoading}
+            isLoading={isSearchLoading}
             minLength={3}
             placeholder='Search for access by name or by serial number'
             labelKey='name'
             filterBy={() => true} // don't filter on top of our search
             allowNew={false}
-            renderMenuItemChildren={(option, props, index) => (
+            renderMenuItemChildren={(option, propsData, index) => (
               <div>
-                <Highlighter key='name' search={props.text}>
+                <Highlighter key='name' search={propsData.text}>
                   {option.name}
                 </Highlighter>
               </div>
             )}
-            onSearch={this._onSearch}
+            onSearch={onSearch}
             onChange={selected => {
               if (selected && selected.length === 1) {
-                this._onSelected(selected[0]);
+                onSelected(selected[0]);
               }
             }}
-            options={this.state.accesses}
+            options={accesses}
           />
         </div>
         <div>or</div>
@@ -67,7 +52,7 @@ export default class SearchAccess extends React.Component<IProps, IState> {
           <Button
             color='link'
             onClick={() => {
-              this._createNew();
+              createNew();
             }}
           >
             <i className='fas fa-plus fa-sm' aria-hidden='true' /> Create New
@@ -78,37 +63,35 @@ export default class SearchAccess extends React.Component<IProps, IState> {
     );
   };
 
-  private _onSearch = async (query: string) => {
-    this.setState({ isSearchLoading: true });
+  const onSearch = async (query: string) => {
+    setIsSearchLoading(true);
     let accesses: IAccess[] = null;
     try {
-      accesses = await this.context.fetch(
-        `/api/${this.context.team.slug}/access/search?q=${query}`
+      accesses = await context.fetch(
+        `/api/${context.team.slug}/access/search?q=${query}`
       );
     } catch (err) {
       toast.error('Error searching accesses.');
-      this.setState({ isSearchLoading: false });
+      setIsSearchLoading(false);
       return;
     }
-    this.setState({
-      accesses,
-      isSearchLoading: false
-    });
+    setAccesses(accesses);
+    setIsSearchLoading(false);
   };
 
-  private _onSelected = (access: IAccess) => {
+  const onSelected = (access: IAccess) => {
     // onChange is called when deselected
     if (!access || !access.name) {
-      this.props.onDeselect();
+      props.onDeselect();
     } else {
-      this.props.onSelect({
+      props.onSelect({
         ...access
       });
     }
   };
 
-  private _createNew = () => {
-    this.props.onSelect({
+  const createNew = () => {
+    props.onSelect({
       assignments: [],
       id: 0,
       name: '',
@@ -117,4 +100,8 @@ export default class SearchAccess extends React.Component<IProps, IState> {
       teamId: 0
     });
   };
-}
+
+  return renderSelectAccess();
+};
+
+export default SearchAccess;
