@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { RouteChildrenProps } from 'react-router';
+import { useContext, useEffect, useState } from 'react';
+import { RouteChildrenProps, useHistory, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -17,16 +18,9 @@ import EquipmentList from './EquipmentList';
 import EquipmentTableContainer from './EquipmentTableContainer';
 import RevokeEquipment from './RevokeEquipment';
 
-interface IState {
-  commonAttributeKeys: string[];
-  equipmentTypes: string[];
-  equipment: IEquipment[]; // either equipment assigned to this person, or all team equipment
-  loading: boolean;
-  equipmentProtectionLevels: string[];
-  equipmentAvailabilityLevels: string[];
-}
-
 interface IProps extends RouteChildrenProps<IMatchParams> {
+  person?: IPerson;
+  space?: ISpace;
   assetInUseUpdated?: (
     type: string,
     spaceId: number,
@@ -40,126 +34,107 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
     count: number
   ) => void;
   assetEdited?: (type: string, spaceId: number, personId: number) => void;
-  person?: IPerson;
-  space?: ISpace;
 }
 
-export default class EquipmentContainer extends React.Component<
-  IProps,
-  IState
-> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+interface IParams {
+  team: string;
+  action?: string;
+  id?: string;
+  assetType?: string;
+}
 
-  constructor(props) {
-    super(props);
+const EquipmentContainer = (props: IProps) => {
+  const [commonAttributeKeys, setCommonAttributeKeys] = useState<string[]>([]);
+  const [equipment, setEquipment] = useState<IEquipment[]>([]);
+  const [equipmentAvailabilityLevels] = useState<string[]>([
+    'A1',
+    'A2',
+    'A3',
+    'A4'
+  ]);
+  const [equipmentProtectionLevels] = useState<string[]>([
+    'P1',
+    'P2',
+    'P3',
+    'P4'
+  ]);
+  const [equipmentTypes, setEquipmentTypes] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const context = useContext(Context);
+  const history = useHistory();
+  const params : IParams = useParams();
 
-    this.state = {
-      commonAttributeKeys: [],
-      equipment: [],
-      equipmentAvailabilityLevels: ['A1', 'A2', 'A3', 'A4'],
-      equipmentProtectionLevels: ['P1', 'P2', 'P3', 'P4'],
-      equipmentTypes: [],
-      loading: true
-    };
-  }
-  public async componentDidMount() {
-    if (!PermissionsUtil.canViewEquipment(this.context.permissions)) {
+  useEffect(() => {
+    if (!PermissionsUtil.canViewEquipment(context.permissions)) {
       return;
     }
     // are we getting the person's equipment or the team's?
     let equipmentFetchUrl = '';
-    if (!!this.props.person) {
-      equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/listassigned?personid=${this.props.person.id}`;
-    } else if (!!this.props.space) {
-      equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/getEquipmentInSpace?spaceId=${this.props.space.id}`;
+    if (!!props.person) {
+      equipmentFetchUrl = `/api/${context.team.slug}/equipment/listassigned?personid=${props.person.id}`;
+    } else if (!!props.space) {
+      equipmentFetchUrl = `/api/${context.team.slug}/equipment/getEquipmentInSpace?spaceId=${props.space.id}`;
     } else {
-      equipmentFetchUrl = `/api/${this.context.team.slug}/equipment/list/`;
+      equipmentFetchUrl = `/api/${context.team.slug}/equipment/list/`;
     }
-    let equipment: IEquipment[] = null;
-    try {
-      equipment = await this.context.fetch(equipmentFetchUrl);
-    } catch (e) {
-      toast.error(
-        'Failed to fetch equipment. Please refresh the page to try again.'
-      );
-      return;
-    }
+
+    const fetchEquipment = async () => {
+      let newEquipment: IEquipment[] = null;
+      try {
+        newEquipment = await context.fetch(equipmentFetchUrl);
+      } catch (e) {
+        toast.error(
+          'Failed to fetch equipment. Please refresh the page to try again.'
+        );
+        return;
+      }
+      setEquipment(newEquipment);
+    };
+
     // TODO: move all this into context
-    const attrFetchUrl = `/api/${this.context.team.slug}/equipment/commonAttributeKeys/`;
+    const attrFetchUrl = `/api/${context.team.slug}/equipment/commonAttributeKeys/`;
+    const equipmentTypeFetchUrl = `/api/${context.team.slug}/equipment/ListEquipmentTypes/`;
 
-    const commonAttributeKeys = await this.context.fetch(attrFetchUrl);
+    const fetchAttributeKeys = async () => {
+      const commonAttributeKeys = await context.fetch(attrFetchUrl);
+      setCommonAttributeKeys(commonAttributeKeys);
+    };
 
-    const equipmentTypeFetchUrl = `/api/${this.context.team.slug}/equipment/ListEquipmentTypes/`;
+    const fetchEquipmentTypes = async () => {
+      const equipmentTypes = await context.fetch(equipmentTypeFetchUrl);
+      setEquipmentTypes(equipmentTypes);
+    };
 
-    const equipmentTypes = await this.context.fetch(equipmentTypeFetchUrl);
+    fetchAttributeKeys();
+    fetchEquipmentTypes();
+    fetchEquipment();
+    setLoading(false);
+  }, [context, props.person, props.space]);
 
-    this.setState({
-      commonAttributeKeys,
-      equipment,
-      equipmentTypes,
-      loading: false
-    });
-  }
-  public render() {
-    if (!PermissionsUtil.canViewEquipment(this.context.permissions)) {
-      return <Denied viewName='Equipment' />;
-    }
-
-    if (this.state.loading) {
-      return <h2>Loading...</h2>;
-    }
-
-    const { action, assetType, id } = this.props.match.params;
-    const activeAsset = !assetType || assetType === 'equipment';
-    const selectedId = parseInt(id, 10);
-    const detailEquipment = this.state.equipment.find(e => e.id === selectedId);
-    return (
-      <div className='card equipment-color'>
-        <div className='card-header-equipment'>
-          <div className='card-head row justify-content-between'>
-            <h2>
-              <i className='fas fa-hdd fa-xs' /> Equipment
-            </h2>
-            <Button color='link' onClick={this._openCreateModal}>
-              <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add
-              Equipment
-            </Button>
-          </div>
-        </div>
-        <div className='card-content'>
-          {this._renderTableOrList()}
-          {activeAsset &&
-            (action === 'assign' || action === 'create') &&
-            this._renderAssignModal(selectedId, detailEquipment)}
-          {activeAsset &&
-            action === 'details' &&
-            this._renderDetailsModal(selectedId, detailEquipment)}
-          {activeAsset &&
-            action === 'edit' &&
-            this._renderEditModal(selectedId, detailEquipment)}
-          {activeAsset &&
-            action === 'revoke' &&
-            this._renderRevokeModal(selectedId, detailEquipment)}
-          {activeAsset &&
-            action === 'delete' &&
-            this._renderDeleteModal(selectedId, detailEquipment)}
-        </div>
-      </div>
-    );
+  if (!PermissionsUtil.canViewEquipment(context.permissions)) {
+    return <Denied viewName='Equipment' />;
   }
 
-  private _renderTableOrList = () => {
-    if (!!this.props.person || !!this.props.space) {
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+
+  const { action, assetType, id } = params;
+  const activeAsset = !assetType || assetType === 'equipment';
+  const selectedId = parseInt(id, 10);
+  const detailEquipment = equipment.find(e => e.id === selectedId);
+
+  const renderTableOrList = () => {
+    if (!!props.person || !!props.space) {
       return (
         <div>
           <EquipmentList
-            equipment={this.state.equipment}
-            onRevoke={this._openRevokeModal}
-            onDelete={this._openDeleteModal}
-            onAdd={this._openAssignModal}
-            showDetails={this._openDetailsModal}
-            onEdit={this._openEditModal}
+            equipment={equipment}
+            onRevoke={openRevokeModal}
+            onDelete={openDeleteModal}
+            onAdd={openAssignModal}
+            showDetails={openDetailsModal}
+            onEdit={openEditModal}
           />
         </div>
       );
@@ -167,119 +142,119 @@ export default class EquipmentContainer extends React.Component<
       return (
         <div>
           <EquipmentTableContainer
-            equipment={this.state.equipment}
-            tags={this.context.tags}
-            equipmentAvailabilityLevels={this.state.equipmentAvailabilityLevels}
-            equipmentProtectionLevels={this.state.equipmentProtectionLevels}
-            equipmentTypes={this.state.equipmentTypes}
-            openRevokeModal={this._openRevokeModal}
-            openDeleteModal={this._openDeleteModal}
-            openAssignModal={this._openAssignModal}
-            openDetailsModal={this._openDetailsModal}
-            openEditModal={this._openEditModal}
+            equipment={equipment}
+            tags={context.tags}
+            equipmentAvailabilityLevels={equipmentAvailabilityLevels}
+            equipmentProtectionLevels={equipmentProtectionLevels}
+            equipmentTypes={equipmentTypes}
+            openRevokeModal={openRevokeModal}
+            openDeleteModal={openDeleteModal}
+            openAssignModal={openAssignModal}
+            openDetailsModal={openDetailsModal}
+            openEditModal={openEditModal}
           />
         </div>
       );
     }
   };
 
-  private _renderAssignModal = (selectedId: number, equipment?: IEquipment) => {
+  const renderAssignModal = (selectedId: number, equipment?: IEquipment) => {
     return (
       <AssignEquipment
         key={selectedId ? `assign-equipment-${selectedId}` : 'create-equipment'}
-        onCreate={this._createAndMaybeAssignEquipment}
+        onCreate={createAndMaybeAssignEquipment}
         modal={true}
-        onAddNew={this._openCreateModal}
-        closeModal={this._closeModals}
+        onAddNew={openCreateModal}
+        closeModal={closeModals}
         selectedEquipment={equipment}
-        person={this.props.person}
-        space={this.props.space}
-        tags={this.context.tags}
-        commonAttributeKeys={this.state.commonAttributeKeys}
-        openDetailsModal={this._openDetailsModal}
-        openEditModal={this._openEditModal}
-        equipmentTypes={this.state.equipmentTypes}
+        person={props.person}
+        space={props.space}
+        tags={context.tags}
+        commonAttributeKeys={commonAttributeKeys}
+        openDetailsModal={openDetailsModal}
+        openEditModal={openEditModal}
+        equipmentTypes={equipmentTypes}
       />
     );
   };
 
-  private _renderDetailsModal = (selectedId: number, equipment: IEquipment) => {
+  const renderDetailsModal = (selectedId: number, equipment: IEquipment) => {
     return (
       <EquipmentDetails
         key={`details-equipment-${selectedId}`}
         selectedEquipment={equipment}
         modal={!!equipment}
-        closeModal={this._closeModals}
-        openEditModal={this._openEditModal}
-        openUpdateModal={this._openAssignModal}
-        updateSelectedEquipment={this._updateEquipmentFromDetails}
+        closeModal={closeModals}
+        openEditModal={openEditModal}
+        openUpdateModal={openAssignModal}
+        updateSelectedEquipment={updateEquipmentFromDetails}
       />
     );
   };
 
-  private _renderEditModal = (selectedId: number, equipment: IEquipment) => {
+  const renderEditModal = (selectedId: number, equipment: IEquipment) => {
     return (
       <EditEquipment
         key={`edit-equipment-${selectedId}`}
         selectedEquipment={equipment}
-        onEdit={this._editEquipment}
-        closeModal={this._closeModals}
-        openUpdateModal={this._openAssignModal}
+        onEdit={editEquipment}
+        closeModal={closeModals}
+        openUpdateModal={openAssignModal}
         modal={!!equipment}
-        tags={this.context.tags}
-        space={this.props.space}
-        commonAttributeKeys={this.state.commonAttributeKeys}
-        equipmentTypes={this.state.equipmentTypes}
+        tags={context.tags}
+        space={props.space}
+        commonAttributeKeys={commonAttributeKeys}
+        equipmentTypes={equipmentTypes}
       />
     );
   };
 
-  private _renderRevokeModal = (selectedId: number, equipment: IEquipment) => {
+  const renderRevokeModal = (selectedId: number, equipment: IEquipment) => {
     return (
       <RevokeEquipment
         key={`revoke-equipment-${selectedId}`}
         selectedEquipment={equipment}
-        revokeEquipment={this._revokeEquipment}
-        closeModal={this._closeModals}
-        openEditModal={this._openEditModal}
-        openUpdateModal={this._openAssignModal}
+        revokeEquipment={revokeEquipment}
+        closeModal={closeModals}
+        openEditModal={openEditModal}
+        openUpdateModal={openAssignModal}
         modal={!!equipment}
       />
     );
   };
 
-  private _renderDeleteModal = (selectedId: number, equipment: IEquipment) => {
+  const renderDeleteModal = (selectedId: number, equipment: IEquipment) => {
     return (
       <DeleteEquipment
         key={`delete-equipment-${selectedId}`}
         selectedEquipment={equipment}
-        deleteEquipment={this._deleteEquipment}
-        closeModal={this._closeModals}
-        openEditModal={this._openEditModal}
-        openUpdateModal={this._openAssignModal}
+        deleteEquipment={deleteEquipment}
+        closeModal={closeModals}
+        openEditModal={openEditModal}
+        openUpdateModal={openAssignModal}
         modal={!!equipment}
       />
     );
   };
 
-  private _createAndMaybeAssignEquipment = async (
+  const createAndMaybeAssignEquipment = async (
     person: IPerson,
-    equipment: IEquipment,
+    selectedEquipment: IEquipment,
     date: any
   ) => {
     let updateTotalAssetCount = false;
     let updateInUseAssetCount = false;
 
-    const attributes = equipment.attributes;
+    const attributes = selectedEquipment.attributes;
     // call API to create a equipment, then assign it if there is a person to assign to
     // if we are creating a new equipment
-    if (equipment.id === 0) {
-      equipment.teamId = this.context.team.id;
+    if (selectedEquipment.id === 0) {
+      selectedEquipment.teamId = context.team.id;
       try {
-        equipment = await this.context.fetch(
-          `/api/${this.context.team.slug}/equipment/create`,
+        selectedEquipment = await context.fetch(
+          `/api/${context.team.slug}/equipment/create`,
           {
-            body: JSON.stringify(equipment),
+            body: JSON.stringify(selectedEquipment),
             method: 'POST'
           }
         );
@@ -288,20 +263,20 @@ export default class EquipmentContainer extends React.Component<
         toast.error('Error creating equipment.');
         throw new Error(); // throw error so modal doesn't close
       }
-      equipment.attributes = attributes;
+      selectedEquipment.attributes = attributes;
       updateTotalAssetCount = true;
     }
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/api/${this.context.team.slug}/equipment/assign?equipmentId=${equipment.id}&personId=${person.id}&date=${date}`;
+      const assignUrl = `/api/${context.team.slug}/equipment/assign?equipmentId=${selectedEquipment.id}&personId=${person.id}&date=${date}`;
 
-      if (!equipment.assignment) {
+      if (!selectedEquipment.assignment) {
         // don't count as assigning unless this is a new one
         updateInUseAssetCount = true;
       }
       try {
-        equipment = await this.context.fetch(assignUrl, {
+        selectedEquipment = await context.fetch(assignUrl, {
           method: 'POST'
         });
         toast.success('Equipment assigned successfully!');
@@ -309,57 +284,53 @@ export default class EquipmentContainer extends React.Component<
         toast.error('Error assigning equipment.');
         throw new Error(); // throw error so modal doesn't close
       }
-      equipment.attributes = attributes;
-      equipment.assignment.person = person;
+      selectedEquipment.attributes = attributes;
+      selectedEquipment.assignment.person = person;
     }
 
-    const index = this.state.equipment.findIndex(x => x.id === equipment.id);
+    const index = equipment.findIndex(x => x.id === selectedEquipment.id);
     if (index !== -1) {
       // update already existing entry in equipment
-      const updateEquipment = [...this.state.equipment];
-      updateEquipment[index] = equipment;
-
-      this.setState({
-        equipment: updateEquipment
-      });
+      const updateEquipment = [...equipment];
+      updateEquipment[index] = selectedEquipment;
+      setEquipment(updateEquipment);
     } else if (
-      !!this.props.space &&
-      !!equipment.space &&
-      this.props.space.id !== equipment.space.id
+      !!props.space &&
+      !!selectedEquipment.space &&
+      props.space.id !== selectedEquipment.space.id
     ) {
       // if we are on the space tab and we have assigned/created an equipment that is not in this space, do nothing to our state here
     } else {
-      this.setState(prevState => ({
-        equipment: [...prevState.equipment, equipment]
-      }));
+      setEquipment(prevEquipment => ({ ...prevEquipment, equipment }));
     }
 
-    if (updateTotalAssetCount && this.props.assetTotalUpdated) {
-      this.props.assetTotalUpdated(
+    if (updateTotalAssetCount && props.assetTotalUpdated) {
+      props.assetTotalUpdated(
         'equipment',
-        this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null,
+        props.space ? props.space.id : null,
+        props.person ? props.person.id : null,
         1
       );
     }
-    if (updateInUseAssetCount && this.props.assetInUseUpdated) {
-      this.props.assetInUseUpdated(
+
+    if (updateInUseAssetCount && props.assetInUseUpdated) {
+      props.assetInUseUpdated(
         'equipment',
-        this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null,
+        props.space ? props.space.id : null,
+        props.person ? props.person.id : null,
         1
       );
     }
   };
 
-  private _revokeEquipment = async (equipment: IEquipment) => {
+  const revokeEquipment = async (selectedEquipment: IEquipment) => {
     if (!confirm('Are you sure you want to revoke item?')) {
       return false;
     }
     // call API to actually revoke
     try {
-      const removed: IEquipment = await this.context.fetch(
-        `/api/${this.context.team.slug}/equipment/revoke/${equipment.id}`,
+      await context.fetch(
+        `/api/${context.team.slug}/equipment/revoke/${selectedEquipment.id}`,
         {
           method: 'POST'
         }
@@ -371,10 +342,10 @@ export default class EquipmentContainer extends React.Component<
     }
 
     // remove from state
-    const index = this.state.equipment.indexOf(equipment);
+    const index = equipment.indexOf(selectedEquipment);
     if (index > -1) {
-      const shallowCopy = [...this.state.equipment];
-      if (!this.props.person) {
+      const shallowCopy = [...equipment];
+      if (!props.person) {
         // if we are looking at all equipment, just update assignment
         shallowCopy[index].assignment = null;
         shallowCopy[index].equipmentAssignmentId = null;
@@ -382,26 +353,26 @@ export default class EquipmentContainer extends React.Component<
         // if we are looking at a person, remove from our list of equipment
         shallowCopy.splice(index, 1);
       }
-      this.setState({ equipment: shallowCopy });
-      if (this.props.assetInUseUpdated) {
-        this.props.assetInUseUpdated(
+      setEquipment(shallowCopy);
+      if (props.assetInUseUpdated) {
+        props.assetInUseUpdated(
           'equipment',
-          this.props.space ? this.props.space.id : null,
-          this.props.person ? this.props.person.id : null,
+          props.space ? props.space.id : null,
+          props.person ? props.person.id : null,
           -1
         );
       }
     }
   };
 
-  private _deleteEquipment = async (equipment: IEquipment) => {
+  const deleteEquipment = async (selectedEquipment: IEquipment) => {
     if (!confirm('Are you sure you want to delete item?')) {
       return false;
     }
 
     try {
-      const deleted: IEquipment = await this.context.fetch(
-        `/api/${this.context.team.slug}/equipment/delete/${equipment.id}`,
+      await context.fetch(
+        `/api/${context.team.slug}/equipment/delete/${selectedEquipment.id}`,
         {
           method: 'POST'
         }
@@ -413,33 +384,33 @@ export default class EquipmentContainer extends React.Component<
     }
 
     // remove from state
-    const index = this.state.equipment.indexOf(equipment);
+    const index = equipment.indexOf(selectedEquipment);
     if (index > -1) {
-      const shallowCopy = [...this.state.equipment];
+      const shallowCopy = [...equipment];
       shallowCopy.splice(index, 1);
-      this.setState({ equipment: shallowCopy });
+      setEquipment(shallowCopy);
 
-      if (equipment.assignment !== null && this.props.assetInUseUpdated) {
-        this.props.assetInUseUpdated(
+      if (selectedEquipment.assignment !== null && props.assetInUseUpdated) {
+        props.assetInUseUpdated(
           'equipment',
-          this.props.space ? this.props.space.id : null,
-          this.props.person ? this.props.person.id : null,
+          props.space ? props.space.id : null,
+          props.person ? props.person.id : null,
           -1
         );
       }
-      if (this.props.assetTotalUpdated) {
-        this.props.assetTotalUpdated(
+      if (props.assetTotalUpdated) {
+        props.assetTotalUpdated(
           'equipment',
-          this.props.space ? this.props.space.id : null,
-          this.props.person ? this.props.person.id : null,
+          props.space ? props.space.id : null,
+          props.person ? props.person.id : null,
           -1
         );
       }
     }
   };
 
-  private _editEquipment = async (equipment: IEquipment) => {
-    const index = this.state.equipment.findIndex(x => x.id === equipment.id);
+  const editEquipment = async (selectedEquipment: IEquipment) => {
+    const index = equipment.findIndex(x => x.id === selectedEquipment.id);
 
     if (index === -1) {
       // should always already exist
@@ -448,10 +419,10 @@ export default class EquipmentContainer extends React.Component<
 
     let updated: IEquipment = null;
     try {
-      updated = await this.context.fetch(
-        `/api/${this.context.team.slug}/equipment/update`,
+      updated = await context.fetch(
+        `/api/${context.team.slug}/equipment/update`,
         {
-          body: JSON.stringify(equipment),
+          body: JSON.stringify(selectedEquipment),
           method: 'POST'
         }
       );
@@ -461,54 +432,52 @@ export default class EquipmentContainer extends React.Component<
       throw new Error(); // throw error so modal doesn't close
     }
 
-    updated.assignment = equipment.assignment;
+    updated.assignment = selectedEquipment.assignment;
 
     // update already existing entry in key
-    const updateEquipment = [...this.state.equipment];
+    const updateEquipment = [...equipment];
     updateEquipment[index] = updated;
 
     // if on space tab and the space has been edited
     if (
-      !!this.props.space &&
-      equipment.space.id !== this.state.equipment[index].space.id
+      !!props.space &&
+      selectedEquipment.space.id !== equipment[index].space.id
     ) {
       // remove one from total of old space
-      this.props.assetTotalUpdated(
+      props.assetTotalUpdated(
         'equipment',
-        this.state.equipment[index].space.id,
-        this.props.person ? this.props.person.id : null,
+        equipment[index].space.id,
+        props.person ? props.person.id : null,
         -1
       );
       // remove from this state
       updateEquipment.splice(index, 1);
       // and add one to total of new space
-      this.props.assetTotalUpdated(
+      props.assetTotalUpdated(
         'equipment',
-        equipment.space.id,
-        this.props.person ? this.props.person.id : null,
+        selectedEquipment.space.id,
+        props.person ? props.person.id : null,
         1
       );
     }
 
-    this.setState({
-      equipment: updateEquipment
-    });
+    setEquipment(updateEquipment);
 
-    if (this.props.assetEdited) {
-      this.props.assetEdited(
+    if (props.assetEdited) {
+      props.assetEdited(
         'equipment',
-        this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null
+        props.space ? props.space.id : null,
+        props.person ? props.person.id : null
       );
     }
   };
 
-  private _updateEquipmentFromDetails = (
-    equipment: IEquipment,
+  const updateEquipmentFromDetails = (
+    selectedEquipment: IEquipment,
     id?: number
   ) => {
-    const equipmentId = equipment ? equipment.id : id;
-    const index = this.state.equipment.findIndex(x => x.id === equipmentId);
+    const equipmentId = selectedEquipment ? selectedEquipment.id : id;
+    const index = equipment.findIndex(x => x.id === equipmentId);
 
     if (index === -1) {
       // should always already exist
@@ -516,70 +485,95 @@ export default class EquipmentContainer extends React.Component<
     }
 
     // update already existing entry in key
-    const updateEquipment = [...this.state.equipment];
+    const updateEquipment = [...equipment];
     // if equipment has been deleted elsewhere
     if (equipment === null) {
       updateEquipment.splice(index, 1);
     } else {
-      updateEquipment[index] = equipment;
+      updateEquipment[index] = selectedEquipment;
     }
 
-    this.setState({ equipment: updateEquipment });
+    setEquipment(updateEquipment);
   };
 
-  private _openAssignModal = (equipment: IEquipment) => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/equipment/assign/${equipment.id}`
-    );
+  const openAssignModal = (selectedEquipment: IEquipment) => {
+    history.push(`${getBaseUrl()}/equipment/assign/${selectedEquipment.id}`);
   };
 
-  private _openCreateModal = () => {
-    this.props.history.push(`${this._getBaseUrl()}/equipment/create`);
+  const openCreateModal = () => {
+    history.push(`${getBaseUrl()}/equipment/create`);
   };
 
-  private _openDetailsModal = (equipment: IEquipment) => {
+  const openDetailsModal = (selectedEquipment: IEquipment) => {
     // if we are on spaces page, and this equipment is not assigned to this space
     // this happens on the search
-    if (this.state.equipment.findIndex(x => x.id === equipment.id) === -1) {
-      this.props.history.push(
-        `/${this.context.team.slug}/equipment/details/${equipment.id}`
+    if (equipment.findIndex(x => x.id === selectedEquipment.id) === -1) {
+      history.push(
+        `/${context.team.slug}/equipment/details/${selectedEquipment.id}`
       );
     } else {
-      this.props.history.push(
-        `${this._getBaseUrl()}/equipment/details/${equipment.id}`
-      );
+      history.push(`${getBaseUrl()}/equipment/details/${selectedEquipment.id}`);
     }
   };
 
-  private _openEditModal = (equipment: IEquipment) => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/equipment/edit/${equipment.id}`
-    );
+  const openEditModal = (equipment: IEquipment) => {
+    history.push(`${getBaseUrl()}/equipment/edit/${equipment.id}`);
   };
 
-  private _openRevokeModal = (equipment: IEquipment) => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/equipment/revoke/${equipment.id}`
-    );
+  const openRevokeModal = (equipment: IEquipment) => {
+    history.push(`${getBaseUrl()}/equipment/revoke/${equipment.id}`);
   };
 
-  private _openDeleteModal = (equipment: IEquipment) => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/equipment/delete/${equipment.id}`
-    );
+  const openDeleteModal = (equipment: IEquipment) => {
+    history.push(`${getBaseUrl()}/equipment/delete/${equipment.id}`);
   };
 
-  private _closeModals = () => {
-    this.props.history.push(`${this._getBaseUrl()}/equipment`);
+  const closeModals = () => {
+    history.push(`${getBaseUrl()}/equipment`);
   };
 
-  private _getBaseUrl = () => {
-    if (!!this.props.person) {
-      return `/${this.context.team.slug}/people/details/${this.props.person.id}`;
-    } else if (!!this.props.space) {
-      return `/${this.context.team.slug}/spaces/details/${this.props.space.id}`;
+  const getBaseUrl = () => {
+    if (!!props.person) {
+      return `/${context.team.slug}/people/details/${props.person.id}`;
+    } else if (!!props.space) {
+      return `/${context.team.slug}/spaces/details/${props.space.id}`;
     } else {
-      return `/${this.context.team.slug}`;
+      return `/${context.team.slug}`;
     }
   };
-}
+
+  return (
+    <div className='card equipment-color'>
+      <div className='card-header-equipment'>
+        <div className='card-head row justify-content-between'>
+          <h2>
+            <i className='fas fa-hdd fa-xs' /> Equipment
+          </h2>
+          <Button color='link' onClick={openCreateModal}>
+            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Equipment
+          </Button>
+        </div>
+      </div>
+      <div className='card-content'>
+        {renderTableOrList()}
+        {activeAsset &&
+          (action === 'assign' || action === 'create') &&
+          renderAssignModal(selectedId, detailEquipment)}
+        {activeAsset &&
+          action === 'details' &&
+          renderDetailsModal(selectedId, detailEquipment)}
+        {activeAsset &&
+          action === 'edit' &&
+          renderEditModal(selectedId, detailEquipment)}
+        {activeAsset &&
+          action === 'revoke' &&
+          renderRevokeModal(selectedId, detailEquipment)}
+        {activeAsset &&
+          action === 'delete' &&
+          renderDeleteModal(selectedId, detailEquipment)}
+      </div>
+    </div>
+  );
+};
+
+export default EquipmentContainer;
