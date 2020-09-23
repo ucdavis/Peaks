@@ -1,15 +1,7 @@
-import { addYears, format, isBefore, startOfDay } from 'date-fns';
+import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
-import DatePicker from 'react-date-picker';
-import {
-  Button,
-  Form,
-  FormFeedback,
-  Modal,
-  ModalBody,
-  ModalFooter
-} from 'reactstrap';
-import { Context } from '../../Context';
+import { useEffect, useState } from 'react';
+import { Button, Form, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
 import { IPerson } from '../../models/People';
@@ -32,291 +24,247 @@ interface IProps {
   openEditModal: (keySerial: IKeySerial) => void;
   openDetailsModal: (keySerial: IKeySerial) => void;
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
-  checkIfKeySerialNumberIsValid: (keyId: number, serialNumber: string, id: number) => boolean;
+  checkIfKeySerialNumberIsValid: (
+    keyId: number,
+    serialNumber: string,
+    id: number
+  ) => boolean;
 }
 
-interface IState {
-  date: Date;
-  error: IValidationError;
-  keySerial: IKeySerial;
-  person: IPerson;
-  submitting: boolean;
-  validState: boolean;
-}
-
-export default class AssignKey extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props: IProps) {
-    super(props);
-
-    const assignment =
-      props.selectedKeySerial && props.selectedKeySerial.keySerialAssignment;
-
-    const date = !!assignment
+const AssignKeySerial = (props: IProps) => {
+  const assignment =
+    props.selectedKeySerial && props.selectedKeySerial.keySerialAssignment;
+  const [date, setDate] = useState<Date>(
+    !!assignment
       ? new Date(assignment.expiresAt)
-      : addYears(startOfDay(new Date()), 3);
+      : addYears(startOfDay(new Date()), 3)
+  );
+  const [keySerial, setKeySerial] = useState<IKeySerial>(
+    props.selectedKeySerial
+  );
+  const [person, setPerson] = useState<IPerson>(
+    !!assignment ? assignment.person : props.person
+  );
+  const [error, setError] = useState<IValidationError>({
+    message: '',
+    path: ''
+  });
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [validState, setValidState] = useState<boolean>(false);
 
-    const person = !!assignment ? assignment.person : props.person;
+  useEffect(() => {
+    const validateState = () => {
+      // for if they select person before key serial, don't show error but disable button
+      if (!keySerial) {
+        setValidState(false);
+        return;
+      }
 
-    this.state = {
-      date,
-      error: { message: '', path: '' },
-      keySerial: props.selectedKeySerial,
-      person,
-      submitting: false,
-      validState: false
+      const checkIfKeySerialNumberIsValid = props.checkIfKeySerialNumberIsValid;
+      const error = yupAssetValidation(
+        keySerialSchema,
+        keySerial,
+        {
+          context: { checkIfKeySerialNumberIsValid }
+        },
+        { date: date, person: person }
+      );
+      setError(error);
+      setValidState(error.message === '');
     };
-  }
 
-  public render() {
-    const { isModalOpen, selectedKey } = this.props;
-    const { person, keySerial } = this.state;
+    validateState();
+  }, [date, keySerial, person, props.checkIfKeySerialNumberIsValid]);
 
-    return (
-      <Modal
-        isOpen={isModalOpen}
-        toggle={this._confirmClose}
-        size='lg'
-        className='keys-color'
-      >
-        <div className='modal-header row justify-content-between'>
-          <h2>
-            {this.props.selectedKeySerial || this.props.person
-              ? 'Assign Key Serial'
-              : 'Add Key Serial'}
-          </h2>
-          <Button color='link' onClick={this._closeModal}>
-            <i className='fas fa-times fa-lg' />
-          </Button>
-        </div>
-        <ModalBody>
-          <div className='container-fluid'>
-            <Form>
-              <AssignPerson
-                disabled={
-                  !!this.props.person ||
-                  (!!this.props.selectedKeySerial &&
-                    !!this.props.selectedKeySerial.keySerialAssignment)
-                }
-                isRequired={keySerial && keySerial.id !== 0 && !person}
-                // disable if we are on person page or updating
-                label='Assign Person'
-                person={person}
-                onSelect={this._onSelectPerson}
-                error={this.state.error}
-              />
+  const { isModalOpen, selectedKey } = props;
 
-              {(!!person || !!this.props.person) && (
-                <AssignDate
-                  date={this.state.date}
-                  isRequired={true}
-                  error={this.state.error}
-                  onChangeDate={this._changeDate}
-                />
-              )}
-              {!this.state.keySerial && (
-                <div className='form-group'>
-                  <SearchKeySerial
-                    selectedKey={selectedKey}
-                    selectedKeySerial={keySerial}
-                    onSelect={this._onSelected}
-                    onDeselect={this._onDeselected}
-                    openDetailsModal={this.props.openDetailsModal}
-                  />
-                </div>
-              )}
-              {this.state.keySerial &&
-              !this.state.keySerial.id && ( // if we are creating a new serial, edit properties
-                  <div>
-                    <div className='row justify-content-between'>
-                      <h3>Create New Serial</h3>
-                      <Button
-                        color='link'
-                        onClick={this._onDeselected}
-                      >
-                        Clear{' '}
-                        <i className='fas fa-times fa-sm' aria-hidden='true' />
-                      </Button>
-                    </div>
-                    {!this.state.keySerial.key && (
-                      <div>
-                        <label>Choose a key to create a new serial for</label>
-                        <SearchKeys
-                          onSelect={this._selectKey}
-                          onDeselect={this._deselectKey}
-                          allowNew={false}
-                        />
-                      </div>
-                    )}
-                    {!!this.state.keySerial.key && (
-                      <KeySerialEditValues
-                        keySerial={this.state.keySerial}
-                        changeProperty={this._changeProperty}
-                        disableEditing={false}
-                        statusList={this.props.statusList}
-                        goToKeyDetails={this.props.goToKeyDetails}
-                        error={this.state.error}
-                      />
-                    )}
-                  </div>
-                )}
-              {this.state.keySerial && !!this.state.keySerial.id && (
-                <div>
-                  <div className='row justify-content-between'>
-                    <h3>Assign Existing Serial</h3>
-                    <Button
-                      color='link'
-                      onClick={this._onDeselected}
-                    >
-                      Clear{' '}
-                      <i className='fas fa-times fa-sm' aria-hidden='true' />
-                    </Button>
-                  </div>
-
-                  <KeySerialEditValues
-                    keySerial={this.state.keySerial}
-                    disableEditing={true}
-                    openEditModal={this.props.openEditModal}
-                    statusList={this.props.statusList}
-                    goToKeyDetails={this.props.goToKeyDetails}
-                  />
-                </div>
-              )}
-            </Form>
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            color='primary'
-            onClick={this._assignSelected}
-            disabled={!this.state.validState || this.state.submitting}
-          >
-            Go!{' '}
-            {this.state.submitting && (
-              <i className='fas fa-circle-notch fa-spin' />
-            )}
-          </Button>{' '}
-        </ModalFooter>
-      </Modal>
-    );
-  }
-
-  private _changeProperty = (property: string, value: string) => {
-    this.setState(
-      prevState => ({
-        keySerial: {
-          ...prevState.keySerial,
-          [property]: value
-        }
-      }),
-      this._validateState
-    );
+  const changeProperty = (property: string, value: string) => {
+    setKeySerial({ ...keySerial, [property]: value });
   };
 
-  private _selectKey = (keyInfo: IKeyInfo) => {
-    this.setState(prevState => ({
-      keySerial: {
-        ...prevState.keySerial,
-        key: keyInfo.key
-      }
-    }));
+  const selectKey = (keyInfo: IKeyInfo) => {
+    setKeySerial({ ...keySerial, key: keyInfo.key });
   };
 
-  private _deselectKey = () => {
-    this.setState(prevState => ({
-      keySerial: {
-        ...prevState.keySerial,
-        key: null
-      }
-    }));
+  const deselectKey = () => {
+    setKeySerial({ ...keySerial, key: null });
   };
 
   // clear everything out on close
-  private _confirmClose = () => {
+  const confirmClose = () => {
     if (!confirm('Please confirm you want to close!')) {
       return;
     }
 
-    this._closeModal();
+    closeModal();
   };
 
-  private _closeModal = () => {
-    this.setState({
-      date: addYears(startOfDay(new Date()), 3),
-      error: { message: '', path: '' },
-      keySerial: null,
-      person: null,
-      submitting: false,
-      validState: false
-    });
-
-    this.props.closeModal();
+  const closeModal = () => {
+    setDate(addYears(startOfDay(new Date()), 3));
+    setError({ message: '', path: '' });
+    setKeySerial(null);
+    setPerson(null);
+    setSubmitting(false);
+    setValidState(false);
+    props.closeModal();
   };
 
   // assign the selected key even if we have to create it
-  private _assignSelected = async () => {
-    if (!this.state.validState || this.state.submitting) {
+  const assignSelected = async () => {
+    if (!validState || submitting) {
       return;
     }
 
-    this.setState({ submitting: true });
-    const person = this.props.person ? this.props.person : this.state.person;
+    setSubmitting(true);
+    const personData = props.person ? props.person : person;
 
     try {
-      await this.props.onCreate(
-        person,
-        this.state.keySerial,
-        format(this.state.date, 'MM/dd/yyyy')
-      );
+      await props.onCreate(personData, keySerial, format(date, 'MM/dd/yyyy'));
     } catch (err) {
-      this.setState({ submitting: false });
+      setSubmitting(false);
       return;
     }
 
-    this._closeModal();
+    closeModal();
   };
 
-  private _onSelected = (keySerial: IKeySerial) => {
-    this.setState(
-      { keySerial, error: { message: '', path: '' } },
-      this._validateState
-    );
+  const onSelected = (keySerial: IKeySerial) => {
+    setKeySerial(keySerial);
+    setError({ message: '', path: '' });
   };
 
-  private _onDeselected = () => {
-    this.setState({ keySerial: null, error: { message: '', path: '' } });
+  const onDeselected = () => {
+    setKeySerial(null);
+    setError({ message: '', path: '' });
   };
 
-  private _onSelectPerson = (person: IPerson) => {
-    this.setState({ person }, this._validateState);
+  const onSelectPerson = (person: IPerson) => {
+    setPerson(person);
   };
 
-  private _changeDate = (newDate: Date) => {
-    this.setState(
-      { date: startOfDay(new Date(newDate)), error: { message: '', path: '' } },
-      this._validateState
-    );
+  const changeDate = (newDate: Date) => {
+    setDate(startOfDay(new Date(newDate)));
+    setError({ message: '', path: '' });
   };
 
-  private _validateState = () => {
-    // for if they select person before key serial, don't show error but disable button
-    if (!this.state.keySerial) {
-      this.setState({ validState: false });
-      return;
-    }
+  return (
+    <Modal
+      isOpen={isModalOpen}
+      toggle={confirmClose}
+      size='lg'
+      className='keys-color'
+    >
+      <div className='modal-header row justify-content-between'>
+        <h2>
+          {props.selectedKeySerial || props.person
+            ? 'Assign Key Serial'
+            : 'Add Key Serial'}
+        </h2>
+        <Button color='link' onClick={closeModal}>
+          <i className='fas fa-times fa-lg' />
+        </Button>
+      </div>
+      <ModalBody>
+        <div className='container-fluid'>
+          <Form>
+            <AssignPerson
+              disabled={
+                !!props.person ||
+                (!!props.selectedKeySerial &&
+                  !!props.selectedKeySerial.keySerialAssignment)
+              }
+              isRequired={keySerial && keySerial.id !== 0 && !person}
+              // disable if we are on person page or updating
+              label='Assign Person'
+              person={person}
+              onSelect={onSelectPerson}
+              error={error}
+            />
 
-    const checkIfKeySerialNumberIsValid = this.props
-      .checkIfKeySerialNumberIsValid;
-    const error = yupAssetValidation(
-      keySerialSchema,
-      this.state.keySerial,
-      {
-        context: { checkIfKeySerialNumberIsValid }
-      },
-      { date: this.state.date, person: this.state.person }
-    );
-    this.setState({ error, validState: error.message === '' });
-  };
-}
+            {(!!person || !!props.person) && (
+              <AssignDate
+                date={date}
+                isRequired={true}
+                error={error}
+                onChangeDate={changeDate}
+              />
+            )}
+            {!keySerial && (
+              <div className='form-group'>
+                <SearchKeySerial
+                  selectedKey={selectedKey}
+                  selectedKeySerial={keySerial}
+                  onSelect={onSelected}
+                  onDeselect={onDeselected}
+                  openDetailsModal={props.openDetailsModal}
+                />
+              </div>
+            )}
+            {keySerial &&
+            !keySerial.id && ( // if we are creating a new serial, edit properties
+                <div>
+                  <div className='row justify-content-between'>
+                    <h3>Create New Serial</h3>
+                    <Button color='link' onClick={onDeselected}>
+                      Clear{' '}
+                      <i className='fas fa-times fa-sm' aria-hidden='true' />
+                    </Button>
+                  </div>
+                  {!keySerial.key && (
+                    <div>
+                      <label>Choose a key to create a new serial for</label>
+                      <SearchKeys
+                        onSelect={selectKey}
+                        onDeselect={deselectKey}
+                        allowNew={false}
+                      />
+                    </div>
+                  )}
+                  {!!keySerial.key && (
+                    <KeySerialEditValues
+                      keySerial={keySerial}
+                      changeProperty={changeProperty}
+                      disableEditing={false}
+                      statusList={props.statusList}
+                      goToKeyDetails={props.goToKeyDetails}
+                      error={error}
+                    />
+                  )}
+                </div>
+              )}
+            {keySerial && !!keySerial.id && (
+              <div>
+                <div className='row justify-content-between'>
+                  <h3>Assign Existing Serial</h3>
+                  <Button color='link' onClick={onDeselected}>
+                    Clear{' '}
+                    <i className='fas fa-times fa-sm' aria-hidden='true' />
+                  </Button>
+                </div>
+
+                <KeySerialEditValues
+                  keySerial={keySerial}
+                  disableEditing={true}
+                  openEditModal={props.openEditModal}
+                  statusList={props.statusList}
+                  goToKeyDetails={props.goToKeyDetails}
+                />
+              </div>
+            )}
+          </Form>
+        </div>
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          color='primary'
+          onClick={assignSelected}
+          disabled={!validState || submitting}
+        >
+          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+        </Button>{' '}
+      </ModalFooter>
+    </Modal>
+  );
+};
+
+export default AssignKeySerial;

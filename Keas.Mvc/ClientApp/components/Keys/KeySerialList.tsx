@@ -11,47 +11,47 @@ interface IProps {
   onEdit?: (keySerial: IKeySerial) => void;
 }
 
-export default class KeySerialList extends React.Component<IProps, {}> {
-  public render() {
-    const { keySerials } = this.props;
-    const serials =
-      !keySerials || keySerials.length < 1 ? (
-        <tr>
-          <td colSpan={6}>No Key Serials Found</td>
-        </tr>
-      ) : (
-        keySerials.map(this.renderItem)
-      );
-
-    return (
-      <table className='table'>
-        <thead>
-          <tr>
-            <th />
-            <th>Key Code</th>
-            <th>Serial Number</th>
-            <th>Status</th>
-            <th>Assigned To</th>
-            <th>Expiration</th>
-            <th className='list-actions'>Actions</th>
-          </tr>
-        </thead>
-        <tbody>{serials}</tbody>
-      </table>
-    );
-  }
-
-  private renderItem = key => {
+const KeySerialList = (props: IProps) => {
+  const renderItem = key => {
     return (
       <KeySerialListItem
         key={key.id}
         keySerial={key}
-        onRevoke={this.props.onRevoke}
-        onAssign={this.props.onAssign}
-        onUpdate={this.props.onUpdate}
-        showDetails={this.props.showDetails}
-        onEdit={this.props.onEdit}
+        onRevoke={props.onRevoke}
+        onAssign={props.onAssign}
+        onUpdate={props.onUpdate}
+        showDetails={props.showDetails}
+        onEdit={props.onEdit}
       />
     );
   };
-}
+
+  const { keySerials } = props;
+  const serials =
+    !keySerials || keySerials.length < 1 ? (
+      <tr>
+        <td colSpan={6}>No Key Serials Found</td>
+      </tr>
+    ) : (
+      keySerials.map(renderItem)
+    );
+
+  return (
+    <table className='table'>
+      <thead>
+        <tr>
+          <th />
+          <th>Key Code</th>
+          <th>Serial Number</th>
+          <th>Status</th>
+          <th>Assigned To</th>
+          <th>Expiration</th>
+          <th className='list-actions'>Actions</th>
+        </tr>
+      </thead>
+      <tbody>{serials}</tbody>
+    </table>
+  );
+};
+
+export default KeySerialList;
