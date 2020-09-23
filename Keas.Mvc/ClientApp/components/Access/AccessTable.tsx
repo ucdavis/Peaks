@@ -2,7 +2,11 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IAccess } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
-import { ExpirationColumnFilter, expirationFilter, ReactTableExpirationUtil } from '../../util/reactTable';
+import {
+  ExpirationColumnFilter,
+  expirationFilter,
+  ReactTableExpirationUtil
+} from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
@@ -16,14 +20,35 @@ interface IProps {
   onEdit?: (access: IAccess) => void;
 }
 
-export default class AccessTable extends React.Component<IProps, {}> {
-  public render() {
-    const columns: Column<IAccess>[] = [
+const AccessTable = (props: IProps) => {
+  const renderDropdownColumn = data => {
+    const accessEntity: IAccess = data.row.original;
+    const actions: IAction[] = [];
+
+    if (!!props.onAdd) {
+      actions.push({
+        onClick: () => props.onAdd(accessEntity),
+        title: 'Assign'
+      });
+    }
+
+    if (!!props.onDelete) {
+      actions.push({
+        onClick: () => props.onDelete(accessEntity),
+        title: 'Delete'
+      });
+    }
+
+    return <ListActionsDropdown actions={actions} />;
+  };
+
+  const columns: Column<IAccess>[] = React.useMemo(
+    () => [
       {
         Cell: data => (
           <Button
             color='link'
-            onClick={() => this.props.showDetails(data.row.original)}
+            onClick={() => props.showDetails(data.row.original)}
           >
             Details
           </Button>
@@ -62,44 +87,28 @@ export default class AccessTable extends React.Component<IProps, {}> {
         id: 'expiresAt'
       },
       {
-        Cell: this.renderDropdownColumn,
+        Cell: renderDropdownColumn,
         Header: 'Actions'
       }
-    ];
-    
-    const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'name' }],
-      pageSize: ReactTableUtil.getPageSize()
-    };
+    ],
+    [props]
+  );
 
-    return (
-      <ReactTable
-        data={this.props.accesses}
-        columns={columns}
-        initialState={initialState}
-        filterTypes={{ expiration: expirationFilter }}
-      />
-    );
-  }
+  const accessData = React.useMemo(() => props.accesses, [props.accesses]);
 
-  private renderDropdownColumn = data => {
-    const accessEntity: IAccess = data.row.original;
-    const actions: IAction[] = [];
-
-    if (!!this.props.onAdd) {
-      actions.push({
-        onClick: () => this.props.onAdd(accessEntity),
-        title: 'Assign'
-      });
-    }
-
-    if (!!this.props.onDelete) {
-      actions.push({
-        onClick: () => this.props.onDelete(accessEntity),
-        title: 'Delete'
-      });
-    }
-
-    return <ListActionsDropdown actions={actions} />;
+  const initialState: Partial<TableState<any>> = {
+    sortBy: [{ id: 'name' }],
+    pageSize: ReactTableUtil.getPageSize()
   };
-}
+
+  return (
+    <ReactTable
+      data={accessData}
+      columns={columns}
+      initialState={initialState}
+      filterTypes={{ expiration: expirationFilter }}
+    />
+  );
+};
+
+export default AccessTable;

@@ -11,40 +11,40 @@ interface IProps {
   showDetails: (access: IAccess) => void;
 }
 
-export default class AccessList extends React.Component<IProps, {}> {
-  public render() {
-    const access =
-      !this.props.access || this.props.access.length < 1 ? (
-        <tr>
-          <td colSpan={5}>No Accesses Found</td>
-        </tr>
-      ) : (
-        this.props.access.map(x => (
-          <AccessListItem
-            key={x.id.toString()}
-            accessEntity={x}
-            personView={this.props.personView}
-            onDelete={this.props.onDelete}
-            onAdd={this.props.onAdd}
-            onRevoke={this.props.onRevoke}
-            showDetails={this.props.showDetails}
-          />
-        ))
-      );
-    return (
-      <table className='table'>
-        <thead>
-          <tr>
-            <th />
-            <th>Name</th>
-            <th>Assigned?</th>
-            <th>Number of Assignments</th>
-            <th>Expiration</th>
-            <th className='list-actions'>Actions</th>
-          </tr>
-        </thead>
-        <tbody>{access}</tbody>
-      </table>
+const AccessList = (props: IProps) => {
+  const access =
+    !props.access || props.access.length < 1 ? (
+      <tr>
+        <td colSpan={5}>No Accesses Found</td>
+      </tr>
+    ) : (
+      props.access.map(x => (
+        <AccessListItem
+          key={x.id.toString()}
+          accessEntity={x}
+          personView={props.personView}
+          onDelete={props.onDelete}
+          onAdd={props.onAdd}
+          onRevoke={props.onRevoke}
+          showDetails={props.showDetails}
+        />
+      ))
     );
-  }
-}
+  return (
+    <table className='table'>
+      <thead>
+        <tr>
+          <th />
+          <th>Name</th>
+          <th>Assigned?</th>
+          <th>Number of Assignments</th>
+          <th>Expiration</th>
+          <th className='list-actions'>Actions</th>
+        </tr>
+      </thead>
+      <tbody>{access}</tbody>
+    </table>
+  );
+};
+
+export default AccessList;
