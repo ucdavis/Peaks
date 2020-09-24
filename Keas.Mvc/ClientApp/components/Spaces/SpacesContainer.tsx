@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { RouteChildrenProps } from 'react-router';
+import { useContext, useEffect, useState } from 'react';
+import {
+  RouteChildrenProps,
+  useHistory,
+  useLocation,
+  useParams,
+  useRouteMatch
+} from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -20,325 +27,273 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
   spacesTotalUpdated?: (keyId: number, count: number) => void;
 }
 
-interface IState {
-  spaces: ISpaceInfo[];
-  loading: boolean;
-  tableFilters: any[]; // object containing filters on table
-  tagFilters: string[]; // array of filters from SearchTags
+interface IParams {
+  team: string;
+  action: string;
+  id: string;
+  assetType: string;
+  containerAction: string;
+  containerId: string;
 }
-export default class SpacesContainer extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
 
-  constructor(props) {
-    super(props);
+interface IMatch {
+  isExact: boolean;
+  params: IParams;
+  path: string;
+  url: string;
+}
 
-    this.state = {
-      loading: true,
-      spaces: [],
-      tableFilters: [],
-      tagFilters: []
-    };
-  }
-  public async componentDidMount() {
-    if (!PermissionsUtil.canViewSpaces(this.context.permissions)) {
+const SpacesContainer = (props: IProps) => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [spaces, setSpaces] = useState<ISpaceInfo[]>([]);
+  const [tableFilters, setTableFilters] = useState<any[]>([]);
+  const [tagFilters, setTagFilters] = useState<string[]>([]);
+  const context = useContext(Context);
+  const history = useHistory();
+  const location = useLocation();
+  const match: IMatch = useRouteMatch();
+  const params: IParams = useParams();
+
+  useEffect(() => {
+    if (!PermissionsUtil.canViewSpaces(context.permissions)) {
       return;
     }
-    const { selectedKeyInfo } = this.props;
-    const { team } = this.context;
-
     let spacesFetchUrl = '';
-    if (!!selectedKeyInfo) {
-      spacesFetchUrl = `/api/${team.slug}/spaces/getSpacesForKey?keyid=${selectedKeyInfo.id}`;
+    if (!!props.selectedKeyInfo) {
+      spacesFetchUrl = `/api/${context.team.slug}/spaces/getSpacesForKey?keyid=${props.selectedKeyInfo.id}`;
     } else {
-      spacesFetchUrl = `/api/${team.slug}/spaces/list`;
+      spacesFetchUrl = `/api/${context.team.slug}/spaces/list`;
     }
 
-    let spaces: ISpaceInfo[] = null;
-    try {
-      spaces = await this.context.fetch(spacesFetchUrl);
-    } catch (err) {
-      toast.error(
-        'Error fetching spaces. Please refresh the page to try again.'
-      );
-      return;
-    }
+    const fetchSpaces = async () => {
+      let spacesData: ISpaceInfo[] = null;
+      try {
+        spacesData = await context.fetch(spacesFetchUrl);
+      } catch (err) {
+        toast.error(
+          'Error fetching spaces. Please refresh the page to try again.'
+        );
+        return;
+      }
+      setSpaces(spacesData);
+    };
 
-    this.setState({ loading: false, spaces });
+    fetchSpaces();
+    setLoading(false);
+  }, [context, props.selectedKeyInfo]);
+
+  if (!PermissionsUtil.canViewSpaces(context.permissions)) {
+    return <Denied viewName='Spaces' />;
   }
-
-  public render() {
-    if (!PermissionsUtil.canViewSpaces(this.context.permissions)) {
-      return <Denied viewName='Spaces' />;
-    }
-    if (this.state.loading) {
-      return <h2>Loading...</h2>;
-    }
-    const {
-      containerAction,
-      containerId,
-      action,
-      id
-    } = this.props.match.params;
-    const onKeysTab = !!this.props.selectedKeyInfo;
-    // if on keys tab, should be id
-    // if on spaces tab, should be container id
-    const selectedId = onKeysTab ? parseInt(id, 10) : parseInt(containerId, 10);
-    const selectedSpaceInfo = this.state.spaces.find(k => k.id === selectedId);
-
-    const shouldRenderDetailsView = !onKeysTab && containerAction === 'details';
-    const shouldRenderTableView = !shouldRenderDetailsView;
-    return (
-      <div className='card spaces-color'>
-        <div className='card-header-spaces'>
-          <div className='card-head row justify-content-between'>
-            <h2>
-              <i className='fas fa-building fa-xs' /> Spaces
-            </h2>
-            {shouldRenderTableView && onKeysTab && (
-              <div>
-                <Button
-                  color='link'
-                  onClick={() => this._openAssociateModal(null)}
-                >
-                  <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
-                  Associate
-                </Button>
-                {action === 'associate' && this._renderAssociateModal()}
-              </div>
-            )}
-          </div>
-          {this.state.spaces.length === 0 && (
-            <div className='card-body'>
-              Don't see your spaces? Visit the{' '}
-              <a
-                href='https://computing.caes.ucdavis.edu/documentation/peaks/spaces'
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                Space FAQ
-              </a>
-              .
-            </div>
-          )}
-        </div>
-
-        <div className='card-content'>
-          {shouldRenderTableView && this._renderTableOrList(selectedId) // show on keys/details page
-          }
-          {shouldRenderDetailsView &&
-            !onKeysTab &&
-            !!selectedSpaceInfo &&
-            !!selectedSpaceInfo.space &&
-            this._renderDetailsView(selectedSpaceInfo)}
-        </div>
-      </div>
-    );
+  if (loading) {
+    return <h2>Loading...</h2>;
   }
+  const { containerAction, containerId, action, id } = params;
+  const onKeysTab = !!props.selectedKeyInfo;
+  // if on keys tab, should be id
+  // if on spaces tab, should be container id
+  const selectedId = onKeysTab ? parseInt(id, 10) : parseInt(containerId, 10);
+  const selectedSpaceInfo = spaces.find(k => k.id === selectedId);
 
-  private _renderTableOrList(selectedId: number) {
-    const { selectedKeyInfo } = this.props;
+  const shouldRenderDetailsView = !onKeysTab && containerAction === 'details';
+  const shouldRenderTableView = !shouldRenderDetailsView;
+
+  const renderTableOrList = (selectedId: number) => {
+    const { selectedKeyInfo } = props;
     if (!!selectedKeyInfo) {
-      return this._renderTableList(selectedId);
+      return renderTableList(selectedId);
     }
 
-    return this._renderTableView();
-  }
+    return renderTableView();
+  };
 
   // if we are at route teamName/spaces
-  private _renderTableView() {
+  const renderTableView = () => {
     let filteredSpaces = [];
-    if (!!this.state.tagFilters && this.state.tagFilters.length > 0) {
-      filteredSpaces = this.state.spaces.filter(x =>
-        this._checkFilters(x, this.state.tagFilters)
-      );
+    if (!!tagFilters && tagFilters.length > 0) {
+      filteredSpaces = spaces.filter(x => checkFilters(x, tagFilters));
     } else {
-      filteredSpaces = this.state.spaces;
+      filteredSpaces = spaces;
     }
 
     return (
       <div>
         <SearchTags
-          tags={this.context.tags}
-          selected={this.state.tagFilters}
-          onSelect={this._filterTags}
+          tags={context.tags}
+          selected={tagFilters}
+          onSelect={filterTags}
           disabled={false}
         />
         <SpacesTable
           spaces={filteredSpaces}
-          showDetails={this._openDetails}
-          filtered={this.state.tableFilters}
-          updateFilters={this._updateTableFilters}
+          showDetails={openDetails}
+          filtered={tableFilters}
+          updateFilters={updateTableFilters}
         />
       </div>
     );
-  }
+  };
 
-  private _renderTableList = (selectedId: number) => {
+  const renderTableList = (selectedId: number) => {
     // flatten the space info for simple space
-    const spaces = this.state.spaces.map(s => s.space);
-    const { action } = this.props.match.params;
-    const selectedSpace = spaces.find(k => k.id === selectedId);
+    const spacesData = spaces.map(s => s.space);
+    const { action } = params;
+    const selectedSpace = spacesData.find(k => k.id === selectedId);
     return (
       <div>
         {action === 'disassociate' &&
-          this._renderDisassociateModal(selectedId, selectedSpace)}
+          renderDisassociateModal(selectedId, selectedSpace)}
         <SpacesList
-          spaces={spaces}
-          showDetails={this._openDetails}
-          onDisassociate={this._openDisassociateModal}
+          spaces={spacesData}
+          showDetails={openDetails}
+          onDisassociate={openDisassociateModal}
         />
       </div>
     );
   };
 
   // if we are at route teamName/spaces/details/spaceId
-  private _renderDetailsView = (selectedSpaceInfo: ISpaceInfo) => {
+  const renderDetailsView = (selectedSpaceInfo: ISpaceInfo) => {
     const routeObject = {
-      history: this.props.history,
-      location: this.props.location,
-      match: this.props.match
+      history: history,
+      location: location,
+      match: match
     };
     return (
       <SpacesDetails
         key={`spaces-details-${selectedSpaceInfo.id}`}
         route={routeObject}
-        goBack={this._goBack}
+        goBack={goBack}
         selectedSpaceInfo={selectedSpaceInfo}
-        tags={this.context.tags}
-        inUseUpdated={this._assetInUseUpdated}
-        totalUpdated={this._assetTotalUpdated}
-        edited={this._assetEdited}
+        tags={context.tags}
+        inUseUpdated={assetInUseUpdated}
+        totalUpdated={assetTotalUpdated}
+        edited={assetEdited}
       />
     );
   };
 
-  private _renderAssociateModal = () => {
+  const renderAssociateModal = () => {
     return (
       <AssociateSpace
         key={'associate-space'}
-        selectedKeyInfo={this.props.selectedKeyInfo}
-        onAssign={this._associateSpace}
-        openModal={() => this._openAssociateModal(null)}
-        closeModal={this._closeModals}
+        selectedKeyInfo={props.selectedKeyInfo}
+        onAssign={associateSpace}
+        openModal={() => openAssociateModal(null)}
+        closeModal={closeModals}
         isModalOpen={true}
-        searchableTags={this.context.tags}
+        searchableTags={context.tags}
       />
     );
   };
 
-  private _renderDisassociateModal = (
+  const renderDisassociateModal = (
     selectedId: number,
     selectedSpace: ISpace
   ) => {
     return (
       <DisassociateSpace
         key={`disassociate-space-${selectedId}`}
-        selectedKeyInfo={this.props.selectedKeyInfo}
+        selectedKeyInfo={props.selectedKeyInfo}
         selectedSpace={selectedSpace}
-        onDisassociate={this._disassociateSpace}
+        onDisassociate={disassociateSpace}
         isModalOpen={!!selectedSpace}
-        closeModal={this._closeModals}
+        closeModal={closeModals}
       />
     );
   };
 
-  private _updateTableFilters = (filters: any[]) => {
-    this.setState({ tableFilters: filters });
+  const updateTableFilters = (filters: any[]) => {
+    setTableFilters(filters);
   };
 
-  private _openDetails = (space: ISpace) => {
-    const { team } = this.context;
-    this.props.history.push(`/${team.slug}/spaces/details/${space.id}`);
+  const openDetails = (space: ISpace) => {
+    const { team } = context;
+    history.push(`/${team.slug}/spaces/details/${space.id}`);
   };
 
-  private _openAssociateModal = (space: ISpace) => {
+  const openAssociateModal = (space: ISpace) => {
     if (!!space) {
-      this.props.history.push(
-        `${this._getBaseUrl()}/spaces/associate/${space.id}`
-      );
+      history.push(`${getBaseUrl()}/spaces/associate/${space.id}`);
       return;
     }
 
-    this.props.history.push(`${this._getBaseUrl()}/spaces/associate/`);
+    history.push(`${getBaseUrl()}/spaces/associate/`);
   };
 
-  private _openDisassociateModal = (space: ISpace) => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/spaces/disassociate/${space.id}`
-    );
+  const openDisassociateModal = (space: ISpace) => {
+    history.push(`${getBaseUrl()}/spaces/disassociate/${space.id}`);
   };
 
-  private _closeModals = () => {
-    this.props.history.push(`${this._getBaseUrl()}`);
+  const closeModals = () => {
+    history.push(`${getBaseUrl()}`);
   };
 
-  private _goBack = () => {
-    this.props.history.push(`${this._getBaseUrl()}/spaces`);
+  const goBack = () => {
+    history.push(`${getBaseUrl()}/spaces`);
   };
 
   // managing counts for assigned or revoked
-  private _assetInUseUpdated = (
+  const assetInUseUpdated = (
     type: string,
     spaceId: number,
     personId: number,
     count: number
   ) => {
     // this is called when we are assigning or revoking an asset
-    const index = this.state.spaces.findIndex(x => x.id === spaceId);
+    const index = spaces.findIndex(x => x.id === spaceId);
     if (index > -1) {
-      const spaces = [...this.state.spaces];
+      const spacesData = [...spaces];
       switch (type) {
         case 'workstation':
-          spaces[index].workstationsInUse += count;
+          spacesData[index].workstationsInUse += count;
       }
-      this.setState({ spaces });
+      setSpaces(spacesData);
     }
   };
 
-  private _assetTotalUpdated = (
+  const assetTotalUpdated = (
     type: string,
     spaceId: number,
     personId: number,
     count: number
   ) => {
     // this is called when we are either changing the room on an asset, or creating a workstation
-    const index = this.state.spaces.findIndex(x => x.id === spaceId);
+    const index = spaces.findIndex(x => x.id === spaceId);
     if (index > -1) {
-      const spaces = [...this.state.spaces];
+      const spacesData = [...spaces];
       switch (type) {
         case 'equipment':
-          spaces[index].equipmentCount += count;
+          spacesData[index].equipmentCount += count;
           break;
         case 'key':
-          spaces[index].keyCount += count;
+          spacesData[index].keyCount += count;
           break;
         case 'workstation':
-          spaces[index].workstationsTotal += count;
+          spacesData[index].workstationsTotal += count;
       }
-      this.setState({ spaces });
+      setSpaces(spacesData);
     }
   };
 
-  private _assetEdited = async (
+  const assetEdited = async (
     type: string,
     spaceId: number,
     personId: number
   ) => {
-    const index = this.state.spaces.findIndex(x => x.id === spaceId);
+    const index = spaces.findIndex(x => x.id === spaceId);
     if (index > -1) {
-      const tags = await this.context.fetch(
-        `/api/${this.context.team.slug}/spaces/getTagsInSpace?spaceId=${spaceId}`
+      const tags = await context.fetch(
+        `/api/${context.team.slug}/spaces/getTagsInSpace?spaceId=${spaceId}`
       );
-      const spaces = [...this.state.spaces];
-      spaces[index].tags = tags;
-      this.setState({ spaces });
+      const spacesData = [...spaces];
+      spacesData[index].tags = tags;
+      setSpaces(spacesData);
     }
   };
 
-  private _associateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
-    const { team } = this.context;
-    const { spaces } = this.state;
+  const associateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
+    const { team } = context;
 
     const request = {
       spaceId: space.id
@@ -346,7 +301,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
     const associateUrl = `/api/${team.slug}/keys/associateSpace/${keyInfo.id}`;
     try {
-      await this.context.fetch(associateUrl, {
+      await context.fetch(associateUrl, {
         body: JSON.stringify(request),
         method: 'POST'
       });
@@ -366,15 +321,12 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
       workstationsTotal: 0
     };
     const updatedSpaces = [...spaces, spaceInfo];
-    this.setState({
-      spaces: updatedSpaces
-    });
-    this.props.spacesTotalUpdated(this.props.selectedKeyInfo.id, 1);
+    setSpaces(updatedSpaces);
+    props.spacesTotalUpdated(props.selectedKeyInfo.id, 1);
   };
 
-  private _disassociateSpace = async (keyInfo: IKeyInfo, space: ISpace) => {
-    const { team } = this.context;
-    const { spaces } = this.state;
+  const disassociateSpace = async (keyInfo: IKeyInfo, space: ISpace) => {
+    const { team } = context;
 
     const request = {
       spaceId: space.id
@@ -382,7 +334,7 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
 
     const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${keyInfo.id}`;
     try {
-      await this.context.fetch(disassociateUrl, {
+      await context.fetch(disassociateUrl, {
         body: JSON.stringify(request),
         method: 'POST'
       });
@@ -395,15 +347,13 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     const index = updatedSpaces.findIndex(s => s.space.id === space.id);
     updatedSpaces.splice(index, 1);
 
-    this.setState({
-      spaces: updatedSpaces
-    });
-    this.props.spacesTotalUpdated(this.props.selectedKeyInfo.id, -1);
+    setSpaces(updatedSpaces);
+    props.spacesTotalUpdated(props.selectedKeyInfo.id, -1);
   };
 
-  private _getBaseUrl = () => {
-    const { team } = this.context;
-    const { selectedKeyInfo } = this.props;
+  const getBaseUrl = () => {
+    const { team } = context;
+    const { selectedKeyInfo } = props;
 
     if (!!selectedKeyInfo) {
       return `/${team.slug}/keys/details/${selectedKeyInfo.id}`;
@@ -412,13 +362,60 @@ export default class SpacesContainer extends React.Component<IProps, IState> {
     return `/${team.slug}`;
   };
 
-  private _filterTags = (filters: string[]) => {
-    this.setState({ tagFilters: filters });
+  const filterTags = (filters: string[]) => {
+    setTagFilters(filters);
   };
 
-  private _checkFilters = (space: ISpaceInfo, filters: string[]) => {
+  const checkFilters = (space: ISpaceInfo, filters: string[]) => {
     return filters.every(
       f => !!space && !!space.tags && space.tags.includes(f)
     );
   };
-}
+
+  return (
+    <div className='card spaces-color'>
+      <div className='card-header-spaces'>
+        <div className='card-head row justify-content-between'>
+          <h2>
+            <i className='fas fa-building fa-xs' /> Spaces
+          </h2>
+          {shouldRenderTableView && onKeysTab && (
+            <div>
+              <Button color='link' onClick={() => openAssociateModal(null)}>
+                <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
+                Associate
+              </Button>
+              {action === 'associate' && renderAssociateModal()}
+            </div>
+          )}
+        </div>
+        {spaces.length === 0 && (
+          <div className='card-body'>
+            Don't see your spaces? Visit the{' '}
+            <a
+              href='https://computing.caes.ucdavis.edu/documentation/peaks/spaces'
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              Space FAQ
+            </a>
+            .
+          </div>
+        )}
+      </div>
+
+      <div className='card-content'>
+        {
+          shouldRenderTableView && renderTableOrList(selectedId) // show on keys/details page
+        }
+        {shouldRenderDetailsView &&
+          !onKeysTab &&
+          !!selectedSpaceInfo &&
+          !!selectedSpaceInfo.space &&
+          renderDetailsView(selectedSpaceInfo)}
+      </div>
+    </div>
+  );
+};
+
+export default SpacesContainer;

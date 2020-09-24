@@ -18,6 +18,13 @@ import EquipmentList from './EquipmentList';
 import EquipmentTableContainer from './EquipmentTableContainer';
 import RevokeEquipment from './RevokeEquipment';
 
+interface IParams {
+  team: string;
+  action?: string;
+  id?: string;
+  assetType?: string;
+}
+
 interface IProps extends RouteChildrenProps<IMatchParams> {
   person?: IPerson;
   space?: ISpace;
@@ -34,13 +41,6 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
     count: number
   ) => void;
   assetEdited?: (type: string, spaceId: number, personId: number) => void;
-}
-
-interface IParams {
-  team: string;
-  action?: string;
-  id?: string;
-  assetType?: string;
 }
 
 const EquipmentContainer = (props: IProps) => {
@@ -497,7 +497,9 @@ const EquipmentContainer = (props: IProps) => {
   };
 
   const openAssignModal = (selectedEquipment: IEquipment) => {
-    history.push(`${getBaseUrl()}/equipment/assign/${selectedEquipment.id}`);
+    history.push(
+      `${getBaseUrl()}/equipment/assign/${selectedEquipment.id}`
+    );
   };
 
   const openCreateModal = () => {
@@ -512,7 +514,9 @@ const EquipmentContainer = (props: IProps) => {
         `/${context.team.slug}/equipment/details/${selectedEquipment.id}`
       );
     } else {
-      history.push(`${getBaseUrl()}/equipment/details/${selectedEquipment.id}`);
+      history.push(
+        `${getBaseUrl()}/equipment/details/${selectedEquipment.id}`
+      );
     }
   };
 
