@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
+import { MemoryRouter } from 'react-router';
 
-import SpacesContainer from './SpacesContainer';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeSpaces } from '../specs/mockData/Space';
+import SpacesContainer from './SpacesContainer';
 
 // mock all route elements
-let mockRouter: any = {};
-let mockRouterMatch: any = {
+const mockRouter: any = {};
+const mockRouterMatch: any = {
   params: {}
 };
 
@@ -18,7 +19,7 @@ let container: Element = null;
 jest.mock('../Equipment/EquipmentContainer', () => {
   return {
     default: () => {
-      return <div id="EquipmentContainer">EquipmentContainer</div>;
+      return <div id='EquipmentContainer'>EquipmentContainer</div>;
     }
   };
 });
@@ -26,7 +27,7 @@ jest.mock('../Equipment/EquipmentContainer', () => {
 jest.mock('../Keys/KeyContainer', () => {
   return {
     default: () => {
-      return <div id="KeyContainer">KeyContainer</div>;
+      return <div id='KeyContainer'>KeyContainer</div>;
     }
   };
 });
@@ -34,7 +35,7 @@ jest.mock('../Keys/KeyContainer', () => {
 jest.mock('../Workstations/WorkstationContainer', () => {
   return {
     default: () => {
-      return <div id="WorkstationContainer">WorkstationContainer</div>;
+      return <div id='WorkstationContainer'>WorkstationContainer</div>;
     }
   };
 });
@@ -71,11 +72,13 @@ describe('Space Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <SpacesContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <SpacesContainer
+              history={mockRouter}
+              match={mockRouterMatch}
+              location={mockRouter}
+            />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -96,11 +99,13 @@ describe('Space Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <SpacesContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <SpacesContainer
+              history={mockRouter}
+              match={mockRouterMatch}
+              location={mockRouter}
+            />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -109,7 +114,7 @@ describe('Space Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function(match) {
+    matches.forEach(function (match) {
       const rowContent = match.textContent;
       if (rowContent.includes('IPO - Open Office 3')) {
         foundIt = true;
@@ -134,11 +139,13 @@ describe('Space Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <SpacesContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <SpacesContainer
+              history={mockRouter}
+              match={mockRouterMatch}
+              location={mockRouter}
+            />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -163,11 +170,13 @@ describe('Space Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <SpacesContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <SpacesContainer
+              history={mockRouter}
+              match={mockRouterMatch}
+              location={mockRouter}
+            />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );

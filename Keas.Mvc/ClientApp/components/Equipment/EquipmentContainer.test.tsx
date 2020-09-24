@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
+import { MemoryRouter } from 'react-router';
 
-import EquipmentContainer from '../Equipment/EquipmentContainer';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeEquipment } from '../specs/mockData/Equipment';
+import EquipmentContainer from '../Equipment/EquipmentContainer';
 
 // mock all route elements
-let mockRouter: any = {};
-let mockRouterMatch: any = {
+const mockRouter: any = {};
+const mockRouterMatch: any = {
   params: {}
 };
 
@@ -54,11 +55,13 @@ describe('Equipment Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <EquipmentContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <EquipmentContainer
+              history={mockRouter}
+              match={mockRouterMatch}
+              location={mockRouter}
+            />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -79,11 +82,13 @@ describe('Equipment Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <EquipmentContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <EquipmentContainer
+              history={mockRouter}
+              match={mockRouterMatch}
+              location={mockRouter}
+            />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -105,11 +110,13 @@ describe('Equipment Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <EquipmentContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <EquipmentContainer
+              history={mockRouter}
+              match={mockRouterMatch}
+              location={mockRouter}
+            />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -141,11 +148,13 @@ describe('Equipment Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <EquipmentContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <EquipmentContainer
+              history={mockRouter}
+              match={mockRouterMatch}
+              location={mockRouter}
+            />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -173,11 +182,13 @@ describe('Equipment Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <EquipmentContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <EquipmentContainer
+              history={mockRouter}
+              match={mockRouterMatch}
+              location={mockRouter}
+            />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -185,6 +196,12 @@ describe('Equipment Container', () => {
 
     const detailButton = container.querySelectorAll('button')[1];
     detailButton.click();
+    // const doc = document.querySelectorAll('div');
+
+    // const consoleSpy = jest.spyOn(console, 'log');
+    // console.log(doc[]);
+
+    // expect(consoleSpy).toHaveBeenCalledWith('hello');
 
     const details = document.querySelector('.modal-content').textContent;
 
