@@ -9,24 +9,24 @@ interface IProps {
   tags: string[];
 }
 
-export default class SearchTags extends React.Component<IProps, {}> {
-  public render() {
-    return (
-      <div>
-        <Typeahead
-          id='searchTags' // for accessibility
-          options={this.props.disabled ? [] : this.props.tags}
-          disabled={this.props.disabled}
-          multiple={true}
-          clearButton={true}
-          onChange={selected => {
-            this.props.onSelect(selected);
-          }}
-          selected={this.props.selected}
-          highlightOnlyResult={true}
-          placeholder='Search for Tags'
-        />
-      </div>
-    );
-  }
-}
+const SearchTags = (props: IProps) => {
+  return (
+    <div>
+      <Typeahead
+        id='searchTags' // for accessibility
+        options={props.disabled ? [] : props.tags}
+        disabled={props.disabled}
+        multiple={true}
+        clearButton={true}
+        onChange={selected => {
+          props.onSelect(selected);
+        }}
+        selected={props.selected}
+        highlightOnlyResult={true}
+        placeholder='Search for Tags'
+      />
+    </div>
+  );
+};
+
+export default SearchTags;

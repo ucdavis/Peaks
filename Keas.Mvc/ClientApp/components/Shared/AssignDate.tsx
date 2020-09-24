@@ -1,6 +1,6 @@
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
-import { FormFeedback, FormGroup, Label } from 'reactstrap';
+import { FormGroup, Label } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
 
 interface IProps {
@@ -10,7 +10,7 @@ interface IProps {
   error?: IValidationError;
 }
 
-export const AssignDate = (props: IProps) => {
+const AssignDate = (props: IProps) => {
   return (
     <FormGroup>
       <Label for='date'>Set the expiration date</Label>
@@ -28,3 +28,5 @@ export const AssignDate = (props: IProps) => {
     </FormGroup>
   );
 };
+
+export default AssignDate;

@@ -7,7 +7,7 @@ import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';
 import { IWorkstation, workstationSchema } from '../../models/Workstations';
 import AssignPerson from '../People/AssignPerson';
-import { AssignDate } from '../Shared/AssignDate';
+import AssignDate from '../Shared/AssignDate';
 import SearchWorkstations from './SearchWorkstations';
 import WorkstationEditValues from './WorkstationEditValues';
 
