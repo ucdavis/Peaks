@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { RouteChildrenProps } from 'react-router';
+import { useContext, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
 import { IKey } from '../../models/Keys';
 import { IPerson, IPersonInfo } from '../../models/People';
-import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
@@ -12,192 +12,142 @@ import CreatePerson from './CreatePerson';
 import PeopleTable from './PeopleTable';
 import PersonDetails from './PersonDetails';
 
-interface IState {
-  loading: boolean;
-  people: IPersonInfo[];
-  tableFilters: any[]; // object containing filters on table
-  tagFilters: string[]; // string of tag filters
+interface IParams {
+  team: string;
+  action: string;
+  id: string;
+  assetType: string;
+  containerAction: string;
+  containerId: string;
 }
 
-export default class PeopleContainer extends React.Component<
-  RouteChildrenProps<IMatchParams>,
-  IState
-> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const PeopleContainer = props => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [people, setPeople] = useState<IPersonInfo[]>([]);
+  const [tableFilters, setTableFilters] = useState<any[]>([]);
+  const [tagFilters, setTagFilters] = useState<string[]>([]);
+  const context = useContext(Context);
+  const history = useHistory();
+  const params : IParams = useParams();
 
-  constructor(props) {
-    super(props);
+  useEffect(() => {
+    if (!PermissionsUtil.canViewPeople(context.permissions)) {
+      return;
+    }
 
-    this.state = {
-      loading: true,
-      people: [],
-      tableFilters: [],
-      tagFilters: []
+    const fetchPeople = async () => {
+      let newPeople: IPersonInfo[] = null;
+      try {
+        newPeople = await context.fetch(
+          `/api/${context.team.slug}/people/list/`
+        );
+      } catch (err) {
+        toast.error('Error fetching people. Please refresh to try again.');
+        return;
+      }
+
+      setPeople(newPeople);
+      setLoading(false);
     };
-  }
 
-  public async componentDidMount() {
-    if (!PermissionsUtil.canViewPeople(this.context.permissions)) {
-      return;
-    }
-    let people: IPersonInfo[] = null;
-    try {
-      people = await this.context.fetch(
-        `/api/${this.context.team.slug}/people/list/`
-      );
-    } catch (err) {
-      toast.error('Error fetching people. Please refresh to try again.');
-      return;
-    }
+    fetchPeople();
+  }, [context]);
 
-    this.setState({ loading: false, people });
-  }
-
-  public render() {
-    if (!PermissionsUtil.canViewPeople(this.context.permissions)) {
-      return <Denied viewName='People' />;
-    }
-
-    if (this.state.loading) {
-      return <h2>Loading...</h2>;
-    }
-
-    const {
-      containerAction: personAction,
-      containerId: personId
-    } = this.props.match.params;
-    const selectedId = parseInt(personId, 10);
-    const detailPerson = this.state.people.find(e => e.id === selectedId);
-    return (
-      <div className='card people-color'>
-        <div className='card-header-people'>
-          <div className='card-head row justify-content-between'>
-            <h2>
-              <i className='fas fa-users fa-xs' /> People
-            </h2>
-            <CreatePerson
-              onCreate={this._createPerson}
-              modal={personAction === 'create'}
-              onAddNew={this._openCreateModal}
-              closeModal={this._goBack}
-              tags={this.context.tags}
-              userIds={this.state.people.map(x => x.person.userId)}
-            />
-          </div>
-        </div>
-        <div className='card-content'>
-          {(!personAction || personAction === 'create') &&
-            this._renderTableView(personAction === 'create')}
-          {personAction === 'details' &&
-            !!detailPerson &&
-            !!detailPerson.person &&
-            this._renderDetailsView(detailPerson)}
-        </div>
-      </div>
-    );
-  }
-
-  private _renderTableView = (createModal: boolean) => {
-    let filteredPeople = this.state.people;
-    if (this.state.tagFilters.length > 0) {
+  const renderTableView = (createModal: boolean) => {
+    let filteredPeople = people;
+    if (tagFilters.length > 0) {
       filteredPeople = filteredPeople.filter(x =>
-        this._checkTagFilters(x.person, this.state.tagFilters)
+        checkTagFilters(x.person, tagFilters)
       );
     }
     return (
       <div>
         <SearchTags
-          tags={this.context.tags}
-          selected={this.state.tagFilters}
-          onSelect={this._filterTags}
+          tags={context.tags}
+          selected={tagFilters}
+          onSelect={filterTags}
           disabled={false}
         />
         <PeopleTable
           people={filteredPeople}
-          showDetails={this._openDetailsModal}
-          filtered={this.state.tableFilters}
-          updateFilters={this._updateTableFilters}
+          showDetails={openDetailsModal}
+          filtered={tableFilters}
+          updateFilters={updateTableFilters}
         />
       </div>
     );
   };
 
-  private _renderDetailsView = (detailPerson: IPersonInfo) => {
+  const renderDetailsView = (detailPerson: IPersonInfo) => {
     return (
       <PersonDetails
         key={`person-details-${detailPerson.id}`}
-        router={this.props}
+        router={props}
         selectedPersonInfo={detailPerson}
-        tags={this.context.tags}
-        goBack={this._goBack}
-        inUseUpdated={this._assetInUseUpdated}
-        onEdit={this._editPerson}
-        onDelete={this._deletePerson}
-        goToKeyDetails={this._goToKeyDetails}
+        tags={context.tags}
+        goBack={goBack}
+        inUseUpdated={assetInUseUpdated}
+        onEdit={editPerson}
+        onDelete={deletePerson}
+        goToKeyDetails={goToKeyDetails}
       />
     );
   };
 
-  private _updateTableFilters = (filters: any[]) => {
-    this.setState({ tableFilters: filters });
+  const updateTableFilters = (filters: any[]) => {
+    setTableFilters(filters);
   };
 
   // managing counts for assigned or revoked
-  private _assetInUseUpdated = (
+  const assetInUseUpdated = (
     type: string,
     spaceId: number,
     personId: number,
     count: number
   ) => {
-    const index = this.state.people.findIndex(x => x.id === personId);
+    const index = people.findIndex(x => x.id === personId);
     if (index > -1) {
-      const people = [...this.state.people];
+      const peopleData = [...people];
       switch (type) {
         case 'equipment':
-          people[index].equipmentCount += count;
+          peopleData[index].equipmentCount += count;
           break;
         case 'serial':
-          people[index].keyCount += count;
+          peopleData[index].keyCount += count;
           break;
         case 'access':
-          people[index].accessCount += count;
+          peopleData[index].accessCount += count;
           break;
         case 'workstation':
-          people[index].workstationCount += count;
+          peopleData[index].workstationCount += count;
       }
-      this.setState({ people });
+      setPeople(peopleData);
     }
   };
 
   // tags
-  private _filterTags = (filters: string[]) => {
-    this.setState({ tagFilters: filters });
+  const filterTags = (filters: string[]) => {
+    setTagFilters(filters);
   };
 
-  private _checkTagFilters = (person: IPerson, filters: string[]) => {
+  const checkTagFilters = (person: IPerson, filters: string[]) => {
     return filters.every(
       f => !!person && !!person.tags && person.tags.includes(f)
     );
   };
 
-  private _createPerson = async (person: IPerson) => {
-    const index = this.state.people.findIndex(
-      x => x.person.userId === person.userId
-    );
+  const createPerson = async (person: IPerson) => {
+    const index = people.findIndex(x => x.person.userId === person.userId);
     if (index !== -1) {
       // if we somehow already have this person, return
       return;
     }
-    person.teamId = this.context.team.id;
+    person.teamId = context.team.id;
     try {
-      person = await this.context.fetch(
-        `/api/${this.context.team.slug}/people/create`,
-        {
-          body: JSON.stringify(person),
-          method: 'POST'
-        }
-      );
+      person = await context.fetch(`/api/${context.team.slug}/people/create`, {
+        body: JSON.stringify(person),
+        method: 'POST'
+      });
       toast.success('Successfully created person!');
     } catch (err) {
       toast.error('Error creating person.');
@@ -212,13 +162,11 @@ export default class PeopleContainer extends React.Component<
       person,
       workstationCount: 0
     };
-    this.setState(prevState => ({
-      people: [...prevState.people, personInfo]
-    }));
+    setPeople(prevPeople => [...prevPeople, personInfo]);
   };
 
-  private _editPerson = async (person: IPerson) => {
-    const index = this.state.people.findIndex(x => x.id === person.id);
+  const editPerson = async (person: IPerson) => {
+    const index = people.findIndex(x => x.id === person.id);
 
     if (index === -1) {
       // should always already exist
@@ -227,8 +175,8 @@ export default class PeopleContainer extends React.Component<
 
     let updated: IPerson = null;
     try {
-      updated = await this.context.fetch(
-        `/api/${this.context.team.slug}/peopleAdmin/update`,
+      updated = await context.fetch(
+        `/api/${context.team.slug}/peopleAdmin/update`,
         {
           body: JSON.stringify(person),
           method: 'POST'
@@ -241,16 +189,13 @@ export default class PeopleContainer extends React.Component<
     }
 
     // update already existing entry in key
-    const updatePeople = [...this.state.people];
+    const updatePeople = [...people];
     updatePeople[index].person = updated;
-
-    this.setState({
-      people: updatePeople
-    });
+    setPeople(updatePeople);
   };
 
-  private _deletePerson = async (person: IPerson) => {
-    const index = this.state.people.findIndex(x => x.id === person.id);
+  const deletePerson = async (person: IPerson) => {
+    const index = people.findIndex(x => x.id === person.id);
 
     if (index === -1) {
       // should always already exist
@@ -262,8 +207,8 @@ export default class PeopleContainer extends React.Component<
     }
 
     try {
-      const deleted: IPerson = await this.context.fetch(
-        `/api/${this.context.team.slug}/peopleAdmin/delete/${person.id}`,
+      await context.fetch(
+        `/api/${context.team.slug}/peopleAdmin/delete/${person.id}`,
         {
           method: 'POST'
         }
@@ -274,38 +219,72 @@ export default class PeopleContainer extends React.Component<
       throw new Error();
     }
 
-    this._goBack();
+    goBack();
 
     // update already existing entry in key
-    const updatePeople = [...this.state.people];
+    const updatePeople = [...people];
     updatePeople.splice(index, 1);
-
-    this.setState({
-      people: updatePeople
-    });
+    setPeople(updatePeople);
   };
 
-  private _goToKeyDetails = (key: IKey) => {
-    this.props.history.push(
-      `/${this.context.team.slug}/keys/details/${key.id}`
-    );
+  const goToKeyDetails = (key: IKey) => {
+    history.push(`/${context.team.slug}/keys/details/${key.id}`);
   };
 
-  private _openCreateModal = () => {
-    this.props.history.push(`${this._getBaseUrl()}/people/create`);
+  const openCreateModal = () => {
+    history.push(`${getBaseUrl()}/people/create`);
   };
 
-  private _openDetailsModal = (person: IPerson) => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/people/details/${person.id}`
-    );
+  const openDetailsModal = (person: IPerson) => {
+    history.push(`${getBaseUrl()}/people/details/${person.id}`);
   };
 
-  private _goBack = () => {
-    this.props.history.push(`${this._getBaseUrl()}/people`);
+  const goBack = () => {
+    history.push(`${getBaseUrl()}/people`);
   };
 
-  private _getBaseUrl = () => {
-    return `/${this.context.team.slug}`;
+  const getBaseUrl = () => {
+    return `/${context.team.slug}`;
   };
-}
+
+  if (!PermissionsUtil.canViewPeople(context.permissions)) {
+    return <Denied viewName='People' />;
+  }
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+
+  const { containerAction: personAction, containerId: personId } = params;
+  const selectedId = parseInt(personId, 10);
+  const detailPerson = people.find(e => e.id === selectedId);
+  return (
+    <div className='card people-color'>
+      <div className='card-header-people'>
+        <div className='card-head row justify-content-between'>
+          <h2>
+            <i className='fas fa-users fa-xs' /> People
+          </h2>
+          <CreatePerson
+            onCreate={createPerson}
+            modal={personAction === 'create'}
+            onAddNew={openCreateModal}
+            closeModal={goBack}
+            tags={context.tags}
+            userIds={people.map(x => x.person.userId)}
+          />
+        </div>
+      </div>
+      <div className='card-content'>
+        {(!personAction || personAction === 'create') &&
+          renderTableView(personAction === 'create')}
+        {personAction === 'details' &&
+          !!detailPerson &&
+          !!detailPerson.person &&
+          renderDetailsView(detailPerson)}
+      </div>
+    </div>
+  );
+};
+
+export default PeopleContainer;
