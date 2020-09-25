@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Reflection.Metadata;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Extensions;
@@ -40,7 +41,7 @@ namespace EfTestHelpers
         private string _outputIndent = "";
 
         private readonly QueryableScannerOptions _options;
-        private readonly T _dbContext;
+        private T _dbContext;
 
         public QueryableBuilder(QueryableScannerOptions options)
         {
@@ -50,128 +51,38 @@ namespace EfTestHelpers
         public IQueryable GetQueryable(T dbContext, QueryableExpressionContext context)
         {
             _context = context;
+            _dbContext = dbContext;
 
-            var queryableArgumetnExpression = ExtractQueryableArgumentExpression(context);
+            var rootNodeContext = GenerateQueryable(context);
 
-            var getQueryable = TransformToLambda(context, queryableArgumetnExpression);
-
-            return getQueryable?.Invoke(dbContext);
+            return rootNodeContext.Queryable;
         }
 
         /// <summary>
-        /// Convert expression syntax to a Func<T, IQueryable>
+        /// Convert expression syntax to a <see cref="Func&lt;T, IQueryable&gt;"/>
         /// </summary>
-        private Func<T, IQueryable> TransformToLambda(QueryableExpressionContext context,
-            ExpressionSyntax baseQueryableExpression)
+        private SyntaxNodeContext GenerateQueryable(QueryableExpressionContext context)
         {
-            var rootNodeContext = BuildNodeContextTree(context, baseQueryableExpression);
+            _options.OutputWriteLine($"ORIGINAL EXPRESSION:{Environment.NewLine}{context.ExtensionMethodInvocation}");
 
-            var expression = (Expression<Func<T, IQueryable>>)rootNodeContext.Expression;
-
-            var delagate = expression.Compile();
-
-            return delagate;
-        }
-
-        private SyntaxNodeContext BuildNodeContextTree(QueryableExpressionContext context,
-            ExpressionSyntax baseQueryableExpression)
-        {
-            _options.OutputWriteLine($"ORIGINAL EXPRESSION:{Environment.NewLine}{baseQueryableExpression}");
-
-            //var generator = SyntaxGenerator.GetGenerator(context.Solution.Workspace, baseQueryableExpression.Language);
-            
             var nodeContexts = new Dictionary<SyntaxNode, SyntaxNodeContext>();
 
-            foreach (var node in baseQueryableExpression.DescendantNodesAndSelf())
+            foreach (var node in context.ExtensionMethodInvocation.DescendantNodesAndSelf())
             {
                 nodeContexts.Add(node, new SyntaxNodeContext(node, _context, nodeContexts));
             }
 
-            //// replace all expressions referencing captured variables with constants/default values
-            var model = baseQueryableExpression.GetModel(_context.Solution);
-            //var analysis = model.AnalyzeDataFlow(baseQueryableExpression);
+            var model = context.ExtensionMethodInvocation.GetModel(_context.Solution);
 
-            //// As we generate and replace nodes in the SyntaxTree, we can no longer reference original nodes.
-
-            //var identifierNodes = baseQueryableExpression.DescendantNodes().OfType<IdentifierNameSyntax>().ToArray();
-
-            //var rootNode = generator.ValueReturningLambdaExpression("dbContext", baseQueryableExpression);
-
-            ////wrap expression with a lambda taking a paramater named dbContext
-            //var rootNodeContext = SetReplacementNode(baseQueryableExpression, rootNode);
-            var rootNodeContext = nodeContexts[baseQueryableExpression];
+            var rootNodeContext = nodeContexts[context.ExtensionMethodInvocation];
 
 
-            //// ensure all references to instance of DbContext are renamed to "dbContext"
-            //foreach (var identifier in identifierNodes
-            //    .Where(node => node.GetSymbol(_context.Solution).GetClrType(node.GetModel(_context.Solution)) == typeof(T)))
-            //{
-            //    SetReplacementNode(identifier, generator.IdentifierName("dbContext"));
-            //}
 
-            //foreach (var capturedSymbol in analysis.Captured.Where(s => s.CanBeReferencedByName))
-            //{
-            //    foreach (var identifierNameSyntax in identifierNodes
-            //        .Where(node => SymbolEqualityComparer.Default.Equals(node.GetSymbol(_context.Solution), capturedSymbol)))
-            //    {
-            //        var capturedExpression = identifierNameSyntax.AncestorsAndSelf()
-            //            .FirstOrDefault(node =>
-            //            {
-            //                // Use .Ancestors() instead of .Parent to ensure we don't get a trivia node
-            //                var parent = node.Ancestors().FirstOrDefault();
-            //                return parent is InvocationExpressionSyntax || parent is BinaryExpressionSyntax || parent is ArgumentListSyntax;
-            //            });
-
-            //        if (capturedExpression == null)
-            //            throw new InvalidOperationException("Unable to find a SyntaxNode for captured expression replacement");
-
-            //        var type = GetCapturedExpressionClrType(capturedExpression, model);
-
-            //        if (type.IsClass && _context.Solution.Projects.Any(p => type.Assembly.FullName.StartsWith(p.AssemblyName)))
-            //            continue;
-
-            //        var value = type.Instantiate();
-
-            //        SyntaxNode replacementExpression = generator.LiteralExpression(value);
-
-            //        switch (capturedExpression.Ancestors().First())
-            //        {
-            //            case ArgumentListSyntax argumentList:
-            //                replacementExpression = generator.Argument(replacementExpression.GetName(), RefKind.None, replacementExpression);
-            //                break;
-            //            case InvocationExpressionSyntax invocation:
-            //                break;
-            //            case BinaryExpressionSyntax binary:
-            //                break;
-            //            default:
-            //                throw new InvalidOperationException();
-            //        }
-
-            //        SetReplacementNode(capturedExpression, replacementExpression);
-            //    }
-            //}
-
-            var walker = new Walker(_options, _context, nodeContexts);//, rootNodeContext);
-            walker.Visit(baseQueryableExpression);
+            var walker = new Walker(_options, _context, nodeContexts, _dbContext);
+            walker.Visit(context.ExtensionMethodInvocation);
 
             return rootNodeContext;
 
-            //SyntaxNodeContext SetReplacementNode(SyntaxNode originalNode, SyntaxNode replacementNode)
-            //{
-            //    var originalNodeContext = nodeContexts[originalNode];
-            //    originalNodeContext.ReplacementNode = replacementNode;
-            //    nodeContexts[replacementNode] = originalNodeContext;
-
-            //    //// TODO: Nodes created by SyntaxGenerator can contain descendant nodes. Determine if those descendant nodes also need to be mapped
-            //    //foreach (var node in replacementNode.DescendantNodes())
-            //    //{
-            //    //    var nodeContext = new SyntaxNodeContext(null, _context, nodeContexts, node);
-            //    //    nodeContext.OriginalOrReplacementNode = replacementNode;
-            //    //    nodeContexts[replacementNode] = nodeContext;
-            //    //}
-
-            //    return originalNodeContext;
-            //}
         }
 
         private Type GetCapturedExpressionClrType(SyntaxNode capturedExpression, SemanticModel model)
@@ -270,39 +181,6 @@ namespace EfTestHelpers
             return type;
         }
 
-        //TODO: Climb expression until we get to DbSet, extracting chain of calls after we are outside of what will be converted to Linq expression tree
-        //TODO: Then construct a delegate that takes a DbContext and calls those methods on the given DbSet,
-
-        private static ExpressionSyntax ExtractQueryableArgumentExpression(QueryableExpressionContext context)
-        {
-            // get IQueryable expression from argument to invocation of method in EntityFrameworkQueryableExtensions
-            ExpressionSyntax baseQueryableExpression = null;
-            ExpressionSyntax predicateExpression = null;
-
-            switch (context.ExtensionMethodInvocation.Expression)
-            {
-                case MemberAccessExpressionSyntax s:
-                    switch (s.Expression)
-                    {
-                        case InvocationExpressionSyntax s2:
-                            baseQueryableExpression = s2.ArgumentList.Arguments.FirstOrDefault()?.Expression ?? s2;
-                            predicateExpression = s2.ArgumentList.Arguments.Skip(1).FirstOrDefault()?.Expression as SimpleLambdaExpressionSyntax;
-                            break;
-                        case MemberAccessExpressionSyntax s2:
-                            baseQueryableExpression = s2;
-                            break;
-                        default:
-                            throw new InvalidOperationException();
-                    }
-
-                    break;
-                default:
-                    throw new InvalidOperationException();
-            }
-
-            return baseQueryableExpression;
-        }
-
         /// <summary>
         /// Organizes a collection of <see cref="SyntaxNodeContext"/>s into a tree that is more readily digestible
         /// for creation of Linq expression
@@ -312,19 +190,17 @@ namespace EfTestHelpers
             private QueryableExpressionContext _context;
             private string _outputIndent = "";
 
-            private readonly Stack<SyntaxNodeContext> _nodeContextStack;
             private readonly QueryableScannerOptions _options;
             private readonly Dictionary<SyntaxNode, SyntaxNodeContext> _nodeContexts;
-            //private readonly SyntaxNodeContext _rootNodeContext;
+            private T _dbContext;
 
             public Walker(QueryableScannerOptions options, QueryableExpressionContext context,
-                Dictionary<SyntaxNode, SyntaxNodeContext> nodeContexts)//, SyntaxNodeContext rootNodeContext)
+                Dictionary<SyntaxNode, SyntaxNodeContext> nodeContexts, T dbContext)
             {
                 _options = options;
                 _context = context;
                 _nodeContexts = nodeContexts;
-                _nodeContextStack = new Stack<SyntaxNodeContext>();
-                //_rootNodeContext = rootNodeContext;
+                _dbContext = dbContext;
             }
 
             private void LogVisitation(string s)
@@ -337,10 +213,7 @@ namespace EfTestHelpers
             public override void Visit(SyntaxNode node)
             {
                 _outputIndent = _outputIndent + "    ";
-                //var nodeContext = _nodeContexts[node];
-                //// only visit node if it is not being replaced
-                //if (nodeContext.ReplacementNode == null || nodeContext == _rootNodeContext)
-                    base.Visit(node);
+                base.Visit(node);
                 _outputIndent = _outputIndent.Substring(0, _outputIndent.Length - 4);
             }
 
@@ -351,59 +224,7 @@ namespace EfTestHelpers
 
                 var nodeContext = _nodeContexts[node];
                 nodeContext.Expression = Expression.Default(nodeContext.Type);
-                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
-
-                _nodeContextStack.Push(nodeContext);
-            }
-
-            public override void VisitArgumentList(ArgumentListSyntax node)
-            {
-                base.VisitArgumentList(node);
-                LogVisitation($"{_outputIndent}VisitArgumentList: {node}");
-
-                var nodeContext = _nodeContexts[node];
-
-                _nodeContextStack.TryPeek(out var potentialArgumentNodeContext);
-
-                if (!(potentialArgumentNodeContext?.SyntaxNode is ArgumentSyntax ||
-                      potentialArgumentNodeContext?.SyntaxNode is MemberAccessExpressionSyntax))
-                    throw new InvalidOperationException(
-                        $"{nameof(ArgumentListSyntax)} {nameof(node)} should have at least one argument");
-
-                _nodeContextStack.Pop();
-
-                // first node can be either a MemberAccess or Argument
-                nodeContext.AddComponentContext(potentialArgumentNodeContext);
-
-                // subsequent nodes should all be ArgumentSyntax
-                while (_nodeContextStack.TryPeek(out potentialArgumentNodeContext) &&
-                       potentialArgumentNodeContext.SyntaxNode is ArgumentSyntax)
-                {
-                    _nodeContextStack.Pop();
-
-                    nodeContext.AddComponentContext(potentialArgumentNodeContext);
-                }
-
-                _nodeContextStack.Push(nodeContext);
-            }
-
-            public override void VisitArgument(ArgumentSyntax node)
-            {
-                base.VisitArgument(node);
-                LogVisitation($"{_outputIndent}VisitArgument: {node}");
-
-                var nodeContext = _nodeContexts[node];
-
-                if (!_nodeContextStack.TryPop(out var argumentExpressioNodeContext))
-                    throw new InvalidOperationException(
-                        $"No {nameof(argumentExpressioNodeContext)} found for {nameof(ArgumentSyntax)} {node}");
-
-                nodeContext.AddComponentContext(argumentExpressioNodeContext);
-
-                _nodeContextStack.Push(nodeContext);
-
-                //// just pass the argumentExpressionContext.Expression up to its parent 
-                //nodeContext.Expression = argumentExpressionContext.GetExpression();
+                LogVisitation($"{_outputIndent}* Build Expression: {nodeContext.Expression}");
             }
 
             public override void VisitParameter(ParameterSyntax node)
@@ -413,18 +234,10 @@ namespace EfTestHelpers
 
                 var nodeContext = _nodeContexts[node];
 
-                if (_nodeContextStack.TryPeek(out var parameterExpressioNodeContext) && parameterExpressioNodeContext.SyntaxNode is IdentifierNameSyntax)
-                {
-                    nodeContext.AddComponentContext(parameterExpressioNodeContext);
-                    _nodeContextStack.Pop();
-                }
-
                 nodeContext.Expression = Expression.Parameter(
                     nodeContext.Symbol.GetClrType(nodeContext.Model),
                     nodeContext.Symbol.Name);
-                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
-
-                _nodeContextStack.Push(nodeContext);
+                LogVisitation($"{_outputIndent}* Build Expression: {nodeContext.Expression}");
             }
 
             public override void VisitInvocationExpression(InvocationExpressionSyntax node)
@@ -433,37 +246,65 @@ namespace EfTestHelpers
                 LogVisitation($"{_outputIndent}VisitInvocationExpression: {node}");
 
                 var nodeContext = _nodeContexts[node];
+                var methodOrDelegateNodeContext = _nodeContexts[node.Expression];
 
-                if (!_nodeContextStack.TryPop(out var methodOrDelegateNodeContext))
-                    throw new InvalidOperationException(
-                        $"No {nameof(methodOrDelegateNodeContext)} found for {nameof(InvocationExpressionSyntax)} {node}");
-
-                if (_nodeContextStack.TryPop(out var argumentListNodeContext))
+                if (methodOrDelegateNodeContext.Symbol.Name == "AsQueryable" && methodOrDelegateNodeContext.Queryable != null)
                 {
-                    nodeContext.AddComponentContext(argumentListNodeContext);
+                    nodeContext.Queryable = methodOrDelegateNodeContext.Queryable;
+                    LogVisitation($"{_outputIndent}* Pass Queryable Up: {nodeContext.Queryable}");
+                    return;
                 }
 
-                nodeContext.AddComponentContext(methodOrDelegateNodeContext);
+                var (methodInfo, arguments) = nodeContext.GetMethodAndArguments();
 
-                var argumentListContext = nodeContext.ComponentContexts
-                    .Skip(1)
-                    .FirstOrDefault();
+                if (methodOrDelegateNodeContext.Queryable != null)
+                {
+                    if (methodInfo.ReturnType?.ImplementsOrDerives(typeof(IQueryable<>)) ?? false)
+                    {
+                        nodeContext.Queryable = (IQueryable) methodInfo.Invoke(null, arguments);
+                        LogVisitation($"{_outputIndent}* Get Queryable from invocation: {nodeContext.Queryable}");
+                        return;
+                    }
 
-                var argumentExpressions =
-                    argumentListContext?.SyntaxNode is ArgumentListSyntax l
-                        ? argumentListContext.ComponentContexts
-                            .Select(c => c.Expression)
-                            .ToArray()
-                        : new Expression[] { };
+                    if (methodInfo.ReturnType?.ImplementsOrDerives(typeof(Task<>)) ?? false)
+                    {
+                        var queryable = methodOrDelegateNodeContext.Queryable;
+
+                        var predicateExpression = arguments
+                            .Where(a => a is LambdaExpression lambda && lambda.ReturnType == typeof(bool))
+                            .Cast<Expression>()
+                            .FirstOrDefault();
+
+                        if (predicateExpression != null)
+                        {
+                            // for those extension methods that take a predicate, combine the predicate via Where()
+
+                            // Get the Where method that takes an Expression<Func<TSource, bool>>
+                            var whereMethodinfo = typeof(Queryable).GetMethods().First(m =>
+                                    m.Name == "Where"
+                                    && m.GetParameters()[1]
+                                        .ParameterType.GetGenericArguments()[0]
+                                        .GetMethod("Invoke")
+                                        .GetParameters().Length == 1)
+                                .MakeGenericMethod(queryable.ElementType);
+
+                            queryable = (IQueryable) whereMethodinfo.Invoke(null,
+                                new object[] {queryable, predicateExpression});
+                        }
+
+                        nodeContext.Queryable = queryable;
+                        LogVisitation($"{_outputIndent}* Get Queryable from invocation after combining with extra predicate: {nodeContext.Queryable}");
+                        return;
+                    }
+                }
+
 
                 var instanceExpression = methodOrDelegateNodeContext.Expression;
-                var methodInfo = methodOrDelegateNodeContext.GetMethodInfo();
+
+                var argumentExpressions = arguments.Cast<Expression>().ToArray();
 
                 nodeContext.Expression = Expression.Call(instanceExpression, methodInfo, argumentExpressions);
-                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
-                //TODO: Do we ever need to use Expression.Invoke()?
-
-                _nodeContextStack.Push(nodeContext);
+                LogVisitation($"{_outputIndent}* Build Expression: {nodeContext.Expression}");
             }
 
             public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
@@ -472,41 +313,31 @@ namespace EfTestHelpers
                 LogVisitation($"{_outputIndent}VisitMemberAccessExpression: {node}");
 
                 var nodeContext = _nodeContexts[node];
+                var containingNodeContext = _nodeContexts[node.Expression];
+                var memberNodeContext = _nodeContexts[node.Name];
+
+                var queryable = containingNodeContext.Queryable ?? memberNodeContext.Queryable;
+
+                if (queryable != null )
+                {
+                    if (node.Name.ToString() == "AsQueryable" && queryable.GetType().ImplementsOrDerives(typeof(DbSet<>)))
+                    {
+                        queryable = (IQueryable)queryable.GetType().GetMethod("AsQueryable").Invoke(queryable, new object[] { });
+                    }
+                    nodeContext.Queryable = queryable;
+                    LogVisitation($"{_outputIndent}* Pass Queryable Up: {nodeContext.Queryable}");
+                    return;
+                }
 
                 if (!(nodeContext.Symbol is IPropertySymbol || nodeContext.Symbol is IFieldSymbol))
                     return; // Only properties and fields are considered for MemberAccess as far as linq expressions is concerned
 
-                if (!_nodeContextStack.TryPop(out var memberNodeContext))
-                    throw new InvalidOperationException(
-                        $"No {nameof(memberNodeContext)} found for {nameof(MemberAccessExpressionSyntax)} {node}");
-
-                if (!_nodeContextStack.TryPop(out var containingNodeContext))
-                    throw new InvalidOperationException(
-                        $"No {nameof(containingNodeContext)} found for {nameof(MemberAccessExpressionSyntax)} {node}");
-
-
-                //if (!_nodeContextStack.TryPeek(out var containingNodeContext) &&
-                //    containingNodeContext.Symbol is IParameterSymbol)
-                //{
-                //    _nodeContextStack.Pop();
-                //    nodeContext.AddComponentContext(containingNodeContext);
-                //}
-                //else
-                //{
-                //    containingNodeContext = null;
-
-                //}
-
-                nodeContext.AddComponentContext(containingNodeContext);
-                nodeContext.AddComponentContext(memberNodeContext);
-
-                _nodeContextStack.Push(nodeContext);
 
                 var memberInfo = memberNodeContext.GetMemberInfo();
 
                 nodeContext.Expression = Expression.MakeMemberAccess(containingNodeContext.Expression, memberInfo);
 
-                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
+                LogVisitation($"{_outputIndent}* Build Expression: {nodeContext.Expression}");
             }
 
 
@@ -517,30 +348,13 @@ namespace EfTestHelpers
                 LogVisitation($"{_outputIndent}VisitSimpleLambdaExpression: {node}");
 
                 var nodeContext = _nodeContexts[node];
+                var parameterContext = _nodeContexts[node.Parameter];
+                var lambdaBodyContext = _nodeContexts[node.Body];
 
-                if (!_nodeContextStack.TryPop(out var lambdaBodyContext))
-                    throw new InvalidOperationException(
-                        $"No {nameof(lambdaBodyContext)} found for {nameof(SimpleLambdaExpressionSyntax)} {node}");
+                var paramList = new[] {Expression.Parameter(parameterContext.Type, _nodeContexts[node.Parameter].Symbol.Name)};
 
-                if (!_nodeContextStack.TryPop(out var parameterContext))
-                    throw new InvalidOperationException(
-                        $"No {nameof(parameterContext)} found for {nameof(SimpleLambdaExpressionSyntax)} {node}");
-
-                nodeContext.AddComponentContext(parameterContext);
-                nodeContext.AddComponentContext(lambdaBodyContext);
-
-                var parameterExpressions = parameterContext?.SyntaxNode switch
-                {
-                    ParameterListSyntax s => s.Parameters
-                        .Select(p => Expression.Parameter(_nodeContexts[p].Type, _nodeContexts[p].Symbol.Name)).ToArray(),
-                    ParameterSyntax s => new[] {Expression.Parameter(parameterContext.Type, _nodeContexts[s].Symbol.Name) },
-                    _ => new ParameterExpression[] { }
-                };
-
-                nodeContext.Expression = Expression.Lambda(lambdaBodyContext.Expression, false, parameterExpressions);
-                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
-
-                _nodeContextStack.Push(nodeContext);
+                nodeContext.Expression = Expression.Lambda(lambdaBodyContext.Expression, false, paramList);
+                LogVisitation($"{_outputIndent}* Build Expression: {nodeContext.Expression}");
             }
 
             public override void VisitParenthesizedLambdaExpression(ParenthesizedLambdaExpressionSyntax node)
@@ -549,35 +363,13 @@ namespace EfTestHelpers
                 LogVisitation($"{_outputIndent}VisitParenthesizedLambdaExpression: {node}");
 
                 var nodeContext = _nodeContexts[node];
+                var lambdaBodyContext = _nodeContexts[node.Body];
 
-                if (!_nodeContextStack.TryPop(out var argumentListContext))
-                    throw new InvalidOperationException(
-                        $"No {nameof(argumentListContext)} found for {nameof(ParenthesizedLambdaExpressionSyntax)} {node}");
+                var paramList = node.ParameterList.Parameters
+                    .Select(p => Expression.Parameter(_nodeContexts[p].Type, _nodeContexts[p].Symbol.Name)).ToList();
 
-                if (!_nodeContextStack.TryPop(out var lambdaBodyContext))
-                    throw new InvalidOperationException(
-                        $"No {nameof(lambdaBodyContext)} found for {nameof(ParenthesizedLambdaExpressionSyntax)} {node}");
-
-                nodeContext.AddComponentContext(lambdaBodyContext);
-                nodeContext.AddComponentContext(argumentListContext);
-
-                var bodyExpression = lambdaBodyContext.Expression;
-
-                argumentListContext = nodeContext.ComponentContexts
-                    .Skip(1)
-                    .FirstOrDefault();
-
-                var parameterExpressions =
-                    argumentListContext?.SyntaxNode is ArgumentListSyntax
-                        ? argumentListContext.ComponentContexts
-                            .Select(c => Expression.Parameter(c.Type, c.SyntaxNode.GetName()))
-                            .ToArray()
-                        : new ParameterExpression[] { };
-
-                nodeContext.Expression = Expression.Lambda(bodyExpression, false, parameterExpressions);
-                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
-
-                _nodeContextStack.Push(nodeContext);
+                nodeContext.Expression = Expression.Lambda(lambdaBodyContext.Expression, false, paramList);
+                LogVisitation($"{_outputIndent}* Build Expression: {nodeContext.Expression}");
             }
 
             public override void VisitBinaryExpression(BinaryExpressionSyntax node)
@@ -586,26 +378,14 @@ namespace EfTestHelpers
                 LogVisitation($"{_outputIndent}VisitBinaryExpression: {node}");
 
                 var nodeContext = _nodeContexts[node];
-
-                if (!_nodeContextStack.TryPop(out var rightNodeContext))
-                    throw new InvalidOperationException(
-                        $"No {nameof(rightNodeContext)} found for {nameof(BinaryExpressionSyntax)} {node}");
-
-                if (!_nodeContextStack.TryPop(out var leftNodeContext))
-                    throw new InvalidOperationException(
-                        $"No {nameof(leftNodeContext)} found for {nameof(BinaryExpressionSyntax)} {node}");
-
-                nodeContext.AddComponentContext(leftNodeContext);
-                nodeContext.AddComponentContext(rightNodeContext);
-
-                _nodeContextStack.Push(nodeContext);
+                var leftNodeContext = _nodeContexts[node.Left];
+                var rightNodeContext = _nodeContexts[node.Right];
 
                 var expressionType = GetOpExpressionType(node.Kind());
 
-                
-
                 nodeContext.Expression = Expression.MakeBinary(expressionType, leftNodeContext.Expression,
                     rightNodeContext.Expression);
+                LogVisitation($"{_outputIndent}* Build Expression: {nodeContext.Expression}");
             }
 
             public override void VisitIdentifierName(IdentifierNameSyntax node)
@@ -614,6 +394,34 @@ namespace EfTestHelpers
                 LogVisitation($"{_outputIndent}VisitIdentifierName: {node}");
 
                 var nodeContext = _nodeContexts[node];
+
+                if (nodeContext.Symbol is IMethodSymbol)
+                {
+                    LogVisitation($"{_outputIndent}* Ignore method identifier");
+                    return;
+                }
+
+                var type = nodeContext.Symbol.GetClrType(nodeContext.Model);
+
+                if (type.ImplementsOrDerives(typeof(T)))
+                {
+                    LogVisitation($"{_outputIndent}* Ignore dbContext identifier");
+                    return;
+                }
+
+                if (type.ImplementsOrDerives(typeof(DbSet<>)))
+                {
+                    nodeContext.Queryable =
+                        (IQueryable) typeof(T).GetProperty(node.Identifier.Text).GetMethod
+                            .Invoke(_dbContext, new object[] { });
+                    LogVisitation($"{_outputIndent}* Set Queryable: {nodeContext.Queryable}");
+                    return;
+                }
+
+                if (type.ImplementsOrDerives(typeof(IQueryable<>)))
+                {
+                    throw new InvalidOperationException("Not yet sure what to do here");
+                }
 
                 switch (nodeContext.Symbol)
                 {
@@ -636,11 +444,9 @@ namespace EfTestHelpers
                         }
                         else
                         {
-                            if (!_nodeContextStack.TryPeek(out var containingNodeContext))
-                                throw new InvalidOperationException("No nodeContext found for containing expression");
-
-                            nodeContext.Expression = Expression.Property(containingNodeContext?.Expression, s.Name);
-                            nodeContext.ComponentContexts.Push(containingNodeContext);
+                            //node.Identifier.
+                            //nodeContext.Expression = Expression.Property(containingNodeContext?.Expression, s.Name);
+                            //nodeContext.ComponentContexts.Push(containingNodeContext);
                         }
 
 
@@ -654,18 +460,26 @@ namespace EfTestHelpers
                         }
                         else
                         {
-                            if (!_nodeContextStack.TryPeek(out var containingNodeContext))
-                                throw new InvalidOperationException("No nodeContext found for containing expression");
+                            //if (_nodeContextStack.TryPeek(out var containingNodeContext))
+                            //{
+                            //    nodeContext.Expression = Expression.Field(containingNodeContext?.Expression, s.Name);
+                            //    nodeContext.ComponentContexts.Push(containingNodeContext);
+                            //}
+                            //else if (typeof(DbContext).IsAssignableFrom(nodeContext.Type))
+                            //{
+                            //    nodeContext.Expression = Expression.Parameter(nodeContext.Type, "dbContext");
+                            //}
+                            //else
+                            //{
+                            //    throw new InvalidOperationException("No nodeContext found for containing expression");
+                            //}
 
-                            nodeContext.Expression = Expression.Field(containingNodeContext?.Expression, s.Name);
-                            nodeContext.ComponentContexts.Push(containingNodeContext);
+
                         }
 
                         break;
                 }
-                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
-
-                _nodeContextStack.Push(nodeContext);
+                LogVisitation($"{_outputIndent}* Build Expression: {nodeContext.Expression}");
             }
 
             public override void VisitLiteralExpression(LiteralExpressionSyntax node)
@@ -676,9 +490,7 @@ namespace EfTestHelpers
                 var nodeContext = _nodeContexts[node];
 
                 nodeContext.Expression = Expression.Constant(node.Token.Value);
-                LogVisitation($"{_outputIndent}Build Expression: {nodeContext.Expression}");
-
-                _nodeContextStack.Push(nodeContext);
+                LogVisitation($"{_outputIndent}* Build Expression: {nodeContext.Expression}");
             }
 #nullable disable
 

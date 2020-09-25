@@ -20,14 +20,12 @@ namespace EfTestHelpers
         public SemanticModel Model { get; set; }
         public Type Type { get; set; }
         public Expression Expression { get; set; }
-        public Stack<SyntaxNodeContext> ComponentContexts { get; set; }
-        public SyntaxNodeContext ParentContext { get; set; }
         public Dictionary<SyntaxNode, SyntaxNodeContext> AllContexts { get; set; }
+        public IQueryable Queryable { get; set; }
 
         public SyntaxNodeContext(SyntaxNode syntaxNode, QueryableExpressionContext expressionContext,
             Dictionary<SyntaxNode, SyntaxNodeContext> allContexts, SyntaxNode replacementNode = null)
         {
-            ComponentContexts = new Stack<SyntaxNodeContext>();
             SyntaxNode = syntaxNode;
             Symbol = syntaxNode?.GetSymbol(expressionContext.Solution);
             Model = syntaxNode?.GetModel(expressionContext.Solution);
@@ -37,40 +35,58 @@ namespace EfTestHelpers
 
         public override string ToString()
         {
-            return ToString(includeComponentContexts: true);
-        }
-
-        public string ToString(bool includeComponentContexts)
-        {
-            if (!includeComponentContexts || !ComponentContexts.Any())
-                return/* ReplacementNode?.ToString() ??*/ SyntaxNode.ToString();
-
-            var sb = new StringBuilder();
-            sb.Append($"{/*ReplacementNode ??*/ SyntaxNode}{Environment.NewLine}    [{ComponentContexts.First()}");
-
-            foreach (var component in ComponentContexts.Skip(1))
-            {
-                sb.Append($",{Environment.NewLine}    {component.ToString(includeComponentContexts: false)}");
-            }
-
-            sb.Append("]");
-
-            return sb.ToString();
+            return SyntaxNode.ToString();
         }
     }
 
     public static class SyntaxNodeContextExtensions
     {
 
-        public static void AddComponentContext(this SyntaxNodeContext containingNodeContext, SyntaxNodeContext componentNodeContext)
+        public static (MethodInfo methodInfo, object[] arguments) GetMethodAndArguments(this SyntaxNodeContext nodeContext)
         {
-            containingNodeContext.ComponentContexts.Push(componentNodeContext);
-            componentNodeContext.ParentContext = containingNodeContext;
-        }
+            if (nodeContext.Symbol is IMethodSymbol originalMethodSymbol && nodeContext.SyntaxNode is InvocationExpressionSyntax invocationSyntax)
+            {
+                var methodSymbol = originalMethodSymbol.ReducedFrom ?? originalMethodSymbol;
 
-        public static MethodInfo GetMethodInfo(this SyntaxNodeContext nodeContext)
-        {
-            throw new NotImplementedException();
+                var containingType = methodSymbol.ContainingType.GetClrType(nodeContext.Model);
+                var methodInfo = containingType.GetMethods().FirstOrDefault(
+                    m => m.Name == methodSymbol.Name
+                         && m.IsStatic == methodSymbol.IsStatic
+                         && m.IsGenericMethodDefinition == methodSymbol.IsGenericMethod
+                         && m.GetGenericArguments().Length == methodSymbol.TypeArguments.Length
+                         && m.GetParameters().Length == methodSymbol.Parameters.Length
+                         // if not a generic method definition, be sure the parameter types match...
+                         && (m.IsGenericMethodDefinition || m.GetParameters()
+                             .Select(p => p.ParameterType)
+                             .SequenceEqual(methodSymbol.Parameters.Select(p => p.GetClrType(nodeContext.Model)))));
+
+                var argumentNodeContexts = invocationSyntax.ArgumentList.Arguments
+                    .Select(a => nodeContext.AllContexts[a.Expression])
+                    .ToList();
+
+                if (methodInfo.IsGenericMethodDefinition)
+                {
+
+                    // extension method calls are interpereted as MemberAccessExpressions in which the child Expression is the first/this argument
+                    if (originalMethodSymbol.ReducedFrom != null && methodSymbol.IsExtensionMethod && invocationSyntax.Expression is MemberAccessExpressionSyntax memberAccess)
+                        argumentNodeContexts.Insert(0, nodeContext.AllContexts[memberAccess.Expression]);
+                    
+                    // try to get correct type arguments for constructing generic method...
+                    var typeArguments = argumentNodeContexts
+                        .SelectMany(c => (c.Queryable?.GetType() ?? c.Expression?.Type ?? typeof(object)).GetTypeInfo().GenericTypeArguments)
+                        .Where(t => t != typeof(bool)) // ignore predicate return types
+                        .Distinct()
+                        .ToArray();
+
+                    methodInfo = methodInfo.MakeGenericMethod(typeArguments);
+                }
+
+                var arguments = argumentNodeContexts.Select(c => (object) c.Queryable ?? c.Expression).ToArray();
+
+                return (methodInfo, arguments);
+            }
+
+            throw new InvalidOperationException();
         }
 
         public static MemberInfo GetMemberInfo(this SyntaxNodeContext nodeContext)
