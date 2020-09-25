@@ -182,7 +182,10 @@ describe('Equipment Container', () => {
 //       // important to add the context provider here since it includes permissions and fetch info
 //       render(
 //         <Context.Provider value={contextObject}>
-//           <MemoryRouter>
+//           <MemoryRouter
+//             initialEntries={['/caes-cru/equipment/details/24']}
+//             initialIndex={0}
+//           >
 //             <EquipmentContainer
 //               history={mockRouter}
 //               match={mockRouterMatch}
@@ -196,6 +199,12 @@ describe('Equipment Container', () => {
 
 //     const detailButton = container.querySelectorAll('button')[1];
 //     detailButton.click();
+//     // const doc = document.querySelector('body');
+
+//     // const consoleSpy = jest.spyOn(console, 'log');
+//     // console.log(doc);
+
+//     // expect(consoleSpy).toHaveBeenCalledWith('hello');
 
 //     const details = document.querySelector('.modal-content').textContent;
 
