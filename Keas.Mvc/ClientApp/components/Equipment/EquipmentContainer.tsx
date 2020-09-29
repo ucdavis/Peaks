@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
-import { RouteChildrenProps, useHistory, useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -18,14 +18,7 @@ import EquipmentList from './EquipmentList';
 import EquipmentTableContainer from './EquipmentTableContainer';
 import RevokeEquipment from './RevokeEquipment';
 
-interface IParams {
-  team: string;
-  action?: string;
-  id?: string;
-  assetType?: string;
-}
-
-interface IProps extends RouteChildrenProps<IMatchParams> {
+interface IProps {
   person?: IPerson;
   space?: ISpace;
   assetInUseUpdated?: (
@@ -43,7 +36,7 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
   assetEdited?: (type: string, spaceId: number, personId: number) => void;
 }
 
-const EquipmentContainer = (props: IProps) => {
+const EquipmentContainer = (props: IProps): JSX.Element => {
   const [commonAttributeKeys, setCommonAttributeKeys] = useState<string[]>([]);
   const [equipment, setEquipment] = useState<IEquipment[]>([]);
   const [equipmentAvailabilityLevels] = useState<string[]>([
@@ -62,7 +55,7 @@ const EquipmentContainer = (props: IProps) => {
   const [loading, setLoading] = useState<boolean>(true);
   const context = useContext(Context);
   const history = useHistory();
-  const params : IParams = useParams();
+  const params : IMatchParams = useParams();
 
   useEffect(() => {
     if (!PermissionsUtil.canViewEquipment(context.permissions)) {
@@ -70,9 +63,9 @@ const EquipmentContainer = (props: IProps) => {
     }
     // are we getting the person's equipment or the team's?
     let equipmentFetchUrl = '';
-    if (!!props.person) {
+    if (props.person) {
       equipmentFetchUrl = `/api/${context.team.slug}/equipment/listassigned?personid=${props.person.id}`;
-    } else if (!!props.space) {
+    } else if (props.space) {
       equipmentFetchUrl = `/api/${context.team.slug}/equipment/getEquipmentInSpace?spaceId=${props.space.id}`;
     } else {
       equipmentFetchUrl = `/api/${context.team.slug}/equipment/list/`;
@@ -324,7 +317,7 @@ const EquipmentContainer = (props: IProps) => {
   };
 
   const revokeEquipment = async (selectedEquipment: IEquipment) => {
-    if (!confirm('Are you sure you want to revoke item?')) {
+    if (!window.confirm('Are you sure you want to revoke item?')) {
       return false;
     }
     // call API to actually revoke
@@ -366,7 +359,7 @@ const EquipmentContainer = (props: IProps) => {
   };
 
   const deleteEquipment = async (selectedEquipment: IEquipment) => {
-    if (!confirm('Are you sure you want to delete item?')) {
+    if (!window.confirm('Are you sure you want to delete item?')) {
       return false;
     }
 
@@ -537,9 +530,9 @@ const EquipmentContainer = (props: IProps) => {
   };
 
   const getBaseUrl = () => {
-    if (!!props.person) {
+    if (props.person) {
       return `/${context.team.slug}/people/details/${props.person.id}`;
-    } else if (!!props.space) {
+    } else if (props.space) {
       return `/${context.team.slug}/spaces/details/${props.space.id}`;
     } else {
       return `/${context.team.slug}`;
