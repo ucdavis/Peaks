@@ -6,6 +6,7 @@ import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeEquipment } from '../specs/mockData/Equipment';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
+import { routes } from '../../pages/assets/routes';
 
 let container: Element = null;
 
@@ -156,9 +157,7 @@ describe('Equipment Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter initialEntries={['/caes-cru/equipment/details/24']}>
-            <Route path='/:team/equipment/:action?/:id?'>
-              <EquipmentContainer />
-            </Route>
+            {routes}
           </MemoryRouter>
         </Context.Provider>,
         container
