@@ -1,17 +1,11 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, Route } from 'react-router';
 
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeEquipment } from '../specs/mockData/Equipment';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
-
-// mock all route elements
-const mockRouter: any = {};
-const mockRouterMatch: any = {
-  params: {}
-};
 
 let container: Element = null;
 
@@ -56,11 +50,7 @@ describe('Equipment Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter>
-            <EquipmentContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
-            />
+            <EquipmentContainer />
           </MemoryRouter>
         </Context.Provider>,
         container
@@ -84,9 +74,6 @@ describe('Equipment Container', () => {
         <Context.Provider value={contextObject}>
           <MemoryRouter>
             <EquipmentContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
             />
           </MemoryRouter>
         </Context.Provider>,
@@ -112,9 +99,6 @@ describe('Equipment Container', () => {
         <Context.Provider value={contextObject}>
           <MemoryRouter>
             <EquipmentContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
             />
           </MemoryRouter>
         </Context.Provider>,
@@ -150,9 +134,6 @@ describe('Equipment Container', () => {
         <Context.Provider value={contextObject}>
           <MemoryRouter>
             <EquipmentContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
             />
           </MemoryRouter>
         </Context.Provider>,
@@ -164,51 +145,32 @@ describe('Equipment Container', () => {
     expect(matches.length).toBe(4); //Should this be 3? Or is the inactive ignored and only used when queried by the api?
   });
 
-//   it('Shows equipment details', async () => {
-//     mockRouter.push = () => {
-//       console.log('Nothing');
-//     };
-//     mockRouterMatch.params = {
-//       action: 'details',
-//       id: 24 // test equipmentid
-//     };
+  it('Shows equipment details', async () => {
+    await act(async () => {
+      // spy on our context's fetch handler to return fake equipment
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakeEquipment));
 
-//     await act(async () => {
-//       // spy on our context's fetch handler to return fake equipment
-//       jest
-//         .spyOn(contextObject, 'fetch')
-//         .mockImplementation(() => Promise.resolve(fakeEquipment));
+      // important to add the context provider here since it includes permissions and fetch info
+      render(
+        <Context.Provider value={contextObject}>
+          <MemoryRouter initialEntries={['/caes-cru/equipment/details/24']}>
+            <Route path='/:team/equipment/:action?/:id?'>
+              <EquipmentContainer />
+            </Route>
+          </MemoryRouter>
+        </Context.Provider>,
+        container
+      );
+    });
 
-//       // important to add the context provider here since it includes permissions and fetch info
-//       render(
-//         <Context.Provider value={contextObject}>
-//           <MemoryRouter
-//             initialEntries={['/caes-cru/equipment/details/24']}
-//             initialIndex={0}
-//           >
-//             <EquipmentContainer
-//               history={mockRouter}
-//               match={mockRouterMatch}
-//               location={mockRouter}
-//             />
-//           </MemoryRouter>
-//         </Context.Provider>,
-//         container
-//       );
-//     });
+    const detailButton = container.querySelectorAll('button')[1];
+    detailButton.click();
 
-//     const detailButton = container.querySelectorAll('button')[1];
-//     detailButton.click();
-//     // const doc = document.querySelector('body');
+    const details = document.querySelector('.modal-content').textContent;
 
-//     // const consoleSpy = jest.spyOn(console, 'log');
-//     // console.log(doc);
-
-//     // expect(consoleSpy).toHaveBeenCalledWith('hello');
-
-//     const details = document.querySelector('.modal-content').textContent;
-
-//     expect(details).toContain('Dell Desktop'); // confirm name is displayed
-//     expect(details).toContain('Monitor'); // confirm notes is displayed
-//   });
+    expect(details).toContain('Dell Desktop'); // confirm name is displayed
+    expect(details).toContain('Monitor'); // confirm notes is displayed
+  });
 });
