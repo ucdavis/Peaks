@@ -1,17 +1,11 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { MemoryRouter } from 'react-router';
-
-import PeopleContainer from '../People/PeopleContainer';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakePeople } from '../specs/TestData';
-
-// mock all route elements
-const mockRouter: any = {};
-const mockRouterMatch: any = {
-  params: {}
-};
+import { routes } from '../../pages/assets/routes';
+import PeopleContainer from '../People/PeopleContainer';
 
 let container: Element = null;
 
@@ -99,11 +93,7 @@ describe('People Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter>
-            <PeopleContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
-            />
+            <PeopleContainer />
           </MemoryRouter>
         </Context.Provider>,
         container
@@ -128,11 +118,7 @@ describe('People Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter>
-            <PeopleContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
-            />
+            <PeopleContainer />
           </MemoryRouter>
         </Context.Provider>,
         container
@@ -156,11 +142,7 @@ describe('People Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter>
-            <PeopleContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
-            />
+            <PeopleContainer />
           </MemoryRouter>
         </Context.Provider>,
         container
@@ -195,11 +177,7 @@ describe('People Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter>
-            <PeopleContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
-            />
+            <PeopleContainer />
           </MemoryRouter>
         </Context.Provider>,
         container
@@ -210,43 +188,34 @@ describe('People Container', () => {
     expect(matches.length).toBe(4); //Should this be 3? Or is the inactive ignored and only used when queried by the api?
   });
 
-//   it('Shows person details', async () => {
-//     mockRouterMatch.params = {
-//       containerAction: 'details',
-//       containerId: 123 // test personid
-//     };
+  it('Shows person details', async () => {
+    await act(async () => {
+      // spy on our context's fetch handler to return fake people
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakePeople));
 
-//     await act(async () => {
-//       // spy on our context's fetch handler to return fake people
-//       jest
-//         .spyOn(contextObject, 'fetch')
-//         .mockImplementation(() => Promise.resolve(fakePeople));
+      // important to add the context provider here since it includes permissions and fetch info
+      render(
+        <Context.Provider value={contextObject}>
+          <MemoryRouter initialEntries={['/caes-cru/people/details/123']}>
+            {routes}
+          </MemoryRouter>
+        </Context.Provider>,
+        container
+      );
+    });
 
-//       // important to add the context provider here since it includes permissions and fetch info
-//       render(
-//         <Context.Provider value={contextObject}>
-//           <MemoryRouter>
-//             <PeopleContainer
-//               history={mockRouter}
-//               match={mockRouterMatch}
-//               location={mockRouter}
-//             />
-//           </MemoryRouter>
-//         </Context.Provider>,
-//         container
-//       );
-//     });
+    // should show person contact info
+    const personContent = container.querySelector('.person-col').textContent;
 
-//     // should show person contact info
-//     const personContent = container.querySelector('.person-col').textContent;
+    expect(personContent).toContain('chuck@testpilot.gov');
 
-//     expect(personContent).toContain('chuck@testpilot.gov');
+    // should show the access container
+    const accessAssignmentContainerContent = container.querySelector(
+      '#AccessAssignmentContainer'
+    ).textContent;
 
-//     // should show the access container
-//     const accessAssignmentContainerContent = container.querySelector(
-//       '#AccessAssignmentContainer'
-//     ).textContent;
-
-//     expect(accessAssignmentContainerContent).toBe('AccessAssignmentContainer');
-//   });
+    expect(accessAssignmentContainerContent).toBe('AccessAssignmentContainer');
+  });
 });

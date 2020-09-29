@@ -1,12 +1,11 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-import { MemoryRouter, Route } from 'react-router';
-
+import { MemoryRouter } from 'react-router';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeEquipment } from '../specs/mockData/Equipment';
-import EquipmentContainer from '../Equipment/EquipmentContainer';
 import { routes } from '../../pages/assets/routes';
+import EquipmentContainer from '../Equipment/EquipmentContainer';
 
 let container: Element = null;
 
@@ -74,8 +73,7 @@ describe('Equipment Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter>
-            <EquipmentContainer
-            />
+            <EquipmentContainer />
           </MemoryRouter>
         </Context.Provider>,
         container
@@ -99,8 +97,7 @@ describe('Equipment Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter>
-            <EquipmentContainer
-            />
+            <EquipmentContainer />
           </MemoryRouter>
         </Context.Provider>,
         container
@@ -134,8 +131,7 @@ describe('Equipment Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter>
-            <EquipmentContainer
-            />
+            <EquipmentContainer />
           </MemoryRouter>
         </Context.Provider>,
         container

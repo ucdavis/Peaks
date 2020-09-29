@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import {
-  RouteChildrenProps,
   useHistory,
   useLocation,
   useParams,
@@ -11,7 +10,6 @@ import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKeyInfo } from '../../models/Keys';
-import { IMatchParams } from '../../models/Shared';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
 import { PermissionsUtil } from '../../util/permissions';
 import AssociateSpace from '../Keys/AssociateSpace';
@@ -22,7 +20,7 @@ import SpacesDetails from './SpacesDetails';
 import SpacesList from './SpacesList';
 import SpacesTable from './SpacesTable';
 
-interface IProps extends RouteChildrenProps<IMatchParams> {
+interface IProps {
   selectedKeyInfo?: IKeyInfo;
   spacesTotalUpdated?: (keyId: number, count: number) => void;
 }

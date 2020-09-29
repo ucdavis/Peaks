@@ -1,17 +1,11 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 import { MemoryRouter } from 'react-router';
-
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeSpaces } from '../specs/mockData/Space';
+import { routes } from '../../pages/assets/routes';
 import SpacesContainer from './SpacesContainer';
-
-// mock all route elements
-const mockRouter: any = {};
-const mockRouterMatch: any = {
-  params: {}
-};
 
 let container: Element = null;
 
@@ -73,11 +67,7 @@ describe('Space Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter>
-            <SpacesContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
-            />
+            <SpacesContainer />
           </MemoryRouter>
         </Context.Provider>,
         container
@@ -100,11 +90,7 @@ describe('Space Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter>
-            <SpacesContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
-            />
+            <SpacesContainer />
           </MemoryRouter>
         </Context.Provider>,
         container
@@ -140,11 +126,7 @@ describe('Space Container', () => {
       render(
         <Context.Provider value={contextObject}>
           <MemoryRouter>
-            <SpacesContainer
-              history={mockRouter}
-              match={mockRouterMatch}
-              location={mockRouter}
-            />
+            <SpacesContainer />
           </MemoryRouter>
         </Context.Provider>,
         container
@@ -155,40 +137,31 @@ describe('Space Container', () => {
     expect(matches.length).toBe(4);
   });
 
-//   it('Shows spaces details', async () => {
-//     mockRouterMatch.params = {
-//       containerAction: 'details',
-//       containerId: 3518 // test spaceid
-//     };
+  it('Shows spaces details', async () => {
+    await act(async () => {
+      // spy on our context's fetch handler to return fake spaces
+      jest
+        .spyOn(contextObject, 'fetch')
+        .mockImplementation(() => Promise.resolve(fakeSpaces));
 
-//     await act(async () => {
-//       // spy on our context's fetch handler to return fake spaces
-//       jest
-//         .spyOn(contextObject, 'fetch')
-//         .mockImplementation(() => Promise.resolve(fakeSpaces));
+      // important to add the context provider here since it includes permissions and fetch info
+      render(
+        <Context.Provider value={contextObject}>
+          <MemoryRouter initialEntries={['/caes-cru/spaces/details/3518']}>
+            {routes}
+          </MemoryRouter>
+        </Context.Provider>,
+        container
+      );
+    });
 
-//       // important to add the context provider here since it includes permissions and fetch info
-//       render(
-//         <Context.Provider value={contextObject}>
-//           <MemoryRouter>
-//             <SpacesContainer
-//               history={mockRouter}
-//               match={mockRouterMatch}
-//               location={mockRouter}
-//             />
-//           </MemoryRouter>
-//         </Context.Provider>,
-//         container
-//       );
-//     });
+    // should show spaces info
+    const spaceTitle = container.querySelector('.card-title').textContent;
 
-//     // should show spaces info
-//     const spaceTitle = container.querySelector('.card-title').textContent;
+    expect(spaceTitle).toContain('0192 Temporary Building 200');
 
-//     expect(spaceTitle).toContain('0192 Temporary Building 200');
+    const spaceContent = container.querySelector('.card-text').textContent;
 
-//     const spaceContent = container.querySelector('.card-text').textContent;
-
-//     expect(spaceContent).toContain('562 Sq Feet');
-//   });
+    expect(spaceContent).toContain('562 Sq Feet');
+  });
 });
