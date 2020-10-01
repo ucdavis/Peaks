@@ -1,12 +1,5 @@
 import * as React from 'react';
-import { useContext, useEffect, useState } from 'react';
-import {
-  RouteChildrenProps,
-  useHistory,
-  useLocation,
-  useParams,
-  useRouteMatch
-} from 'react-router';
+import { RouteChildrenProps } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -43,74 +36,137 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
   space?: ISpace;
 }
 
-interface IParams {
-  team: string;
-  action: string;
-  id: string;
-  assetType: string;
-  containerAction: string;
-  containerId: string;
+interface IState {
+  loading: boolean;
+  keys: IKeyInfo[]; // either key assigned to this person, or all team keys
+
+  tableFilters: any[];
+  tagFilters: string[];
 }
 
-interface IMatch {
-  isExact: boolean;
-  params: IParams;
-  path: string;
-  url: string;
-}
+export default class KeyContainer extends React.Component<IProps, IState> {
+  public static contextType = Context;
+  public context!: React.ContextType<typeof Context>;
 
-const KeyContainer = (props: IProps) => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [keys, setKeys] = useState<IKeyInfo[]>([]);
-  const [tableFilters, setTableFilters] = useState<any[]>([]);
-  const [tagFilters, setTagFilters] = useState<string[]>([]);
-  const context = useContext(Context);
-  const history = useHistory();
-  const location = useLocation();
-  const match: IMatch = useRouteMatch();
-  const params: IParams = useParams();
+  constructor(props) {
+    super(props);
 
-  useEffect(() => {
-    if (!PermissionsUtil.canViewKeys(context.permissions)) {
+    this.state = {
+      keys: [],
+      loading: true,
+      tableFilters: [],
+      tagFilters: []
+    };
+  }
+  public async componentDidMount() {
+    if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
       return;
     }
+    const { team } = this.context;
 
     // are we getting the person's key or the team's?
     let keyFetchUrl = '';
-    if (!!props.space) {
-      keyFetchUrl = `/api/${context.team.slug}/keys/getKeysInSpace?spaceId=${props.space.id}`;
+    if (!!this.props.space) {
+      keyFetchUrl = `/api/${team.slug}/keys/getKeysInSpace?spaceId=${this.props.space.id}`;
     } else {
-      keyFetchUrl = `/api/${context.team.slug}/keys/list/`;
+      keyFetchUrl = `/api/${team.slug}/keys/list/`;
+    }
+    let keys: IKeyInfo[] = null;
+    try {
+      keys = await this.context.fetch(keyFetchUrl);
+    } catch (err) {
+      toast.error(
+        'Failed to fetch keys. Please refresh the page to try again.'
+      );
+      return;
     }
 
-    const fetchKeys = async () => {
-      let newKeys: IKeyInfo[] = null;
-      try {
-        newKeys = await context.fetch(keyFetchUrl);
-      } catch (err) {
-        toast.error(
-          'Failed to fetch keys. Please refresh the page to try again.'
-        );
-        return;
-      }
+    this.setState({ keys, loading: false });
+  }
 
-      setKeys(newKeys);
-      setLoading(false);
-    };
+  public render() {
+    if (!PermissionsUtil.canViewKeys(this.context.permissions)) {
+      return <Denied viewName='Keys' />;
+    }
 
-    fetchKeys();
-  }, [context, props.space]);
+    if (this.state.loading) {
+      return <h2>Loading...</h2>;
+    }
 
-  const renderTableOrListView = (selectedKeyId: number) => {
-    const { space } = props;
+    const { space } = this.props;
+    const {
+      containerAction,
+      containerId,
+      action,
+      id
+    } = this.props.match.params;
+
+    const onSpaceTab = !!space;
+    // if on key tab, select using containerId. if on spaces, select using id
+    const selectedKeyId = !onSpaceTab
+      ? parseInt(containerId, 10)
+      : parseInt(id, 10);
+    const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
+
+    const shouldRenderDetailsView =
+      !onSpaceTab && containerAction === 'details';
+    const shouldRenderTableView = !shouldRenderDetailsView;
+
+    return (
+      <div className='card keys-color'>
+        <div className='card-header-keys'>
+          <div className='card-head row justify-content-between'>
+            <h2>
+              <i className='fas fa-key fa-xs' /> Keys
+            </h2>
+            {!onSpaceTab && (
+              <CreateKey
+                onCreate={this._createKey}
+                onOpenModal={this._openCreateModal}
+                closeModal={this._closeModals}
+                modal={containerAction === 'create'}
+                searchableTags={this.context.tags}
+                checkIfKeyCodeIsValid={this._checkIfKeyCodeIsValid}
+              />
+            )}
+            {onSpaceTab && shouldRenderTableView && (
+              <div>
+                <Button
+                  color='link'
+                  onClick={this._openAssociate}
+                  className='keys-anomaly'
+                >
+                  <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
+                  Associate
+                </Button>
+                {action === 'associate' &&
+                  this._renderAssociateModal(selectedKeyId, selectedKeyInfo)}
+              </div>
+            )}
+          </div>
+        </div>
+        <div className='card-content'>
+          {shouldRenderTableView && this._renderTableOrListView(selectedKeyId)}
+          {shouldRenderDetailsView && this._renderDetailsView()}
+          {(containerAction === 'delete' || action === 'delete') &&
+            this._renderDeleteModal(selectedKeyId, selectedKeyInfo)}
+        </div>
+      </div>
+    );
+  }
+
+  private _renderTableOrListView(selectedKeyId: number) {
+    const { space } = this.props;
     if (!space) {
-      return renderTableView();
+      return this._renderTableView();
     }
 
-    return renderListView(selectedKeyId);
-  };
+    return this._renderListView(selectedKeyId);
+  }
 
-  const renderTableView = () => {
+  private _renderTableView() {
+    const { keys, tableFilters, tagFilters } = this.state;
+
     let filteredKeys = keys;
 
     // check for tag filters
@@ -126,84 +182,83 @@ const KeyContainer = (props: IProps) => {
     return (
       <div>
         <SearchTags
-          tags={context.tags}
+          tags={this.context.tags}
           disabled={false}
           selected={tagFilters}
-          onSelect={onTagsFiltered}
+          onSelect={this._onTagsFiltered}
         />
         <KeyTable
           keysInfo={filteredKeys}
-          onEdit={openEditModal}
-          showDetails={openDetailsModal}
-          onDelete={openDeleteModal}
+          onEdit={this._openEditModal}
+          showDetails={this._openDetailsModal}
+          onDelete={this._openDeleteModal}
           filters={tableFilters}
-          onFiltersChange={onTableFiltered}
+          onFiltersChange={this._onTableFiltered}
         />
       </div>
     );
-  };
+  }
 
-  const renderListView = (selectedKeyId: number) => {
+  private _renderListView(selectedKeyId: number) {
     // this is what is rendered inside of space container
-    const { action } = params;
-    const selectedKeyInfo = keys.find(k => k.id === selectedKeyId);
+    const { action } = this.props.match.params;
+    const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
     return (
       <div>
         {action === 'disassociate' &&
-          renderDisassociateModal(selectedKeyId, selectedKeyInfo)}
+          this._renderDisassociateModal(selectedKeyId, selectedKeyInfo)}
         <KeyList
-          keysInfo={keys}
-          onEdit={openEditModal}
-          showDetails={openDetailsModal}
-          onDelete={openDeleteModal}
-          onDisassociate={openDisassociate}
+          keysInfo={this.state.keys}
+          onEdit={this._openEditModal}
+          showDetails={this._openDetailsModal}
+          onDelete={this._openDeleteModal}
+          onDisassociate={this._openDisassociate}
         />
       </div>
     );
-  };
+  }
 
-  const renderDetailsView = () => {
-    const { containerId } = params;
+  private _renderDetailsView() {
+    const { containerId } = this.props.match.params;
     const selectedKeyId = parseInt(containerId, 10);
-    const selectedKeyInfo = keys.find(k => k.id === selectedKeyId);
+    const selectedKeyInfo = this.state.keys.find(k => k.id === selectedKeyId);
 
     const routeObject = {
-      history: history,
-      location: location,
-      match: match
+      history: this.props.history,
+      location: this.props.location,
+      match: this.props.match
     };
-
     return (
       <KeyDetailContainer
         key={`key-details-${selectedKeyId}`}
         route={routeObject}
         selectedKeyInfo={selectedKeyInfo}
-        goBack={closeModals}
-        serialInUseUpdated={serialInUseUpdated}
-        serialTotalUpdated={serialTotalUpdated}
-        spacesTotalUpdated={spacesTotalUpdated}
-        openEditModal={openEditModal}
-        checkValidKeyCodeOnEdit={checkIfKeyCodeIsValidOnEdit}
-        editKey={editKey}
+        goBack={this._closeModals}
+        serialInUseUpdated={this._serialInUseUpdated}
+        serialTotalUpdated={this._serialTotalUpdated}
+        spacesTotalUpdated={this._spacesTotalUpdated}
+        openEditModal={this._openEditModal}
+        checkValidKeyCodeOnEdit={this._checkIfKeyCodeIsValidOnEdit}
+        editKey={this._editKey}
       />
     );
-  };
-  const renderAssociateModal = (selectedId: number, keyInfo: IKeyInfo) => {
+  }
+  private _renderAssociateModal = (selectedId: number, keyInfo: IKeyInfo) => {
     return (
       <AssociateSpace
         key={`associate-space-${selectedId}`}
         selectedKeyInfo={keyInfo}
-        selectedSpace={props.space}
-        onAssign={associateSpace}
+        selectedSpace={this.props.space}
+        onAssign={this._associateSpace}
         isModalOpen={true}
-        openModal={openAssociate}
-        closeModal={closeModals}
-        searchableTags={context.tags}
+        openModal={this._openAssociate}
+        closeModal={this._closeModals}
+        searchableTags={this.context.tags}
       />
     );
   };
 
-  const renderDisassociateModal = (
+  private _renderDisassociateModal = (
     selectedId: number,
     selectedKeyInfo: IKeyInfo
   ) => {
@@ -211,27 +266,27 @@ const KeyContainer = (props: IProps) => {
       <DisassociateSpace
         key={`disassociate-key-${selectedId}`}
         selectedKeyInfo={selectedKeyInfo}
-        selectedSpace={props.space}
-        onDisassociate={disassociateSpace}
+        selectedSpace={this.props.space}
+        onDisassociate={this._disassociateSpace}
         isModalOpen={!!selectedKeyInfo}
-        closeModal={closeModals}
+        closeModal={this._closeModals}
       />
     );
   };
 
-  const renderDeleteModal = (selectedId: number, keyInfo: IKeyInfo) => {
+  private _renderDeleteModal = (selectedId: number, keyInfo: IKeyInfo) => {
     return (
       <DeleteKey
         key={`delete-key-${selectedId}`}
         selectedKeyInfo={keyInfo}
-        deleteKey={deleteKey}
-        closeModal={closeModals}
+        deleteKey={this._deleteKey}
+        closeModal={this._closeModals}
         modal={!!keyInfo}
       />
     );
   };
 
-  const createKey = async (key: IKey) => {
+  private _createKey = async (key: IKey) => {
     const request = {
       code: key.code,
       name: key.name,
@@ -239,9 +294,9 @@ const KeyContainer = (props: IProps) => {
       tags: key.tags
     };
 
-    const createUrl = `/api/${context.team.slug}/keys/create`;
+    const createUrl = `/api/${this.context.team.slug}/keys/create`;
     try {
-      key = await context.fetch(createUrl, {
+      key = await this.context.fetch(createUrl, {
         body: JSON.stringify(request),
         method: 'POST'
       });
@@ -251,7 +306,7 @@ const KeyContainer = (props: IProps) => {
       throw new Error(); // throw error so modal doesn't close
     }
 
-    const index = keys.findIndex(x => x.id === key.id);
+    const index = this.state.keys.findIndex(x => x.id === key.id);
     let keyInfo: IKeyInfo = {
       id: key.id,
       key,
@@ -259,21 +314,25 @@ const KeyContainer = (props: IProps) => {
       serialsTotalCount: 0,
       spacesCount: 0
     };
-
     if (index !== -1) {
       // update already existing entry in key
-      const updateKeys = [...keys];
+      const updateKeys = [...this.state.keys];
       updateKeys[index].key = key;
       keyInfo = updateKeys[index];
-      setKeys(updateKeys);
+
+      this.setState({
+        keys: updateKeys
+      });
     } else {
-      setKeys(prevKeys => [...prevKeys, keyInfo]);
+      this.setState(prevState => ({
+        keys: [...prevState.keys, keyInfo]
+      }));
     }
 
-    if (props.assetTotalUpdated) {
-      props.assetTotalUpdated(
+    if (this.props.assetTotalUpdated) {
+      this.props.assetTotalUpdated(
         'key',
-        props.space ? props.space.id : null,
+        this.props.space ? this.props.space.id : null,
         null,
         1
       );
@@ -282,16 +341,16 @@ const KeyContainer = (props: IProps) => {
     return keyInfo;
   };
 
-  const checkIfKeyCodeIsValid = (code: string) => {
-    return !keys.some(x => x.key.code === code);
+  private _checkIfKeyCodeIsValid = (code: string) => {
+    return !this.state.keys.some(x => x.key.code === code);
   };
 
-  const checkIfKeyCodeIsValidOnEdit = (code: string, id: number) => {
-    return !keys.some(x => x.id !== id && x.key.code === code);
+  private _checkIfKeyCodeIsValidOnEdit = (code: string, id: number) => {
+    return !this.state.keys.some(x => x.id !== id && x.key.code === code);
   };
 
-  const editKey = async (key: IKey) => {
-    const index = keys.findIndex(x => x.id === key.id);
+  private _editKey = async (key: IKey) => {
+    const index = this.state.keys.findIndex(x => x.id === key.id);
 
     // should always already exist
     if (index < 0) {
@@ -305,9 +364,9 @@ const KeyContainer = (props: IProps) => {
       tags: key.tags
     };
 
-    const updateUrl = `/api/${context.team.slug}/keys/update/${key.id}`;
+    const updateUrl = `/api/${this.context.team.slug}/keys/update/${key.id}`;
     try {
-      key = await context.fetch(updateUrl, {
+      key = await this.context.fetch(updateUrl, {
         body: JSON.stringify(request),
         method: 'POST'
       });
@@ -318,25 +377,35 @@ const KeyContainer = (props: IProps) => {
     }
 
     // update already existing entry in key
-    const updateKey = [...keys];
+    const updateKey = [...this.state.keys];
     updateKey[index].key = key;
-    setKeys(updateKey);
 
-    if (props.assetEdited) {
-      props.assetEdited('key', props.space ? props.space.id : null, null);
+    this.setState({
+      keys: updateKey
+    });
+
+    if (this.props.assetEdited) {
+      this.props.assetEdited(
+        'key',
+        this.props.space ? this.props.space.id : null,
+        null
+      );
     }
 
     // TODO: handle count changes once keys are related to spaces
   };
 
-  const deleteKey = async (key: IKey) => {
+  private _deleteKey = async (key: IKey) => {
     if (!confirm('Are you sure you want to delete item?')) {
       return false;
     }
     try {
-      await context.fetch(`/api/${context.team.slug}/keys/delete/${key.id}`, {
-        method: 'POST'
-      });
+      const deleted: IKey = await this.context.fetch(
+        `/api/${this.context.team.slug}/keys/delete/${key.id}`,
+        {
+          method: 'POST'
+        }
+      );
       toast.success('Key deleted successfully!');
     } catch (err) {
       toast.error('Error deleting key.');
@@ -344,21 +413,22 @@ const KeyContainer = (props: IProps) => {
     }
 
     // remove from state
-    const index = keys.findIndex(x => x.id === key.id);
+    const index = this.state.keys.findIndex(x => x.id === key.id);
     if (index > -1) {
-      const shallowCopy = [...keys];
+      const shallowCopy = [...this.state.keys];
       shallowCopy.splice(index, 1);
-      setKeys(shallowCopy);
+      this.setState({ keys: shallowCopy });
     }
   };
 
-  const associateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
-    const { team } = context;
+  private _associateSpace = async (space: ISpace, keyInfo: IKeyInfo) => {
+    const { team } = this.context;
+    const { keys } = this.state;
 
     // possibly create key
     if (keyInfo.id === 0) {
       try {
-        keyInfo = await createKey(keyInfo.key);
+        keyInfo = await this._createKey(keyInfo.key);
         toast.success('Key created successfully!');
       } catch (err) {
         toast.error('Error creating key.');
@@ -372,7 +442,7 @@ const KeyContainer = (props: IProps) => {
 
     const associateUrl = `/api/${team.slug}/keys/associateSpace/${keyInfo.id}`;
     try {
-      await context.fetch(associateUrl, {
+      const association = await this.context.fetch(associateUrl, {
         body: JSON.stringify(request),
         method: 'POST'
       });
@@ -385,35 +455,41 @@ const KeyContainer = (props: IProps) => {
     // update count here
     keyInfo.spacesCount++;
 
-    const index = keys.findIndex(x => x.id === keyInfo.id);
+    const index = this.state.keys.findIndex(x => x.id === keyInfo.id);
     if (index !== -1) {
       // update already existing entry in key
-      const updateKeys = [...keys];
+      const updateKeys = [...this.state.keys];
       updateKeys[index] = keyInfo;
-      setKeys(updateKeys);
-    } else {
-      setKeys(prevKeys => [...prevKeys, keyInfo]);
-    }
 
-    if (props.assetTotalUpdated) {
-      props.assetTotalUpdated(
+      this.setState({
+        keys: updateKeys
+      });
+    } else {
+      this.setState(prevState => ({
+        keys: [...prevState.keys, keyInfo]
+      }));
+    }
+    if (this.props.assetTotalUpdated) {
+      this.props.assetTotalUpdated(
         'key',
-        props.space ? props.space.id : null,
+        this.props.space ? this.props.space.id : null,
         null,
         1
       );
     }
   };
 
-  const disassociateSpace = async (keyInfo: IKeyInfo, space: ISpace) => {
-    const { team } = context;
+  private _disassociateSpace = async (keyInfo: IKeyInfo, space: ISpace) => {
+    const { team } = this.context;
+    const { keys } = this.state;
+
     const request = {
       spaceId: space.id
     };
-    const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${keyInfo.id}`;
 
+    const disassociateUrl = `/api/${team.slug}/keys/disassociateSpace/${keyInfo.id}`;
     try {
-      await context.fetch(disassociateUrl, {
+      const result = await this.context.fetch(disassociateUrl, {
         body: JSON.stringify(request),
         method: 'POST'
       });
@@ -425,15 +501,19 @@ const KeyContainer = (props: IProps) => {
 
     // update count here
     keyInfo.spacesCount--;
+
     const updatedKeys = [...keys];
     const index = updatedKeys.findIndex(k => k.id === keyInfo.id);
     updatedKeys.splice(index, 1);
-    setKeys(updatedKeys);
 
-    if (props.assetTotalUpdated) {
-      props.assetTotalUpdated(
+    this.setState({
+      keys: updatedKeys
+    });
+
+    if (this.props.assetTotalUpdated) {
+      this.props.assetTotalUpdated(
         'key',
-        props.space ? props.space.id : null,
+        this.props.space ? this.props.space.id : null,
         null,
         -1
       );
@@ -441,75 +521,79 @@ const KeyContainer = (props: IProps) => {
   };
 
   // managing counts for assigned or revoked
-  const serialInUseUpdated = (keyId: number, count: number) => {
-    const index = keys.findIndex(x => x.id === keyId);
+  private _serialInUseUpdated = (keyId: number, count: number) => {
+    const index = this.state.keys.findIndex(x => x.id === keyId);
     if (index > -1) {
-      const newKeys = [...keys];
+      const keys = [...this.state.keys];
       keys[index].serialsInUseCount += count;
-      setKeys(newKeys);
+
+      this.setState({ keys });
     }
   };
-
-  const serialTotalUpdated = (keyId: number, count: number) => {
-    const index = keys.findIndex(x => x.id === keyId);
+  private _serialTotalUpdated = (keyId: number, count: number) => {
+    const index = this.state.keys.findIndex(x => x.id === keyId);
     if (index > -1) {
-      const newKeys = [...keys];
+      const keys = [...this.state.keys];
       keys[index].serialsTotalCount += count;
-      setKeys(newKeys);
+
+      this.setState({ keys });
     }
   };
 
-  const spacesTotalUpdated = (keyId: number, count: number) => {
-    const index = keys.findIndex(x => x.id === keyId);
+  private _spacesTotalUpdated = (keyId: number, count: number) => {
+    const index = this.state.keys.findIndex(x => x.id === keyId);
     if (index > -1) {
-      const newKeys = [...keys];
+      const keys = [...this.state.keys];
       keys[index].spacesCount += count;
-      setKeys(newKeys);
+
+      this.setState({ keys });
     }
   };
 
-  const onTagsFiltered = (tagFilters: string[]) => {
-    setTagFilters(tagFilters);
+  private _onTagsFiltered = (tagFilters: string[]) => {
+    this.setState({ tagFilters });
   };
 
-  const onTableFiltered = (tableFilters: any[]) => {
-    setTableFilters(tableFilters);
+  private _onTableFiltered = (tableFilters: any[]) => {
+    this.setState({ tableFilters });
   };
 
-  const openCreateModal = () => {
-    const { team } = context;
-    history.push(`/${team.slug}/keys/create`);
+  private _openCreateModal = () => {
+    const { team } = this.context;
+    this.props.history.push(`/${team.slug}/keys/create`);
   };
 
-  const openDetailsModal = (key: IKey) => {
-    const { team } = context;
-    history.push(`/${team.slug}/keys/details/${key.id}`);
+  private _openDetailsModal = (key: IKey) => {
+    const { team } = this.context;
+    this.props.history.push(`/${team.slug}/keys/details/${key.id}`);
   };
 
-  const openEditModal = (key: IKey) => {
-    const { team } = context;
-    history.push(`/${team.slug}/keys/edit/${key.id}`);
+  private _openEditModal = (key: IKey) => {
+    const { team } = this.context;
+    this.props.history.push(`/${team.slug}/keys/edit/${key.id}`);
   };
 
-  const openDeleteModal = (key: IKey) => {
-    history.push(`${getBaseUrl()}/keys/delete/${key.id}`);
+  private _openDeleteModal = (key: IKey) => {
+    this.props.history.push(`${this._getBaseUrl()}/keys/delete/${key.id}`);
   };
 
-  const openAssociate = () => {
-    history.push(`${getBaseUrl()}/keys/associate`);
+  private _openAssociate = () => {
+    this.props.history.push(`${this._getBaseUrl()}/keys/associate`);
   };
 
-  const openDisassociate = (key: IKeyInfo) => {
-    history.push(`${getBaseUrl()}/keys/disassociate/${key.id}`);
+  private _openDisassociate = (key: IKeyInfo) => {
+    this.props.history.push(
+      `${this._getBaseUrl()}/keys/disassociate/${key.id}`
+    );
   };
 
-  const closeModals = () => {
-    history.push(`${getBaseUrl()}/keys`);
+  private _closeModals = () => {
+    this.props.history.push(`${this._getBaseUrl()}/keys`);
   };
 
-  const getBaseUrl = () => {
-    const { space } = props;
-    const slug = context.team.slug;
+  private _getBaseUrl = () => {
+    const { space } = this.props;
+    const slug = this.context.team.slug;
 
     if (!!space) {
       return `/${slug}/spaces/details/${space.id}`;
@@ -517,69 +601,4 @@ const KeyContainer = (props: IProps) => {
 
     return `/${slug}`;
   };
-
-  if (!PermissionsUtil.canViewKeys(context.permissions)) {
-    return <Denied viewName='Keys' />;
-  }
-
-  if (loading) {
-    return <h2>Loading...</h2>;
-  }
-
-  const { space } = props;
-  const { containerAction, containerId, action, id } = params;
-
-  const onSpaceTab = !!space;
-  // if on key tab, select using containerId. if on spaces, select using id
-  const selectedKeyId = !onSpaceTab
-    ? parseInt(containerId, 10)
-    : parseInt(id, 10);
-  const selectedKeyInfo = keys.find(k => k.id === selectedKeyId);
-
-  const shouldRenderDetailsView = !onSpaceTab && containerAction === 'details';
-  const shouldRenderTableView = !shouldRenderDetailsView;
-
-  return (
-    <div className='card keys-color'>
-      <div className='card-header-keys'>
-        <div className='card-head row justify-content-between'>
-          <h2>
-            <i className='fas fa-key fa-xs' /> Keys
-          </h2>
-          {!onSpaceTab && (
-            <CreateKey
-              onCreate={createKey}
-              onOpenModal={openCreateModal}
-              closeModal={closeModals}
-              modal={containerAction === 'create'}
-              searchableTags={context.tags}
-              checkIfKeyCodeIsValid={checkIfKeyCodeIsValid}
-            />
-          )}
-          {onSpaceTab && shouldRenderTableView && (
-            <div>
-              <Button
-                color='link'
-                onClick={openAssociate}
-                className='keys-anomaly'
-              >
-                <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
-                Associate
-              </Button>
-              {action === 'associate' &&
-                renderAssociateModal(selectedKeyId, selectedKeyInfo)}
-            </div>
-          )}
-        </div>
-      </div>
-      <div className='card-content'>
-        {shouldRenderTableView && renderTableOrListView(selectedKeyId)}
-        {shouldRenderDetailsView && renderDetailsView()}
-        {(containerAction === 'delete' || action === 'delete') &&
-          renderDeleteModal(selectedKeyId, selectedKeyInfo)}
-      </div>
-    </div>
-  );
-};
-
-export default KeyContainer;
+}
