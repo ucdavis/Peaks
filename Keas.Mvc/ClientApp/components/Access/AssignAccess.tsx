@@ -51,11 +51,12 @@ const AssignAccess = (props: IProps) => {
       }
 
       setError(error);
+      setPerson(person);
       setValidState(error.message === '');
     };
 
     validateState();
-  }, [access, date, person]);
+  }, [access, date, person, props.person]);
 
   // clear everything out on close
   const confirmClose = () => {
