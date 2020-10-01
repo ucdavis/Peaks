@@ -51,7 +51,7 @@ const AssignAccess = (props: IProps) => {
       }
 
       setError(error);
-      setPerson(props.person);
+      setPerson(props.person ? props.person : person);
       setValidState(error.message === '');
     };
 
