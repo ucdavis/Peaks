@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
 import { Context } from '../../Context';
@@ -10,82 +11,42 @@ import KeySerialEditValues from './KeySerialEditValues';
 
 interface IProps {
   isModalOpen: boolean;
+  selectedKeySerial: IKeySerial;
   closeModal: () => void;
   openEditModal: (keySerial: IKeySerial) => void;
   openUpdateModal: (keySerial: IKeySerial) => void;
-  selectedKeySerial: IKeySerial;
   updateSelectedKeySerial: (keySerial: IKeySerial, id?: number) => void;
   goToKeyDetails?: (key: IKey) => void; // will only be supplied from person container
 }
 
-export default class KeyDetails extends React.Component<IProps, {}> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const KeySerialDetails = (props: IProps) => {
+  const context = useContext(Context);
+  const { selectedKeySerial } = props;
 
-  public componentDidMount() {
-    if (!this.props.selectedKeySerial) {
-      return;
-    }
-    this._fetchDetails(this.props.selectedKeySerial.id);
+  useEffect(() => {
+      if (!props.selectedKeySerial) {
+        return;
+      }
+      fetchDetails(props.selectedKeySerial.id);
+  }, [props.selectedKeySerial])
+
+
+  if (!selectedKeySerial) {
+    return null;
   }
 
-  public render() {
-    const { selectedKeySerial } = this.props;
-
-    if (!selectedKeySerial) {
-      return null;
-    }
-
-    return (
-      <div>
-        <Modal
-          isOpen={this.props.isModalOpen}
-          toggle={this.props.closeModal}
-          size='lg'
-          className='keys-color'
-        >
-          <div className='modal-header row justify-content-between'>
-            <h2>
-              Details for {selectedKeySerial.key.code}{' '}
-              {selectedKeySerial.number}
-            </h2>
-            <Button color='link' onClick={this.props.closeModal}>
-              <i className='fas fa-times fa-lg' />
-            </Button>
-          </div>
-          <ModalBody>
-            <KeySerialEditValues
-              keySerial={selectedKeySerial}
-              disableEditing={true}
-              openEditModal={this.props.openEditModal}
-              goToKeyDetails={this.props.goToKeyDetails}
-            />
-            <KeySerialAssignmentValues
-              selectedKeySerial={selectedKeySerial}
-              openUpdateModal={this.props.openUpdateModal}
-            />
-            <HistoryContainer
-              controller='keyserials'
-              id={selectedKeySerial.id}
-            />
-          </ModalBody>
-        </Modal>
-      </div>
-    );
-  }
-
-  private _fetchDetails = async (id: number) => {
-    const url = `/api/${this.context.team.slug}/keySerials/details/${id}`;
+  const fetchDetails = async (id: number) => {
+    const url = `/api/${context.team.slug}/keySerials/details/${id}`;
     let keySerial: IKeySerial = null;
     try {
-      keySerial = await this.context.fetch(url);
+      keySerial = await context.fetch(url);
     } catch (err) {
       if (err.message === 'Not Found') {
         toast.error(
           'The key serial you were trying to view could not be found. It may have been deleted.'
         );
-        this.props.updateSelectedKeySerial(null, id);
-        this.props.closeModal();
+        props.updateSelectedKeySerial(null, id);
+        props.closeModal();
       } else {
         toast.error(
           'Error fetching key serial details. Please refresh the page to try again.'
@@ -93,6 +54,41 @@ export default class KeyDetails extends React.Component<IProps, {}> {
       }
       return;
     }
-    this.props.updateSelectedKeySerial(keySerial);
+    props.updateSelectedKeySerial(keySerial);
   };
-}
+
+  return (
+    <div>
+      <Modal
+        isOpen={props.isModalOpen}
+        toggle={props.closeModal}
+        size='lg'
+        className='keys-color'
+      >
+        <div className='modal-header row justify-content-between'>
+          <h2>
+            Details for {selectedKeySerial.key.code} {selectedKeySerial.number}
+          </h2>
+          <Button color='link' onClick={props.closeModal}>
+            <i className='fas fa-times fa-lg' />
+          </Button>
+        </div>
+        <ModalBody>
+          <KeySerialEditValues
+            keySerial={selectedKeySerial}
+            disableEditing={true}
+            openEditModal={props.openEditModal}
+            goToKeyDetails={props.goToKeyDetails}
+          />
+          <KeySerialAssignmentValues
+            selectedKeySerial={selectedKeySerial}
+            openUpdateModal={props.openUpdateModal}
+          />
+          <HistoryContainer controller='keyserials' id={selectedKeySerial.id} />
+        </ModalBody>
+      </Modal>
+    </div>
+  );
+};
+
+export default KeySerialDetails;
