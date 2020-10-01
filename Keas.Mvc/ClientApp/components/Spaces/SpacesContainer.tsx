@@ -11,6 +11,7 @@ import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKeyInfo } from '../../models/Keys';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
+import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import AssociateSpace from '../Keys/AssociateSpace';
 import DisassociateSpace from '../Keys/DisassociateSpace';
@@ -25,18 +26,9 @@ interface IProps {
   spacesTotalUpdated?: (keyId: number, count: number) => void;
 }
 
-interface IParams {
-  team: string;
-  action: string;
-  id: string;
-  assetType: string;
-  containerAction: string;
-  containerId: string;
-}
-
 interface IMatch {
   isExact: boolean;
-  params: IParams;
+  params: IMatchParams;
   path: string;
   url: string;
 }
@@ -50,7 +42,7 @@ const SpacesContainer = (props: IProps) => {
   const history = useHistory();
   const location = useLocation();
   const match: IMatch = useRouteMatch();
-  const params: IParams = useParams();
+  const params: IMatchParams = useParams();
 
   useEffect(() => {
     if (!PermissionsUtil.canViewSpaces(context.permissions)) {

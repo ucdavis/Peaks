@@ -5,21 +5,13 @@ import { toast } from 'react-toastify';
 import { Context } from '../../Context';
 import { IKey } from '../../models/Keys';
 import { IPerson, IPersonInfo } from '../../models/People';
+import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import SearchTags from '../Tags/SearchTags';
 import CreatePerson from './CreatePerson';
 import PeopleTable from './PeopleTable';
 import PersonDetails from './PersonDetails';
-
-interface IParams {
-  team: string;
-  action: string;
-  id: string;
-  assetType: string;
-  containerAction: string;
-  containerId: string;
-}
 
 const PeopleContainer = props => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -28,7 +20,7 @@ const PeopleContainer = props => {
   const [tagFilters, setTagFilters] = useState<string[]>([]);
   const context = useContext(Context);
   const history = useHistory();
-  const params : IParams = useParams();
+  const params : IMatchParams = useParams();
 
   useEffect(() => {
     if (!PermissionsUtil.canViewPeople(context.permissions)) {
