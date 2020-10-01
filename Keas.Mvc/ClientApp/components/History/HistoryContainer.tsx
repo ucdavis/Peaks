@@ -1,87 +1,73 @@
 import * as React from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IHistory } from '../../models/Shared';
 import HistoryList from './HistoryList';
-
-interface IState {
-  histories: IHistory[];
-  loading: boolean;
-  reloaded: boolean;
-  reloading: boolean;
-}
 
 interface IProps {
   controller: string;
   id: number;
 }
 
-export default class HistoryContainer extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
+const HistoryContainer = (props: IProps) => {
+  const [histories, setHistories] = useState<IHistory[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [reloaded, setReloaded] = useState<boolean>(false);
+  const [reloading, setReloading] = useState<boolean>(false);
+  const context = useContext(Context);
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      histories: [],
-      loading: true,
-      reloaded: false, // controls checkmark to show that histories have been refreshed
-      reloading: false // controls loading icon while fetching
-    };
-  }
-  public async componentDidMount() {
-    this.setState({ loading: true });
-    const histories = await this._getHistories();
-    this.setState({ histories, loading: false });
-  }
-  public render() {
-    if (this.state.loading) {
-      return <h2>Loading...</h2>;
-    }
-
-    return (
-      <div className='card history-color'>
-        <div>
-          <div className='card-head'>
-            <h2>
-              <i className='fas fa-history fa-xs' /> History
-            </h2>
-          </div>
-        </div>
-        <div className='card-content'>
-          {this.state.histories.length > 0 && (
-            <HistoryList histories={this.state.histories} />
-          )}
-          {this.state.histories.length < 1 && <p>No histories were found</p>}
-          {this.props.controller === 'people' && (
-            <Button
-              color='link'
-              onClick={this._reloadHistories}
-              disabled={this.state.reloading}
-            >
-              Refresh{' '}
-              {this.state.reloaded ? <i className='fas fa-check' /> : null}
-              {this.state.reloading ? (
-                <i className='fas fa-spin fa-spinner' />
-              ) : null}
-            </Button>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  private _reloadHistories = async () => {
-    this.setState({ reloading: true, reloaded: false });
-    const histories = await this._getHistories();
-    this.setState({ histories, reloading: false, reloaded: true });
+  const reloadHistories = async () => {
+    setReloading(true);
+    setReloaded(false);
+    const histories = await getHistories();
+    setHistories(histories);
+    setReloading(false);
+    setReloaded(true);
   };
 
-  private _getHistories = async () => {
-    const historyFetchUrl = `/api/${this.context.team.slug}/${this.props.controller}/getHistory/${this.props.id}`;
+  const getHistories = async () => {
+    const historyFetchUrl = `/api/${context.team.slug}/${props.controller}/getHistory/${props.id}`;
 
-    const histories = await this.context.fetch(historyFetchUrl);
+    const histories = await context.fetch(historyFetchUrl);
     return histories;
   };
-}
+  
+  useEffect(() => {
+    const retrieveHistories = async () => {
+      const historyData = await getHistories();
+      setHistories(historyData);
+      setLoading(false);
+    };
+    setLoading(true);
+    retrieveHistories();
+  }, []);
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+
+  return (
+    <div className='card history-color'>
+      <div>
+        <div className='card-head'>
+          <h2>
+            <i className='fas fa-history fa-xs' /> History
+          </h2>
+        </div>
+      </div>
+      <div className='card-content'>
+        {histories.length > 0 && <HistoryList histories={histories} />}
+        {histories.length < 1 && <p>No histories were found</p>}
+        {props.controller === 'people' && (
+          <Button color='link' onClick={reloadHistories} disabled={reloading}>
+            Refresh {reloaded ? <i className='fas fa-check' /> : null}
+            {reloading ? <i className='fas fa-spin fa-spinner' /> : null}
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default HistoryContainer;
