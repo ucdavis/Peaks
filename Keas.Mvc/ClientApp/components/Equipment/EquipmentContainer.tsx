@@ -55,7 +55,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true);
   const context = useContext(Context);
   const history = useHistory();
-  const params : IMatchParams = useParams();
+  const params: IMatchParams = useParams();
 
   useEffect(() => {
     if (!PermissionsUtil.canViewEquipment(context.permissions)) {
@@ -294,7 +294,9 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     ) {
       // if we are on the space tab and we have assigned/created an equipment that is not in this space, do nothing to our state here
     } else {
-      setEquipment(prevEquipment => ({ ...prevEquipment, equipment }));
+      const updateEquipment = [...equipment];
+      updateEquipment.push(selectedEquipment);
+      setEquipment(updateEquipment);
     }
 
     if (updateTotalAssetCount && props.assetTotalUpdated) {
@@ -490,9 +492,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
   };
 
   const openAssignModal = (selectedEquipment: IEquipment) => {
-    history.push(
-      `${getBaseUrl()}/equipment/assign/${selectedEquipment.id}`
-    );
+    history.push(`${getBaseUrl()}/equipment/assign/${selectedEquipment.id}`);
   };
 
   const openCreateModal = () => {
@@ -507,9 +507,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
         `/${context.team.slug}/equipment/details/${selectedEquipment.id}`
       );
     } else {
-      history.push(
-        `${getBaseUrl()}/equipment/details/${selectedEquipment.id}`
-      );
+      history.push(`${getBaseUrl()}/equipment/details/${selectedEquipment.id}`);
     }
   };
 
