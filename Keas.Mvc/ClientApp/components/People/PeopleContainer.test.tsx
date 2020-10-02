@@ -1,16 +1,11 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-
-import PeopleContainer from '../People/PeopleContainer';
+import { MemoryRouter } from 'react-router';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakePeople } from '../specs/TestData';
-
-// mock all route elements
-let mockRouter: any = {};
-let mockRouterMatch: any = {
-  params: {}
-};
+import { routes } from '../../pages/assets/routes';
+import PeopleContainer from '../People/PeopleContainer';
 
 let container: Element = null;
 
@@ -19,7 +14,7 @@ jest.mock('../Access/AccessAssignmentContainer', () => {
   return {
     default: () => {
       return (
-        <div id="AccessAssignmentContainer">AccessAssignmentContainer</div>
+        <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>
       );
     }
   };
@@ -28,7 +23,7 @@ jest.mock('../Access/AccessAssignmentContainer', () => {
 jest.mock('../Equipment/EquipmentContainer', () => {
   return {
     default: () => {
-      return <div id="EquipmentContainer">EquipmentContainer</div>;
+      return <div id='EquipmentContainer'>EquipmentContainer</div>;
     }
   };
 });
@@ -36,7 +31,7 @@ jest.mock('../Equipment/EquipmentContainer', () => {
 jest.mock('../Keys/KeySerialContainer', () => {
   return {
     default: () => {
-      return <div id="KeySerialContainer">KeySerialContainer</div>;
+      return <div id='KeySerialContainer'>KeySerialContainer</div>;
     }
   };
 });
@@ -44,7 +39,7 @@ jest.mock('../Keys/KeySerialContainer', () => {
 jest.mock('../Workstations/WorkstationContainer', () => {
   return {
     default: () => {
-      return <div id="WorkstationContainer">WorkstationContainer</div>;
+      return <div id='WorkstationContainer'>WorkstationContainer</div>;
     }
   };
 });
@@ -52,7 +47,7 @@ jest.mock('../Workstations/WorkstationContainer', () => {
 jest.mock('../History/HistoryContainer', () => {
   return {
     default: () => {
-      return <div id="HistoryContainer">HistoryContainer</div>;
+      return <div id='HistoryContainer'>HistoryContainer</div>;
     }
   };
 });
@@ -60,7 +55,7 @@ jest.mock('../History/HistoryContainer', () => {
 jest.mock('../Documents/DocumentsContainer', () => {
   return {
     default: () => {
-      return <div id="DocumentsContainer">DocumentsContainer</div>;
+      return <div id='DocumentsContainer'>DocumentsContainer</div>;
     }
   };
 });
@@ -97,11 +92,9 @@ describe('People Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <PeopleContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <PeopleContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -124,11 +117,9 @@ describe('People Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <PeopleContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <PeopleContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -150,11 +141,9 @@ describe('People Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <PeopleContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <PeopleContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -164,7 +153,7 @@ describe('People Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function(match) {
+    matches.forEach(function (match) {
       const rowContent = match.textContent;
       if (rowContent.includes('chuck@testpilot.gov')) {
         foundIt = true;
@@ -187,11 +176,9 @@ describe('People Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <PeopleContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <PeopleContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -202,11 +189,6 @@ describe('People Container', () => {
   });
 
   it('Shows person details', async () => {
-    mockRouterMatch.params = {
-      containerAction: 'details',
-      containerId: 123 // test personid
-    };
-
     await act(async () => {
       // spy on our context's fetch handler to return fake people
       jest
@@ -216,11 +198,9 @@ describe('People Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <PeopleContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter initialEntries={['/caes-cru/people/details/123']}>
+            {routes}
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
