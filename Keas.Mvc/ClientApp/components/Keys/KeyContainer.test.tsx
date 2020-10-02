@@ -3,20 +3,16 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import { MemoryRouter } from 'react-router';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
+import { routes } from '../../pages/assets/routes';
 import { fakeKeys } from '../specs/mockData/Key';
 import KeyContainer from '../Keys/KeyContainer';
-
-const mockRouter: any = {};
-const mockRouterMatch: any = {
-  params: {}
-};
 
 let container: Element = null;
 
 jest.mock('../Spaces/SpacesContainer', () => {
   return {
     default: () => {
-      return <div id="SpacesContainer">SpacesContainer</div>;
+      return <div id='SpacesContainer'>SpacesContainer</div>;
     }
   };
 });
@@ -24,7 +20,7 @@ jest.mock('../Spaces/SpacesContainer', () => {
 jest.mock('../Keys/KeySerialContainer', () => {
   return {
     default: () => {
-      return <div id="KeySerialContainer">KeySerialContainer</div>;
+      return <div id='KeySerialContainer'>KeySerialContainer</div>;
     }
   };
 });
@@ -32,7 +28,7 @@ jest.mock('../Keys/KeySerialContainer', () => {
 jest.mock('../History/HistoryContainer', () => {
   return {
     default: () => {
-      return <div id="HistoryContainer">HistoryContainer</div>;
+      return <div id='HistoryContainer'>HistoryContainer</div>;
     }
   };
 });
@@ -69,11 +65,9 @@ describe('Key Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <KeyContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -94,11 +88,9 @@ describe('Key Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <KeyContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -120,11 +112,9 @@ describe('Key Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <KeyContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -133,7 +123,7 @@ describe('Key Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function(match) {
+    matches.forEach(function (match) {
       const rowContent = match.textContent;
       if (rowContent.includes('Test')) {
         foundIt = true;
@@ -156,11 +146,9 @@ describe('Key Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <KeyContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -171,11 +159,6 @@ describe('Key Container', () => {
   });
 
   it('Shows keys details', async () => {
-    mockRouterMatch.params = {
-      containerAction: 'details',
-      containerId: 23 // test keyid
-    };
-
     await act(async () => {
       // spy on our context's fetch handler to return fake keys
       jest
@@ -185,11 +168,9 @@ describe('Key Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeyContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter initialEntries={['/caes-cru/keys/details/23']}>
+            {routes}
+          </MemoryRouter>
         </Context.Provider>,
         container
       );

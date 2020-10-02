@@ -24,7 +24,7 @@ import KeyDetailContainer from './KeyDetailContainer';
 import KeyList from './KeyList';
 import KeyTable from './KeyTable';
 
-interface IProps extends RouteChildrenProps<IMatchParams> {
+interface IProps {
   assetInUseUpdated?: (
     type: string,
     spaceId: number,
