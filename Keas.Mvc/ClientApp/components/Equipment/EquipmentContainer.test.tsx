@@ -1,23 +1,18 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-
-import EquipmentContainer from '../Equipment/EquipmentContainer';
+import { MemoryRouter } from 'react-router';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeEquipment } from '../specs/mockData/Equipment';
-
-// mock all route elements
-let mockRouter: any = {};
-let mockRouterMatch: any = {
-  params: {}
-};
+import { routes } from '../../pages/assets/routes';
+import EquipmentContainer from '../Equipment/EquipmentContainer';
 
 let container: Element = null;
 
 jest.mock('../History/HistoryContainer', () => {
   return {
     default: () => {
-      return <div id="HistoryContainer">HistoryContainer</div>;
+      return <div id='HistoryContainer'>HistoryContainer</div>;
     }
   };
 });
@@ -54,11 +49,9 @@ describe('Equipment Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <EquipmentContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <EquipmentContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -79,11 +72,9 @@ describe('Equipment Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <EquipmentContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <EquipmentContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -105,11 +96,9 @@ describe('Equipment Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <EquipmentContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <EquipmentContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -118,7 +107,7 @@ describe('Equipment Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function(match) {
+    matches.forEach(function (match) {
       const rowContent = match.textContent;
       if (rowContent.includes('Dell Desktop')) {
         foundIt = true;
@@ -141,11 +130,9 @@ describe('Equipment Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <EquipmentContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <EquipmentContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -156,14 +143,6 @@ describe('Equipment Container', () => {
   });
 
   it('Shows equipment details', async () => {
-    mockRouter.push = () => {
-      console.log('Nothing');
-    };
-    mockRouterMatch.params = {
-      action: 'details',
-      id: 24 // test equipmentid
-    };
-
     await act(async () => {
       // spy on our context's fetch handler to return fake equipment
       jest
@@ -173,11 +152,9 @@ describe('Equipment Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <EquipmentContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter initialEntries={['/caes-cru/equipment/details/24']}>
+            {routes}
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
