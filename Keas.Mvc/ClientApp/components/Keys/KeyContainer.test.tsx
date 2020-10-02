@@ -1,14 +1,13 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-
-import KeyContainer from '../Keys/KeyContainer';
+import { MemoryRouter } from 'react-router';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeKeys } from '../specs/mockData/Key';
+import KeyContainer from '../Keys/KeyContainer';
 
-// mock all route elements
-let mockRouter: any = {};
-let mockRouterMatch: any = {
+const mockRouter: any = {};
+const mockRouterMatch: any = {
   params: {}
 };
 
