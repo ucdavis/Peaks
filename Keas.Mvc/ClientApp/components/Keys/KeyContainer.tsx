@@ -43,18 +43,9 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
   space?: ISpace;
 }
 
-interface IParams {
-  team: string;
-  action: string;
-  id: string;
-  assetType: string;
-  containerAction: string;
-  containerId: string;
-}
-
 interface IMatch {
   isExact: boolean;
-  params: IParams;
+  params: IMatchParams;
   path: string;
   url: string;
 }
@@ -68,7 +59,7 @@ const KeyContainer = (props: IProps) => {
   const history = useHistory();
   const location = useLocation();
   const match: IMatch = useRouteMatch();
-  const params: IParams = useParams();
+  const params: IMatchParams = useParams();
 
   useEffect(() => {
     if (!PermissionsUtil.canViewKeys(context.permissions)) {
