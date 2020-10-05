@@ -184,8 +184,8 @@ describe('Key Serial Container', () => {
 
     const details = document.querySelectorAll('input');
 
-    expect(details[3].value).toContain('Cereal'); // confirm key name is displayed
     expect(details[4].value).toContain('ADD'); // confirm key code is displayed
+    expect(details[3].value).toContain('Cereal'); // confirm key name is displayed
     expect(details[5].value).toContain('2'); // confirm key serial number is displayed
   });
 });

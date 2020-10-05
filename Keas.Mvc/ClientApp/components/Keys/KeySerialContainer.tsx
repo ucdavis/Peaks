@@ -73,8 +73,8 @@ const KeySerialContainer = (props: IProps) => {
         return;
       }
       const statusList = await context.fetch(statusListFetchUrl);
-      setKeySerials(newKeySerials);
       setStatusList(statusList);
+      setKeySerials(newKeySerials);
       setLoading(false);
     };
 
