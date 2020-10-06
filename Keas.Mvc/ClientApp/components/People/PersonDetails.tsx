@@ -108,7 +108,6 @@ const PersonDetails = (props: IProps) => {
         }
       />
       <WorkstationContainer
-        {...props.router}
         person={props.selectedPersonInfo.person}
         tags={props.tags}
         assetInUseUpdated={props.inUseUpdated}

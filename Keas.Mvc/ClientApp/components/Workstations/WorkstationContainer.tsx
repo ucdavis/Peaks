@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { RouteChildrenProps } from 'react-router';
+import { useContext, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -16,7 +17,7 @@ import WorkstationDetails from '../Workstations/WorkstationDetails';
 import WorkstationList from './../Workstations/WorkstationList';
 import DeleteWorkstation from './DeleteWorkstation';
 
-interface IProps extends RouteChildrenProps<IMatchParams> {
+interface IProps {
   assetInUseUpdated?: (
     type: string,
     spaceId: number,
@@ -35,110 +36,43 @@ interface IProps extends RouteChildrenProps<IMatchParams> {
   tags: string[];
 }
 
-interface IState {
-  loading: boolean;
-  workstations: IWorkstation[];
-}
+const WorkstationContainer = (props: IProps) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [workstations, setWorkstations] = useState<IWorkstation[]>([]);
+  const context = useContext(Context);
+  const history = useHistory();
+  const params: IMatchParams = useParams();
 
-export default class WorkstationContainer extends React.Component<
-  IProps,
-  IState
-> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      loading: false,
-      workstations: []
-    };
-  }
-
-  public async componentDidMount() {
-    if (!PermissionsUtil.canViewWorkstations(this.context.permissions)) {
+  useEffect(() => {
+    if (!PermissionsUtil.canViewWorkstations(context.permissions)) {
       return;
     }
-    this.setState({ loading: true });
+    setLoading(true);
     let url = '';
-    if (!this.props.space && !!this.props.person) {
-      url = `/api/${this.context.team.slug}/workstations/listAssigned?personId=${this.props.person.id}`;
-    } else if (!!this.props.space && !this.props.person) {
-      url = `/api/${this.context.team.slug}/workstations/getWorkstationsInSpace?spaceId=${this.props.space.id}`;
+    if (!props.space && !!props.person) {
+      url = `/api/${context.team.slug}/workstations/listAssigned?personId=${props.person.id}`;
+    } else if (!!props.space && !props.person) {
+      url = `/api/${context.team.slug}/workstations/getWorkstationsInSpace?spaceId=${props.space.id}`;
     }
-    let workstations = [];
-    try {
-      workstations = await this.context.fetch(url);
-    } catch (err) {
-      toast.error('Error loading workstations. Please refresh and try again.');
-      return;
-    }
-    this.setState({ workstations, loading: false });
-  }
 
-  public render() {
-    if (!PermissionsUtil.canViewWorkstations(this.context.permissions)) {
-      return <Denied viewName='Workstations' />;
-    }
-    if (!this.props.space && !this.props.person) {
-      return null;
-    }
-    if (this.state.loading) {
-      return <div>Loading Workstations...</div>;
-    }
-    const { action, assetType, id } = this.props.match.params;
-    const activeAsset = assetType === 'workstations';
-    const selectedId = parseInt(id, 10);
-    const selectedWorkstation = this.state.workstations.find(
-      k => k.id === selectedId
-    );
+    const fetchWorkstations = async () => {
+      let workstationsData = [];
+      try {
+        workstationsData = await context.fetch(url);
+      } catch (err) {
+        toast.error(
+          'Error loading workstations. Please refresh and try again.'
+        );
+        return;
+      }
+      setWorkstations(workstationsData);
+      setLoading(false);
+    };
 
-    return (
-      <div className='card spaces-color'>
-        <div className='card-header-spaces'>
-          <div className='card-head row justify-content-between'>
-            <h2>
-              <i className='fas fa-briefcase fa-xs' /> Workstations
-            </h2>
-            <Button color='link' onClick={() => this._openCreateModal()}>
-              <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add
-              Workstation
-            </Button>
-          </div>
-        </div>
-        <div className='card-content'>
-          <WorkstationList
-            workstations={this.state.workstations}
-            showDetails={this._openDetailsModal}
-            onEdit={this._openEditModal}
-            onAdd={this._openAssignModal}
-            onCreate={this._openCreateModal}
-            onDelete={this._deleteWorkstation}
-            onRevoke={this._openRevokeModal}
-          />
+    fetchWorkstations();
+  }, [context, props.person, props.space]);
 
-          {activeAsset &&
-            (action === 'assign' || action === 'create') &&
-            this._renderAssignModal(selectedId, selectedWorkstation)}
-          {activeAsset &&
-            action === 'details' &&
-            this._renderDetailsModal(selectedId, selectedWorkstation)}
-          {activeAsset &&
-            action === 'edit' &&
-            this._renderEditModal(selectedId, selectedWorkstation)}
-          {activeAsset &&
-            action === 'revoke' &&
-            this._renderRevokeModal(selectedId, selectedWorkstation)}
-          {activeAsset &&
-            action === 'delete' &&
-            this._renderDeleteModal(selectedId, selectedWorkstation)}
-        </div>
-      </div>
-    );
-  }
-
-  private _renderAssignModal = (
+  const renderAssignModal = (
     selectedId: number,
     workstation?: IWorkstation
   ) => {
@@ -147,89 +81,80 @@ export default class WorkstationContainer extends React.Component<
         key={
           selectedId ? `assign-workstation-${selectedId}` : 'create-workstation'
         }
-        closeModal={this._closeModals}
+        closeModal={closeModals}
         modal={true}
         person={
           workstation && workstation.assignment
             ? workstation.assignment.person
-            : this.props.person
+            : props.person
         }
         selectedWorkstation={workstation}
-        tags={this.props.tags}
-        space={this.props.space}
-        onCreate={this._createAndMaybeAssignWorkstation}
-        openEditModal={this._openEditModal}
-        openDetailsModal={this._openDetailsModal}
-        onAddNew={this._openCreateModal}
+        tags={props.tags}
+        space={props.space}
+        onCreate={createAndMaybeAssignWorkstation}
+        openEditModal={openEditModal}
+        openDetailsModal={openDetailsModal}
+        onAddNew={openCreateModal}
       />
     );
   };
 
-  private _renderDetailsModal = (
+  const renderDetailsModal = (
     selectedId: number,
     workstation: IWorkstation
   ) => {
     return (
       <WorkstationDetails
         key={`details-workstation-${selectedId}`}
-        closeModal={this._closeModals}
+        closeModal={closeModals}
         modal={!!workstation}
         selectedWorkstation={workstation}
-        openEditModal={this._openEditModal}
-        openUpdateModal={this._openAssignModal}
-        updateSelectedWorkstation={this._updateWorkstationFromDetails}
+        openEditModal={openEditModal}
+        openUpdateModal={openAssignModal}
+        updateSelectedWorkstation={updateWorkstationFromDetails}
       />
     );
   };
 
-  private _renderEditModal = (
-    selectedId: number,
-    workstation: IWorkstation
-  ) => {
+  const renderEditModal = (selectedId: number, workstation: IWorkstation) => {
     return (
       <EditWorkstation
         key={`edit-workstation-${selectedId}`}
-        closeModal={this._closeModals}
-        tags={this.props.tags}
+        closeModal={closeModals}
+        tags={props.tags}
         modal={!!workstation}
         selectedWorkstation={workstation}
-        onEdit={this._editWorkstation}
-        openUpdateModal={this._openAssignModal}
+        onEdit={editWorkstation}
+        openUpdateModal={openAssignModal}
       />
     );
   };
 
-  private _renderRevokeModal = (
-    selectedId: number,
-    workstation: IWorkstation
-  ) => {
+  const renderRevokeModal = (selectedId: number, workstation: IWorkstation) => {
     return (
       <RevokeWorkstation
         key={`revoke-workstation-${selectedId}`}
-        closeModal={this._closeModals}
-        revokeWorkstation={this._revokeWorkstation}
+        closeModal={closeModals}
+        revokeWorkstation={revokeWorkstation}
         modal={!!workstation}
         selectedWorkstation={workstation}
       />
     );
   };
 
-  private _renderDeleteModal = (
-    selectedId: number,
-    workstation: IWorkstation
-  ) => {
+  const renderDeleteModal = (selectedId: number, workstation: IWorkstation) => {
     return (
       <DeleteWorkstation
         key={`delete-workstation-${selectedId}`}
         selectedWorkstation={workstation}
-        deleteWorkstation={this._deleteWorkstation}
-        closeModal={this._closeModals}
+        deleteWorkstation={deleteWorkstation}
+        closeModal={closeModals}
         modal={!!workstation}
       />
     );
   };
 
-  private _createAndMaybeAssignWorkstation = async (
+  const createAndMaybeAssignWorkstation = async (
     person: IPerson,
     workstation: IWorkstation,
     date: any
@@ -240,10 +165,10 @@ export default class WorkstationContainer extends React.Component<
     // call API to create a workstation, then assign it if there is a person to assign to
     // if we are creating a new workstation
     if (workstation.id === 0) {
-      workstation.teamId = this.context.team.id;
+      workstation.teamId = context.team.id;
       try {
-        workstation = await this.context.fetch(
-          `/api/${this.context.team.slug}/workstations/create`,
+        workstation = await context.fetch(
+          `/api/${context.team.slug}/workstations/create`,
           {
             body: JSON.stringify(workstation),
             method: 'POST'
@@ -259,14 +184,14 @@ export default class WorkstationContainer extends React.Component<
 
     // if we know who to assign it to, do it now
     if (person) {
-      const assignUrl = `/api/${this.context.team.slug}/workstations/assign?workstationId=${workstation.id}&personId=${person.id}&date=${date}`;
+      const assignUrl = `/api/${context.team.slug}/workstations/assign?workstationId=${workstation.id}&personId=${person.id}&date=${date}`;
 
       if (!workstation.assignment) {
         // only count as assigned if this is a new one
         updateInUseAssetCount = true;
       }
       try {
-        workstation = await this.context.fetch(assignUrl, {
+        workstation = await context.fetch(assignUrl, {
           method: 'POST'
         });
         toast.success('Workstation assigned successfully!');
@@ -277,53 +202,43 @@ export default class WorkstationContainer extends React.Component<
       workstation.assignment.person = person;
     }
 
-    const index = this.state.workstations.findIndex(
-      x => x.id === workstation.id
-    );
+    const index = workstations.findIndex(x => x.id === workstation.id);
     if (index !== -1) {
       // update already existing entry in workstation
-      const updateWorkstation = [...this.state.workstations];
+      const updateWorkstation = [...workstations];
       updateWorkstation[index] = workstation;
-
-      this.setState({
-        workstations: updateWorkstation
-      });
-    } else if (
-      !!this.props.space &&
-      this.props.space.id !== workstation.space.id
-    ) {
+      setWorkstations(updateWorkstation);
+    } else if (!!props.space && props.space.id !== workstation.space.id) {
       // if we are on the space tab and we have created a workstation that is not in this space, do nothing to our state here
     } else {
-      this.setState(prevState => ({
-        workstations: [...prevState.workstations, workstation]
-      }));
+      setWorkstations(prevWorkstations => [...prevWorkstations, workstation]);
     }
-    if (updateTotalAssetCount && this.props.assetTotalUpdated) {
-      this.props.assetTotalUpdated(
+    if (updateTotalAssetCount && props.assetTotalUpdated) {
+      props.assetTotalUpdated(
         'workstation',
         workstation.space ? workstation.space.id : null,
-        this.props.person ? this.props.person.id : null,
+        props.person ? props.person.id : null,
         1
       );
     }
-    if (updateInUseAssetCount && this.props.assetInUseUpdated) {
-      this.props.assetInUseUpdated(
+    if (updateInUseAssetCount && props.assetInUseUpdated) {
+      props.assetInUseUpdated(
         'workstation',
         workstation.space ? workstation.space.id : null,
-        this.props.person ? this.props.person.id : null,
+        props.person ? props.person.id : null,
         1
       );
     }
   };
 
-  private _revokeWorkstation = async (workstation: IWorkstation) => {
+  const revokeWorkstation = async (workstation: IWorkstation) => {
     if (!confirm('Are you sure you want to revoke workstation?')) {
       return false;
     }
     // call API to actually revoke
     try {
-      const removed: IWorkstation = await this.context.fetch(
-        `/api/${this.context.team.slug}/workstations/revoke/${workstation.id}`,
+      await context.fetch(
+        `/api/${context.team.slug}/workstations/revoke/${workstation.id}`,
         {
           method: 'POST'
         }
@@ -335,36 +250,36 @@ export default class WorkstationContainer extends React.Component<
     }
 
     // remove from state
-    const index = this.state.workstations.indexOf(workstation);
+    const index = workstations.indexOf(workstation);
     if (index > -1) {
-      const shallowCopy = [...this.state.workstations];
-      if (!this.props.person && !!this.props.space) {
+      const shallowCopy = [...workstations];
+      if (!props.person && !!props.space) {
         // if we are looking at all workstations, just update assignment
         shallowCopy[index].assignment = null;
       } else {
         // if we are looking at a person, remove from our list of workstations
         shallowCopy.splice(index, 1);
       }
-      this.setState({ workstations: shallowCopy });
+      setWorkstations(shallowCopy);
 
-      if (this.props.assetInUseUpdated) {
-        this.props.assetInUseUpdated(
+      if (props.assetInUseUpdated) {
+        props.assetInUseUpdated(
           'workstation',
-          this.props.space ? this.props.space.id : null,
-          this.props.person ? this.props.person.id : null,
+          props.space ? props.space.id : null,
+          props.person ? props.person.id : null,
           -1
         );
       }
     }
   };
 
-  private _deleteWorkstation = async (workstation: IWorkstation) => {
+  const deleteWorkstation = async (workstation: IWorkstation) => {
     if (!confirm('Are you sure you want to delete item?')) {
       return false;
     }
     try {
-      const deleted: IWorkstation = await this.context.fetch(
-        `/api/${this.context.team.slug}/workstations/delete/${workstation.id}`,
+      const deleted: IWorkstation = await context.fetch(
+        `/api/${context.team.slug}/workstations/delete/${workstation.id}`,
         {
           method: 'POST'
         }
@@ -375,43 +290,41 @@ export default class WorkstationContainer extends React.Component<
       throw new Error(); // throw error so modal doesn't close
     }
     // remove from state
-    const index = this.state.workstations.indexOf(workstation);
+    const index = workstations.indexOf(workstation);
     if (index > -1) {
-      const shallowCopy = [...this.state.workstations];
+      const shallowCopy = [...workstations];
       shallowCopy.splice(index, 1);
-      this.setState({ workstations: shallowCopy });
+      setWorkstations(shallowCopy);
 
-      if (workstation.assignment !== null && this.props.assetInUseUpdated) {
-        this.props.assetInUseUpdated(
+      if (workstation.assignment !== null && props.assetInUseUpdated) {
+        props.assetInUseUpdated(
           'workstation',
-          this.props.space ? this.props.space.id : null,
-          this.props.person ? this.props.person.id : null,
+          props.space ? props.space.id : null,
+          props.person ? props.person.id : null,
           -1
         );
       }
-      if (this.props.assetTotalUpdated) {
-        this.props.assetTotalUpdated(
+      if (props.assetTotalUpdated) {
+        props.assetTotalUpdated(
           'workstation',
-          this.props.space ? this.props.space.id : null,
-          this.props.person ? this.props.person.id : null,
+          props.space ? props.space.id : null,
+          props.person ? props.person.id : null,
           -1
         );
       }
     }
   };
 
-  private _editWorkstation = async (workstation: IWorkstation) => {
-    const index = this.state.workstations.findIndex(
-      x => x.id === workstation.id
-    );
+  const editWorkstation = async (workstation: IWorkstation) => {
+    const index = workstations.findIndex(x => x.id === workstation.id);
     if (index === -1) {
       // should always already exist
       return;
     }
     let updated: IWorkstation = null;
     try {
-      updated = await this.context.fetch(
-        `/api/${this.context.team.slug}/workstations/update`,
+      updated = await context.fetch(
+        `/api/${context.team.slug}/workstations/update`,
         {
           body: JSON.stringify(workstation),
           method: 'POST'
@@ -426,30 +339,25 @@ export default class WorkstationContainer extends React.Component<
     updated.assignment = workstation.assignment;
 
     // update already existing entry in key
-    const updateWorkstation = [...this.state.workstations];
+    const updateWorkstation = [...workstations];
     updateWorkstation[index] = updated;
+    setWorkstations(updateWorkstation);
 
-    this.setState({
-      workstations: updateWorkstation
-    });
-
-    if (this.props.assetEdited) {
-      this.props.assetEdited(
+    if (props.assetEdited) {
+      props.assetEdited(
         'workstation',
-        this.props.space ? this.props.space.id : null,
-        this.props.person ? this.props.person.id : null
+        props.space ? props.space.id : null,
+        props.person ? props.person.id : null
       );
     }
   };
 
-  private _updateWorkstationFromDetails = (
+  const updateWorkstationFromDetails = (
     workstation: IWorkstation,
     id?: number
   ) => {
     const workstationId = workstation ? workstation.id : id;
-    const index = this.state.workstations.findIndex(
-      x => x.id === workstationId
-    );
+    const index = workstations.findIndex(x => x.id === workstationId);
 
     if (index === -1) {
       // should always already exist
@@ -457,65 +365,114 @@ export default class WorkstationContainer extends React.Component<
     }
 
     // update already existing entry in key
-    const updateWorkstations = [...this.state.workstations];
+    const updateWorkstations = [...workstations];
     // if workstation has been deleted elsewhere
     if (workstation == null) {
       updateWorkstations.splice(index, 1);
     } else {
       updateWorkstations[index] = workstation;
     }
-    this.setState({ workstations: updateWorkstations });
+    setWorkstations(updateWorkstations);
   };
 
-  private _openDetailsModal = (workstation: IWorkstation) => {
+  const openDetailsModal = (workstation: IWorkstation) => {
     // if we are on spaces or person page, and this workstation is not in our state
     // this happens on the search, when selecting already assigned
-    if (
-      this.state.workstations.findIndex(x => x.id === workstation.id) === -1
-    ) {
-      this.props.history.push(
-        `/${this.context.team.slug}/spaces/details/${workstation.space.id}/workstations/details/${workstation.id}`
+    if (workstations.findIndex(x => x.id === workstation.id) === -1) {
+      history.push(
+        `/${context.team.slug}/spaces/details/${workstation.space.id}/workstations/details/${workstation.id}`
       );
     } else {
-      this.props.history.push(
-        `${this._getBaseUrl()}/workstations/details/${workstation.id}`
-      );
+      history.push(`${getBaseUrl()}/workstations/details/${workstation.id}`);
     }
   };
 
-  private _openEditModal = (workstation: IWorkstation) => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/workstations/edit/${workstation.id}`
-    );
+  const openEditModal = (workstation: IWorkstation) => {
+    history.push(`${getBaseUrl()}/workstations/edit/${workstation.id}`);
   };
 
-  private _openAssignModal = (workstation: IWorkstation) => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/workstations/assign/${workstation.id}`
-    );
+  const openAssignModal = (workstation: IWorkstation) => {
+    history.push(`${getBaseUrl()}/workstations/assign/${workstation.id}`);
   };
 
-  private _openCreateModal = () => {
-    this.props.history.push(`${this._getBaseUrl()}/workstations/create/`);
+  const openCreateModal = () => {
+    history.push(`${getBaseUrl()}/workstations/create/`);
   };
 
-  private _openRevokeModal = (workstation: IWorkstation) => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/workstations/revoke/${workstation.id}`
-    );
+  const openRevokeModal = (workstation: IWorkstation) => {
+    history.push(`${getBaseUrl()}/workstations/revoke/${workstation.id}`);
   };
 
-  private _closeModals = () => {
-    if (!!this.props.person && !this.props.space) {
-      this.props.history.push(`${this._getBaseUrl()}`);
-    } else if (!this.props.person && !!this.props.space) {
-      this.props.history.push(`${this._getBaseUrl()}`);
+  const closeModals = () => {
+    if (!!props.person && !props.space) {
+      history.push(`${getBaseUrl()}`);
+    } else if (!props.person && !!props.space) {
+      history.push(`${getBaseUrl()}`);
     }
   };
 
-  private _getBaseUrl = () => {
-    return this.props.person
-      ? `/${this.context.team.slug}/people/details/${this.props.person.id}`
-      : `/${this.context.team.slug}/spaces/details/${this.props.space.id}`;
+  const getBaseUrl = () => {
+    return props.person
+      ? `/${context.team.slug}/people/details/${props.person.id}`
+      : `/${context.team.slug}/spaces/details/${props.space.id}`;
   };
-}
+
+  if (!PermissionsUtil.canViewWorkstations(context.permissions)) {
+    return <Denied viewName='Workstations' />;
+  }
+  if (!props.space && !props.person) {
+    return null;
+  }
+  if (loading) {
+    return <div>Loading Workstations...</div>;
+  }
+  const { action, assetType, id } = params;
+  const activeAsset = assetType === 'workstations';
+  const selectedId = parseInt(id, 10);
+  const selectedWorkstation = workstations.find(k => k.id === selectedId);
+
+  return (
+    <div className='card spaces-color'>
+      <div className='card-header-spaces'>
+        <div className='card-head row justify-content-between'>
+          <h2>
+            <i className='fas fa-briefcase fa-xs' /> Workstations
+          </h2>
+          <Button color='link' onClick={() => openCreateModal()}>
+            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add
+            Workstation
+          </Button>
+        </div>
+      </div>
+      <div className='card-content'>
+        <WorkstationList
+          workstations={workstations}
+          showDetails={openDetailsModal}
+          onEdit={openEditModal}
+          onAdd={openAssignModal}
+          onCreate={openCreateModal}
+          onDelete={deleteWorkstation}
+          onRevoke={openRevokeModal}
+        />
+
+        {activeAsset &&
+          (action === 'assign' || action === 'create') &&
+          renderAssignModal(selectedId, selectedWorkstation)}
+        {activeAsset &&
+          action === 'details' &&
+          renderDetailsModal(selectedId, selectedWorkstation)}
+        {activeAsset &&
+          action === 'edit' &&
+          renderEditModal(selectedId, selectedWorkstation)}
+        {activeAsset &&
+          action === 'revoke' &&
+          renderRevokeModal(selectedId, selectedWorkstation)}
+        {activeAsset &&
+          action === 'delete' &&
+          renderDeleteModal(selectedId, selectedWorkstation)}
+      </div>
+    </div>
+  );
+};
+
+export default WorkstationContainer;
