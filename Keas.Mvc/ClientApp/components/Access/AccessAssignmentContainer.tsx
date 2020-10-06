@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
-import {
-  RouteChildrenProps,
-  withRouter,
-  useHistory,
-  useParams
-} from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
 import { IAccess, IAccessAssignment } from '../../models/Access';
@@ -83,7 +78,6 @@ const AssignmentContainer = (props: IProps) => {
   }, [
     assignments.length,
     context,
-    context.permissions,
     params.id,
     props.person
   ]);

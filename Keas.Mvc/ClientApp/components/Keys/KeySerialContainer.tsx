@@ -79,7 +79,7 @@ const KeySerialContainer = (props: IProps) => {
     };
 
     fetchKeySerials();
-  });
+  }, [context, props]);
 
   const renderAssignModal = (selectedId: number, keySerial: IKeySerial) => {
     return (
