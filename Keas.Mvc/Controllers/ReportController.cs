@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Keas.Mvc.Models;
 
 namespace Keas.Mvc.Controllers
 {
@@ -174,6 +175,24 @@ namespace Keas.Mvc.Controllers
             var incompleteDocs = await _reportService.IncompleteDocuments(null, Team);
 
             return View(incompleteDocs);
+        }
+
+        public async Task<IActionResult> PeopleInTeam(bool hideInactive = true)
+        {
+            var team = await _context.Teams.SingleAsync(a => a.Slug == Team);
+            var peopleQuery = _context.People.IgnoreQueryFilters().Include(a => a.User).Include(a => a.Supervisor).Where(a => a.TeamId == team.Id).AsNoTracking().AsQueryable();
+            if (hideInactive)
+            {
+                peopleQuery = peopleQuery.Where(a => a.Active);
+            }
+
+            var model = new PeopleInTeamReportViewModel
+            {
+                HideInactive = hideInactive,
+                PeopleList = await peopleQuery.ToListAsync()
+            };
+
+            return View(model);
         }
     }
 }
