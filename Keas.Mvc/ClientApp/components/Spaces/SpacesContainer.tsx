@@ -66,10 +66,10 @@ const SpacesContainer = (props: IProps) => {
         return;
       }
       setSpaces(spacesData);
+      setLoading(false);
     };
 
     fetchSpaces();
-    setLoading(false);
   }, [context, props.selectedKeyInfo]);
 
   if (!PermissionsUtil.canViewSpaces(context.permissions)) {
