@@ -1,16 +1,11 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-
-import AccessContainer from '../Access/AccessContainer';
+import { MemoryRouter } from 'react-router';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
+import { routes } from '../../pages/assets/routes';
 import { fakeAccesses } from '../specs/mockData/Access';
-
-// mock all route elements
-let mockRouter: any = {};
-let mockRouterMatch: any = {
-  params: {}
-};
+import AccessContainer from '../Access/AccessContainer';
 
 let container: Element = null;
 
@@ -19,7 +14,7 @@ jest.mock('../Access/AccessAssignmentContainer', () => {
   return {
     default: () => {
       return (
-        <div id="AccessAssignmentContainer">AccessAssignmentContainer</div>
+        <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>
       );
     }
   };
@@ -28,9 +23,7 @@ jest.mock('../Access/AccessAssignmentContainer', () => {
 jest.mock('../History/HistoryContainer', () => {
   return {
     default: () => {
-      return (
-        <div id="HistoryContainer">HistoryContainer</div>
-      );
+      return <div id='HistoryContainer'>HistoryContainer</div>;
     }
   };
 });
@@ -67,11 +60,9 @@ describe('Access Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <AccessContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <AccessContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -94,11 +85,9 @@ describe('Access Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <AccessContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <AccessContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -120,11 +109,9 @@ describe('Access Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <AccessContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <AccessContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -133,7 +120,7 @@ describe('Access Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function(match) {
+    matches.forEach(function (match) {
       const rowContent = match.textContent;
       if (rowContent.includes('Real Access')) {
         foundIt = true;
@@ -156,11 +143,9 @@ describe('Access Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <AccessContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <AccessContainer />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -171,11 +156,6 @@ describe('Access Container', () => {
   });
 
   it('Shows access details', async () => {
-    mockRouterMatch.params = {
-      containerAction: 'details',
-      containerId: 15 // test accessid
-    };
-
     await act(async () => {
       // spy on our context's fetch handler to return fake access
       jest
@@ -185,11 +165,9 @@ describe('Access Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <AccessContainer
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter initialEntries={['/caes-cru/access/details/15']}>
+            {routes}
+          </MemoryRouter>
         </Context.Provider>,
         container
       );

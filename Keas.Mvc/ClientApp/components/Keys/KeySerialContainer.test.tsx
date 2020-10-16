@@ -1,27 +1,22 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-
-import KeySerialContainer from '../Keys/KeySerialContainer';
+import { MemoryRouter, Route } from 'react-router';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeKeySerials } from '../specs/mockData/KeySerial';
+import KeySerialContainer from '../Keys/KeySerialContainer';
 
-// mock all route elements
-let mockRouter: any = {};
-let mockRouterMatch: any = {
-  params: {}
-};
 
 jest.mock('../History/HistoryContainer', () => {
   return {
     default: () => {
-      return <div id="HistoryContainer">HistoryContainer</div>;
+      return <div id='HistoryContainer'>HistoryContainer</div>;
     }
   };
 });
 
 let container: Element = null;
-let selectedKey = {
+const selectedKey = {
   code: 'ADD',
   keyXSpaces: null,
   serials: null,
@@ -67,12 +62,9 @@ describe('Key Serial Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeySerialContainer
-            selectedKey={selectedKey}
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <KeySerialContainer selectedKey={selectedKey} />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -96,12 +88,9 @@ describe('Key Serial Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeySerialContainer
-            selectedKey={selectedKey}
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <KeySerialContainer selectedKey={selectedKey} />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -123,12 +112,9 @@ describe('Key Serial Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeySerialContainer
-            selectedKey={selectedKey}
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <KeySerialContainer selectedKey={selectedKey} />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -137,7 +123,7 @@ describe('Key Serial Container', () => {
     const matches = container.querySelectorAll('.rt-tr-group');
 
     let foundIt = false;
-    matches.forEach(function(match) {
+    matches.forEach(function (match) {
       const rowContent = match.textContent;
       if (rowContent.includes('ADD-1312')) {
         foundIt = true;
@@ -159,12 +145,9 @@ describe('Key Serial Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeySerialContainer
-            selectedKey={selectedKey}
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <KeySerialContainer selectedKey={selectedKey} />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -175,15 +158,6 @@ describe('Key Serial Container', () => {
   });
 
   it('Shows key serial details', async () => {
-    mockRouter.push = () => {
-      console.log('Nothing');
-    };
-    mockRouterMatch.params = {
-      action: 'details',
-      assetType: 'keyserials',
-      id: 40 // test key serial id
-    };
-
     await act(async () => {
       // spy on our context's fetch handler to return fake key serials
       jest
@@ -193,12 +167,13 @@ describe('Key Serial Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <KeySerialContainer
-            selectedKey={selectedKey}
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter
+            initialEntries={['/caes-cru/keys/details/24/keyserials/details/40']}
+          >
+            <Route path='/:team/keys/details/:keyId/keyserials/:action?/:id?'>
+              <KeySerialContainer selectedKey={selectedKey} />
+            </Route>
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -209,8 +184,8 @@ describe('Key Serial Container', () => {
 
     const details = document.querySelectorAll('input');
 
-    expect(details[3].value).toContain('Cereal'); // confirm key name is displayed
     expect(details[4].value).toContain('ADD'); // confirm key code is displayed
+    expect(details[3].value).toContain('Cereal'); // confirm key name is displayed
     expect(details[5].value).toContain('2'); // confirm key serial number is displayed
   });
 });

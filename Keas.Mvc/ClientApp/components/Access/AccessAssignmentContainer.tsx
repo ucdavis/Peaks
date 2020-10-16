@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { RouteChildrenProps, withRouter } from 'react-router';
+import { useContext, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
 import { IAccess, IAccessAssignment } from '../../models/Access';
@@ -15,173 +16,90 @@ import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 
 // List of assignments passed by props, since this container can be in multiple places
-interface IProps extends RouteChildrenProps<IMatchParams> {
+interface IProps {
   person?: IPerson;
   access?: IAccess;
   onRevokeSuccess?(assignment: IAccessAssignment);
   onAssignSuccess?(access: IAccessAssignment);
 }
 
-interface IState {
-  selectedAssignment?: IAccessAssignment;
-  assignments: IAccessAssignment[];
-}
+const AssignmentContainer = (props: IProps) => {
+  const context = useContext(Context);
+  const params: IMatchParams = useParams();
+  const history = useHistory();
+  const [assignments, setAssignments] = useState<IAccessAssignment[]>(
+    (props.access &&
+      props.access.assignments.map(assignment => ({
+        ...assignment,
+        access: props.access
+      }))) ||
+      []
+  );
+  const [selectedAssignment, setSelectedAssignment] = useState<
+    IAccessAssignment
+  >(assignments.find(el => el.id === parseInt(params.id, 10)));
 
-class AssignmentContainer extends React.Component<IProps, IState> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props: IProps) {
-    super(props);
-
-    const assignments =
-      (props.access &&
-        props.access.assignments.map(assignment => ({
-          ...assignment,
-          access: props.access
-        }))) ||
-      [];
-    const { action } = props.match.params;
-
-    this.state = {
-      assignments,
-      selectedAssignment: assignments.find(
-        el => el.id === parseInt(props.match.params.id, 10)
-      )
-    };
-  }
-
-  // assume that props.person is valid
-  public async fetchAssignments(): Promise<IAccessAssignment[]> {
-    const accessFetchUrl = `/api/${this.context.team.slug}/access/listAssigned?personId=${this.props.person.id}`;
-    let accesses: IAccess[] = null;
-    try {
-      accesses = await this.context.fetch(accessFetchUrl);
-    } catch (err) {
-      toast.error('Error loading access list. Please refresh and try again.');
-    }
-
-    return accesses.map(access => ({
-      ...access.assignments.find(
-        assignment =>
-          assignment.accessId === access.id &&
-          assignment.personId === this.props.person.id
-      ),
-      access
-    }));
-  }
-
-  public async componentDidMount() {
-    if (!PermissionsUtil.canViewAccess(this.context.permissions)) {
+  useEffect(() => {
+    if (!PermissionsUtil.canViewAccess(context.permissions)) {
       return;
     }
-    if (this.state.assignments.length === 0 && this.props.person) {
-      const assignments = await this.fetchAssignments();
-      this.setState({
-        assignments,
-        selectedAssignment: assignments.find(
-          el => el.id === parseInt(this.props.match.params.id, 10)
-        )
-      });
-    }
-  }
 
-  public render() {
-    if (!PermissionsUtil.canViewAccess(this.context.permissions)) {
-      return <Denied viewName='Access' />;
-    }
-    const { action, assetType } = this.props.match.params;
-    const isRevokeModalShown =
-      assetType === 'accessAssignment' && action === 'revoke';
-    const isEditModalShown =
-      assetType === 'accessAssignment' && action === 'update';
-    const isAssignModalShown = assetType === 'access' && action === 'assign';
-    const assignments = this.state.assignments;
+    // assume that props.person is valid
+    const fetchAssignments = async (): Promise<IAccessAssignment[]> => {
+      const accessFetchUrl = `/api/${context.team.slug}/access/listAssigned?personId=${props.person.id}`;
+      let accesses: IAccess[] = null;
+      try {
+        accesses = await context.fetch(accessFetchUrl);
+      } catch (err) {
+        toast.error('Error loading access list. Please refresh and try again.');
+      }
 
-    return (
-      <div>
-        {isRevokeModalShown && (
-          <RevokeAccess
-            assignment={this.state.selectedAssignment}
-            revoke={this.callRevoke}
-            cancelRevoke={this.hideModals}
-          />
-        )}
-        {isEditModalShown && (
-          <UpdateAccess
-            assignment={this.state.selectedAssignment}
-            update={this.callUpdate}
-            cancelUpdate={this.hideModals}
-          />
-        )}
-        {isAssignModalShown && (
-          <AssignAccess
-            closeModal={this.hideModals}
-            modal={isAssignModalShown}
-            person={this.props.person}
-            tags={this.context.tags}
-            selectedAccess={this.props.access}
-            onCreate={this.callAssign}
-          />
-        )}
-        <AccessAssignmentCard openAssignModal={this._openAssignModal}>
-          {this.props.person ? (
-            <AccessList
-              showDetails={this._openDetails}
-              personView={true}
-              access={this.state.assignments.map(
-                assignment => assignment.access
-              )}
-              onRevoke={access =>
-                this.showRevokeModal(
-                  assignments.find(
-                    assignment =>
-                      assignment.accessId === access.id &&
-                      assignment.personId === this.props.person.id
-                  )
-                )
-              }
-            />
-          ) : (
-            <AssignmentTable
-              assignments={assignments}
-              onRevoke={this.showRevokeModal}
-              onEdit={this.showEditModal}
-            />
-          )}
-        </AccessAssignmentCard>
-      </div>
-    );
-  }
+      return accesses.map(access => ({
+        ...access.assignments.find(
+          assignment =>
+            assignment.accessId === access.id &&
+            assignment.personId === props.person.id
+        ),
+        access
+      }));
+    };
 
-  private showRevokeModal = (assignment: IAccessAssignment) => {
-    this.setState({
-      selectedAssignment: assignment
-    });
-    this.props.history.push(
-      `${this._getBaseUrl()}/accessAssignment/revoke/${assignment.id}`
-    );
+    const getAssignments = async () => {
+      if (assignments.length === 0 && props.person) {
+        const assignmentsData = await fetchAssignments();
+        setAssignments(assignmentsData);
+        setSelectedAssignment(
+          assignmentsData.find(el => el.id === parseInt(params.id, 10))
+        );
+      }
+    };
+
+    getAssignments();
+  }, [
+    assignments,
+    context,
+    params.id,
+    props.person
+  ]);
+
+  const showRevokeModal = (assignment: IAccessAssignment) => {
+    setSelectedAssignment(assignment);
+    history.push(`${getBaseUrl()}/accessAssignment/revoke/${assignment.id}`);
   };
 
-  private showEditModal = (assignment: IAccessAssignment) => {
-    this.setState({
-      selectedAssignment: assignment
-    });
-    this.props.history.push(
-      `${this._getBaseUrl()}/accessAssignment/update/${assignment.id}`
-    );
+  const showEditModal = (assignment: IAccessAssignment) => {
+    setSelectedAssignment(assignment);
+    history.push(`${getBaseUrl()}/accessAssignment/update/${assignment.id}`);
   };
 
-  private hideModals = () => {
-    this.setState({
-      selectedAssignment: null
-    });
-    this.props.history.replace(this._getBaseUrl());
+  const hideModals = () => {
+    setSelectedAssignment(null);
+    history.replace(getBaseUrl());
   };
 
-  private callRevoke = async assignment => {
-    await this.context.fetch(
-      `/api/${this.context.team.slug}/access/revoke/${assignment.id}`,
+  const callRevoke = async assignment => {
+    await context.fetch(
+      `/api/${context.team.slug}/access/revoke/${assignment.id}`,
       {
         method: 'POST'
       }
@@ -189,25 +107,21 @@ class AssignmentContainer extends React.Component<IProps, IState> {
 
     toast.success('Access revoked sucessfully!');
 
-    const assignments = this.state.assignments;
-    assignments.splice(assignments.indexOf(assignment), 1);
+    const assignmentsData = assignments;
+    assignmentsData.splice(assignments.indexOf(assignment), 1);
+    setAssignments(assignmentsData);
+    hideModals();
 
-    this.setState({
-      assignments
-    });
-
-    this.hideModals();
-
-    if (this.props.onRevokeSuccess) {
-      this.props.onRevokeSuccess(assignment);
+    if (props.onRevokeSuccess) {
+      props.onRevokeSuccess(assignment);
     }
   };
 
-  private callUpdate = async (access: IAccess, date: any, person: IPerson) => {
-    const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
+  const callUpdate = async (access: IAccess, date: any, person: IPerson) => {
+    const assignUrl = `/api/${context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
     let accessAssignment: IAccessAssignment = null;
     try {
-      accessAssignment = await this.context.fetch(assignUrl, {
+      accessAssignment = await context.fetch(assignUrl, {
         method: 'POST'
       });
 
@@ -221,29 +135,25 @@ class AssignmentContainer extends React.Component<IProps, IState> {
       throw new Error(); // throw error so modal doesn't close
     }
 
-    const assignments = this.state.assignments;
-
-    this.setState({
-      assignments
-    });
-
-    this.hideModals();
+    const assignmentsData = assignments;
+    setAssignments(assignmentsData);
+    hideModals();
   };
 
-  private _openAssignModal = () => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/access/assign${
-        this.props.access ? '/' + this.props.access.id : ''
+  const openAssignModal = () => {
+    history.push(
+      `${getBaseUrl()}/access/assign${
+        props.access ? '/' + props.access.id : ''
       }`
     );
   };
 
-  private callAssign = async (access: IAccess, date: any, person: IPerson) => {
+  const callAssign = async (access: IAccess, date: any, person: IPerson) => {
     if (access.id === 0) {
-      access.teamId = this.context.team.id;
+      access.teamId = context.team.id;
       try {
-        access = await this.context.fetch(
-          `/api/${this.context.team.slug}/access/create`,
+        access = await context.fetch(
+          `/api/${context.team.slug}/access/create`,
           {
             body: JSON.stringify(access),
             method: 'POST'
@@ -256,10 +166,10 @@ class AssignmentContainer extends React.Component<IProps, IState> {
       }
     }
 
-    const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
+    const assignUrl = `/api/${context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
     let accessAssignment: IAccessAssignment = null;
     try {
-      accessAssignment = await this.context.fetch(assignUrl, {
+      accessAssignment = await context.fetch(assignUrl, {
         method: 'POST'
       });
 
@@ -273,27 +183,84 @@ class AssignmentContainer extends React.Component<IProps, IState> {
       throw new Error(); // throw error so modal doesn't close
     }
 
-    const assignments = this.state.assignments;
+    const assignmentsData = assignments;
     assignments.push(accessAssignment);
-
-    this.setState({
-      assignments
-    });
-
-    this.props.onAssignSuccess(accessAssignment);
+    setAssignments(assignmentsData);
+    props.onAssignSuccess(accessAssignment);
   };
 
-  private _openDetails = (access: IAccess) => {
-    this.props.history.push(
-      `/${this.context.team.slug}/access/details/${access.id}`
-    );
+  const openDetails = (access: IAccess) => {
+    history.push(`/${context.team.slug}/access/details/${access.id}`);
   };
 
-  private _getBaseUrl = () => {
-    return this.props.person
-      ? `/${this.context.team.slug}/people/details/${this.props.person.id}`
-      : `/${this.context.team.slug}/access/details/${this.props.access.id}`;
+  const getBaseUrl = () => {
+    return props.person
+      ? `/${context.team.slug}/people/details/${props.person.id}`
+      : `/${context.team.slug}/access/details/${props.access.id}`;
   };
-}
 
-export default withRouter(AssignmentContainer);
+  if (!PermissionsUtil.canViewAccess(context.permissions)) {
+    return <Denied viewName='Access' />;
+  }
+  const { action, assetType } = params;
+  const isRevokeModalShown =
+    assetType === 'accessAssignment' && action === 'revoke';
+  const isEditModalShown =
+    assetType === 'accessAssignment' && action === 'update';
+  const isAssignModalShown = assetType === 'access' && action === 'assign';
+
+  return (
+    <div>
+      {isRevokeModalShown && (
+        <RevokeAccess
+          assignment={selectedAssignment}
+          revoke={callRevoke}
+          cancelRevoke={hideModals}
+        />
+      )}
+      {isEditModalShown && (
+        <UpdateAccess
+          assignment={selectedAssignment}
+          update={callUpdate}
+          cancelUpdate={hideModals}
+        />
+      )}
+      {isAssignModalShown && (
+        <AssignAccess
+          closeModal={hideModals}
+          modal={isAssignModalShown}
+          person={props.person}
+          tags={context.tags}
+          selectedAccess={props.access}
+          onCreate={callAssign}
+        />
+      )}
+      <AccessAssignmentCard openAssignModal={openAssignModal}>
+        {props.person ? (
+          <AccessList
+            showDetails={openDetails}
+            personView={true}
+            access={assignments.map(assignment => assignment.access)}
+            onRevoke={access =>
+              showRevokeModal(
+                assignments.find(
+                  assignment =>
+                    assignment.accessId === access.id &&
+                    assignment.personId === props.person.id
+                )
+              )
+            }
+          />
+        ) : (
+          <AssignmentTable
+            assignments={assignments}
+            onRevoke={showRevokeModal}
+            onEdit={showEditModal}
+          />
+        )}
+      </AccessAssignmentCard>
+    </div>
+  );
+};
+
+export default AssignmentContainer;
