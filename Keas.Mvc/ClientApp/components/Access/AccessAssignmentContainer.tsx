@@ -76,7 +76,7 @@ const AssignmentContainer = (props: IProps) => {
 
     getAssignments();
   }, [
-    assignments.length,
+    assignments,
     context,
     params.id,
     props.person
