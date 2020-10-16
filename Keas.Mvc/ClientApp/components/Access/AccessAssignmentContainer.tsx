@@ -173,10 +173,10 @@ const AssignmentContainer = (props: IProps) => {
         method: 'POST'
       });
 
-      accessAssignment.access = {
-        ...access,
-        assignments: [...access.assignments, accessAssignment]
-      };
+    //   accessAssignment.access = {
+    //     ...access,
+    //     assignments: [...access.assignments, accessAssignment]
+    //   };
       toast.success('Access assigned successfully!');
     } catch (err) {
       toast.error('Error assigning access.');
