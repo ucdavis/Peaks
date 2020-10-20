@@ -184,7 +184,10 @@ namespace Keas.Mvc.Controllers.Api
             }
 
             await _context.SaveChangesAsync();
-            return Json(assignment);
+            var newAssignment = await _context.AccessAssignments.Where(x => x.Id == assignment.Id)
+                .Include(x => x.Person)
+                .SingleAsync();
+            return Json(newAssignment);
         }
 
         [HttpPost]

@@ -75,12 +75,7 @@ const AssignmentContainer = (props: IProps) => {
     };
 
     getAssignments();
-  }, [
-    assignments,
-    context,
-    params.id,
-    props.person
-  ]);
+  }, [assignments, context, params.id, props.person]);
 
   const showRevokeModal = (assignment: IAccessAssignment) => {
     setSelectedAssignment(assignment);
@@ -172,6 +167,10 @@ const AssignmentContainer = (props: IProps) => {
       accessAssignment = await context.fetch(assignUrl, {
         method: 'POST'
       });
+      accessAssignment.access = {
+        ...access,
+        assignments: [...access.assignments, accessAssignment]
+      };
       toast.success('Access assigned successfully!');
     } catch (err) {
       toast.error('Error assigning access.');
