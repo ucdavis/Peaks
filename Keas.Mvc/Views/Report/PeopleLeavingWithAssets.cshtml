@@ -1,3 +1,4 @@
+@using Keas.Core.Extensions
 @model IEnumerable<Keas.Mvc.Models.ReportModels.PeopleLeavingWithAssetsModel>
 
 @{
@@ -87,10 +88,10 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
+                @item.StartDate?.ToShortDateString()
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
+                @item.EndDate?.ToShortDateString()
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.EquipmentCount)
