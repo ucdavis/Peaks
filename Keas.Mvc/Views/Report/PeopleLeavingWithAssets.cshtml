@@ -1,64 +1,81 @@
-﻿@model IEnumerable<Keas.Mvc.Models.ReportModels.PeopleLeavingWithAssetsModel>
+@model IEnumerable<Keas.Mvc.Models.ReportModels.PeopleLeavingWithAssetsModel>
 
 @{
-    ViewData["Title"] = "PeopleLeavingWithAssets";
+    ViewData["Title"] = "People Leaving With Assets";
 }
 
-<h2>PeopleLeavingWithAssets</h2>
+<div class="card people-color">
+<div class="card-header-people">
+    <div class="card-head">
+        <h2>People Leaving With Assets</h2>
+    </div>
+</div>
+<div class="card-content">
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+    <div class="row align-items-start">
+        <div class="col-md-6 col-lg-4">
+            <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
+            <ul>
+                <li>
+                    If you have filtered the report with the Search feature, only the filtered results will be exported.
+                </li>
+            </ul>
+        </div>
+
+    </div>
+
+<br/><br/>
+
+<table class="table dataTable">
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Active)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EquipmentCount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AccessCount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.KeyCount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.WorkstationCount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Slug)
-            </th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Active)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EndDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.EquipmentCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.AccessCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KeyCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.WorkstationCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Slug)
+        </th>
+        <th></th>
+    </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+    @foreach (var item in Model) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Active)
+                @item.Active.ToYesNoString()
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.FirstName)
@@ -91,11 +108,39 @@
                 @Html.DisplayFor(modelItem => item.Slug)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                @if (item.Active)
+                {
+                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.Id)' target="_blank">Details</a>
+                }
             </td>
         </tr>
-}
+    }
     </tbody>
 </table>
+</div>
+</div>
+
+
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ImportJS");}  
+    
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+            "dom": 'lBfrtip',
+            "buttons": [
+                { extend: 'copyHtml5' },
+                { extend: 'excelHtml5' },
+                { extend: 'csvHtml5' },
+                { extend: 'print'},
+            ],
+            "columnDefs": [
+                { "type": "date", "targets": [5,6] },
+            ]
+        });
+    </script>
+}
