@@ -152,7 +152,10 @@
                 @item.User.Email
             </td>
             <td>
+            @if (item.Active)
+            {
                 <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.Id)' target="_blank">Details</a>
+            }
             </td>
         </tr>
     }
