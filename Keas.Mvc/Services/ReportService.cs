@@ -7,7 +7,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Models;
 using System;
+using System.Globalization;
 using System.Linq.Expressions;
+using Dapper;
+using Keas.Core.Extensions;
 
 namespace Keas.Mvc.Services
 {
@@ -25,6 +28,9 @@ namespace Keas.Mvc.Services
 
         Task<IList<IncompleteDocumentReportModel>> IncompleteDocuments(Team team, string teamSlug);
         Task<IList<IncompleteDocumentReportModel>> IncompleteDocuments(Group group);
+
+        Task<IList<PeopleLeavingWithAssetsModel>> PeopleLeavingWithAssets(Team team, string teamSlug, DateTime theDate);
+        Task<IList<PeopleLeavingWithAssetsModel>> PeopleLeavingWithAssets(Group group, DateTime theDate);
     }
 
 
@@ -341,6 +347,61 @@ namespace Keas.Mvc.Services
 
 
             return people;
+        }
+
+        public async Task<IList<PeopleLeavingWithAssetsModel>> PeopleLeavingWithAssets(Team team, string teamSlug, DateTime theDate)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+            var teamId = team.Id;
+            var enddate = theDate.Format("yyyy-MM-dd");
+
+            var sql = PeopleQueries.PeopleLeavingWithAssets;
+            
+            //TODO: Remove once Scott expresses commented out code sadness
+            //var result = _context.Database.GetDbConnection().Query(sql, new { enddate = enddate, teamId }).Select(r => new PeopleLeavingWithAssetsModel
+            //    {
+            //        Id = r.Id,
+            //        Active = r.Active,
+            //        FirstName = r.FirstName,
+            //        LastName = r.LastName,
+            //        Email = r.Email,
+            //        Slug = r.Slug,
+            //        StartDate = r.StartDate,
+            //        EndDate = r.EndDate,
+            //        EquipmentCount = r.EquipmentCount,
+            //        AccessCount = r.AccessCount,
+            //        KeyCount = r.KeyCount,
+            //        WorkstationCount = r.WorkstationCount,
+            //}).ToList();
+
+            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new {enddate = enddate, teamId});
+            
+            var rtValue =  result.Select(r => new PeopleLeavingWithAssetsModel
+            {
+                Id = r.Id,
+                Active = r.Active,
+                FirstName = r.FirstName,
+                LastName = r.LastName,
+                Email = r.Email,
+                Slug = r.Slug,
+                StartDate = r.StartDate,
+                EndDate = r.EndDate,
+                EquipmentCount = r.EquipmentCount,
+                AccessCount = r.AccessCount,
+                KeyCount = r.KeyCount,
+                WorkstationCount = r.WorkstationCount,
+
+            }).ToList();
+
+            return rtValue;
+        }
+
+        public Task<IList<PeopleLeavingWithAssetsModel>> PeopleLeavingWithAssets(Group @group, DateTime theDate)
+        {
+            throw new NotImplementedException();
         }
     }
 }
