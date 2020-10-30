@@ -165,10 +165,14 @@ namespace Keas.Mvc.Controllers
             }
 
             var theDate = DateTime.UtcNow.AddDays(30).Date;
+            var model = new PeopleLeavingGroupViewModel
+            {
+                Group = group,
+                People = await _reportService.PeopleLeavingWithAssets(group, theDate),
+            };
 
-            var peopleQuery = await _reportService.PeopleLeavingWithAssets(group, theDate);
 
-            return View(peopleQuery);
+            return View(model);
         }
 
         private async Task<Group> GetGroup(int id) {
