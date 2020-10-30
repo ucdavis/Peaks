@@ -29,7 +29,24 @@ namespace Keas.Mvc.Models.ReportModels
         public int WorkstationCount { get; set; }
         [Display(Name = "Team")]
         public string Slug { get; set; }
+        public string Category { get; set; }
+        public string SupervisorFirstName { get; set; }
+        public string SupervisorLastName { get; set; }
+        public string SupervisorEmail { get; set; }
 
+        [Display(Name = "Supervisor")]
+        public string SuperDuper
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(SupervisorEmail))
+                {
+                    return $"{SupervisorFirstName} {SupervisorLastName} ({SupervisorEmail})";
+                }
+
+                return string.Empty;
+            }
+        }
 
     }
 }

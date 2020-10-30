@@ -63,6 +63,8 @@
         <th>
             @Html.DisplayNameFor(model => model.WorkstationCount)
         </th>
+        <th>@Html.DisplayNameFor(model => model.Category)</th>
+        <th>@Html.DisplayNameFor(model => model.SuperDuper)</th>
         <th>
             @Html.DisplayNameFor(model => model.Slug)
         </th>
@@ -106,6 +108,12 @@
                 @Html.DisplayFor(modelItem => item.WorkstationCount)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Category)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SuperDuper)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Slug)
             </td>
             <td>
@@ -140,7 +148,8 @@
                 { extend: 'print'},
             ],
             "columnDefs": [
-                { "type": "date", "targets": [5,6] },
+                { "type": "date", "targets": [5, 6] },
+                { "orderable": false, "targets": -1},
             ]
         });
     </script>

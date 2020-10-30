@@ -360,23 +360,6 @@ namespace Keas.Mvc.Services
 
             var sql = PeopleQueries.PeopleLeavingWithAssets;
             
-            //TODO: Remove once Scott expresses commented out code sadness
-            //var result = _context.Database.GetDbConnection().Query(sql, new { enddate = enddate, teamId }).Select(r => new PeopleLeavingWithAssetsModel
-            //    {
-            //        Id = r.Id,
-            //        Active = r.Active,
-            //        FirstName = r.FirstName,
-            //        LastName = r.LastName,
-            //        Email = r.Email,
-            //        Slug = r.Slug,
-            //        StartDate = r.StartDate,
-            //        EndDate = r.EndDate,
-            //        EquipmentCount = r.EquipmentCount,
-            //        AccessCount = r.AccessCount,
-            //        KeyCount = r.KeyCount,
-            //        WorkstationCount = r.WorkstationCount,
-            //}).ToList();
-
             var result = await _context.Database.GetDbConnection().QueryAsync(sql, new {enddate = enddate, teamId});
             
             var rtValue =  result.Select(r => new PeopleLeavingWithAssetsModel
@@ -393,7 +376,10 @@ namespace Keas.Mvc.Services
                 AccessCount = r.AccessCount,
                 KeyCount = r.KeyCount,
                 WorkstationCount = r.WorkstationCount,
-
+                Category = r.Category,
+                SupervisorFirstName = r.SupervisorFirstName,
+                SupervisorLastName = r.SupervisorLastName,
+                SupervisorEmail = r.SupervisorEmail,
             }).ToList();
 
             return rtValue;

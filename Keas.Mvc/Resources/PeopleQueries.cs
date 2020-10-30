@@ -33,7 +33,7 @@ where (People.Active = @active1 or People.Active = @active2) and People.TeamId =
 
 
 
-    public static string PeopleLeavingWithAssets = @"select People.*, EquipmentCount, AccessCount, KeyCount, WorkstationCount, Teams.Slug
+    public static string PeopleLeavingWithAssets = @"select People.*, SUP.FirstName SupervisorFirstName, SUP.LastName SupervisorLastName, SUP.Email SupervisorEmail, EquipmentCount, AccessCount, KeyCount, WorkstationCount, Teams.Slug
     from (select People.Id, count(E.Id) as EquipmentCount
       from People
         left join EquipmentAssignments E on People.Id = E.PersonId
@@ -57,6 +57,7 @@ where (People.Active = @active1 or People.Active = @active2) and People.TeamId =
         left join WorkstationAssignments WA on People.Id = WA.PersonId
         group by People.Id
     ) t4 on t1.Id = t4.Id
+    left outer join People SUP on People.SupervisorId = SUP.Id
     INNER JOIN
          Teams ON People.TeamId = dbo.Teams.Id
 where (People.Active = 0 or (People.EndDate is not null and People.EndDate <= @enddate)) and (EquipmentCount > 0 or AccessCount > 0 or KeyCount > 0 or WorkstationCount > 0) and People.TeamId = @teamId;";
