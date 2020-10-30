@@ -194,5 +194,14 @@ namespace Keas.Mvc.Controllers
 
             return View(model);
         }
+
+        public async Task<IActionResult> PeopleLeavingWithAssets()
+        {
+            var theDate = DateTime.UtcNow.AddDays(30).Date;
+
+            var peopleQuery = await _reportService.PeopleLeavingWithAssets(null, Team, theDate);
+
+            return View(peopleQuery);
+        }
     }
 }

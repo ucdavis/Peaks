@@ -1,0 +1,157 @@
+@using Keas.Core.Extensions
+@model IEnumerable<Keas.Mvc.Models.ReportModels.PeopleLeavingWithAssetsModel>
+
+@{
+    ViewData["Title"] = "People Leaving With Assets";
+}
+
+<div class="card people-color">
+    <div class="card-header-people">
+        <div class="card-head">
+            <h2>People Leaving With Assets</h2>
+        </div>
+    </div>
+    <div class="card-content">
+        <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
+        <ul>
+            <li>This report shows all people in the team who have assets assigned to them, and are inactive or have an end date that has passed or will occur within 30 days</li>
+            <li>
+                To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).
+            </li>
+            <li>
+                If you have filtered the report with the Search feature, only the filtered results will be exported.
+            </li>
+            <li>
+                You can filter the table with the data that isn't displayed on the screen (such as notes).
+            </li>
+        </ul>
+        <table class="table dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Id)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Active)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FirstName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LastName)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Email)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.StartDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.EndDate)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.EquipmentCount)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.AccessCount)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.KeyCount)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.WorkstationCount)
+                    </th>
+                    <th>@Html.DisplayNameFor(model => model.Category)</th>
+                    <th>@Html.DisplayNameFor(model => model.SuperDuper)</th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Slug)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Id)
+                        </td>
+                        <td>
+                            @item.Active.ToYesNoString()
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FirstName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.LastName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td>
+                            @item.StartDate?.ToShortDateString()
+                        </td>
+                        <td>
+                            @item.EndDate?.ToShortDateString()
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EquipmentCount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AccessCount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.KeyCount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.WorkstationCount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SuperDuper)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Slug)
+                        </td>
+                        <td>
+                            @if (item.Active)
+                            {
+                                <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.Id)' target="_blank">Details</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ImportJS");}  
+    
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+            "dom": 'lBfrtip',
+            "buttons": [
+                { extend: 'copyHtml5' },
+                { extend: 'excelHtml5' },
+                { extend: 'csvHtml5' },
+                { extend: 'print'},
+            ],
+            "columnDefs": [
+                { "type": "date", "targets": [5, 6] },
+                { "orderable": false, "targets": -1 },
+                { "targets" : [ 0,1,13], "visible" : false},
+            ]
+        });
+    </script>
+}

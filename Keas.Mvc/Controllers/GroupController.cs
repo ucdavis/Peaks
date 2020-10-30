@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -149,6 +150,27 @@ namespace Keas.Mvc.Controllers
                 Group = group,
                 IncompleteDocuments = await _reportService.IncompleteDocuments(group)
             };
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> PeopleLeavingWithAssets(int id)
+        {
+            var group = await GetGroup(id);
+
+            if (group == null)
+            {
+                ErrorMessage = "Group not found or no access to Group";
+                return RedirectToAction("NoAccess", "Home");
+            }
+
+            var theDate = DateTime.UtcNow.AddDays(30).Date;
+            var model = new PeopleLeavingGroupViewModel
+            {
+                Group = group,
+                People = await _reportService.PeopleLeavingWithAssets(group, theDate),
+            };
+
 
             return View(model);
         }
