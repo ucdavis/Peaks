@@ -385,9 +385,37 @@ namespace Keas.Mvc.Services
             return rtValue;
         }
 
-        public Task<IList<PeopleLeavingWithAssetsModel>> PeopleLeavingWithAssets(Group @group, DateTime theDate)
+        public async Task<IList<PeopleLeavingWithAssetsModel>> PeopleLeavingWithAssets(Group group, DateTime theDate)
         {
-            throw new NotImplementedException();
+            var teamIds = group.Teams.Select(a => a.Team.Id).ToArray();
+
+            var enddate = theDate.Format("yyyy-MM-dd");
+
+            var sql = PeopleQueries.PeopleLeavingWithAssetsInGroup;
+
+            var result = await _context.Database.GetDbConnection().QueryAsync(sql, new { enddate = enddate, teamIds = teamIds });
+
+            var rtValue = result.Select(r => new PeopleLeavingWithAssetsModel
+            {
+                Id = r.Id,
+                Active = r.Active,
+                FirstName = r.FirstName,
+                LastName = r.LastName,
+                Email = r.Email,
+                Slug = r.Slug,
+                StartDate = r.StartDate,
+                EndDate = r.EndDate,
+                EquipmentCount = r.EquipmentCount,
+                AccessCount = r.AccessCount,
+                KeyCount = r.KeyCount,
+                WorkstationCount = r.WorkstationCount,
+                Category = r.Category,
+                SupervisorFirstName = r.SupervisorFirstName,
+                SupervisorLastName = r.SupervisorLastName,
+                SupervisorEmail = r.SupervisorEmail,
+            }).ToList();
+
+            return rtValue;
         }
     }
 }
