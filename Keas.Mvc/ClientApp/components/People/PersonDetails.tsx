@@ -90,13 +90,11 @@ const PersonDetails = (props: IProps) => {
       </div>
 
       <KeySerialContainer
-        {...props.router}
         selectedPerson={props.selectedPersonInfo.person}
         assetInUseUpdated={props.inUseUpdated}
         goToKeyDetails={props.goToKeyDetails}
       />
       <EquipmentContainer
-        {...props.router}
         person={props.selectedPersonInfo.person}
         assetInUseUpdated={props.inUseUpdated}
       />
@@ -110,7 +108,6 @@ const PersonDetails = (props: IProps) => {
         }
       />
       <WorkstationContainer
-        {...props.router}
         person={props.selectedPersonInfo.person}
         tags={props.tags}
         assetInUseUpdated={props.inUseUpdated}

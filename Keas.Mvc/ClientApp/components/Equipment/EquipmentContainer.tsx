@@ -82,6 +82,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
         return;
       }
       setEquipment(newEquipment);
+      setLoading(false);
     };
 
     // TODO: move all this into context
@@ -101,7 +102,6 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     fetchAttributeKeys();
     fetchEquipmentTypes();
     fetchEquipment();
-    setLoading(false);
   }, [context, props.person, props.space]);
 
   if (!PermissionsUtil.canViewEquipment(context.permissions)) {

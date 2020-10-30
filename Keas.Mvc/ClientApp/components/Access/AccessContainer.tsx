@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { RouteChildrenProps } from 'react-router';
+import { useContext, useEffect, useState } from 'react';
+import { useHistory, useParams } from 'react-router';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -14,110 +15,63 @@ import AccessTable from './AccessTable';
 import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
 
-interface IState {
-  accesses: IAccess[]; // either access assigned to this person, or all team access
-  loading: boolean;
-  tagFilters: string[];
-}
+const AccessContainer = () => {
+  const [accesses, setAccesses] = useState<IAccess[]>([]);
+  const [tagFilters, setTagFilters] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const context = useContext(Context);
+  const history = useHistory();
+  const params: IMatchParams = useParams();
 
-export default class AccessContainer extends React.Component<
-  RouteChildrenProps<IMatchParams>,
-  IState
-> {
-  public static contextType = Context;
-  public context!: React.ContextType<typeof Context>;
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      accesses: [],
-      loading: true,
-      tagFilters: []
-    };
-  }
-  public async componentDidMount() {
-    if (!PermissionsUtil.canViewAccess(this.context.permissions)) {
+  useEffect(() => {
+    if (!PermissionsUtil.canViewAccess(context.permissions)) {
       return;
     }
-    const accessFetchUrl = `/api/${this.context.team.slug}/access/list/`;
-    let accesses: IAccess[] = null;
-    try {
-      accesses = await this.context.fetch(accessFetchUrl);
-    } catch (err) {
-      toast.error('Error loading access list. Please refresh and try again.');
-    }
 
-    accesses = accesses.map(a => ({
-      ...a,
-      assignments: a.assignments.map(assignment => ({
-        ...assignment,
-        access: a
-      }))
-    }));
+    const fetchAccesses = async () => {
+      const accessFetchUrl = `/api/${context.team.slug}/access/list/`;
+      let accessesData: IAccess[] = null;
+      try {
+        accessesData = await context.fetch(accessFetchUrl);
+      } catch (err) {
+        toast.error('Error loading access list. Please refresh and try again.');
+      }
 
-    this.setState({ accesses, loading: false });
-  }
-  public render() {
-    if (!PermissionsUtil.canViewAccess(this.context.permissions)) {
-      return <Denied viewName='Access' />;
-    }
+      accessesData = accessesData.map(a => ({
+        ...a,
+        assignments: a.assignments.map(assignment => ({
+          ...assignment,
+          access: a
+        }))
+      }));
 
-    if (this.state.loading) {
-      return <h2>Loading...</h2>;
-    }
-    const { containerAction, assetType, containerId } = this.props.match.params;
-    const activeAsset = !assetType || assetType === 'access';
-    const selectedId = parseInt(containerId, 10);
-    const detailAccess = this.state.accesses.find(a => a.id === selectedId);
-    const shouldRenderDetails = containerAction === 'details';
+      setAccesses(accessesData);
+      setLoading(false);
+    };
 
-    return (
-      <div className='card access-color'>
-        <div className='card-header-access'>
-          <div className='card-head row justify-content-between'>
-            <h2>
-              <i className='fas fa-address-card fa-xs' /> Access
-            </h2>
-            <Button color='link' onClick={this._openCreateModal}>
-              <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Access
-            </Button>
-          </div>
-        </div>
-        <div className='card-content'>
-          {!shouldRenderDetails && this._renderTable()}
-          {shouldRenderDetails && this._renderDetails(selectedId, detailAccess)}
-          {activeAsset &&
-            (containerAction === 'assign' || containerAction === 'create') &&
-            this._renderAssignModal(selectedId, detailAccess)}
-          {activeAsset &&
-            containerAction === 'delete' &&
-            this._renderDeleteModal(selectedId, detailAccess)}
-        </div>
-      </div>
-    );
-  }
+    fetchAccesses();
+  }, [context]);
 
-  private _createAndMaybeAssignAccess = async (
+  const createAndMaybeAssignAccess = async (
     access: IAccess,
     date?: any,
     person?: IPerson
   ) => {
-    const accesses = this.state.accesses;
+    const accessesData = accesses;
     if (access.id === 0) {
       try {
-        access = await this.context.fetch(
-          `/api/${this.context.team.slug}/access/create`,
+        access = await context.fetch(
+          `/api/${context.team.slug}/access/create`,
           {
             body: JSON.stringify({
               ...access,
-              teamId: this.context.team.id
+              teamId: context.team.id
             }),
             method: 'POST'
           }
         );
-        accesses.push(access);
-        this.setState({ accesses });
+        accessesData.push(access);
+        setAccesses(accessesData);
         toast.success('Access created successfully!');
       } catch (err) {
         toast.error('Error creating access.');
@@ -125,18 +79,17 @@ export default class AccessContainer extends React.Component<
       }
     }
     if (person && date) {
-      const assignUrl = `/api/${this.context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
+      const assignUrl = `/api/${context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
       let accessAssignment: IAccessAssignment = null;
       try {
-        accessAssignment = await this.context.fetch(assignUrl, {
+        accessAssignment = await context.fetch(assignUrl, {
           method: 'POST'
         });
 
         const newAccess = accesses.find(a => a.id === access.id);
         accessAssignment.access = newAccess;
         newAccess.assignments.push(accessAssignment);
-
-        this.setState({ accesses });
+        setAccesses(accesses);
         toast.success('Access assigned successfully!');
       } catch (err) {
         toast.error('Error assigning access.');
@@ -145,89 +98,89 @@ export default class AccessContainer extends React.Component<
     }
   };
 
-  private _renderAssignModal = (selectedId: number, access?: IAccess) => {
+  const renderAssignModal = (selectedId: number, access?: IAccess) => {
     return (
       <AssignAccess
         key={`assign-access-${selectedId}`}
-        onCreate={this._createAndMaybeAssignAccess}
+        onCreate={createAndMaybeAssignAccess}
         modal={true}
-        closeModal={this._closeModals}
+        closeModal={closeModals}
         selectedAccess={access}
-        tags={this.context.tags}
+        tags={context.tags}
       />
     );
   };
 
-  private _renderTable = () => {
-    let filteredAccess = this.state.accesses;
-    if (this.state.tagFilters.length > 0) {
+  const renderTable = () => {
+    let filteredAccess = accesses;
+    if (tagFilters.length > 0) {
       filteredAccess = filteredAccess.filter(x =>
-        this._checkTagFilters(x, this.state.tagFilters)
+        checkTagFilters(x, tagFilters)
       );
     }
     return (
       <div>
         <div className='row'>
           <SearchTags
-            tags={this.context.tags}
-            selected={this.state.tagFilters}
-            onSelect={this._filterTags}
+            tags={context.tags}
+            selected={tagFilters}
+            onSelect={filterTags}
             disabled={false}
           />
         </div>
         <AccessTable
           accesses={filteredAccess}
-          onDelete={this._openDeleteModal}
-          onAdd={this._openAssignModal}
-          onEdit={this._openEditModal}
-          showDetails={this._openDetails}
+          onDelete={openDeleteModal}
+          onAdd={openAssignModal}
+          onEdit={openEditModal}
+          showDetails={openDetails}
         />
       </div>
     );
   };
 
-  private _renderDetails = (selectedId: number, access: IAccess) => {
+  const renderDetails = (selectedId: number, access: IAccess) => {
     return (
       <AccessDetails
-        goBack={() => this.props.history.push(this._getBaseUrl() + '/access')}
+        goBack={() => history.push(getBaseUrl() + '/access')}
         key={`details-access-${selectedId}`}
         selectedAccess={access}
         modal={!!access}
-        closeModal={this._closeModals}
-        editAccess={this._editAccess}
-        openDeleteModal={this._openDeleteModal}
-        updateSelectedAccess={this._updateAccessFromDetails}
+        closeModal={closeModals}
+        editAccess={editAccess}
+        openDeleteModal={openDeleteModal}
+        updateSelectedAccess={updateAccessFromDetails}
       />
     );
   };
 
-  private _renderDeleteModal = (selectedId: number, access: IAccess) => {
+  const renderDeleteModal = (selectedId: number, access: IAccess) => {
     return (
       <DeleteAccess
         key={`delete-access-${selectedId}`}
         selectedAccess={access}
-        closeModal={this._closeModals}
-        deleteAccess={this._deleteAccess}
+        closeModal={closeModals}
+        deleteAccess={deleteAccess}
         modal={!!access}
       />
     );
   };
 
-  private _filterTags = (filters: string[]) => {
-    this.setState({ tagFilters: filters });
+  const filterTags = (filters: string[]) => {
+    setTagFilters(filters);
   };
 
-  private _checkTagFilters = (access: IAccess, filters: string[]) => {
+  const checkTagFilters = (access: IAccess, filters: string[]) => {
     return filters.every(f => !!access.tags && access.tags.includes(f));
   };
 
-  private _deleteAccess = async (access: IAccess) => {
+  const deleteAccess = async (access: IAccess) => {
     if (!confirm('Are you sure you want to delete item?')) {
       return false;
     }
     try {
-      const deleted: IAccess = await this.context.fetch(
-        `/api/${this.context.team.slug}/access/delete/${access.id}`,
+      await context.fetch(
+        `/api/${context.team.slug}/access/delete/${access.id}`,
         {
           method: 'POST'
         }
@@ -239,16 +192,16 @@ export default class AccessContainer extends React.Component<
     }
 
     // remove from state
-    const index = this.state.accesses.indexOf(access);
+    const index = accesses.indexOf(access);
     if (index > -1) {
-      const shallowCopy = [...this.state.accesses];
+      const shallowCopy = [...accesses];
       shallowCopy.splice(index, 1);
-      this.setState({ accesses: shallowCopy });
+      setAccesses(shallowCopy);
     }
   };
 
-  private _editAccess = async (access: IAccess) => {
-    const index = this.state.accesses.findIndex(x => x.id === access.id);
+  const editAccess = async (access: IAccess) => {
+    const index = accesses.findIndex(x => x.id === access.id);
 
     if (index === -1) {
       // should always already exist
@@ -257,13 +210,10 @@ export default class AccessContainer extends React.Component<
 
     let updated: IAccess = null;
     try {
-      updated = await this.context.fetch(
-        `/api/${this.context.team.slug}/access/update`,
-        {
-          body: JSON.stringify(access),
-          method: 'POST'
-        }
-      );
+      updated = await context.fetch(`/api/${context.team.slug}/access/update`, {
+        body: JSON.stringify(access),
+        method: 'POST'
+      });
       toast.success('Access edited successfully!');
     } catch (err) {
       toast.error('Error editing access.');
@@ -271,18 +221,14 @@ export default class AccessContainer extends React.Component<
     }
 
     // update already existing entry in key
-    const updateAccesses = [...this.state.accesses];
+    const updateAccesses = [...accesses];
     updateAccesses[index] = updated;
-
-    this.setState({
-      ...this.state,
-      accesses: updateAccesses
-    });
+    setAccesses(updateAccesses);
   };
 
-  private _updateAccessFromDetails = (access: IAccess, id?: number) => {
+  const updateAccessFromDetails = (access: IAccess, id?: number) => {
     const accessId = access ? access.id : id;
-    const index = this.state.accesses.findIndex(x => x.id === accessId);
+    const index = accesses.findIndex(x => x.id === accessId);
 
     if (index === -1) {
       // should always already exist
@@ -290,45 +236,83 @@ export default class AccessContainer extends React.Component<
     }
 
     // update already existing entry in key
-    const updateAccesses = [...this.state.accesses];
+    const updateAccesses = [...accesses];
     // if access has been deleted elsewhere
     if (access === null) {
       updateAccesses.splice(index, 1);
     } else {
       updateAccesses[index] = access;
     }
-    this.setState({ ...this.state, accesses: updateAccesses });
+    setAccesses(updateAccesses);
   };
 
-  private _openAssignModal = (access: IAccess) => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/access/details/${access.id}/assign/${access.id}`
+  const openAssignModal = (access: IAccess) => {
+    history.push(
+      `${getBaseUrl()}/access/details/${access.id}/assign/${access.id}`
     );
   };
 
-  private _openCreateModal = () => {
-    this.props.history.push(`${this._getBaseUrl()}/access/create`);
+  const openCreateModal = () => {
+    history.push(`${getBaseUrl()}/access/create`);
   };
 
-  private _openDetails = (access: IAccess) => {
-    this.props.history.push(
-      `${this._getBaseUrl()}/access/details/${access.id}`
-    );
+  const openDetails = (access: IAccess) => {
+    history.push(`${getBaseUrl()}/access/details/${access.id}`);
   };
 
-  private _openEditModal = (access: IAccess) => {
-    this.props.history.push(`${this._getBaseUrl()}/access/edit/${access.id}`);
+  const openEditModal = (access: IAccess) => {
+    history.push(`${getBaseUrl()}/access/edit/${access.id}`);
   };
 
-  private _openDeleteModal = (access: IAccess) => {
-    this.props.history.push(`${this._getBaseUrl()}/access/delete/${access.id}`);
+  const openDeleteModal = (access: IAccess) => {
+    history.push(`${getBaseUrl()}/access/delete/${access.id}`);
   };
 
-  private _closeModals = () => {
-    this.props.history.push(`${this._getBaseUrl()}/access`);
+  const closeModals = () => {
+    history.push(`${getBaseUrl()}/access`);
   };
 
-  private _getBaseUrl = () => {
-    return `/${this.context.team.slug}`;
+  const getBaseUrl = () => {
+    return `/${context.team.slug}`;
   };
-}
+
+  if (!PermissionsUtil.canViewAccess(context.permissions)) {
+    return <Denied viewName='Access' />;
+  }
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+  const { containerAction, assetType, containerId } = params;
+  const activeAsset = !assetType || assetType === 'access';
+  const selectedId = parseInt(containerId, 10);
+  const detailAccess = accesses.find(a => a.id === selectedId);
+  const shouldRenderDetails = containerAction === 'details';
+
+  return (
+    <div className='card access-color'>
+      <div className='card-header-access'>
+        <div className='card-head row justify-content-between'>
+          <h2>
+            <i className='fas fa-address-card fa-xs' /> Access
+          </h2>
+          <Button color='link' onClick={openCreateModal}>
+            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Access
+          </Button>
+        </div>
+      </div>
+      <div className='card-content'>
+        {!shouldRenderDetails && renderTable()}
+        {shouldRenderDetails && renderDetails(selectedId, detailAccess)}
+        {activeAsset &&
+          (containerAction === 'assign' || containerAction === 'create') &&
+          renderAssignModal(selectedId, detailAccess)}
+        {activeAsset &&
+          containerAction === 'delete' &&
+          renderDeleteModal(selectedId, detailAccess)}
+      </div>
+    </div>
+  );
+};
+
+export default AccessContainer;

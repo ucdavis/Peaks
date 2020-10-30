@@ -1,17 +1,11 @@
 import * as React from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
-
-import WorkstationContainer from '../Workstations/WorkstationContainer';
+import { MemoryRouter, Route } from 'react-router';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
-import { fakeWorkstations } from '../specs/mockData/Workstation';
 import { ISpace } from 'ClientApp/models/Spaces';
-
-// mock all route elements
-let mockRouter: any = {};
-let mockRouterMatch: any = {
-  params: {}
-};
+import { fakeWorkstations } from '../specs/mockData/Workstation';
+import WorkstationContainer from '../Workstations/WorkstationContainer';
 
 jest.mock('../History/HistoryContainer', () => {
   return {
@@ -22,7 +16,7 @@ jest.mock('../History/HistoryContainer', () => {
 });
 
 let container: Element = null;
-let selectedSpace: ISpace = {
+const selectedSpace: ISpace = {
   id: 3535,
   deptName: "Dean's Office, CA&ES",
   bldgName: 'Mrak Hall',
@@ -67,13 +61,9 @@ describe('Workstation Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <WorkstationContainer
-            space={selectedSpace}
-            tags={null}
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <WorkstationContainer space={selectedSpace} tags={null} />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -95,13 +85,9 @@ describe('Workstation Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <WorkstationContainer
-            space={selectedSpace}
-            tags={null}
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <WorkstationContainer space={selectedSpace} tags={null} />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -123,13 +109,9 @@ describe('Workstation Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <WorkstationContainer
-            space={selectedSpace}
-            tags={null}
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <WorkstationContainer space={selectedSpace} tags={null} />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -160,13 +142,9 @@ describe('Workstation Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <WorkstationContainer
-            space={selectedSpace}
-            tags={null}
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter>
+            <WorkstationContainer space={selectedSpace} tags={null} />
+          </MemoryRouter>
         </Context.Provider>,
         container
       );
@@ -177,15 +155,6 @@ describe('Workstation Container', () => {
   });
 
   it('Shows workstation details', async () => {
-    mockRouter.push = () => {
-      console.log('Nothing');
-    };
-    mockRouterMatch.params = {
-      action: 'details',
-      assetType: 'workstations',
-      id: 17 // test workstation id
-    };
-
     await act(async () => {
       // spy on our context's fetch handler to return fake workstations
       jest
@@ -195,13 +164,15 @@ describe('Workstation Container', () => {
       // important to add the context provider here since it includes permissions and fetch info
       render(
         <Context.Provider value={contextObject}>
-          <WorkstationContainer
-            space={selectedSpace}
-            tags={null}
-            history={mockRouter}
-            match={mockRouterMatch}
-            location={mockRouter}
-          />
+          <MemoryRouter
+            initialEntries={[
+              '/caes-cru/spaces/details/3535/workstations/details/17'
+            ]}
+          >
+            <Route path='/:team/spaces/:containerAction?/:containerId?/:assetType?/:action?/:id?'>
+              <WorkstationContainer space={selectedSpace} tags={null} />
+            </Route>
+          </MemoryRouter>
         </Context.Provider>,
         container
       );

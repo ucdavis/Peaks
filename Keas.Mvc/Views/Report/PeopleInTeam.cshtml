@@ -1,0 +1,186 @@
+@using Microsoft.CodeAnalysis.Operations
+@model PeopleInTeamReportViewModel
+
+@{
+    ViewData["Title"] = "People In Team";
+}
+
+<div class="card people-color">
+<div class="card-header-people">
+    <div class="card-head">
+        <h2>People In Team Report</h2>
+    </div>
+</div>
+<div class="card-content">
+        
+<form asp-action="PeopleInTeam" method="get">
+
+
+    <div class="row align-items-start">
+        <div class="col-md-6 col-lg-4">
+            <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
+            <ul>
+                            
+                <li>
+                    To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).
+                </li>
+                <li>
+                    If you have filtered the report with the Search feature, only the filtered results will be exported.
+                </li>
+                <li>
+                    You can filter the table with the data that isn't displayed on the screen (such as notes).
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-6 col-lg-4">
+            <h3>Filters</h3>
+            <div class="form-group">
+                <label asp-for="HideInactive" class="form-check-label"></label>
+                <input asp-for="HideInactive" class="peaks-checkbox" />
+            </div>
+            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+        </div>
+    </div>
+
+</form>
+<br/><br/>
+
+<table class="table dataTable">
+    <thead>
+    <tr>
+        <th>
+            Id
+        </th>
+        <th>
+            Active
+        </th>
+        <th>
+            Login Id
+        </th>
+        <th>
+            First Name
+        </th>
+        <th>
+            Last Name
+        </th>
+        <th>
+            Person Email
+        </th>
+        <th>
+            Tags
+        </th>
+        <th>
+            Title
+        </th>
+        <th>
+            Home Phone
+        </th>
+        <th>
+            Team Phone
+        </th>
+        <th>
+            Supervisor
+        </th>
+        <th>
+            Start Date
+        </th>
+        <th>
+            End Date
+        </th>
+        <th>
+            Category
+        </th>
+        <th>
+            Notes
+        </th>
+
+        <th>
+            User Email
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.PeopleList) {
+        <tr>
+            <td> 
+                @item.Id
+            </td>
+            <td>
+                @item.Active.ToYesNoString()
+            </td>
+            <td>
+                @item.UserId
+            </td>
+            <td>
+                @item.FirstName
+            </td>
+            <td>
+                @item.LastName
+            </td>
+            <td>
+                @item.Email
+            </td>
+            <td>
+                @item.Tags
+            </td>
+            <td>
+                @item.Title
+            </td>
+            <td>
+                @item.HomePhone
+            </td>
+            <td>
+                @item.TeamPhone
+            </td>
+            <td>
+                @(item.SupervisorId.HasValue ? item.Supervisor.Name: string.Empty)
+            </td>
+            <td>
+                @item.StartDate
+            </td>
+            <td>
+                @item.EndDate
+            </td>
+            <td>
+                @item.Category
+            </td>
+            <td>
+                @item.Notes
+            </td>
+            <td>
+                @item.User.Email
+            </td>
+            <td>
+                <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.Id)' target="_blank">Details</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+</div>
+</div>
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ImportJS");}  
+    
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+            "dom": 'lBfrtip',
+            "buttons": [
+                { extend: 'copyHtml5' },
+                { extend: 'excelHtml5' },
+                { extend: 'csvHtml5' },
+                { extend: 'print'},
+            ],
+            "columnDefs": [
+                { "type": "date", "targets": [11,12] },
+                { "targets" : [ 0,2,7,8,9,14,15], "visible" : false}
+            ]
+        });
+    </script>
+}
