@@ -25,7 +25,7 @@
     color: $people;
   }
   .fa-info-circle {
-    color: transparentize($people, 0.96);
+    color: $people;
   }
   .card-header-people {
     border-bottom: 4px solid $people;
@@ -73,7 +73,7 @@
   }
 
   .fa-info-circle {
-    color: transparentize($keys, 0.6);
+    color: $keys;
   }
   .card-header-keys {
     border-bottom: 4px solid $keys;
@@ -106,7 +106,7 @@
   }
 
   .fa-info-circle {
-    color: transparentize($spaces, 0.4);
+    color: $spaces;
   }
   .card-header-spaces {
     border-bottom: 4px solid $spaces;
@@ -139,7 +139,7 @@
     }
   }
   .fa-info-circle {
-    color: transparentize($equipment, 0.5);
+    color: $equipment;
   }
   .card-header-equipment {
     border-bottom: 4px solid $equipment;
@@ -176,7 +176,7 @@
   }
 
   .fa-info-circle {
-    color: transparentize($access, 0.6);
+    color: $access;
   }
   .card-header-access {
     border-bottom: 4px solid $access;
