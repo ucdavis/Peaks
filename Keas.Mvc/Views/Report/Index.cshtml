@@ -43,6 +43,9 @@
                 <li>
                     <a asp-action="PeopleInTeam">People in Team <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                 </li> 
+                <li>
+                    <a asp-action="PeopleLeavingWithAssets">People Leaving With assets <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                </li> 
             </ul>
         </div>
         @if (Model.Contains(Role.Codes.SpaceMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
