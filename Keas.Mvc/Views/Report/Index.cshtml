@@ -20,13 +20,13 @@
                 <h3><i class="fas fa-hdd fa-xs"></i> Equipment Reports</h3>
                 <ul>
                     <li>
-                        <a asp-action="EquipmentReport">View All Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="EquipmentReport">View All Equipment&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                     <li>
-                        <a asp-action="EquipmentReportV2">View All Equipment V2 <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="EquipmentReportV2">View All Equipment V2&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                     <li>
-                        <a asp-action="KeyValues">Key/Value Pairs in Equipment <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="KeyValues">Key/Value Pairs in Equipment&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>      
                 </ul>
             </div>
@@ -35,13 +35,13 @@
             <h3><i class="fas fa-users fa-xs"></i> People Reports</h3>
             <ul>
                 <li>
-                    <a asp-action="SupervisorDirectReports">Direct Reports by Supervisor <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    <a asp-action="SupervisorDirectReports">Direct Reports by Supervisor&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                 </li>
                 <li>
-                    <a asp-action="PersonActions">Actions Taken Against People in Team <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    <a asp-action="PersonActions">Actions Taken Against People in Team&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                 </li>   
                 <li>
-                    <a asp-action="PeopleInTeam">People in Team <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    <a asp-action="PeopleInTeam">People in Team&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                 </li> 
                 <li>
                     <a asp-action="PeopleLeavingWithAssets">People Leaving With assets <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
@@ -54,7 +54,7 @@
                 <h3><i class="fas fa-building fa-xs"></i> Workstations Reports</h3>
                     <ul>
                         <li>
-                        <a asp-action="WorkstationReport">View All Workstations <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="WorkstationReport">View All Workstations&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                         </li>
                     </ul> 
             </div>
@@ -65,7 +65,7 @@
                 <h3><i class="fas fa-id-card fa-xs"></i> Access Reports</h3>
                 <ul>
                     <li>
-                        <a asp-action="AccessReport">View All Access <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="AccessReport">View All Access&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                 </ul>
             </div>
@@ -77,13 +77,13 @@
                 <h3><i class="fas fa-key fa-xs"></i> Keys Reports</h3>
                 <ul>
                     <li>
-                        <a asp-action="KeyReport">View All Keys <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="KeyReport">View All Keys&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                     <li>
-                        <a asp-action="KeyWithSerialReport">Keys With Serials <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="KeyWithSerialReport">Keys With Serials&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                     <li>
-                        <a asp-action="KeyWithSpaceReport">Keys With Spaces <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="KeyWithSpaceReport">Keys With Spaces&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                 </ul>
             </div>
@@ -94,7 +94,7 @@
                 <h3><i class="fas fa-file-alt fa-xs"></i> Documents Reports</h3>
                 <ul>
                     <li>
-                        <a asp-action="PeopleWithIncompleteDocuments">People with Unsigned Documents <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="PeopleWithIncompleteDocuments">People with Unsigned Documents&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                 </ul>
             </div>
@@ -103,12 +103,12 @@
             <h3><i class="fas fa-list fa-xs"></i> General Reports</h3>
             <ul>
                 <li>
-                    <a asp-action="ExpiringItems">Expiring Items <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    <a asp-action="ExpiringItems">Expiring Items&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                 </li>
                 @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin) || Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.SpaceMaster))
                 {
                     <li>
-                        <a asp-action="UnAcceptedItems">Items Pending Acceptance <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                        <a asp-action="UnAcceptedItems">Items Pending Acceptance&nbsp;<i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                 }
 
