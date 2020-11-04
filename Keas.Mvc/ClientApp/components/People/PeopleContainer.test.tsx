@@ -209,7 +209,7 @@ describe('People Container', () => {
     // should show person contact info
     const personContent = container.querySelector('.person-col').textContent;
 
-    expect(personContent).toContain('chuck@testpilot.gov');
+    expect(personContent).toContain('chuck@ucdavis.edu');
 
     // should show the access container
     const accessAssignmentContainerContent = container.querySelector(
