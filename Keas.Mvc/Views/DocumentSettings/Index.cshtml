@@ -1,4 +1,4 @@
-@model IEnumerable<Keas.Core.Domain.TeamDocumentSetting>
+@model TeamDocumentSettingsModel
 
 @{
     ViewData["Title"] = "Document Signing Settings";
@@ -10,41 +10,64 @@
     <div class="card-head">
       <div class="row justify-content-between">
         <h2>Document Settings</h2>
-        <a class="btn btn-link" asp-action="Create"><i class="fas fa-plus fa-sm" aria-hidden="true"></i> Create New</a>  
       </div>
     </div>
   </div>
-<div class="card-content">
-    <p>The following DocuSign templates are available to be sent out to team members for signature</p>
-    <table class="table">
-        <thead>
-            <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Name)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.TemplateId)
-                    </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-    @foreach (var item in Model) {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.TemplateId)
-                </td>
-                <td>
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                </td>
-            </tr>
-    }
-        </tbody>
-    </table>
-</div>
+  <div class="card-content">
+          @if (Model.TeamAccount?.AccountId == null)
+          {
+              <p>
+                  The team does not have a Docusign account assigned. The following DocuSign accounts are available to be used by this team. Please select one.
+              </p>
+          }
+          else
+          {
+              <p>
+                  <b>Docusign Account:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountName)<br/>
+                  <b>Account Id:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountId)<br/>
+                  <b>Api Base Url:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.ApiBasePath)
+              </p>
+          }
+      <p></p>
+      <table class="table">
+          <thead>
+              <tr>
+                  <th>
+                      @Html.DisplayNameFor(model => model.AvailableAccounts.First().AccountName)
+                  </th>
+                  <th>
+                      @Html.DisplayNameFor(model => model.AvailableAccounts.First().AccountId)
+                  </th>
+                  <th>
+                      @Html.DisplayNameFor(model => model.AvailableAccounts.First().ApiBasePath)
+                  </th>
+                  <th></th>
+              </tr>
+          </thead>
+          <tbody>
+              @foreach (var item in Model.AvailableAccounts)
+              {
+                  <tr>
+                      <td>
+                          @Html.DisplayFor(modelItem => item.AccountName)
+                      </td>
+                      <td>
+                          @Html.DisplayFor(modelItem => item.AccountId)
+                      </td>
+                      <td>
+                          @Html.DisplayFor(modelItem => item.ApiBasePath)
+                      </td>
+                      <td>
+                          <form asp-action="SelectAccount" method="post">
+                              <input id="AccountId" name="AccountId" type="text" value="@item.AccountId" hidden />
+                              <a href="" onclick="this.parentElement.submit(); return false;">Select Account</a>
+                          </form>
+                      </td>
+                  </tr>
+              }
+          </tbody>
+      </table>
+  </div>
 
 </div>
 

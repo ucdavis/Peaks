@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DocuSign.eSign.Api;
 using DocuSign.eSign.Client;
+using DocuSign.eSign.Client.Auth;
 using DocuSign.eSign.Model;
 using Keas.Mvc.Models;
 using Microsoft.Extensions.Options;
@@ -19,6 +20,7 @@ namespace Keas.Mvc.Services
         Task<EnvelopesInformation> GetEnvelopes(string[] envelopeIds);
         Task<EnvelopeTemplate> GetTemplate(string templateId);
         Task<EnvelopeSummary> SendTemplate(string signerEmail, string signerName, string templateId);
+        OAuth.UserInfo GetUserInfo();
     }
 
     public class DocumentSigningService : IDocumentSigningService
@@ -30,10 +32,24 @@ namespace Keas.Mvc.Services
 
         private readonly DocumentSigningSettings _documentSigningSettings;
 
+        private OAuth.UserInfo _userInfo;
+
         public DocumentSigningService(IOptions<DocumentSigningSettings> documentSigningSettings)
         {
             _apiClient = _apiClient ?? new ApiClient();
             _documentSigningSettings = documentSigningSettings.Value;
+        }
+
+        public OAuth.UserInfo GetUserInfo()
+        {
+            if (_userInfo != null)
+                return _userInfo;
+
+            var apiClient = new ApiClient(_documentSigningSettings.ApiBasePath);
+            var token = GetToken();
+            _userInfo = apiClient.GetUserInfo(token.access_token);
+
+            return _userInfo;
         }
 
         public async Task<EnvelopeSummary> SendTemplate(string signerEmail, string signerName, string templateId)
