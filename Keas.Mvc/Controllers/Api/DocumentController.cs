@@ -91,7 +91,8 @@ namespace Keas.Mvc.Controllers.Api
             var documentTemplateInfos = templates
                 .Select(x => new DocumentTemplateInfo
                 {
-                    TemplateId = x.TemplateId, Name = x.Name, TeamId = team.Id
+                    TemplateId = x.TemplateId, Name = x.Name, TeamId = team.Id, 
+                    ApiBasePath = team.DocumentApiBasePath, AccountId = team.DocumentAccountId
                 })
                 .ToList();
 

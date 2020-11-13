@@ -152,7 +152,7 @@ namespace Keas.Mvc.Services
         {
             var token = GetToken();
 
-            var config = new Configuration(new ApiClient(apiBasePath));
+            var config = new Configuration(new ApiClient(apiBasePath + "/restapi"));
             config.AddDefaultHeader("Authorization", "Bearer " + token.access_token);
 
             return config;

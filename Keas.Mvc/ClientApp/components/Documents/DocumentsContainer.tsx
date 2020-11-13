@@ -57,6 +57,8 @@ const DocumentsContainer = (props: IProps): JSX.Element => {
         teamId: ctx.team.id,
         name: template.name,
         templateId: template.templateId,
+        accountId: template.accountId,
+        apiBasePath: template.apiBasePath,
         status: 'sent'
       };
 

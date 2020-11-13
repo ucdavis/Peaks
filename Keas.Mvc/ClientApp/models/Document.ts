@@ -5,6 +5,8 @@ export interface IDocument {
   id: number;
   envelopeId: string;
   templateId: string;
+  accountId: string;
+  apiBasePath: string;
   status: string;
   name: string;
   tags: string;
@@ -21,4 +23,6 @@ export interface IDocumentTemplate {
   templateId: string;
   name: string;
   teamId: number;
+  accountId: string;
+  apiBasePath: string;
 }

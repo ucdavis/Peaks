@@ -10,5 +10,7 @@ namespace Keas.Mvc.Models
         public int TeamId { get; set; }
         public string TemplateId { get; set; }
         public string Name { get; set; }
+        public string AccountId { get; set; }
+        public string ApiBasePath { get; set; }
     }
 }
