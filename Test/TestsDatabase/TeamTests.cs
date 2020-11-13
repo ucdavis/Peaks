@@ -41,7 +41,10 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"Notification Email\")]",
                 "[System.ComponentModel.DataAnnotations.EmailAddressAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)256)]",
-            }));  
+            }));
+            expectedFields.Add(new NameAndType("DocumentAccountId", "System.String", new List<string>()));
+            expectedFields.Add(new NameAndType("DocumentAccountName", "System.String", new List<string>()));
+            expectedFields.Add(new NameAndType("DocumentApiBasePath", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("FISOrgs", "System.Collections.Generic.List`1[Keas.Core.Domain.FinancialOrganization]", new List<string>()));
             expectedFields.Add(new NameAndType("Groups", "System.Collections.Generic.List`1[Keas.Core.Domain.GroupXTeam]", new List<string>
             {
@@ -71,7 +74,7 @@ namespace Test.TestsDatabase
             {
                 "[Newtonsoft.Json.JsonIgnoreAttribute()]",
             }));
-            
+
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(Team));
