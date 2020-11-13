@@ -123,6 +123,8 @@ namespace Keas.Mvc.Controllers.Api
                 TeamId = document.TeamId,
                 EnvelopeId = envelope.EnvelopeId,
                 TemplateId = document.TemplateId,
+                AccountId = document.AccountId,
+                ApiBasePath = document.ApiBasePath,
                 Active = true,
                 Status = "sent",
                 CreatedAt = DateTime.UtcNow
