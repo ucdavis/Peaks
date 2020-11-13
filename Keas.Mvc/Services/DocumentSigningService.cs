@@ -86,10 +86,6 @@ namespace Keas.Mvc.Services
 
             envelope.Status = "sent";
 
-            if (!string.IsNullOrEmpty(_documentSigningSettings.BrandId)) {
-                envelope.BrandId = _documentSigningSettings.BrandId;
-            }
-
             return await envelopesApi.CreateEnvelopeAsync(document.AccountId, envelope);
         }
 
