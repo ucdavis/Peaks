@@ -14,12 +14,13 @@ namespace Keas.Mvc.Services
 {
     public interface IDocumentSigningService
     {
-        Task<Stream> DownloadEnvelope(string envelopeId);
+        Task<Stream> DownloadEnvelope(Core.Domain.Team team, string envelopeId);
         string GetEnvelopePath(string envelopeId);
-        Task<EnvelopesInformation> GetEnvelopes(string email);
-        Task<EnvelopesInformation> GetEnvelopes(string[] envelopeIds);
-        Task<EnvelopeTemplate> GetTemplate(string templateId);
-        Task<EnvelopeSummary> SendTemplate(string signerEmail, string signerName, string templateId);
+        Task<EnvelopesInformation> GetEnvelopes(Core.Domain.Team team, string email);
+        Task<EnvelopesInformation> GetEnvelopes(Core.Domain.Team team, string[] envelopeIds);
+        Task<EnvelopeTemplate> GetTemplate(Core.Domain.Team team, string templateId);
+        Task<IEnumerable<EnvelopeTemplate>> GetTemplates(Core.Domain.Team team);
+        Task<EnvelopeSummary> SendTemplate(Core.Domain.Document document);
         OAuth.UserInfo GetUserInfo();
     }
 
@@ -36,7 +37,7 @@ namespace Keas.Mvc.Services
 
         public DocumentSigningService(IOptions<DocumentSigningSettings> documentSigningSettings)
         {
-            _apiClient = _apiClient ?? new ApiClient();
+            _apiClient ??= new ApiClient();
             _documentSigningSettings = documentSigningSettings.Value;
         }
 
@@ -52,13 +53,13 @@ namespace Keas.Mvc.Services
             return _userInfo;
         }
 
-        public async Task<EnvelopeSummary> SendTemplate(string signerEmail, string signerName, string templateId)
+        public async Task<EnvelopeSummary> SendTemplate(Core.Domain.Document document)
         {
-            var envelopesApi = new EnvelopesApi(GetApiClient());
-            var envelope = new EnvelopeDefinition { TemplateId = templateId };
+            var envelopesApi = new EnvelopesApi(GetApiClient(document.ApiBasePath));
+            var envelope = new EnvelopeDefinition { TemplateId = document.TemplateId };
 
             // Only handle templtes with single role named "signer"
-            var signer = new TemplateRole { Email = signerEmail, Name = signerName, RoleName = "signer" };
+            var signer = new TemplateRole { Email = document.Person.Email, Name = document.Person.Name, RoleName = "signer" };
             envelope.TemplateRoles = new List<TemplateRole> { signer };
 
             // get webhook callbacks for completion events
@@ -89,48 +90,69 @@ namespace Keas.Mvc.Services
                 envelope.BrandId = _documentSigningSettings.BrandId;
             }
 
-            return await envelopesApi.CreateEnvelopeAsync(_documentSigningSettings.AccountId, envelope);
+            return await envelopesApi.CreateEnvelopeAsync(document.AccountId, envelope);
         }
 
-        public async Task<EnvelopeTemplate> GetTemplate(string templateId)
+        public async Task<EnvelopeTemplate> GetTemplate(Core.Domain.Team team, string templateId)
         {
-            var templatesApi = new TemplatesApi(GetApiClient());
-            var templateInfo = await templatesApi.GetAsync(_documentSigningSettings.AccountId, templateId);
+            var templatesApi = new TemplatesApi(GetApiClient(team.DocumentApiBasePath));
+            var templateInfo = await templatesApi.GetAsync(team.DocumentAccountId, templateId);
 
             return templateInfo;
         }
 
-        public async Task<EnvelopesInformation> GetEnvelopes(string email)
+        public async Task<IEnumerable<EnvelopeTemplate>> GetTemplates(Core.Domain.Team team)
         {
-            var envelopesApi = new EnvelopesApi(GetApiClient());
+            var templatesApi = new TemplatesApi(GetApiClient(team.DocumentApiBasePath));
+            var options = new TemplatesApi.ListTemplatesOptions();
+            var envelopeTemplates = new List<EnvelopeTemplate>();
+            var startPosition = "0";
+
+            do
+            {
+                options.startPosition = startPosition;
+                var templateInfo = await templatesApi.ListTemplatesAsync(team.DocumentAccountId);
+                envelopeTemplates.AddRange(templateInfo.EnvelopeTemplates ?? new List<EnvelopeTemplate>());
+                startPosition = envelopeTemplates.Count < int.Parse(templateInfo.TotalSetSize)
+                    ? (int.Parse(templateInfo.EndPosition) + 1).ToString() 
+                    : null;
+
+            } while (startPosition != null);
+
+            return envelopeTemplates;
+        }
+
+        public async Task<EnvelopesInformation> GetEnvelopes(Core.Domain.Team team, string email)
+        {
+            var envelopesApi = new EnvelopesApi(GetApiClient(team.DocumentApiBasePath));
             var options = new EnvelopesApi.ListStatusChangesOptions();
             options.fromDate = DateTime.Now.AddDays(-30).ToString("yyyy/MM/dd");
             options.userName = email;
 
-            return await envelopesApi.ListStatusChangesAsync(_documentSigningSettings.AccountId, options);
+            return await envelopesApi.ListStatusChangesAsync(team.DocumentAccountId, options);
         }
 
-        public async Task<EnvelopesInformation> GetEnvelopes(string[] envelopeIds)
+        public async Task<EnvelopesInformation> GetEnvelopes(Core.Domain.Team team, string[] envelopeIds)
         {
-            var envelopesApi = new EnvelopesApi(GetApiClient());
+            var envelopesApi = new EnvelopesApi(GetApiClient(team.DocumentApiBasePath));
             var options = new EnvelopesApi.ListStatusChangesOptions();
             options.envelopeIds = string.Join(",", envelopeIds);
 
-            return await envelopesApi.ListStatusChangesAsync(_documentSigningSettings.AccountId, options);
+            return await envelopesApi.ListStatusChangesAsync(team.DocumentAccountId, options);
         }
 
-        public async Task<Stream> DownloadEnvelope(string envelopeId)
+        public async Task<Stream> DownloadEnvelope(Core.Domain.Team team, string envelopeId)
         {
-            var envelopesApi = new EnvelopesApi(GetApiClient());
+            var envelopesApi = new EnvelopesApi(GetApiClient(team.DocumentApiBasePath));
 
-            return await envelopesApi.GetDocumentAsync(_documentSigningSettings.AccountId, envelopeId, "combined");
+            return await envelopesApi.GetDocumentAsync(team.DocumentAccountId, envelopeId, "combined");
         }
 
-        private Configuration GetApiClient()
+        private Configuration GetApiClient(string apiBasePath)
         {
             var token = GetToken();
 
-            var config = new Configuration(new ApiClient(_documentSigningSettings.ApiBasePath));
+            var config = new Configuration(new ApiClient(apiBasePath));
             config.AddDefaultHeader("Authorization", "Bearer " + token.access_token);
 
             return config;

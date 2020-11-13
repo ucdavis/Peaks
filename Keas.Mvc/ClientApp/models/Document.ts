@@ -18,7 +18,6 @@ export interface IDocument {
 }
 
 export interface IDocumentTemplate {
-  id: number;
   templateId: string;
   name: string;
   teamId: number;

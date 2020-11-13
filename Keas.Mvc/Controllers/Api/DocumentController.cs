@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Net.Mime;
+using Keas.Mvc.Models;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -67,25 +68,34 @@ namespace Keas.Mvc.Controllers.Api
         {
             var document = await _context.Documents
                 .Where(x => x.Team.Slug == Team && x.Id == id)
+                .Include(x => x.Team)
                 .SingleAsync();
 
-            var fileStream = await _documentSigningService.DownloadEnvelope(document.EnvelopeId);
+            var fileStream = await _documentSigningService.DownloadEnvelope(document.Team, document.EnvelopeId);
 
             return File(fileStream, "application/pdf", document.Name + ".pdf");
         }
 
         // Get a specific document's combined pdf
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<TeamDocumentSetting>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<DocumentTemplateInfo>), StatusCodes.Status200OK)]
         public async Task<IActionResult> TeamSettings()
         {
-            var teamSettings = await _context.TeamDocumentSettings
-                .Where(x => x.Team.Slug == Team)
-                .OrderBy(x => x.Name)
+            var team = await _context.Teams
                 .AsNoTracking()
-                .ToListAsync();
+                .SingleAsync(t => t.Slug == Team);
 
-            return Json(teamSettings);
+            // Entire templates are being pulled just to extract name and id. Not sure if anything can be done about that.
+            var templates = await _documentSigningService.GetTemplates(team);
+
+            var documentTemplateInfos = templates
+                .Select(x => new DocumentTemplateInfo
+                {
+                    TemplateId = x.TemplateId, Name = x.Name, TeamId = team.Id
+                })
+                .ToList();
+
+            return Json(documentTemplateInfos);
         }
 
         [HttpPost]
@@ -103,7 +113,7 @@ namespace Keas.Mvc.Controllers.Api
                 return NotFound();
             }
 
-            var envelope = await _documentSigningService.SendTemplate(document.Person.Email, document.Person.Name, document.TemplateId);
+            var envelope = await _documentSigningService.SendTemplate(document);
 
             var newDocument = new Document
             {

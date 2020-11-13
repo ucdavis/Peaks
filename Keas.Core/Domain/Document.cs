@@ -12,6 +12,8 @@ namespace Keas.Core.Domain
         public string Status { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? CompletedAt { get; set; }
+        public string AccountId { get; set; }
+        public string ApiBasePath { get; set; }
 
         protected internal static void OnModelCreating(ModelBuilder builder)
         {

@@ -94,7 +94,7 @@ namespace Keas.Mvc.Controllers
             try {
                 // verify that the template can be accessed by our program.
                 // TODO: make sure not only the template is accessible but that signers are setup properly
-                await _documentSigningService.GetTemplate(newDocSetting.TemplateId);
+                await _documentSigningService.GetTemplate(team, newDocSetting.TemplateId);
             } catch {
                 ModelState.AddModelError("TemplateId", $"The templateId {newDocSetting.TemplateId} was not found.  Please ensure you have shared the template as specified in the instructions");
             }

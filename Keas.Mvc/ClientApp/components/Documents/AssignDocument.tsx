@@ -19,7 +19,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
   const [templates, setTemplates] = useState<IDocumentTemplate[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const [selectedTemplate, setSelectedTemplate] = useState<number>();
+  const [selectedTemplate, setSelectedTemplate] = useState<string>();
 
   // on load, get the list of templates we have available for this team
   useEffect(() => {
@@ -30,7 +30,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
 
       if (result.length > 0) {
         setTemplates(result);
-        setSelectedTemplate(result[0].id); // default select the first one
+        setSelectedTemplate(result[0].templateId); // default select the first one
       }
 
       setLoading(false);
@@ -61,7 +61,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
             setLoading(true);
             try {
               await props.sendDocument(
-                templates.find(t => t.id === selectedTemplate)
+                templates.find(t => t.templateId === selectedTemplate)
               );
               setLoading(false);
             } catch {
@@ -74,10 +74,10 @@ export const AssignDocument = (props: IProps): JSX.Element => {
             <label>Select Template To Send</label>
             <select
               className='form-control'
-              onChange={e => setSelectedTemplate(parseInt(e.target.value))}
+              onChange={e => setSelectedTemplate(e.target.value)}
             >
               {templates.map(template => (
-                <option key={template.id} value={template.id}>
+                <option key={template.templateId} value={template.templateId}>
                   {template.name}
                 </option>
               ))}
