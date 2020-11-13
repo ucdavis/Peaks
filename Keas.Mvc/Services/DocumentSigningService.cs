@@ -111,7 +111,7 @@ namespace Keas.Mvc.Services
             do
             {
                 options.startPosition = startPosition;
-                var templateInfo = await templatesApi.ListTemplatesAsync(team.DocumentAccountId);
+                var templateInfo = await templatesApi.ListTemplatesAsync(team.DocumentAccountId, options);
                 envelopeTemplates.AddRange(templateInfo.EnvelopeTemplates ?? new List<EnvelopeTemplate>());
                 startPosition = envelopeTemplates.Count < int.Parse(templateInfo.TotalSetSize)
                     ? (int.Parse(templateInfo.EndPosition) + 1).ToString() 
