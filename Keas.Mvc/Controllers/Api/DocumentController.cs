@@ -126,7 +126,7 @@ namespace Keas.Mvc.Controllers.Api
                 AccountId = document.AccountId,
                 ApiBasePath = document.ApiBasePath,
                 Active = true,
-                Status = "sent",
+                Status = "Sent",
                 CreatedAt = DateTime.UtcNow
             };
 
