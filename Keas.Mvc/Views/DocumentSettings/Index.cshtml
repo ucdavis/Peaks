@@ -14,20 +14,52 @@
     </div>
   </div>
   <div class="card-content">
-          @if (Model.TeamAccount?.AccountId == null)
-          {
-              <p>
-                  The team does not have a Docusign account assigned. The following DocuSign accounts are available to be used by this team. Please select one.
-              </p>
-          }
-          else
-          {
-              <p>
-                  <b>Docusign Account:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountName)<br/>
-                  <b>Account Id:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountId)<br/>
-                  <b>Api Base Url:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.ApiBasePath)
-              </p>
-          }
+      <div class="row">
+          <div class="col-md-8">
+              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseInstructions" aria-expanded="false" aria-controls="collapseInstructions">
+                  Show Instructions
+              </button>
+
+              <div class="collapse" id="collapseInstructions">
+                  <div class="card card-body">
+                      <h3>Familiar with DocuSign Already?</h3>
+                      <p>You need to create a template with a single recipient who's role is "signer" and share the template with the PEAKS group.</p>
+                      <h3>Basic Instructions</h3>
+                      <p>You can find detailed instructions in CRU's Peaks <a target="_blank" href="https://computing.caes.ucdavis.edu/documentation/peaks/docusign-documents">DocuSign Documents</a> Document.
+                          It essentially boils down to the following steps...</p>
+                      <ol>
+                          <li>
+                              Login to <a href="https://app.docusign.com/home" target="_blank">docusign.com</a> and choose "Templates" from the top menu.
+                              If you do not see that option, <a href="https://itcatalog.ucdavis.edu/service/docusign-pilot" target="_blank">request access here</a>
+                          </li>
+                          <li>Click "New" and create a tempate</li>
+                          <li>Give the template and name and then add the documents that need signing</li>
+                          <li>In the "Add Recipients" section, <strong> in the "Role" field type "signer"</strong>. Do not fill in name or email, and do not add any more recipients</li>
+                          <li>If you would like to you can customize the email subject and message that will be sent out when the system requests their signature</li>
+                          <li>Click "Next" and setup the document for signing as desired, ex: placing their signature and date signed at the bottom</li>
+                          <li>Click "Save and Close"</li>
+                          <li>Back at the list of templates, select the dropdown next to your template and choose "Share with Users" and <strong>choose GROUPS and select PEAKS and then click share</strong></li>
+                          <li>And finally, click on the template name to navigate to the template details page.</li>
+                      </ol>
+                      <p>Templates created in this manner should be listed in Peaks' Assign Document dialog the next time the User Details page is visited.</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      @if (Model.TeamAccount?.AccountId == null)
+      {
+          <p>
+              The team does not have a DocuSign account assigned. The following DocuSign accounts are available to be used by this team. Please select one.
+          </p>
+      }
+      else
+      {
+          <p>
+              <b>Docusign Account:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountName)<br />
+              <b>Account Id:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountId)<br />
+              <b>Api Base Url:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.ApiBasePath)
+          </p>
+      }
       <p></p>
       <table class="table">
           <thead>
