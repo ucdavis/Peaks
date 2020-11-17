@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Models;
+using Keas.Mvc.Models;
 using Keas.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,13 +25,55 @@ namespace Keas.Mvc.Controllers
 
         public async Task<ActionResult> Index()
         {
-            var model = await _context.TeamDocumentSettings.Where(t => t.Team.Slug == Team).OrderBy(t=> t.Name).ToListAsync();
+            var userInfo = _documentSigningService.GetUserInfo();
+
+            var accounts = userInfo.Accounts.Select(a => new DocumentSigningAccount {
+                    AccountId = a.AccountId,
+                    AccountName = a.AccountName,
+                    ApiBasePath = a.BaseUri,
+                    IsDefault = bool.Parse(a.IsDefault)})
+                .ToList();
+
+            var teamAccount = await _context.Teams
+                .Where(t => t.Slug == Team)
+                .Select(t => new DocumentSigningAccount
+                {
+                    AccountId = t.DocumentAccountId,
+                    AccountName = t.DocumentAccountName,
+                    ApiBasePath = t.DocumentApiBasePath
+                })
+                .SingleAsync();
+
+            var teamDocumentSettings = await _context.TeamDocumentSettings
+                .Where(t => t.Team.Slug == Team)
+                .ToListAsync();
+
+            var model = new TeamDocumentSettingsModel
+            {
+                AvailableAccounts = accounts,
+                TeamDocumentSettings = teamDocumentSettings,
+                TeamAccount = teamAccount
+            };
+
             return View(model);
         }
 
-        public ActionResult Create()
+        [HttpPost]
+        public async Task<ActionResult> SelectAccount(string AccountId)
         {
-            return View();
+            var account = _documentSigningService.GetUserInfo()
+                .Accounts.Single(a => a.AccountId == AccountId);
+
+            if (account != null)
+            {
+                var team = await _context.Teams.SingleAsync(t => t.Slug == Team);
+                team.DocumentAccountName = account.AccountName;
+                team.DocumentAccountId = account.AccountId;
+                team.DocumentApiBasePath = account.BaseUri;
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Index");
         }
         
         [HttpPost]
@@ -51,7 +94,7 @@ namespace Keas.Mvc.Controllers
             try {
                 // verify that the template can be accessed by our program.
                 // TODO: make sure not only the template is accessible but that signers are setup properly
-                await _documentSigningService.GetTemplate(newDocSetting.TemplateId);
+                await _documentSigningService.GetTemplate(team, newDocSetting.TemplateId);
             } catch {
                 ModelState.AddModelError("TemplateId", $"The templateId {newDocSetting.TemplateId} was not found.  Please ensure you have shared the template as specified in the instructions");
             }

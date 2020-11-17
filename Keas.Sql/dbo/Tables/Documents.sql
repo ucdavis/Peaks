@@ -11,6 +11,8 @@ CREATE TABLE [dbo].[Documents] (
     [TeamId]                INT            NOT NULL,
     [CreatedAt]             DATETIME2 (7)  NOT NULL,
     [CompletedAt]           DATETIME2 (7)  NULL,
+    [AccountId] NVARCHAR(64) NULL, 
+    [ApiBasePath] NVARCHAR(64) NULL, 
     CONSTRAINT [PK_Documents] PRIMARY KEY CLUSTERED ([Id] ASC),
     CONSTRAINT [FK_Documents_People_PersonId] FOREIGN KEY ([PersonId]) REFERENCES [dbo].[People] ([Id]),
     CONSTRAINT [FK_Documents_Teams_TeamId] FOREIGN KEY ([TeamId]) REFERENCES [dbo].[Teams] ([Id]) ON DELETE CASCADE  

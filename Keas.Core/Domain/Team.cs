@@ -48,6 +48,11 @@ namespace Keas.Core.Domain
         public List<GroupXTeam> Groups { get; set; }
 
         public TeamApiCode TeamApiCode { get; set; }
-       
+
+        public string DocumentAccountName { get; set; }
+
+        public string DocumentAccountId { get; set; }
+
+        public string DocumentApiBasePath { get; set; }
     }
 }
