@@ -85,18 +85,32 @@ namespace Keas.Mvc.Controllers.Api
                 .AsNoTracking()
                 .SingleAsync(t => t.Slug == Team);
 
-            // Entire templates are being pulled just to extract name and id. Not sure if anything can be done about that.
-            var templates = await _documentSigningService.GetTemplates(team);
+            //Return early if they are not setup
+            if (string.IsNullOrWhiteSpace(team.DocumentApiBasePath))
+            {
+                return Json(new List<DocumentTemplateInfo>());
+            }
 
-            var documentTemplateInfos = templates
-                .Select(x => new DocumentTemplateInfo
-                {
-                    TemplateId = x.TemplateId, Name = x.Name, TeamId = team.Id, 
-                    ApiBasePath = team.DocumentApiBasePath, AccountId = team.DocumentAccountId
-                })
-                .ToList();
+            try
+            {
+                // Entire templates are being pulled just to extract name and id. Not sure if anything can be done about that.
+                var templates = await _documentSigningService.GetTemplates(team);
+            
 
-            return Json(documentTemplateInfos);
+                var documentTemplateInfos = templates
+                    .Select(x => new DocumentTemplateInfo
+                    {
+                        TemplateId = x.TemplateId, Name = x.Name, TeamId = team.Id, 
+                        ApiBasePath = team.DocumentApiBasePath, AccountId = team.DocumentAccountId
+                    })
+                    .ToList();
+
+                return Json(documentTemplateInfos);
+            }
+            catch (Exception)
+            {
+                return Json(new List<DocumentTemplateInfo>());
+            }
         }
 
         [HttpPost]
