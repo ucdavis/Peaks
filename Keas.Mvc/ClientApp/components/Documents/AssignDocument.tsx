@@ -45,8 +45,9 @@ export const AssignDocument = (props: IProps): JSX.Element => {
     if (templates.length === 0) {
       return (
         <div>
-          No documents are available to send. Have a team administrator create
-          documents through the Team DocuSign Settings menu.
+          No documents are available to send. Have a team administrator make
+          sure they have selected a docusign account and that docusign
+          template(s) have been shared with the PEAKS service account.
         </div>
       );
     }

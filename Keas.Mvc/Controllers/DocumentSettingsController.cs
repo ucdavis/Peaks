@@ -71,6 +71,8 @@ namespace Keas.Mvc.Controllers
                 team.DocumentAccountId = account.AccountId;
                 team.DocumentApiBasePath = account.BaseUri;
                 await _context.SaveChangesAsync();
+
+                Message = $"{team.DocumentAccountName} Docusign account associated with this team.";
             }
 
             return RedirectToAction("Index");

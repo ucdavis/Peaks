@@ -48,18 +48,24 @@
       </div>
       @if (Model.TeamAccount?.AccountId == null)
       {
-          <p>
+          <div class="card card-body">
+              <h3>You currently have no account selected</h3>
+              <p>
               Before you can access your shared templates, you must add your docusign account to this team.
               The following DocuSign accounts are available. Please select one.
-          </p>
+              </p>
+          </div>
       }
       else
       {
-          <p>
-              <b>Docusign Account:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountName)<br />
-              <b>Account Id:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountId)<br />
-              <b>Api Base Url:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.ApiBasePath)
-          </p>
+          <div class="card card-body">
+              <h3>Selected Account:</h3>
+              <ul>
+                  <li><b>Docusign Account:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountName)</li>
+                  <li><b>Account Id:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountId)</li>
+                  <li><b>Api Base Url:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.ApiBasePath)</li>
+              </ul>
+          </div>
       }
       <p></p>
       <table class="table">
