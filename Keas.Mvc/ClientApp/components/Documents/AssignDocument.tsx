@@ -22,25 +22,22 @@ export const AssignDocument = (props: IProps): JSX.Element => {
   const [selectedTemplate, setSelectedTemplate] = useState<string>();
 
   // on load, get the list of templates we have available for this team
-  useEffect(
-    () => {
-      const loadTemplates = async () => {
-        const result: IDocumentTemplate[] = await ctx.fetch(
-          `/api/${ctx.team.slug}/documents/TeamSettings`
-        );
+  useEffect(() => {
+    const loadTemplates = async () => {
+      const result: IDocumentTemplate[] = await ctx.fetch(
+        `/api/${ctx.team.slug}/documents/TeamSettings`
+      );
 
-        if (result.length > 0) {
-          setTemplates(result);
-          setSelectedTemplate(result[0].templateId); // default select the first one
-        }
+      if (result.length > 0) {
+        setTemplates(result);
+        setSelectedTemplate(result[0].templateId); // default select the first one
+      }
 
-        setLoading(false);
-      };
+      setLoading(false);
+    };
 
-      loadTemplates();
-    },
-    [ctx]
-  );
+    loadTemplates();
+  }, [ctx]);
 
   const { show, setShow } = props;
 
@@ -74,10 +71,10 @@ export const AssignDocument = (props: IProps): JSX.Element => {
             }
           }}
         >
-          <div className="form-group">
+          <div className='form-group'>
             <label>Select Template To Send</label>
             <select
-              className="form-control"
+              className='form-control'
               onChange={e => setSelectedTemplate(e.target.value)}
             >
               {templates.map(template => (
@@ -87,7 +84,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
               ))}
             </select>
           </div>
-          <button type="submit" className="btn btn-primary">
+          <button type='submit' className='btn btn-primary'>
             Submit
           </button>
         </form>
@@ -100,18 +97,18 @@ export const AssignDocument = (props: IProps): JSX.Element => {
       <Modal
         isOpen={show}
         toggle={() => setShow(false)}
-        size="lg"
-        className="documents-color"
+        size='lg'
+        className='documents-color'
       >
-        <div className="modal-header row justify-content-between">
+        <div className='modal-header row justify-content-between'>
           <h2>Assign Document for Signature</h2>
-          <Button color="link" onClick={() => setShow(false)}>
-            <i className="fas fa-times fa-lg" />
+          <Button color='link' onClick={() => setShow(false)}>
+            <i className='fas fa-times fa-lg' />
           </Button>
         </div>
 
         <ModalBody>
-          <div className="container-fluid">
+          <div className='container-fluid'>
             {loading && <div>Processing...</div>}
             {!loading && renderTemplates()}
           </div>
