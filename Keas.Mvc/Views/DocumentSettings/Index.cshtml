@@ -55,11 +55,14 @@
       }
       else
       {
-          <p>
-              <b>Docusign Account:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountName)<br />
-              <b>Account Id:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountId)<br />
-              <b>Api Base Url:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.ApiBasePath)
-          </p>
+          <div class="card card-body">
+              <h3>Selected Account:</h3>
+              <ul>
+                  <li><b>Docusign Account:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountName)</li>
+                  <li><b>Account Id:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountId)</li>
+                  <li><b>Api Base Url:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.ApiBasePath)</li>
+              </ul>
+          </div>
       }
       <p></p>
       <table class="table">
