@@ -48,10 +48,13 @@
       </div>
       @if (Model.TeamAccount?.AccountId == null)
       {
-          <p>
+          <div class="card card-body">
+              <h3>You currently have no account selected</h3>
+              <p>
               Before you can access your shared templates, you must add your docusign account to this team.
               The following DocuSign accounts are available. Please select one.
-          </p>
+              </p>
+          </div>
       }
       else
       {
