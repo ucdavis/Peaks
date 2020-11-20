@@ -107,7 +107,35 @@
           </tbody>
       </table>
   </div>
-
+@if (Model.TeamAccount.AccountId != null)
+{
+    <div class="card-content">
+        <div class="card card-body">
+        <div class="card card-body">
+            <h3>Templates Available and shared for this Account</h3>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Template Name</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.TemplateNames)
+            {
+                <tr>
+                    <td>
+                        @item
+                    </td>
+                    <td></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    </div>
+}
 </div>
 
 

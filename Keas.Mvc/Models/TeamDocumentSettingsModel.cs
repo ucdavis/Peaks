@@ -11,5 +11,8 @@ namespace Keas.Mvc.Models
         public List<DocumentSigningAccount> AvailableAccounts { get; set; }
         public List<TeamDocumentSetting> TeamDocumentSettings { get; set; }
         public DocumentSigningAccount TeamAccount { get; set; }
+
+        public List<string> TemplateNames { get; set; } = new List<string>();
+
     }
 }
