@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
@@ -34,6 +36,9 @@ namespace Keas.Mvc.Controllers
                     IsDefault = bool.Parse(a.IsDefault)})
                 .ToList();
 
+            var team = await _context.Teams
+                .Where(t => t.Slug == Team).SingleAsync();
+
             var teamAccount = await _context.Teams
                 .Where(t => t.Slug == Team)
                 .Select(t => new DocumentSigningAccount
@@ -54,6 +59,19 @@ namespace Keas.Mvc.Controllers
                 TeamDocumentSettings = teamDocumentSettings,
                 TeamAccount = teamAccount
             };
+
+            if (string.IsNullOrWhiteSpace(team.DocumentAccountId))
+            {
+                try
+                {
+                    var templates = await _documentSigningService.GetTemplates(team);
+                    model.TemplateNames = templates.Select(a => a.Name).ToList();
+                }
+                catch
+                {
+                    model.TemplateNames = new List<string>();
+                }
+            }
 
             return View(model);
         }
