@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Core.Data;
@@ -59,16 +60,18 @@ namespace Keas.Mvc.Controllers
                 TeamAccount = teamAccount
             };
 
-            try
+            if (string.IsNullOrWhiteSpace(team.DocumentAccountId))
             {
-                var templates = await _documentSigningService.GetTemplates(team);
-                model.TemplateNames = templates.Select(a => a.Name).ToList();
+                try
+                {
+                    var templates = await _documentSigningService.GetTemplates(team);
+                    model.TemplateNames = templates.Select(a => a.Name).ToList();
+                }
+                catch
+                {
+                    model.TemplateNames = new List<string>();
+                }
             }
-            catch (Exception e)
-            {
-                
-            }
-            
 
             return View(model);
         }
