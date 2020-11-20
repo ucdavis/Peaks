@@ -60,7 +60,7 @@ namespace Keas.Mvc.Controllers
                 TeamAccount = teamAccount
             };
 
-            if (string.IsNullOrWhiteSpace(team.DocumentAccountId))
+            if (!string.IsNullOrWhiteSpace(team.DocumentAccountId))
             {
                 try
                 {
