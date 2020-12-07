@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Exceptions;
+using Serilog.Sinks.Elasticsearch;
 using StackifyLib;
 
 namespace Keas.Jobs.Core
@@ -65,6 +66,27 @@ namespace Keas.Jobs.Core
             }
 
             return logConfig.WriteTo.Stackify();
+        }
+
+        private static LoggerConfiguration WriteToElasticSearchCustom(this LoggerConfiguration logConfig)
+        {
+            // get logging config for ES endpoint (re-use some stackify settings for now)
+            var loggingSection = _configuration.GetSection("Stackify");
+
+            var esUrl = loggingSection.GetValue<string>("ElasticUrl");
+
+            // only continue if a valid http url is setup in the config
+            if (esUrl == null || !esUrl.StartsWith("http"))
+            {
+                return logConfig;
+            }
+
+            return logConfig.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(esUrl))
+            {
+                IndexFormat = $"logs-{loggingSection.GetValue<string>("AppName")}-{loggingSection.GetValue<string>("Environment")}-{{0:yyyy.MM.dd}}",
+                AutoRegisterTemplate = true,
+                AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7
+            });
         }
     }
 }

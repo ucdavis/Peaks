@@ -74,7 +74,8 @@ namespace Keas.Mvc.Helpers
             var esUrl = loggingSection.GetValue<string>("ElasticUrl");
 
             // only continue if a valid http url is setup in the config
-            if (!esUrl.StartsWith("http")) {
+            if (esUrl == null || !esUrl.StartsWith("http"))
+            {
                 return logConfig;
             }
             
