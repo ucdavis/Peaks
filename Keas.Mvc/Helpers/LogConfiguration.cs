@@ -46,14 +46,16 @@ namespace Keas.Mvc.Helpers
 
             // standard logger
             var logConfig = new LoggerConfiguration()
-                .MinimumLevel.Information() // TODO: would like to do debug here, but would need to set our own custom logging to Log.Debug()
+                .MinimumLevel.Debug()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                // .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning) // uncomment this to hide EF core general info logs
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
                 .Enrich.WithExceptionDetails();
 
             // various sinks
             logConfig = logConfig
+                .WriteTo.Console()
                 .WriteToStackifyCustom()
                 .WriteToElasticSearchCustom();
 
