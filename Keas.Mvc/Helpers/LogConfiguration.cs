@@ -78,9 +78,11 @@ namespace Keas.Mvc.Helpers
             {
                 return logConfig;
             }
-            
+
+            logConfig.Enrich.WithProperty("Application", loggingSection.GetValue<string>("AppName"));
+            logConfig.Enrich.WithProperty("AppEnvironment", loggingSection.GetValue<string>("Environment"));
+
             return logConfig.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(esUrl)) {
-                IndexFormat = $"logstash-{loggingSection.GetValue<string>("AppName")}-{loggingSection.GetValue<string>("Environment")}-{{0:yyyy.MM.dd}}",
                 AutoRegisterTemplate = true,
                 AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7
             });
