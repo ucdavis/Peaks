@@ -65,6 +65,8 @@ namespace Keas.Mvc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
+
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
             services.Configure<BigfixSettings>(Configuration.GetSection("Bigfix"));
@@ -218,7 +220,7 @@ namespace Keas.Mvc
         {
             // setup logging
             LogConfiguration.Setup(Configuration);
-            app.ConfigureStackifyLogging(Configuration);
+            app.ConfigureStackifyLogging(Configuration); // TODO: do we need this?
             loggerFactory.AddSerilog();
 
             appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
@@ -253,6 +255,8 @@ namespace Keas.Mvc
                 app.UseStaticFiles();
                 app.UseHsts();
             }
+
+            app.UseSerilogRequestLogging();
 
             app.UseHttpsRedirection();
             app.UseRouting();
