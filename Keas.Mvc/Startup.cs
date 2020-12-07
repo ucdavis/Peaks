@@ -220,7 +220,7 @@ namespace Keas.Mvc
         {
             // setup logging
             LogConfiguration.Setup(Configuration);
-            app.ConfigureStackifyLogging(Configuration); // TODO: do we need this?
+            app.ConfigureStackifyLogging(Configuration);
             loggerFactory.AddSerilog();
 
             appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
