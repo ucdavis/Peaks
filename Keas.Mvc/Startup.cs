@@ -160,6 +160,7 @@ namespace Keas.Mvc
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ITeamsManager, TeamsManager>();
             services.AddScoped<IBigfixService, BigfixService>();
+            services.AddScoped<IServiceNowService, ServiceNowService>();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddXmlSerializerFormatters()

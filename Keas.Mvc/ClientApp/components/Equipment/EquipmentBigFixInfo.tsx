@@ -123,6 +123,7 @@ const EquipmentBigFixInfo = (props: IProps) => {
 
       return;
     }
+    console.log(response)
 
     const sortedResult = Object.keys(response)
       .sort()
