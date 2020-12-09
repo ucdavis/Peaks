@@ -256,8 +256,6 @@ namespace Keas.Mvc
                 app.UseHsts();
             }
 
-            app.UseSerilogRequestLogging();
-
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseSession();
@@ -266,6 +264,9 @@ namespace Keas.Mvc
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Peaks API v1"));
+
+            app.UseMiddleware<LogUserNameMiddleware>();
+            app.UseSerilogRequestLogging();
 
             app.UseEndpoints(endpoints =>
             {
