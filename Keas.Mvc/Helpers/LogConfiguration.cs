@@ -1,7 +1,10 @@
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Serilog;
+using Serilog.Context;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
@@ -51,6 +54,8 @@ namespace Keas.Mvc.Helpers
                 // .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning) // uncomment this to hide EF core general info logs
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
+                .Enrich.WithClientIp()
+                .Enrich.WithClientAgent()
                 .Enrich.WithExceptionDetails();
 
             // various sinks
@@ -92,6 +97,24 @@ namespace Keas.Mvc.Helpers
                 AutoRegisterTemplate = true,
                 AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv7
             });
+        }
+    }
+
+    public class LogUserNameMiddleware
+    {
+        private readonly RequestDelegate next;
+
+        public LogUserNameMiddleware(RequestDelegate next)
+        {
+            this.next = next;
+        }
+
+        public async Task Invoke(HttpContext context)
+        {
+            using (LogContext.PushProperty("User", context.User.Identity.Name ?? "anonymous"))
+            {
+                await next(context);
+            }
         }
     }
 }
