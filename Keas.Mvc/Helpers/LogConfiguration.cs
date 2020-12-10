@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Elastic.Apm.SerilogEnricher;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -53,6 +54,7 @@ namespace Keas.Mvc.Helpers
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
                 // .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning) // uncomment this to hide EF core general info logs
                 .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+                .Enrich.WithElasticApmCorrelationInfo()
                 .Enrich.FromLogContext()
                 .Enrich.WithClientIp()
                 .Enrich.WithClientAgent()
