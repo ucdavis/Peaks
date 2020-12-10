@@ -193,6 +193,7 @@ namespace EfTestHelpers
             private readonly QueryableScannerOptions _options;
             private readonly Dictionary<SyntaxNode, SyntaxNodeContext> _nodeContexts;
             private T _dbContext;
+            private HashSet<Type> _entityTypes;
 
             public Walker(QueryableScannerOptions options, QueryableExpressionContext context,
                 Dictionary<SyntaxNode, SyntaxNodeContext> nodeContexts, T dbContext)
@@ -201,6 +202,10 @@ namespace EfTestHelpers
                 _context = context;
                 _nodeContexts = nodeContexts;
                 _dbContext = dbContext;
+                _entityTypes = _dbContext.GetType().GetProperties()
+                    .Where(p => p.PropertyType.ImplementsOrDerives(typeof(DbSet<>)))
+                    .Select(p => p.PropertyType.GenericTypeArguments[0])
+                    .ToHashSet();
             }
 
             private void LogVisitation(string s)

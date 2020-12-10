@@ -109,12 +109,16 @@ namespace Test.Integration
 
                 var i = 0;
 
+                //var tempQueryable = db.Workstations.AsQueryable()
+                //    .Where(w => w.Assignment.PersonId == 1 && w.Team.Slug == "NotEmpty");
+
                 foreach (var c in queryableExpressionContexts)
                 {
                     _output.WriteLine($"{Environment.NewLine}{++i:D4} ************ {c}");
 
                     var queryable = /*Should.NotThrow(() =>*/ builder.GetQueryable(db, c);//, "Failed to build queryable");
 
+                    //var tempSql = tempQueryable.ToSql();
                     var sql = /*Should.NotThrow(() => */queryable.ToSql();//, "Failed to generate sql");
                 }
             });
@@ -129,8 +133,8 @@ namespace Test.Integration
     public class TestDbService
     {
         private readonly ApplicationDbContext _dbContext;
-        private static readonly string _string01 = "NotEmpty";
-        private static readonly int _int01 = 1;
+        public static readonly string _string01 = "NotEmpty";
+        public static readonly int _int01 = 1;
 
         private IQueryable<Workstation> _expField000;
         private IQueryable<Workstation> _expField001;
@@ -152,7 +156,7 @@ namespace Test.Integration
             var exp000 = _dbContext.Workstations.AsQueryable()
                 .Where(w => w.Assignment.PersonId == _int01 && w.Team.Slug == _string01)
                 .ToArrayAsync();
-
+            Console.Out.WriteLine("");
             // ...is compiled to something pretty closely resempling this...
             IQueryable<Workstation> source = _dbContext.Workstations.AsQueryable();
             var parameterExpression = Expression.Parameter(typeof(Workstation), "w");
@@ -165,6 +169,7 @@ namespace Test.Integration
                                 LinqOp.PropertyOf(() => default(Workstation).Assignment)),
                             LinqOp.PropertyOf(() => default(AssignmentBase).PersonId)),
                         Expression.Field(null, LinqOp.FieldOf(() => TestDbService._int01))),
+                        //Expression.Field(null, LinqOp.FieldOf(() => default(TestDbService)._int01))),
                     Expression.Equal(
                         Expression.Property(
                             Expression.Property(
@@ -172,6 +177,7 @@ namespace Test.Integration
                                 LinqOp.PropertyOf(() => default(AssetBase).Team)),
                             LinqOp.PropertyOf(() => default(Team).Slug)),
                         Expression.Field(null, LinqOp.FieldOf(() => TestDbService._string01)))),
+                        //Expression.Field(null, LinqOp.FieldOf(() => default(TestDbService)._string01)))),
                 new[]
                 {
                     parameterExpression

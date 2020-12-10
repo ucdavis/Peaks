@@ -67,6 +67,54 @@ namespace EfTestHelpers
             throw new InvalidOperationException($"Unable to initialize {nameof(type)} {type}");
         }
 
+        public static bool CanInstantiate(this Type type)
+        {
+            return CanInstantiate(type, true);
+        }
+
+        private static bool CanInstantiate(this Type type, bool recurse)
+        {
+            switch (Type.GetTypeCode(type))
+            {
+                case TypeCode.Byte:
+                case TypeCode.SByte:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.Decimal:
+                case TypeCode.Double:
+                case TypeCode.Single:
+                case TypeCode.Boolean:
+                case TypeCode.Char:
+                case TypeCode.DateTime:
+                case TypeCode.String:
+                    return true;
+            }
+
+            if (type.IsEnum)
+                return true;
+
+            if (type.ImplementsOrDerives(typeof(Guid)))
+                return true;
+
+            if (type.ImplementsOrDerives(typeof(IEnumerable<>)))
+            {
+                if (recurse && !CanInstantiate(type.GetElementType(), false))
+                    return false;
+
+                return true;
+            }
+
+            var nullableOfType = Nullable.GetUnderlyingType(type);
+            if (nullableOfType != null && recurse && CanInstantiate(nullableOfType, false))
+                return true;
+
+            return false;
+        }
+
         public static bool ImplementsOrDerives(this Type type, Type otherType)
         {
             if (otherType is null)
