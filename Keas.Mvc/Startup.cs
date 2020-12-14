@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AspNetCore.Security.CAS;
+using Elastic.Apm.NetCoreAll;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Models;
@@ -218,6 +219,8 @@ namespace Keas.Mvc
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHostApplicationLifetime appLifetime)
         {
+            app.UseAllElasticApm(Configuration);
+            
             // setup logging
             LogConfiguration.Setup(Configuration);
             app.ConfigureStackifyLogging(Configuration);
