@@ -68,6 +68,7 @@ namespace Keas.Mvc
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
             services.Configure<BigfixSettings>(Configuration.GetSection("Bigfix"));
+            services.Configure<ServiceNowSettings>(Configuration.GetSection("ServiceNow"));
             services.Configure<SuperuserSettings>(Configuration.GetSection("Superuser"));
             services.Configure<ApiSettings>(Configuration.GetSection("Api"));
             services.Configure<DocumentSigningSettings>(Configuration.GetSection("DocumentSigning"));

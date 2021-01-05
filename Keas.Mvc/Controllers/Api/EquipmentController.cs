@@ -28,12 +28,14 @@ namespace Keas.Mvc.Controllers.Api
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
         private readonly IBigfixService _bigfixService;
+        private readonly IServiceNowService _serviceNowService;
 
-        public EquipmentController(ApplicationDbContext context, IEventService eventService, IBigfixService bigfixService)
+        public EquipmentController(ApplicationDbContext context, IEventService eventService, IBigfixService bigfixService, IServiceNowService serviceNowService)
         {
             this._context = context;
             _eventService = eventService;
             this._bigfixService = bigfixService;
+            this._serviceNowService = serviceNowService;
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -49,7 +51,7 @@ namespace Keas.Mvc.Controllers.Api
             var equipment =
                 from eq in _context.Equipment
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                (EF.Functions.Like(x.Name,q.EfStartsWith()) || EF.Functions.Like(x.SerialNumber, q.EfStartsWith())))
+                (EF.Functions.Like(x.Name, q.EfStartsWith()) || EF.Functions.Like(x.SerialNumber, q.EfStartsWith())))
                 .Include(x => x.Attributes)
                 .Include(x => x.Space).Include(x => x.Assignment)
                 .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
@@ -183,7 +185,7 @@ namespace Keas.Mvc.Controllers.Api
         [HttpPost]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> Create([FromBody]Equipment equipment)
+        public async Task<IActionResult> Create([FromBody] Equipment equipment)
         {
             if (!ModelState.IsValid)
             {
@@ -247,7 +249,7 @@ namespace Keas.Mvc.Controllers.Api
         [HttpPost]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> Update([FromBody]Equipment updatedEquipment)
+        public async Task<IActionResult> Update([FromBody] Equipment updatedEquipment)
         {
             if (!ModelState.IsValid)
             {
@@ -397,15 +399,20 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(IEnumerable<BigfixComputerSearchResult>), StatusCodes.Status200OK)]
+        // [ProducesResponseType(typeof(IEnumerable<BigfixComputerSearchResult>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetComputer(string id)
         {
-            try 
+            try
             {
-                 var result = await this._bigfixService.GetComputer(id);
-                 return Json(result);
+                var result = await this._bigfixService.GetComputer(id);
+                var results = await this._serviceNowService.GetComputer(id);
+                
+                Console.WriteLine("\n \n \n \n \n \n");
+                Console.WriteLine(Json(results));
+
+                return Json(results);
             }
-            catch (BigfixApiException ex) 
+            catch (BigfixApiException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
@@ -419,7 +426,7 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     throw;
                 }
-            } 
+            }
         }
 
         [HttpGet]
@@ -429,7 +436,7 @@ namespace Keas.Mvc.Controllers.Api
             if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
             {
                 var result = await this._bigfixService.GetComputersByName(value);
-                 if (result.Length == 0)
+                if (result.Length == 0)
                 {
                     return NotFound();
                 }
@@ -437,7 +444,8 @@ namespace Keas.Mvc.Controllers.Api
                 {
                     return Json(result);
                 }
-            } else
+            }
+            else
             {
                 // not supported yet
                 return null;

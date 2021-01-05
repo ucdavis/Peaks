@@ -123,14 +123,15 @@ const EquipmentBigFixInfo = (props: IProps) => {
 
       return;
     }
-    console.log(response)
 
-    const sortedResult = Object.keys(response)
+    const sortedResult = Object.keys(response.result[0])
       .sort()
       .reduce((accumulator, currentValue) => {
-        accumulator[currentValue] = response[currentValue];
+        const key = currentValue.replace("hardware_", "");
+        accumulator[key] = response.result[0][currentValue];
         return accumulator;
       }, {});
+
 
     setComputerInfo(sortedResult);
     setIsFetched(true);
