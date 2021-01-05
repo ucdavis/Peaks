@@ -1,7 +1,14 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace Keas.Mvc.Models
 {
+    public class ServiceNowPropertyWrapper
+    {
+        [JsonProperty("result")]
+        public List<ServiceNowProperties> Result { get; set; }
+    }
     public class ServiceNowProperties
     {
         [JsonProperty("hardware_department")]
