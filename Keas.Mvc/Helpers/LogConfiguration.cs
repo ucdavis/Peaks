@@ -96,7 +96,7 @@ namespace Keas.Mvc.Helpers
             logConfig.Enrich.WithProperty("AppEnvironment", loggingSection.GetValue<string>("Environment"));
 
             return logConfig.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(esUrl)) {
-                IndexFormat = "aspnet-peaks-{0:yyyy.MM}"
+                IndexFormat = "aspnet-peaks-{0:yyyy.MM.dd}"
             });
         }
     }
