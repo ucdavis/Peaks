@@ -399,7 +399,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
-        // [ProducesResponseType(typeof(IEnumerable<BigfixComputerSearchResult>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ServiceNowPropertyWrapper>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetComputer(string id)
         {
             try
@@ -407,9 +407,6 @@ namespace Keas.Mvc.Controllers.Api
                 var result = await this._bigfixService.GetComputer(id);
                 var results = await this._serviceNowService.GetComputer(id);
                 
-                Console.WriteLine("\n \n \n \n \n \n");
-                Console.WriteLine(Json(results));
-
                 return Json(results);
             }
             catch (BigfixApiException ex)
