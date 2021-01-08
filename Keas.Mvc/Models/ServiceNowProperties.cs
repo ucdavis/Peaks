@@ -7,7 +7,7 @@ namespace Keas.Mvc.Models
     public class ServiceNowPropertyWrapper
     {
         [JsonProperty("result")]
-        public List<ServiceNowProperties> Result { get; set; }
+        public List<ServiceNowProperties> Results { get; set; }
     }
     public class ServiceNowProperties
     {
