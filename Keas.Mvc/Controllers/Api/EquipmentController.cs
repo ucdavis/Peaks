@@ -432,14 +432,15 @@ namespace Keas.Mvc.Controllers.Api
         {
             if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
             {
-                var result = await this._bigfixService.GetComputersByName(value);
-                 if (result.Length == 0)
+                // var result = await this._bigfixService.GetComputersByName(value);
+                var results = await this._serviceNowService.GetComputersByName(value);
+                if (results.Results.Count == 0)
                 {
                     return NotFound();
                 }
                 else
                 {
-                    return Json(result);
+                    return Json(results);
                 }
             } else
             {

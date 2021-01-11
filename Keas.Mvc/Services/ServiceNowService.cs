@@ -10,6 +10,7 @@ namespace Keas.Mvc.Services
 {
     public interface IServiceNowService
     {
+        Task<ServiceNowPropertyWrapper> GetComputersByName(string name);
         Task<ServiceNowPropertyWrapper> GetComputer(string id);
         string Base64Encode(string textToEncode);
     }
@@ -21,6 +22,22 @@ namespace Keas.Mvc.Services
         public ServiceNowService(IOptions<ServiceNowSettings> serviceNowSettings)
         {
             _serviceNowSettings = serviceNowSettings.Value;
+        }
+
+        public async Task<ServiceNowPropertyWrapper> GetComputersByName(string name)
+        {
+            string urlAddOns = "?sysparm_query=hardware_display_nameLIKE";
+            string endUrl = "&sysparm_display_value=true&sysparm_exclude_reference_link=true&sysparm_limit=5";
+            string fullUrl = _serviceNowSettings.ApiBasePath + urlAddOns + name + endUrl;
+
+            using (var client = GetClient())
+            {
+                HttpResponseMessage response = await client.GetAsync(fullUrl);
+                string responseBody = await response.Content.ReadAsStringAsync();
+                ServiceNowPropertyWrapper ServiceNowResults = JsonConvert.DeserializeObject<ServiceNowPropertyWrapper>(responseBody);
+
+                return ServiceNowResults;
+            }
         }
         public async Task<ServiceNowPropertyWrapper> GetComputer(string id)
         {
@@ -44,11 +61,11 @@ namespace Keas.Mvc.Services
             return Convert.ToBase64String(textAsBytes);
         }
 
-        private HttpClient GetClient() 
+        private HttpClient GetClient()
         {
             HttpClient client = new HttpClient();
             client.DefaultRequestHeaders.Add($"Authorization", $"Basic {Base64Encode($"{_serviceNowSettings.Username}:{_serviceNowSettings.Password}")}");
-            
+
             return client;
         }
     }

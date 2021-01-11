@@ -152,17 +152,17 @@ const EquipmentBigFixSearchId = (props: IProps) => {
               <tbody>
                 {listOfComputers.map(computer => {
                   return (
-                    <tr key={computer.id} className='bigfix-info border-bottom'>
+                    <tr key={computer.hardware_u_bigfix_id} className='bigfix-info border-bottom'>
                       <Button
                         color='link'
                         onClick={() =>
                           props.addBigFixId(
                             'systemManagementId',
-                            computer.id
+                            computer.hardware_u_bigfix_id
                           )
                         }
                       >
-                        {computer.name}
+                        {computer.hardware_display_name}
                       </Button>
                     </tr>
                   );
@@ -230,10 +230,10 @@ const EquipmentBigFixSearchId = (props: IProps) => {
       return;
     }
 
-    const firstFiveName = response.slice(0, 5);
+    console.log(response)
     setIsFetched(true);
     setIsSearching(false);
-    setListOfComputers(firstFiveName);
+    setListOfComputers(response.result);
   };
 
   const changeSelectedInput = value => {
