@@ -230,7 +230,6 @@ const EquipmentBigFixSearchId = (props: IProps) => {
       return;
     }
 
-    console.log(response)
     setIsFetched(true);
     setIsSearching(false);
     setListOfComputers(response.result);

@@ -26,7 +26,7 @@ namespace Keas.Mvc.Services
 
         public async Task<ServiceNowPropertyWrapper> GetComputersByName(string name)
         {
-            string urlAddOns = "?sysparm_query=hardware_display_nameLIKE";
+            string urlAddOns = "?sysparm_query=hardware_u_device_nameLIKE";
             string endUrl = "&sysparm_display_value=true&sysparm_exclude_reference_link=true&sysparm_limit=5";
             string fullUrl = _serviceNowSettings.ApiBasePath + urlAddOns + name + endUrl;
 
