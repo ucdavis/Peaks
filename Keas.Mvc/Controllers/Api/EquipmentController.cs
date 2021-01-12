@@ -27,14 +27,12 @@ namespace Keas.Mvc.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
-        private readonly IBigfixService _bigfixService;
         private readonly IServiceNowService _serviceNowService;
 
-        public EquipmentController(ApplicationDbContext context, IEventService eventService, IBigfixService bigfixService, IServiceNowService serviceNowService)
+        public EquipmentController(ApplicationDbContext context, IEventService eventService, IServiceNowService serviceNowService)
         {
             this._context = context;
             _eventService = eventService;
-            this._bigfixService = bigfixService;
             this._serviceNowService = serviceNowService;
         }
 
@@ -404,7 +402,6 @@ namespace Keas.Mvc.Controllers.Api
         {
             try
             {
-                var result = await this._bigfixService.GetComputer(id);
                 var results = await this._serviceNowService.GetComputer(id);
                 
                 return Json(results);
@@ -427,12 +424,11 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<BigfixComputerSearchResult>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ServiceNowPropertyWrapper>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetComputersBySearch(string field, string value)
         {
             if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
             {
-                // var result = await this._bigfixService.GetComputersByName(value);
                 var results = await this._serviceNowService.GetComputersByName(value);
                 if (results.Results.Count == 0)
                 {
