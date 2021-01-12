@@ -182,7 +182,7 @@ namespace Test.TestsController
             ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("GetComputersBySearch", 3 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
             ControllerReflection.MethodExpectedAttribute<HttpGetAttribute>("GetComputersBySearch", 3 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
             responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("GetComputersBySearch", 3 + countAdjustment, "GetComputersBySearch", showListOfAttributes: false);
-            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("BigfixComputerSearchResult");
+            responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("ServiceNowPropertyWrapper");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
 
         }
