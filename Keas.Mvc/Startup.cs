@@ -261,8 +261,8 @@ namespace Keas.Mvc
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseSession();
-            app.UseMiddleware<ApiKeyMiddleware>();
             app.UseAuthentication();
+            app.UseMiddleware<ApiKeyMiddleware>();
             app.UseAuthorization();
 
             app.UseSwagger();

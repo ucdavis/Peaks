@@ -148,7 +148,6 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(AccessAssignment), StatusCodes.Status200OK)]
-        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Assign(int accessId, int personId, string date)
         {
             if (!ModelState.IsValid)
@@ -211,7 +210,6 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(AccessAssignment), StatusCodes.Status200OK)]
-        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Revoke(int id)
         {
             var assignment = await _context.AccessAssignments
@@ -229,7 +227,6 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
-        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Delete(int id)
         {
             var access = await _context.Access
