@@ -228,7 +228,6 @@ namespace Keas.Mvc
 
             appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
 
-            app.UseMiddleware<ApiKeyMiddleware>();
             app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<LogIdentityMiddleware>();
 
@@ -262,6 +261,7 @@ namespace Keas.Mvc
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseSession();
+            app.UseMiddleware<ApiKeyMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
 
