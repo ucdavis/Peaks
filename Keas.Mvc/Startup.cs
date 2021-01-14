@@ -228,7 +228,6 @@ namespace Keas.Mvc
 
             appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
 
-            app.UseMiddleware<ApiKeyMiddleware>();
             app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<LogIdentityMiddleware>();
 
@@ -263,6 +262,9 @@ namespace Keas.Mvc
             app.UseRouting();
             app.UseSession();
             app.UseAuthentication();
+            // Identity containing ApiKey does not get assigned to user if middleware is applied prior to authentication,
+            // but it needs to come before authorization to make it available to authorization logic.
+            app.UseMiddleware<ApiKeyMiddleware>();
             app.UseAuthorization();
 
             app.UseSwagger();

@@ -18,9 +18,9 @@ namespace Keas.Core.Domain
         public string Name { get; set; }
 
         [JsonIgnore]
-        public ICollection<GroupPermission> GroupPermissions { get; set; }
+        public List<GroupPermission> GroupPermissions { get; set; }
 
         [JsonIgnore]
-        public IList<GroupXTeam> Teams { get; set; }
+        public List<GroupXTeam> Teams { get; set; }
     }
 }
