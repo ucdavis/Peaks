@@ -67,7 +67,6 @@ namespace Keas.Mvc
         {
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
-            services.Configure<BigfixSettings>(Configuration.GetSection("Bigfix"));
             services.Configure<ServiceNowSettings>(Configuration.GetSection("ServiceNow"));
             services.Configure<SuperuserSettings>(Configuration.GetSection("Superuser"));
             services.Configure<ApiSettings>(Configuration.GetSection("Api"));
@@ -160,7 +159,6 @@ namespace Keas.Mvc
             services.AddScoped<IFinancialService, FinancialService>();
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ITeamsManager, TeamsManager>();
-            services.AddScoped<IBigfixService, BigfixService>();
             services.AddScoped<IServiceNowService, ServiceNowService>();
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)

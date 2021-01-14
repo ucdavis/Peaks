@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -67,6 +68,15 @@ namespace Keas.Mvc.Services
             client.DefaultRequestHeaders.Add($"Authorization", $"Basic {Base64Encode($"{_serviceNowSettings.Username}:{_serviceNowSettings.Password}")}");
 
             return client;
+        }
+
+        public class ServiceNowApiException : Exception
+        {
+            public ServiceNowApiException(HttpStatusCode statusCode, string message){
+                
+            }
+
+            public HttpStatusCode StatusCode { get; }
         }
     }
 }

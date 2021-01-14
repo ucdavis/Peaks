@@ -13,9 +13,7 @@ using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Keas.Mvc.Models;
-using Bigfix;
 using Keas.Core.Extensions;
-using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -406,7 +404,7 @@ namespace Keas.Mvc.Controllers.Api
                 
                 return Json(results);
             }
-            catch (BigfixApiException ex) 
+            catch (ServiceNowService.ServiceNowApiException ex) 
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
