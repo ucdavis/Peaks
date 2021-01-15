@@ -22,7 +22,9 @@ interface IProps {
 
 const EquipmentTableContainer = (props: IProps) => {
   const [attributeFilters, setAttributeFilters] = useState<string[]>([]);
-  const [bigfixFilters, setBigfixFilters] = useState<string[]>([]);
+  const [managedSystemFilters, setManagedSystemFilters] = useState<string[]>(
+    []
+  );
   const [
     equipmentAvailabilityFilters,
     setEquipmentAvailabilityFilters
@@ -50,8 +52,8 @@ const EquipmentTableContainer = (props: IProps) => {
   const filterEquipmentAvailability = (filters: string[]) => {
     setEquipmentAvailabilityFilters(filters);
   };
-  const filterBigfix = (filters: string[]) => {
-    setBigfixFilters(filters);
+  const filterManagedSystem = (filters: string[]) => {
+    setManagedSystemFilters(filters);
   };
 
   const checkTagFilters = (equipment: IEquipment, filters: string[]) => {
@@ -106,8 +108,8 @@ const EquipmentTableContainer = (props: IProps) => {
     );
   };
 
-  const checkBigfixFilters = (equipment: IEquipment) => {
-    const filters = bigfixFilters;
+  const checkManagedSystemFilters = (equipment: IEquipment) => {
+    const filters = managedSystemFilters;
     return filters.some(
       f =>
         equipment &&
@@ -115,7 +117,7 @@ const EquipmentTableContainer = (props: IProps) => {
         equipment.systemManagementId.includes(f)
     );
   };
-  
+
   let filteredEquipment = props.equipment;
   if (tagFilters.length > 0) {
     filteredEquipment = filteredEquipment.filter(x =>
@@ -142,8 +144,10 @@ const EquipmentTableContainer = (props: IProps) => {
       checkEquipmentAvailabilityFilters(x)
     );
   }
-  if (bigfixFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x => checkBigfixFilters(x));
+  if (managedSystemFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkManagedSystemFilters(x)
+    );
   }
 
   return (
@@ -182,8 +186,8 @@ const EquipmentTableContainer = (props: IProps) => {
           placeHolder='Search Availability Level'
         />
         <SearchManagedSystem
-          selected={bigfixFilters}
-          onSelect={filterBigfix}
+          selected={managedSystemFilters}
+          onSelect={filterManagedSystem}
           disabled={false}
         />
       </div>

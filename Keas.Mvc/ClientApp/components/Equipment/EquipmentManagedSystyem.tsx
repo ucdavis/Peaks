@@ -9,12 +9,12 @@ interface IProps {
 }
 
 const EquipmentManagedSystyem = (props: IProps) => {
-  const renderBigFixInfoOrSearchId = () => {
+  const renderManagedSystemInfoOrSearchId = () => {
     if (!props.managedSystemId) {
       if (props.disableEditing) {
         return (
           <span className='ml-3'>
-            ( Click Edit Equipment above to search for Bigfix Id )
+            ( Click Edit Equipment above to search for ManagedSystem Id )
           </span>
         );
       }
@@ -26,7 +26,7 @@ const EquipmentManagedSystyem = (props: IProps) => {
       );
     }
 
-    // if Bigfix Id exists
+    // if ManagedSystem Id exists
     return (
       <EquipmentManagedSystemInfo managedSystemId={props.managedSystemId} />
     );
@@ -35,9 +35,9 @@ const EquipmentManagedSystyem = (props: IProps) => {
   return (
     <>
       <div className='d-flex'>
-        <label> Bigfix Id</label>
+        <label> ManagedSystem Id</label>
         <span />
-        {renderBigFixInfoOrSearchId()}
+        {renderManagedSystemInfoOrSearchId()}
       </div>
     </>
   );

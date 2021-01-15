@@ -25,7 +25,7 @@ const SearchManagedSystem = (props: IProps) => {
           props.onSelect(strings);
         }}
         selected={props.selected}
-        placeholder='Search for Bigfix Id'
+        placeholder='Search for ManagedSystem Id'
         allowNew={true}
         emptyLabel={''}
         newSelectionPrefix='Search for: '

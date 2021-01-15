@@ -23,7 +23,7 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
         className='bigfix-info'
         onClick={() => {
           modalToggle();
-          getBigFixComputerInfo(props.managedSystemId || '');
+          getManagedSystemComputerInfo(props.managedSystemId || '');
         }}
       >
         <i className='fas fa-info-circle ml-2' />
@@ -31,7 +31,7 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
     );
   };
 
-  const renderBigFixModal = () => {
+  const renderManagedSystemModal = () => {
     return (
       <Modal
         isOpen={managedSystemModal}
@@ -90,7 +90,8 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
       } else {
         return (
           <p>
-            Not a valid Bigfix id, please make sure to enter a valid Bigfix id.
+            Not a valid ManagedSystem id, please make sure to enter a valid
+            ManagedSystem id.
           </p>
         );
       }
@@ -99,7 +100,7 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
     return <p>No data to present</p>;
   };
 
-  const getBigFixComputerInfo = async (id: string) => {
+  const getManagedSystemComputerInfo = async (id: string) => {
     let response = null;
     try {
       response = await context.fetch(
@@ -149,7 +150,7 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
     <>
       {renderInfoIcon()}
 
-      {renderBigFixModal()}
+      {renderManagedSystemModal()}
     </>
   );
 };

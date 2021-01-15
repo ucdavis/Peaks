@@ -14,7 +14,7 @@ import {
   Table
 } from 'reactstrap';
 import { Context } from '../../Context';
-import { IBigFixSearchedName } from '../../models/Equipment';
+import { IManagedSystemSearchedName } from '../../models/Equipment';
 
 interface IProps {
   addManagedSystemId: (property: string, id: string) => void;
@@ -29,7 +29,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
   const [selectedField, setSelectedField] = useState<string>('Name');
   const [valueToBeSearched, setValueToBeSearched] = useState<string>('');
   const [listOfComputers, setListOfComputers] = useState<
-    IBigFixSearchedName[]
+    IManagedSystemSearchedName[]
   >();
   const context = useContext(Context);
 
