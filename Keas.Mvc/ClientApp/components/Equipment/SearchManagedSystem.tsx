@@ -8,7 +8,7 @@ interface IProps {
   selected: string[];
 }
 
-const SearchBigfix = (props: IProps) => {
+const SearchManagedSystem = (props: IProps) => {
   return (
     <div>
       <Typeahead
@@ -34,4 +34,4 @@ const SearchBigfix = (props: IProps) => {
   );
 };
 
-export default SearchBigfix;
+export default SearchManagedSystem;

@@ -6,7 +6,7 @@ import { ISpace } from '../../models/Spaces';
 import SearchSpaces from '../Spaces/SearchSpaces';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentAttributes from './EquipmentAttributes';
-import EquipmentBigFix from './EquipmentBigFix';
+import EquipmentManagedSystyem from './EquipmentManagedSystyem';
 
 interface IProps {
   changeProperty?: (property: string, value: any) => void;
@@ -253,9 +253,9 @@ const EquipmentEditValues = (props: IProps) => {
           'SystemManagementId'
         ) && (
           <FormGroup>
-            <EquipmentBigFix
-              bigfixId={props.selectedEquipment.systemManagementId}
-              addBigFixId={props.changeProperty}
+            <EquipmentManagedSystyem
+              managedSystemId={props.selectedEquipment.systemManagementId}
+              addManagedSystemId={props.changeProperty}
               disableEditing={props.disableEditing}
             />
             <Input

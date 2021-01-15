@@ -17,10 +17,10 @@ import { Context } from '../../Context';
 import { IBigFixSearchedName } from '../../models/Equipment';
 
 interface IProps {
-  addBigFixId: (property: string, id: string) => void;
+  addManagedSystemId: (property: string, id: string) => void;
 }
 
-const EquipmentBigFixSearchId = (props: IProps) => {
+const EquipmentManagedSystemSearchId = (props: IProps) => {
   const [isFetched, setIsFetched] = useState<boolean>(false);
   const [isFound, setIsFound] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -152,11 +152,14 @@ const EquipmentBigFixSearchId = (props: IProps) => {
               <tbody>
                 {listOfComputers.map(computer => {
                   return (
-                    <tr key={computer.hardware_u_bigfix_id} className='bigfix-info border-bottom'>
+                    <tr
+                      key={computer.hardware_u_bigfix_id}
+                      className='bigfix-info border-bottom'
+                    >
                       <Button
                         color='link'
                         onClick={() =>
-                          props.addBigFixId(
+                          props.addManagedSystemId(
                             'systemManagementId',
                             computer.hardware_u_bigfix_id
                           )
@@ -245,12 +248,12 @@ const EquipmentBigFixSearchId = (props: IProps) => {
   };
 
   const modalToggle = () => {
-      setIsFetched(false);
-      setIsFound(true);
-      setIsValidSearch(true);
-      setListOfComputers([]);
-      setValueToBeSearched('');
-      setSearchModal(prevModal => !prevModal);
+    setIsFetched(false);
+    setIsFound(true);
+    setIsValidSearch(true);
+    setListOfComputers([]);
+    setValueToBeSearched('');
+    setSearchModal(prevModal => !prevModal);
   };
 
   return (
@@ -261,4 +264,4 @@ const EquipmentBigFixSearchId = (props: IProps) => {
   );
 };
 
-export default EquipmentBigFixSearchId;
+export default EquipmentManagedSystemSearchId;

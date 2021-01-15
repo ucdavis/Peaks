@@ -4,7 +4,7 @@ import { IEquipment } from '../../models/Equipment';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentTable from './EquipmentTable';
 import SearchAttributes from './SearchAttributes';
-import SearchBigfix from './SearchBigfix';
+import SearchManagedSystem from './SearchManagedSystem';
 import SearchEquipmentType from './SearchEquipmentType';
 
 interface IProps {
@@ -181,7 +181,7 @@ const EquipmentTableContainer = (props: IProps) => {
           disabled={false}
           placeHolder='Search Availability Level'
         />
-        <SearchBigfix
+        <SearchManagedSystem
           selected={bigfixFilters}
           onSelect={filterBigfix}
           disabled={false}
