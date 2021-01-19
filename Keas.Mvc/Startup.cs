@@ -4,7 +4,6 @@ using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using AspNetCore.Security.CAS;
-using Elastic.Apm.NetCoreAll;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Models;
@@ -66,8 +65,6 @@ namespace Keas.Mvc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpContextAccessor();
-
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
             services.Configure<ServiceNowSettings>(Configuration.GetSection("ServiceNow"));
@@ -219,8 +216,6 @@ namespace Keas.Mvc
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IHostApplicationLifetime appLifetime)
         {
-            app.UseAllElasticApm(Configuration);
-            
             // setup logging
             LogConfiguration.Setup(Configuration);
             app.ConfigureStackifyLogging(Configuration);
@@ -228,6 +223,7 @@ namespace Keas.Mvc
 
             appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
 
+            app.UseMiddleware<ApiKeyMiddleware>();
             app.UseMiddleware<CorrelationIdMiddleware>();
             app.UseMiddleware<LogIdentityMiddleware>();
 
@@ -262,16 +258,10 @@ namespace Keas.Mvc
             app.UseRouting();
             app.UseSession();
             app.UseAuthentication();
-            // Identity containing ApiKey does not get assigned to user if middleware is applied prior to authentication,
-            // but it needs to come before authorization to make it available to authorization logic.
-            app.UseMiddleware<ApiKeyMiddleware>();
             app.UseAuthorization();
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Peaks API v1"));
-
-            app.UseMiddleware<LogUserNameMiddleware>();
-            app.UseSerilogRequestLogging();
 
             app.UseEndpoints(endpoints =>
             {

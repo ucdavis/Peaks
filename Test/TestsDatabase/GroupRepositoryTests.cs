@@ -36,7 +36,7 @@ namespace Test.TestsDatabase
         {
             #region Arrange
             var expectedFields = new List<NameAndType>();
-            expectedFields.Add(new NameAndType("GroupPermissions", "System.Collections.Generic.List`1[Keas.Core.Domain.GroupPermission]", new List<string>
+            expectedFields.Add(new NameAndType("GroupPermissions", "System.Collections.Generic.ICollection`1[Keas.Core.Domain.GroupPermission]", new List<string>
             {
                 "[Newtonsoft.Json.JsonIgnoreAttribute()]",
             }));
@@ -50,7 +50,7 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.RequiredAttribute()]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)128)]",
             }));
-            expectedFields.Add(new NameAndType("Teams", "System.Collections.Generic.List`1[Keas.Core.Domain.GroupXTeam]", new List<string>
+            expectedFields.Add(new NameAndType("Teams", "System.Collections.Generic.IList`1[Keas.Core.Domain.GroupXTeam]", new List<string>
             {
                 "[Newtonsoft.Json.JsonIgnoreAttribute()]",
             }));

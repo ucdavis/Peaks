@@ -248,6 +248,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Assign(int workstationId, int personId, string date)
         {
             // TODO make sure user has permission
@@ -295,6 +296,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Revoke(int id)
         {
             // TODO permission
@@ -341,6 +343,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Delete(int id)
         {
             var workstation = await _context.Workstations

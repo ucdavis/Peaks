@@ -304,6 +304,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(KeySerial), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Revoke(int id)
         {
             // find keyserial
