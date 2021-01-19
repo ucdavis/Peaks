@@ -304,7 +304,7 @@ namespace Keas.Mvc.Controllers.Api
                 }
             }
 
-            if (!EquipmentTypes.BigfixTypes.Contains(updatedEquipment.Type, StringComparer.OrdinalIgnoreCase))
+            if (!EquipmentTypes.ManagedSystemTypes.Contains(updatedEquipment.Type, StringComparer.OrdinalIgnoreCase))
             {
                 updatedEquipment.SystemManagementId = null;
             }

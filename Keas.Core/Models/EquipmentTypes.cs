@@ -69,7 +69,7 @@ namespace Keas.Core.Models
             Tablet,
         };
 
-        public static List<string> BigfixTypes = new List<string>
+        public static List<string> ManagedSystemTypes = new List<string>
         {
             Computer,
             Desktop,
