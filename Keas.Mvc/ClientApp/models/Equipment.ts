@@ -103,6 +103,6 @@ export interface IEquipmentAttribute {
 }
 
 export interface IBigFixSearchedName {
-  id: string;
-  name: string;
+  hardware_u_bigfix_id: string;
+  hardware_display_name: string;
 }
