@@ -72,6 +72,7 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpPost("{id}")]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Delete(int id)
         {
             var person = await _context.People

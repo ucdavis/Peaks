@@ -65,7 +65,7 @@ const AssignmentContainer = (props: IProps) => {
     };
 
     const getAssignments = async () => {
-      if (props.person) {
+      if (assignments.length === 0 && props.person) {
         const assignmentsData = await fetchAssignments();
         setAssignments(assignmentsData);
         setSelectedAssignment(
@@ -75,7 +75,7 @@ const AssignmentContainer = (props: IProps) => {
     };
 
     getAssignments();
-  }, [context, params.id, props.person]);
+  }, [assignments, context, params.id, props.person]);
 
   const showRevokeModal = (assignment: IAccessAssignment) => {
     setSelectedAssignment(assignment);

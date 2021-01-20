@@ -13,9 +13,7 @@ using System.Threading.Tasks;
 using Keas.Core.Models;
 using Keas.Mvc.Extensions;
 using Keas.Mvc.Models;
-using Bigfix;
 using Keas.Core.Extensions;
-using Microsoft.AspNetCore.Cors;
 
 namespace Keas.Mvc.Controllers.Api
 {
@@ -27,13 +25,13 @@ namespace Keas.Mvc.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
-        private readonly IBigfixService _bigfixService;
+        private readonly IServiceNowService _serviceNowService;
 
-        public EquipmentController(ApplicationDbContext context, IEventService eventService, IBigfixService bigfixService)
+        public EquipmentController(ApplicationDbContext context, IEventService eventService, IServiceNowService serviceNowService)
         {
             this._context = context;
             _eventService = eventService;
-            this._bigfixService = bigfixService;
+            this._serviceNowService = serviceNowService;
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -210,6 +208,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Assign(int equipmentId, int personId, string date)
         {
             // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
@@ -305,7 +304,7 @@ namespace Keas.Mvc.Controllers.Api
                 }
             }
 
-            if (!EquipmentTypes.BigfixTypes.Contains(updatedEquipment.Type, StringComparer.OrdinalIgnoreCase))
+            if (!EquipmentTypes.ManagedSystemTypes.Contains(updatedEquipment.Type, StringComparer.OrdinalIgnoreCase))
             {
                 updatedEquipment.SystemManagementId = null;
             }
@@ -313,6 +312,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Revoke(int id)
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
@@ -337,6 +337,7 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Delete(int id)
         {
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team)
@@ -394,15 +395,16 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(IEnumerable<BigfixComputerSearchResult>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ServiceNowPropertyWrapper>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetComputer(string id)
         {
-            try 
+            try
             {
-                 var result = await this._bigfixService.GetComputer(id);
-                 return Json(result);
+                var results = await this._serviceNowService.GetComputer(id);
+                
+                return Json(results);
             }
-            catch (BigfixApiException ex) 
+            catch (ServiceNowService.ServiceNowApiException ex) 
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
@@ -420,19 +422,19 @@ namespace Keas.Mvc.Controllers.Api
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<BigfixComputerSearchResult>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ServiceNowPropertyWrapper>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetComputersBySearch(string field, string value)
         {
             if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
             {
-                var result = await this._bigfixService.GetComputersByName(value);
-                 if (result.Length == 0)
+                var results = await this._serviceNowService.GetComputersByName(value);
+                if (results.Results.Count == 0)
                 {
                     return NotFound();
                 }
                 else
                 {
-                    return Json(result);
+                    return Json(results);
                 }
             } else
             {
