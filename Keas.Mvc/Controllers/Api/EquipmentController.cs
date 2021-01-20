@@ -401,16 +401,19 @@ namespace Keas.Mvc.Controllers.Api
             try
             {
                 var results = await this._serviceNowService.GetComputer(id);
-                
-                return Json(results);
-            }
-            catch (ServiceNowService.ServiceNowApiException ex) 
-            {
-                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+
+                if (results.Results.Count == 0)
                 {
                     return NotFound();
                 }
-                else if (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                else
+                {
+                    return Json(results);
+                }
+            }
+            catch (ServiceNowService.ServiceNowApiException ex) 
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
                 {
                     return StatusCode(403);
                 }

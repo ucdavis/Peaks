@@ -42,7 +42,7 @@ namespace Keas.Mvc.Services
         }
         public async Task<ServiceNowPropertyWrapper> GetComputer(string id)
         {
-            string urlAddOns = "?sysparm_query=hardware_u_bigfix_id%";
+            string urlAddOns = "?sysparm_query=hardware_u_bigfix_id=";
             string endUrl = "&sysparm_display_value=true&sysparm_exclude_reference_link=true&sysparm_limit=1";
             string fullUrl = _serviceNowSettings.ApiBasePath + urlAddOns + id + endUrl;
 
