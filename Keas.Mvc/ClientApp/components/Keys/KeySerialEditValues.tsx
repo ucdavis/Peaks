@@ -2,10 +2,12 @@ import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IKey } from '../../models/Keys';
 import { IKeySerial } from '../../models/KeySerials';
+import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
 
 interface IProps {
   keySerial: IKeySerial;
+  person?: IPerson;
   disableEditing: boolean;
   statusList?: string[];
   error?: IValidationError;
@@ -52,14 +54,20 @@ const KeySerialEditValues = (props: IProps) => {
     props.goToKeyDetails(props.keySerial.key);
   };
 
+  const renderEditKeySerial = () => {
+    return !props.person ? (
+      <Button color='link' onClick={() => props.openEditModal(keySerial)}>
+        <i className='fas fa-edit fa-xs' /> Edit Serial
+      </Button>
+    ) : null;
+  };
+
   return (
     <div>
       {props.disableEditing && props.openEditModal && (
         <div className='row justify-content-between'>
           <h3>Key Details</h3>
-          <Button color='link' onClick={() => props.openEditModal(keySerial)}>
-            <i className='fas fa-edit fa-xs' /> Edit Serial
-          </Button>
+          {renderEditKeySerial()}
         </div>
       )}
       <div className='wrapperasset'>

@@ -112,12 +112,11 @@ namespace Test.TestsController
             response2.ElementAt(0).ContentTypes.Count.ShouldBe(1);
             response2.ElementAt(0).ContentTypes.ElementAt(0).ShouldBe(MediaTypeNames.Application.Json);
             //7
-            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Assign", 4 + countAdjustment, "Assign", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Assign", 4 + countAdjustment, "Assign", showListOfAttributes: false);
-            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Assign", 4 + countAdjustment, "Assign", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Assign", 3 + countAdjustment, "Assign", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Assign", 3 + countAdjustment, "Assign", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Assign", 3 + countAdjustment, "Assign", showListOfAttributes: false);
             responseType.ElementAt(0).Type.Name.ShouldBe("AccessAssignment");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
-            response2 = ControllerReflection.MethodExpectedAttribute<ConsumesAttribute>("Assign", 4 + countAdjustment, "Create", showListOfAttributes: false);
             response2.Count().ShouldBe(1);
             response2.ElementAt(0).ContentTypes.Count.ShouldBe(1);
             response2.ElementAt(0).ContentTypes.ElementAt(0).ShouldBe(MediaTypeNames.Application.Json);
@@ -132,22 +131,20 @@ namespace Test.TestsController
             response2.ElementAt(0).ContentTypes.Count.ShouldBe(1);
             response2.ElementAt(0).ContentTypes.ElementAt(0).ShouldBe(MediaTypeNames.Application.Json);
             //9
-            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Revoke", 4 + countAdjustment, "Revoke", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Revoke", 4 + countAdjustment, "Revoke", showListOfAttributes: false);
-            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Revoke", 4 + countAdjustment, "Revoke", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Revoke", 3 + countAdjustment, "Revoke", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Revoke", 3 + countAdjustment, "Revoke", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Revoke", 3 + countAdjustment, "Revoke", showListOfAttributes: false);
             responseType.ElementAt(0).Type.Name.ShouldBe("AccessAssignment");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
-            response2 = ControllerReflection.MethodExpectedAttribute<ConsumesAttribute>("Revoke", 4 + countAdjustment, "Create", showListOfAttributes: false);
             response2.Count().ShouldBe(1);
             response2.ElementAt(0).ContentTypes.Count.ShouldBe(1);
             response2.ElementAt(0).ContentTypes.ElementAt(0).ShouldBe(MediaTypeNames.Application.Json);
             //10
-            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Delete", 4 + countAdjustment, "Delete", showListOfAttributes: false);
-            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Delete", 4 + countAdjustment, "Delete", showListOfAttributes: false);
-            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Delete", 4 + countAdjustment, "Delete", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Delete", 3 + countAdjustment, "Delete", showListOfAttributes: false);
             responseType.ElementAt(0).Type.Name.ShouldBe("Access");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
-            response2 = ControllerReflection.MethodExpectedAttribute<ConsumesAttribute>("Delete", 4 + countAdjustment, "Create", showListOfAttributes: false);
             response2.Count().ShouldBe(1);
             response2.ElementAt(0).ContentTypes.Count.ShouldBe(1);
             response2.ElementAt(0).ContentTypes.ElementAt(0).ShouldBe(MediaTypeNames.Application.Json);

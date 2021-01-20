@@ -222,6 +222,7 @@ const AssignKeySerial = (props: IProps) => {
                   )}
                   {!!keySerial.key && (
                     <KeySerialEditValues
+                      person={props.person}
                       keySerial={keySerial}
                       changeProperty={changeProperty}
                       disableEditing={false}
@@ -244,6 +245,7 @@ const AssignKeySerial = (props: IProps) => {
 
                 <KeySerialEditValues
                   keySerial={keySerial}
+                  person={props.person}
                   disableEditing={true}
                   openEditModal={props.openEditModal}
                   statusList={props.statusList}
