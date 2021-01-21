@@ -17,10 +17,10 @@ import { Context } from '../../Context';
 import { IBigFixSearchedName } from '../../models/Equipment';
 
 interface IProps {
-  addBigFixId: (property: string, id: string) => void;
+  addManagedSystemId: (property: string, id: string) => void;
 }
 
-const EquipmentBigFixSearchId = (props: IProps) => {
+const EquipmentManagedSystemSearchId = (props: IProps) => {
   const [isFetched, setIsFetched] = useState<boolean>(false);
   const [isFound, setIsFound] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -159,7 +159,7 @@ const EquipmentBigFixSearchId = (props: IProps) => {
                       <Button
                         color='link'
                         onClick={() =>
-                          props.addBigFixId(
+                          props.addManagedSystemId(
                             'systemManagementId',
                             computer.hardware_u_bigfix_id
                           )
@@ -264,4 +264,4 @@ const EquipmentBigFixSearchId = (props: IProps) => {
   );
 };
 
-export default EquipmentBigFixSearchId;
+export default EquipmentManagedSystemSearchId;

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import EquipmentBigFixInfo from './EquipmentBigFixInfo';
-import EquipmentBigFixSearchId from './EquipmentBigFixSearchId';
+import EquipmentManagedSystemInfo from './EquipmentManagedSystemInfo';
+import EquipmentManagedSystemSearchId from './EquipmentManagedSystemSearchId';
 
 interface IProps {
   bigfixId: string;
@@ -19,11 +19,11 @@ const EquipmentBigFix = (props: IProps) => {
         );
       }
       // if editing is enabled
-      return <EquipmentBigFixSearchId addBigFixId={props.addBigFixId} />;
+      return <EquipmentManagedSystemSearchId addManagedSystemId={props.addBigFixId} />;
     }
 
     // if Bigfix Id exists
-    return <EquipmentBigFixInfo bigfixId={props.bigfixId} />;
+    return <EquipmentManagedSystemInfo managedSystemId={props.bigfixId} />;
   };
 
   return (
