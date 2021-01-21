@@ -35,18 +35,16 @@ namespace Keas.Mvc.Controllers
         private readonly IUserService _userService;
         private readonly IFinancialService _financialService;
         private readonly INotificationService _notificationService;
-        private readonly IBigfixService _bigfixService;
         private static readonly DateTime MinAssignmentDate = new DateTime(1970,01,01);
 
 
-        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService, INotificationService notificationService, IBigfixService bigfixService)
+        public TeamAdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IFinancialService financialService, INotificationService notificationService)
         {
             _context = context;
             _identityService = identityService;
             _userService = userService;
             _financialService = financialService;
             _notificationService = notificationService;
-            _bigfixService = bigfixService;
         }
 
         public async Task<IActionResult> Index()
@@ -60,20 +58,6 @@ namespace Keas.Mvc.Controllers
 
             return View(team);
         }
-
-        public async Task<IActionResult> TestBigfix(string id)
-        {
-            if (id != null && id.Equals("os", StringComparison.OrdinalIgnoreCase))
-            {
-                var os = await _bigfixService.TestOs();
-                return Content(os);
-            }
-            else
-            {
-                return Content(await _bigfixService.TestLookupComputer());
-            }
-        }
-
 
         [HttpPost]
         public async Task<IActionResult> UpdateEmail(int id, Team team)

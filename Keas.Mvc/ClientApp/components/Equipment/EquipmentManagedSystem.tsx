@@ -22,7 +22,7 @@ const EquipmentManagedSystem = (props: IProps) => {
       return <EquipmentManagedSystemSearchId addManagedSystemId={props.addManagedSystemId} />;
     }
 
-    // if Bigfix Id exists
+    // if Managed System Id exists
     return <EquipmentManagedSystemInfo managedSystemId={props.managedSystemId} />;
   };
 

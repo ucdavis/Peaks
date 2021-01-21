@@ -303,38 +303,38 @@ namespace Test.TestsModel
 
         #endregion
 
-        #region BigfixTypes List
+        #region ManagedSystemTypes List
 
         [Fact]
-        public void BigfixTypesListContainsExpectedNumberOfValues()
+        public void ManagedSystemTypesListContainsExpectedNumberOfValues()
         {
-            EquipmentTypes.BigfixTypes.Count.ShouldBe(4);
+            EquipmentTypes.ManagedSystemTypes.Count.ShouldBe(4);
         }
 
         //1
         [Fact]
-        public void BigfixTypesContainsComputer()
+        public void ManagedSystemTypesContainsComputer()
         {
             EquipmentTypes.Computer.ShouldBe("Computer");
             EquipmentTypes.Is3Types.ShouldContain(EquipmentTypes.Computer);
         }
         //2
         [Fact]
-        public void BigfixTypesContainsServer()
+        public void ManagedSystemTypesContainsServer()
         {
             EquipmentTypes.Server.ShouldBe("Server");
             EquipmentTypes.Is3Types.ShouldContain(EquipmentTypes.Server);
         }
         //3
         [Fact]
-        public void BigfixTypesContainsDesktop()
+        public void ManagedSystemTypesContainsDesktop()
         {
             EquipmentTypes.Desktop.ShouldBe("Desktop");
             EquipmentTypes.Is3Types.ShouldContain(EquipmentTypes.Desktop);
         }
         //4
         [Fact]
-        public void BigfixTypesContainsLaptop()
+        public void ManagedSystemTypesContainsLaptop()
         {
             EquipmentTypes.Laptop.ShouldBe("Laptop");
             EquipmentTypes.Is3Types.ShouldContain(EquipmentTypes.Laptop);
