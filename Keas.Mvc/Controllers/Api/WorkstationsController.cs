@@ -279,20 +279,30 @@ namespace Keas.Mvc.Controllers.Api
         [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
         public async Task<IActionResult> Assign(int workstationId, int personId, string date)
         {
-            // TODO make sure user has permission
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
-                .Include(w => w.Space).Include(t => t.Team).Include(w => w.Assignment).ThenInclude(a => a.Person).SingleAsync(w => w.Id == workstationId);
+            if (!await _securityService.IsUserAllowed(Team, Role.Codes.SpaceMaster))
+            {
+                return BadRequest("Missing Permissions");
+            }
 
+            //This validates that workstation exists for the team
+            var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
+                .Include(w => w.Space)
+                .Include(t => t.Team)
+                .Include(w => w.Assignment).ThenInclude(a => a.Person)
+                .SingleAsync(w => w.Id == workstationId);
+            
+            var requestedByPerson = await _securityService.GetPerson(Team);
+            
             if (workstation.Assignment != null)
             {
                 _context.WorkstationAssignments.Update(workstation.Assignment);
                 workstation.Assignment.ExpiresAt = DateTime.Parse(date);
-                workstation.Assignment.RequestedById = User.Identity.Name;
-                workstation.Assignment.RequestedByName = User.GetNameClaim();
+                workstation.Assignment.RequestedById = requestedByPerson.UserId;
+                workstation.Assignment.RequestedByName = requestedByPerson.Name;
                 await _eventService.TrackWorkstationAssignmentUpdated(workstation);
             }
             else
@@ -300,8 +310,8 @@ namespace Keas.Mvc.Controllers.Api
                 workstation.Assignment = new WorkstationAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
                 workstation.Assignment.Person =
                 await _context.People.Include(p => p.Team).SingleAsync(p => p.Id == personId);
-                workstation.Assignment.RequestedById = User.Identity.Name;
-                workstation.Assignment.RequestedByName = User.GetNameClaim();
+                workstation.Assignment.RequestedById = requestedByPerson.UserId; 
+                workstation.Assignment.RequestedByName = requestedByPerson.Name;
 
                 if (workstation.Assignment.Person.Team.Slug != Team)
                 {
