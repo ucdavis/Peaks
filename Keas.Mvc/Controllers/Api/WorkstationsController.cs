@@ -332,8 +332,6 @@ namespace Keas.Mvc.Controllers.Api
         [HttpPost("{id}")]
         public async Task<IActionResult> Revoke(int id)
         {
-            // TODO permission
-
             var workstation = await _context.Workstations.Where(x => x.Team.Slug == Team)
                 .Include(w => w.Assignment).ThenInclude(w => w.Person)
                 .Include(w => w.Space)
@@ -358,7 +356,6 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Update([FromBody]Workstation workstation)
         {
-            //TODO: check permissions
             if (!ModelState.IsValid)
             {
                 return BadRequest();
