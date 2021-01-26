@@ -37,6 +37,9 @@ namespace Keas.Mvc.Services
         Task<bool> IsInTeamOrAdmin(string teamslug);
 
         bool IsRoleNameOrDAInArray(string[] roles, string roleName);
+
+        Task<bool> IsTeamValid(string slug, int teamId);
+        Task<bool> IsSpaceInTeam(string slug, int spaceId);
     }
     public class SecurityService : ISecurityService
     {
@@ -171,6 +174,23 @@ namespace Keas.Mvc.Services
             }
 
             return false;
+        }
+
+        public async Task<bool> IsTeamValid(string slug, int teamId)
+        {
+            return await _dbContext.Teams.AnyAsync(a => a.Slug == slug && a.Id == teamId);
+        }
+
+        public async Task<bool> IsSpaceInTeam(string slug, int spaceId)
+        {
+            var teamId = await _dbContext.Teams.Where(a => a.Slug == slug).Select(s => s.Id).SingleAsync();
+            var teamOrgs = await _dbContext.FISOrgs.Where(a => a.TeamId == teamId).Select(s => s.OrgCode).ToArrayAsync();
+            if (!await _dbContext.Spaces.AnyAsync(a => a.Id == spaceId && teamOrgs.Contains(a.OrgId)))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

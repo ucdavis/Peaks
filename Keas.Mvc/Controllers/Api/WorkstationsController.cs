@@ -26,11 +26,13 @@ namespace Keas.Mvc.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
+        private readonly ISecurityService _securityService;
 
-        public WorkstationsController(ApplicationDbContext context, IEventService eventService)
+        public WorkstationsController(ApplicationDbContext context, IEventService eventService, ISecurityService securityService)
         {
             _context = context;
             _eventService = eventService;
+            _securityService = securityService;
         }
 
         [HttpGet]
@@ -235,16 +237,14 @@ namespace Keas.Mvc.Controllers.Api
             }
 
             //Validate passed team matches workstation team.
-            var team = await _context.Teams.SingleAsync(a => a.Slug == Team);
-            if (workstation.TeamId != team.Id)
+            if (!await _securityService.IsTeamValid(Team, workstation.TeamId))
             {
                 return BadRequest("Invalid Team");
             }
             if (workstation.Space != null)
             {
                 //Validate Team has space.
-                var teamOrgs = await _context.FISOrgs.Where(a => a.TeamId == team.Id).Select(s => s.OrgCode).ToArrayAsync();
-                if (!await _context.Spaces.AnyAsync(a => a.Id == workstation.Space.Id && teamOrgs.Contains(a.OrgId)))
+                if (!await _securityService.IsSpaceInTeam(Team, workstation.Space.Id))
                 {
                     return BadRequest("Space not in Team");
                 }
