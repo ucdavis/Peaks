@@ -238,8 +238,6 @@ namespace Keas.Mvc
             }
             else
             {
-                // monitor in production
-                app.UseMiddleware<StackifyMiddleware.RequestTracerMiddleware>();
                 app.UseExceptionHandler("/Error/Index");
             }
 
