@@ -140,6 +140,17 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
+            //Validate passed team matches workstation team.
+            if (!await _securityService.IsTeamValid(Team, access.TeamId))
+            {
+                return BadRequest("Invalid Team");
+            }
+
+            if (access.Assignments != null && access.Assignments.Any())
+            {
+                return BadRequest("Don't assign person with create.");
+            }
+
             _context.Access.Add(access);
             await _eventService.TrackCreateAccess(access);
             await _context.SaveChangesAsync();
