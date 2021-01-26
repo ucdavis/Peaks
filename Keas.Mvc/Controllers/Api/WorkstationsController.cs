@@ -236,26 +236,26 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
+            if (workstation.Space == null)
+            {
+                return BadRequest("No Space for workstation");
+            }
+
             //Validate passed team matches workstation team.
             if (!await _securityService.IsTeamValid(Team, workstation.TeamId))
             {
                 return BadRequest("Invalid Team");
             }
-            if (workstation.Space != null)
-            {
-                //Validate Team has space.
-                if (!await _securityService.IsSpaceInTeam(Team, workstation.Space.Id))
-                {
-                    return BadRequest("Space not in Team");
-                }
 
-                var space = await _context.Spaces.SingleAsync(s => s.Id == workstation.Space.Id);
-                workstation.Space = space;
-            }
-            else
+            //Validate Team has space.
+            if (!await _securityService.IsSpaceInTeam(Team, workstation.Space.Id))
             {
-                return BadRequest("No Space for workstation");
+                return BadRequest("Space not in Team");
             }
+
+            var space = await _context.Spaces.SingleAsync(s => s.Id == workstation.Space.Id);
+            workstation.Space = space;
+
             _context.Workstations.Add(workstation);
             await _eventService.TrackCreateWorkstation(workstation);
             await _context.SaveChangesAsync();

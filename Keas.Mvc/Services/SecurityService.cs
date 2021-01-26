@@ -185,12 +185,8 @@ namespace Keas.Mvc.Services
         {
             var teamId = await _dbContext.Teams.Where(a => a.Slug == slug).Select(s => s.Id).SingleAsync();
             var teamOrgs = await _dbContext.FISOrgs.Where(a => a.TeamId == teamId).Select(s => s.OrgCode).ToArrayAsync();
-            if (!await _dbContext.Spaces.AnyAsync(a => a.Id == spaceId && teamOrgs.Contains(a.OrgId)))
-            {
-                return false;
-            }
-
-            return true;
+            
+            return await _dbContext.Spaces.AnyAsync(a => a.Id == spaceId && teamOrgs.Contains(a.OrgId));
         }
     }
 }
