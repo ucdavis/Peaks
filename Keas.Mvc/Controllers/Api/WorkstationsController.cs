@@ -26,11 +26,13 @@ namespace Keas.Mvc.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
+        private readonly ISecurityService _securityService;
 
-        public WorkstationsController(ApplicationDbContext context, IEventService eventService)
+        public WorkstationsController(ApplicationDbContext context, IEventService eventService, ISecurityService securityService)
         {
             _context = context;
             _eventService = eventService;
+            _securityService = securityService;
         }
 
         [HttpGet]
@@ -233,11 +235,32 @@ namespace Keas.Mvc.Controllers.Api
             {
                 return BadRequest();
             }
-            if (workstation.Space != null)
+
+            if (workstation.Space == null)
             {
-                var space = await _context.Spaces.SingleAsync(s => s.Id == workstation.Space.Id);
-                workstation.Space = space;
+                return BadRequest("No Space for workstation");
             }
+
+            if (workstation.Assignment != null || workstation.WorkstationAssignmentId.HasValue)
+            {
+                return BadRequest("Don't assign person with create.");
+            }
+
+            //Validate passed team matches workstation team.
+            if (!await _securityService.IsTeamValid(Team, workstation.TeamId))
+            {
+                return BadRequest("Invalid Team");
+            }
+
+            //Validate Team has space.
+            if (!await _securityService.IsSpaceInTeam(Team, workstation.Space.Id))
+            {
+                return BadRequest("Space not in Team");
+            }
+
+            var space = await _context.Spaces.SingleAsync(s => s.Id == workstation.Space.Id);
+            workstation.Space = space;
+
             _context.Workstations.Add(workstation);
             await _eventService.TrackCreateWorkstation(workstation);
             await _context.SaveChangesAsync();
