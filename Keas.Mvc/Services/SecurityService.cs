@@ -41,7 +41,6 @@ namespace Keas.Mvc.Services
         Task<bool> IsTeamValid(string slug, int teamId);
         Task<bool> IsSpaceInTeam(string slug, int spaceId);
 
-        Task<bool> IsUserAllowed(string slug, string assetType);
     }
     public class SecurityService : ISecurityService
     {
@@ -189,21 +188,6 @@ namespace Keas.Mvc.Services
             var teamOrgs = await _dbContext.FISOrgs.Where(a => a.TeamId == teamId).Select(s => s.OrgCode).ToArrayAsync();
             
             return await _dbContext.Spaces.AnyAsync(a => a.Id == spaceId && teamOrgs.Contains(a.OrgId));
-        }
-
-        public async Task<bool> IsUserAllowed(string slug, string role)
-        {
-            var person = await GetPerson(slug);
-            if (person == null)
-            {
-                return false;
-            }
-            if (person.UserId == _apiSettings.UserId)
-            {
-                return true;
-            }
-
-            return await IsInRoles(new[] {Role.Codes.DepartmentalAdmin, role}, slug, person.UserId);
         }
     }
 }

@@ -258,12 +258,6 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest("Space not in Team");
             }
 
-            //Validate User (including API user, has permissions)
-            if (!await _securityService.IsUserAllowed(Team, Role.Codes.SpaceMaster))
-            {
-                return BadRequest("Missing Permissions");
-            }
-
             var space = await _context.Spaces.SingleAsync(s => s.Id == workstation.Space.Id);
             workstation.Space = space;
 
@@ -283,10 +277,6 @@ namespace Keas.Mvc.Controllers.Api
             {
                 return BadRequest();
             }
-            if (!await _securityService.IsUserAllowed(Team, Role.Codes.SpaceMaster))
-            {
-                return BadRequest("Missing Permissions");
-            }
 
             //This validates that workstation exists for the team
             var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
@@ -300,6 +290,12 @@ namespace Keas.Mvc.Controllers.Api
             if (workstation.Assignment != null)
             {
                 _context.WorkstationAssignments.Update(workstation.Assignment);
+
+                if (workstation.Assignment.PersonId != personId)
+                {
+                    return BadRequest("Can't update different person");
+                }
+
                 workstation.Assignment.ExpiresAt = DateTime.Parse(date);
                 workstation.Assignment.RequestedById = requestedByPerson.UserId;
                 workstation.Assignment.RequestedByName = requestedByPerson.Name;
