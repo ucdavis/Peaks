@@ -226,7 +226,7 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody] Workstation workstation)
         {
-            // TODO Make sure user has permission; Protect from overpost
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -256,6 +256,12 @@ namespace Keas.Mvc.Controllers.Api
             if (!await _securityService.IsSpaceInTeam(Team, workstation.Space.Id))
             {
                 return BadRequest("Space not in Team");
+            }
+
+            //Validate User (including API user, has permissions)
+            if (!await _securityService.IsUserAllowed(Team, Role.Codes.SpaceMaster))
+            {
+                return BadRequest("Missing Permissions");
             }
 
             var space = await _context.Spaces.SingleAsync(s => s.Id == workstation.Space.Id);
