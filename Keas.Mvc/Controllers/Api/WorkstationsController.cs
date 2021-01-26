@@ -241,7 +241,7 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest("No Space for workstation");
             }
 
-            if (workstation.Assignment != null)
+            if (workstation.Assignment != null || workstation.WorkstationAssignmentId.HasValue)
             {
                 return BadRequest("Don't assign person with create.");
             }
