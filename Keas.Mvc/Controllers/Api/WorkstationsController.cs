@@ -241,6 +241,11 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest("No Space for workstation");
             }
 
+            if (workstation.Assignment != null)
+            {
+                return BadRequest("Don't assign person with create.");
+            }
+
             //Validate passed team matches workstation team.
             if (!await _securityService.IsTeamValid(Team, workstation.TeamId))
             {
