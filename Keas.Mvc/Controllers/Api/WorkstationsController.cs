@@ -252,6 +252,10 @@ namespace Keas.Mvc.Controllers.Api
                 var space = await _context.Spaces.SingleAsync(s => s.Id == workstation.Space.Id);
                 workstation.Space = space;
             }
+            else
+            {
+                return BadRequest("No Space for workstation");
+            }
             _context.Workstations.Add(workstation);
             await _eventService.TrackCreateWorkstation(workstation);
             await _context.SaveChangesAsync();
