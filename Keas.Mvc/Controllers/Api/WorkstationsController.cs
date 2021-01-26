@@ -233,8 +233,22 @@ namespace Keas.Mvc.Controllers.Api
             {
                 return BadRequest();
             }
+
+            //Validate passed team matches workstation team.
+            var team = await _context.Teams.SingleAsync(a => a.Slug == Team);
+            if (workstation.TeamId != team.Id)
+            {
+                return BadRequest("Invalid Team");
+            }
             if (workstation.Space != null)
             {
+                //Validate Team has space.
+                var teamOrgs = await _context.FISOrgs.Where(a => a.TeamId == team.Id).Select(s => s.OrgCode).ToArrayAsync();
+                if (!await _context.Spaces.AnyAsync(a => a.Id == workstation.Space.Id && teamOrgs.Contains(a.OrgId)))
+                {
+                    return BadRequest("Space not in Team");
+                }
+
                 var space = await _context.Spaces.SingleAsync(s => s.Id == workstation.Space.Id);
                 workstation.Space = space;
             }
