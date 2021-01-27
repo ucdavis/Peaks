@@ -166,25 +166,38 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
+            //Verify access is in team and exists
+            var access = await _context.Access.Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignments).SingleAsync(x => x.Id == accessId);
+
+            //Verify person is in team. Maybe move this to the security service
+            var personToAssign = await _context.People.Include(p => p.Team).SingleAsync(p => p.Id == personId);
+            if (personToAssign.Team.Slug != Team)
+            {
+                return BadRequest("User is not part of this team!");
+            }
+
+
             var assignment = await _context.AccessAssignments.Where(x => x.AccessId == accessId && x.PersonId == personId)
                 .Include(x => x.Person)
                 .SingleOrDefaultAsync();
 
+            var requestedByPerson = await _securityService.GetPerson(Team);
+
             if (assignment != null) 
             {
-                assignment.ExpiresAt = DateTime.Parse(date);
+                assignment.ExpiresAt = DateTime.Parse(date); //TODO Verify a good date. (In future, etc.)
+                assignment.RequestedById = requestedByPerson.UserId;
+                assignment.RequestedByName = requestedByPerson.Name;
                 await _eventService.TrackAssignAccessUpdate(assignment, Team);
             } else 
             {
-                var access = await _context.Access.Where(x => x.Team.Slug == Team)
-                    .Include(x => x.Assignments).SingleAsync(x => x.Id == accessId);
-
-                 assignment = new AccessAssignment
+                assignment = new AccessAssignment
                 {
                     AccessId = accessId,
                     PersonId = personId,
-                    RequestedById = User.Identity.Name,
-                    RequestedByName = User.GetNameClaim(),
+                    RequestedById = requestedByPerson.UserId,
+                    RequestedByName = requestedByPerson.Name,
                     ExpiresAt = DateTime.Parse(date),
                 };
 
