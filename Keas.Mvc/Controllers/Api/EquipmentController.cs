@@ -361,12 +361,12 @@ namespace Keas.Mvc.Controllers.Api
             {
                 if (string.IsNullOrWhiteSpace(updatedEquipment.ProtectionLevel))
                 {
-                    updatedEquipment.ProtectionLevel = "P1";
+                    updatedEquipment.ProtectionLevel = ProtectionLevels.P1;
                 }
 
                 if (string.IsNullOrWhiteSpace(updatedEquipment.AvailabilityLevel))
                 {
-                    updatedEquipment.AvailabilityLevel = "A1";
+                    updatedEquipment.AvailabilityLevel = AvailabilityLevels.A1;
                 }
             }
 
