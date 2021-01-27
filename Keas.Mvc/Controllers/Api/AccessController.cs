@@ -170,9 +170,8 @@ namespace Keas.Mvc.Controllers.Api
             var access = await _context.Access.Where(x => x.Team.Slug == Team)
                 .Include(x => x.Assignments).SingleAsync(x => x.Id == accessId);
 
-            //Verify person is in team. Maybe move this to the security service
-            var personToAssign = await _context.People.Include(p => p.Team).SingleAsync(p => p.Id == personId);
-            if (personToAssign.Team.Slug != Team)
+            //Verify person is in team. 
+            if (!await _securityService.IsPersonInTeam(Team, personId))
             {
                 return BadRequest("User is not part of this team!");
             }

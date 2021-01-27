@@ -284,7 +284,12 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(t => t.Team)
                 .Include(w => w.Assignment).ThenInclude(a => a.Person)
                 .SingleAsync(w => w.Id == workstationId);
-            
+
+            if (!await _securityService.IsPersonInTeam(Team, personId))
+            {
+                return BadRequest("User is not part of this team!");
+            }
+
             var requestedByPerson = await _securityService.GetPerson(Team);
             
             if (workstation.Assignment != null)
@@ -309,17 +314,6 @@ namespace Keas.Mvc.Controllers.Api
                 workstation.Assignment.RequestedById = requestedByPerson.UserId; 
                 workstation.Assignment.RequestedByName = requestedByPerson.Name;
 
-                if (workstation.Assignment.Person.Team.Slug != Team)
-                {
-                    Message = "User is not part of this team!";
-                    return BadRequest(workstation);
-                }
-
-                if (workstation.TeamId != workstation.Assignment.Person.TeamId)
-                {
-                    Message = "Workstation team did not match person's team!";
-                    return BadRequest(workstation);
-                }
 
                 _context.WorkstationAssignments.Add(workstation.Assignment);
                 await _eventService.TrackAssignWorkstation(workstation);
