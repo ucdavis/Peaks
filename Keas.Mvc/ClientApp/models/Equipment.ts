@@ -102,7 +102,7 @@ export interface IEquipmentAttribute {
   value: string;
 }
 
-export interface IBigFixSearchedName {
+export interface IManagedSystemSearchedName {
   hardware_u_bigfix_id: string;
   hardware_display_name: string;
 }

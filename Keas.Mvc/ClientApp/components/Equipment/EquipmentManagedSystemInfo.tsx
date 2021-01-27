@@ -5,11 +5,11 @@ import { Button, Modal, ModalBody, Table } from 'reactstrap';
 import { Context } from '../../Context';
 
 interface IProps {
-  bigfixId: string;
+  managedSystemId: string;
 }
 
-const EquipmentBigFixInfo = (props: IProps) => {
-  const [bigfixModal, setBigfixModal] = useState<boolean>(false);
+const EquipmentManagedSystemInfo = (props: IProps) => {
+  const [managedSystemModal, setManagedSystemModal] = useState<boolean>(false);
   const [computerInfo, setComputerInfo] = useState<object>({});
   const [isFetched, setIsFetched] = useState<boolean>(false);
   const [isFound, setIsFound] = useState<boolean>(true);
@@ -23,7 +23,7 @@ const EquipmentBigFixInfo = (props: IProps) => {
         className='bigfix-info'
         onClick={() => {
           modalToggle();
-          getBigFixComputerInfo(props.bigfixId || '');
+          getManagedSystemComputerInfo(props.managedSystemId || '');
         }}
       >
         <i className='fas fa-info-circle ml-2' />
@@ -31,10 +31,10 @@ const EquipmentBigFixInfo = (props: IProps) => {
     );
   };
 
-  const renderBigFixModal = () => {
+  const renderManagedSystemModal = () => {
     return (
       <Modal
-        isOpen={bigfixModal}
+        isOpen={managedSystemModal}
         toggle={modalToggle}
         size='lg'
         className='equipment-color'
@@ -90,7 +90,7 @@ const EquipmentBigFixInfo = (props: IProps) => {
       } else {
         return (
           <p>
-            Not a valid Bigfix id, please make sure to enter a valid Bigfix id.
+            Not a valid Managed System id, please make sure to enter a valid Managed System id.
           </p>
         );
       }
@@ -99,7 +99,7 @@ const EquipmentBigFixInfo = (props: IProps) => {
     return <p>No data to present</p>;
   };
 
-  const getBigFixComputerInfo = async (id: string) => {
+  const getManagedSystemComputerInfo = async (id: string) => {
     let response = null;
     try {
       response = await context.fetch(
@@ -138,7 +138,7 @@ const EquipmentBigFixInfo = (props: IProps) => {
 
   const modalToggle = () => {
     // reset the states to its initial values.
-    setBigfixModal(prevModal => !prevModal);
+    setManagedSystemModal(prevModal => !prevModal);
     setIsFetched(false);
     setIsFound(true);
     setIsForbidden(false);
@@ -149,9 +149,9 @@ const EquipmentBigFixInfo = (props: IProps) => {
     <>
       {renderInfoIcon()}
 
-      {renderBigFixModal()}
+      {renderManagedSystemModal()}
     </>
   );
 };
 
-export default EquipmentBigFixInfo;
+export default EquipmentManagedSystemInfo;
