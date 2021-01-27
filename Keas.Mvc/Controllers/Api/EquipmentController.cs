@@ -201,6 +201,12 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest("Invalid Team");
             }
 
+            if(!EquipmentTypes.Types.Contains(equipment.Type))
+            {
+                return BadRequest("Invalid Equipment Type");
+            }
+
+
             if (equipment.Space != null)
             {
                 //Validate Team has space.
@@ -213,6 +219,17 @@ namespace Keas.Mvc.Controllers.Api
             }
 
             UpdateTypeSpecificFields(equipment);
+            if (EquipmentTypes.Is3Types.Contains(equipment.Type, StringComparer.OrdinalIgnoreCase))
+            {
+                if (!ProtectionLevels.Levels.Contains(equipment.ProtectionLevel))
+                {
+                    return BadRequest("Invalid Protection Level");
+                }
+                if (!AvailabilityLevels.Levels.Contains(equipment.AvailabilityLevel))
+                {
+                    return BadRequest("Invalid Availability Level");
+                }
+            }
 
             _context.Equipment.Add(equipment);
             await _eventService.TrackCreateEquipment(equipment);
