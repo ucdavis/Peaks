@@ -210,6 +210,11 @@ namespace Keas.Mvc.Controllers.Api
             return Json(assignment);
         }
 
+        /// <summary>
+        /// Only Name, Notes, and Tags fields are updated
+        /// </summary>
+        /// <param name="access"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         [Consumes(MediaTypeNames.Application.Json)]
@@ -249,6 +254,11 @@ namespace Keas.Mvc.Controllers.Api
             return Json(null);
         }
 
+        /// <summary>
+        /// If there are any assignments, they will be removed before the access record is set to inactive
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(int id)
