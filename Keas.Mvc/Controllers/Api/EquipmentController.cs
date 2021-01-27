@@ -28,12 +28,14 @@ namespace Keas.Mvc.Controllers.Api
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
         private readonly IBigfixService _bigfixService;
+        private readonly ISecurityService _securityService;
 
-        public EquipmentController(ApplicationDbContext context, IEventService eventService, IBigfixService bigfixService)
+        public EquipmentController(ApplicationDbContext context, IEventService eventService, IBigfixService bigfixService, ISecurityService securityService)
         {
             this._context = context;
             _eventService = eventService;
             this._bigfixService = bigfixService;
+            _securityService = securityService;
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
@@ -193,8 +195,19 @@ namespace Keas.Mvc.Controllers.Api
             {
                 return BadRequest();
             }
+            //Validate passed team matches equipment team.
+            if (!await _securityService.IsTeamValid(Team, equipment.TeamId))
+            {
+                return BadRequest("Invalid Team");
+            }
+
             if (equipment.Space != null)
             {
+                //Validate Team has space.
+                if (!await _securityService.IsSpaceInTeam(Team, equipment.Space.Id))
+                {
+                    return BadRequest("Space not in Team");
+                }
                 var space = await _context.Spaces.SingleAsync(x => x.Id == equipment.Space.Id);
                 equipment.Space = space;
             }
@@ -212,28 +225,40 @@ namespace Keas.Mvc.Controllers.Api
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Assign(int equipmentId, int personId, string date)
         {
-            // TODO Make sure user has permssion, make sure equipment exists, makes sure equipment is in this team
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+
+            if (!await _securityService.IsPersonInTeam(Team, personId))
+            {
+                return BadRequest("User is not part of this team!");
+            }
+
             var equipment = await _context.Equipment.Where(x => x.Team.Slug == Team && x.Active)
-                .Include(x => x.Space).Include(x => x.Assignment).ThenInclude(a => a.Person).SingleAsync(x => x.Id == equipmentId);
+                .Include(x => x.Space)
+                .Include(x => x.Assignment)
+                .ThenInclude(a => a.Person)
+                .SingleAsync(x => x.Id == equipmentId);
+
+            //TODO: Change to .SingleOrDefaultAsync() and return a nice not found instead of throwing an exception?
+
+            var requestedByPerson = await _securityService.GetPerson(Team);
 
             if (equipment.Assignment != null)
             {
                 _context.EquipmentAssignments.Update(equipment.Assignment);
-                equipment.Assignment.ExpiresAt = DateTime.Parse(date);
-                equipment.Assignment.RequestedById = User.Identity.Name;
-                equipment.Assignment.RequestedByName = User.GetNameClaim();
+                equipment.Assignment.ExpiresAt = DateTime.Parse(date); //TODO: Validate date is in the future...
+                equipment.Assignment.RequestedById = requestedByPerson.UserId;
+                equipment.Assignment.RequestedByName = requestedByPerson.Name;
                 await _eventService.TrackEquipmentAssignmentUpdated(equipment);
             }
             else
             {
                 equipment.Assignment = new EquipmentAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
                 equipment.Assignment.Person = await _context.People.SingleAsync(p => p.Id == personId);
-                equipment.Assignment.RequestedById = User.Identity.Name;
-                equipment.Assignment.RequestedByName = User.GetNameClaim();
+                equipment.Assignment.RequestedById = requestedByPerson.UserId;
+                equipment.Assignment.RequestedByName = requestedByPerson.Name;
 
                 _context.EquipmentAssignments.Add(equipment.Assignment);
                 await _eventService.TrackAssignEquipment(equipment);
@@ -278,6 +303,11 @@ namespace Keas.Mvc.Controllers.Api
             }
             else
             {
+                //Validate Team has space.
+                if (!await _securityService.IsSpaceInTeam(Team, updatedEquipment.Space.Id))
+                {
+                    return BadRequest("Space not in Team");
+                }
                 eq.Space = await _context.Spaces.SingleAsync(x => x.Id == updatedEquipment.Space.Id);
             }
             await _eventService.TrackUpdateEquipment(eq);
@@ -319,7 +349,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Assignment).ThenInclude(x => x.Person)
                 .Include(x => x.Team)
                 .SingleAsync(x => x.Id == id);
-            if (equipment == null)
+            if (equipment == null) //This isn't possible unless we change the SingleAsync above
             {
                 return NotFound();
             }
@@ -344,7 +374,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Team)
                 .SingleAsync(x => x.Id == id);
 
-            if (equipment == null)
+            if (equipment == null)//This isn't possible unless we change the SingleAsync above
             {
                 return NotFound();
             }
