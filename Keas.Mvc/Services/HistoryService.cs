@@ -270,7 +270,7 @@ namespace Keas.Mvc.Services
 
             var historyEntry = new History
             {
-                Description = accessAssignment.GetDescription(nameof(Access), access.Title, person, "Assignment updated by"),
+                Description = accessAssignment.GetDescription(nameof(Access), access.Title, person, "Assignment updated for"),
                 ActorId = person.UserId,
                 AssetType = "Access",
                 ActionType = "Assigned",
