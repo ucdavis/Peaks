@@ -311,6 +311,24 @@ namespace Keas.Mvc.Controllers.Api
             eq.AvailabilityLevel = updatedEquipment.AvailabilityLevel;
             eq.SystemManagementId = updatedEquipment.SystemManagementId;
 
+            if (!EquipmentTypes.Types.Contains(eq.Type))
+            {
+                return BadRequest("Invalid Equipment Type");
+            }
+
+            if (EquipmentTypes.Is3Types.Contains(eq.Type, StringComparer.OrdinalIgnoreCase))
+            {
+                if (!ProtectionLevels.Levels.Contains(eq.ProtectionLevel))
+                {
+                    return BadRequest("Invalid Protection Level");
+                }
+                if (!AvailabilityLevels.Levels.Contains(eq.AvailabilityLevel))
+                {
+                    return BadRequest("Invalid Availability Level");
+                }
+            }
+
+
             eq.Attributes.Clear();
             updatedEquipment.Attributes.ForEach(x => eq.AddAttribute(x.Key, x.Value));
 
