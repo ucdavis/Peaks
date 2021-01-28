@@ -165,7 +165,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
                           )
                         }
                       >
-                        {computer.hardware_display_name}
+                        {computer.hardware_display_name} ({computer.hardware_u_device_name})
                       </Button>
                     </tr>
                   );
