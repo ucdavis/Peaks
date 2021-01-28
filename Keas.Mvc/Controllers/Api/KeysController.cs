@@ -194,7 +194,6 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody]CreateKeyViewModel model)
         {
-            // TODO Make sure user has permissions
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -202,7 +201,7 @@ namespace Keas.Mvc.Controllers.Api
 
             if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code == model.Code.Trim()))
             {
-                return BadRequest();
+                return BadRequest("Code already exists");
                 //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
             }
 
@@ -210,7 +209,7 @@ namespace Keas.Mvc.Controllers.Api
             var key = new Key()
             {
                 Name = model.Name.Trim(),
-                Code = model.Code.Trim(),
+                Code = model.Code.Trim().ToUpper(),
                 Notes = model.Notes,
                 Tags = model.Tags,
             };
