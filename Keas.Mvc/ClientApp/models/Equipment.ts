@@ -105,4 +105,5 @@ export interface IEquipmentAttribute {
 export interface IManagedSystemSearchedName {
   hardware_u_bigfix_id: string;
   hardware_display_name: string;
+  hardware_u_device_name: string;
 }
