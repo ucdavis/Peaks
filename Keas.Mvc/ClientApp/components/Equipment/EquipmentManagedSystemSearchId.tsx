@@ -14,13 +14,13 @@ import {
   Table
 } from 'reactstrap';
 import { Context } from '../../Context';
-import { IBigFixSearchedName } from '../../models/Equipment';
+import { IManagedSystemSearchedName } from '../../models/Equipment';
 
 interface IProps {
-  addBigFixId: (property: string, id: string) => void;
+  addManagedSystemId: (property: string, id: string) => void;
 }
 
-const EquipmentBigFixSearchId = (props: IProps) => {
+const EquipmentManagedSystemSearchId = (props: IProps) => {
   const [isFetched, setIsFetched] = useState<boolean>(false);
   const [isFound, setIsFound] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -29,7 +29,7 @@ const EquipmentBigFixSearchId = (props: IProps) => {
   const [selectedField, setSelectedField] = useState<string>('Name');
   const [valueToBeSearched, setValueToBeSearched] = useState<string>('');
   const [listOfComputers, setListOfComputers] = useState<
-    IBigFixSearchedName[]
+    IManagedSystemSearchedName[]
   >();
   const context = useContext(Context);
 
@@ -152,17 +152,20 @@ const EquipmentBigFixSearchId = (props: IProps) => {
               <tbody>
                 {listOfComputers.map(computer => {
                   return (
-                    <tr key={computer.id} className='bigfix-info border-bottom'>
+                    <tr
+                      key={computer.hardware_u_bigfix_id}
+                      className='bigfix-info border-bottom'
+                    >
                       <Button
                         color='link'
                         onClick={() =>
-                          props.addBigFixId(
+                          props.addManagedSystemId(
                             'systemManagementId',
-                            computer.id
+                            computer.hardware_u_bigfix_id
                           )
                         }
                       >
-                        {computer.name}
+                        {computer.hardware_display_name}
                       </Button>
                     </tr>
                   );
@@ -230,10 +233,9 @@ const EquipmentBigFixSearchId = (props: IProps) => {
       return;
     }
 
-    const firstFiveName = response.slice(0, 5);
     setIsFetched(true);
     setIsSearching(false);
-    setListOfComputers(firstFiveName);
+    setListOfComputers(response.result);
   };
 
   const changeSelectedInput = value => {
@@ -246,12 +248,12 @@ const EquipmentBigFixSearchId = (props: IProps) => {
   };
 
   const modalToggle = () => {
-      setIsFetched(false);
-      setIsFound(true);
-      setIsValidSearch(true);
-      setListOfComputers([]);
-      setValueToBeSearched('');
-      setSearchModal(prevModal => !prevModal);
+    setIsFetched(false);
+    setIsFound(true);
+    setIsValidSearch(true);
+    setListOfComputers([]);
+    setValueToBeSearched('');
+    setSearchModal(prevModal => !prevModal);
   };
 
   return (
@@ -262,4 +264,4 @@ const EquipmentBigFixSearchId = (props: IProps) => {
   );
 };
 
-export default EquipmentBigFixSearchId;
+export default EquipmentManagedSystemSearchId;
