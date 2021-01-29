@@ -27,11 +27,13 @@ namespace Keas.Mvc.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
+        private readonly ISecurityService _securityService;
 
-        public KeysController(ApplicationDbContext context, IEventService eventService)
+        public KeysController(ApplicationDbContext context, IEventService eventService, ISecurityService securityService)
         {
             _context = context;
             _eventService = eventService;
+            _securityService = securityService;
         }
 
         [HttpGet]
@@ -199,7 +201,7 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
-            if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code == model.Code.Trim()))
+            if (await _context.Keys.AnyAsync(a => a.Team.Slug == Team && a.Code == model.Code.Trim().ToUpper()))
             {
                 return BadRequest("Code already exists");
                 //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
@@ -229,10 +231,12 @@ namespace Keas.Mvc.Controllers.Api
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Key), StatusCodes.Status200OK)]
         [Consumes(MediaTypeNames.Application.Json)]
-        public async Task<IActionResult> Update(int id, [FromBody]UpdateKeyViewModel model)
+        public async Task<IActionResult> Update(int id, [FromBody]UpdateKeyViewModel model) //This is currently identical to CreateKeyViewModel
         {
-            //TODO: check permissions, make sure SN isn't edited 
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             // get full object
             var key = await _context.Keys
@@ -243,13 +247,13 @@ namespace Keas.Mvc.Controllers.Api
                         .ThenInclude(assignment => assignment.Person)
                 .SingleAsync(x => x.Id == id);
 
-            if (await _context.Keys.AnyAsync(a => a.Id != key.Id && a.Team.Slug == Team && a.Code == model.Code.Trim()))
+            if (await _context.Keys.AnyAsync(a => a.Id != key.Id && a.Team.Slug == Team && a.Code == model.Code.Trim().ToUpper()))
             {
                 return BadRequest();
                 //throw new Exception($"Duplicate Code detected for Team. {model.Code}");
             }
 
-            key.Code = model.Code.Trim();
+            key.Code = model.Code.Trim().ToUpper();
             key.Name = model.Name.Trim();
             key.Tags = model.Tags;
             key.Notes = model.Notes;
@@ -314,10 +318,14 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> AssociateSpace(int id, [FromBody] AssociateKeyViewModel model)
         {
-            // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            if (!await _securityService.IsSpaceInTeam(Team, model.SpaceId))
+            {
+                return BadRequest("Space not in Team");
             }
 
             // find key
@@ -359,7 +367,6 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> DisassociateSpace(int id, [FromBody] DisassociateKeyViewModel model)
         {
-            // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
