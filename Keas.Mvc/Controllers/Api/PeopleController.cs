@@ -182,7 +182,25 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody] Person person)
         {
-            // TODO Make sure user has permission; Protect from overpost
+            //This commented out code would be much cleared, but I don't feel like updating and testing it now -- Jason
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(person);
+            //}
+
+            //if (person.Id == 0)
+            //{
+            //    if (!person.Active)
+            //    {
+            //        return BadRequest("Creating an inactive person is bad...");
+            //    }
+            //    //Do create login
+            //}
+            //else
+            //{
+            //    //do Update logic
+            //}
+
             if (ModelState.IsValid)
             {
                 // if we are being sent in an already existing, active person
