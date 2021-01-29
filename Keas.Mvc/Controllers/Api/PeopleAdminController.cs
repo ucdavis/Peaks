@@ -26,12 +26,14 @@ namespace Keas.Mvc.Controllers.Api
         private readonly ApplicationDbContext _context;
         private readonly IIdentityService _identityService;
         private readonly INotificationService _notificationService;
+        private readonly ISecurityService _securityService;
 
-        public PeopleAdminController(ApplicationDbContext context, IIdentityService identityService, INotificationService notificationService)
+        public PeopleAdminController(ApplicationDbContext context, IIdentityService identityService, INotificationService notificationService, ISecurityService securityService)
         {
             this._context = context;
             this._identityService = identityService;
             _notificationService = notificationService;
+            _securityService = securityService;
         }
 
         [HttpPost]
@@ -39,36 +41,37 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Update([FromBody]Person person)
         {
-            //TODO: check permissions
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var p = await _context.People.Where(x => x.Team.Slug == Team)
-                    .SingleAsync(x => x.Id == person.Id);
-
-                p.FirstName = person.FirstName;
-                p.LastName = person.LastName;
-                p.Email = person.Email;
-                p.Tags = person.Tags;
-                p.TeamPhone = person.TeamPhone;
-                p.HomePhone = person.HomePhone;
-                p.Title = person.Title;
-                p.StartDate = person.StartDate;
-                p.EndDate = person.EndDate;
-                p.Category = person.Category;
-                p.Notes = person.Notes;
-                p.Supervisor = person.Supervisor;
-                p.SupervisorId = person.SupervisorId;
-
-                if (person.Supervisor != null)
-                {
-                    _context.Attach(p.Supervisor);
-                }
-
-
-                await _context.SaveChangesAsync();
-                return Json(p);
+                return BadRequest(ModelState);
             }
-            return BadRequest(ModelState);
+
+            var p = await _context.People.Where(x => x.Team.Slug == Team)
+                .SingleAsync(x => x.Id == person.Id);
+
+            p.FirstName = person.FirstName;
+            p.LastName = person.LastName;
+            p.Email = person.Email;
+            p.Tags = person.Tags;
+            p.TeamPhone = person.TeamPhone;
+            p.HomePhone = person.HomePhone;
+            p.Title = person.Title;
+            p.StartDate = person.StartDate;
+            p.EndDate = person.EndDate;
+            p.Category = person.Category;
+            p.Notes = person.Notes;
+            p.Supervisor = person.Supervisor;
+            p.SupervisorId = person.SupervisorId;
+
+            if (person.Supervisor != null)
+            {
+                _context.Attach(p.Supervisor);
+            }
+
+
+            await _context.SaveChangesAsync();
+            return Json(p);
+
         }
 
         [HttpPost("{id}")]
@@ -79,19 +82,21 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.User)
                 .SingleAsync(x => x.Id == id);
 
-            if (User.Identity.Name == person.UserId)
+            var personActing = await _securityService.GetPerson(Team);
+
+            if (personActing.UserId == person.UserId)
             {
                 ModelState.AddModelError("User", "Don't delete yourself.");
                 return BadRequest(ModelState);
             }
 
-
-            using (var transaction = _context.Database.BeginTransaction())
+            //Yes, await using and await BeginTransactionAsync works...
+            await using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 var personToUpdate = await _context.People.SingleAsync(a => a.Id == person.Id && a.TeamId == person.TeamId);
                 personToUpdate.Active = false;
 
-                await _notificationService.PersonUpdated(person, null, Team, User.GetNameClaim(), User.Identity.Name, PersonNotification.Actions.Deactivated, String.Empty);
+                await _notificationService.PersonUpdated(person, null, Team, personActing.Name, personActing.UserId, PersonNotification.Actions.Deactivated, String.Empty);
 
                 //Remove any Admin roles for that team
                 var teamPermissionsToDelete = await _context.TeamPermissions.Where(a => a.TeamId == person.TeamId && a.UserId == personToUpdate.UserId).ToArrayAsync();
@@ -102,7 +107,7 @@ namespace Keas.Mvc.Controllers.Api
 
                 await _context.SaveChangesAsync();
 
-                transaction.Commit();
+                await transaction.CommitAsync();
                 return Json(null);
             }
 
