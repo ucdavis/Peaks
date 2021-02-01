@@ -28,8 +28,7 @@ const KeySerialDetails = (props: IProps) => {
         return;
       }
       fetchDetails(props.selectedKeySerial.id);
-  }, [props.selectedKeySerial])
-
+  }, [])
 
   if (!selectedKeySerial) {
     return null;
