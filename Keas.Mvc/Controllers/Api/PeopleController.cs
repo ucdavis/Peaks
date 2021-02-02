@@ -182,7 +182,7 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody] Person person)
         {
-            //This commented out code would be much cleared, but I don't feel like updating and testing it now -- Jason
+            //This commented out code would be much clearer, but I don't feel like updating and testing it now -- Jason
             //if (!ModelState.IsValid)
             //{
             //    return BadRequest(person);

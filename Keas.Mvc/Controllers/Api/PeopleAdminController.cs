@@ -49,6 +49,12 @@ namespace Keas.Mvc.Controllers.Api
             var p = await _context.People.Where(x => x.Team.Slug == Team)
                 .SingleAsync(x => x.Id == person.Id);
 
+            //We don't check if the supervisor has been removed, so this could just start failing if we include this check.
+            //if (person.Supervisor!= null && !await _securityService.IsPersonInTeam(Team, person.SupervisorId.Value))
+            //{
+            //    return BadRequest("Supervisor not in team.");
+            //}
+
             p.FirstName = person.FirstName;
             p.LastName = person.LastName;
             p.Email = person.Email;
