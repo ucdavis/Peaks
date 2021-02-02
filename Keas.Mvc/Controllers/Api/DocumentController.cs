@@ -24,12 +24,14 @@ namespace Keas.Mvc.Controllers.Api
         private readonly ApplicationDbContext _context;
         private readonly IDocumentSigningService _documentSigningService;
         private readonly IEventService _eventService;
+        private readonly ISecurityService _securityService;
 
-        public DocumentsController(ApplicationDbContext context, IDocumentSigningService documentSigningService, IEventService eventService)
+        public DocumentsController(ApplicationDbContext context, IDocumentSigningService documentSigningService, IEventService eventService, ISecurityService securityService)
         {
             this._context = context;
             this._documentSigningService = documentSigningService;
             this._eventService = eventService;
+            _securityService = securityService;
         }
 
         // List all documents for this team
@@ -126,6 +128,12 @@ namespace Keas.Mvc.Controllers.Api
             // make sure the given person is actually part of the current team
             if (!await _context.People.AnyAsync(p => p.Team.Slug == Team && p.Id == document.PersonId)) {
                 return NotFound();
+            }
+
+            //Validate passed team matches document team.
+            if (!await _securityService.IsTeamValid(Team, document.TeamId))
+            {
+                return BadRequest("Invalid Team");
             }
 
             var envelope = await _documentSigningService.SendTemplate(document);

@@ -140,6 +140,17 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest();
             }
 
+            //Validate passed team matches workstation team.
+            if (!await _securityService.IsTeamValid(Team, access.TeamId))
+            {
+                return BadRequest("Invalid Team");
+            }
+
+            if (access.Assignments != null && access.Assignments.Any())
+            {
+                return BadRequest("Don't assign person with create.");
+            }
+
             _context.Access.Add(access);
             await _eventService.TrackCreateAccess(access);
             await _context.SaveChangesAsync();
@@ -155,25 +166,37 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest(ModelState);
             }
 
+            //Verify access is in team and exists
+            var access = await _context.Access.Where(x => x.Team.Slug == Team)
+                .Include(x => x.Assignments).SingleAsync(x => x.Id == accessId);
+
+            //Verify person is in team. 
+            if (!await _securityService.IsPersonInTeam(Team, personId))
+            {
+                return BadRequest("User is not part of this team!");
+            }
+
+
             var assignment = await _context.AccessAssignments.Where(x => x.AccessId == accessId && x.PersonId == personId)
                 .Include(x => x.Person)
                 .SingleOrDefaultAsync();
 
+            var requestedByPerson = await _securityService.GetPerson(Team);
+
             if (assignment != null) 
             {
-                assignment.ExpiresAt = DateTime.Parse(date);
+                assignment.ExpiresAt = DateTime.Parse(date); //TODO Verify a good date. (In future, etc.)
+                assignment.RequestedById = requestedByPerson.UserId;
+                assignment.RequestedByName = requestedByPerson.Name;
                 await _eventService.TrackAssignAccessUpdate(assignment, Team);
             } else 
             {
-                var access = await _context.Access.Where(x => x.Team.Slug == Team)
-                    .Include(x => x.Assignments).SingleAsync(x => x.Id == accessId);
-
-                 assignment = new AccessAssignment
+                assignment = new AccessAssignment
                 {
                     AccessId = accessId,
                     PersonId = personId,
-                    RequestedById = User.Identity.Name,
-                    RequestedByName = User.GetNameClaim(),
+                    RequestedById = requestedByPerson.UserId,
+                    RequestedByName = requestedByPerson.Name,
                     ExpiresAt = DateTime.Parse(date),
                 };
 
@@ -186,6 +209,11 @@ namespace Keas.Mvc.Controllers.Api
             return Json(assignment);
         }
 
+        /// <summary>
+        /// Only Name, Notes, and Tags fields are updated
+        /// </summary>
+        /// <param name="access"></param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         [Consumes(MediaTypeNames.Application.Json)]
@@ -225,6 +253,11 @@ namespace Keas.Mvc.Controllers.Api
             return Json(null);
         }
 
+        /// <summary>
+        /// If there are any assignments, they will be removed before the access record is set to inactive
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost("{id}")]
         [ProducesResponseType(typeof(Access), StatusCodes.Status200OK)]
         public async Task<IActionResult> Delete(int id)

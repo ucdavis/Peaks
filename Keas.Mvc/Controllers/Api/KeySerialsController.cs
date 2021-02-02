@@ -27,11 +27,13 @@ namespace Keas.Mvc.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly IEventService _eventService;
+        private readonly ISecurityService _securityService;
 
-        public KeySerialsController(ApplicationDbContext context, IEventService eventService)
+        public KeySerialsController(ApplicationDbContext context, IEventService eventService, ISecurityService securityService)
         {
             _context = context;
             _eventService = eventService;
+            _securityService = securityService;
         }
 
         //Return Serials instead????
@@ -150,7 +152,6 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody] CreateKeySerialViewModel model)
         {
-            // TODO Make sure user has permissions
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -182,8 +183,13 @@ namespace Keas.Mvc.Controllers.Api
                 Name = model.Number.Trim(),
                 Number = model.Number.Trim(),
                 Notes = model.Notes,
-                Status = model.Status ?? "Active",
+                Status = model.Status ?? KeySerialStatusModel.Active,
             };
+
+            if (!KeySerialStatusModel.StatusList.Contains(keySerial.Status))
+            {
+                return BadRequest("Invalid Status");
+            }
 
             // add key serial
             key.Serials.Add(keySerial);
@@ -199,10 +205,14 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateKeySerialViewModel model)
         {
-            // TODO Make sure user has permissions
             if (!ModelState.IsValid)
             {
                 return BadRequest();
+            }
+
+            if (!KeySerialStatusModel.StatusList.Contains(model.Status))
+            {
+                return BadRequest("Invalid Status");
             }
 
             // get key serial
@@ -233,8 +243,7 @@ namespace Keas.Mvc.Controllers.Api
             //TODO: Do we want to update the Name too? When we create it, we make Number and Name the same.
             keySerial.Status = model.Status;
             keySerial.Notes = model.Notes;
-
-
+            
 
             await _eventService.TrackUpdateKeySerial(keySerial);
             await _context.SaveChangesAsync();
@@ -247,10 +256,14 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Assign([FromBody] AssignKeySerialViewModel model)
         {
-            // TODO Make sure user has permission, make sure equipment exists, makes sure equipment is in this team
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+
+            if (!await _securityService.IsPersonInTeam(Team, model.PersonId))
+            {
+                return BadRequest("User is not part of this team!");
             }
 
             // find serial
@@ -265,13 +278,14 @@ namespace Keas.Mvc.Controllers.Api
             var person = await _context.People
                 .SingleAsync(p => p.Id == model.PersonId);
 
+            var requestedByPerson = await _securityService.GetPerson(Team);
 
             // check for existing assignment and update
             if (serial.KeySerialAssignment != null)
             {
                 serial.KeySerialAssignment.ExpiresAt = model.ExpiresAt;
-                serial.KeySerialAssignment.RequestedById = User.Identity.Name;
-                serial.KeySerialAssignment.RequestedByName = User.GetNameClaim();
+                serial.KeySerialAssignment.RequestedById = requestedByPerson.UserId;
+                serial.KeySerialAssignment.RequestedByName = requestedByPerson.Name;
 
                 _context.KeySerialAssignments.Update(serial.KeySerialAssignment);
                 await _eventService.TrackAssignmentUpdatedKeySerial(serial);
@@ -285,8 +299,8 @@ namespace Keas.Mvc.Controllers.Api
                     Person = person,
                     PersonId = person.Id,
                     ExpiresAt = model.ExpiresAt,
-                    RequestedById = User.Identity.Name,
-                    RequestedByName = User.GetNameClaim()
+                    RequestedById = requestedByPerson.UserId,
+                    RequestedByName = requestedByPerson.Name
                 };
 
                 // create, associate, and track

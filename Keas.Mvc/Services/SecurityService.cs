@@ -40,6 +40,8 @@ namespace Keas.Mvc.Services
 
         Task<bool> IsTeamValid(string slug, int teamId);
         Task<bool> IsSpaceInTeam(string slug, int spaceId);
+        Task<bool> IsPersonInTeam(string slug, int personId);
+
     }
     public class SecurityService : ISecurityService
     {
@@ -187,6 +189,12 @@ namespace Keas.Mvc.Services
             var teamOrgs = await _dbContext.FISOrgs.Where(a => a.TeamId == teamId).Select(s => s.OrgCode).ToArrayAsync();
             
             return await _dbContext.Spaces.AnyAsync(a => a.Id == spaceId && teamOrgs.Contains(a.OrgId));
+        }
+
+        public async Task<bool> IsPersonInTeam(string slug, int personId)
+        {
+            var teamId = await _dbContext.Teams.Where(a => a.Slug == slug).Select(s => s.Id).SingleAsync();
+            return await _dbContext.People.AnyAsync(a => a.Id == personId && a.TeamId == teamId);
         }
     }
 }

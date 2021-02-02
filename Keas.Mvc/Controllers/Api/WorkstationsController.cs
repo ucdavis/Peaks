@@ -226,7 +226,7 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Create([FromBody] Workstation workstation)
         {
-            // TODO Make sure user has permission; Protect from overpost
+            
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -273,20 +273,37 @@ namespace Keas.Mvc.Controllers.Api
         [ProducesResponseType(typeof(Workstation), StatusCodes.Status200OK)]
         public async Task<IActionResult> Assign(int workstationId, int personId, string date)
         {
-            // TODO make sure user has permission
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
-                .Include(w => w.Space).Include(t => t.Team).Include(w => w.Assignment).ThenInclude(a => a.Person).SingleAsync(w => w.Id == workstationId);
 
+            //This validates that workstation exists for the team
+            var workstation = await _context.Workstations.Where(w => w.Team.Slug == Team && w.Active)
+                .Include(w => w.Space)
+                .Include(t => t.Team)
+                .Include(w => w.Assignment).ThenInclude(a => a.Person)
+                .SingleAsync(w => w.Id == workstationId);
+
+            if (!await _securityService.IsPersonInTeam(Team, personId))
+            {
+                return BadRequest("User is not part of this team!");
+            }
+
+            var requestedByPerson = await _securityService.GetPerson(Team);
+            
             if (workstation.Assignment != null)
             {
                 _context.WorkstationAssignments.Update(workstation.Assignment);
+
+                if (workstation.Assignment.PersonId != personId)
+                {
+                    return BadRequest("Can't update different person");
+                }
+
                 workstation.Assignment.ExpiresAt = DateTime.Parse(date);
-                workstation.Assignment.RequestedById = User.Identity.Name;
-                workstation.Assignment.RequestedByName = User.GetNameClaim();
+                workstation.Assignment.RequestedById = requestedByPerson.UserId;
+                workstation.Assignment.RequestedByName = requestedByPerson.Name;
                 await _eventService.TrackWorkstationAssignmentUpdated(workstation);
             }
             else
@@ -294,20 +311,9 @@ namespace Keas.Mvc.Controllers.Api
                 workstation.Assignment = new WorkstationAssignment { PersonId = personId, ExpiresAt = DateTime.Parse(date) };
                 workstation.Assignment.Person =
                 await _context.People.Include(p => p.Team).SingleAsync(p => p.Id == personId);
-                workstation.Assignment.RequestedById = User.Identity.Name;
-                workstation.Assignment.RequestedByName = User.GetNameClaim();
+                workstation.Assignment.RequestedById = requestedByPerson.UserId; 
+                workstation.Assignment.RequestedByName = requestedByPerson.Name;
 
-                if (workstation.Assignment.Person.Team.Slug != Team)
-                {
-                    Message = "User is not part of this team!";
-                    return BadRequest(workstation);
-                }
-
-                if (workstation.TeamId != workstation.Assignment.Person.TeamId)
-                {
-                    Message = "Workstation team did not match person's team!";
-                    return BadRequest(workstation);
-                }
 
                 _context.WorkstationAssignments.Add(workstation.Assignment);
                 await _eventService.TrackAssignWorkstation(workstation);
@@ -320,8 +326,6 @@ namespace Keas.Mvc.Controllers.Api
         [HttpPost("{id}")]
         public async Task<IActionResult> Revoke(int id)
         {
-            // TODO permission
-
             var workstation = await _context.Workstations.Where(x => x.Team.Slug == Team)
                 .Include(w => w.Assignment).ThenInclude(w => w.Person)
                 .Include(w => w.Space)
@@ -346,7 +350,6 @@ namespace Keas.Mvc.Controllers.Api
         [Consumes(MediaTypeNames.Application.Json)]
         public async Task<IActionResult> Update([FromBody]Workstation workstation)
         {
-            //TODO: check permissions
             if (!ModelState.IsValid)
             {
                 return BadRequest();
