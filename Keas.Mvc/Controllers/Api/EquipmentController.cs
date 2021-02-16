@@ -199,7 +199,12 @@ namespace Keas.Mvc.Controllers.Api
                 return BadRequest("Invalid Team");
             }
 
-            if(!EquipmentTypes.Types.Contains(equipment.Type))
+
+            if (string.IsNullOrWhiteSpace(equipment.Type))
+            {
+                equipment.Type = EquipmentTypes.Default;
+            }
+            if (!EquipmentTypes.Types.Contains(equipment.Type))
             {
                 return BadRequest("Invalid Equipment Type");
             }
@@ -309,6 +314,10 @@ namespace Keas.Mvc.Controllers.Api
             eq.AvailabilityLevel = updatedEquipment.AvailabilityLevel;
             eq.SystemManagementId = updatedEquipment.SystemManagementId;
 
+            if (string.IsNullOrWhiteSpace(eq.Type))
+            {
+                eq.Type = EquipmentTypes.Default;
+            }
             if (!EquipmentTypes.Types.Contains(eq.Type))
             {
                 return BadRequest("Invalid Equipment Type");
