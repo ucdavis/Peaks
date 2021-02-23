@@ -101,12 +101,12 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
     if (selectedField === 'Name') {
       return (
         <>
-          <label>Name</label>
+          <label>Computer Property</label>
           <Input
             type='text'
             name='name'
             id='computer-name'
-            placeholder='Enter Computer Name'
+            placeholder='Enter a Computer Property'
             invalid={valueToBeSearched.length < 1}
             onKeyPress={e => {
               if (e.key === 'Enter') {
@@ -118,24 +118,6 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
             }}
           />
         </>
-      );
-    } else if (selectedField === 'Id') {
-      return (
-        <Input
-          type='text'
-          name='Id'
-          id='computer Id'
-          placeholder='Enter Computer Id'
-        />
-      );
-    } else if (selectedField === 'Company') {
-      return (
-        <Input
-          type='text'
-          name='Company'
-          id='computer Company'
-          placeholder='Enter Computer Company'
-        />
       );
     }
   };
