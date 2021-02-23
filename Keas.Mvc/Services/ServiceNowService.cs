@@ -27,9 +27,15 @@ namespace Keas.Mvc.Services
 
         public async Task<ServiceNowPropertyWrapper> GetComputersByName(string name)
         {
-            string urlAddOns = "?sysparm_query=hardware_u_device_nameLIKE";
+            // Using ServiceNow's API we can chain requests with ^OR
+            string nameQuery = "?sysparm_query=hardware_u_device_nameLIKE" + name;
+            string userNameQuery = "^ORuser_user_nameLIKE" + name;
+            string ipAddressQuery = "^ORhardware_u_ip_addressLIKE" + name;
+            string macAddressQuery = "^ORhardware_u_mac_addressLIKE" + name;
+            string serialNumberQuery = "^ORhardware_serial_numberLIKE" + name;
             string endUrl = "&sysparm_display_value=true&sysparm_exclude_reference_link=true&sysparm_limit=5";
-            string fullUrl = _serviceNowSettings.ApiBasePath + urlAddOns + name + endUrl;
+            string fullUrl = _serviceNowSettings.ApiBasePath + nameQuery + userNameQuery +
+                ipAddressQuery + macAddressQuery + serialNumberQuery + endUrl;
 
             using (var client = GetClient())
             {
