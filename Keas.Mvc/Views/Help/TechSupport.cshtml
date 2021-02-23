@@ -1,0 +1,33 @@
+@using Keas.Core.Domain
+@model Keas.Core.Domain.Team
+
+@{
+    ViewBag.Title = "Help";
+}
+
+
+
+<div class="card">
+    <div class="card-header-primary">
+        <div class="row justify-content-between">
+            <div class="card-head">
+                <h2>Is this a question about your stuff or Emails about your stuff?</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-content">
+        <a asp-action="MyContacts" class="btn  btn-primary" style="background-color: green">Yes!</a>
+    </div>
+</div>
+<div class="card">
+    <div class="card-header-primary">
+        <div class="row justify-content-between">
+            <div class="card-head">
+                <h2>Is this a Technical Support question or a General Inquiry NOT related to your stuff?</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-content">
+        <a href=@($"https://caeshelp.ucdavis.edu/?appname=Peaks&team={@Model.Slug}") class="btn btn-primary" target="_blank" ref="noopener noreferrer">Continue...</a>
+    </div>
+</div>

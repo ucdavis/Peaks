@@ -40,6 +40,22 @@ namespace Keas.Mvc.Controllers
             return View(team);
         }
 
+        public async Task<IActionResult> TechSupport()
+        {
+            ViewBag.Version = GetVersion();
+
+            var person = await _securityService.GetPerson(Team);
+            if (person == null)
+            {
+                Message = "You are not yet added to the system.";
+                return RedirectToAction("NoAccess", "Home");
+            }
+
+            var team = await _context.Teams.Where(a => a.Slug == Team).Include(a => a.TeamPermissions).ThenInclude(a => a.User).Include(a => a.TeamPermissions).ThenInclude(a => a.Role).SingleAsync();
+
+            return View(team);
+        }
+
         public async Task<IActionResult> MyContacts()
         {
             ViewBag.Version = GetVersion();
