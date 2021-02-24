@@ -4,6 +4,8 @@ layout: default
 
 The goal of PEAKS is to provide a centralized system where teams can plan and track their most critical resources, enabling them to answer difficult questions like exactly which keys and computers are assigned to a specific person, when they acknowledged receipt of those items, what rooms they can access with those keys, and much, much more.
 
+You can view the production site at https://peaks.ucdavis.edu/.  If you would like to get access to create your own team, continue to the bottom of this page and follow the instructions in the "I want it!!" section
+
 # Features
 
 ## Overall
