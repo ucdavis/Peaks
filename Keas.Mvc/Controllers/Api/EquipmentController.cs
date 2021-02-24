@@ -496,24 +496,18 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<ServiceNowPropertyWrapper>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetComputersBySearch(string field, string value)
+        public async Task<IActionResult> GetComputersBySearch(string value)
         {
-            if (string.Equals(field, "Name", StringComparison.OrdinalIgnoreCase))
+            var results = await this._serviceNowService.GetComputersByProperty(value);
+
+            if (results.Results.Count == 0)
             {
-                var results = await this._serviceNowService.GetComputersByName(value);
-                if (results.Results.Count == 0)
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    return Json(results);
-                }
-            } else
-            {
-                // not supported yet
-                return null;
+                return NotFound();
             }
-        }
+            else
+            {
+                return Json(results);
+            }
+    }
     }
 }

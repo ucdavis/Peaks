@@ -7,7 +7,6 @@ import {
   FormFeedback,
   FormGroup,
   Input,
-  Label,
   Modal,
   ModalBody,
   ModalFooter,
@@ -26,7 +25,6 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [isValidSearch, setIsValidSearch] = useState<boolean>(true);
   const [searchModal, setSearchModal] = useState<boolean>(false);
-  const [selectedField, setSelectedField] = useState<string>('Name');
   const [valueToBeSearched, setValueToBeSearched] = useState<string>('');
   const [listOfComputers, setListOfComputers] = useState<
     IManagedSystemSearchedName[]
@@ -57,7 +55,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
         className='equipment-color'
       >
         <div className='modal-header row justify-content-between'>
-          <h2>Search Computer Id</h2>
+          <h2>Search by Computer Property</h2>
           <Button color='link' onClick={modalToggle}>
             <i className='fas fa-times fa-lg' />
           </Button>
@@ -75,21 +73,15 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
     return (
       <Form className='w-75'>
         <FormGroup className='mb-5'>
-          <Label for='exampleSelect'>Field</Label>
-          <Input
-            type='select'
-            name='select'
-            id='field-select'
-            onChange={e => changeSelectedInput(e.target.value)}
-            value={selectedField}
-          >
-            <option value='Name'>Name</option>
-          </Input>
+          <h3>Searchable Properties:</h3>
+          <p>
+            Computer Name, LoginID, IP Address, Mac Address, or Serial Number
+          </p>
         </FormGroup>
 
         <FormGroup>
           {renderInputSearch()}
-          <FormFeedback>Computer name is required</FormFeedback>
+          <FormFeedback>Computer property is required</FormFeedback>
         </FormGroup>
 
         {renderNameTable()}
@@ -98,46 +90,26 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
   };
 
   const renderInputSearch = () => {
-    if (selectedField === 'Name') {
-      return (
-        <>
-          <label>Name</label>
-          <Input
-            type='text'
-            name='name'
-            id='computer-name'
-            placeholder='Enter Computer Name'
-            invalid={valueToBeSearched.length < 1}
-            onKeyPress={e => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-              }
-            }}
-            onChange={e => {
-              setValueToBeSearched(e.target.value);
-            }}
-          />
-        </>
-      );
-    } else if (selectedField === 'Id') {
-      return (
+    return (
+      <>
+        <label>Computer Property</label>
         <Input
           type='text'
-          name='Id'
-          id='computer Id'
-          placeholder='Enter Computer Id'
+          name='property'
+          id='computer-name'
+          placeholder='Enter a Computer Property'
+          invalid={valueToBeSearched.length < 1}
+          onKeyPress={e => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+            }
+          }}
+          onChange={e => {
+            setValueToBeSearched(e.target.value);
+          }}
         />
-      );
-    } else if (selectedField === 'Company') {
-      return (
-        <Input
-          type='text'
-          name='Company'
-          id='computer Company'
-          placeholder='Enter Computer Company'
-        />
-      );
-    }
+      </>
+    );
   };
 
   const renderNameTable = () => {
@@ -165,7 +137,8 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
                           )
                         }
                       >
-                        {computer.hardware_display_name} ({computer.hardware_u_device_name})
+                        {computer.hardware_display_name} (
+                        {computer.hardware_u_device_name})
                       </Button>
                     </tr>
                   );
@@ -207,14 +180,14 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
     setIsFound(true);
     setIsValidSearch(true);
     setListOfComputers([]);
-    getComputersBySearchId(selectedField, valueToBeSearched);
+    getComputersBySearchId(valueToBeSearched);
   };
 
-  const getComputersBySearchId = async (field: string, value: string) => {
+  const getComputersBySearchId = async (value: string) => {
     let response = null;
     try {
       response = await context.fetch(
-        `/api/${context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`
+        `/api/${context.team.slug}/equipment/GetComputersBySearch?value=${value}`
       );
     } catch (err) {
       if (err.message === 'Not Found') {
@@ -236,15 +209,6 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
     setIsFetched(true);
     setIsSearching(false);
     setListOfComputers(response.result);
-  };
-
-  const changeSelectedInput = value => {
-    setIsFetched(false);
-    setIsFound(true);
-    setIsValidSearch(true);
-    setIsSearching(false);
-    setListOfComputers([]);
-    setSelectedField(value);
   };
 
   const modalToggle = () => {
