@@ -57,7 +57,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
         className='equipment-color'
       >
         <div className='modal-header row justify-content-between'>
-          <h2>Search Computer Id</h2>
+          <h2>Search by Computer Property</h2>
           <Button color='link' onClick={modalToggle}>
             <i className='fas fa-times fa-lg' />
           </Button>
@@ -75,21 +75,12 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
     return (
       <Form className='w-75'>
         <FormGroup className='mb-5'>
-          <Label for='exampleSelect'>Field</Label>
-          <Input
-            type='select'
-            name='select'
-            id='field-select'
-            onChange={e => changeSelectedInput(e.target.value)}
-            value={selectedField}
-          >
-            <option value='Name'>Name</option>
-          </Input>
+            <h3>Search for computer name, username, ip address, mac address, or serial number </h3>
         </FormGroup>
 
         <FormGroup>
           {renderInputSearch()}
-          <FormFeedback>Computer name is required</FormFeedback>
+          <FormFeedback>Computer property is required</FormFeedback>
         </FormGroup>
 
         {renderNameTable()}
@@ -98,28 +89,26 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
   };
 
   const renderInputSearch = () => {
-    if (selectedField === 'Name') {
-      return (
-        <>
-          <label>Computer Property</label>
-          <Input
-            type='text'
-            name='name'
-            id='computer-name'
-            placeholder='Enter a Computer Property'
-            invalid={valueToBeSearched.length < 1}
-            onKeyPress={e => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-              }
-            }}
-            onChange={e => {
-              setValueToBeSearched(e.target.value);
-            }}
-          />
-        </>
-      );
-    }
+    return (
+      <>
+        <label>Computer Property</label>
+        <Input
+          type='text'
+          name='name'
+          id='computer-name'
+          placeholder='Enter a Computer Property'
+          invalid={valueToBeSearched.length < 1}
+          onKeyPress={e => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+            }
+          }}
+          onChange={e => {
+            setValueToBeSearched(e.target.value);
+          }}
+        />
+      </>
+    );
   };
 
   const renderNameTable = () => {
@@ -147,7 +136,8 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
                           )
                         }
                       >
-                        {computer.hardware_display_name} ({computer.hardware_u_device_name})
+                        {computer.hardware_display_name} (
+                        {computer.hardware_u_device_name})
                       </Button>
                     </tr>
                   );
