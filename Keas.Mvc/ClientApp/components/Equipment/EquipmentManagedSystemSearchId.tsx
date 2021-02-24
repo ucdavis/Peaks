@@ -73,7 +73,10 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
     return (
       <Form className='w-75'>
         <FormGroup className='mb-5'>
-            <h3>Search for computer name, loginID, ip address, mac address, or serial number </h3>
+          <h3>Searchable Properties:</h3>
+          <p>
+            Computer Name, LoginID, IP Address, Mac Address, or Serial Number
+          </p>
         </FormGroup>
 
         <FormGroup>
