@@ -7,7 +7,6 @@ import {
   FormFeedback,
   FormGroup,
   Input,
-  Label,
   Modal,
   ModalBody,
   ModalFooter,
