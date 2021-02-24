@@ -498,7 +498,7 @@ namespace Keas.Mvc.Controllers.Api
         [ProducesResponseType(typeof(IEnumerable<ServiceNowPropertyWrapper>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetComputersBySearch(string value)
         {
-            var results = await this._serviceNowService.GetComputersByName(value);
+            var results = await this._serviceNowService.GetComputersByProperty(value);
 
             if (results.Results.Count == 0)
             {

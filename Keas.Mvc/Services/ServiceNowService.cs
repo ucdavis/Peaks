@@ -11,7 +11,7 @@ namespace Keas.Mvc.Services
 {
     public interface IServiceNowService
     {
-        Task<ServiceNowPropertyWrapper> GetComputersByName(string name);
+        Task<ServiceNowPropertyWrapper> GetComputersByProperty(string property);
         Task<ServiceNowPropertyWrapper> GetComputer(string id);
         string Base64Encode(string textToEncode);
     }
@@ -25,21 +25,26 @@ namespace Keas.Mvc.Services
             _serviceNowSettings = serviceNowSettings.Value;
         }
 
-        public async Task<ServiceNowPropertyWrapper> GetComputersByName(string name)
+        public async Task<ServiceNowPropertyWrapper> GetComputersByProperty(string property)
         {
             // Using ServiceNow's API we can chain requests with ^OR
-            string nameQuery = "?sysparm_query=hardware_u_device_nameLIKE" + name;
-            string userNameQuery = "^ORuser_user_nameLIKE" + name;
-            string ipAddressQuery = "^ORhardware_u_ip_addressLIKE" + name;
-            string macAddressQuery = "^ORhardware_u_mac_addressLIKE" + name;
-            string serialNumberQuery = "^ORhardware_serial_numberLIKE" + name;
+            string nameQuery = "?sysparm_query=hardware_u_device_nameLIKE" + property;
+            string userNameQuery = "^ORuser_user_nameLIKE" + property;
+            string ipAddressQuery = "^ORhardware_u_ip_addressLIKE" + property;
+            string macAddressQuery = "^ORhardware_u_mac_addressLIKE" + property;
+            string serialNumberQuery = "^ORhardware_serial_numberLIKE" + property;
             string endUrl = "&sysparm_display_value=true&sysparm_exclude_reference_link=true&sysparm_limit=5";
-            string fullUrl = _serviceNowSettings.ApiBasePath + nameQuery + userNameQuery +
-                ipAddressQuery + macAddressQuery + serialNumberQuery + endUrl;
+            StringBuilder fullUrl = new StringBuilder(_serviceNowSettings.ApiBasePath);
+            fullUrl.Append(nameQuery);
+            fullUrl.Append(userNameQuery);
+            fullUrl.Append(ipAddressQuery);
+            fullUrl.Append(macAddressQuery);
+            fullUrl.Append(serialNumberQuery);
+            fullUrl.Append(endUrl);
 
             using (var client = GetClient())
             {
-                HttpResponseMessage response = await client.GetAsync(fullUrl);
+                HttpResponseMessage response = await client.GetAsync(fullUrl.ToString());
                 string responseBody = await response.Content.ReadAsStringAsync();
                 ServiceNowPropertyWrapper ServiceNowResults = JsonConvert.DeserializeObject<ServiceNowPropertyWrapper>(responseBody);
 
