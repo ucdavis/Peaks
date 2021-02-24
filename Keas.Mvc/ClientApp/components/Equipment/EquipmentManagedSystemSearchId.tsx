@@ -26,7 +26,6 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [isValidSearch, setIsValidSearch] = useState<boolean>(true);
   const [searchModal, setSearchModal] = useState<boolean>(false);
-  const [selectedField, setSelectedField] = useState<string>('Name');
   const [valueToBeSearched, setValueToBeSearched] = useState<string>('');
   const [listOfComputers, setListOfComputers] = useState<
     IManagedSystemSearchedName[]
@@ -94,7 +93,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
         <label>Computer Property</label>
         <Input
           type='text'
-          name='name'
+          name='property'
           id='computer-name'
           placeholder='Enter a Computer Property'
           invalid={valueToBeSearched.length < 1}
@@ -179,14 +178,14 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
     setIsFound(true);
     setIsValidSearch(true);
     setListOfComputers([]);
-    getComputersBySearchId(selectedField, valueToBeSearched);
+    getComputersBySearchId(valueToBeSearched);
   };
 
-  const getComputersBySearchId = async (field: string, value: string) => {
+  const getComputersBySearchId = async (value: string) => {
     let response = null;
     try {
       response = await context.fetch(
-        `/api/${context.team.slug}/equipment/GetComputersBySearch?field=${field}&value=${value}`
+        `/api/${context.team.slug}/equipment/GetComputersBySearch?value=${value}`
       );
     } catch (err) {
       if (err.message === 'Not Found') {
@@ -208,15 +207,6 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
     setIsFetched(true);
     setIsSearching(false);
     setListOfComputers(response.result);
-  };
-
-  const changeSelectedInput = value => {
-    setIsFetched(false);
-    setIsFound(true);
-    setIsValidSearch(true);
-    setIsSearching(false);
-    setListOfComputers([]);
-    setSelectedField(value);
   };
 
   const modalToggle = () => {
