@@ -16,7 +16,7 @@ const doFetch = async (
   });
 
   if (!res.ok) {
-    throw new Error(res.statusText);
+    throw await res.json();
   }
 
   return await res.json();

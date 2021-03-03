@@ -423,7 +423,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
       );
       toast.success('Equipment updated successfully!');
     } catch (e) {
-      toast.error('Error editing equipment.');
+      toast.error(e);
       throw new Error(); // throw error so modal doesn't close
     }
 
