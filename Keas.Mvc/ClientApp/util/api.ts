@@ -16,8 +16,14 @@ const doFetch = async (
   });
 
   if (!res.ok) {
-    const errorText = await res.text();
-    throw new Error(errorText);
+    const errRes = await res.json();
+    let erorrMsg = ""
+
+    if (typeof errRes === "string") {
+        erorrMsg = errRes
+    }
+
+    throw new Error(erorrMsg);
   }
 
   return await res.json();
