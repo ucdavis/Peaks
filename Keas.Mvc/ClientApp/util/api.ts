@@ -15,12 +15,19 @@ const doFetch = async (
     ]
   });
 
-  if (!res.ok) {
-    const errRes = await res.json();
-    let erorrMsg = ""
+  console.log(res);
 
-    if (typeof errRes === "string") {
-        erorrMsg = errRes
+  if (!res.ok) {
+    let erorrMsg = '';
+
+    if (res.status === 500) {
+      throw new Error(erorrMsg);
+    } else if (res.status === 400) {
+      const errRes = await res.json();
+
+      if (typeof errRes === 'string') {
+        erorrMsg = errRes;
+      }
     }
 
     throw new Error(erorrMsg);
