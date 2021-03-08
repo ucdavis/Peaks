@@ -1,5 +1,4 @@
 import 'isomorphic-fetch';
-import { errorMonitor } from 'stream';
 
 const doFetch = async (
   url: string,
@@ -21,7 +20,7 @@ const doFetch = async (
 
     try {
       const errRes = await res.json();
-      
+
       if (typeof errRes === 'string') {
         errorMsg = errRes;
       }
