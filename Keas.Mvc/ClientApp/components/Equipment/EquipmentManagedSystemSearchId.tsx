@@ -21,7 +21,6 @@ interface IProps {
 
 const EquipmentManagedSystemSearchId = (props: IProps) => {
   const [isFetched, setIsFetched] = useState<boolean>(false);
-  const [isFound, setIsFound] = useState<boolean>(true);
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [isValidSearch, setIsValidSearch] = useState<boolean>(true);
   const [searchModal, setSearchModal] = useState<boolean>(false);
@@ -117,8 +116,8 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
     if (isFetched) {
       // if no error occured except Not Found
       if (isValidSearch) {
-        // if not NotFound error.
-        if (isFound) {
+        // If listOfComputers' length is not 0 then  display the computers, else display an error message
+        if (listOfComputers.length > 0) {
           return (
             <Table>
               <tbody>
@@ -147,7 +146,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
             </Table>
           );
         }
-        // if NotFound error.
+        // if listOfComputers is 0
         return <p>Not a valid Name, please make sure to enter a valid Name.</p>;
       }
       // if other errors accurs. also toast error is displayed.
@@ -177,7 +176,6 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
   const onSearch = () => {
     setIsSearching(true);
     setIsFetched(false);
-    setIsFound(true);
     setIsValidSearch(true);
     setListOfComputers([]);
     getComputersBySearchId(valueToBeSearched);
@@ -193,7 +191,6 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
       if (err.message === 'Not Found') {
         setIsFetched(true);
         setIsSearching(false);
-        setIsFound(false);
       } else {
         setIsFetched(true);
         setIsSearching(false);
@@ -213,7 +210,6 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
 
   const modalToggle = () => {
     setIsFetched(false);
-    setIsFound(true);
     setIsValidSearch(true);
     setListOfComputers([]);
     setValueToBeSearched('');
