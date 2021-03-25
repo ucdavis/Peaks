@@ -500,14 +500,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var results = await this._serviceNowService.GetComputersByProperty(value);
 
-            if (results.Results.Count == 0)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Json(results);
-            }
-    }
+            return Json(results);
+        }
     }
 }
