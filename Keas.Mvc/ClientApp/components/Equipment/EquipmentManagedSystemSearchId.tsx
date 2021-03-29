@@ -147,7 +147,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
           );
         }
         // if listOfComputers is 0
-        return <p>Not a valid Name, please make sure to enter a valid Name.</p>;
+        return <p>No results found for the search term.</p>;
       }
       // if other errors accurs. also toast error is displayed.
       return <p className='text-center'>No data to present.</p>;
