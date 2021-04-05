@@ -69,7 +69,7 @@ namespace Keas.Mvc.Controllers.Api
             p.Supervisor = person.Supervisor;
             p.SupervisorId = person.SupervisorId;
 
-            if (person.Supervisor != null)
+            if (person.Supervisor != null && person.SupervisorId != p.Id)
             {
                 _context.Attach(p.Supervisor);
             }
