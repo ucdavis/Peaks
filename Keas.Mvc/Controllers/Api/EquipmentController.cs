@@ -70,18 +70,16 @@ namespace Keas.Mvc.Controllers.Api
             var attributes = from ea in _context.EquipmentAttributes
                     .Where(a => a.Equipment.Team.Slug == Team && a.Equipment.Active &&
                                 (EF.Functions.Like(a.Value, q.EfStartsWith())))
-                    .Include(a => a.Equipment)
                     .AsNoTracking()
                 select new
                 {
                     ea.Equipment.Id
                 };
-            var ids = await attributes.ToListAsync();
-            var distinctIds = ids.Select(a => a.Id).Distinct().ToArray();
+            var ids = await attributes.Distinct().Select(a => a.Id).ToArrayAsync();
 
             var equipment =
                 from eq in _context.Equipment
-                    .Where(x => x.Team.Slug == Team && x.Active && distinctIds.Contains(x.Id))
+                    .Where(x => x.Team.Slug == Team && x.Active && ids.Contains(x.Id))
                     .Include(x => x.Attributes)
                     .Include(x => x.Space).Include(x => x.Assignment)
                     .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
