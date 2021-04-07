@@ -65,6 +65,38 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SearchAttributes(string q)
+        {
+            var attributes = from ea in _context.EquipmentAttributes
+                    .Where(a => a.Equipment.Team.Slug == Team && a.Equipment.Active &&
+                                (EF.Functions.Like(a.Value, q.EfStartsWith())))
+                    .Include(a => a.Equipment)
+                    .AsNoTracking()
+                select new
+                {
+                    ea.Equipment.Id
+                };
+            var ids = await attributes.ToListAsync();
+            var distinctIds = ids.Select(a => a.Id).Distinct().ToArray();
+
+            var equipment =
+                from eq in _context.Equipment
+                    .Where(x => x.Team.Slug == Team && x.Active && distinctIds.Contains(x.Id))
+                    .Include(x => x.Attributes)
+                    .Include(x => x.Space).Include(x => x.Assignment)
+                    .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
+                    .AsNoTracking()
+                select new
+                {
+                    equipment = eq,
+                    label = eq.Id + ". " + eq.Name + " " + eq.SerialNumber,
+                };
+
+            return Json(await equipment.ToListAsync());
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetEquipmentInSpace(int spaceId)
         {
             var equipment = await _context.Equipment
