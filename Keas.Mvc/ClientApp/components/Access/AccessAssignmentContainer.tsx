@@ -20,7 +20,7 @@ interface IProps {
   person?: IPerson;
   access?: IAccess;
   onRevokeSuccess?(assignment: IAccessAssignment);
-  onAssignSuccess?(access: IAccessAssignment);
+  onAssignSuccess: () => void;
 }
 
 const AssignmentContainer = (props: IProps) => {
