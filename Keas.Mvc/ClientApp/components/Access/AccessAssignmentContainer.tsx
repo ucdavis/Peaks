@@ -177,7 +177,7 @@ const AssignmentContainer = (props: IProps) => {
     const assignmentsData = assignments;
     assignments.push(accessAssignment);
     setAssignments(assignmentsData);
-    props.onAssignSuccess(accessAssignment);
+    props.onAssignSuccess();
   };
 
   const openDetails = (access: IAccess) => {
