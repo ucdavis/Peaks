@@ -176,7 +176,11 @@ const WorkstationContainer = (props: IProps) => {
         );
         toast.success('Workstation created successfully!');
       } catch (err) {
-        toast.error('Error creating workstation.');
+        const errorMessage =
+          err.message === ''
+            ? 'Error creating equipment'
+            : `Error creating equipment, ${err.message}`;
+        toast.error(errorMessage);
         throw new Error(); // throw error so modal doesn't close
       }
       updateTotalAssetCount = true;
@@ -196,7 +200,11 @@ const WorkstationContainer = (props: IProps) => {
         });
         toast.success('Workstation assigned successfully!');
       } catch (err) {
-        toast.error('Error assigning workstation.');
+        const errorMessage =
+          err.message === ''
+            ? 'Error assigning equipment'
+            : `Error assigning equipment, ${err.message}`;
+        toast.error(errorMessage);
         throw new Error(); // throw error so modal doesn't close
       }
       workstation.assignment.person = person;
@@ -245,7 +253,11 @@ const WorkstationContainer = (props: IProps) => {
       );
       toast.success('Successfully revoked workstation!');
     } catch (err) {
-      toast.error('Error revoking workstation.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error revoking equipment'
+          : `Error revoking equipment, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -286,7 +298,11 @@ const WorkstationContainer = (props: IProps) => {
       );
       toast.success('Successfully deleted workstation!');
     } catch (err) {
-      toast.error('Error deleting workstation.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error deleting equipment'
+          : `Error deleting equipment, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
     // remove from state
@@ -332,7 +348,11 @@ const WorkstationContainer = (props: IProps) => {
       );
       toast.success('Workstation updated successfully!');
     } catch (err) {
-      toast.error('Error editing workstation.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error editing equipment'
+          : `Error editing equipment, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
