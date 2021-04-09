@@ -67,16 +67,10 @@ namespace Keas.Mvc.Controllers.Api
         [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
         public async Task<IActionResult> SearchAttributes(string q)
         {
-            var attributes = from ea in _context.EquipmentAttributes
-                    .Where(a => a.Equipment.Team.Slug == Team && a.Equipment.Active &&
-                                (EF.Functions.Like(a.Value, q.EfStartsWith())))
-                    .AsNoTracking()
-                select ea.Equipment.Id;
-            var ids = await attributes.Distinct().ToArrayAsync();
-
             var equipment =
                 from eq in _context.Equipment
-                    .Where(x => x.Team.Slug == Team && x.Active && ids.Contains(x.Id))
+                    .Where(x => x.Team.Slug == Team && x.Active &&
+                                x.Attributes.Any(a => (EF.Functions.Like(a.Value, q.EfStartsWith()))))
                     .Include(x => x.Attributes)
                     .Include(x => x.Space).Include(x => x.Assignment)
                     .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
