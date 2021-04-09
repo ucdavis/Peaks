@@ -237,7 +237,11 @@ const KeyContainer = (props: IProps) => {
       });
       toast.success('Key created successfully!');
     } catch (err) {
-      toast.error('Error creating key.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error editing creating key'
+          : `Error editing creating key, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -303,7 +307,11 @@ const KeyContainer = (props: IProps) => {
       });
       toast.success('Key updated successfully!');
     } catch (err) {
-      toast.error('Error updating key.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error updating key'
+          : `Error updating key, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -329,7 +337,11 @@ const KeyContainer = (props: IProps) => {
       });
       toast.success('Key deleted successfully!');
     } catch (err) {
-      toast.error('Error deleting key.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error deleting key'
+          : `Error deleting key, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -351,7 +363,11 @@ const KeyContainer = (props: IProps) => {
         keyInfo = await createKey(keyInfo.key);
         toast.success('Key created successfully!');
       } catch (err) {
-        toast.error('Error creating key.');
+        const errorMessage =
+          err.message === ''
+            ? 'Error deleting key'
+            : `Error deleting key, ${err.message}`;
+        toast.error(errorMessage);
         throw new Error(); // throw error so modal doesn't close
       }
     }
@@ -368,7 +384,11 @@ const KeyContainer = (props: IProps) => {
       });
       toast.success('Space associated succesfully!');
     } catch (err) {
-      toast.error('Error associating space.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error associating space'
+          : `Error associating space, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -409,7 +429,11 @@ const KeyContainer = (props: IProps) => {
       });
       toast.success('Space disassociated succesfully!');
     } catch (err) {
-      toast.error('Error disassociating space.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error disassociating space'
+          : `Error disassociating space, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
