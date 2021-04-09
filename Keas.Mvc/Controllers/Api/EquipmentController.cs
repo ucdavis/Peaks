@@ -71,11 +71,8 @@ namespace Keas.Mvc.Controllers.Api
                     .Where(a => a.Equipment.Team.Slug == Team && a.Equipment.Active &&
                                 (EF.Functions.Like(a.Value, q.EfStartsWith())))
                     .AsNoTracking()
-                select new
-                {
-                    ea.Equipment.Id
-                };
-            var ids = await attributes.Distinct().Select(a => a.Id).ToArrayAsync();
+                select ea.Equipment.Id;
+            var ids = await attributes.Distinct().ToArrayAsync();
 
             var equipment =
                 from eq in _context.Equipment
