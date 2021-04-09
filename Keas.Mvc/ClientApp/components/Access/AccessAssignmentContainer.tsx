@@ -20,7 +20,7 @@ interface IProps {
   person?: IPerson;
   access?: IAccess;
   onRevokeSuccess?(assignment: IAccessAssignment);
-  onAssignSuccess?(access: IAccessAssignment);
+  onAssignSuccess: () => void;
 }
 
 const AssignmentContainer = (props: IProps) => {
@@ -177,7 +177,7 @@ const AssignmentContainer = (props: IProps) => {
     const assignmentsData = assignments;
     assignments.push(accessAssignment);
     setAssignments(assignmentsData);
-    props.onAssignSuccess(accessAssignment);
+    props.onAssignSuccess();
   };
 
   const openDetails = (access: IAccess) => {

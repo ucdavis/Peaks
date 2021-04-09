@@ -23,7 +23,9 @@ interface IProps {
 const AccessDetails = (props: IProps) => {
   const context = useContext(Context);
   const history = useHistory();
-  const [shouldOpenEditModal, setShouldOpenEditModal] = useState<boolean>(false);
+  const [shouldOpenEditModal, setShouldOpenEditModal] = useState<boolean>(
+    false
+  );
 
   useEffect(() => {
     if (!props.selectedAccess) {
@@ -134,10 +136,7 @@ const AccessDetails = (props: IProps) => {
 
       <AccessAssignmentContainer
         access={props.selectedAccess}
-        onAssignSuccess={assignment => {
-          access.assignments.push(assignment);
-          props.updateSelectedAccess(access);
-        }}
+        onAssignSuccess={() => props.updateSelectedAccess(access)}
         onRevokeSuccess={assignment => {
           access.assignments.splice(access.assignments.indexOf(assignment), 1);
           props.updateSelectedAccess(access);
