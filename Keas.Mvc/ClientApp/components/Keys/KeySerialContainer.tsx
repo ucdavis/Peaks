@@ -177,8 +177,8 @@ const KeySerialContainer = (props: IProps) => {
       } catch (err) {
         const errorMessage =
           err.message === ''
-            ? 'Error creating key serial.'
-            : `Error creating key serial., ${err.message}`;
+            ? 'Error creating key serial'
+            : `Error creating key serial, ${err.message}`;
         toast.error(errorMessage);
         throw new Error(); // throw error so modal doesn't close
       }
@@ -209,8 +209,8 @@ const KeySerialContainer = (props: IProps) => {
       } catch (err) {
         const errorMessage =
           err.message === ''
-            ? 'Error assigning key serial.'
-            : `Error assigning key serial., ${err.message}`;
+            ? 'Error assigning key serial'
+            : `Error assigning key serial, ${err.message}`;
         toast.error(errorMessage);
         throw new Error(); // throw error so modal doesn't close
       }
@@ -260,8 +260,8 @@ const KeySerialContainer = (props: IProps) => {
     } catch (err) {
       const errorMessage =
         err.message === ''
-          ? 'Error revoking key serial.'
-          : `Error revoking key serial., ${err.message}`;
+          ? 'Error revoking key serial'
+          : `Error revoking key serial, ${err.message}`;
       toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
@@ -317,8 +317,8 @@ const KeySerialContainer = (props: IProps) => {
     } catch (err) {
       const errorMessage =
         err.message === ''
-          ? 'Error editing key serial.'
-          : `Error editing key serial., ${err.message}`;
+          ? 'Error editing key serial'
+          : `Error editing key serial, ${err.message}`;
       toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
