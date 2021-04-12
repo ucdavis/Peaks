@@ -74,7 +74,11 @@ const AccessContainer = () => {
         setAccesses(accessesData);
         toast.success('Access created successfully!');
       } catch (err) {
-        toast.error('Error creating access.');
+        const errorMessage =
+          err.message === ''
+            ? 'Error creating access'
+            : `Error creating access, ${err.message}`;
+        toast.error(errorMessage);
         throw new Error(); // throw error so modal doesn't close
       }
     }
@@ -92,7 +96,11 @@ const AccessContainer = () => {
         setAccesses(accesses);
         toast.success('Access assigned successfully!');
       } catch (err) {
-        toast.error('Error assigning access.');
+        const errorMessage =
+          err.message === ''
+            ? 'Error assigning access'
+            : `Error assigning access, ${err.message}`;
+        toast.error(errorMessage);
         throw new Error(); // throw error so modal doesn't close
       }
     }
@@ -187,7 +195,11 @@ const AccessContainer = () => {
       );
       toast.success('Access deleted successfully!');
     } catch (err) {
-      toast.error('Error deleting access.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error deleting access'
+          : `Error deleting access, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -216,7 +228,11 @@ const AccessContainer = () => {
       });
       toast.success('Access edited successfully!');
     } catch (err) {
-      toast.error('Error editing access.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error editing access'
+          : `Error editing access, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
