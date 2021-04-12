@@ -65,6 +65,27 @@ namespace Keas.Mvc.Controllers.Api
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> SearchAttributes(string q)
+        {
+            var equipment =
+                from eq in _context.Equipment
+                    .Where(x => x.Team.Slug == Team && x.Active &&
+                                x.Attributes.Any(a => (EF.Functions.Like(a.Value, q.EfStartsWith()))))
+                    .Include(x => x.Attributes)
+                    .Include(x => x.Space).Include(x => x.Assignment)
+                    .OrderBy(x => x.Assignment != null).ThenBy(x => x.Name)
+                    .AsNoTracking()
+                select new
+                {
+                    equipment = eq,
+                    label = eq.Id + ". " + eq.Name + " " + eq.SerialNumber,
+                };
+
+            return Json(await equipment.ToListAsync());
+        }
+
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Equipment>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetEquipmentInSpace(int spaceId)
         {
             var equipment = await _context.Equipment
