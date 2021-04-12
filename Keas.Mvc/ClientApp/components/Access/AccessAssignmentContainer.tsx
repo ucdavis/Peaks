@@ -126,7 +126,11 @@ const AssignmentContainer = (props: IProps) => {
       };
       toast.success('Access updated successfully!');
     } catch (err) {
-      toast.error('Error assigning access.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error updating access'
+          : `Error updating access, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -156,7 +160,11 @@ const AssignmentContainer = (props: IProps) => {
         );
         toast.success('Access created successfully!');
       } catch (err) {
-        toast.error('Error creating access.');
+        const errorMessage =
+          err.message === ''
+            ? 'Error creating access'
+            : `Error creating access, ${err.message}`;
+        toast.error(errorMessage);
         throw new Error(); // throw error so modal doesn't close
       }
     }
@@ -170,7 +178,11 @@ const AssignmentContainer = (props: IProps) => {
       access.assignments.push(accessAssignment);
       toast.success('Access assigned successfully!');
     } catch (err) {
-      toast.error('Error assigning access.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error assigning access'
+          : `Error assigning access, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
