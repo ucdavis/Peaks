@@ -297,7 +297,11 @@ const SpacesContainer = (props: IProps) => {
       });
       toast.success('Successfully associated space!');
     } catch (err) {
-      toast.error('Error associating space.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error associating space'
+          : `Error associating space, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -330,7 +334,11 @@ const SpacesContainer = (props: IProps) => {
       });
       toast.success('Successfully disassociated space!');
     } catch (err) {
-      toast.error('Error disassociating space.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error disassociating space'
+          : `Error disassociating space, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error();
     }
     const updatedSpaces = [...spaces];

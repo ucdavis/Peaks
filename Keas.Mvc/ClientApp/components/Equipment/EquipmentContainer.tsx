@@ -252,8 +252,12 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
           }
         );
         toast.success('Equipment created successfully!');
-      } catch (e) {
-        toast.error('Error creating equipment.');
+      } catch (err) {
+        const errorMessage =
+          err.message === ''
+            ? 'Error creating equipment'
+            : `Error creating equipment, ${err.message}`;
+        toast.error(errorMessage);
         throw new Error(); // throw error so modal doesn't close
       }
       selectedEquipment.attributes = attributes;
@@ -273,8 +277,12 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
           method: 'POST'
         });
         toast.success('Equipment assigned successfully!');
-      } catch (e) {
-        toast.error('Error assigning equipment.');
+      } catch (err) {
+        const errorMessage =
+          err.message === ''
+            ? 'Error assigning equipment'
+            : `Error assigning equipment, ${err.message}`;
+        toast.error(errorMessage);
         throw new Error(); // throw error so modal doesn't close
       }
       selectedEquipment.attributes = attributes;
@@ -331,8 +339,12 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
         }
       );
       toast.success('Equipment revoked successfully!');
-    } catch (e) {
-      toast.error('Error revoking equipment.');
+    } catch (err) {
+      const errorMessage =
+        err.message === ''
+          ? 'Error revoking equipment'
+          : `Error revoking equipment, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -373,8 +385,12 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
         }
       );
       toast.success('Equipment deleted successfully!');
-    } catch (e) {
-      toast.error('Error deleting equipment.');
+    } catch (err) {
+      const errorMessage =
+        err.message === ''
+          ? 'Error deleting equipment'
+          : `Error deleting equipment, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
