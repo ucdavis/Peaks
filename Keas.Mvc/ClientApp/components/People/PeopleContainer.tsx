@@ -20,7 +20,7 @@ const PeopleContainer = props => {
   const [tagFilters, setTagFilters] = useState<string[]>([]);
   const context = useContext(Context);
   const history = useHistory();
-  const params : IMatchParams = useParams();
+  const params: IMatchParams = useParams();
 
   useEffect(() => {
     if (!PermissionsUtil.canViewPeople(context.permissions)) {
@@ -142,7 +142,11 @@ const PeopleContainer = props => {
       });
       toast.success('Successfully created person!');
     } catch (err) {
-      toast.error('Error creating person.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error creating person'
+          : `Error creating person, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error();
     }
     // since this is a new person, they will not have anything assigned
@@ -176,7 +180,11 @@ const PeopleContainer = props => {
       );
       toast.success('Sucessfully updated person!');
     } catch (err) {
-      toast.error('Error editing person.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error editing person'
+          : `Error editing person, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error();
     }
 
@@ -207,7 +215,11 @@ const PeopleContainer = props => {
       );
       toast.success('Successfully deleted person!');
     } catch (err) {
-      toast.error('Error deleting person.');
+      const errorMessage =
+        err.message === ''
+          ? 'Error deleting person'
+          : `Error deleting person, ${err.message}`;
+      toast.error(errorMessage);
       throw new Error();
     }
 
