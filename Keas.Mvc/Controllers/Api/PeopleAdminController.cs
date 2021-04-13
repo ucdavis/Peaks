@@ -55,6 +55,11 @@ namespace Keas.Mvc.Controllers.Api
             //    return BadRequest("Supervisor not in team.");
             //}
 
+            if (person.SupervisorId == p.Id)
+            {
+                return BadRequest("Can't be their own supervisor");
+            }
+
             p.FirstName = person.FirstName;
             p.LastName = person.LastName;
             p.Email = person.Email;
