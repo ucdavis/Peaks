@@ -60,6 +60,7 @@ const EditPerson = (props: IProps) => {
   };
 
   const closeModal = () => {
+    setPerson(props.selectedPerson);
     setError({
       message: '',
       path: ''
