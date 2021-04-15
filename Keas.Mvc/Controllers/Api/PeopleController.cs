@@ -174,6 +174,19 @@ namespace Keas.Mvc.Controllers.Api
                 User = user,
                 Title = await _identityService.GetTitle(user.Iam)
             };
+            var supervisorIam = await _identityService.GetIamSupervisor(user.Iam);
+            if (!string.IsNullOrWhiteSpace(supervisorIam))
+            {
+                var superPerson = await _context.People
+                    .Where(x => x.Team.Slug == Team && x.User.Iam == supervisorIam)
+                    .IgnoreQueryFilters()
+                    .FirstOrDefaultAsync();
+                if (superPerson != null)
+                {
+                    person.SupervisorId = superPerson.Id;
+                    person.Supervisor = superPerson;
+                }
+            }
             return Json(person);
         }
 
