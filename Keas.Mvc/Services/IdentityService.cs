@@ -25,6 +25,7 @@ namespace Keas.Mvc.Services
 
         Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId, Team team, string actorName, string actorId, string notes);
         Task<string> GetTitle(string iamId);
+        Task<User> GetIamSupervisor(string iamId);
     }
 
     public class IdentityService : IIdentityService
@@ -263,6 +264,27 @@ namespace Keas.Mvc.Services
             }
 
             return title;
+        }
+
+        public async Task<User> GetIamSupervisor(string iamId)
+        {
+            User user = null;
+            try
+            {
+                var clientws = new IetClient(_authSettings.IamKey);
+                var result = await clientws.PPSAssociations.Search(PPSAssociationsSearchField.iamId, iamId);
+                if (result.ResponseData.Results.Length > 0)
+                {
+                    var supervisorIamId = result.ResponseData.Results.FirstOrDefault(a => !string.IsNullOrWhiteSpace(a.reportsToIAMID))?.reportsToIAMID;
+                    user = await _context.Users.Where(a => a.Iam == supervisorIamId).FirstOrDefaultAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Getting SupervisorId for IamId: {iamId}.", ex);
+            }
+
+            return user;
         }
 
         public async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
