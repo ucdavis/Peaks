@@ -93,12 +93,17 @@ const AssignmentContainer = (props: IProps) => {
   };
 
   const callRevoke = async assignment => {
-    await context.fetch(
-      `/api/${context.team.slug}/access/revoke/${assignment.id}`,
-      {
-        method: 'POST'
-      }
-    );
+    try {
+      await context.fetch(
+        `/api/${context.team.slug}/access/revoke/${assignment.id}`,
+        {
+          method: 'POST'
+        }
+      );
+    } catch (err) {
+      toast.error("Error revoking access for user");
+      throw new Error(); // throw error so modal doesn't close
+    }
 
     toast.success('Access revoked sucessfully!');
 
