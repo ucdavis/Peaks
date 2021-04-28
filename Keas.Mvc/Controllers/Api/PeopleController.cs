@@ -133,7 +133,11 @@ namespace Keas.Mvc.Controllers.Api
         {
             // this will return either an existing person (regardless of if they are active or not)
             // or it will return a new person based on the user info
-
+            if (string.IsNullOrWhiteSpace(searchTerm))
+            {
+                return BadRequest("Please supply a search term");
+            }
+            searchTerm = searchTerm?.Trim();
             // first try and find an existing person
             var existingPerson = await _context.People
                 .Where(x => x.Team.Slug == Team && (x.Email == searchTerm || x.UserId == searchTerm))
