@@ -22,6 +22,7 @@
         <table id="keys" class="table dataTable">
             <thead>
                 <tr>
+                    <th>Team</th>
                     <th>Key Name</th>
                     <th>Code</th>
                     <th>Serial #</th>
@@ -48,6 +49,7 @@
                         foreach (var serial in item.Serials)
                         {
                             <tr>
+                                <td>@item.Team</td>
                                 <td>@item.KeyName</td>
                                 <td>@item.Code</td>
                                 <td>@serial.SerialNumber</td>
@@ -120,9 +122,9 @@
                 { extend: 'csvHtml5' },
                 { extend: 'print' },
             ],
-            "order": [[0, "asc"], [1, "asc"], [2, "asc"]],
+            "order": [[1, "asc"], [2, "asc"], [3, "asc"]],
             "columnDefs": [
-                { "targets": [4, 7, 11, 12, 14], "visible": false },
+                { "targets": [0,5, 8, 12, 13, 15], "visible": false },
             ]
         });
     </script>
