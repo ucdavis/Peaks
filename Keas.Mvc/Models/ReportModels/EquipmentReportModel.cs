@@ -3,6 +3,7 @@ namespace Keas.Mvc.Models.ReportModels
     public class EquipmentReportModel
     {
         public string Name { get; set; }
+        public string Team { get; set; }
         public string Type { get; set; }
         public string ProtectionLevel { get; set; }
         public string AvailabilityLevel { get; set; }

@@ -156,6 +156,7 @@ namespace Keas.Mvc.Services
             return a => new EquipmentReportModel
             {
                 Name = a.Name,
+                Team = a.Team.Slug,
                 Type = string.IsNullOrWhiteSpace(a.Type) ? EquipmentTypes.Default : a.Type,
                 ProtectionLevel = a.ProtectionLevel,
                 AvailabilityLevel = a.AvailabilityLevel,
