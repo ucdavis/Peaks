@@ -47,6 +47,7 @@ namespace Keas.Mvc.Services
             return a => new WorkstationReportModel
             {
                 Name = a.Name,
+                Team = a.Team.Slug,
                 Notes = a.Notes,
                 Tags = a.Tags,
                 Active = a.Active,
