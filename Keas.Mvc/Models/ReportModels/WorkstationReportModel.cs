@@ -3,6 +3,7 @@ namespace Keas.Mvc.Models.ReportModels
     public class WorkstationReportModel
     {
         public string Name { get; set; }
+        public string Team { get; set; }
         public string Notes { get; set; }
         public string Tags { get; set; }
         public bool Active { get; set; }

@@ -47,6 +47,7 @@ namespace Keas.Mvc.Services
             return a => new WorkstationReportModel
             {
                 Name = a.Name,
+                Team = a.Team.Slug,
                 Notes = a.Notes,
                 Tags = a.Tags,
                 Active = a.Active,
@@ -156,6 +157,7 @@ namespace Keas.Mvc.Services
             return a => new EquipmentReportModel
             {
                 Name = a.Name,
+                Team = a.Team.Slug,
                 Type = string.IsNullOrWhiteSpace(a.Type) ? EquipmentTypes.Default : a.Type,
                 ProtectionLevel = a.ProtectionLevel,
                 AvailabilityLevel = a.AvailabilityLevel,
@@ -258,6 +260,7 @@ namespace Keas.Mvc.Services
             return a => new KeyReportModel()
             {
                 KeyName = a.Name,
+                Team = a.Team.Slug,
                 Code = a.Code,
                 Notes = a.Notes,
                 Tags = a.Tags,

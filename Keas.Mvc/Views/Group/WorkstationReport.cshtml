@@ -23,6 +23,7 @@
         <table id="workstations" class="table dataTable">
             <thead>
                 <tr>
+                    <th>Team</th>
                     <th>WS Name</th>
                     <th>Active</th>
                     <th>Assigned</th>
@@ -44,10 +45,11 @@
                 @foreach (var item in Model)
                 {
                     <tr>
+                        <td>@item.Team</td>
                         <td>@item.Name</td>
                         <td>@item.Active.ToYesNoString()</td>
                         <td>@item.IsAssigned.ToYesNoString()</td>
-                        <td>@item.Tags.Replace(",",", ")</td>
+                        <td>@item.Tags.Replace(",", ", ")</td>
                         <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
                         <td>@item.Notes</td>
                         @if (item.IsAssigned)
@@ -92,9 +94,10 @@
                     { extend: 'csvHtml5' },
                     { extend: 'print'},
                 ],
+                "order": [[1, "asc"]],
                 "columnDefs": [
-                    { "type": "date", "targets": [8] },
-                    { "targets" : [ 5,7,11,13,14], "visible" : false}
+                    { "type": "date", "targets": [9] },
+                    { "targets" : [ 0,6,8,12,14,15], "visible" : false}
                 ]
         });
     </script>

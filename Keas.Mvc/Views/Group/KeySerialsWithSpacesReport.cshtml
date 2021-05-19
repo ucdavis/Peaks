@@ -22,6 +22,7 @@
         <table id="keys" class="table dataTable">
             <thead>
                 <tr>
+                    <th>Team</th>
                     <th>Key Name</th>
                     <th>Code</th>
                     <th>Serial #</th>
@@ -51,6 +52,7 @@
                         {
                             foreach(var space in item.Spaces) {
                                 <tr>
+                                    <td>@item.Team</td>
                                     <td>@item.KeyName</td>
                                     <td>@item.Code</td>
                                     <td>@serial.SerialNumber</td>
@@ -105,10 +107,11 @@
                     { extend: 'excelHtml5' },
                     { extend: 'csvHtml5' },
                     { extend: 'print'},
-                ],
+            ],
+                "order": [1, "asc"],
                 "columnDefs": [
-                    { "type": "date", "targets": [8] },
-                    { "targets" : [ 3,4,5,8,9,11,12], "visible" : false}
+                    { "type": "date", "targets": [9] },
+                    { "targets" : [ 0,4,5,6,9,10,12,13], "visible" : false}
                 ]
         });
     </script>
