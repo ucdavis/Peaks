@@ -217,6 +217,10 @@ namespace Keas.Mvc.Controllers.Api
             //{
             //    //do Update logic
             //}
+            if (string.IsNullOrWhiteSpace(person.UserId))
+            {
+                ModelState.AddModelError("UserId", "Missing UserId");
+            }
 
             if (ModelState.IsValid)
             {
@@ -235,6 +239,16 @@ namespace Keas.Mvc.Controllers.Api
                     {
                         // if this user already exists, but isn't a person
                         person.User = user;
+                    }
+                    else
+                    {
+                        //Force lookup. Don't trust passed user
+                        person.User = await _identityService.GetByKerberos(person.UserId);
+                    }
+
+                    if (person.User == null)
+                    {
+                        return NotFound();
                     }
 
                     if (person.Supervisor != null)
