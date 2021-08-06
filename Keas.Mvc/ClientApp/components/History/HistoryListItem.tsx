@@ -10,7 +10,12 @@ const HistoryListItem = (props: IProps) => {
   return (
     <tr>
       <td>{DateUtil.formatExpiration(props.history.actedDate)}</td>
-      <td>{props.history.description}</td>
+          <td>{props.history.description}</td>
+          <td>                  <a
+              href={`/notify-test${props.history.link}`}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+          >...</a></td>
     </tr>
   );
 };

@@ -45,5 +45,29 @@ namespace Keas.Core.Domain {
 
         public Document Document { get; set; }
         public int? DocumentId { get; set; }
+
+        public string Link
+        {
+            get
+            {
+                //Need to insert team
+                if (EquipmentId != null)
+                {
+                    return $"/equipment/details/{EquipmentId.Value}";
+                }
+
+                if (KeySerialId != null)
+                {
+                    return $"/keys/details/2559/keyserials/details/{KeySerialId.Value}";
+                }
+                //Key id too?
+                if (AccessId != null)
+                {
+                    return $"/access/details/{AccessId.Value}";
+                }
+
+                return null;
+            }
+        }
     }
 }
