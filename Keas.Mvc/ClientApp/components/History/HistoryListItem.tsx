@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { IHistory } from '../../models/Shared';
 import { DateUtil } from '../../util/dates';
+import { useContext } from 'react';
+import { Context } from '../../Context';
 
 interface IProps {
     history: IHistory;
@@ -8,13 +10,14 @@ interface IProps {
 }
 
 const HistoryListItem = (props: IProps) => {
+    const context = useContext(Context);
   return (
     <tr>
       <td>{DateUtil.formatExpiration(props.history.actedDate)}</td>
           <td>{props.history.description}</td>
-          {props.showLink && (
+          {props.showLink && props.history.link != null &&(
           <td>                  <a
-              href={`/notify-test${props.history.link}`}
+                  href={`/${context.team.slug}${props.history.link}`}
                                     target='_blank'
                                     rel='noopener noreferrer'
               >...</a></td>
