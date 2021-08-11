@@ -15,13 +15,15 @@ const HistoryListItem = (props: IProps) => {
     <tr>
       <td>{DateUtil.formatExpiration(props.history.actedDate)}</td>
           <td>{props.history.description}</td>
+        <td>
           {props.showLink && props.history.link != null &&(
-          <td>                  <a
+                            <a
                   href={`/${context.team.slug}${props.history.link}`}
                                     target='_blank'
                                     rel='noopener noreferrer'
-              >...</a></td>
+              >...</a>
           )}
+          </td>
     </tr>
   );
 };
