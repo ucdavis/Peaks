@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Keas.Core.Domain {
     public class History {
@@ -45,7 +46,7 @@ namespace Keas.Core.Domain {
 
         public Document Document { get; set; }
         public int? DocumentId { get; set; }
-
+        [NotMapped]
         public string Link
         {
             get
