@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Keas.Core.Domain;
@@ -57,10 +57,15 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("KeyId", "System.Nullable`1[System.Int32]", new List<string>()));
             expectedFields.Add(new NameAndType("KeySerial", "Keas.Core.Domain.KeySerial", new List<string>()));
             expectedFields.Add(new NameAndType("KeySerialId", "System.Nullable`1[System.Int32]", new List<string>()));
+            expectedFields.Add(new NameAndType("Link", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.Schema.NotMappedAttribute()]",
+            }));
             expectedFields.Add(new NameAndType("Target", "Keas.Core.Domain.Person", new List<string>()));
             expectedFields.Add(new NameAndType("TargetId", "System.Nullable`1[System.Int32]", new List<string>()));
             expectedFields.Add(new NameAndType("Workstation", "Keas.Core.Domain.Workstation", new List<string>()));
             expectedFields.Add(new NameAndType("WorkstationId", "System.Nullable`1[System.Int32]", new List<string>()));
+            
             #endregion Arrange
 
             AttributeAndFieldValidation.ValidateFieldsAndAttributes(expectedFields, typeof(History));
