@@ -108,5 +108,6 @@ export interface IHistory {
   actedDate: Date;
   actionType?: string;
   assetType?: string;
-  id: number;
+    id: number;
+    link: string;
 }

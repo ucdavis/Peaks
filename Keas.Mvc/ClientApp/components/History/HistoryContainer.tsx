@@ -7,7 +7,8 @@ import HistoryList from './HistoryList';
 
 interface IProps {
   controller: string;
-  id: number;
+    id: number;
+    showLink?: boolean;
 }
 
 const HistoryContainer = (props: IProps) => {
@@ -57,7 +58,7 @@ const HistoryContainer = (props: IProps) => {
         </div>
       </div>
       <div className='card-content'>
-        {histories.length > 0 && <HistoryList histories={histories} />}
+        {histories.length > 0 && <HistoryList showLink={props.showLink} histories={histories} />}
         {histories.length < 1 && <p>No histories were found</p>}
         {props.controller === 'people' && (
           <Button color='link' onClick={reloadHistories} disabled={reloading}>

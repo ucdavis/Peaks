@@ -118,7 +118,8 @@ const PersonDetails = (props: IProps) => {
       {canEdit && (
         <HistoryContainer
           controller='peopleAdmin'
-          id={props.selectedPersonInfo.person.id}
+                  id={props.selectedPersonInfo.person.id}
+                  showLink={true}
         />
       )}
     </div>

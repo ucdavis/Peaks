@@ -3,12 +3,13 @@ import { IHistory } from '../../models/Shared';
 import HistoryListItem from './HistoryListItem';
 
 interface IProps {
-  histories: IHistory[];
+    histories: IHistory[];
+    showLink?: boolean;
 }
 
 const HistoryList = (props: IProps) => {
   const histories = props.histories.map(x => (
-    <HistoryListItem key={x.id} history={x} />
+    <HistoryListItem key={x.id} showLink={props.showLink} history={x} />
   ));
   return (
     <div className='table'>
