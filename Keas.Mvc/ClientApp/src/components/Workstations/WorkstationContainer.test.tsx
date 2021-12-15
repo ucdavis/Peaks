@@ -3,7 +3,7 @@ import { render, unmountComponentAtNode } from 'react-dom';
 import { MemoryRouter, Route } from 'react-router';
 import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
-import { ISpace } from 'ClientApp/models/Spaces';
+import { ISpace } from '../../models/Spaces';
 import { fakeWorkstations } from '../specs/mockData/Workstation';
 import WorkstationContainer from '../Workstations/WorkstationContainer';
 

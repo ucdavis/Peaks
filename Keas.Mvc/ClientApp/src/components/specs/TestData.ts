@@ -1,4 +1,4 @@
-import { IPersonInfo } from 'ClientApp/models/People';
+import { IPersonInfo } from '../../models/People';
 
 export const fakePeople: IPersonInfo[] = [
   {

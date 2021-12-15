@@ -1,4 +1,4 @@
-import { IKeySerial } from 'ClientApp/models/KeySerials';
+import { IKeySerial } from '../../../models/KeySerials';
 
 export const fakeKeySerials: IKeySerial[] = [
   {

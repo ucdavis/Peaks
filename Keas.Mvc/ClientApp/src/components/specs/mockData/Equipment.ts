@@ -1,4 +1,4 @@
-import { IEquipment } from 'ClientApp/models/Equipment';
+import { IEquipment } from '../../../models/Equipment';
 
 export const fakeEquipment: IEquipment[] = [
   {

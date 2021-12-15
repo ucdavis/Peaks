@@ -1,4 +1,4 @@
-import { IKeyInfo } from 'ClientApp/models/Keys';
+import { IKeyInfo } from '../../../models/Keys';
 
 export const fakeKeys: IKeyInfo[] = [
   {

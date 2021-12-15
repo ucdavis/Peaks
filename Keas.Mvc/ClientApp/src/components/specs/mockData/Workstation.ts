@@ -1,4 +1,4 @@
-import { IWorkstation } from 'ClientApp/models/Workstations';
+import { IWorkstation } from '../../../models/Workstations';
 
 export const fakeWorkstations: IWorkstation[] = [
   {

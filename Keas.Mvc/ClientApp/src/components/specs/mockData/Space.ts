@@ -1,4 +1,4 @@
-import { ISpaceInfo } from 'ClientApp/models/Spaces';
+import { ISpaceInfo } from '../../../models/Spaces';
 
 export const fakeSpaces: ISpaceInfo[] = [
   {

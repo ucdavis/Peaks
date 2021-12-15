@@ -1,4 +1,4 @@
-import { IAccess } from 'ClientApp/models/Access';
+import { IAccess } from '../../../models/Access';
 
 export const fakeAccesses: IAccess[] = [
   {
