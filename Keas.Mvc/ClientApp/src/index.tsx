@@ -3,16 +3,16 @@ import * as ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { createFetch } from '../../util/api';
+import { createFetch } from './util/api';
 
-import * as RoutesModule from './routes';
+import * as RoutesModule from './pages/assets/routes';
 
 import 'react-toastify/dist/ReactToastify.css';
-import { Context } from '../../Context';
+import { Context } from './Context';
 
 const routes = RoutesModule.routes;
 
-declare var window: any;
+declare let window: any;
 
 function renderApp() {
   const team = window.App.teamData;
@@ -50,10 +50,3 @@ function renderApp() {
 }
 
 renderApp();
-
-// Allow Hot Module Replacement
-if (module.hot) {
-  module.hot.accept(() => {
-    renderApp();
-  });
-}
