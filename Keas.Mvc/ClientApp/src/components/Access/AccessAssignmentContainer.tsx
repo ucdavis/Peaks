@@ -19,7 +19,7 @@ import Denied from '../Shared/Denied';
 interface IProps {
   person?: IPerson;
   access?: IAccess;
-  onRevokeSuccess?(assignment: IAccessAssignment);
+  onRevokeSuccess?: (assignment: IAccessAssignment) => any;
   onAssignSuccess: () => void;
 }
 

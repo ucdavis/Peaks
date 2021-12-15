@@ -1,0 +1,141 @@
+nav {
+  background-color: white;
+  box-shadow: $box-shadow;
+}
+.peaks-nav {
+  width: 100%;
+}
+a.nav-link {
+  font-size: 2rem;
+  font-family: $sans-bold;
+  color: $primary-font;
+  &:hover {
+    color: darken($primary-color, 9);
+  }
+  &.active {
+    color: $primary-color;
+  }
+}
+.navbar {
+  padding: 0;
+  .nav-item {
+    align-self: center;
+  }
+}
+.navbar-toggler {
+  color: $primary-font !important;
+  font-size: 1.8rem;
+  border: none !important;
+  span {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-left: 2px;
+  }
+}
+.nav-active {
+  a.nav-link {
+    border-bottom: 3px solid $borders;
+  }
+}
+.nav-actions {
+  text-align: left;
+  border-left: 1px solid $borders;
+  padding: 0.8rem 1.6rem;
+  label {
+    font-size: 1.8rem;
+    font-family: $sans-bold;
+    margin-bottom: 0;
+  }
+  button {
+    border: none;
+    box-shadow: none;
+    color: $secondary-font;
+    text-decoration: underline;
+    padding: 0;
+    font-size: 1.6rem;
+  }
+}
+
+// React Tabs
+
+.react-tabs {
+  list-style-type: none;
+  padding-left: 0px;
+  display: flex;
+  justify-content: space-around;
+  vertical-align: middle;
+  background-color: #fff;
+  box-shadow: $box-shadow;
+  margin-bottom: 16px;
+  border-radius: 4px;
+  a.tab-link {
+    flex: 1;
+    background-color: white;
+    text-align: center;
+    padding: 20px 0px;
+    font-family: $sans-bold;
+    font-size: 1.8rem;
+    color: $primary-font;
+    border-bottom: 4px solid #fff;
+    @include fader;
+    &.tab-spaces {
+      &.active {
+        color: $spaces;
+        border-bottom: 4px solid $spaces;
+        background-color: transparentize($spaces, 0.9);
+      }
+      &:hover {
+        color: darken($spaces, 10);
+      }
+    }
+    &.tab-keys {
+      &.active {
+        color: $keys;
+        border-bottom: 4px solid $keys;
+        background-color: transparentize($keys, 0.9);
+      }
+      &:hover {
+        color: darken($keys, 10);
+      }
+    }
+    &.tab-equipment {
+      &.active {
+        color: $equipment;
+        border-bottom: 4px solid $equipment;
+        background-color: transparentize($equipment, 0.9);
+      }
+      &:hover {
+        color: darken($equipment, 10);
+      }
+    }
+    &.tab-people {
+      &.active {
+        color: $people;
+        border-bottom: 4px solid $people;
+        background-color: transparentize($people, 0.9);
+      }
+      &:hover {
+        color: darken($people, 10);
+      }
+    }
+    &.tab-access {
+      &.active {
+        color: $access;
+        border-bottom: 4px solid $access;
+        background-color: transparentize($access, 0.9);
+      }
+      &:hover {
+        color: darken($access, 10);
+      }
+    }
+
+    &:first-child {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+    &:last-child {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+  }
+}

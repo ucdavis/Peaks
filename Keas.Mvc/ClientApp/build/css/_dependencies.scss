@@ -1,0 +1,139 @@
+@import 'bootstrap/scss/_functions';
+@import 'bootstrap/scss/_variables';
+@import '@ucdavis/gunrockin/sass/gunrockin.scss';
+$primary-color: $gunrock;
+$secondary-color: $quad;
+$tertiary-color: #f4bd00;
+$theme-colors: (
+  primary: $primary-color,
+  secondary: $secondary-color
+);
+@import 'bootstrap/scss/bootstrap';
+@import '@ucdavis/gunrockin/sass/_typography.scss';
+
+$gold: #daaa00;
+$blue: #004987;
+
+$a-link: transparentize($primary-color, 0.2);
+
+$primary-font: rgba(31, 31, 31, 0.99); //
+$secondary-font: rgba(31, 31, 31, 0.66); //
+$tertiary-font: rgba(31, 31, 31, 0.4); //
+
+$box-shadow: 0 0 0 1px rgba(49, 49, 93, 0.03), 0 2px 5px 0 rgba(49, 49, 93, 0.1),
+  0 1px 2px 0 rgba(0, 0, 0, 0.08);
+
+$bg-color: #f8f9fb; // background
+$borders: #e8e9ed; // border color
+
+$nav-active: #fff;
+$nav-secondary: $secondary-font;
+
+$people: $doubledecker;
+$equipment: $gold;
+$access: $quad;
+$keys: $tahoe;
+$spaces: $pinot;
+$history: $tertiary-font;
+$documents: $poppy;
+
+// UC Davis Colors
+// Supplemental bright color palette for UC Davis
+
+$western-redbud: #c6007e;
+$california-poppy: #ed8800;
+$golden-lupine: #ffcd00;
+$sunny-grass: #78be20;
+$sky-blue: #00b5e2;
+$recpool-blue: #008eaa;
+$wine-grape: #642667;
+
+// Layouts
+$card-padding: 0.75rem 1.75rem;
+$card-thick-padding: 3rem;
+
+@mixin breakpoint($point) {
+  @if $point==sm {
+    @media (min-width: 576px) {
+      @content;
+    }
+  }
+  @if $point==xsm {
+    @media (max-width: 575px) {
+      @content;
+    }
+  }
+  @if $point==md {
+    @media (min-width: 768px) {
+      @content;
+    }
+  }
+  @if $point==lg {
+    @media (min-width: 992px) {
+      @content;
+    }
+  }
+  @if $point==xl {
+    @media (min-width: 1200px) {
+      @content;
+    }
+  }
+}
+
+@mixin fader {
+  -o-transition: 0.25s;
+  -ms-transition: 0.25s;
+  -moz-transition: 0.25s;
+  -webkit-transition: 0.25s;
+  /* ...and now for the proper property */
+  transition: 0.25s;
+}
+@mixin main-btn {
+  white-space: nowrap;
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 20px;
+  box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset, 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: $primary-color;
+  border-radius: 2px;
+  font-size: 1.6rem;
+  letter-spacing: 0.025em;
+  color: #fff !important;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  border: none;
+  font-family: $sans-bold;
+  &:active,
+  &:focus {
+    background-color: darken($primary-color, 5);
+  }
+  &:hover {
+    color: #fff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 -3px 0 rgba(0, 0, 0, 0.15) inset,
+      0 3px 6px rgba(0, 0, 0, 0.08);
+    background-color: lighten($primary-color, 5);
+  }
+}
+
+@mixin inverse-btn {
+  white-space: nowrap;
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 20px;
+  background: #fff;
+  font-size: 1.6rem;
+  letter-spacing: 0.025em;
+  color: $primary-color;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  border: none;
+  font-family: $sans-bold;
+  box-shadow: $box-shadow;
+  &:hover {
+    transform: translateY(-1px);
+    text-decoration: none;
+  }
+}

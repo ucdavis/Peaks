@@ -22,7 +22,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.AspNetCore.SpaServices;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -239,24 +241,31 @@ namespace Keas.Mvc
             else
             {
                 app.UseExceptionHandler("/Error/Index");
+                app.UseHsts();
             }
 
 
             app.UseStatusCodePages("text/plain", "Status code page, status code: {0}");
 
-            if (env.IsDevelopment())
-            {
-                // dist folder will be served by webpack-dev-server
-                app.UseWhen(context => !context.Request.Path.StartsWithSegments("/dist"),
-                    appBuilder => { appBuilder.UseStaticFiles(); });
-            }
-            else
-            {
-                app.UseStaticFiles();
-                app.UseHsts();
-            }
-
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = (context) =>
+                {
+                    // cache our static assest, i.e. CSS and JS, for a long time
+                    if (context.Context.Request.Path.Value.StartsWith("/static"))
+                    {
+                        var headers = context.Context.Response.GetTypedHeaders();
+                        headers.CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
+                        {
+                            Public = true,
+                            MaxAge = TimeSpan.FromDays(365)
+                        };
+                    }
+                }
+            });
+
             app.UseRouting();
             app.UseSession();
             app.UseAuthentication();
@@ -275,20 +284,7 @@ namespace Keas.Mvc
             {
                 endpoints.MapControllers(); // map api controllers via attributes - necessary for being picked up by SwaggerGen
 
-                if (env.IsDevelopment())
-                {
-                    endpoints.MapToSpaCliProxy(
-                        "/dist/{*path}",
-                        options: new SpaOptions {SourcePath = "wwwroot/dist"},
-                        npmScript: "devpack",
-                        port: 8080,
-                        regex: "Project is running",
-                        forceKill: true, // kill anything running on our webpack port
-                        useProxy: true, // proxy webpack requests back through our aspnet server
-                        runner: ScriptRunnerType.Npm
-                    );
-                }
-
+                // TODO: need to remove some of these so they are handled by the SPA
                 endpoints.MapControllerRoute(
                     name: "Assets",
                     pattern: "{teamName}/{asset}/{*type}",
@@ -317,6 +313,33 @@ namespace Keas.Mvc
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                // any other nonfile route should be handled by the spa, except leave the sockjs route alone if we are in dev mode (hot reloading)
+                if (env.IsDevelopment()) {
+                    endpoints.MapControllerRoute(
+                        name: "react",
+                        pattern: "{*path:nonfile}",
+                        defaults: new { controller = "Home", action = "Index" },
+                        constraints: new { path = new RegexRouteConstraint("^(?!sockjs-node).*$") }
+                    );
+                } else {
+                    endpoints.MapControllerRoute(
+                        name: "react",
+                        pattern: "{*path:nonfile}",
+                        defaults: new { controller = "Home", action = "Index" }
+                    );
+                }
+            });
+
+            // SPA needs to kick in for all paths during development
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
             });
         }
     }
