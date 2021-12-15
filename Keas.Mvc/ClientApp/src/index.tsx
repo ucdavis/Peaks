@@ -1,7 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { AppContainer } from 'react-hot-loader';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { createFetch } from './util/api';
 
@@ -19,7 +18,7 @@ function renderApp() {
   const tags = window.App.tags;
   const permissions = window.App.permissionsData;
   const antiForgeryToken = window.App.antiForgeryToken;
-  
+
   const contextObject = {
     fetch: createFetch(antiForgeryToken),
     permissions,
@@ -30,22 +29,31 @@ function renderApp() {
   // This code starts up the React app when it runs in a browser. It sets up the routing
   // configuration and injects the app into a DOM element.
   ReactDOM.render(
-    <AppContainer>
-      <Context.Provider value={contextObject}>
-        <BrowserRouter children={routes} />
-        <ToastContainer
-          position='top-center'
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick={true}
-          rtl={false}
-          draggable={true}
-          pauseOnHover={true}
-        />
-      </Context.Provider>
-    </AppContainer>,
-    document.getElementById('react-app')
+    <Context.Provider value={contextObject}>
+      <BrowserRouter>
+        <Switch>
+          {/* Match any server-side routes and send empty content to let MVC return the view details */}
+          {/* TODO: find paths to send empty for, or perhaps just use inverse of other routes */}
+          <Route
+            path='/(account|rate|permissions|crop|home|system|help)'
+            component={() => <></>}
+          />
+          {routes}
+          <Route path='*'>Page Not found (404 style)</Route>
+        </Switch>
+      </BrowserRouter>
+      <ToastContainer
+        position='top-center'
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={true}
+        rtl={false}
+        draggable={true}
+        pauseOnHover={true}
+      />
+    </Context.Provider>,
+    document.getElementById('root')
   );
 }
 

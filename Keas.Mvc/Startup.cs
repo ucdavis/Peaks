@@ -70,6 +70,11 @@ namespace Keas.Mvc
         {
             services.AddHttpContextAccessor();
 
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/build";
+            });
+
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
             services.Configure<ServiceNowSettings>(Configuration.GetSection("ServiceNow"));
