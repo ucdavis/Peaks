@@ -16,6 +16,16 @@ const routes = RoutesModule.routes;
 declare let window: any;
 
 function renderApp() {
+  if (window.App === undefined) {
+    // set defaults if we aren't using a page that loads client-side vars
+    window.App = {
+      teamData: {},
+      tags: [],
+      permissionsData: [],
+      antiForgeryToken: ''
+    };
+  }
+
   const team = window.App.teamData;
   const tags = window.App.tags;
   const permissions = window.App.permissionsData;
@@ -35,13 +45,7 @@ function renderApp() {
       <BrowserRouter>
         <Switch>
           {/* Match any server-side routes and send empty content to let MVC return the view details */}
-          {/* TODO: find paths to send empty for, or perhaps just use inverse of other routes */}
-          <Route
-            path='/(account|rate|permissions|crop|home|system|help)'
-            component={() => <></>}
-          />
           {routes}
-          <Route path='*'>Page Not found (404 style)</Route>
         </Switch>
       </BrowserRouter>
       <ToastContainer

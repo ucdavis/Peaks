@@ -311,28 +311,33 @@ namespace Keas.Mvc
                     constraints: new {controller = "(group)"}
                 );
 
-                endpoints.MapControllerRoute(
-                    name: "TeamRoutes",
-                    pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}");
+                // maybe a little hacky here, but I don't want to mess with our complex routing too much
+                // basically for our open-ended routes we have to make sure not to intercept the HMR websocket 
+                if (env.IsDevelopment())
+                {                    
+                    var spaHmrSocketRegex = "^(?!sockjs-node).*$";
 
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
-
-                // any other nonfile route should be handled by the spa, except leave the sockjs route alone if we are in dev mode (hot reloading)
-                if (env.IsDevelopment()) {
                     endpoints.MapControllerRoute(
-                        name: "react",
-                        pattern: "{*path:nonfile}",
+                        name: "TeamRoutes",
+                        pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}",
                         defaults: new { controller = "Home", action = "Index" },
-                        constraints: new { path = new RegexRouteConstraint("^(?!sockjs-node).*$") }
-                    );
-                } else {
+                        constraints: new { teamName = spaHmrSocketRegex });
+
                     endpoints.MapControllerRoute(
-                        name: "react",
-                        pattern: "{*path:nonfile}",
-                        defaults: new { controller = "Home", action = "Index" }
-                    );
+                        name: "default",
+                        pattern: "{controller=Home}/{action=Index}/{id?}",
+                        constraints: new { controller = spaHmrSocketRegex });
+                }
+                else
+                {
+                    endpoints.MapControllerRoute(
+                        name: "TeamRoutes",
+                        pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}",
+                        defaults: new { controller = "Home", action = "Index" });
+
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller=Home}/{action=Index}/{id?}");
                 }
             });
 
