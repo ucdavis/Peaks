@@ -55,9 +55,15 @@
               href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
               integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
               crossorigin="anonymous">
-        <link rel="stylesheet" href="~/dist/root.min.css" asp-append-version="true" />
-        <link rel="stylesheet" href="~/dist/vendor.min.css" asp-append-version="true" />
     </environment>
+
+    <environment exclude="Development">
+        @* In a production deployment, we will use a dynamic view component to load the generated styles *@
+        <cache expires-after="@TimeSpan.FromMinutes(30)">
+            @await Component.InvokeAsync("DynamicStyles")
+        </cache>
+    </environment>
+
 
     @RenderSection("Styles", required: false)
 </head>
@@ -239,6 +245,12 @@
         <script src="/static/js/bundle.js"></script>
         <script src="/static/js/vendors~main.chunk.js"></script>
         <script src="/static/js/main.chunk.js"></script>
+    </environment>
+    <environment exclude="Development">
+        @* In a production deployment, we will use a dynamic view component to load the generated scripts *@
+        <cache expires-after="@TimeSpan.FromMinutes(30)">
+            @await Component.InvokeAsync("DynamicScripts")
+        </cache>
     </environment>
 
     <environment include="Development">

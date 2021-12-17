@@ -289,7 +289,7 @@ namespace Keas.Mvc
             {
                 endpoints.MapControllers(); // map api controllers via attributes - necessary for being picked up by SwaggerGen
 
-                // TODO: need to remove some of these so they are handled by the SPA
+                // SPA reqeusts all map to single asset action which injects bootstrapping info into window.App
                 endpoints.MapControllerRoute(
                     name: "Assets",
                     pattern: "{teamName}/{asset}/{*type}",
@@ -313,8 +313,10 @@ namespace Keas.Mvc
 
                 // maybe a little hacky here, but I don't want to mess with our complex routing too much
                 // basically for our open-ended routes we have to make sure not to intercept the HMR websocket 
+                // We could do away with the isDevelopment check, but I'm leaving it just to be super safe
                 if (env.IsDevelopment())
-                {                    
+                {
+                    // Specific route for HMR websocket.
                     var spaHmrSocketRegex = "^(?!sockjs-node).*$";
 
                     endpoints.MapControllerRoute(
