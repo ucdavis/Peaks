@@ -93,6 +93,9 @@
     "coverageReporters": [
       "text",
       "cobertura"
-    ]
+    ],
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/src/components/specs/styleMock.ts"
+    }
   }
 }
