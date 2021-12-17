@@ -55,14 +55,14 @@ stages:
       displayName: 'Run Client Tests'
       inputs:
         command: 'custom'
-        workingDir: './Keas.Mvc'
+        workingDir: './Keas.Mvc/ClientApp'
         customCommand: 'test'
 
     - task: PublishTestResults@2
       displayName: 'Publish Client Tests'
       inputs:
         testResultsFormat: 'VSTest'
-        testResultsFiles: '**/jestTestresults.trx'
+        testResultsFiles: '**/test-results.trx'
         testRunTitle: 'Client Tests'
 
 - stage: Publish
