@@ -56,7 +56,7 @@ stages:
       inputs:
         command: 'custom'
         workingDir: './Keas.Mvc/ClientApp'
-        customCommand: 'test'
+        customCommand: 'citest'
 
     - task: PublishTestResults@2
       displayName: 'Publish Client Tests'
