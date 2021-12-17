@@ -57,7 +57,7 @@
               crossorigin="anonymous">
     </environment>
 
-    <environment exclude="Development">
+    <environment names="Staging,Production">
         @* In a production deployment, we will use a dynamic view component to load the generated styles *@
         <cache expires-after="@TimeSpan.FromMinutes(30)">
             @await Component.InvokeAsync("DynamicStyles")
@@ -246,7 +246,7 @@
         <script src="/static/js/vendors~main.chunk.js"></script>
         <script src="/static/js/main.chunk.js"></script>
     </environment>
-    <environment exclude="Development">
+    <environment names="Staging,Production">
         @* In a production deployment, we will use a dynamic view component to load the generated scripts *@
         <cache expires-after="@TimeSpan.FromMinutes(30)">
             @await Component.InvokeAsync("DynamicScripts")
@@ -262,7 +262,7 @@
         </script>
     </environment>
 
-    <environment exclude="Development">
+    <environment names="Staging,Production">
         <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-2.2.0.min.js"
                 asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
                 asp-fallback-test="window.jQuery"
