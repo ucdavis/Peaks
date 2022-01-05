@@ -10,22 +10,12 @@ import AccessContainer from '../Access/AccessContainer';
 let container: Element = null;
 
 // mock out the sub containers, at least for now
-jest.mock('../Access/AccessAssignmentContainer', () => {
-  return {
-    default: () => {
-      return (
-        <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>
-      );
-    }
-  };
+jest.mock('../Access/AccessAssignmentContainer', () => () => {
+  return <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>;
 });
 
-jest.mock('../History/HistoryContainer', () => {
-  return {
-    default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
-    }
-  };
+jest.mock('../History/HistoryContainer', () => () => {
+  return <div id='HistoryContainer'>HistoryContainer</div>;
 });
 
 beforeEach(() => {

@@ -9,13 +9,9 @@ import EquipmentContainer from '../Equipment/EquipmentContainer';
 
 let container: Element = null;
 
-jest.mock('../History/HistoryContainer', () => {
-  return {
-    default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
-    }
-  };
-});
+jest.mock('../History/HistoryContainer', () => () => (
+  <div id='HistoryContainer'>HistoryContainer</div>
+));
 
 beforeEach(() => {
   // setup a DOM element as a render target

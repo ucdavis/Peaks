@@ -9,28 +9,16 @@ import KeyContainer from '../Keys/KeyContainer';
 
 let container: Element = null;
 
-jest.mock('../Spaces/SpacesContainer', () => {
-  return {
-    default: () => {
-      return <div id='SpacesContainer'>SpacesContainer</div>;
-    }
-  };
+jest.mock('../Spaces/SpacesContainer', () => () => {
+  return <div id='SpacesContainer'>SpacesContainer</div>;
 });
 
-jest.mock('../Keys/KeySerialContainer', () => {
-  return {
-    default: () => {
-      return <div id='KeySerialContainer'>KeySerialContainer</div>;
-    }
-  };
+jest.mock('../Keys/KeySerialContainer', () => () => {
+  return <div id='KeySerialContainer'>KeySerialContainer</div>;
 });
 
-jest.mock('../History/HistoryContainer', () => {
-  return {
-    default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
-    }
-  };
+jest.mock('../History/HistoryContainer', () => () => {
+  return <div id='HistoryContainer'>HistoryContainer</div>;
 });
 
 beforeEach(() => {

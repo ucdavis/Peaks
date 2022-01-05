@@ -10,28 +10,16 @@ import SpacesContainer from './SpacesContainer';
 let container: Element = null;
 
 // mock out the sub containers, at least for now
-jest.mock('../Equipment/EquipmentContainer', () => {
-  return {
-    default: () => {
-      return <div id='EquipmentContainer'>EquipmentContainer</div>;
-    }
-  };
+jest.mock('../Equipment/EquipmentContainer', () => () => {
+  return <div id='EquipmentContainer'>EquipmentContainer</div>;
 });
 
-jest.mock('../Keys/KeyContainer', () => {
-  return {
-    default: () => {
-      return <div id='KeyContainer'>KeyContainer</div>;
-    }
-  };
+jest.mock('../Keys/KeyContainer', () => () => {
+  return <div id='KeyContainer'>KeyContainer</div>;
 });
 
-jest.mock('../Workstations/WorkstationContainer', () => {
-  return {
-    default: () => {
-      return <div id='WorkstationContainer'>WorkstationContainer</div>;
-    }
-  };
+jest.mock('../Workstations/WorkstationContainer', () => () => {
+  return <div id='WorkstationContainer'>WorkstationContainer</div>;
 });
 
 beforeEach(() => {

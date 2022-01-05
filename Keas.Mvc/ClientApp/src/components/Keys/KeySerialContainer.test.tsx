@@ -6,13 +6,8 @@ import { Context } from '../../Context';
 import { fakeKeySerials } from '../specs/mockData/KeySerial';
 import KeySerialContainer from '../Keys/KeySerialContainer';
 
-
-jest.mock('../History/HistoryContainer', () => {
-  return {
-    default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
-    }
-  };
+jest.mock('../History/HistoryContainer', () => () => {
+  return <div id='HistoryContainer'>HistoryContainer</div>;
 });
 
 let container: Element = null;

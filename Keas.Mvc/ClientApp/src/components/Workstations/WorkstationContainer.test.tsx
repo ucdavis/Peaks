@@ -7,12 +7,8 @@ import { ISpace } from '../../models/Spaces';
 import { fakeWorkstations } from '../specs/mockData/Workstation';
 import WorkstationContainer from '../Workstations/WorkstationContainer';
 
-jest.mock('../History/HistoryContainer', () => {
-  return {
-    default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
-    }
-  };
+jest.mock('../History/HistoryContainer', () => () => {
+  return <div id='HistoryContainer'>HistoryContainer</div>;
 });
 
 let container: Element = null;

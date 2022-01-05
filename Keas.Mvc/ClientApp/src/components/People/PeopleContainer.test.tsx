@@ -10,54 +10,28 @@ import PeopleContainer from '../People/PeopleContainer';
 let container: Element = null;
 
 // mock out the sub containers, at least for now
-jest.mock('../Access/AccessAssignmentContainer', () => {
-  return {
-    default: () => {
-      return (
-        <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>
-      );
-    }
-  };
+jest.mock('../Access/AccessAssignmentContainer', () => () => {
+  return <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>;
 });
 
-jest.mock('../Equipment/EquipmentContainer', () => {
-  return {
-    default: () => {
-      return <div id='EquipmentContainer'>EquipmentContainer</div>;
-    }
-  };
+jest.mock('../Equipment/EquipmentContainer', () => () => {
+  return <div id='EquipmentContainer'>EquipmentContainer</div>;
 });
 
-jest.mock('../Keys/KeySerialContainer', () => {
-  return {
-    default: () => {
-      return <div id='KeySerialContainer'>KeySerialContainer</div>;
-    }
-  };
+jest.mock('../Keys/KeySerialContainer', () => () => {
+  return <div id='KeySerialContainer'>KeySerialContainer</div>;
 });
 
-jest.mock('../Workstations/WorkstationContainer', () => {
-  return {
-    default: () => {
-      return <div id='WorkstationContainer'>WorkstationContainer</div>;
-    }
-  };
+jest.mock('../Workstations/WorkstationContainer', () => () => {
+  return <div id='WorkstationContainer'>WorkstationContainer</div>;
 });
 
-jest.mock('../History/HistoryContainer', () => {
-  return {
-    default: () => {
-      return <div id='HistoryContainer'>HistoryContainer</div>;
-    }
-  };
+jest.mock('../History/HistoryContainer', () => () => {
+  return <div id='HistoryContainer'>HistoryContainer</div>;
 });
 
-jest.mock('../Documents/DocumentsContainer', () => {
-  return {
-    default: () => {
-      return <div id='DocumentsContainer'>DocumentsContainer</div>;
-    }
-  };
+jest.mock('../Documents/DocumentsContainer', () => () => {
+  return <div id='DocumentsContainer'>DocumentsContainer</div>;
 });
 
 beforeEach(() => {
