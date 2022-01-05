@@ -161,7 +161,7 @@ namespace Keas.Mvc
             services.Configure<SparkpostSettings>(Configuration.GetSection("Sparkpost"));
 
             // Used by dynamic scripts/styles loader
-            services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Directory.GetCurrentDirectory()));
+            services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Directory.GetCurrentDirectory())); // lgtm [cs/local-not-disposed] 
 
             // Singleton allows authentication to be reused until expiration
             services.AddSingleton<IDocumentSigningService, DocumentSigningService>();
