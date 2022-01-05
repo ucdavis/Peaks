@@ -11,7 +11,7 @@ import siphon   from 'siphon-media-query';
 import path     from 'path';
 import merge    from 'merge-stream';
 import beep     from 'beepbeep';
-import colors   from 'colors';
+//import colors   from 'colors';
 import cheerio  from 'cheerio';
 import sparkpost from 'sparkpost';
 import azureStorage from 'azure-storage';
@@ -307,9 +307,6 @@ function preview() {
 
   const key = CONFIG.sparkpost.apikey;
   const client = new sparkpost(key);
-  const options = {
-    update_published: false,
-  };
 
   let dist = path.join(__dirname, 'dist');
   if (!fs.existsSync(dist)) {

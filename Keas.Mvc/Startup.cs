@@ -22,13 +22,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.AspNetCore.SpaServices;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -67,6 +70,11 @@ namespace Keas.Mvc
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpContextAccessor();
+
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/build";
+            });
 
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
@@ -151,6 +159,9 @@ namespace Keas.Mvc
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
             services.Configure<SparkpostSettings>(Configuration.GetSection("Sparkpost"));
+
+            // Used by dynamic scripts/styles loader
+            services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Directory.GetCurrentDirectory())); // lgtm [cs/local-not-disposed] 
 
             // Singleton allows authentication to be reused until expiration
             services.AddSingleton<IDocumentSigningService, DocumentSigningService>();
@@ -239,24 +250,31 @@ namespace Keas.Mvc
             else
             {
                 app.UseExceptionHandler("/Error/Index");
+                app.UseHsts();
             }
 
 
             app.UseStatusCodePages("text/plain", "Status code page, status code: {0}");
 
-            if (env.IsDevelopment())
-            {
-                // dist folder will be served by webpack-dev-server
-                app.UseWhen(context => !context.Request.Path.StartsWithSegments("/dist"),
-                    appBuilder => { appBuilder.UseStaticFiles(); });
-            }
-            else
-            {
-                app.UseStaticFiles();
-                app.UseHsts();
-            }
-
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = (context) =>
+                {
+                    // cache our static assest, i.e. CSS and JS, for a long time
+                    if (context.Context.Request.Path.Value.StartsWith("/static"))
+                    {
+                        var headers = context.Context.Response.GetTypedHeaders();
+                        headers.CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
+                        {
+                            Public = true,
+                            MaxAge = TimeSpan.FromDays(365)
+                        };
+                    }
+                }
+            });
+
             app.UseRouting();
             app.UseSession();
             app.UseAuthentication();
@@ -275,20 +293,7 @@ namespace Keas.Mvc
             {
                 endpoints.MapControllers(); // map api controllers via attributes - necessary for being picked up by SwaggerGen
 
-                if (env.IsDevelopment())
-                {
-                    endpoints.MapToSpaCliProxy(
-                        "/dist/{*path}",
-                        options: new SpaOptions {SourcePath = "wwwroot/dist"},
-                        npmScript: "devpack",
-                        port: 8080,
-                        regex: "Project is running",
-                        forceKill: true, // kill anything running on our webpack port
-                        useProxy: true, // proxy webpack requests back through our aspnet server
-                        runner: ScriptRunnerType.Npm
-                    );
-                }
-
+                // SPA reqeusts all map to single asset action which injects bootstrapping info into window.App
                 endpoints.MapControllerRoute(
                     name: "Assets",
                     pattern: "{teamName}/{asset}/{*type}",
@@ -310,13 +315,47 @@ namespace Keas.Mvc
                     constraints: new {controller = "(group)"}
                 );
 
-                endpoints.MapControllerRoute(
-                    name: "TeamRoutes",
-                    pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}");
+                // maybe a little hacky here, but I don't want to mess with our complex routing too much
+                // basically for our open-ended routes we have to make sure not to intercept the HMR websocket 
+                // We could do away with the isDevelopment check, but I'm leaving it just to be super safe
+                if (env.IsDevelopment())
+                {
+                    // Specific route for HMR websocket.
+                    var spaHmrSocketRegex = "^(?!sockjs-node).*$";
 
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    endpoints.MapControllerRoute(
+                        name: "TeamRoutes",
+                        pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}",
+                        defaults: new { controller = "Home", action = "Index" },
+                        constraints: new { teamName = spaHmrSocketRegex });
+
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller=Home}/{action=Index}/{id?}",
+                        constraints: new { controller = spaHmrSocketRegex });
+                }
+                else
+                {
+                    endpoints.MapControllerRoute(
+                        name: "TeamRoutes",
+                        pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}",
+                        defaults: new { controller = "Home", action = "Index" });
+
+                    endpoints.MapControllerRoute(
+                        name: "default",
+                        pattern: "{controller=Home}/{action=Index}/{id?}");
+                }
+            });
+
+            // SPA needs to kick in for all paths during development
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
             });
         }
     }

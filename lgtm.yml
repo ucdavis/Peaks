@@ -6,3 +6,6 @@ extraction:
       dotnet:
         arguments: "--configuration Release"
         version: "3.1.301"
+path_classifiers:
+  library:
+    - "**/wwwroot/lib/*"
