@@ -59,7 +59,7 @@
 		<None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
 	</ItemGroup>
   <ItemGroup>
-    <None Include="wwwroot\images\peaksloader.gif" />
+    <Content Include="ClientApp\public\peaksloader.gif" />
   </ItemGroup>
   <ItemGroup>
     <Content Update="Views\Shared\_ReportStylePartial.cshtml">
