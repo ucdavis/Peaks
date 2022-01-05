@@ -290,7 +290,7 @@ const WorkstationContainer = (props: IProps) => {
       return false;
     }
     try {
-      const deleted: IWorkstation = await context.fetch(
+      await context.fetch(
         `/api/${context.team.slug}/workstations/delete/${workstation.id}`,
         {
           method: 'POST'

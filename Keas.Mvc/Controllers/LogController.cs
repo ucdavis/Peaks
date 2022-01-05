@@ -17,7 +17,7 @@ namespace Keas.Mvc.Controllers
             {
                 var logger = Log.Logger
                     .ForContext("source", "browser")
-                    .ForContext("messageBody", message, true);
+                    .ForContext("messageBody", message, true); // lgtm [cs/log-forging]
 
                 if (string.Equals(message.Level, "trace", StringComparison.OrdinalIgnoreCase))
                 {

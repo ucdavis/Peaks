@@ -43,13 +43,13 @@ export const yupAssetValidation = (
     path: ''
   };
   try {
-    const validObject = schema.validateSync(asset, options);
+    schema.validateSync(asset, options);
     if (
       !!assignment && // validate when assignment is passed in
       (asset.id !== 0 || // and we are assigning an asset that already exists
         (asset.id === 0 && !!assignment.person)) // or we are creating a new one and the user has selected a person
     ) {
-      const validAssignment = assignmentSchema.validateSync(assignment);
+      assignmentSchema.validateSync(assignment);
     }
   } catch (err) {
     if (err instanceof ValidationError) {
@@ -108,6 +108,6 @@ export interface IHistory {
   actedDate: Date;
   actionType?: string;
   assetType?: string;
-    id: number;
-    link: string;
+  id: number;
+  link: string;
 }

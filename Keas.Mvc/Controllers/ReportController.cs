@@ -45,12 +45,12 @@ namespace Keas.Mvc.Controllers
             var personNotifications = _context.PersonNotifications.Where(a => a.TeamId == team.Id);
             if (startDate.HasValue)
             {
-                personNotifications = personNotifications.Where(a => a.ActionDate >= startDate.Value.Date.ToUniversalTime());
+                personNotifications = personNotifications.Where(a => a.ActionDate >= startDate.Value.Date.ToUniversalTime()); // lgtm [cs/dereferenced-value-may-be-null]
             }
 
             if (endDate.HasValue)
             {
-                personNotifications = personNotifications.Where(a => a.ActionDate <= endDate.Value.Date.AddDays(1).ToUniversalTime()); //Date 12AM + 1 day
+                personNotifications = personNotifications.Where(a => a.ActionDate <= endDate.Value.Date.AddDays(1).ToUniversalTime()); //Date 12AM + 1 day  // lgtm [cs/dereferenced-value-may-be-null]
             }
 
             var model = new ReportPersonNotifyViewModel

@@ -755,7 +755,6 @@ namespace Keas.Mvc.Controllers
                                                 result.Success = false;
                                                 result.ErrorMessage.Add($"Invalid Assignment values Error(s): {GetModelErrors(ModelState)} ");
                                                 //Clear out values on error, otherwise it can throw a foreign key exception the next time through for the same person
-                                                assignment = new KeySerialAssignment();
                                                 serial.KeySerialAssignment = null;
                                             }
                                         }
