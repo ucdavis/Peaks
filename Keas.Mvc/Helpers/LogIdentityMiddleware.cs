@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Serilog.Context;
 
 namespace Keas.Mvc.Helpers
 {
@@ -19,7 +20,7 @@ namespace Keas.Mvc.Helpers
 
         public async Task Invoke(HttpContext context)
         {
-            var user = context.User.Identity.Name;
+            var user = context.User.Identity.Name ?? "anonymous";
 
             using (_logger.BeginScope(new Dictionary<string, object>()
             {
