@@ -116,6 +116,7 @@ namespace Keas.Mvc.Controllers.Api
                     && x.Key.Team.Slug == Team
                     && x.Key.Active)
                 .Select(x => x.Space)
+                .IgnoreQueryFilters()
                 .AsNoTracking()
                 .ToListAsync();
 
