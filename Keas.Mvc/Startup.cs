@@ -45,26 +45,12 @@ namespace Keas.Mvc
 {
     public class Startup
     {
-        public Startup(IWebHostEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
-
-            if (env.IsDevelopment())
-            {
-                builder.AddUserSecrets<Startup>();
-            }
-
-            builder.AddEnvironmentVariables();
-            Configuration = builder.Build();
-            Environment = env;
+            Configuration = configuration as IConfigurationRoot;
         }
 
         public IConfigurationRoot Configuration { get; }
-
-        public IWebHostEnvironment Environment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -174,7 +160,9 @@ namespace Keas.Mvc
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ITeamsManager, TeamsManager>();
             services.AddScoped<IServiceNowService, ServiceNowService>();
-            services.AddMvc()
+            services.AddMvc(options => {
+                options.Filters.Add<SerilogControllerActionFilter>();
+            })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddXmlSerializerFormatters()
                 .AddNewtonsoftJson(options => {
@@ -233,14 +221,12 @@ namespace Keas.Mvc
             app.UseAllElasticApm(Configuration);
             
             // setup logging
-            LogConfiguration.Setup(Configuration);
             app.ConfigureStackifyLogging(Configuration);
             loggerFactory.AddSerilog();
 
             appLifetime.ApplicationStopped.Register(Log.CloseAndFlush);
 
             app.UseMiddleware<CorrelationIdMiddleware>();
-            app.UseMiddleware<LogIdentityMiddleware>();
 
             if (env.IsDevelopment())
             {
@@ -286,7 +272,7 @@ namespace Keas.Mvc
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Peaks API v1"));
 
-            app.UseMiddleware<LogUserNameMiddleware>();
+            app.UseMiddleware<LogIdentityMiddleware>();
             app.UseSerilogRequestLogging();
 
             app.UseEndpoints(endpoints =>
