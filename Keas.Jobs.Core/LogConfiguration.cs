@@ -54,7 +54,7 @@ namespace Keas.Jobs.Core
                 .WriteTo.Console()
                 .WriteTo.Stackify();
 
-            if (esUrl?.StartsWith("http") ?? false)
+            if (esUrl != null && esUrl.StartsWith("http"))
             {
                 logConfig = logConfig.Enrich.WithProperty("Application", loggingSection.GetValue<string>("AppName"))
                     .Enrich.WithProperty("AppEnvironment", loggingSection.GetValue<string>("Environment"))
