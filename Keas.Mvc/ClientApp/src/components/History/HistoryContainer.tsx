@@ -7,8 +7,8 @@ import HistoryList from './HistoryList';
 
 interface IProps {
   controller: string;
-    id: number;
-    showLink?: boolean;
+  id: number;
+  showLink?: boolean;
 }
 
 const HistoryContainer = (props: IProps) => {
@@ -33,7 +33,7 @@ const HistoryContainer = (props: IProps) => {
     const histories = await context.fetch(historyFetchUrl);
     return histories;
   };
-  
+
   useEffect(() => {
     const retrieveHistories = async () => {
       const historyData = await getHistories();
@@ -50,6 +50,10 @@ const HistoryContainer = (props: IProps) => {
 
   return (
     <div className='card history-color'>
+      {props.controller === 'equipment' && histories.length > 0 && (
+        <span>{props.controller}</span>
+      )}
+
       <div>
         <div className='card-head'>
           <h2>
@@ -58,7 +62,9 @@ const HistoryContainer = (props: IProps) => {
         </div>
       </div>
       <div className='card-content'>
-        {histories.length > 0 && <HistoryList showLink={props.showLink} histories={histories} />}
+        {histories.length > 0 && (
+          <HistoryList showLink={props.showLink} histories={histories} />
+        )}
         {histories.length < 1 && <p>No histories were found</p>}
         {props.controller === 'people' && (
           <Button color='link' onClick={reloadHistories} disabled={reloading}>
