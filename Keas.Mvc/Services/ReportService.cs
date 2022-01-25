@@ -21,6 +21,7 @@ namespace Keas.Mvc.Services
         Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug);
         List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
         Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug, bool hideInactive = true);
+        Task<EquipmentHistoryModel> EquipmentHistory(Team team, string teamSlug, int equipmentId);
         Task<IList<EquipmentReportModel>> EquipmentList(Group group, bool hideInactive = true);
         Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug);
         Task<IList<KeyReportModel>> Keys(Team team, string teamSlug, bool includeSerials = true, bool includeSpaces = true);
@@ -226,6 +227,19 @@ namespace Keas.Mvc.Services
             return await equipment.ToListAsync();
         }
 
+        public async Task<EquipmentHistoryModel> EquipmentHistory(Team team, string teamSlug, int equipmentId)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+
+            var equipment = await _context.Equipment.AsNoTracking().SingleAsync(a => a.TeamId == team.Id && a.Id == equipmentId);
+            var histories = await _context.Histories.Where(a => a.EquipmentId == equipment.Id).ToArrayAsync();
+
+            return new EquipmentHistoryModel { Equipment = equipment, Histories = histories };
+        }
+
         public async Task<IList<AccessReportModel>> AccessList(Team team, string teamSlug)
         {
             if (team == null)
@@ -420,5 +434,6 @@ namespace Keas.Mvc.Services
 
             return rtValue;
         }
+
     }
 }

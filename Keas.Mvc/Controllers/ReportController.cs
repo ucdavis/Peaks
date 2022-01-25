@@ -139,6 +139,12 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]
+        public async Task<IActionResult> EquipmentHistoryReport(int id)
+        {
+            return View(await _reportService.EquipmentHistory(null, Team, id)) ;
+        }
+
         public async Task<IActionResult> AccessReport()
         {
             var accessList = await _reportService.AccessList(null, Team);
