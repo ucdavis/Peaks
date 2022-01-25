@@ -50,10 +50,6 @@ const HistoryContainer = (props: IProps) => {
 
   return (
     <div className='card history-color'>
-      {props.controller === 'equipment' && histories.length > 0 && (
-        <span>{props.controller}</span>
-      )}
-
       <div>
         <div className='card-head'>
           <h2>
@@ -71,6 +67,15 @@ const HistoryContainer = (props: IProps) => {
             Refresh {reloaded ? <i className='fas fa-check' /> : null}
             {reloading ? <i className='fas fa-spin fa-spinner' /> : null}
           </Button>
+        )}
+        {props.controller === 'equipment' && histories.length > 0 && (
+          <a
+            href={`/${context.team.slug}/Report/EquipmentHistoryReport/${props.id}`}
+            target='_blank'
+            rel='noopener noreferrer'
+          >
+            View All
+          </a>
         )}
       </div>
     </div>
