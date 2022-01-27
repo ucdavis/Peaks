@@ -9,6 +9,7 @@ namespace Keas.Mvc.Models.ReportModels
     public class EquipmentHistoryModel
     {
         public Equipment Equipment { get;set;}
+        public Person Person { get;set;}
 
         public IEnumerable<History> Histories { get; set; }
     }

@@ -145,6 +145,11 @@ namespace Keas.Mvc.Controllers
             return View(await _reportService.EquipmentHistory(null, Team, id)) ;
         }
 
+        public async Task<IActionResult> PersonEquipmentHistoryReport(int id)
+        {
+            return View(await _reportService.PersonEquipmentHistory(null, Team, id));
+        }
+
         public async Task<IActionResult> AccessReport()
         {
             var accessList = await _reportService.AccessList(null, Team);

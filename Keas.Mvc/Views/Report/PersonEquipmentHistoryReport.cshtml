@@ -1,0 +1,70 @@
+@using Keas.Core.Extensions
+
+@model Keas.Mvc.Models.ReportModels.EquipmentHistoryModel
+
+@{
+    ViewBag.Title = "Equipment";
+}
+
+<div class="card equipment-color">
+    <div class="card-header-equipment">
+        <div class="card-head">
+            <h2>Person Equipment History Report for @Html.DisplayFor(m => m.Person.Name)</h2>
+        </div>
+    </div>
+    <div class="card-content">
+        <p><b>@Html.DisplayNameFor(m => m.Person.Email)</b></p>
+        <p>@Html.DisplayFor(m => m.Person.Email)</p>
+
+        <br /><br />
+
+        <table id="history" class="table dataTable">
+            <thead>
+                <tr>
+                    <th>Action Date</th>
+                    <th>Action</th>
+                    <th>Actor</th>
+                    <th>Description</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Histories)
+                {
+                    <tr>
+                        <td>@item.ActedDate.ToPacificTime()</td>
+                        <td>@item.ActionType</td>
+                        <td>@item.ActorId</td>
+                        <td>@item.Description</td>
+                        <td><a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "Equipment", item.EquipmentId)' target="_blank">Details</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section Styles {
+@await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+@{await Html.RenderPartialAsync("_ImportJS");}
+
+<script type="text/javascript">
+    $('.dataTable').DataTable({
+        "dom": 'lBfrtip',
+        "buttons": [
+            { extend: 'copyHtml5' },
+            { extend: 'excelHtml5' },
+            { extend: 'csvHtml5' },
+            { extend: 'print' },
+        ],
+        "order": [[0, "desc"]],
+        "columnDefs": [
+            { "type": "date", "targets": [0] },
+        ]
+    });
+</script>
+}
