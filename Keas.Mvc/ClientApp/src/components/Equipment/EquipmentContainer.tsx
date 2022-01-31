@@ -129,13 +129,15 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
             showDetails={openDetailsModal}
             onEdit={openEditModal}
           />
-          <a
-            href={`/${context.team.slug}/Report/PersonEquipmentHistoryReport/${props.person.id}`}
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            View Equipment History for {props.person.name}
-          </a>
+          {props.person && (
+            <a
+              href={`/${context.team.slug}/Report/PersonEquipmentHistoryReport/${props.person.id}`}
+              target='_blank'
+              rel='noopener noreferrer'
+            >
+              View Equipment History for {props.person.name}
+            </a>
+          )}
         </div>
       );
     } else {
