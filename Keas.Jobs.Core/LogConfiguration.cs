@@ -51,8 +51,7 @@ namespace Keas.Jobs.Core
                 // .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning) // uncomment this to hide EF core general info logs
                 .Enrich.FromLogContext()
                 .Enrich.WithExceptionDetails()
-                .WriteTo.Console()
-                .WriteTo.Stackify();
+                .WriteTo.Console();
 
             if (esUrl != null && esUrl.StartsWith("http"))
             {
