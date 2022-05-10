@@ -33,16 +33,21 @@ namespace Keas.Mvc.Services
 
         Task<IList<PeopleLeavingWithAssetsModel>> PeopleLeavingWithAssets(Team team, string teamSlug, DateTime theDate);
         Task<IList<PeopleLeavingWithAssetsModel>> PeopleLeavingWithAssets(Group group, DateTime theDate);
+
+        Task<ReportItemsViewModel> ExpiringItems(Team team, string teamSlug, DateTime? expiresBefore = null, string showType = "All");
+        Task<ReportItemsViewModel> ExpiringItems(Group group, DateTime? expiresBefore = null, string showType = "All");
     }
 
 
     public class ReportService : IReportService
     {
         private readonly ApplicationDbContext _context;
+        private readonly ISecurityService _securityService;
 
-        public ReportService(ApplicationDbContext context)
+        public ReportService(ApplicationDbContext context, ISecurityService securityService)
         {
             _context = context;
+            _securityService = securityService;
         }
 
         public Expression<Func<Workstation, WorkstationReportModel>> WorkstationProjection() {
@@ -448,5 +453,28 @@ namespace Keas.Mvc.Services
             return rtValue;
         }
 
+        public async Task<ReportItemsViewModel> ExpiringItems(Team team, string teamSlug, DateTime? expiresBefore, string showType)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+            var teamId = team.Id;
+
+            if (expiresBefore == null)
+            {
+                expiresBefore = DateTime.Now.AddDays(30);
+            }
+
+            var userRoles = await _securityService.GetUserRoleNamesInTeamOrAdmin(team.Slug);
+
+            var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, team.Slug, showType, userRoles, _securityService);
+            return model;
+        }
+
+        public async Task<ReportItemsViewModel> ExpiringItems(Group group, DateTime? expiresBefore, string showType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
