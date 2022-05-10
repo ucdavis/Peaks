@@ -358,7 +358,7 @@ namespace Keas.Core.Services
 
             foreach (var assignment in expiringItems.AccessAssignments)
             {
-                SetNextNotification(assignment);
+                SetNextNotification(assignment, true);
                 _dbContext.AccessAssignments.Update(assignment);
             }
 
@@ -454,7 +454,7 @@ namespace Keas.Core.Services
             return message.ToString();
         }
 
-        private void SetNextNotification(AssignmentBase assignment)
+        private void SetNextNotification(AssignmentBase assignment, bool deferOld = false)
         {
             // first notification, push back one week before expiration
             if (assignment.NextNotificationDate == null || assignment.ExpiresAt > DateTime.UtcNow.Date.AddDays(7))
@@ -472,6 +472,13 @@ namespace Keas.Core.Services
             if (assignment.ExpiresAt > DateTime.UtcNow.AddDays(1))
             {
                 assignment.NextNotificationDate = assignment.ExpiresAt.AddDays(-1);
+                return;
+            }
+
+            //Old notification, older than 30 days set next notification to 1 month away.
+            if(deferOld && assignment.ExpiresAt < DateTime.UtcNow.AddDays(-30))
+            {
+                assignment.NextNotificationDate = DateTime.UtcNow.Date.AddMonths(1);
                 return;
             }
 
