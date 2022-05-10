@@ -469,6 +469,7 @@ namespace Keas.Mvc.Services
 
             var userRoles = await _securityService.GetUserRoleNamesInTeamOrAdmin(team.Slug);
 
+            //TODO: Replace this method with the projections as we don't need all the data. Would need to modify the view too
             var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, team.Slug, showType, userRoles, _securityService);
             return model;
         }
@@ -502,22 +503,32 @@ namespace Keas.Mvc.Services
                 model.ExpiringItems.AddRange(expiringAccess);
             }
 
-
             var expiringKey = await _context.KeySerials.Where(a => (showType == "All" || showType == "Key") &&
                 a.Key.Team.Groups.Any(g => g.GroupId == group.Id) &&
                 a.KeySerialAssignment.ExpiresAt <= expiresBefore)
-                .Include(k => k.KeySerialAssignment).ThenInclude(a => a.Person).Include(k => k.Key).AsNoTracking().ToArrayAsync();
-  
-            
-            //var expiringEquipment = await _context.Equipment.Where(a => (showType == "All" || showType == "Equipment") &&
+                .Include(a => a.Team).Include(k => k.KeySerialAssignment).ThenInclude(a => a.Person).Include(k => k.Key).Select(ExpiringKeysProjection()).ToArrayAsync();
 
-            //    a.Assignment.ExpiresAt <= expiresBefore)
-            //    .Include(e => e.Assignment).ThenInclude(a => a.Person).AsNoTracking().ToArrayAsync();
-            //var expiringWorkstations = await _context.Workstations.Where(a => (showType == "All" || showType == "Workstation")
-            //     && a.Assignment.ExpiresAt <= expiresBefore)
-            //    .Include(w => w.Assignment).ThenInclude(a => a.Person).AsNoTracking().ToArrayAsync();
+            if (expiringKey.Any())
+            {
+                model.ExpiringItems.AddRange(expiringKey);
+            }
 
-            throw new NotImplementedException();
+            var expiringEquipment = await _context.Equipment.Where(a => (showType == "All" || showType == "Equipment") &&
+                a.Team.Groups.Any(g => g.GroupId == group.Id) &&
+                a.Assignment.ExpiresAt <= expiresBefore)
+                .Include(a => a.Team).Include(e => e.Assignment).ThenInclude(a => a.Person).Select(ExpiringEquipmentProjection()).ToArrayAsync();
+
+            if (expiringEquipment.Any())
+            {
+                model.ExpiringItems.AddRange(expiringEquipment);
+            }
+
+            var expiringWorkstations = await _context.Workstations.Where(a => (showType == "All" || showType == "Workstation") &&
+                a.Team.Groups.Any(g => g.GroupId == group.Id) && 
+                a.Assignment.ExpiresAt <= expiresBefore)
+                .Include(a => a.Team).Include(w => w.Assignment).ThenInclude(a => a.Person).Select(ExpiringWorkstationProjection()).ToArrayAsync();
+
+            return model;
         }
 
         public Expression<Func<AccessAssignment, ExpiringItemReportModel>> ExpiringAccessProjection()
@@ -530,6 +541,44 @@ namespace Keas.Mvc.Services
                 ExpiresAt = a.ExpiresAt,
                 TeamSlug = a.Access.Team.Slug,
                 DetailsLink = $"/{a.Access.Team.Slug}/access/details/{a.AccessId}", //This is really only needed for the non group one?
+            };
+        }
+
+        public Expression<Func<KeySerial, ExpiringItemReportModel>> ExpiringKeysProjection()
+        {
+            return a => new ExpiringItemReportModel
+            {
+                Type = "Key",
+                ItemName = $"{a.Key.Name} {a.Key.Code}-{a.Number}",
+                PersonName = a.KeySerialAssignment.Person.Name,
+                ExpiresAt = a.KeySerialAssignment.ExpiresAt,
+                TeamSlug = a.Team.Slug,
+                DetailsLink = $"/{a.Team.Slug}/keys/details/{a.KeyId}/keyserials/details/{a.KeySerialAssignment.KeySerialId}", //This is really only needed for the non group one?
+            };
+        }
+        public Expression<Func<Equipment, ExpiringItemReportModel>> ExpiringEquipmentProjection()
+        {
+            return a => new ExpiringItemReportModel
+            {
+                Type = "Equipment",
+                ItemName = a.Name,
+                PersonName = a.Assignment.Person.Name,
+                ExpiresAt = a.Assignment.ExpiresAt,
+                TeamSlug = a.Team.Slug,
+                DetailsLink = $"/{a.Team.Slug}/equipment/details/{a.Id}", //This is really only needed for the non group one?
+            };
+        }
+
+        public Expression<Func<Workstation, ExpiringItemReportModel>> ExpiringWorkstationProjection()
+        {
+            return a => new ExpiringItemReportModel
+            {
+                Type = "Workstation",
+                ItemName = a.Name,
+                PersonName = a.Assignment.Person.Name,
+                ExpiresAt = a.Assignment.ExpiresAt,
+                TeamSlug = a.Team.Slug,
+                DetailsLink = $"/{a.Team.Slug}/spaces/details/{a.SpaceId}", //This is really only needed for the non group one?
             };
         }
     }
