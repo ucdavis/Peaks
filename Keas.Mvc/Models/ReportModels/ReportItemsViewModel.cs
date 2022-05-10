@@ -17,6 +17,8 @@ namespace Keas.Mvc.Models.ReportModels
         public Equipment[] Equipment { get; set; }
         public Workstation[] Workstations { get; set; }
 
+        public List<ExpiringItemReportModel> ExpiringItems { get; set; } //This can replace the above for the expiring items report, but this model is used for 2 different reports, so keeping the above values.
+
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "Expires before")]

@@ -159,6 +159,7 @@ namespace Keas.Mvc.Services
             return people;
         }
 
+
         public Expression<Func<Equipment, EquipmentReportModel>> EquipmentProjection()
         {
             return a => new EquipmentReportModel
@@ -474,7 +475,62 @@ namespace Keas.Mvc.Services
 
         public async Task<ReportItemsViewModel> ExpiringItems(Group group, DateTime? expiresBefore, string showType)
         {
+            if (expiresBefore == null)
+            {
+                expiresBefore = DateTime.Now.AddDays(30);
+            }
+
+            //This is a group report, just give access to all
+            var model = new ReportItemsViewModel();
+            model.ItemList = new List<string>() { "All" };
+            model.ItemList.Add("Access");
+            model.ItemList.Add("Equipment");
+            model.ItemList.Add("Key");
+            model.ItemList.Add("Workstation");
+            model.ShowType = showType;
+            model.ExpiresBefore = expiresBefore.Value;
+
+            model.ExpiringItems = new List<ExpiringItemReportModel>();
+
+
+            var expiringAccess = await _context.AccessAssignments.Where(a => (showType == "All" || showType == "Access") &&
+                a.Access.Team.Groups.Any(g => g.GroupId == group.Id) && a.ExpiresAt <= expiresBefore)
+                .Include(a => a.Person).Include(a => a.Access).ThenInclude(a => a.Team).Select(ExpiringAccessProjection()).ToArrayAsync();
+
+            if (expiringAccess.Any())
+            {
+                model.ExpiringItems.AddRange(expiringAccess);
+            }
+
+
+            var expiringKey = await _context.KeySerials.Where(a => (showType == "All" || showType == "Key") &&
+                a.Key.Team.Groups.Any(g => g.GroupId == group.Id) &&
+                a.KeySerialAssignment.ExpiresAt <= expiresBefore)
+                .Include(k => k.KeySerialAssignment).ThenInclude(a => a.Person).Include(k => k.Key).AsNoTracking().ToArrayAsync();
+  
+            
+            //var expiringEquipment = await _context.Equipment.Where(a => (showType == "All" || showType == "Equipment") &&
+
+            //    a.Assignment.ExpiresAt <= expiresBefore)
+            //    .Include(e => e.Assignment).ThenInclude(a => a.Person).AsNoTracking().ToArrayAsync();
+            //var expiringWorkstations = await _context.Workstations.Where(a => (showType == "All" || showType == "Workstation")
+            //     && a.Assignment.ExpiresAt <= expiresBefore)
+            //    .Include(w => w.Assignment).ThenInclude(a => a.Person).AsNoTracking().ToArrayAsync();
+
             throw new NotImplementedException();
+        }
+
+        public Expression<Func<AccessAssignment, ExpiringItemReportModel>> ExpiringAccessProjection()
+        {
+            return a => new ExpiringItemReportModel
+            {
+                Type = "Access",
+                ItemName = a.Access.Name,
+                PersonName = a.Person.Name,
+                ExpiresAt = a.ExpiresAt,
+                TeamSlug = a.Access.Team.Slug,
+                DetailsLink = $"/{a.Access.Team.Slug}/access/details/{a.AccessId}", //This is really only needed for the non group one?
+            };
         }
     }
 }
