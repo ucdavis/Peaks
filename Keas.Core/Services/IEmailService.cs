@@ -475,10 +475,10 @@ namespace Keas.Core.Services
                 return;
             }
 
-            //Old notification, older than 30 days set next notification to 30 days away.
+            //Old notification, older than 30 days set next notification to 1 month away.
             if(deferOld && assignment.ExpiresAt < DateTime.UtcNow.AddDays(-30))
             {
-                assignment.NextNotificationDate = DateTime.UtcNow.Date.AddDays(30);
+                assignment.NextNotificationDate = DateTime.UtcNow.Date.AddMonths(1);
                 return;
             }
 
