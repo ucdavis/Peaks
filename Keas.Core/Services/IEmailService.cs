@@ -478,8 +478,14 @@ namespace Keas.Core.Services
             //Old notification, older than 30 days set next notification to 1 month away.
             if(deferOld && assignment.ExpiresAt < DateTime.UtcNow.AddDays(-30))
             {
+                Log.Information($"Setting Access Assignment to next month. id: {assignment.Id}");
                 assignment.NextNotificationDate = DateTime.UtcNow.Date.AddMonths(1);
                 return;
+            }
+
+            if(assignment.ExpiresAt < DateTime.UtcNow.AddDays(-30))
+            {
+                Log.Information($"Old ExpiresAt Date. id: {assignment.Id} requested by {assignment.RequestedByName}");
             }
 
             // otherwise push back to tomorrow
