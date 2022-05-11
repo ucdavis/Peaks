@@ -538,7 +538,7 @@ namespace Keas.Mvc.Services
                 Type = "Access",
                 ItemName = a.Access.Name,
                 PersonName = a.Person.Name,
-                ExpiresAt = a.ExpiresAt,
+                ExpiresAt = a.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Access.Team.Slug,
                 DetailsLink = $"/{a.Access.Team.Slug}/access/details/{a.AccessId}", //This is really only needed for the non group one?
             };
@@ -551,7 +551,7 @@ namespace Keas.Mvc.Services
                 Type = "Key",
                 ItemName = $"{a.Key.Name} {a.Key.Code}-{a.Number}",
                 PersonName = a.KeySerialAssignment.Person.Name,
-                ExpiresAt = a.KeySerialAssignment.ExpiresAt,
+                ExpiresAt = a.KeySerialAssignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
                 DetailsLink = $"/{a.Team.Slug}/keys/details/{a.KeyId}/keyserials/details/{a.KeySerialAssignment.KeySerialId}", //This is really only needed for the non group one?
             };
@@ -563,7 +563,7 @@ namespace Keas.Mvc.Services
                 Type = "Equipment",
                 ItemName = a.Name,
                 PersonName = a.Assignment.Person.Name,
-                ExpiresAt = a.Assignment.ExpiresAt,
+                ExpiresAt = a.Assignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
                 DetailsLink = $"/{a.Team.Slug}/equipment/details/{a.Id}", //This is really only needed for the non group one?
             };
@@ -576,7 +576,7 @@ namespace Keas.Mvc.Services
                 Type = "Workstation",
                 ItemName = a.Name,
                 PersonName = a.Assignment.Person.Name,
-                ExpiresAt = a.Assignment.ExpiresAt,
+                ExpiresAt = a.Assignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
                 DetailsLink = $"/{a.Team.Slug}/spaces/details/{a.SpaceId}", //This is really only needed for the non group one?
             };

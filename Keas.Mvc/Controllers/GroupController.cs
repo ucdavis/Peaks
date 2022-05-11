@@ -175,6 +175,20 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        public async Task<ActionResult> ExpiringItems(int id, DateTime? expiresBefore = null, string showType = "All")
+        {
+            var group = await GetGroup(id);
+
+            if (group == null)
+            {
+                ErrorMessage = "Group not found or no access to Group";
+                return RedirectToAction("NoAccess", "Home");
+            }
+
+            var model = await _reportService.ExpiringItems(group, expiresBefore, showType);
+            return View(model);
+        }
+
         private async Task<Group> GetGroup(int id) {
             return await _context.Groups.Include(a => a.Teams).ThenInclude(a => a.Team).SingleOrDefaultAsync(a =>
                 a.Id == id && a.GroupPermissions.Any(w => w.UserId == User.Identity.Name));
