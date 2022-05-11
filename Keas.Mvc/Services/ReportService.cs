@@ -460,7 +460,6 @@ namespace Keas.Mvc.Services
             {
                 team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
             }
-            var teamId = team.Id;
 
             if (expiresBefore == null)
             {
