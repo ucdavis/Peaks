@@ -527,6 +527,11 @@ namespace Keas.Mvc.Services
                 a.Assignment.ExpiresAt <= expiresBefore)
                 .Include(a => a.Team).Include(w => w.Assignment).ThenInclude(a => a.Person).Select(ExpiringWorkstationProjection()).ToArrayAsync();
 
+            if (expiringWorkstations.Any())
+            {
+                model.ExpiringItems.AddRange(expiringWorkstations);
+            }
+
             return model;
         }
 
