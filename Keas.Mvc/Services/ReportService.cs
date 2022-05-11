@@ -493,44 +493,24 @@ namespace Keas.Mvc.Services
             model.ExpiringItems = new List<ExpiringItemReportModel>();
 
 
-            var expiringAccess = await _context.AccessAssignments.Where(a => (showType == "All" || showType == "Access") &&
+            model.ExpiringItems.AddRange(await _context.AccessAssignments.Where(a => (showType == "All" || showType == "Access") &&
                 a.Access.Team.Groups.Any(g => g.GroupId == group.Id) && a.ExpiresAt <= expiresBefore)
-                .Include(a => a.Person).Include(a => a.Access).ThenInclude(a => a.Team).Select(ExpiringAccessProjection()).ToArrayAsync();
+                .Select(ExpiringAccessProjection()).ToArrayAsync());
 
-            if (expiringAccess.Any())
-            {
-                model.ExpiringItems.AddRange(expiringAccess);
-            }
-
-            var expiringKey = await _context.KeySerials.Where(a => (showType == "All" || showType == "Key") &&
+            model.ExpiringItems.AddRange(await _context.KeySerials.Where(a => (showType == "All" || showType == "Key") &&
                 a.Key.Team.Groups.Any(g => g.GroupId == group.Id) &&
                 a.KeySerialAssignment.ExpiresAt <= expiresBefore)
-                .Include(a => a.Team).Include(k => k.KeySerialAssignment).ThenInclude(a => a.Person).Include(k => k.Key).Select(ExpiringKeysProjection()).ToArrayAsync();
+                .Select(ExpiringKeysProjection()).ToArrayAsync());
 
-            if (expiringKey.Any())
-            {
-                model.ExpiringItems.AddRange(expiringKey);
-            }
-
-            var expiringEquipment = await _context.Equipment.Where(a => (showType == "All" || showType == "Equipment") &&
+            model.ExpiringItems.AddRange(await _context.Equipment.Where(a => (showType == "All" || showType == "Equipment") &&
                 a.Team.Groups.Any(g => g.GroupId == group.Id) &&
                 a.Assignment.ExpiresAt <= expiresBefore)
-                .Include(a => a.Team).Include(e => e.Assignment).ThenInclude(a => a.Person).Select(ExpiringEquipmentProjection()).ToArrayAsync();
+                .Select(ExpiringEquipmentProjection()).ToArrayAsync());
 
-            if (expiringEquipment.Any())
-            {
-                model.ExpiringItems.AddRange(expiringEquipment);
-            }
-
-            var expiringWorkstations = await _context.Workstations.Where(a => (showType == "All" || showType == "Workstation") &&
-                a.Team.Groups.Any(g => g.GroupId == group.Id) && 
+            model.ExpiringItems.AddRange(await _context.Workstations.Where(a => (showType == "All" || showType == "Workstation") &&
+                a.Team.Groups.Any(g => g.GroupId == group.Id) &&
                 a.Assignment.ExpiresAt <= expiresBefore)
-                .Include(a => a.Team).Include(w => w.Assignment).ThenInclude(a => a.Person).Select(ExpiringWorkstationProjection()).ToArrayAsync();
-
-            if (expiringWorkstations.Any())
-            {
-                model.ExpiringItems.AddRange(expiringWorkstations);
-            }
+                .Select(ExpiringWorkstationProjection()).ToArrayAsync());
 
             return model;
         }
