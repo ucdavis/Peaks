@@ -483,6 +483,11 @@ namespace Keas.Core.Services
                 return;
             }
 
+            if(assignment.ExpiresAt < DateTime.UtcNow.AddDays(-30))
+            {
+                Log.Information($"Old ExpiresAt Date. id: {assignment.Id} requested by {assignment.RequestedByName}");
+            }
+
             // otherwise push back to tomorrow
             assignment.NextNotificationDate = DateTime.UtcNow.Date.AddDays(1);
         }
