@@ -27,7 +27,7 @@ namespace Keas.Mvc.Handlers
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, VerifyRoleOrAuthToken requirement) {
             // get team name from url
             var team = "";
-            if (context.Resource is Endpoint)
+            if (_httpContext.HttpContext.Request != null)
             {
                 team = _httpContext.HttpContext.Request.RouteValues["teamName"]?.ToString() ?? "";
             }
