@@ -163,7 +163,7 @@ namespace Keas.Core.Services
                     NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
                     Team = new Team { Id = 1, Name = "Test", Slug = "Slug" }
                 }
-                }.ToArray().GroupBy(a => a.TeamId).ToList();
+                }.GroupBy(a => a.TeamId).ToList();
 
                 using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Person Notification"), Subject = "PEAKS People Notification" })
                 {
