@@ -163,7 +163,7 @@ namespace Keas.Core.Services
                     NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
                     Team = new Team { Id = 1, Name = "Test", Slug = "Slug" }
                 }
-                }.ToArray().GroupBy(a => a.TeamId);
+                }.ToArray().GroupBy(a => a.TeamId).ToList();
 
                 using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Person Notification"), Subject = "PEAKS People Notification" })
                 {
@@ -210,7 +210,7 @@ namespace Keas.Core.Services
             foreach (var personEmail in personEmails)
             {
                 //Get the notifications to send to this user.                
-                var personNotifications = (await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail == personEmail).Include(a => a.Team).OrderBy(a => a.TeamId).ThenBy(a => a.ActionDate).ToArrayAsync()).GroupBy(a => a.TeamId);
+                var personNotifications = (await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail == personEmail).Include(a => a.Team).OrderBy(a => a.TeamId).ThenBy(a => a.ActionDate).ToArrayAsync()).GroupBy(a => a.TeamId).ToList();
 
                 //Send the Email
                 Log.Information($"Sending person notification email to {personEmail}");
