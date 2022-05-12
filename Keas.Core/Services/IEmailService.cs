@@ -210,7 +210,7 @@ namespace Keas.Core.Services
             foreach (var personEmail in personEmails)
             {
                 //Get the notifications to send to this user.                
-                var personNotifications = await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail == personEmail).Include(a => a.Team).OrderBy(a => a.TeamId).ThenBy(a => a.ActionDate).GroupBy(a => a.TeamId).ToListAsync();
+                var personNotifications = (await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail == personEmail).Include(a => a.Team).OrderBy(a => a.TeamId).ThenBy(a => a.ActionDate).ToArrayAsync()).GroupBy(a => a.TeamId).ToList();
 
                 //Send the Email
                 Log.Information($"Sending person notification email to {personEmail}");
@@ -502,7 +502,7 @@ namespace Keas.Core.Services
                 DateTimeCreated = DateTime.UtcNow,
                 Team = new Team { Id = 1, Name = "Test" }
                 }
-            }.GroupBy(g => g.TeamId).ToArray();
+            }.ToArray().GroupBy(g => g.TeamId);
 
             //TODO: Do something with these notifications to build them into a single email.
             using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Notification"), Subject = "PEAKS Notification" })
