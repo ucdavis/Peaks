@@ -37,6 +37,24 @@
             }
         },
         {
+            "name": ".NET Core Launch (SendMail)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "buildSendMail",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/Keas.Jobs.SendMail/bin/Debug/netcoreapp3.1/Keas.Jobs.SendMail.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Keas.Jobs.SendMail",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart",
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            },
+            "sourceFileMap": {
+                "/Views": "${workspaceFolder}/Views"
+            }
+        },
+        {
             "name": ".NET Core Attach",
             "type": "coreclr",
             "request": "attach",
