@@ -94,8 +94,7 @@ namespace Keas.Mvc
                 .Enrich.WithClientIp()
                 .Enrich.WithClientAgent()
                 .Enrich.WithExceptionDetails()
-                .WriteTo.Console()
-                .WriteTo.Stackify();
+                .WriteTo.Console();
 
             if (esUrl?.StartsWith("http") ?? false)
             {
