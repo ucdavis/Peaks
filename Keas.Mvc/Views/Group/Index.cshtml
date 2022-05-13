@@ -65,7 +65,14 @@
    
                 </ul>
             </div>
-
+            <div class="report-list general-color col-md-3">
+                <h3><i class="fas fa-list fa-xs"></i> General Reports</h3>
+                <ul>
+                    <li>
+                        <a asp-action="ExpiringItems" asp-route-id="@Model.Group.Id">Expiring <span style="white-space: nowrap;">Items <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></span></a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

@@ -65,12 +65,7 @@ namespace Keas.Mvc.Controllers
 
         public async Task<ActionResult> ExpiringItems(DateTime? expiresBefore = null, string showType = "All")
         {
-            if (expiresBefore == null)
-            {
-                expiresBefore = DateTime.Now.AddDays(30);
-            }
-            var userRoles = await _securityService.GetUserRoleNamesInTeamOrAdmin(Team);
-            var model = await ReportItemsViewModel.CreateExpiry(_context, expiresBefore.Value, Team, showType, userRoles, _securityService);
+            var model = await _reportService.ExpiringItems(null, Team, expiresBefore, showType);
             return View(model);
         }
 
