@@ -91,7 +91,13 @@ namespace Keas.Mvc.Controllers.Api
             var person = await _context.People
                 .Where(x => x.Team.Slug == Team)
                 .Include(x => x.User)
+                .Include(a => a.AccessAssignments)
+                .Include(a => a.KeySerialAssignments)
+                .Include(a => a.EquipmentAssignments)
+                .Include(a => a.WorkstationAssignments)
                 .SingleAsync(x => x.Id == id);
+
+           
 
             var personActing = await _securityService.GetPerson(Team);
 
@@ -100,6 +106,28 @@ namespace Keas.Mvc.Controllers.Api
                 ModelState.AddModelError("User", "Don't delete yourself.");
                 return BadRequest(ModelState);
             }
+
+            if (person.AccessAssignments.Any())
+            {
+                ModelState.AddModelError("AccessAssignments", "Remove Access Assignments first");
+                return BadRequest(ModelState);
+            }
+            if (person.KeySerialAssignments.Any())
+            {
+                ModelState.AddModelError("KeySerialAssignments", "Remove Key Assignments first");
+                return BadRequest(ModelState);
+            }
+            if (person.EquipmentAssignments.Any())
+            {
+                ModelState.AddModelError("EquipmentAssignments", "Remove Equipment Assignments first");
+                return BadRequest(ModelState);
+            }
+            if (person.WorkstationAssignments.Any())
+            {
+                ModelState.AddModelError("WorkstationAssignments", "Remove Workstation Assignments first");
+                return BadRequest(ModelState);
+            }
+
 
             //Yes, await using and await BeginTransactionAsync works...
             await using (var transaction = await _context.Database.BeginTransactionAsync())
