@@ -50,7 +50,8 @@
                     </th>
                     <th>
                         Expiration
-                    </th>           
+                    </th>    
+                    <th>Warning</th>
                     <th>
                         Link
                     </th>
@@ -66,12 +67,13 @@
                         <td>@item.PersonName</td>
                         <td>
                             @Html.DisplayFor(a => item.ExpiresAt)
-                        </td>               
+                        </td>
+                        <td>@(item.PersonActive == false ? "Person is not active" : string.Empty)</td>
                         <td>
                             <a href="@item.DetailsLink" target="_blank">Details</a>
                         </td>
                     </tr>
-                }                
+                }
                 </tbody>
             </table>
 
