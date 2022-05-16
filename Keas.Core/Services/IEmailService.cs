@@ -196,7 +196,7 @@ namespace Keas.Core.Services
                 return;
             }
 
-            var personEmails = await _dbContext.PersonNotifications.Where(a => a.Pending && a.SendEmail).AsNoTracking().Select(a => a.NotificationEmail).Distinct().ToArrayAsync();
+            var personEmails = await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail != null && a.NotificationEmail != string.Empty).AsNoTracking().Select(a => a.NotificationEmail).Distinct().ToArrayAsync();
             if (!personEmails.Any())
             {
                 Log.Information("No Person Notifications to Send");
@@ -207,7 +207,7 @@ namespace Keas.Core.Services
 
             Log.Information($"About to send {personEmails.Length} Person Notification Emails");
 
-            foreach (var personEmail in personEmails)
+            foreach (var personEmail in personEmails.Where(a => !string.IsNullOrWhiteSpace(a)))
             {
                 //Get the notifications to send to this user.                
                 var personNotifications = (await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail == personEmail).Include(a => a.Team).OrderBy(a => a.TeamId).ThenBy(a => a.ActionDate).ToArrayAsync()).GroupBy(a => a.TeamId).ToList();
