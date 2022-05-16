@@ -196,7 +196,7 @@ namespace Keas.Core.Services
                 return;
             }
 
-            var personEmails = await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail != null).AsNoTracking().Select(a => a.NotificationEmail).Distinct().ToArrayAsync();
+            var personEmails = await _dbContext.PersonNotifications.Where(a => a.Pending && a.NotificationEmail != null && a.NotificationEmail != string.Empty).AsNoTracking().Select(a => a.NotificationEmail).Distinct().ToArrayAsync();
             if (!personEmails.Any())
             {
                 Log.Information("No Person Notifications to Send");
