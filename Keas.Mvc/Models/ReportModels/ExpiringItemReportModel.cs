@@ -13,5 +13,7 @@ namespace Keas.Mvc.Models.ReportModels
         public string TeamSlug { get;set;}
         public string DetailsLink { get;set;}
 
+        public bool PersonActive { get;set;}
+
     }
 }

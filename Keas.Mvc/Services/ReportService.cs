@@ -494,22 +494,22 @@ namespace Keas.Mvc.Services
 
 
             model.ExpiringItems.AddRange(await _context.AccessAssignments.Where(a => (showType == "All" || showType == "Access") &&
-                a.Access.Team.Groups.Any(g => g.GroupId == group.Id) && a.ExpiresAt <= expiresBefore)
+                a.Access.Team.Groups.Any(g => g.GroupId == group.Id) && a.ExpiresAt <= expiresBefore && a.Access.Active).IgnoreQueryFilters()
                 .Select(ExpiringAccessProjection()).ToArrayAsync());
 
             model.ExpiringItems.AddRange(await _context.KeySerials.Where(a => (showType == "All" || showType == "Key") &&
                 a.Key.Team.Groups.Any(g => g.GroupId == group.Id) &&
-                a.KeySerialAssignment.ExpiresAt <= expiresBefore)
+                a.KeySerialAssignment.ExpiresAt <= expiresBefore && a.Active).IgnoreQueryFilters()
                 .Select(ExpiringKeysProjection()).ToArrayAsync());
 
             model.ExpiringItems.AddRange(await _context.Equipment.Where(a => (showType == "All" || showType == "Equipment") &&
                 a.Team.Groups.Any(g => g.GroupId == group.Id) &&
-                a.Assignment.ExpiresAt <= expiresBefore)
+                a.Assignment.ExpiresAt <= expiresBefore && a.Active).IgnoreQueryFilters()
                 .Select(ExpiringEquipmentProjection()).ToArrayAsync());
 
             model.ExpiringItems.AddRange(await _context.Workstations.Where(a => (showType == "All" || showType == "Workstation") &&
                 a.Team.Groups.Any(g => g.GroupId == group.Id) &&
-                a.Assignment.ExpiresAt <= expiresBefore)
+                a.Assignment.ExpiresAt <= expiresBefore && a.Active).IgnoreQueryFilters()
                 .Select(ExpiringWorkstationProjection()).ToArrayAsync());
 
             return model;
@@ -521,7 +521,8 @@ namespace Keas.Mvc.Services
             {
                 Type = "Access",
                 ItemName = a.Access.Name,
-                PersonName = a.Person.Name,
+                PersonName = a.Person != null ? a.Person.Name : $"Missing Person: {a.Id}",
+                PersonActive = a.Person.Active,
                 ExpiresAt = a.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Access.Team.Slug,
                 DetailsLink = $"/{a.Access.Team.Slug}/access/details/{a.AccessId}", //This is really only needed for the non group one?
@@ -534,7 +535,8 @@ namespace Keas.Mvc.Services
             {
                 Type = "Key",
                 ItemName = $"{a.Key.Name} {a.Key.Code}-{a.Number}",
-                PersonName = a.KeySerialAssignment.Person.Name,
+                PersonName = a.KeySerialAssignment.Person != null ? a.KeySerialAssignment.Person.Name : $"Missing Person {a.KeySerialAssignment.Id}",
+                PersonActive = a.KeySerialAssignment.Person.Active,
                 ExpiresAt = a.KeySerialAssignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
                 DetailsLink = $"/{a.Team.Slug}/keys/details/{a.KeyId}/keyserials/details/{a.KeySerialAssignment.KeySerialId}", //This is really only needed for the non group one?
@@ -546,7 +548,8 @@ namespace Keas.Mvc.Services
             {
                 Type = "Equipment",
                 ItemName = a.Name,
-                PersonName = a.Assignment.Person.Name,
+                PersonName = a.Assignment.Person != null ? a.Assignment.Person.Name : $"Missing Person: {a.Assignment.Id}",
+                PersonActive = a.Assignment.Person.Active,
                 ExpiresAt = a.Assignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
                 DetailsLink = $"/{a.Team.Slug}/equipment/details/{a.Id}", //This is really only needed for the non group one?
@@ -559,7 +562,8 @@ namespace Keas.Mvc.Services
             {
                 Type = "Workstation",
                 ItemName = a.Name,
-                PersonName = a.Assignment.Person.Name,
+                PersonName = a.Assignment.Person != null ? a.Assignment.Person.Name : $"Missing Person: {a.Assignment.Id}",
+                PersonActive = a.Assignment.Person.Active,
                 ExpiresAt = a.Assignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
                 DetailsLink = $"/{a.Team.Slug}/spaces/details/{a.SpaceId}", //This is really only needed for the non group one?
