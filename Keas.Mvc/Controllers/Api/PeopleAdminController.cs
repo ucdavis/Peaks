@@ -99,30 +99,27 @@ namespace Keas.Mvc.Controllers.Api
 
             if (personActing.UserId == person.UserId)
             {
-                ModelState.AddModelError("User", "Don't delete yourself.");
-                return BadRequest(ModelState);
+                ModelState.AddModelError("User", "Don't delete yourself.");                
             }
-
-
-
             if (await _context.AccessAssignments.AnyAsync(a => a.PersonId == id))
             {
                 ModelState.AddModelError("AccessAssignments", "Remove Access Assignments first");
-                return BadRequest(ModelState);
             }
             if (await _context.KeySerialAssignments.AnyAsync(a => a.PersonId == id))
             {
                 ModelState.AddModelError("KeySerialAssignments", "Remove Key Assignments first");
-                return BadRequest(ModelState);
             }
             if (await _context.EquipmentAssignments.AnyAsync(a => a.PersonId == id))
             {
                 ModelState.AddModelError("EquipmentAssignments", "Remove Equipment Assignments first");
-                return BadRequest(ModelState);
             }
             if (await _context.WorkstationAssignments.AnyAsync(a => a.PersonId == id))
             {
                 ModelState.AddModelError("WorkstationAssignments", "Remove Workstation Assignments first");
+            }
+
+            if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
             }
 
