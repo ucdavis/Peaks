@@ -31,4 +31,9 @@ CREATE NONCLUSTERED INDEX [IX_Notifications_UserId]
 GO
 CREATE NONCLUSTERED INDEX [IX_Notifications_HistoryId]
     ON [dbo].[Notifications]([HistoryId] ASC);
+    
+GO
+
+create index IX_Notifications_Pending_UserId_index
+    on dbo.Notifications (Pending, UserId)
 
