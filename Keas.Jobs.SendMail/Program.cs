@@ -43,6 +43,8 @@ namespace Keas.Jobs.SendMail
 
         private static void SendEmails(ServiceProvider provider) {
             var dbContext = provider.GetService<ApplicationDbContext>();
+            dbContext.Database.SetCommandTimeout(1800); //30 minutes
+
             var emailService = provider.GetService<IEmailService>();
 
             var counter = 0;
