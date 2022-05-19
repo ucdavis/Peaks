@@ -40,7 +40,16 @@ namespace Keas.Core.Domain
 
         public int? SqFt { get; set; }
 
-         protected internal  static void OnModelCreating(ModelBuilder builder)
+        //Not Mapped
+        public string ShortName
+        {
+            get
+            {
+                return $"{RoomNumber} {BldgName}";
+            }
+        }
+
+        protected internal  static void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Space>().HasQueryFilter(a => a.Active);
         }
