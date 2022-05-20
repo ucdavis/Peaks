@@ -52,7 +52,7 @@
               <th>Serial</th>
               <th>Name</th>
               <th>Expiration</th>
-              <th>Accepted?</th>
+              <th>Accepted?</th>              
             </tr>
           </thead>
           <tbody>
@@ -62,7 +62,7 @@
               <td>@serial.Number</td>
               <td>@serial.Key.Name</td>
               <td>@serial.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>
-              <td>@serial.KeySerialAssignment.ConfirmedAt.AcceptedWithDate()</td>
+              <td>@serial.KeySerialAssignment.ConfirmedAt.AcceptedWithDate()</td>            
             </tr>
             }
 
@@ -88,6 +88,7 @@
               <th>Name</th>
               <th>Make</th>
               <th>Model</th>
+              <th>Room</th>
               <th>Expiration</th>
               <th>Accepted?</th>
             </tr>
@@ -99,6 +100,7 @@
               <td>@equipment.Name</td>
               <td>@equipment.Make</td>
               <td>@equipment.Model</td>
+              <td>@equipment.Space?.ShortName</td>
               <td>@equipment.Assignment.ExpiresAt.ToShortDateString()</td>
               <td>@equipment.Assignment.ConfirmedAt.AcceptedWithDate()</td>
             </tr>
@@ -164,7 +166,7 @@
             @foreach (var workstation in Model.Workstations) {
             <tr>
               <td>@workstation.Title</td>
-              <td>@workstation.Space.RoomNumber @workstation.Space.BldgName</td>
+              <td>@workstation.Space.ShortName</td>
               <td>@workstation.Assignment.ExpiresAt.ToShortDateString()</td>
               <td>@workstation.Assignment.ConfirmedAt.AcceptedWithDate()</td>
             </tr>
