@@ -1,4 +1,4 @@
-﻿using Keas.Core.Domain;
+using Keas.Core.Domain;
 using Shouldly;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -54,6 +54,7 @@ namespace Test.TestsDatabase
             expectedFields.Add(new NameAndType("RoomKey", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("RoomName", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("RoomNumber", "System.String", new List<string>()));
+            expectedFields.Add(new NameAndType("ShortName", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("Source", "System.String", new List<string>()));
             expectedFields.Add(new NameAndType("SqFt", "System.Nullable`1[System.Int32]", new List<string>()));
             #endregion Arrange

@@ -40,7 +40,9 @@ namespace Keas.Core.Domain
 
         public int? SqFt { get; set; }
 
-        //Not Mapped
+        /// <summary>
+        /// Not Mapped
+        /// </summary>
         public string ShortName
         {
             get
