@@ -164,6 +164,7 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> GetKeysInSpace(int spaceId)
         {
             var joins = await _context.KeyXSpaces
+                .IgnoreQueryFilters()
                 .Where(x => x.Space.Id == spaceId
                         && x.Key.Team.Slug == Team
                         && x.Key.Active)
