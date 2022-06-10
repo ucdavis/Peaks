@@ -73,6 +73,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var workstations = await _context.Workstations
                 .Where(x => x.Space.Id == spaceId && x.Team.Slug == Team && x.Active)
+                .IgnoreQueryFilters()
                 .Include(x => x.Space)
                 .Include(x => x.Assignment)
                 .ThenInclude(x => x.Person)
@@ -326,7 +327,8 @@ namespace Keas.Mvc.Controllers.Api
         [HttpPost("{id}")]
         public async Task<IActionResult> Revoke(int id)
         {
-            var workstation = await _context.Workstations.Where(x => x.Team.Slug == Team)
+            var workstation = await _context.Workstations.Where(x => x.Team.Slug == Team && x.Active)
+                .IgnoreQueryFilters()
                 .Include(w => w.Assignment).ThenInclude(w => w.Person)
                 .Include(w => w.Space)
                 .SingleAsync(w => w.Id == id);
@@ -370,7 +372,8 @@ namespace Keas.Mvc.Controllers.Api
         public async Task<IActionResult> Delete(int id)
         {
             var workstation = await _context.Workstations
-                .Where(x => x.Team.Slug == Team)
+                .Where(x => x.Team.Slug == Team && x.Active)
+                .IgnoreQueryFilters()
                 .Include(x => x.Team)
                 .Include(x => x.Assignment)
                     .ThenInclude(x => x.Person)
