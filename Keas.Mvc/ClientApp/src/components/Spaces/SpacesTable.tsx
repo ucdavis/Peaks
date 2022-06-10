@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, UncontrolledTooltip } from 'reactstrap';
+import { Button, Row, UncontrolledTooltip } from 'reactstrap';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { ReactTable } from '../Shared/ReactTable';
@@ -77,7 +77,10 @@ const SpacesTable = (props: IProps) => {
         Cell: data => (
           <span>
             {data.row.original.space.roomNumber}{' '}
-            {data.row.original.space.bldgName}
+            {data.row.original.space.bldgName}{' '}
+            {!!!data.row.original.space.active && (
+              <span className='text-danger'> (Inactive)</span>
+            )}
           </span>
         ),
         Header: 'Room',
