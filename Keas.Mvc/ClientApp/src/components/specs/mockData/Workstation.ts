@@ -12,7 +12,8 @@ export const fakeWorkstations: IWorkstation[] = [
       roomCategoryName: 'Assignable Area',
       orgId: 'AADM',
       deptName: "Dean's Office, CA&ES",
-      sqFt: '847'
+      sqFt: '847',
+      active: true
     },
     assignment: null,
     id: 17,
@@ -32,7 +33,8 @@ export const fakeWorkstations: IWorkstation[] = [
       roomCategoryName: 'Assignable Area',
       orgId: 'AADM',
       deptName: "Dean's Office, CA&ES",
-      sqFt: '847'
+      sqFt: '847',
+      active: true
     },
     assignment: null,
     id: 18,
@@ -52,7 +54,8 @@ export const fakeWorkstations: IWorkstation[] = [
       roomCategoryName: 'Assignable Area',
       orgId: 'AADM',
       deptName: "Dean's Office, CA&ES",
-      sqFt: '847'
+      sqFt: '847',
+      active: true
     },
     assignment: null,
     id: 19,
@@ -72,7 +75,8 @@ export const fakeWorkstations: IWorkstation[] = [
       roomCategoryName: 'Assignable Area',
       orgId: 'AADM',
       deptName: "Dean's Office, CA&ES",
-      sqFt: '847'
+      sqFt: '847',
+      active: true
     },
     assignment: null,
     id: 20,

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { RouteChildrenProps } from 'react-router';
-import { Button } from 'reactstrap';
+import { Button, Alert } from 'reactstrap';
 import { IMatchParams } from '../../models/Shared';
 import { ISpaceInfo } from '../../models/Spaces';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
@@ -34,6 +34,14 @@ const SpacesDetails = (props: IProps) => {
   }
   return (
     <div>
+      {!!!props.selectedSpaceInfo.space.active && (
+        <Alert color='danger'>
+          {' '}
+          Warning!!! This space is no longer active. Remove anything associated
+          with it.
+        </Alert>
+      )}
+
       <div>
         <Button color='link' onClick={props.goBack}>
           <i className='fas fa-arrow-left fa-xs' /> Return to Table

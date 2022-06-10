@@ -19,4 +19,5 @@ export interface ISpace {
   roomNumber: string;
   sqFt: string;
   roomCategoryName: string;
+  active: boolean;
 }

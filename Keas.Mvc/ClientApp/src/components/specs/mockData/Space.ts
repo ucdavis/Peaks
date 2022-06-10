@@ -12,7 +12,8 @@ export const fakeSpaces: ISpaceInfo[] = [
       floorName: '1st Floor',
       roomCategoryName: 'Assignable Area',
       orgId: 'AADM',
-      sqFt: '562'
+      sqFt: '562',
+      active: true
     },
     id: 3518,
     equipmentCount: 1,
@@ -32,7 +33,8 @@ export const fakeSpaces: ISpaceInfo[] = [
       floorName: '1st Floor',
       roomCategoryName: 'Assignable Area',
       orgId: 'AADM',
-      sqFt: '562'
+      sqFt: '562',
+      active: true
     },
     id: 3519,
     equipmentCount: 1,
@@ -52,7 +54,8 @@ export const fakeSpaces: ISpaceInfo[] = [
       floorName: '1st Floor',
       roomCategoryName: 'Assignable Area',
       orgId: 'AADM',
-      sqFt: '562'
+      sqFt: '562',
+      active: true
     },
     id: 3520,
     equipmentCount: 1,
@@ -72,7 +75,8 @@ export const fakeSpaces: ISpaceInfo[] = [
       floorName: '1st Floor',
       roomCategoryName: 'Assignable Area',
       orgId: 'AADM',
-      sqFt: '562'
+      sqFt: '562',
+      active: true
     },
     id: 3521,
     equipmentCount: 1,
