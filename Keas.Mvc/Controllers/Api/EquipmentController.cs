@@ -90,6 +90,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var equipment = await _context.Equipment
                 .Where(x => x.Space.Id == spaceId && x.Team.Slug == Team && x.Active)
+                .IgnoreQueryFilters()
                 .Include(x => x.Space)
                 .Include(x => x.Attributes)
                 .Include(x => x.Team)
