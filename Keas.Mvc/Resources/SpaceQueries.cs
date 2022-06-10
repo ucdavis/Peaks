@@ -26,5 +26,5 @@ from (select Space.Id, count(Equipment.Id) as EquipmentCount, STRING_AGG(NULLIF(
                         group by Space.Id) t4 on t1.Id = t4.Id
        inner join Spaces Space on Space.Id = t1.Id
        inner join FISOrgs on space.OrgId = FISOrgs.OrgCode
-       where Space.Active = 1 AND FISOrgs.TeamId = @teamid";
+       where FISOrgs.TeamId = @teamid AND (Space.Active = 1 or (Space.Active = 0 AND WorkstationsInUseCount > 0))";
 }
