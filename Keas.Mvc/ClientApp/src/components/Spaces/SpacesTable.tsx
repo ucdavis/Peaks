@@ -77,7 +77,10 @@ const SpacesTable = (props: IProps) => {
         Cell: data => (
           <span>
             {data.row.original.space.roomNumber}{' '}
-            {data.row.original.space.bldgName}
+            {data.row.original.space.bldgName}{' '}
+            {!!!data.row.original.space.active && (
+              <span className='text-danger'> (Inactive)</span>
+            )}
           </span>
         ),
         Header: 'Room',
