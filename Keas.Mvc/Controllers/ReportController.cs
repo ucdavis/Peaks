@@ -209,5 +209,13 @@ namespace Keas.Mvc.Controllers
 
             return View(peopleQuery);
         }
+
+        public async Task<IActionResult> InActiveSpaces()
+        {
+
+            var spaceQuery = await _reportService.InactiveSpaces(Team);
+
+            return View(spaceQuery);
+        }
     }
 }

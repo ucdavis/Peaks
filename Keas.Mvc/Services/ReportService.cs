@@ -36,6 +36,7 @@ namespace Keas.Mvc.Services
 
         Task<ReportItemsViewModel> ExpiringItems(Team team, string teamSlug, DateTime? expiresBefore = null, string showType = "All");
         Task<ReportItemsViewModel> ExpiringItems(Group group, DateTime? expiresBefore = null, string showType = "All");
+        Task<List<InactiveSpaceReportModel>> InactiveSpaces(string teamSlug); //Not sure if this one can be done with a group
     }
 
 
@@ -452,6 +453,35 @@ namespace Keas.Mvc.Services
             }).ToList();
 
             return rtValue;
+        }
+
+        public async Task<List<InactiveSpaceReportModel>> InactiveSpaces(string teamSlug)
+        {
+
+            var teamId = await _context.Teams.Where(a => a.Slug == teamSlug).Select(s => s.Id).SingleAsync();
+
+            var sql = SpaceQueries.Inactive;
+
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId });
+
+
+            var spaces = result.Where(a => !a.Active).Select(a => new InactiveSpaceReportModel
+            {
+                TeamSlug = teamSlug,
+                DetailsLink = $"/{teamSlug}/spaces/details/{a.SpaceId}",
+                Room = $"{a.RoomNumber} {a.BldgName}",
+                RoomName = a.RoomName,
+                EquipmentCount = a.EquipmentCount,
+                KeyCount = a.KeyCount,
+                WorkStationCount = a.WorkstationsTotalCount       
+            }).ToList();
+
+            return spaces;
+        }
+
+        private string removeDuplications(string tags)
+        {
+            return !string.IsNullOrWhiteSpace(tags) ? string.Join(",", tags.ToString().Split(',').Distinct().ToArray()) : "";
         }
 
         public async Task<ReportItemsViewModel> ExpiringItems(Team team, string teamSlug, DateTime? expiresBefore, string showType)
