@@ -382,6 +382,7 @@ namespace Keas.Mvc.Controllers.Api
 
             // find space
             var space = await _context.Spaces
+                .IgnoreQueryFilters()
                 .SingleAsync(x => x.Id == model.SpaceId);
 
             // find existing relationship
