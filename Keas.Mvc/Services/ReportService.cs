@@ -465,10 +465,10 @@ namespace Keas.Mvc.Services
             var result = _context.Database.GetDbConnection().Query(sql, new { teamId });
 
 
-            var spaces = result.Where(a => !a.Active).Select(a => new InactiveSpaceReportModel
+            var spaces = result.Select(a => new InactiveSpaceReportModel
             {
                 TeamSlug = teamSlug,
-                DetailsLink = $"/{teamSlug}/spaces/details/{a.SpaceId}",
+                DetailsLink = $"/{teamSlug}/spaces/details/{a.Id}",
                 Room = $"{a.RoomNumber} {a.BldgName}",
                 RoomName = a.RoomName,
                 EquipmentCount = a.EquipmentCount,

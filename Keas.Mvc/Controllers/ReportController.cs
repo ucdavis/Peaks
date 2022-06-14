@@ -212,7 +212,6 @@ namespace Keas.Mvc.Controllers
 
         public async Task<IActionResult> InActiveSpaces()
         {
-
             var spaceQuery = await _reportService.InactiveSpaces(Team);
 
             return View(spaceQuery);

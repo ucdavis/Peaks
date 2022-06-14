@@ -29,7 +29,7 @@ from (select Space.Id, count(Equipment.Id) as EquipmentCount, STRING_AGG(NULLIF(
        where FISOrgs.TeamId = @teamid AND (Space.Active = 1 or (Space.Active = 0 AND (WorkstationsInUseCount > 0 or KeyCount > 0 or EquipmentCount > 0)))";
 
 
-    public static string Inactive = @"select Space.*,
+    public static string Inactive = @"select distinct Space.*,
        Space.Id              as Id,
        EquipmentCount,
        COALESCE(KeyCount, 0) as KeyCount,
@@ -55,5 +55,5 @@ from (select Space.Id, count(Equipment.Id) as EquipmentCount
                         group by Space.Id) t4 on t1.Id = t4.Id
        inner join Spaces Space on Space.Id = t1.Id
        inner join FISOrgs on space.OrgId = FISOrgs.OrgCode
-       where FISOrgs.TeamId = @teamid AND (Space.Active = 0 AND (WorkstationsInUseCount > 0 or KeyCount > 0 or EquipmentCount > 0))";
+       where Space.Active = 0 AND (WorkstationsInUseCount > 0 or KeyCount > 0 or EquipmentCount > 0)";
 }
