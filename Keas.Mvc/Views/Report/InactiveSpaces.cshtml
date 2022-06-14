@@ -1,0 +1,101 @@
+@using Keas.Mvc.Models.ReportModels
+@model System.Collections.Generic.List<InactiveSpaceReportModel>
+@{
+    ViewBag.Title = "Inactive Spaces";
+}
+
+<div class="card history-color">
+    <div class="card-header-history">
+        <div class="card-head">
+            <h2>Inactive Spaces Report</h2>
+        </div>
+    </div>
+    <div class="card-content">
+        <div class="row align-items-start">
+            <div class="col-md-6 col-lg-4">
+                <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
+                <ul>
+                    <li>
+                        This report displays all inactive spaces that have active assets associated with them
+                    </li>
+                    <li>
+                        If you have filtered the report with the Search feature, only the filtered results will be exported.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <br /><br />
+
+        <table id="inactive" class="table dataTable">
+            <thead>
+                <tr>
+                    <th>Room</th>
+                    <th>Room Name</th>
+                    <th>Equipment Count</th>
+                    <th>Key Count</th>
+                    <th>WorkStation Count</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(a => item.Room)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(a => item.RoomName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(a => item.EquipmentCount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(a => item.KeyCount)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(a => item.WorkStationCount)
+                        </td>
+                        <td>
+                            <a href="@item.DetailsLink" target="_blank">Details</a>
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+    @section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ImportJS");
+    }
+
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+            "dom": 'lBfrtip',
+            "buttons": [
+                { extend: 'copyHtml5' },
+                { extend: 'excelHtml5' },
+                { extend: 'csvHtml5' },
+                { extend: 'print' },
+            ],
+            "columnDefs": [
+                {
+                    targets: -1,
+                    sortable: false,
+                },
+            ]
+        });
+    </script>
+}
+
+
+
