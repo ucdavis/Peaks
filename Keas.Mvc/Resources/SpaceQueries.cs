@@ -34,7 +34,7 @@ from (select Space.Id, count(Equipment.Id) as EquipmentCount, STRING_AGG(NULLIF(
        EquipmentCount,
        COALESCE(KeyCount, 0) as KeyCount,
        WorkstationsTotalCount,
-       WorkstationsInUseCount,      
+       WorkstationsInUseCount   
 from (select Space.Id, count(Equipment.Id) as EquipmentCount
       from Spaces Space
              left join Equipment on Space.Id = Equipment.SpaceId and Equipment.Active = 1 and Equipment.TeamId = @teamId
@@ -54,5 +54,6 @@ from (select Space.Id, count(Equipment.Id) as EquipmentCount
                                  on Space.Id = W.SpaceId and W.Active = 1 and W.WorkstationAssignmentId is not null and W.TeamId = @teamId
                         group by Space.Id) t4 on t1.Id = t4.Id
        inner join Spaces Space on Space.Id = t1.Id
-       where Space.Active = 0 AND (WorkstationsInUseCount > 0 or KeyCount > 0 or EquipmentCount > 0)";
+       inner join FISOrgs on space.OrgId = FISOrgs.OrgCode
+       where FISOrgs.TeamId = @teamid AND (Space.Active = 0 AND (WorkstationsInUseCount > 0 or KeyCount > 0 or EquipmentCount > 0))";
 }
