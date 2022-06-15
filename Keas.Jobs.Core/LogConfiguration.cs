@@ -59,7 +59,7 @@ namespace Keas.Jobs.Core
                     .Enrich.WithProperty("AppEnvironment", loggingSection.GetValue<string>("Environment"))
                     .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(esUrl))
                     {
-                        IndexFormat = "aspnet-peaks-{0:yyyy.MM.dd}"
+                        IndexFormat = "aspnet-peaks-{0:yyyy.MM}"
                     });
             }
 
