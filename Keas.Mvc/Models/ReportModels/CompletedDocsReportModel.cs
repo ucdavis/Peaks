@@ -16,6 +16,6 @@ namespace Keas.Mvc.Models.ReportModels
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         [Display(Name = "End Created Date")]
         public DateTime End { get; set; }
-        public List<Document> docs {get;set;}
+        public List<Document> Docs {get;set;}
     }
 }

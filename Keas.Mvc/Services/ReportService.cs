@@ -395,7 +395,7 @@ namespace Keas.Mvc.Services
 
             var docs = await _context.Documents.AsNoTracking().Include(a => a.Person).Where(a => a.TeamId == team.Id && a.Active && a.Person.Active && a.CreatedAt >= start && a.CreatedAt <= end && a.Status == "Completed").ToListAsync();
 
-            var model = new CompletedDocsReportModel { Start = start.Value.ToPacificTime().Date, End = end.Value.ToPacificTime().Date, docs = docs };
+            var model = new CompletedDocsReportModel { Start = start.Value.ToPacificTime().Date, End = end.Value.ToPacificTime().Date, Docs = docs };
 
             return model;
         }
