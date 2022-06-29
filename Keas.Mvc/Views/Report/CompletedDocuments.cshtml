@@ -1,0 +1,105 @@
+@using Keas.Core.Extensions
+@model Keas.Mvc.Models.ReportModels.CompletedDocsReportModel
+
+@{
+    ViewData["Title"] = "Expiring Items";
+}
+
+
+<form asp-action="CompletedDocuments" method="get">
+    <div class="card documents-color">
+        <div class="card-header-documents">
+            <div class="card-head">
+                <h2>Completed documents</h2>
+            </div>
+        </div>
+        <div class="card-content">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row align-items-end">
+                <div class="col-sm-4">
+                    <h3>Filters</h3>
+                    <div class="form-group">
+                        <label asp-for="Start" class="control-label"></label>
+                        <input asp-for="Start" class="form-control datepicker"/>
+                        <span asp-validation-for="Start" class="text-danger"></span>
+                        <label asp-for="End" class="control-label"></label>
+                        <input asp-for="End" class="form-control datepicker"/>
+                        <span asp-validation-for="End" class="text-danger"></span>
+                        <div class="form-group">
+                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+           
+            <br>
+            <br>
+            <table id="dtDocuments" class="table dataTable">
+                <thead>
+                <tr>
+                    <th>
+                        Person
+                    </th>
+                    <th>
+                        Doc Name
+                    </th>
+                    <th>
+                        Created
+                    </th>
+                    <th>
+                        Completed
+                    </th>           
+                    <th>
+                        Link
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.docs)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(a=> item.Person.Name)</td>
+                        <td>@Html.DisplayFor(a=> item.Name)</td>
+                        <td>
+                            @item.CreatedAt.ToPacificTime().ToString("d")
+                        </td>     
+                        <td>
+                            @item.CompletedAt.Value.ToPacificTime().ToString("d")
+                        </td>  
+                        <td>
+                            <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "people", item.PersonId)' >Details</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</form>
+
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ImportJS");}        
+    
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+            "dom": 'lBfrtip',
+            "buttons": [
+                { extend: 'copyHtml5' },
+                { extend: 'excelHtml5' },
+                { extend: 'csvHtml5' },
+                { extend: 'print'},
+            ],
+            "columnDefs": [
+                { "type": "date", "targets": [2,3] }
+            ]
+        });
+    </script>
+}
+
