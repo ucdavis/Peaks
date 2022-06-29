@@ -37,6 +37,8 @@ namespace Keas.Mvc.Services
         Task<ReportItemsViewModel> ExpiringItems(Team team, string teamSlug, DateTime? expiresBefore = null, string showType = "All");
         Task<ReportItemsViewModel> ExpiringItems(Group group, DateTime? expiresBefore = null, string showType = "All");
         Task<List<InactiveSpaceReportModel>> InactiveSpaces(string teamSlug); //Not sure if this one can be done with a group
+
+        Task<CompletedDocsReportModel> CompletedDocuments(Team team, string teamSlug, DateTime? start, DateTime? end);
     }
 
 
@@ -366,6 +368,36 @@ namespace Keas.Mvc.Services
 
 
             return people;
+        }
+
+        public async Task<CompletedDocsReportModel> CompletedDocuments(Team team, string teamSlug, DateTime? start = null, DateTime? end = null)
+        {
+            if (team == null)
+            {
+                team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
+            }
+            if (!start.HasValue)
+            {
+                start = DateTime.UtcNow.AddDays(-30).Date;
+            }
+            else
+            {
+                start = start.Value.FromPacificTime().Date;
+            }
+            if (!end.HasValue)
+            {
+                end = DateTime.UtcNow.AddDays(1).Date;
+            }
+            else
+            {
+                end = end.Value.FromPacificTime().Date;
+            }
+
+            var docs = await _context.Documents.AsNoTracking().Include(a => a.Person).Where(a => a.TeamId == team.Id && a.Active && a.Person.Active && a.CreatedAt >= start && a.CreatedAt <= end && a.Status == "Completed").ToListAsync();
+
+            var model = new CompletedDocsReportModel { Start = start.Value.ToPacificTime().Date, End = end.Value.ToPacificTime().Date, Docs = docs };
+
+            return model;
         }
 
         public async Task<IList<IncompleteDocumentReportModel>> IncompleteDocuments(Group group)

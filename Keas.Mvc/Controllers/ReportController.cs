@@ -183,6 +183,14 @@ namespace Keas.Mvc.Controllers
             return View(incompleteDocs);
         }
 
+        [Authorize(Policy = AccessCodes.Codes.DocumentMasterAccess)]
+        public async Task<IActionResult> CompletedDocuments(DateTime? start = null, DateTime? end = null)
+        {
+            var model = await _reportService.CompletedDocuments(null, Team, start, end);
+
+            return View(model);
+        }
+
         public async Task<IActionResult> PeopleInTeam(bool hideInactive = true)
         {
             var team = await _context.Teams.SingleAsync(a => a.Slug == Team);
