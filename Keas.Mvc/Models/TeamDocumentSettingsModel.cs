@@ -12,7 +12,13 @@ namespace Keas.Mvc.Models
         public List<TeamDocumentSetting> TeamDocumentSettings { get; set; }
         public DocumentSigningAccount TeamAccount { get; set; }
 
-        public List<string> TemplateNames { get; set; } = new List<string>();
+        public List<TemplateModel> TemplateNames { get; set; } = new List<TemplateModel>();
 
+    }
+
+    public class TemplateModel
+    {
+        public string Name { get; set; }
+        public string Id { get; set; }
     }
 }
