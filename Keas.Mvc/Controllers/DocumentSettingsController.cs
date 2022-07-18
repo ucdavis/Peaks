@@ -65,11 +65,11 @@ namespace Keas.Mvc.Controllers
                 try
                 {
                     var templates = await _documentSigningService.GetTemplates(team);
-                    model.TemplateNames = templates.Select(a => a.Name).ToList();
+                    model.TemplateNames = templates.Select(a => new TemplateModel { Name = a.Name, Id = a.TemplateId}).ToList();
                 }
                 catch
                 {
-                    model.TemplateNames = new List<string>();
+                    model.TemplateNames = new List<TemplateModel>();
                 }
             }
 

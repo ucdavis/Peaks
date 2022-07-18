@@ -32,9 +32,9 @@
                               Login to <a href="https://app.docusign.com/home" target="_blank">docusign.com</a> and choose "Templates" from the top menu.
                               If you do not see that option, <a href="https://itcatalog.ucdavis.edu/service/docusign-pilot" target="_blank">request access here</a>
                           </li>
-                          <li>Click "New" and create a tempate</li>
+                          <li>Click "New" and create a template</li>
                           <li>Give the template and name and then add the documents that need signing</li>
-                          <li>In the "Add Recipients" section, <strong> in the "Role" field type "signer"</strong>. Do not fill in name or email, and do not add any more recipients</li>
+                          <li>In the "Add Recipients" section, <strong> in the "Role" field type "signer" This is case sensitive and must be as shown</strong>. Do not fill in name or email, and do not add any more recipients</li>
                           <li>If you would like to you can customize the email subject and message that will be sent out when the system requests their signature</li>
                           <li>Click "Next" and setup the document for signing as desired, ex: placing their signature and date signed at the bottom</li>
                           <li>Click "Save and Close"</li>
@@ -118,6 +118,7 @@
             <thead>
             <tr>
                 <th>Template Name</th>
+                <th>Template Id</th>
                 <th></th>
             </tr>
             </thead>
@@ -126,8 +127,9 @@
             {
                 <tr>
                     <td>
-                        @item
+                        @item.Name
                     </td>
+                    <td>@item.Id</td>
                     <td></td>
                 </tr>
             }
