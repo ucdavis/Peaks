@@ -15,6 +15,8 @@ namespace Keas.Core.Models
         const string Undergrad = "Undergrad";
         const string Visitor = "Visitor";
         const string Volunteer = "Volunteer";
+        const string AdjunctFaculty = "Adjunct Faculty";
+        const string Lecturer = "Lecturer";
 
         public static List<string> Types = new List<string>
         {
@@ -27,6 +29,8 @@ namespace Keas.Core.Models
             Undergrad,
             Visitor,
             Volunteer,
+            AdjunctFaculty,
+            Lecturer
         };
 
     }
