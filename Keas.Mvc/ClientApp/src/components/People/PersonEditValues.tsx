@@ -193,6 +193,8 @@ const PersonEditValues = (props: IProps) => {
         >
           <option value=''>-- Not Set --</option>
           <option value='Faculty'>Faculty</option>
+          <option value='Adjunct Faculty'>Adjunct Faculty</option>
+          <option value='Lecturer'>Lecturer</option>
           <option value='Research'>Research</option>
           <option value='Staff'>Staff</option>
           <option value='Admin Staff'>Admin Staff</option>
