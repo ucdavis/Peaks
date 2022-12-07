@@ -223,7 +223,7 @@ namespace Keas.Mvc.Services
         public async Task TrackEquipmentAssignmentUpdated(Equipment equipment)
         {
             var history = await _historyService.EquipmentAssignmentUpdated(equipment);
-            await _notificationService.EquipmentAssigned(equipment, history);
+            await _notificationService.EquipmentAssignmentUpdated(equipment, history); //This should not generated a "needsAssignment"
         }
         public async Task TrackWorkstationAssignmentUpdated(Workstation workstation)
         {

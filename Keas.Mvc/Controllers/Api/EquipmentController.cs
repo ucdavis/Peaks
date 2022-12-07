@@ -293,7 +293,7 @@ namespace Keas.Mvc.Controllers.Api
                 equipment.Assignment.ExpiresAt = DateTime.Parse(date); //TODO: Validate date is in the future...
                 equipment.Assignment.RequestedById = requestedByPerson.UserId;
                 equipment.Assignment.RequestedByName = requestedByPerson.Name;
-                await _eventService.TrackEquipmentAssignmentUpdated(equipment);
+                await _eventService.TrackEquipmentAssignmentUpdated(equipment); 
             }
             else
             {
