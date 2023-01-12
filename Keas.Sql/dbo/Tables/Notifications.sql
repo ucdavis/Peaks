@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[Notifications] (
+CREATE TABLE [dbo].[Notifications] (
     [Id]              INT            IDENTITY (1, 1) NOT NULL,
     [DateTimeCreated] DATETIME2 (7)  NOT NULL,
     [DateTimeSent]    DATETIME2 (7)  NULL,
@@ -32,3 +32,7 @@ GO
 CREATE NONCLUSTERED INDEX [IX_Notifications_HistoryId]
     ON [dbo].[Notifications]([HistoryId] ASC);
 
+
+GO
+
+CREATE NONCLUSTERED INDEX [IX_Notifications_Pending] ON [dbo].[Notifications] ([Pending] DESC, [UserId] ASC);
