@@ -23,6 +23,8 @@ CREATE TABLE [dbo].[Notifications] (
 
 
 
+
+
 GO
 CREATE NONCLUSTERED INDEX [IX_Notifications_UserId]
     ON [dbo].[Notifications]([UserId] ASC);
@@ -34,5 +36,8 @@ CREATE NONCLUSTERED INDEX [IX_Notifications_HistoryId]
 
 
 GO
+CREATE NONCLUSTERED INDEX [IX_Notifications_Pending_UserId] ON [dbo].[Notifications] ([Pending] DESC, [UserId] ASC) INCLUDE ([DateTimeCreated], [DateTimeSent], [Details], [HistoryId], [NeedsAccept], [TeamId])
 
-CREATE NONCLUSTERED INDEX [IX_Notifications_Pending] ON [dbo].[Notifications] ([Pending] DESC, [UserId] ASC);
+GO
+CREATE NONCLUSTERED INDEX [IX_Notifications_Team_DateCreated] ON [dbo].[Notifications] ([TeamId] ASC, [DateTimeCreated] DESC) INCLUDE ([DateTimeSent], [Details], [HistoryId], [NeedsAccept])
+

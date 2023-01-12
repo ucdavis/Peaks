@@ -14,8 +14,12 @@
     [room_share_use_type_code] VARCHAR (150) NULL,
     [room_share_use_type_name] VARCHAR (150) NULL,
     [Space_Key]                VARCHAR (150) NULL,
-    [Bldg_Asset_Code]          VARCHAR (150) NULL
+    [Bldg_Asset_Code]          VARCHAR (150) NULL,
+    [Room_Share_Station_Count] INT           NULL,
+    [Room_Name]                VARCHAR (150) NULL
 );
+
+
 
 
 GO
