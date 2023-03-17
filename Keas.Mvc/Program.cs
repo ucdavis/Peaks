@@ -102,7 +102,8 @@ namespace Keas.Mvc
                     .Enrich.WithProperty("AppEnvironment", loggingSection.GetValue<string>("Environment"))
                     .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(esUrl))
                     {
-                        IndexFormat = "aspnet-peaks-{0:yyyy.MM}"
+                        IndexFormat = "aspnet-peaks-{0:yyyy.MM}",
+                        TypeName = null
                     });
             }
 
