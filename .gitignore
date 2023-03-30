@@ -302,8 +302,6 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 
-.vscode/
-
 # Ignore test results meant for CI
 *.trx
 

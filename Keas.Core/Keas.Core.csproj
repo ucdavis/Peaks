@@ -1,18 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-      <TargetFramework>netcoreapp3.1</TargetFramework>
+      <TargetFramework>net6</TargetFramework>
       <LangVersion>8.0</LangVersion>
   </PropertyGroup>
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App"/>
 	</ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Humanizer.Core" Version="2.8.26" />
+    <PackageReference Include="Humanizer.Core" Version="2.14.1" />
     <PackageReference Include="libphonenumber-csharp" Version="8.12.7" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.5" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
-    <PackageReference Include="Razor.Templating.Core" Version="1.6.0" />
-    <PackageReference Include="Serilog" Version="2.7.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.15" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Razor.Templating.Core" Version="1.8.0" />
+    <PackageReference Include="Serilog" Version="2.12.0" />
   </ItemGroup>
 </Project>

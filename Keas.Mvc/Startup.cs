@@ -25,7 +25,6 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.AspNetCore.SpaServices;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
-using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -39,7 +38,6 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using SpaCliMiddleware;
-using StackifyLib;
 
 namespace Keas.Mvc
 {
@@ -163,7 +161,6 @@ namespace Keas.Mvc
             services.AddMvc(options => {
                 options.Filters.Add<SerilogControllerActionFilter>();
             })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
                 .AddXmlSerializerFormatters()
                 .AddNewtonsoftJson(options => {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
@@ -213,6 +210,7 @@ namespace Keas.Mvc
 
                 c.OperationFilter<SecurityRequirementsOperationFilter>(securityScheme);
             });
+            services.AddDatabaseDeveloperPageExceptionFilter();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -227,7 +225,6 @@ namespace Keas.Mvc
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
             }
             else
             {
