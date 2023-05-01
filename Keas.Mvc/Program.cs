@@ -13,7 +13,6 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
-using StackifyLib;
 
 namespace Keas.Mvc
 {
@@ -80,7 +79,6 @@ namespace Keas.Mvc
 
         static LoggerConfiguration CreateLogConfig(IConfigurationRoot configuration)
         {
-            configuration.ConfigureStackifyLogging();
             var loggingSection = configuration.GetSection("Stackify");
             var esUrl = loggingSection.GetValue<string>("ElasticUrl");
 

@@ -7,7 +7,6 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Exceptions;
 using Serilog.Sinks.Elasticsearch;
-using StackifyLib;
 
 namespace Keas.Jobs.Core
 {
@@ -41,7 +40,6 @@ namespace Keas.Jobs.Core
 
         static LoggerConfiguration CreateLogConfig(IConfigurationRoot configuration)
         {
-            configuration.ConfigureStackifyLogging();
             var loggingSection = configuration.GetSection("Stackify");
             var esUrl = loggingSection.GetValue<string>("ElasticUrl");
 
