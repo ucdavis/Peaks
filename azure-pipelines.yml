@@ -44,7 +44,8 @@ stages:
 
     - task: Npm@1
       inputs:
-        command: 'install --legacy-peer-deps'
+        command: 'custom'
+        customCommand: 'install --legacy-peer-deps'
         workingDir: './Keas.Mvc'
 
     - task: DotNetCoreCLI@2
