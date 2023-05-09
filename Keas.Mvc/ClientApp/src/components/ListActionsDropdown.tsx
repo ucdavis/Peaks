@@ -36,7 +36,7 @@ export default class ListActionsDropdown extends React.Component<
 
     return (
       <Dropdown
-        direction='left'
+        direction='start'
         isOpen={this.state.isOpen}
         toggle={this.toggle}
       >
