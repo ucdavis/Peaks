@@ -300,7 +300,7 @@ namespace Keas.Mvc
                 if (env.IsDevelopment())
                 {
                     // Specific route for HMR websocket.
-                    var spaHmrSocketRegex = "^(?!sockjs-node).*$";
+                    var spaHmrSocketRegex = "^(?!ws|.*?hot-update.js(on)?).*$";
 
                     endpoints.MapControllerRoute(
                         name: "TeamRoutes",

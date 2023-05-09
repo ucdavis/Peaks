@@ -6,7 +6,6 @@ import {
   FormGroup,
   Input,
   InputGroup,
-  InputGroupAddon,
   Label
 } from 'reactstrap';
 import { Context } from '../../Context';
@@ -69,15 +68,13 @@ const SearchUsers = (props: IProps) => {
           onChange={e => setSearch(e.target.value)}
           onKeyPress={e => handleKeyPress(e)}
         />
-        <InputGroupAddon addonType='append'>
-          <Button color='link' onClick={loadUser}>
-            {loading ? (
-              <i className='fas fa-spin fa-spinner' />
-            ) : (
-              <i className='fas fa-search fa-sm' />
-            )}
-          </Button>
-        </InputGroupAddon>
+        <Button color='link' onClick={loadUser}>
+          {loading ? (
+            <i className='fas fa-spin fa-spinner' />
+          ) : (
+            <i className='fas fa-search fa-sm' />
+          )}
+        </Button>
       </InputGroup>
     </FormGroup>
   );

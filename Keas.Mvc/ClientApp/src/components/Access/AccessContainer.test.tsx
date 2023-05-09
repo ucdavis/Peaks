@@ -115,7 +115,7 @@ describe('Access Container', () => {
       if (rowContent.includes('Real Access')) {
         foundIt = true;
         expect(rowContent).toContain('Ichigo Kurosaki'); // confirm assigned person is displayed
-        expect(rowContent).toContain(1); // confirm number of assignments is displayed
+        expect(rowContent).toContain('1'); // confirm number of assignments is displayed
       }
     });
 

@@ -22,7 +22,8 @@ const selectedSpace: ISpace = {
   floorName: 'Basement Floor',
   roomCategoryName: 'Assignable Area',
   orgId: 'AADM',
-  sqFt: '320'
+  sqFt: '320',
+  active: false
 };
 
 beforeEach(() => {

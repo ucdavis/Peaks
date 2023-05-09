@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import Button from 'reactstrap/lib/Button';
+import { Button } from 'reactstrap';
 import { IEquipment } from '../../models/Equipment';
 import { DateUtil } from '../../util/dates';
 

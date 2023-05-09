@@ -1,5 +1,5 @@
 ﻿import * as React from 'react';
-import Button from 'reactstrap/lib/Button';
+import { Button } from 'reactstrap';
 import { IKeySerial } from '../../models/KeySerials';
 import { DateUtil } from '../../util/dates';
 
