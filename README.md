@@ -27,6 +27,16 @@ Get the app settings from Box and put them in your secrets location
 
 `dotnet restore`
 
+// To use NVM for windows
+
+`nvm list available`
+
+`nvm install 18.16.0`
+
+//This is the current version of node we are using
+
+`nvm use 18.16.0`
+
 // when you are ready to debug locally
 
 `npm run debug`
