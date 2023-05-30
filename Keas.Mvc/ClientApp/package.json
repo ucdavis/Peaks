@@ -92,5 +92,9 @@
     "moduleNameMapper": {
       "\\.(css|less)$": "<rootDir>/src/components/specs/styleMock.ts"
     }
+  },
+  "engines": {
+    "npm": ">=9.5.1",
+    "node": ">=18.16.0"
   }
 }
