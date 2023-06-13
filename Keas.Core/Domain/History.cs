@@ -57,11 +57,12 @@ namespace Keas.Core.Domain {
                     return $"/equipment/details/{EquipmentId.Value}";
                 }
 
-                if (KeySerialId != null)
+                if (KeySerialId != null && KeyId != null) //Note, prior to this PR, the key id wasn't being tracked.
                 {
                     return $"/keys/details/{KeyId.Value}/keyserials/details/{KeySerialId.Value}";
                 }
-                //Key id too?
+                //Don't need one for only keyId as this link is only on the person page and that isn't relevant 
+
                 if (AccessId != null)
                 {
                     return $"/access/details/{AccessId.Value}";
