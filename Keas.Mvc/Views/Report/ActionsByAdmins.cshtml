@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <table id="dtDirectReports" class="table dataTable">
+            <table id="adminActions" class="table dataTable">
                 <thead>
                     <tr>
                         <th>
@@ -67,6 +67,7 @@
                             <tr>
                                 <td>@Html.DisplayFor(a => item.AssetType)</td>
                                 <td>@Html.DisplayFor(a => item.ActionType)</td>
+                                <td>@Html.DisplayFor(a => item.ActorId)</td>
                                 <td>@item.ActedDate.ToPacificTime().ToString("d")</td>
                                 <td>
                                     @Html.DisplayFor(a=> item.Description)
@@ -103,7 +104,7 @@
                 { extend: 'print' },
             ],
             "columnDefs": [
-                { "type": "date", "targets": [2] }
+                { "type": "date", "targets": [3] }
             ]
         });
     </script>
