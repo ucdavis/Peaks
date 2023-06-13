@@ -90,6 +90,7 @@ namespace Keas.Mvc.Services
                 AssetType = "KeySerial",
                 ActionType = "Created",
                 KeySerial = keySerial,
+                KeyId = keySerial.KeyId,
             };
             _context.Histories.Add(historyEntry);
             await _context.SaveChangesAsync();
@@ -241,7 +242,8 @@ namespace Keas.Mvc.Services
                 AssetType = "KeySerial",
                 ActionType = "Assigned",
                 KeySerialId = keySerial.Id,
-                TargetId = keySerial.KeySerialAssignment.PersonId
+                TargetId = keySerial.KeySerialAssignment.PersonId,
+                KeyId = keySerial.KeyId,
             };
             _context.Histories.Add(historyEntry);
             return historyEntry;
@@ -308,7 +310,8 @@ namespace Keas.Mvc.Services
                 AssetType = "KeySerial",
                 ActionType = "Unassigned",
                 KeySerialId = keySerial.Id,
-                TargetId = keySerial.KeySerialAssignment.PersonId
+                TargetId = keySerial.KeySerialAssignment.PersonId,
+                KeyId = keySerial.KeyId,
             };
             _context.Histories.Add(historyEntry);
             return historyEntry;
@@ -593,7 +596,8 @@ namespace Keas.Mvc.Services
                 AssetType = "KeySerial",
                 ActionType = "AssignmentUpdated",
                 KeySerial = keySerial,
-                TargetId = keySerial.KeySerialAssignment.PersonId
+                TargetId = keySerial.KeySerialAssignment.PersonId,
+                KeyId = keySerial.KeyId,
             };
             _context.Histories.Add(historyEntry);
             return historyEntry;
