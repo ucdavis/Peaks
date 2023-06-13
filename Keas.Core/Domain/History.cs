@@ -59,7 +59,7 @@ namespace Keas.Core.Domain {
 
                 if (KeySerialId != null)
                 {
-                    return $"/keys/details/2559/keyserials/details/{KeySerialId.Value}";
+                    return $"/keys/details/{KeyId.Value}/keyserials/details/{KeySerialId.Value}";
                 }
                 //Key id too?
                 if (AccessId != null)
