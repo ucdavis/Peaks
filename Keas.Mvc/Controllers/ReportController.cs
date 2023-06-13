@@ -86,7 +86,7 @@ namespace Keas.Mvc.Controllers
             if (start == null && end == null)
             {
                 model.Start = DateTime.UtcNow.ToPacificTime().Date.AddDays(-30);
-                model.End = DateTime.UtcNow.ToPacificTime().Date;
+                model.End = DateTime.UtcNow.ToPacificTime().Date.AddDays(1);
             }
             else
             {
@@ -104,8 +104,8 @@ namespace Keas.Mvc.Controllers
                 model.Histories = await _context.Histories.Where(a =>
                     a.ActionType != "Accepted" &&
                     a.ActorId == kerb &&
-                    a.ActedDate >= model.Start &&
-                    a.ActedDate <= model.End &&
+                    a.ActedDate >= model.Start.Value.FromPacificTime() &&
+                    a.ActedDate <= model.End.Value.FromPacificTime() &&
                     (
                         (a.AccessId != null && a.Access.Team.Slug == Team) ||
                         (a.EquipmentId != null && a.Equipment.Team.Slug == Team) ||
