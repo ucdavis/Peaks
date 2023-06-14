@@ -7,6 +7,8 @@ namespace Keas.Mvc.Models.ReportModels
 {
     public class AdminHistoryReportViewModel
     {
+        public string TeamSlug { get; set; }
+
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? Start { get; set; }

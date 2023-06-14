@@ -5,7 +5,7 @@
     <div class="card people-color">
         <div class="card-header-people">
             <div class="card-head">
-                <h2>Lets Spy for ISO</h2>
+                <h2>Admin Action History</h2>
             </div>
         </div>
 
@@ -73,7 +73,10 @@
                                     @Html.DisplayFor(a=> item.Description)
                                 </td>
                                 <td>
-                                    <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.Id)'>Details</a>
+                                    @if(item.Link != null)
+                                    {
+                                        <a href='@($"/{Model.TeamSlug}{item.Link}")' target="_blank">Details</a>
+                                    }
                                 </td>
                             </tr>
                         }

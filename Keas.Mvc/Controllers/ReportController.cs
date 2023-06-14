@@ -83,6 +83,7 @@ namespace Keas.Mvc.Controllers
         public async Task<ActionResult> ActionsByAdmins(DateTime? start, DateTime? end, int personID = 0)
         {
             var model = new AdminHistoryReportViewModel();
+            model.TeamSlug = Team;
             if (start == null && end == null)
             {
                 model.Start = DateTime.UtcNow.ToPacificTime().Date.AddDays(-30);
