@@ -1,15 +1,16 @@
 @using Keas.Core.Extensions;
 @model Keas.Mvc.Models.ReportModels.AdminHistoryReportViewModel
 
-<form asp-action="ActionsByAdmins" method="get">
-    <div class="card people-color">
-        <div class="card-header-people">
-            <div class="card-head">
-                <h2>Admin Action History</h2>
-            </div>
-        </div>
 
-        <div class="card-content">
+<div class="card people-color">
+    <div class="card-header-people">
+        <div class="card-head">
+            <h2>Admin Action History</h2>
+        </div>
+    </div>
+
+    <div class="card-content">
+        <form asp-action="ActionsByAdmins" method="get">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="row align-items-end">
                 <div class="col-sm">
@@ -37,56 +38,56 @@
                 <div class="col-sm">
                 </div>
             </div>
-
-            <table id="adminActions" class="table dataTable">
-                <thead>
-                    <tr>
-                        <th>
-                            Asset
-                        </th>
-                        <th>
-                            Action
-                        </th>
-                        <th>
-                            ActorId
-                        </th>
-                        <th>
-                            Date
-                        </th>
-                        <th>
-                            Description
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (Model.Histories != null)
+        </form>
+        <table id="adminActions" class="table dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        Asset
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                    <th>
+                        ActorId
+                    </th>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Histories != null)
+                {
+                    foreach (var item in Model.Histories)
                     {
-                        foreach (var item in Model.Histories)
-                        {
-                            <tr>
-                                <td>@Html.DisplayFor(a => item.AssetType)</td>
-                                <td>@Html.DisplayFor(a => item.ActionType)</td>
-                                <td>@Html.DisplayFor(a => item.ActorId)</td>
-                                <td>@item.ActedDate.ToPacificTime().ToString("d")</td>
-                                <td>
-                                    @Html.DisplayFor(a=> item.Description)
-                                </td>
-                                <td>
-                                    @if(item.Link != null)
-                                    {
-                                        <a href='@($"/{Model.TeamSlug}{item.Link}")' target="_blank">Details</a>
-                                    }
-                                </td>
-                            </tr>
-                        }
+                        <tr>
+                            <td>@Html.DisplayFor(a => item.AssetType)</td>
+                            <td>@Html.DisplayFor(a => item.ActionType)</td>
+                            <td>@Html.DisplayFor(a => item.ActorId)</td>
+                            <td>@item.ActedDate.ToPacificTime().ToString("d")</td>
+                            <td>
+                                @Html.DisplayFor(a=> item.Description)
+                            </td>
+                            <td>
+                                @if (item.Link != null)
+                                {
+                                    <a href='@($"/{Model.TeamSlug}{item.Link}")' target="_blank">Details</a>
+                                }
+                            </td>
+                        </tr>
                     }
-                </tbody>
-            </table>
+                }
+            </tbody>
+        </table>
 
-        </div>
     </div>
-</form>
+</div>
+
 
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")
