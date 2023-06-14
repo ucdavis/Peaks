@@ -61,12 +61,23 @@ namespace Keas.Core.Domain {
                 {
                     return $"/keys/details/{KeyId.Value}/keyserials/details/{KeySerialId.Value}";
                 }
-                //Don't need one for only keyId as this link is only on the person page and that isn't relevant 
+               
+                if(KeyId != null)
+                {
+                    return $"/keys/details/{KeyId.Value}";
+                }
 
                 if (AccessId != null)
                 {
                     return $"/access/details/{AccessId.Value}";
                 }
+
+                if(DocumentId != null && TargetId != null)
+                {
+                    return $"/people/details/{TargetId}";
+                }
+                
+                //Can't really do workstations, as they are related to spaces/people and we don't track the space id here
 
                 return null;
             }
