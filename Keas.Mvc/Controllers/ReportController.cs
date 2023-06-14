@@ -10,6 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Keas.Mvc.Models;
+using Keas.Core.Domain;
 
 namespace Keas.Mvc.Controllers
 {
@@ -76,6 +77,48 @@ namespace Keas.Mvc.Controllers
 
             return View(model);
 
+        }
+
+        [Authorize(Policy = AccessCodes.Codes.DepartmentAdminAccess)]
+        public async Task<ActionResult> ActionsByAdmins(DateTime? start, DateTime? end, int personID = 0)
+        {
+            var model = new AdminHistoryReportViewModel();
+            model.TeamSlug = Team;
+            if (start == null && end == null)
+            {
+                model.Start = DateTime.UtcNow.ToPacificTime().Date.AddDays(-30);
+                model.End = DateTime.UtcNow.ToPacificTime().Date.AddDays(1);
+            }
+            else
+            {
+                model.Start = start?.Date;
+                model.End = end?.Date;
+            }
+
+            var userIds = await _context.TeamPermissions.Where(a => a.Team.Slug == Team).Select(a => a.User.Id).Distinct().ToListAsync();
+            model.Admins = await _context.People.Where(a => a.Team.Slug == Team && userIds.Contains(a.User.Id)).ToListAsync();
+            model.Admins.Insert(0, new Person { Id = 0, FirstName = "--Select--" });
+
+            if (personID != 0)
+            {
+                var kerb = await _context.People.Where(a => a.Team.Slug == Team && a.Id == personID).Select(a => a.UserId).SingleAsync();
+                model.Histories = await _context.Histories.Where(a =>
+                    a.ActionType != "Accepted" &&
+                    a.ActorId == kerb &&
+                    a.ActedDate >= model.Start.Value.FromPacificTime() &&
+                    a.ActedDate <= model.End.Value.FromPacificTime() &&
+                    (
+                        (a.AccessId != null && a.Access.Team.Slug == Team) ||
+                        (a.EquipmentId != null && a.Equipment.Team.Slug == Team) ||
+                        (a.KeyId != null && a.Key.Team.Slug == Team) ||
+                        (a.KeySerialId != null && a.KeySerial.Key.Team.Slug == Team) ||
+                        (a.WorkstationId != null && a.Workstation.Team.Slug == Team) ||
+                        (a.DocumentId != null && a.Document.Team.Slug == Team)
+                    )
+                ).OrderByDescending(a => a.ActedDate).ToListAsync();
+            }
+
+            return View(model);
         }
 
         [Authorize(Policy = AccessCodes.Codes.DepartmentAdminAccess)]

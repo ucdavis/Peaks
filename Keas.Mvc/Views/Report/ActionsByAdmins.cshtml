@@ -1,0 +1,115 @@
+@using Keas.Core.Extensions;
+@model Keas.Mvc.Models.ReportModels.AdminHistoryReportViewModel
+
+
+<div class="card people-color">
+    <div class="card-header-people">
+        <div class="card-head">
+            <h2>Admin Action History</h2>
+        </div>
+    </div>
+
+    <div class="card-content">
+        <form asp-action="ActionsByAdmins" method="get">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row align-items-end">
+                <div class="col-sm">
+                    <h3>Filters</h3>
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label asp-for="Start" class="control-label"></label>
+                            <input id="start" asp-for="Start" class="form-control" />
+                            <span asp-validation-for="Start" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="End" class="control-label"></label>
+                            <input id="end" asp-for="End" class="form-control" />
+                            <span asp-validation-for="End" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PersonId" class="control-label"></label>
+                            <select asp-for="PersonId" class="form-control" asp-items="@(new SelectList(Model.Admins, "Id", "Name"))"></select>
+                        </div>
+                        <div class="form-group">
+                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm">
+                </div>
+            </div>
+        </form>
+        <table id="adminActions" class="table dataTable">
+            <thead>
+                <tr>
+                    <th>
+                        Asset
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                    <th>
+                        ActorId
+                    </th>
+                    <th>
+                        Date
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Histories != null)
+                {
+                    foreach (var item in Model.Histories)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(a => item.AssetType)</td>
+                            <td>@Html.DisplayFor(a => item.ActionType)</td>
+                            <td>@Html.DisplayFor(a => item.ActorId)</td>
+                            <td>@item.ActedDate.ToPacificTime().ToString("d")</td>
+                            <td>
+                                @Html.DisplayFor(a=> item.Description)
+                            </td>
+                            <td>
+                                @if (item.Link != null)
+                                {
+                                    <a href='@($"/{Model.TeamSlug}{item.Link}")' target="_blank">Details</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ImportJS");
+    }
+
+    <script type="text/javascript">
+        $('.dataTable').DataTable({
+            "dom": 'lBfrtip',
+            "buttons": [
+                { extend: 'copyHtml5' },
+                { extend: 'excelHtml5' },
+                { extend: 'csvHtml5' },
+                { extend: 'print' },
+            ],
+            "columnDefs": [
+                { "type": "date", "targets": [3] }
+            ]
+        });
+    </script>
+}
