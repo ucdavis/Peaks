@@ -1,6 +1,8 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Context } from '../../Context';
 import { IPerson, personSchema } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { validateEmail } from '../../util/email';
@@ -25,6 +27,8 @@ const CreatePerson = (props: IProps) => {
   const [person, setPerson] = useState<IPerson>(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [validState, setValidState] = useState<boolean>(false);
+  const [exisitngPerson, setExisitingPerson] = useState<IPerson>(null);
+  const context = useContext(Context);
 
   useEffect(() => {
     const validateState = () => {
@@ -95,6 +99,7 @@ const CreatePerson = (props: IProps) => {
         'The user could not be found. Please make sure you are searching the correct kerberos or email.'
       );
       setPerson(null);
+      setExisitingPerson(null);
     } else if (
       props.userIds.findIndex(x => x === selectedPerson.userId) !== -1 ||
       (selectedPerson.active && selectedPerson.teamId !== 0)
@@ -103,14 +108,17 @@ const CreatePerson = (props: IProps) => {
         'The user you have chosen is already active in this team.'
       );
       setPerson(null);
+      setExisitingPerson(selectedPerson);
     } else if (selectedPerson.active && selectedPerson.teamId === 0) {
       setMoreInfoString('You are creating a new person.');
       setPerson(selectedPerson);
+      setExisitingPerson(null);
     } else {
       setMoreInfoString(
         'This person was set to inactive. Continuing will set them to active.'
       );
       setPerson(selectedPerson);
+      setExisitingPerson(null);
     }
   };
 
@@ -150,6 +158,18 @@ const CreatePerson = (props: IProps) => {
             </div>
 
             {moreInfoString}
+            {exisitngPerson && (
+              <Link
+                to={`/${context.team.slug}/people/details/${exisitngPerson.id}`}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                <Button color='link' type='button'>
+                  <i className='fas fa-user fas-xs' aria-hidden='true' /> View
+                  Existing Person
+                </Button>
+              </Link>
+            )}
           </div>
         </ModalBody>
         <ModalFooter>
