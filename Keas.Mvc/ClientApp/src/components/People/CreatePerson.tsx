@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { Context } from '../../Context';
@@ -29,6 +30,7 @@ const CreatePerson = (props: IProps) => {
   const [validState, setValidState] = useState<boolean>(false);
   const [exisitngPerson, setExisitingPerson] = useState<IPerson>(null);
   const context = useContext(Context);
+  const history = useHistory();
 
   useEffect(() => {
     const validateState = () => {
@@ -72,6 +74,7 @@ const CreatePerson = (props: IProps) => {
     setPerson(null);
     setSubmitting(false);
     setValidState(false);
+    setExisitingPerson(null);
     props.closeModal();
   };
 
@@ -122,6 +125,14 @@ const CreatePerson = (props: IProps) => {
     }
   };
 
+  const viewExisitingPerson = () => {
+    // done this way to clear state and navigate to details page in the same tab
+    // since i think this should behave like if you click "person details" from the table
+    closeModal();
+    const { team } = context;
+    history.push(`/${team.slug}/people/details/${exisitngPerson.id}`);
+  };
+
   return (
     <div>
       <Button color='link' onClick={props.onAddNew}>
@@ -159,16 +170,10 @@ const CreatePerson = (props: IProps) => {
 
             {moreInfoString}
             {exisitngPerson && (
-              <Link
-                to={`/${context.team.slug}/people/details/${exisitngPerson.id}`}
-                target='_blank'
-                rel='noopener noreferrer'
-              >
-                <Button color='link' type='button'>
-                  <i className='fas fa-user fas-xs' aria-hidden='true' /> View
-                  Existing Person
-                </Button>
-              </Link>
+              <Button color='link' type='button' onClick={viewExisitingPerson}>
+                <i className='fas fa-user fas-xs' aria-hidden='true' /> View
+                Existing Person
+              </Button>
             )}
           </div>
         </ModalBody>
