@@ -21,22 +21,24 @@ interface IProps {
 }
 
 const EquipmentTableContainer = (props: IProps) => {
+  // state. array of strings from each filter's selected values
+  const [tagFilters, setTagFilters] = useState<string[]>([]);
   const [attributeFilters, setAttributeFilters] = useState<string[]>([]);
-  const [managedSystemFilters, setManagedSystemFilters] = useState<string[]>(
+  const [equipmentTypeFilters, setEquipmentTypeFilters] = useState<string[]>(
     []
   );
+  const [equipmentProtectionFilters, setEquipmentProtectionFilters] = useState<
+    string[]
+  >([]);
   const [
     equipmentAvailabilityFilters,
     setEquipmentAvailabilityFilters
   ] = useState<string[]>([]);
-  const [equipmentProtectionFilters, setEquipmentProtectionFilters] = useState<
-    string[]
-  >([]);
-  const [equipmentTypeFilters, setEquipmentTypeFilters] = useState<string[]>(
+  const [managedSystemFilters, setManagedSystemFilters] = useState<string[]>(
     []
   );
-  const [tagFilters, setTagFilters] = useState<string[]>([]);
 
+  // filter functions
   const checkTagFilters = (equipment: IEquipment, filters: string[]) => {
     return filters.every(
       f => !!equipment && !!equipment.tags && equipment.tags.includes(f)
