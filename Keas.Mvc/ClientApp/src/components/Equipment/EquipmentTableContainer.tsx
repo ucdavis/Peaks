@@ -22,7 +22,9 @@ interface IProps {
 
 const EquipmentTableContainer = (props: IProps) => {
   const [attributeFilters, setAttributeFilters] = useState<string[]>([]);
-  const [managedSystemFilters, setManagedSystemFilters] = useState<string[]>([]);
+  const [managedSystemFilters, setManagedSystemFilters] = useState<string[]>(
+    []
+  );
   const [
     equipmentAvailabilityFilters,
     setEquipmentAvailabilityFilters
@@ -34,25 +36,6 @@ const EquipmentTableContainer = (props: IProps) => {
     []
   );
   const [tagFilters, setTagFilters] = useState<string[]>([]);
-
-  const filterTags = (filters: string[]) => {
-    setTagFilters(filters);
-  };
-  const filterAttributes = (filters: string[]) => {
-    setAttributeFilters(filters);
-  };
-  const filterEquipmentType = (filters: string[]) => {
-    setEquipmentTypeFilters(filters);
-  };
-  const filterEquipmentProtection = (filters: string[]) => {
-    setEquipmentProtectionFilters(filters);
-  };
-  const filterEquipmentAvailability = (filters: string[]) => {
-    setEquipmentAvailabilityFilters(filters);
-  };
-  const filterManagedSystem = (filters: string[]) => {
-    setManagedSystemFilters(filters);
-  };
 
   const checkTagFilters = (equipment: IEquipment, filters: string[]) => {
     return filters.every(
@@ -115,7 +98,7 @@ const EquipmentTableContainer = (props: IProps) => {
         equipment.systemManagementId.includes(f)
     );
   };
-  
+
   let filteredEquipment = props.equipment;
   if (tagFilters.length > 0) {
     filteredEquipment = filteredEquipment.filter(x =>
@@ -143,7 +126,9 @@ const EquipmentTableContainer = (props: IProps) => {
     );
   }
   if (managedSystemFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x => checkManagedSystemFilters(x));
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkManagedSystemFilters(x)
+    );
   }
 
   return (
@@ -152,38 +137,38 @@ const EquipmentTableContainer = (props: IProps) => {
         <SearchTags
           tags={props.tags}
           selected={tagFilters}
-          onSelect={filterTags}
+          onSelect={setTagFilters}
           disabled={false}
         />
         <SearchAttributes
           selected={attributeFilters}
-          onSelect={filterAttributes}
+          onSelect={setAttributeFilters}
           disabled={false}
         />
         <SearchEquipmentType
           equipmentTypes={props.equipmentTypes}
           selected={equipmentTypeFilters}
-          onSelect={filterEquipmentType}
+          onSelect={setEquipmentTypeFilters}
           disabled={false}
           placeHolder='Search for Equipment Types'
         />
         <SearchEquipmentType
           equipmentTypes={props.equipmentProtectionLevels}
           selected={equipmentProtectionFilters}
-          onSelect={filterEquipmentProtection}
+          onSelect={setEquipmentProtectionFilters}
           disabled={false}
           placeHolder='Search Protection Level'
         />
         <SearchEquipmentType
           equipmentTypes={props.equipmentAvailabilityLevels}
           selected={equipmentAvailabilityFilters}
-          onSelect={filterEquipmentAvailability}
+          onSelect={setEquipmentAvailabilityFilters}
           disabled={false}
           placeHolder='Search Availability Level'
         />
         <SearchManagedSystem
           selected={managedSystemFilters}
-          onSelect={filterManagedSystem}
+          onSelect={setManagedSystemFilters}
           disabled={false}
         />
       </div>
