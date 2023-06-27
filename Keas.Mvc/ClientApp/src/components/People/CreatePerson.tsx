@@ -28,7 +28,7 @@ const CreatePerson = (props: IProps) => {
   const [person, setPerson] = useState<IPerson>(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [validState, setValidState] = useState<boolean>(false);
-  const [exisitngPerson, setExisitingPerson] = useState<IPerson>(null);
+  const [existingPerson, setExistingPerson] = useState<IPerson>(null);
   const context = useContext(Context);
   const history = useHistory();
 
@@ -74,7 +74,7 @@ const CreatePerson = (props: IProps) => {
     setPerson(null);
     setSubmitting(false);
     setValidState(false);
-    setExisitingPerson(null);
+    setExistingPerson(null);
     props.closeModal();
   };
 
@@ -102,7 +102,7 @@ const CreatePerson = (props: IProps) => {
         'The user could not be found. Please make sure you are searching the correct kerberos or email.'
       );
       setPerson(null);
-      setExisitingPerson(null);
+      setExistingPerson(null);
     } else if (
       props.userIds.findIndex(x => x === selectedPerson.userId) !== -1 ||
       (selectedPerson.active && selectedPerson.teamId !== 0)
@@ -111,26 +111,26 @@ const CreatePerson = (props: IProps) => {
         'The user you have chosen is already active in this team.'
       );
       setPerson(null);
-      setExisitingPerson(selectedPerson);
+      setExistingPerson(selectedPerson);
     } else if (selectedPerson.active && selectedPerson.teamId === 0) {
       setMoreInfoString('You are creating a new person.');
       setPerson(selectedPerson);
-      setExisitingPerson(null);
+      setExistingPerson(null);
     } else {
       setMoreInfoString(
         'This person was set to inactive. Continuing will set them to active.'
       );
       setPerson(selectedPerson);
-      setExisitingPerson(null);
+      setExistingPerson(null);
     }
   };
 
-  const viewExisitingPerson = () => {
+  const viewExistingPerson = () => {
     // done this way to clear state and navigate to details page in the same tab
     // since i think this should behave like if you click "person details" from the table
     closeModal();
     const { team } = context;
-    history.push(`/${team.slug}/people/details/${exisitngPerson.id}`);
+    history.push(`/${team.slug}/people/details/${existingPerson.id}`);
   };
 
   return (
@@ -169,8 +169,8 @@ const CreatePerson = (props: IProps) => {
             </div>
 
             {moreInfoString}
-            {exisitngPerson && (
-              <Button color='link' type='button' onClick={viewExisitingPerson}>
+            {existingPerson && (
+              <Button color='link' type='button' onClick={viewExistingPerson}>
                 <i className='fas fa-user fas-xs' aria-hidden='true' /> View
                 Existing Person
               </Button>
