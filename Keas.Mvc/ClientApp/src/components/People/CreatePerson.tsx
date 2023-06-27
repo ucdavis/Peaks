@@ -16,14 +16,6 @@ interface IProps {
   closeModal: () => void;
 }
 
-interface IState {
-  error: IValidationError;
-  moreInfoString: string; // for explaining results, e.g. if person is new or inactive
-  person: IPerson;
-  submitting: boolean;
-  validState: boolean;
-}
-
 const CreatePerson = (props: IProps) => {
   const [error, setError] = useState<IValidationError>({
     message: '',
