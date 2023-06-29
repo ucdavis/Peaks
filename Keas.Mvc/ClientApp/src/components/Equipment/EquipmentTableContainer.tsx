@@ -38,7 +38,7 @@ const EquipmentTableContainer = (props: IProps) => {
     []
   );
   const [makeFilters, setMakeFilters] = useState<object[]>([]);
-  // const [modelFilters, setModelFilters] = useState<string[]>([]);
+  const [modelFilters, setModelFilters] = useState<object[]>([]);
 
   // filter functions
   const checkTagFilters = (equipment: IEquipment, filters: string[]) => {
@@ -101,11 +101,20 @@ const EquipmentTableContainer = (props: IProps) => {
     return filters.some(
       f =>
         equipment &&
-        !!equipment.make.toLowerCase() &&
-        equipment.make.includes(f.label.toLowerCase())
+        !!equipment.make &&
+        equipment.make.toLowerCase().includes(f.label.toLowerCase())
+    );
+  };
+  const checkModelFilters = (equipment: IEquipment, filters) => {
+    return filters.some(
+      f =>
+        equipment &&
+        !!equipment.model &&
+        equipment.model.toLowerCase().includes(f.label.toLowerCase())
     );
   };
 
+  // actually filter equipment list
   let filteredEquipment = props.equipment;
   if (tagFilters.length > 0) {
     filteredEquipment = filteredEquipment.filter(x =>
@@ -142,9 +151,11 @@ const EquipmentTableContainer = (props: IProps) => {
       checkMakeFilters(x, makeFilters)
     );
   }
-  // if (modelFilters.length > 0) {
-  //   filteredEquipment = filteredEquipment.filter(x => checkModelFilters(x));
-  // }
+  if (modelFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkModelFilters(x, modelFilters)
+    );
+  }
 
   return (
     <div>
@@ -198,13 +209,13 @@ const EquipmentTableContainer = (props: IProps) => {
           id='searchMake'
           placeholder='Search for Make'
         />
-        {/* <SearchEquipmentType
-          options={[]}
+        <TypeaheadCustomOptions
           selected={modelFilters}
           onSelect={setModelFilters}
           disabled={false}
-          placeHolder='Search Equipment Models'
-        /> */}
+          id='searchModel'
+          placeholder='Search for Model'
+        />
       </div>
       <EquipmentTable
         equipment={filteredEquipment}
