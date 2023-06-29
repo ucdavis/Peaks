@@ -15,6 +15,8 @@ using Razor.Templating.Core;
 using Serilog;
 using System.Net.Mail;
 using System.Net.Mime;
+// avoid conflict with types in System.Net.Mime
+using MjMl = Mjml.Net;
 
 namespace Keas.Core.Services
 {
@@ -38,11 +40,13 @@ namespace Keas.Core.Services
 
         private readonly SmtpClient _client;
 
-        public EmailService(ApplicationDbContext dbContext, IOptions<SparkpostSettings> emailSettings)
+        private readonly MjMl.IMjmlRenderer _mjmlRenderer;
+
+        public EmailService(ApplicationDbContext dbContext, IOptions<SparkpostSettings> emailSettings, MjMl.IMjmlRenderer mjmlRenderer)
         {
             _dbContext = dbContext;
             _emailSettings = emailSettings.Value;
-
+            _mjmlRenderer = mjmlRenderer;
             _client = new SmtpClient(_emailSettings.Host, _emailSettings.Port) { Credentials = new NetworkCredential(_emailSettings.UserName, _emailSettings.Password), EnableSsl = true };
         }
 
@@ -87,13 +91,30 @@ namespace Keas.Core.Services
                 // body is our fallback text and we'll add an HTML view as an alternate.
                 message.Body = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
 
-                var htmlView = AlternateView.CreateAlternateViewFromString(await RazorTemplateEngine.RenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+                var htmlView = await RenderEmail("/Views/_ExpiringTeam.cshtml", expiringItems);
                 message.AlternateViews.Add(htmlView);
 
                 await _client.SendMailAsync(message);
             }
         }
-    
+
+        private async Task<AlternateView> RenderEmail(string view, object model = null)
+        {
+            var mjml = await RazorTemplateEngine.RenderAsync(view, model);
+            var xml = _mjmlRenderer.FixXML(mjml);
+
+            var (html, errors) = _mjmlRenderer.Render(xml);
+
+            if (errors.Any())
+            {
+                throw new Exception($"Error rendering notification for subject \"{view}\": {string.Join(Environment.NewLine, errors.Select(e => $"{e.Line}:{e.Column} {e.Error}"))}");
+            }
+
+            var alternateView = AlternateView.CreateAlternateViewFromString(html, new ContentType(MediaTypeNames.Text.Html));
+
+            return alternateView;
+        }
+
         public async Task SendTeamExpiringMessage(int teamId, ExpiringItemsEmailModel model)
         {
             if (_emailSettings.DisableSend.Equals("Yes", StringComparison.OrdinalIgnoreCase))
@@ -137,16 +158,16 @@ namespace Keas.Core.Services
                 // body is our fallback text and we'll add an HTML view as an alternate.
                 message.Body = "Your team has asset assignments that are expiring. Please visit https://peaks.ucdavis.edu to review them.";
 
-                var htmlView = AlternateView.CreateAlternateViewFromString(await RazorTemplateEngine.RenderAsync("/EmailTemplates/_ExpiringTeam.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+                var htmlView = await RenderEmail("/Views/_ExpiringTeam.cshtml", expiringItems);
                 message.AlternateViews.Add(htmlView);
 
                 await _client.SendMailAsync(message);
             }
         }
-        
+
         public async Task SendSamplePersonNotification()
         {
-            var personEmails = new PersonNotification [] { new PersonNotification{
+            var personEmails = new PersonNotification[] { new PersonNotification{
                 PersonName = "User Peaks",
                 PersonEmail = "donotreply@peaks-notify.ucdavis.edu",
                 NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
@@ -157,12 +178,22 @@ namespace Keas.Core.Services
             foreach (var personEmail in personEmails)
             {
                 //Get the notifications to send to this user.                
-                var personNotifications = new PersonNotification [] { new PersonNotification{
-                    PersonName = "User Peaks",
-                    PersonEmail = "donotreply@peaks-notify.ucdavis.edu",
-                    NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
-                    Team = new Team { Id = 1, Name = "Test", Slug = "Slug" }
-                }
+                var personNotifications = new PersonNotification[]
+                {
+                    new PersonNotification
+                    {
+                        PersonName = "User Peaks",
+                        PersonEmail = "donotreply@peaks-notify.ucdavis.edu",
+                        NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
+                        Team = new Team { Id = 1, Name = "Test", Slug = "Slug" },
+                    },
+                    new PersonNotification
+                    {
+                        PersonName = "User Peaks2",
+                        PersonEmail = "donotreply@peaks-notify.ucdavis.edu",
+                        NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
+                        Team = new Team { Id = 1, Name = "Test", Slug = "Slug" },
+                    }
                 }.GroupBy(a => a.TeamId).ToList();
 
                 using (var message = new MailMessage { From = new MailAddress("donotreply@peaks-notify.ucdavis.edu", "PEAKS Person Notification"), Subject = "PEAKS People Notification" })
@@ -172,7 +203,7 @@ namespace Keas.Core.Services
                     // body is our fallback text and we'll add an HTML view as an alternate.
                     message.Body = "The people in your teams have changed";
 
-                    var htmlView = AlternateView.CreateAlternateViewFromString(await RazorTemplateEngine.RenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications), new ContentType(MediaTypeNames.Text.Html));
+                    var htmlView = await RenderEmail("/Views/_Notification-person.cshtml", personNotifications);
                     message.AlternateViews.Add(htmlView);
 
                     try
@@ -222,7 +253,7 @@ namespace Keas.Core.Services
                     // body is our fallback text and we'll add an HTML view as an alternate.
                     message.Body = "The people in your teams have changed";
 
-                    var htmlView = AlternateView.CreateAlternateViewFromString(await RazorTemplateEngine.RenderAsync("/EmailTemplates/_Notification-person.cshtml", personNotifications), new ContentType(MediaTypeNames.Text.Html));
+                    var htmlView = await RenderEmail("/Views/_Notification-person.cshtml", personNotifications);
                     message.AlternateViews.Add(htmlView);
 
                     try
@@ -295,7 +326,7 @@ namespace Keas.Core.Services
                 // body is our fallback text and we'll add an HTML view as an alternate.
                 message.Body = BuildExpiringTextMessage(expiringItems);
 
-                var htmlView = AlternateView.CreateAlternateViewFromString(await RazorTemplateEngine.RenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+                var htmlView = await RenderEmail("/Views/_Expiring.cshtml", expiringItems);
                 message.AlternateViews.Add(htmlView);
 
                 await _client.SendMailAsync(message);
@@ -331,7 +362,7 @@ namespace Keas.Core.Services
                 // body is our fallback text and we'll add an HTML view as an alternate.
                 message.Body = BuildExpiringTextMessage(expiringItems);
 
-                var htmlView = AlternateView.CreateAlternateViewFromString(await RazorTemplateEngine.RenderAsync("/EmailTemplates/_Expiring.cshtml", expiringItems), new ContentType(MediaTypeNames.Text.Html));
+                var htmlView = await RenderEmail("/Views/_Expiring.cshtml", expiringItems);
                 message.AlternateViews.Add(htmlView);
 
                 await _client.SendMailAsync(message);
@@ -476,14 +507,14 @@ namespace Keas.Core.Services
             }
 
             //Old notification, older than 30 days set next notification to 1 month away.
-            if(deferOld && assignment.ExpiresAt < DateTime.UtcNow.AddDays(-30))
+            if (deferOld && assignment.ExpiresAt < DateTime.UtcNow.AddDays(-30))
             {
                 Log.Information($"Setting Access Assignment to next month. id: {assignment.Id}");
                 assignment.NextNotificationDate = DateTime.UtcNow.Date.AddMonths(1);
                 return;
             }
 
-            if(assignment.ExpiresAt < DateTime.UtcNow.AddDays(-30))
+            if (assignment.ExpiresAt < DateTime.UtcNow.AddDays(-30))
             {
                 Log.Information($"Old ExpiresAt Date. id: {assignment.Id} requested by {assignment.RequestedByName}");
             }
@@ -495,12 +526,16 @@ namespace Keas.Core.Services
         public async Task SendSampleNotificationMessage()
         {
             var user = new User { Email = "notifyme@ucdavis.edu", FirstName = "Notify", LastName = "Person" };
-            var notifications = new Notification[] { new Notification {
-                TeamId = 1,
-                User = user,
-                Details = "This is our details",
-                DateTimeCreated = DateTime.UtcNow,
-                Team = new Team { Id = 1, Name = "Test" }
+            var notifications = new Notification[] 
+            { 
+                new Notification
+                {
+                    TeamId = 1,
+                    User = user,
+                    Details = "This is our details",
+                    DateTimeCreated = DateTime.UtcNow,
+                    Team = new Team { Id = 1, Name = "Test" },
+                    NeedsAccept = true
                 }
             }.ToArray().GroupBy(g => g.TeamId);
 
@@ -512,7 +547,7 @@ namespace Keas.Core.Services
                 // body is our fallback text and we'll add an HTML view as an alternate.
                 message.Body = BuildNotificationTextMessage(notifications.ToList());
 
-                var htmlView = AlternateView.CreateAlternateViewFromString(await RazorTemplateEngine.RenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList()), new ContentType(MediaTypeNames.Text.Html));
+                var htmlView = await RenderEmail("/Views/_Notification.cshtml", notifications.ToList());
                 message.AlternateViews.Add(htmlView);
 
                 await _client.SendMailAsync(message);
@@ -541,7 +576,7 @@ namespace Keas.Core.Services
                 // body is our fallback text and we'll add an HTML view as an alternate.
                 message.Body = BuildNotificationTextMessage(notifications.ToList());
 
-                var htmlView = AlternateView.CreateAlternateViewFromString(await RazorTemplateEngine.RenderAsync("/EmailTemplates/_Notification.cshtml", notifications.ToList()), new ContentType(MediaTypeNames.Text.Html));
+                var htmlView = await RenderEmail("/Views/_Notification.cshtml", notifications.ToList());
                 message.AlternateViews.Add(htmlView);
 
                 await _client.SendMailAsync(message);
