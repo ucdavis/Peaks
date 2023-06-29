@@ -13,7 +13,7 @@ interface IProps {
 
 // allows user to search for any text in the given field
 // as opposed to from a dropdown list of options
-const SearchFilterCustomOption = (props: IProps) => {
+const TypeaheadCustomOptions = (props: IProps) => {
   return (
     <div>
       <Typeahead
@@ -35,4 +35,4 @@ const SearchFilterCustomOption = (props: IProps) => {
   );
 };
 
-export default SearchFilterCustomOption;
+export default TypeaheadCustomOptions;

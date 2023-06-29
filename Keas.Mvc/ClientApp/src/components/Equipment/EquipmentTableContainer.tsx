@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { IEquipment } from '../../models/Equipment';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentTable from './EquipmentTable';
-import SearchFilterCustomOption from '../Shared/SearchFilterCustomOption';
+import TypeaheadCustomOptions from '../Shared/TypeaheadCustomOptions';
 import SearchManagedSystem from './SearchManagedSystem';
-import SearchEquipmentType from './SearchEquipmentType';
+import TypeaheadDefinedOptions from '../Shared/TypeaheadDefinedOptions';
 
 interface IProps {
   equipment: IEquipment[];
@@ -156,40 +156,43 @@ const EquipmentTableContainer = (props: IProps) => {
           onSelect={setTagFilters}
           disabled={false}
         />
-        <SearchFilterCustomOption
+        <TypeaheadCustomOptions
           selected={attributeFilters}
           onSelect={setAttributeFilters}
           disabled={false}
           id='searchAttributes'
           placeholder='Search for Attributes'
         />
-        <SearchEquipmentType
-          equipmentTypes={props.equipmentTypes}
+        <TypeaheadDefinedOptions
+          definedOptions={props.equipmentTypes}
           selected={equipmentTypeFilters}
           onSelect={setEquipmentTypeFilters}
           disabled={false}
           placeHolder='Search for Equipment Types'
+          id='searchEquipmentTypes'
         />
-        <SearchEquipmentType
-          equipmentTypes={props.equipmentProtectionLevels}
+        <TypeaheadDefinedOptions
+          definedOptions={props.equipmentProtectionLevels}
           selected={equipmentProtectionFilters}
           onSelect={setEquipmentProtectionFilters}
           disabled={false}
           placeHolder='Search Protection Level'
+          id='equipmentProtectionLevels'
         />
-        <SearchEquipmentType
-          equipmentTypes={props.equipmentAvailabilityLevels}
+        <TypeaheadDefinedOptions
+          definedOptions={props.equipmentAvailabilityLevels}
           selected={equipmentAvailabilityFilters}
           onSelect={setEquipmentAvailabilityFilters}
           disabled={false}
           placeHolder='Search Availability Level'
+          id='equipmentAvailabilityLevels'
         />
         <SearchManagedSystem
           selected={managedSystemFilters}
           onSelect={setManagedSystemFilters}
           disabled={false}
         />
-        <SearchFilterCustomOption
+        <TypeaheadCustomOptions
           selected={makeFilters}
           onSelect={setMakeFilters}
           disabled={false}
