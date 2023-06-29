@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { IEquipment } from '../../models/Equipment';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentTable from './EquipmentTable';
-import TypeaheadCustomOptions from '../Shared/TypeaheadCustomOptions';
+import TypeaheadSearchCustomOptions from '../Shared/TypeaheadSearchCustomOptions';
 import SearchManagedSystem from './SearchManagedSystem';
-import TypeaheadDefinedOptions from '../Shared/TypeaheadDefinedOptions';
+import TypeaheadSearchDefinedOptions from '../Shared/TypeaheadSearchDefinedOptions';
 
 interface IProps {
   equipment: IEquipment[];
@@ -160,20 +160,22 @@ const EquipmentTableContainer = (props: IProps) => {
   return (
     <div>
       <div className='row'>
-        <SearchTags
-          tags={props.tags}
+        <TypeaheadSearchDefinedOptions
+          definedOptions={props.tags}
           selected={tagFilters}
           onSelect={setTagFilters}
           disabled={false}
+          placeHolder='Search for Tags'
+          id='searchTags'
         />
-        <TypeaheadCustomOptions
+        <TypeaheadSearchCustomOptions
           selected={attributeFilters}
           onSelect={setAttributeFilters}
           disabled={false}
           id='searchAttributes'
           placeholder='Search for Attributes'
         />
-        <TypeaheadDefinedOptions
+        <TypeaheadSearchDefinedOptions
           definedOptions={props.equipmentTypes}
           selected={equipmentTypeFilters}
           onSelect={setEquipmentTypeFilters}
@@ -181,7 +183,7 @@ const EquipmentTableContainer = (props: IProps) => {
           placeHolder='Search for Equipment Types'
           id='searchEquipmentTypes'
         />
-        <TypeaheadDefinedOptions
+        <TypeaheadSearchDefinedOptions
           definedOptions={props.equipmentProtectionLevels}
           selected={equipmentProtectionFilters}
           onSelect={setEquipmentProtectionFilters}
@@ -189,7 +191,7 @@ const EquipmentTableContainer = (props: IProps) => {
           placeHolder='Search Protection Level'
           id='equipmentProtectionLevels'
         />
-        <TypeaheadDefinedOptions
+        <TypeaheadSearchDefinedOptions
           definedOptions={props.equipmentAvailabilityLevels}
           selected={equipmentAvailabilityFilters}
           onSelect={setEquipmentAvailabilityFilters}
@@ -202,14 +204,14 @@ const EquipmentTableContainer = (props: IProps) => {
           onSelect={setManagedSystemFilters}
           disabled={false}
         />
-        <TypeaheadCustomOptions
+        <TypeaheadSearchCustomOptions
           selected={makeFilters}
           onSelect={setMakeFilters}
           disabled={false}
           id='searchMake'
           placeholder='Search for Make'
         />
-        <TypeaheadCustomOptions
+        <TypeaheadSearchCustomOptions
           selected={modelFilters}
           onSelect={setModelFilters}
           disabled={false}
