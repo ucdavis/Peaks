@@ -3,9 +3,9 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 interface IProps {
-  onSelect: (tag: string[]) => void;
+  onSelect: (tag: object[]) => void;
   disabled: boolean;
-  selected: string[];
+  selected: object[];
 }
 
 const SearchAttributes = (props: IProps) => {

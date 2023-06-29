@@ -23,7 +23,7 @@ interface IProps {
 const EquipmentTableContainer = (props: IProps) => {
   // state. array of strings from each filter's selected values
   const [tagFilters, setTagFilters] = useState<string[]>([]);
-  const [attributeFilters, setAttributeFilters] = useState<string[]>([]);
+  const [attributeFilters, setAttributeFilters] = useState<object[]>([]);
   const [equipmentTypeFilters, setEquipmentTypeFilters] = useState<string[]>(
     []
   );
@@ -37,6 +37,8 @@ const EquipmentTableContainer = (props: IProps) => {
   const [managedSystemFilters, setManagedSystemFilters] = useState<string[]>(
     []
   );
+  const [makeFilters, setMakeFilters] = useState<object[]>([]);
+  // const [modelFilters, setModelFilters] = useState<string[]>([]);
 
   // filter functions
   const checkTagFilters = (equipment: IEquipment, filters: string[]) => {
@@ -44,8 +46,8 @@ const EquipmentTableContainer = (props: IProps) => {
       f => !!equipment && !!equipment.tags && equipment.tags.includes(f)
     );
   };
-
   const checkAttributeFilters = (equipment: IEquipment, filters) => {
+    console.log('attribute filters:', equipment, filters);
     for (const filter of filters) {
       if (
         !equipment.attributes ||
@@ -61,7 +63,6 @@ const EquipmentTableContainer = (props: IProps) => {
     }
     return true;
   };
-
   const checkEquipmentTypeFilters = (equipment: IEquipment) => {
     const filters = equipmentTypeFilters;
     return filters.some(
@@ -70,7 +71,6 @@ const EquipmentTableContainer = (props: IProps) => {
         (equipment && !equipment.type && f === 'Default')
     );
   };
-
   const checkEquipmentProtectionFilters = (equipment: IEquipment) => {
     const filters = equipmentProtectionFilters;
     return filters.some(
@@ -80,7 +80,6 @@ const EquipmentTableContainer = (props: IProps) => {
         equipment.protectionLevel === f
     );
   };
-
   const checkEquipmentAvailabilityFilters = (equipment: IEquipment) => {
     const filters = equipmentAvailabilityFilters;
     return filters.some(
@@ -90,7 +89,6 @@ const EquipmentTableContainer = (props: IProps) => {
         equipment.availabilityLevel === f
     );
   };
-
   const checkManagedSystemFilters = (equipment: IEquipment) => {
     const filters = managedSystemFilters;
     return filters.some(
@@ -98,6 +96,14 @@ const EquipmentTableContainer = (props: IProps) => {
         equipment &&
         !!equipment.systemManagementId &&
         equipment.systemManagementId.includes(f)
+    );
+  };
+  const checkMakeFilters = (equipment: IEquipment, filters) => {
+    return filters.some(
+      f =>
+        equipment &&
+        !!equipment.make.toLowerCase() &&
+        equipment.make.includes(f.label.toLowerCase())
     );
   };
 
@@ -132,6 +138,14 @@ const EquipmentTableContainer = (props: IProps) => {
       checkManagedSystemFilters(x)
     );
   }
+  if (makeFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkMakeFilters(x, makeFilters)
+    );
+  }
+  // if (modelFilters.length > 0) {
+  //   filteredEquipment = filteredEquipment.filter(x => checkModelFilters(x));
+  // }
 
   return (
     <div>
@@ -173,6 +187,18 @@ const EquipmentTableContainer = (props: IProps) => {
           onSelect={setManagedSystemFilters}
           disabled={false}
         />
+        <SearchAttributes
+          selected={makeFilters}
+          onSelect={setMakeFilters}
+          disabled={false}
+        />
+        {/* <SearchEquipmentType
+          options={[]}
+          selected={modelFilters}
+          onSelect={setModelFilters}
+          disabled={false}
+          placeHolder='Search Equipment Models'
+        /> */}
       </div>
       <EquipmentTable
         equipment={filteredEquipment}
