@@ -16,10 +16,10 @@ import { PermissionsUtil } from '../../util/permissions';
 import AssociateSpace from '../Keys/AssociateSpace';
 import DisassociateSpace from '../Keys/DisassociateSpace';
 import Denied from '../Shared/Denied';
-import SearchTags from '../Tags/SearchTags';
 import SpacesDetails from './SpacesDetails';
 import SpacesList from './SpacesList';
 import SpacesTable from './SpacesTable';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   selectedKeyInfo?: IKeyInfo;
@@ -108,11 +108,13 @@ const SpacesContainer = (props: IProps) => {
 
     return (
       <div>
-        <SearchTags
-          tags={context.tags}
+        <SearchDefinedOptions
+          definedOptions={context.tags}
           selected={tagFilters}
           onSelect={filterTags}
           disabled={false}
+          placeHolder='Search for Tags'
+          id='searchTagsSpaces'
         />
         <SpacesTable
           spaces={filteredSpaces}

@@ -14,7 +14,6 @@ import { IMatchParams } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
-import SearchTags from '../Tags/SearchTags';
 import AssociateSpace from './AssociateSpace';
 import CreateKey from './CreateKey';
 import DeleteKey from './DeleteKey';
@@ -22,6 +21,7 @@ import DisassociateSpace from './DisassociateSpace';
 import KeyDetailContainer from './KeyDetailContainer';
 import KeyList from './KeyList';
 import KeyTable from './KeyTable';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   assetInUseUpdated?: (
@@ -115,11 +115,13 @@ const KeyContainer = (props: IProps) => {
 
     return (
       <div>
-        <SearchTags
-          tags={context.tags}
+        <SearchDefinedOptions
+          definedOptions={context.tags}
           disabled={false}
           selected={tagFilters}
           onSelect={onTagsFiltered}
+          placeHolder='Search for Tags'
+          id='searchTagsKeys'
         />
         <KeyTable
           keysInfo={filteredKeys}

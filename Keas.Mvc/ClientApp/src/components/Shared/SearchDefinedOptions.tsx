@@ -13,7 +13,7 @@ interface IProps {
 
 // user searches and picks from a list of pre-defined options
 // these are either hardcoded or fetched per team
-const TypeaheadSearchDefinedOptions = (props: IProps) => {
+const SearchDefinedOptions = (props: IProps) => {
   return (
     <div>
       <Typeahead
@@ -33,4 +33,4 @@ const TypeaheadSearchDefinedOptions = (props: IProps) => {
   );
 };
 
-export default TypeaheadSearchDefinedOptions;
+export default SearchDefinedOptions;

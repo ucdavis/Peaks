@@ -7,8 +7,8 @@ import DatePicker from 'react-date-picker';
 import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';
-import SearchTags from '../Tags/SearchTags';
 import AssignPerson from './AssignPerson';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   changeProperty?: (property: string, value: any) => void;
@@ -219,8 +219,8 @@ const PersonEditValues = (props: IProps) => {
 
       <FormGroup>
         <Label for='Tags'>Tags</Label>
-        <SearchTags
-          tags={props.tags}
+        <SearchDefinedOptions
+          definedOptions={props.tags}
           disabled={props.disableEditing}
           selected={
             !!props.selectedPerson.tags
@@ -228,6 +228,8 @@ const PersonEditValues = (props: IProps) => {
               : []
           }
           onSelect={e => props.changeProperty('tags', e.join(','))}
+          placeHolder='Search for Tags'
+          id='searchTagsPersonEditValues'
         />
       </FormGroup>
     </div>
