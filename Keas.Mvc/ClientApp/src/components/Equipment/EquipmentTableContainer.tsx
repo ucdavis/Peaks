@@ -196,10 +196,12 @@ const EquipmentTableContainer = (props: IProps) => {
           placeHolder='Search Availability Level'
           id='equipmentAvailabilityLevels'
         />
-        <SearchManagedSystem
+        <SearchCustomOptions
           selected={managedSystemFilters}
           onSelect={setManagedSystemFilters}
           disabled={false}
+          placeholder='Search for Managed System Id'
+          id='searchBigfix'
         />
         <SearchCustomOptions
           selected={makeFilters}
