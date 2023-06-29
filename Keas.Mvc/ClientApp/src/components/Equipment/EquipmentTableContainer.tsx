@@ -47,7 +47,6 @@ const EquipmentTableContainer = (props: IProps) => {
     );
   };
   const checkAttributeFilters = (equipment: IEquipment, filters) => {
-    console.log('attribute filters:', equipment, filters);
     for (const filter of filters) {
       if (
         !equipment.attributes ||
