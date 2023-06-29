@@ -6,13 +6,17 @@ interface IProps {
   onSelect: (tag: object[]) => void;
   disabled: boolean;
   selected: object[];
+  placeholder: string;
+  id: string;
 }
 
-const SearchAttributes = (props: IProps) => {
+// allows user to search for any text in the given field
+// as opposed to from a dropdown list of options
+const SearchFilterCustomOption = (props: IProps) => {
   return (
     <div>
       <Typeahead
-        id='searchAttributes' // for accessibility
+        id={props.id} // for accessibility
         options={[]}
         disabled={props.disabled}
         multiple={true}
@@ -21,7 +25,7 @@ const SearchAttributes = (props: IProps) => {
           props.onSelect(selected);
         }}
         selected={props.selected}
-        placeholder='Search for Attributes'
+        placeholder={props.placeholder}
         allowNew={true}
         emptyLabel={''}
         newSelectionPrefix='Search for: '
@@ -30,4 +34,4 @@ const SearchAttributes = (props: IProps) => {
   );
 };
 
-export default SearchAttributes;
+export default SearchFilterCustomOption;

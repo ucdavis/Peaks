@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { IEquipment } from '../../models/Equipment';
 import SearchTags from '../Tags/SearchTags';
 import EquipmentTable from './EquipmentTable';
-import SearchAttributes from './SearchAttributes';
+import SearchFilterCustomOption from '../Shared/SearchFilterCustomOption';
 import SearchManagedSystem from './SearchManagedSystem';
 import SearchEquipmentType from './SearchEquipmentType';
 
@@ -156,10 +156,12 @@ const EquipmentTableContainer = (props: IProps) => {
           onSelect={setTagFilters}
           disabled={false}
         />
-        <SearchAttributes
+        <SearchFilterCustomOption
           selected={attributeFilters}
           onSelect={setAttributeFilters}
           disabled={false}
+          id='searchAttributes'
+          placeholder='Search for Attributes'
         />
         <SearchEquipmentType
           equipmentTypes={props.equipmentTypes}
@@ -187,10 +189,12 @@ const EquipmentTableContainer = (props: IProps) => {
           onSelect={setManagedSystemFilters}
           disabled={false}
         />
-        <SearchAttributes
+        <SearchFilterCustomOption
           selected={makeFilters}
           onSelect={setMakeFilters}
           disabled={false}
+          id='searchMake'
+          placeholder='Search for Make'
         />
         {/* <SearchEquipmentType
           options={[]}
