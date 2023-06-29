@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { IEquipment } from '../../models/Equipment';
 import EquipmentTable from './EquipmentTable';
-import SearchCustomOptions from '../Shared/TypeaheadSearchCustomOptions';
+import SearchCustomOptions from '../Shared/SearchCustomOptions';
 import SearchManagedSystem from './SearchManagedSystem';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
@@ -22,7 +22,7 @@ interface IProps {
 const EquipmentTableContainer = (props: IProps) => {
   // state. array of strings from each filter's selected values
   const [tagFilters, setTagFilters] = useState<string[]>([]);
-  const [attributeFilters, setAttributeFilters] = useState<object[]>([]);
+  const [attributeFilters, setAttributeFilters] = useState<string[]>([]);
   const [equipmentTypeFilters, setEquipmentTypeFilters] = useState<string[]>(
     []
   );
@@ -36,8 +36,8 @@ const EquipmentTableContainer = (props: IProps) => {
   const [managedSystemFilters, setManagedSystemFilters] = useState<string[]>(
     []
   );
-  const [makeFilters, setMakeFilters] = useState<object[]>([]);
-  const [modelFilters, setModelFilters] = useState<object[]>([]);
+  const [makeFilters, setMakeFilters] = useState<string[]>([]);
+  const [modelFilters, setModelFilters] = useState<string[]>([]);
 
   // filter functions
   const checkTagFilters = (equipment: IEquipment, filters: string[]) => {
@@ -96,20 +96,22 @@ const EquipmentTableContainer = (props: IProps) => {
         equipment.systemManagementId.includes(f)
     );
   };
-  const checkMakeFilters = (equipment: IEquipment, filters) => {
+  const checkMakeFilters = (equipment: IEquipment) => {
+    const filters = makeFilters;
     return filters.some(
       f =>
         equipment &&
         !!equipment.make &&
-        equipment.make.toLowerCase().includes(f.label.toLowerCase())
+        equipment.make.toLowerCase().includes(f.toLowerCase())
     );
   };
-  const checkModelFilters = (equipment: IEquipment, filters) => {
+  const checkModelFilters = (equipment: IEquipment) => {
+    const filters = modelFilters;
     return filters.some(
       f =>
         equipment &&
         !!equipment.model &&
-        equipment.model.toLowerCase().includes(f.label.toLowerCase())
+        equipment.model.toLowerCase().includes(f.toLowerCase())
     );
   };
 
@@ -146,14 +148,10 @@ const EquipmentTableContainer = (props: IProps) => {
     );
   }
   if (makeFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkMakeFilters(x, makeFilters)
-    );
+    filteredEquipment = filteredEquipment.filter(x => checkMakeFilters(x));
   }
   if (modelFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkModelFilters(x, modelFilters)
-    );
+    filteredEquipment = filteredEquipment.filter(x => checkModelFilters(x));
   }
 
   return (
