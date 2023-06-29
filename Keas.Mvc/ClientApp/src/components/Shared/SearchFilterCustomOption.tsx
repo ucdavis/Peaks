@@ -3,6 +3,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 interface IProps {
+  // object will look like: { customOption: true, id: 'id-1', label: 'search text'}
   onSelect: (tag: object[]) => void;
   disabled: boolean;
   selected: object[];
