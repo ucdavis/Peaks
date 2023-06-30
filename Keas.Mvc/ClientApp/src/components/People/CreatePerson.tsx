@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Context } from '../../Context';
 import { IPerson, personSchema } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { validateEmail } from '../../util/email';
@@ -16,14 +19,6 @@ interface IProps {
   closeModal: () => void;
 }
 
-interface IState {
-  error: IValidationError;
-  moreInfoString: string; // for explaining results, e.g. if person is new or inactive
-  person: IPerson;
-  submitting: boolean;
-  validState: boolean;
-}
-
 const CreatePerson = (props: IProps) => {
   const [error, setError] = useState<IValidationError>({
     message: '',
@@ -33,6 +28,9 @@ const CreatePerson = (props: IProps) => {
   const [person, setPerson] = useState<IPerson>(null);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [validState, setValidState] = useState<boolean>(false);
+  const [existingPerson, setExistingPerson] = useState<IPerson>(null);
+  const context = useContext(Context);
+  const history = useHistory();
 
   useEffect(() => {
     const validateState = () => {
@@ -76,6 +74,7 @@ const CreatePerson = (props: IProps) => {
     setPerson(null);
     setSubmitting(false);
     setValidState(false);
+    setExistingPerson(null);
     props.closeModal();
   };
 
@@ -103,6 +102,7 @@ const CreatePerson = (props: IProps) => {
         'The user could not be found. Please make sure you are searching the correct kerberos or email.'
       );
       setPerson(null);
+      setExistingPerson(null);
     } else if (
       props.userIds.findIndex(x => x === selectedPerson.userId) !== -1 ||
       (selectedPerson.active && selectedPerson.teamId !== 0)
@@ -111,15 +111,26 @@ const CreatePerson = (props: IProps) => {
         'The user you have chosen is already active in this team.'
       );
       setPerson(null);
+      setExistingPerson(selectedPerson);
     } else if (selectedPerson.active && selectedPerson.teamId === 0) {
       setMoreInfoString('You are creating a new person.');
       setPerson(selectedPerson);
+      setExistingPerson(null);
     } else {
       setMoreInfoString(
         'This person was set to inactive. Continuing will set them to active.'
       );
       setPerson(selectedPerson);
+      setExistingPerson(null);
     }
+  };
+
+  const viewExistingPerson = () => {
+    // done this way to clear state and navigate to details page in the same tab
+    // since i think this should behave like if you click "person details" from the table
+    closeModal();
+    const { team } = context;
+    history.push(`/${team.slug}/people/details/${existingPerson.id}`);
   };
 
   return (
@@ -158,6 +169,12 @@ const CreatePerson = (props: IProps) => {
             </div>
 
             {moreInfoString}
+            {existingPerson && (
+              <Button color='link' type='button' onClick={viewExistingPerson}>
+                <i className='fas fa-user fas-xs' aria-hidden='true' /> View
+                Existing Person
+              </Button>
+            )}
           </div>
         </ModalBody>
         <ModalFooter>
