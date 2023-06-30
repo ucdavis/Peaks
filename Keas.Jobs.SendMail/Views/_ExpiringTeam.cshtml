@@ -40,12 +40,14 @@
 
     @if (accessCount > 0)
     {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="10px">
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="10px">
         <mj-column width="90%" vertical-align="top">
           <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
           <h2>Access</h2>
           </mj-text>
         </mj-column>
+      </mj-section>
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="10px">
         <mj-column width="90%" vertical-align="top" border-left="4px solid #203F60" padding-left="10px">
           <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
             <p><b>@accessCount</b> expiring @(accessCount == 1 ? "item" : "items")</p>
@@ -56,12 +58,14 @@
 
     @if (keyCount > 0)
     {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="10px">
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="10px">
         <mj-column width="90%" vertical-align="top">
           <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
           <h2>Keys</h2>
           </mj-text>
         </mj-column>
+      </mj-section>
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="10px">
         <mj-column width="90%" vertical-align="top" border-left="4px solid #203F60" padding-left="10px">
           <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
             <p><b>@keyCount</b> expiring @(keyCount == 1 ? "item" : "items")</p>
@@ -72,12 +76,14 @@
 
     @if (equipmentCount > 0)
     {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="10px">
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="10px">
         <mj-column width="90%" vertical-align="top">
           <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
           <h2>Equipment</h2>
           </mj-text>
         </mj-column>
+      </mj-section>
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="10px">
         <mj-column width="90%" vertical-align="top" border-left="4px solid #203F60" padding-left="10px">
           <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
             <p><b>@equipmentCount</b> expiring @(equipmentCount == 1 ? "item" : "items")</p>
@@ -88,12 +94,14 @@
 
     @if (workstationCount > 0)
     {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="10px">
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="10px">
         <mj-column width="90%" vertical-align="top">
           <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
           <h2>Workstations</h2>
           </mj-text>
         </mj-column>
+      </mj-section>
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="10px">
         <mj-column width="90%" vertical-align="top" border-left="4px solid #203F60" padding-left="10px">
           <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
             <p><b>@workstationCount</b> expiring @(workstationCount == 1 ? "item" : "items")</p>
