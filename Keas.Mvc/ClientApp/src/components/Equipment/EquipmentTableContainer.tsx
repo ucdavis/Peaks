@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { IEquipment } from '../../models/Equipment';
 import EquipmentTable from './EquipmentTable';
 import SearchCustomOptions from '../Shared/SearchCustomOptions';
-import SearchManagedSystem from './SearchManagedSystem';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
