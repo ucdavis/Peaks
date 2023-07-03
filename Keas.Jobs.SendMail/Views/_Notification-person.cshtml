@@ -16,14 +16,6 @@
       </mj-column>
     </mj-section>
         
-    <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="10px" padding-top="5px">
-      <mj-column width="90%" vertical-align="top" border-bottom="1px solid #c7c8cc">
-        <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
-        <h4>Notification Details</h4>
-        </mj-text>
-      </mj-column>
-    </mj-section>
-
     @foreach (IGrouping<int?, PersonNotification> notificationGroup in Model)
     {
         var teamName = "Not Set";
@@ -43,17 +35,24 @@
         </mj-section>
         @foreach (var notification in notificationGroup)
         {
+          @if(!firstNotification)
+          {
+            <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" border-top="0px" border-bottom="0px" padding-bottom="3px" padding-top="0px">
+            @* This is just for padding with the standard background color*@
+            </mj-section>
+          }
           <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="0px">
-            <mj-column width="90%" vertical-align="top" border-left="4px solid @ActionColor(notification.Action)" padding-left="10px" border-top="@(firstNotification ? null : "1px solid #c7c8cc")">
+            <mj-column width="90%" vertical-align="top" border-left="4px solid @ActionColor(notification.Action)" padding-left="10px">
               <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
-              <p><b>Person:</b> @notification.PersonName (@notification.PersonEmail)</p>
-              <p><b>Action Date:</b> @notification.ActionDate.ToPacificTime().ToString("g")</p>
-              <p><b>Actor:</b> @notification.ActorName</p>
-              <p><b>Action:</b> @notification.Action</p>
-              @if(!string.IsNullOrWhiteSpace(notification.Notes))
-              {
-                <p><b>Notes:</b> @notification.Notes</p>
-              }
+                <p>
+                  <b>@notification.ActorName</b> @notification.Action.ToLower()
+                  <b>@notification.PersonName</b> (@notification.PersonEmail)
+                  on @notification.ActionDate.ToPacificTime().ToString("g").
+                  @if(!string.IsNullOrWhiteSpace(notification.Notes))
+                  {
+                    <b>Notes:</b> @notification.Notes
+                  }
+                </p>
               </mj-text>
             </mj-column>
           </mj-section>

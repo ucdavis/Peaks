@@ -24,14 +24,6 @@
       </mj-column>
     </mj-section>
         
-    <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="10px" padding-top="5px">
-      <mj-column width="90%" vertical-align="top" border-bottom="1px solid #c7c8cc">
-        <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
-        <h4>Notification Details</h4>
-        </mj-text>
-      </mj-column>
-    </mj-section>
-
     @foreach (IGrouping<int?, Notification> notificationGroup in Model)
     {
       var acceptStatement = notificationGroup.Any(n => n.NeedsAccept);
