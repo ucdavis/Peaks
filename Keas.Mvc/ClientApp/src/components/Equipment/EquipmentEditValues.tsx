@@ -4,9 +4,9 @@ import { IEquipment, IEquipmentAttribute } from '../../models/Equipment';
 import { IValidationError } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';
 import SearchSpaces from '../Spaces/SearchSpaces';
-import SearchTags from '../Tags/SearchTags';
 import EquipmentAttributes from './EquipmentAttributes';
 import EquipmentManagedSystem from './EquipmentManagedSystem';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   changeProperty?: (property: string, value: any) => void;
@@ -297,8 +297,8 @@ const EquipmentEditValues = (props: IProps) => {
 
         <FormGroup>
           <Label for='tags'>Tags</Label>
-          <SearchTags
-            tags={props.tags}
+          <SearchDefinedOptions
+            definedOptions={props.tags}
             disabled={props.disableEditing}
             selected={
               !!props.selectedEquipment.tags
@@ -306,6 +306,8 @@ const EquipmentEditValues = (props: IProps) => {
                 : []
             }
             onSelect={e => props.changeProperty('tags', e.join(','))}
+            placeHolder='Search for Tags'
+            id='searchTagsEquipmentEditValues'
           />
           <FormFeedback>
             {error && error.path === 'tags' && error.message}

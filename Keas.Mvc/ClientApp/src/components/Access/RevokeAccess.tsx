@@ -3,8 +3,8 @@ import { useState } from 'react';
 import { Alert, Button } from 'reactstrap';
 import { IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
-import SearchTags from '../Tags/SearchTags';
 import AccessModal from './AccessModal';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   assignment?: IAccessAssignment;
@@ -54,11 +54,13 @@ const RevokeAccess = (props: IProps) => {
           <p>
             <b>Tags</b>
           </p>
-          <SearchTags
-            tags={[]}
+          <SearchDefinedOptions
+            definedOptions={[]}
             disabled={true}
             onSelect={() => {}}
             selected={assignment.access.tags.split(',')}
+            placeHolder='Search for Tags'
+            id='searchTagsRevokeAccess'
           />
         </>
       )}

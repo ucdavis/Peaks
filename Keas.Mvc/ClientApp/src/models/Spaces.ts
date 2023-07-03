@@ -21,3 +21,9 @@ export interface ISpace {
   roomCategoryName: string;
   active: boolean;
 }
+
+export interface ISpaceShort {
+  id: number;
+  bldgName: string;
+  roomNumber: string;
+}

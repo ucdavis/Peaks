@@ -102,6 +102,26 @@ namespace Keas.Mvc.Controllers.Api
             return Json(spaces);
         }
 
+[HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Space>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> ShortList()
+        {
+            var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
+
+            var sql = SpaceQueries.List;            
+
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId });
+
+            var spaces = result.Select(r => new {
+                id = r.Id,
+                bldgName = r.BldgName,
+                roomNumber = r.RoomNumber
+            });
+
+            return Json(spaces);
+        }
+
+
         private string removeDuplications(string tags) 
         {
             return !string.IsNullOrWhiteSpace(tags) ? string.Join(",", tags.ToString().Split(',').Distinct().ToArray()) : "";

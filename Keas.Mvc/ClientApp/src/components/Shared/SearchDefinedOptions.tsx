@@ -3,19 +3,22 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 interface IProps {
-  onSelect: (equipmentType: string[]) => void;
+  onSelect: (definedOptions: string[]) => void;
   disabled: boolean;
   selected: string[];
-  equipmentTypes: string[];
+  definedOptions: string[];
   placeHolder: string;
+  id: string;
 }
 
-const SearchEquipmentType = (props: IProps) => {
+// user searches and picks from a list of pre-defined options
+// these are either hardcoded or fetched per team
+const SearchDefinedOptions = (props: IProps) => {
   return (
     <div>
       <Typeahead
-        id='searchEquipmentType' // for accessibility
-        options={props.disabled ? [] : props.equipmentTypes}
+        id={props.id} // for accessibility
+        options={props.disabled ? [] : props.definedOptions}
         disabled={props.disabled}
         multiple={true}
         clearButton={true}
@@ -30,4 +33,4 @@ const SearchEquipmentType = (props: IProps) => {
   );
 };
 
-export default SearchEquipmentType;
+export default SearchDefinedOptions;

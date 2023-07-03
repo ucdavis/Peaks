@@ -8,10 +8,10 @@ import { IPerson, IPersonInfo } from '../../models/People';
 import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
-import SearchTags from '../Tags/SearchTags';
 import CreatePerson from './CreatePerson';
 import PeopleTable from './PeopleTable';
 import PersonDetails from './PersonDetails';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 const PeopleContainer = props => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -54,11 +54,13 @@ const PeopleContainer = props => {
     }
     return (
       <div>
-        <SearchTags
-          tags={context.tags}
+        <SearchDefinedOptions
+          definedOptions={context.tags}
           selected={tagFilters}
           onSelect={filterTags}
           disabled={false}
+          placeHolder='Search for Tags'
+          id='searchTagsPeople'
         />
         <PeopleTable
           people={filteredPeople}

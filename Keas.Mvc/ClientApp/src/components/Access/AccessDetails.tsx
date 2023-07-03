@@ -5,10 +5,10 @@ import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IAccess } from '../../models/Access';
-import SearchTags from '../Tags/SearchTags';
 import AccessAssignmentContainer from './AccessAssignmentContainer';
 import HistoryContainer from '../History/HistoryContainer';
 import EditAccess from './EditAccess';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   goBack: () => void;
@@ -125,11 +125,13 @@ const AccessDetails = (props: IProps) => {
           <p>
             <b>Tags</b>
           </p>
-          <SearchTags
-            tags={[]}
+          <SearchDefinedOptions
+            definedOptions={[]}
             disabled={true}
             onSelect={() => {}}
             selected={access.tags.split(',')}
+            placeHolder='Search for Tags'
+            id='searchTagsAccessDetails'
           />
         </>
       )}

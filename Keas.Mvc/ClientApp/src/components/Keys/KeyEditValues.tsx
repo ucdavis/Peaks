@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IKey } from '../../models/Keys';
 import { IValidationError } from '../../models/Shared';
-import SearchTags from '../Tags/SearchTags';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   selectedKey: IKey;
@@ -108,8 +108,8 @@ const KeyEditValues = (props: IProps) => {
           readOnly={props.disableEditing}
           value={notes || ''}
           onChange={e => {
-            props.changeProperty('notes', e.target.value)
-            setNotes(e.target.value)
+            props.changeProperty('notes', e.target.value);
+            setNotes(e.target.value);
           }}
           invalid={error && error.path === 'notes'}
         />
@@ -119,11 +119,13 @@ const KeyEditValues = (props: IProps) => {
       </FormGroup>
       <FormGroup>
         <Label>Tags</Label>
-        <SearchTags
-          tags={props.searchableTags}
+        <SearchDefinedOptions
+          definedOptions={props.searchableTags}
           disabled={props.disableEditing}
           selected={parsedTags}
           onSelect={onChangeTags}
+          placeHolder='Search for Tags'
+          id='searchTagsKeyEditValues'
         />
         <FormFeedback>
           {error && error.path === 'tags' && error.message}

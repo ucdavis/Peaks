@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IAccess } from '../../models/Access';
 import { IValidationError } from '../../models/Shared';
-import SearchTags from '../Tags/SearchTags';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   selectedAccess: IAccess;
@@ -76,8 +76,8 @@ const AccessEditValues = (props: IProps) => {
         </FormGroup>
         <FormGroup>
           <Label>Tags</Label>
-          <SearchTags
-            tags={props.tags}
+          <SearchDefinedOptions
+            definedOptions={props.tags}
             disabled={props.disableEditing}
             selected={
               !!props.selectedAccess && !!props.selectedAccess.tags
@@ -87,6 +87,8 @@ const AccessEditValues = (props: IProps) => {
             onSelect={e => {
               props.onAccessUpdate({ ...access, tags: e.join(',') });
             }}
+            placeHolder='Search for Tags'
+            id='searchTags'
           />
           <FormFeedback>
             {error && error.path === 'tags' && error.message}

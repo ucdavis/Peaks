@@ -4,7 +4,7 @@ import { IValidationError } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';
 import { IWorkstation } from '../../models/Workstations';
 import SearchSpaces from '../Spaces/SearchSpaces';
-import SearchTags from '../Tags/SearchTags';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   changeProperty?: (property: string, value: any) => void;
@@ -22,7 +22,7 @@ const WorkstationEditValues = (props: IProps) => {
     return null;
   }
   const error = props.error;
-  
+
   return (
     <div>
       {props.disableEditing && props.openEditModal && (
@@ -101,8 +101,8 @@ const WorkstationEditValues = (props: IProps) => {
 
         <FormGroup>
           <Label for='tags'>Tags</Label>
-          <SearchTags
-            tags={props.tags}
+          <SearchDefinedOptions
+            definedOptions={props.tags}
             disabled={props.disableEditing}
             selected={
               !!props.selectedWorkstation.tags
@@ -110,6 +110,8 @@ const WorkstationEditValues = (props: IProps) => {
                 : []
             }
             onSelect={e => props.changeProperty('tags', e.join(','))}
+            placeHolder='Search for Tags'
+            id='searchTagsWorkstationEditValues'
           />
           <FormFeedback>
             {error && error.path === 'tags' && error.message}

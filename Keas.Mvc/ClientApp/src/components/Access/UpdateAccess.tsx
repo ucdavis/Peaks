@@ -6,8 +6,8 @@ import { IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
 import { DateUtil } from '../../util/dates';
 import { format, startOfDay } from 'date-fns';
-import SearchTags from '../Tags/SearchTags';
 import AccessModal from './AccessModal';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   assignment?: IAccessAssignment;
@@ -89,11 +89,13 @@ const UpdateAccess = (props: IProps) => {
           <p>
             <b>Tags</b>
           </p>
-          <SearchTags
-            tags={[]}
+          <SearchDefinedOptions
+            definedOptions={[]}
             disabled={true}
             onSelect={() => {}}
             selected={assignment.access.tags.split(',')}
+            placeHolder='Search for Tags'
+            id='searchTagsUpdateAccess'
           />
         </>
       )}

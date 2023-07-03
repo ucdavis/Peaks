@@ -9,11 +9,11 @@ import { IPerson } from '../../models/People';
 import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
-import SearchTags from '../Tags/SearchTags';
 import AccessDetails from './AccessDetails';
 import AccessTable from './AccessTable';
 import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 const AccessContainer = () => {
   const [accesses, setAccesses] = useState<IAccess[]>([]);
@@ -129,11 +129,13 @@ const AccessContainer = () => {
     return (
       <div>
         <div className='row'>
-          <SearchTags
-            tags={context.tags}
+          <SearchDefinedOptions
+            definedOptions={context.tags}
             selected={tagFilters}
             onSelect={filterTags}
             disabled={false}
+            placeHolder='Search for Tags'
+            id='searchTagsAccess'
           />
         </div>
         <AccessTable
