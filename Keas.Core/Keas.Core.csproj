@@ -11,6 +11,7 @@
     <PackageReference Include="libphonenumber-csharp" Version="8.12.7" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.15" />
+    <PackageReference Include="Mjml.Net" Version="1.23.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Razor.Templating.Core" Version="1.8.0" />
     <PackageReference Include="Serilog" Version="2.12.0" />

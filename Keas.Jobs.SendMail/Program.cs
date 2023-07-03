@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Keas.Core.Services;
 using Keas.Jobs.Core;
 using Serilog;
+using Mjml.Net;
 
 namespace Keas.Jobs.SendMail
 {
@@ -134,6 +135,7 @@ namespace Keas.Jobs.SendMail
             services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<IMjmlRenderer, MjmlRenderer>();
             services.Configure<SparkpostSettings>(Configuration.GetSection("Sparkpost"));
 
             return services.BuildServiceProvider();

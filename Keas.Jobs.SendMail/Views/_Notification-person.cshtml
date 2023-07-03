@@ -1,0 +1,74 @@
+@using System.Collections
+@using Keas.Core.Domain
+@using Keas.Core.Extensions
+@model List<IGrouping<int?, Keas.Core.Domain.PersonNotification>>
+
+@{
+  Layout = "_EmailLayout";
+}
+
+    <mj-section border-top="4px solid #203F60" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="20px">
+      <mj-column width="100%" vertical-align="top">
+        <mj-text padding-top="0px" padding-bottom="0px" font-size="20px" line-height="25px" color="#1F1F1F">
+          The following people have been added/removed/reactivated from PEAKS.
+        </mj-text>
+       
+      </mj-column>
+    </mj-section>
+        
+    @foreach (IGrouping<int?, PersonNotification> notificationGroup in Model)
+    {
+        var teamName = "Not Set";
+        var link = "https://peaks.ucdavis.edu/";
+        if (notificationGroup.Key != null)
+        {
+            teamName = notificationGroup.First().Team.Name; 
+            link = "https://peaks.ucdavis.edu/" + notificationGroup.First().Team.Slug + "/home/index";
+        }
+        <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="10px">
+          <mj-column width="90%" vertical-align="top">
+            <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
+            <h2>Team: <a href="@link">@teamName</a></h2>
+            </mj-text>
+          </mj-column>
+        </mj-section>
+        @foreach (var notification in notificationGroup)
+        {
+          <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" border-top="0px" border-bottom="0px" padding-bottom="3px" padding-top="0px">
+          @* This is just for padding with the standard background color and no column border*@
+          </mj-section>
+          <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="0px">
+            <mj-column width="90%" vertical-align="top" border-left="4px solid @ActionColor(notification.Action)" padding-left="10px">
+              <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
+                <p>
+                  <b>@notification.ActorName</b> @notification.Action.ToLower()
+                  <b>@notification.PersonName</b> (@notification.PersonEmail)
+                  on @notification.ActionDate.ToPacificTime().ToString("g").
+                  @if(!string.IsNullOrWhiteSpace(notification.Notes))
+                  {
+                    <b>Notes:</b> @notification.Notes
+                  }
+                </p>
+              </mj-text>
+            </mj-column>
+          </mj-section>
+        }
+    }
+
+@functions {
+    public string ActionColor(string action)
+    {
+        switch (action)
+        {
+            case "Added":
+                return "#3dae2b";
+            case "Deactivated":
+                return "#daaa00";
+            case "Reactivated":
+                return "#00b2e3";
+            default:
+                return "#203F60";
+        }
+    }
+}
+```

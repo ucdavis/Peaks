@@ -1,0 +1,69 @@
+@using System.Collections
+@using Keas.Core.Domain
+@using Keas.Core.Extensions
+@using Keas.Jobs.SendMail.Views.Shared
+@model List<IGrouping<int?, Keas.Core.Domain.Notification>>
+@{
+  Layout = "_EmailLayout";
+
+  var userName = Model.First().First(a => a.User != null).User.Name;
+  var tempCount = Model.Sum(a => a.Count());
+  var count = tempCount.ToString();
+  var notificationPluralize = "notification";
+  if (tempCount > 1)
+    {
+        notificationPluralize = "notifications";
+    }
+}
+    <mj-section border-top="4px solid #203F60" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="20px">
+      <mj-column width="100%" vertical-align="top">
+        <mj-text padding-top="0px" padding-bottom="0px" font-size="20px" line-height="25px" color="#1F1F1F">
+          @userName, you have @count new @notificationPluralize from PEAKS.
+        </mj-text>
+       
+      </mj-column>
+    </mj-section>
+        
+    @foreach (IGrouping<int?, Notification> notificationGroup in Model)
+    {
+      var acceptStatement = notificationGroup.Any(n => n.NeedsAccept);
+      var teamName = "Not Set";
+      var link = "https://peaks.ucdavis.edu/";
+      if (notificationGroup.Key != null)
+      {
+        teamName = notificationGroup.First().Team.Name;
+        link = "https://peaks.ucdavis.edu/" + notificationGroup.First().Team.Slug + "/Confirm/Confirm";
+      }
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="10px">
+        <mj-column width="90%" vertical-align="top">
+          <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
+          <h2>Team: @teamName</h2>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+
+        @foreach (var notification in notificationGroup)
+        {
+          <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" border-top="0px" border-bottom="0px" padding-bottom="3px" padding-top="0px">
+          @* This is just for padding with the standard background color and no column border*@
+          </mj-section>
+          <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="0px">
+            <mj-column width="90%" vertical-align="top" border-left="4px solid #203F60" padding-left="10px">
+              <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
+              <p><b>@notification.DateTimeCreated.ToPacificTime().ToString("g")</b>: @notification.Details</p>
+              </mj-text>
+            </mj-column>
+          </mj-section>
+        }
+
+      @if (acceptStatement)
+      {
+        @await Html.PartialAsync("_EmailButton", new EmailButtonModel 
+        {
+          Url = link,
+          ButtonText = "Accept",
+          Description = "One or more items in this team require you to accept them.",
+
+        });
+      }
+    }
