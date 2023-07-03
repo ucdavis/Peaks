@@ -72,8 +72,15 @@ namespace Keas.Core.Services
                     KeySerialAssignment = new KeySerialAssignment { ExpiresAt = DateTime.UtcNow }
                     }
                 }.ToArray(),
-                AccessAssignments = new AccessAssignment[] { new AccessAssignment{
-                    Access = new Access { Name = "Access" }
+                AccessAssignments = new AccessAssignment[] 
+                {
+                    new AccessAssignment
+                    {
+                        Access = new Access { Name = "Access" }
+                    },
+                    new AccessAssignment
+                    {
+                        Access = new Access { Name = "Some Other Access" }
                     }
                 }.ToArray(),
                 Person = new Person
@@ -317,8 +324,15 @@ namespace Keas.Core.Services
                     KeySerialAssignment = new KeySerialAssignment { ExpiresAt = DateTime.UtcNow }
                     }
                 }.ToArray(),
-                AccessAssignments = new AccessAssignment[] { new AccessAssignment{
-                    Access = new Access { Name = "Access" }
+                AccessAssignments = new AccessAssignment[]
+                {
+                    new AccessAssignment
+                    {
+                        Access = new Access { Name = "Access" }
+                    },
+                    new AccessAssignment
+                    {
+                        Access = new Access { Name = "Some Other Access" }
                     }
                 }.ToArray(),
                 Person = person
@@ -531,13 +545,22 @@ namespace Keas.Core.Services
         public async Task SendSampleNotificationMessage()
         {
             var user = new User { Email = "notifyme@ucdavis.edu", FirstName = "Notify", LastName = "Person" };
-            var notifications = new Notification[] 
-            { 
+            var notifications = new Notification[]
+            {
                 new Notification
                 {
                     TeamId = 1,
                     User = user,
                     Details = "This is our details",
+                    DateTimeCreated = DateTime.UtcNow,
+                    Team = new Team { Id = 1, Name = "Test" },
+                    NeedsAccept = true
+                },
+                new Notification
+                {
+                    TeamId = 1,
+                    User = user,
+                    Details = "Here are some other details",
                     DateTimeCreated = DateTime.UtcNow,
                     Team = new Team { Id = 1, Name = "Test" },
                     NeedsAccept = true
