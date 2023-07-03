@@ -122,8 +122,13 @@ const EquipmentTableContainer = (props: IProps) => {
       f =>
         equipment &&
         !!equipment.space &&
-        (equipment.space.bldgName.toLowerCase().includes(f.toLowerCase()) ||
-          equipment.space.roomNumber.toLowerCase().includes(f.toLowerCase()))
+        // matches exactly from our list of options
+        // TODO: allow for partial matches, e.g. search for all equipment in a building
+        f
+          .toLowerCase()
+          .includes(
+            `${equipment.space.roomNumber} ${equipment.space.bldgName}`.toLowerCase()
+          )
     );
   };
 
