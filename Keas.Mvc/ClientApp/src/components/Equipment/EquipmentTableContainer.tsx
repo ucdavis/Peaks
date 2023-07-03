@@ -4,12 +4,14 @@ import { IEquipment } from '../../models/Equipment';
 import EquipmentTable from './EquipmentTable';
 import SearchCustomOptions from '../Shared/SearchCustomOptions';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import { ISpaceShort } from '../../models/Spaces';
 
 interface IProps {
   equipment: IEquipment[];
   equipmentAvailabilityLevels: string[];
   equipmentProtectionLevels: string[];
   equipmentTypes: string[];
+  teamSpaces: ISpaceShort[];
   tags: string[];
   openRevokeModal?: (equipment: IEquipment) => void;
   openDeleteModal?: (equipment: IEquipment) => void;

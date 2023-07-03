@@ -7,7 +7,7 @@ import { Context } from '../../Context';
 import { IEquipment } from '../../models/Equipment';
 import { IPerson } from '../../models/People';
 import { IMatchParams } from '../../models/Shared';
-import { ISpace } from '../../models/Spaces';
+import { ISpace, ISpaceShort } from '../../models/Spaces';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import AssignEquipment from './AssignEquipment';
@@ -52,6 +52,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     'P4'
   ]);
   const [equipmentTypes, setEquipmentTypes] = useState<string[]>([]);
+  const [teamSpaces, setTeamSpaces] = useState<ISpaceShort[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const context = useContext(Context);
   const history = useHistory();
@@ -88,6 +89,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     // TODO: move all this into context
     const attrFetchUrl = `/api/${context.team.slug}/equipment/commonAttributeKeys/`;
     const equipmentTypeFetchUrl = `/api/${context.team.slug}/equipment/ListEquipmentTypes/`;
+    const teamSpacesFetchUrl = `/api/${context.team.slug}/spaces/shortlist`;
 
     const fetchAttributeKeys = async () => {
       const commonAttributeKeys = await context.fetch(attrFetchUrl);
@@ -99,9 +101,19 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
       setEquipmentTypes(equipmentTypes);
     };
 
+    const fetchTeamSpaces = async () => {
+      const teamSpaces = await context.fetch(teamSpacesFetchUrl);
+      setTeamSpaces(teamSpaces);
+    };
+
     fetchAttributeKeys();
     fetchEquipmentTypes();
     fetchEquipment();
+    if (!props.space && !props.person) {
+      // if we are on a space or a person, we don't need to be able to filter on space
+      // or: we only filter on spaces on the table view
+      fetchTeamSpaces();
+    }
   }, [context, props.person, props.space]);
 
   if (!PermissionsUtil.canViewEquipment(context.permissions)) {
@@ -145,10 +157,11 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
         <div>
           <EquipmentTableContainer
             equipment={equipment}
-            tags={context.tags}
             equipmentAvailabilityLevels={equipmentAvailabilityLevels}
             equipmentProtectionLevels={equipmentProtectionLevels}
             equipmentTypes={equipmentTypes}
+            teamSpaces={teamSpaces}
+            tags={context.tags}
             openRevokeModal={openRevokeModal}
             openDeleteModal={openDeleteModal}
             openAssignModal={openAssignModal}
