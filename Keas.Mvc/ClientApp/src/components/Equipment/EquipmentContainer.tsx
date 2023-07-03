@@ -52,7 +52,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     'P4'
   ]);
   const [equipmentTypes, setEquipmentTypes] = useState<string[]>([]);
-  const [teamSpaces, setTeamSpaces] = useState<ISpaceShort[]>([]);
+  const [teamSpaces, setTeamSpaces] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const context = useContext(Context);
   const history = useHistory();
@@ -103,7 +103,10 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
 
     const fetchTeamSpaces = async () => {
       const teamSpaces = await context.fetch(teamSpacesFetchUrl);
-      setTeamSpaces(teamSpaces);
+      const teamSpacesStrings = teamSpaces.map((space: ISpaceShort) => {
+        return `${space.roomNumber} ${space.bldgName}`;
+      });
+      setTeamSpaces(teamSpacesStrings);
     };
 
     fetchAttributeKeys();

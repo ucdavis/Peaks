@@ -25,6 +25,5 @@ export interface ISpace {
 export interface ISpaceShort {
   id: number;
   bldgName: string;
-  deptName: string;
   roomNumber: string;
 }

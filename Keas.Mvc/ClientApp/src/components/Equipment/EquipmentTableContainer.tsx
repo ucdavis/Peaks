@@ -11,7 +11,7 @@ interface IProps {
   equipmentAvailabilityLevels: string[];
   equipmentProtectionLevels: string[];
   equipmentTypes: string[];
-  teamSpaces: ISpaceShort[];
+  teamSpaces: string[];
   tags: string[];
   openRevokeModal?: (equipment: IEquipment) => void;
   openDeleteModal?: (equipment: IEquipment) => void;
@@ -39,6 +39,7 @@ const EquipmentTableContainer = (props: IProps) => {
   );
   const [makeFilters, setMakeFilters] = useState<string[]>([]);
   const [modelFilters, setModelFilters] = useState<string[]>([]);
+  const [teamSpacesFilters, setTeamSpacesFilters] = useState<string[]>([]);
 
   // filter functions
   const checkTagFilters = (equipment: IEquipment, filters: string[]) => {
@@ -115,6 +116,16 @@ const EquipmentTableContainer = (props: IProps) => {
         equipment.model.toLowerCase().includes(f.toLowerCase())
     );
   };
+  const checkTeamSpacesFilters = (equipment: IEquipment) => {
+    const filters = teamSpacesFilters;
+    return filters.some(
+      f =>
+        equipment &&
+        !!equipment.space &&
+        (equipment.space.bldgName.toLowerCase().includes(f.toLowerCase()) ||
+          equipment.space.roomNumber.toLowerCase().includes(f.toLowerCase()))
+    );
+  };
 
   // actually filter equipment list
   let filteredEquipment = props.equipment;
@@ -153,6 +164,11 @@ const EquipmentTableContainer = (props: IProps) => {
   }
   if (modelFilters.length > 0) {
     filteredEquipment = filteredEquipment.filter(x => checkModelFilters(x));
+  }
+  if (teamSpacesFilters.length > 0) {
+    filteredEquipment = filteredEquipment.filter(x =>
+      checkTeamSpacesFilters(x)
+    );
   }
 
   return (
@@ -217,6 +233,14 @@ const EquipmentTableContainer = (props: IProps) => {
           disabled={false}
           placeholder='Search for Model'
           id='searchModel'
+        />
+        <SearchDefinedOptions
+          definedOptions={props.teamSpaces}
+          selected={teamSpacesFilters}
+          onSelect={setTeamSpacesFilters}
+          disabled={false}
+          placeHolder='Search for Team Spaces'
+          id='searchTeamSpaces'
         />
       </div>
       <EquipmentTable

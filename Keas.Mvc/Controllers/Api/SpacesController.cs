@@ -115,7 +115,6 @@ namespace Keas.Mvc.Controllers.Api
             var spaces = result.Select(r => new {
                 id = r.Id,
                 bldgName = r.BldgName,
-                deptName = r.DeptName,
                 roomNumber = r.RoomNumber
             });
 
