@@ -16,7 +16,7 @@ namespace Test.TestsModel
         [Fact]
         public void EquipmentTypesListContainsExpectedNumberOfValues()
         {
-            EquipmentTypes.Types.Count.ShouldBe(14);
+            EquipmentTypes.Types.Count.ShouldBe(15);
         }
 
         //1
@@ -131,6 +131,13 @@ namespace Test.TestsModel
             EquipmentTypes.Accessory.ShouldBe("Accessory");
             EquipmentTypes.Types.ShouldContain(EquipmentTypes.Accessory);
         }
+        // 15
+        [Fact]
+        public void EquipmentTypesContainsDisplay()
+        {
+            EquipmentTypes.Display.ShouldBe("Display");
+            EquipmentTypes.Types.ShouldContain(EquipmentTypes.Display);
+        }
 
         #endregion Types List
 
@@ -139,7 +146,7 @@ namespace Test.TestsModel
         [Fact]
         public void EquipmentMakeAndModelTypesListContainsExpectedNumberOfValues()
         {
-            EquipmentTypes.MakeAndModelTypes.Count.ShouldBe(12);
+            EquipmentTypes.MakeAndModelTypes.Count.ShouldBe(13);
         }
 
         //1
@@ -237,6 +244,13 @@ namespace Test.TestsModel
         {
             EquipmentTypes.Accessory.ShouldBe("Accessory");
             EquipmentTypes.MakeAndModelTypes.ShouldContain(EquipmentTypes.Accessory);
+        }
+        // 13
+        [Fact]
+        public void EquipmentMakeAndModelTypesContainsDisplay()
+        {
+            EquipmentTypes.Display.ShouldBe("Display");
+            EquipmentTypes.MakeAndModelTypes.ShouldContain(EquipmentTypes.Display);
         }
 
 
