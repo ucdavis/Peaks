@@ -44,13 +44,16 @@
         @foreach (var notification in notificationGroup)
         {
           <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="0px">
-            <mj-column width="90%" vertical-align="top" border-left="4px solid #203F60" padding-left="10px" border-top="@(firstNotification ? null : "1px solid #c7c8cc")">
+            <mj-column width="90%" vertical-align="top" border-left="4px solid @ActionColor(notification.Action)" padding-left="10px" border-top="@(firstNotification ? null : "1px solid #c7c8cc")">
               <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
               <p><b>Person:</b> @notification.PersonName (@notification.PersonEmail)</p>
               <p><b>Action Date:</b> @notification.ActionDate.ToPacificTime().ToString("g")</p>
               <p><b>Actor:</b> @notification.ActorName</p>
               <p><b>Action:</b> @notification.Action</p>
-              <p><b>Notes:</b> @notification.Notes</p>
+              @if(!string.IsNullOrWhiteSpace(notification.Notes))
+              {
+                <p><b>Notes:</b> @notification.Notes</p>
+              }
               </mj-text>
             </mj-column>
           </mj-section>
@@ -58,3 +61,21 @@
           firstNotification = false;
         }
     }
+
+@functions {
+    public string ActionColor(string action)
+    {
+        switch (action)
+        {
+            case "Added":
+                return "#3dae2b";
+            case "Deactivated":
+                return "#daaa00";
+            case "Reactivated":
+                return "#00b2e3";
+            default:
+                return "#203F60";
+        }
+    }
+}
+```

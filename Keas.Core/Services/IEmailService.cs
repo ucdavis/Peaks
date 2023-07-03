@@ -186,6 +186,8 @@ namespace Keas.Core.Services
                         PersonEmail = "donotreply@peaks-notify.ucdavis.edu",
                         NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
                         Team = new Team { Id = 1, Name = "Test", Slug = "Slug" },
+                        Action = "Added",
+                        ActorName = "User Peaks",
                     },
                     new PersonNotification
                     {
@@ -193,6 +195,9 @@ namespace Keas.Core.Services
                         PersonEmail = "donotreply@peaks-notify.ucdavis.edu",
                         NotificationEmail = "donotreply@peaks-notify.ucdavis.edu",
                         Team = new Team { Id = 1, Name = "Test", Slug = "Slug" },
+                        Action = "Deactivated",
+                        ActorName = "User Peaks",
+                        Notes = "Some notes"
                     }
                 }.GroupBy(a => a.TeamId).ToList();
 
