@@ -21,6 +21,7 @@ namespace Keas.Core.Models
         public const string Software = "Software";
         public const string Other = "Other";
         public const string Accessory = "Accessory";
+        public const string Display = "Display";
 
 
         public static List<string> Types = new List<string>
@@ -39,6 +40,7 @@ namespace Keas.Core.Models
             Software,
             Other,
             Accessory,
+            Display
         }.OrderBy(a => a).ToList();
 
 
@@ -56,6 +58,7 @@ namespace Keas.Core.Models
             Accessory,
             Printer,
             Tablet,
+            Display
         };
 
         public static List<string> Is3Types = new List<string>
