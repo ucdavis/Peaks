@@ -502,3 +502,11 @@ button:focus {
     color: inherit;
   }
 }
+
+// modal
+
+.modal-header {
+  h2 {
+    overflow-wrap: anywhere;
+  }
+}
