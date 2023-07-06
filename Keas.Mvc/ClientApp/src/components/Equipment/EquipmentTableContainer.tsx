@@ -43,7 +43,10 @@ const EquipmentTableContainer = (props: IProps) => {
   // filter functions
   const checkTagFilters = (equipment: IEquipment, filters: string[]) => {
     return filters.every(
-      f => !!equipment && !!equipment.tags && equipment.tags.includes(f)
+      f =>
+        !!equipment &&
+        !!equipment.tags &&
+        equipment.tags.toLowerCase().indexOf(f.toLowerCase()) !== -1
     );
   };
   const checkAttributeFilters = (equipment: IEquipment, filters: string[]) => {
@@ -68,60 +71,63 @@ const EquipmentTableContainer = (props: IProps) => {
   };
   const checkEquipmentTypeFilters = (equipment: IEquipment) => {
     const filters = equipmentTypeFilters;
-    return filters.some(
+    return filters.every(
       f =>
-        (equipment && !!equipment.type && equipment.type === f) ||
+        (equipment &&
+          !!equipment.type &&
+          equipment.type.toLowerCase().indexOf(f.toLowerCase())) !== -1 ||
         (equipment && !equipment.type && f === 'Default')
     );
   };
   const checkEquipmentProtectionFilters = (equipment: IEquipment) => {
     const filters = equipmentProtectionFilters;
-    return filters.some(
+    return filters.every(
       f =>
         equipment &&
         !!equipment.protectionLevel &&
-        equipment.protectionLevel === f
+        equipment.protectionLevel.toLowerCase().indexOf(f.toLowerCase()) !== -1
     );
   };
   const checkEquipmentAvailabilityFilters = (equipment: IEquipment) => {
     const filters = equipmentAvailabilityFilters;
-    return filters.some(
+    return filters.every(
       f =>
         equipment &&
         !!equipment.availabilityLevel &&
-        equipment.availabilityLevel === f
+        equipment.availabilityLevel.toLowerCase().indexOf(f.toLowerCase()) !==
+          -1
     );
   };
   const checkManagedSystemFilters = (equipment: IEquipment) => {
     const filters = managedSystemFilters;
-    return filters.some(
+    return filters.every(
       f =>
         equipment &&
         !!equipment.systemManagementId &&
-        equipment.systemManagementId.includes(f)
+        equipment.systemManagementId.toLowerCase().indexOf(f) !== -1
     );
   };
   const checkMakeFilters = (equipment: IEquipment) => {
     const filters = makeFilters;
-    return filters.some(
+    return filters.every(
       f =>
         equipment &&
         !!equipment.make &&
-        equipment.make.toLowerCase().includes(f.toLowerCase())
+        equipment.make.toLowerCase().indexOf(f.toLowerCase()) !== -1
     );
   };
   const checkModelFilters = (equipment: IEquipment) => {
     const filters = modelFilters;
-    return filters.some(
+    return filters.every(
       f =>
         equipment &&
         !!equipment.model &&
-        equipment.model.toLowerCase().includes(f.toLowerCase())
+        equipment.model.toLowerCase().indexOf(f.toLowerCase()) !== -1
     );
   };
   const checkTeamSpacesFilters = (equipment: IEquipment) => {
     const filters = teamSpacesFilters;
-    return filters.some(
+    return filters.every(
       f =>
         equipment &&
         !!equipment.space &&
