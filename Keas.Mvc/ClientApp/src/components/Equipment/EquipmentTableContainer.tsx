@@ -4,7 +4,6 @@ import { IEquipment } from '../../models/Equipment';
 import EquipmentTable from './EquipmentTable';
 import SearchCustomOptions from '../Shared/SearchCustomOptions';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
-import { ISpaceShort } from '../../models/Spaces';
 
 interface IProps {
   equipment: IEquipment[];
@@ -47,21 +46,25 @@ const EquipmentTableContainer = (props: IProps) => {
       f => !!equipment && !!equipment.tags && equipment.tags.includes(f)
     );
   };
-  const checkAttributeFilters = (equipment: IEquipment, filters) => {
+  const checkAttributeFilters = (equipment: IEquipment, filters: string[]) => {
     for (const filter of filters) {
+      // make sure the equipment has attributes, and that the filter matches
+      // either the key or the value of one of the attributes
       if (
-        !equipment.attributes ||
+        !!equipment.attributes &&
         equipment.attributes.findIndex(
           x =>
-            x.key.toLowerCase() === filter.label.toLowerCase() ||
-            x.value.toLowerCase() === filter.label.toLowerCase()
-        ) === -1
+            //indexOf() will return -1 if the substring is not found
+            x.key.toLowerCase().indexOf(filter.toLowerCase()) !== -1 ||
+            (!!x.value && // have to check that value exists. attributes can have a key with no value
+              x.value.toLowerCase().indexOf(filter.toLowerCase()) !== -1)
+          // findIndex() will return -1 if there is not an element of the array where the above condition is true
+        ) !== -1
       ) {
-        // if we cannot find an index where some of our filter matches the key
-        return false;
+        return true;
       }
     }
-    return true;
+    return false;
   };
   const checkEquipmentTypeFilters = (equipment: IEquipment) => {
     const filters = equipmentTypeFilters;
