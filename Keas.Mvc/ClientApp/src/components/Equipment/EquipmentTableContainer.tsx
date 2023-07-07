@@ -4,6 +4,7 @@ import { IEquipment } from '../../models/Equipment';
 import EquipmentTable from './EquipmentTable';
 import SearchCustomOptions from '../Shared/SearchCustomOptions';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import SearchAllOptions from '../Shared/SearchAllOptions';
 
 interface IProps {
   equipment: IEquipment[];
@@ -188,6 +189,14 @@ const EquipmentTableContainer = (props: IProps) => {
   return (
     <div>
       <div className='row'>
+        <SearchAllOptions
+          selected={tagFilters}
+          definedOptions={props.tags}
+          onSelect={setTagFilters}
+          disabled={false}
+          placeholder='Search for Tags'
+          id='searchTags'
+        />
         <SearchDefinedOptions
           definedOptions={props.tags}
           selected={tagFilters}
