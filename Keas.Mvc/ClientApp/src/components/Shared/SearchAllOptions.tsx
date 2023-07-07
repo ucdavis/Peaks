@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Typeahead } from 'react-bootstrap-typeahead';
+import { Highlighter, Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { IFilter } from '../../models/Shared';
 
@@ -19,7 +19,7 @@ const SearchAllOptions = (props: IProps) => {
     <div>
       <Typeahead
         id={props.id} // for accessibility
-        options={props.disabled ? [] : props.definedOptions}
+        options={props.definedOptions}
         labelKey={(option: IFilter) => option.filter}
         disabled={props.disabled}
         multiple={true}
@@ -30,6 +30,14 @@ const SearchAllOptions = (props: IProps) => {
         selected={props.selected}
         highlightOnlyResult={true}
         placeholder={props.placeholder}
+        renderMenuItemChildren={(option: IFilter, { text }) => (
+          <>
+            <Highlighter search={text}>{option.filter}</Highlighter>
+            <div>
+              <small>{option.type}</small>
+            </div>
+          </>
+        )}
       />
     </div>
   );
