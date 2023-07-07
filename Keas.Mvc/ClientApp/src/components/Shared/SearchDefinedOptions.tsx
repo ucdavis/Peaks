@@ -7,7 +7,7 @@ interface IProps {
   disabled: boolean;
   selected: string[];
   definedOptions: string[];
-  placeHolder: string;
+  placeholder: string;
   id: string;
 }
 
@@ -27,7 +27,7 @@ const SearchDefinedOptions = (props: IProps) => {
         }}
         selected={props.selected}
         highlightOnlyResult={true}
-        placeholder={props.placeHolder}
+        placeholder={props.placeholder}
       />
     </div>
   );

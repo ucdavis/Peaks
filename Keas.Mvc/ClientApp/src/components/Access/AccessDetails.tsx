@@ -130,7 +130,7 @@ const AccessDetails = (props: IProps) => {
             disabled={true}
             onSelect={() => {}}
             selected={access.tags.split(',')}
-            placeHolder='Search for Tags'
+            placeholder='Search for Tags'
             id='searchTagsAccessDetails'
           />
         </>

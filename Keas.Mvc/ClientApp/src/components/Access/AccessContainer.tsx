@@ -134,7 +134,7 @@ const AccessContainer = () => {
             selected={tagFilters}
             onSelect={filterTags}
             disabled={false}
-            placeHolder='Search for Tags'
+            placeholder='Search for Tags'
             id='searchTagsAccess'
           />
         </div>

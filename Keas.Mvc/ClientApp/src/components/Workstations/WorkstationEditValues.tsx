@@ -110,7 +110,7 @@ const WorkstationEditValues = (props: IProps) => {
                 : []
             }
             onSelect={e => props.changeProperty('tags', e.join(','))}
-            placeHolder='Search for Tags'
+            placeholder='Search for Tags'
             id='searchTagsWorkstationEditValues'
           />
           <FormFeedback>

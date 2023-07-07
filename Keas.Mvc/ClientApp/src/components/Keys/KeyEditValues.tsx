@@ -124,7 +124,7 @@ const KeyEditValues = (props: IProps) => {
           disabled={props.disableEditing}
           selected={parsedTags}
           onSelect={onChangeTags}
-          placeHolder='Search for Tags'
+          placeholder='Search for Tags'
           id='searchTagsKeyEditValues'
         />
         <FormFeedback>

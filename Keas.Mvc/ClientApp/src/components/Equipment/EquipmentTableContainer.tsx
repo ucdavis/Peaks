@@ -193,7 +193,7 @@ const EquipmentTableContainer = (props: IProps) => {
           selected={tagFilters}
           onSelect={setTagFilters}
           disabled={false}
-          placeHolder='Search for Tags'
+          placeholder='Search for Tags'
           id='searchTagsEquipment'
         />
         <SearchCustomOptions
@@ -208,7 +208,7 @@ const EquipmentTableContainer = (props: IProps) => {
           selected={equipmentTypeFilters}
           onSelect={setEquipmentTypeFilters}
           disabled={false}
-          placeHolder='Search for Equipment Types'
+          placeholder='Search for Equipment Types'
           id='searchEquipmentTypes'
         />
         <SearchDefinedOptions
@@ -216,7 +216,7 @@ const EquipmentTableContainer = (props: IProps) => {
           selected={equipmentProtectionFilters}
           onSelect={setEquipmentProtectionFilters}
           disabled={false}
-          placeHolder='Search Protection Level'
+          placeholder='Search Protection Level'
           id='equipmentProtectionLevels'
         />
         <SearchDefinedOptions
@@ -224,7 +224,7 @@ const EquipmentTableContainer = (props: IProps) => {
           selected={equipmentAvailabilityFilters}
           onSelect={setEquipmentAvailabilityFilters}
           disabled={false}
-          placeHolder='Search Availability Level'
+          placeholder='Search Availability Level'
           id='equipmentAvailabilityLevels'
         />
         <SearchCustomOptions
@@ -253,7 +253,7 @@ const EquipmentTableContainer = (props: IProps) => {
           selected={teamSpacesFilters}
           onSelect={setTeamSpacesFilters}
           disabled={false}
-          placeHolder='Search for Team Spaces'
+          placeholder='Search for Team Spaces'
           id='searchTeamSpaces'
         />
       </div>
