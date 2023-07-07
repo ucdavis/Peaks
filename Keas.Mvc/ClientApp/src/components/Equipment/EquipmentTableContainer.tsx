@@ -5,6 +5,7 @@ import EquipmentTable from './EquipmentTable';
 import SearchCustomOptions from '../Shared/SearchCustomOptions';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 import SearchAllOptions from '../Shared/SearchAllOptions';
+import { IFilter } from '../../models/Shared';
 
 interface IProps {
   equipment: IEquipment[];
@@ -21,6 +22,7 @@ interface IProps {
 }
 
 const EquipmentTableContainer = (props: IProps) => {
+  const [allFilters, setAllFilters] = useState<IFilter[]>([]);
   // state. array of strings from each filter's selected values
   const [tagFilters, setTagFilters] = useState<string[]>([]);
   const [attributeFilters, setAttributeFilters] = useState<string[]>([]);
@@ -186,16 +188,30 @@ const EquipmentTableContainer = (props: IProps) => {
     );
   }
 
+  const allOptions: IFilter[] = [
+    ...props.tags.map(x => ({ filter: x, type: 'tag' })),
+    ...props.equipmentTypes.map(x => ({ filter: x, type: 'equipmentType' })),
+    ...props.equipmentProtectionLevels.map(x => ({
+      filter: x,
+      type: 'equipmentProtectionLevel'
+    })),
+    ...props.equipmentAvailabilityLevels.map(x => ({
+      filter: x,
+      type: 'equipmentAvailabilityLevel'
+    })),
+    ...props.teamSpaces.map(x => ({ filter: x, type: 'teamSpace' }))
+  ];
+
   return (
     <div>
       <div className='row'>
         <SearchAllOptions
-          selected={tagFilters}
-          definedOptions={props.tags}
-          onSelect={setTagFilters}
+          selected={allFilters}
+          definedOptions={allOptions}
+          onSelect={setAllFilters}
           disabled={false}
-          placeholder='Search for Tags'
-          id='searchTags'
+          placeholder='Search for All'
+          id='searchAll'
         />
         <SearchDefinedOptions
           definedOptions={props.tags}

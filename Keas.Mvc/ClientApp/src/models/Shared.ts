@@ -111,3 +111,8 @@ export interface IHistory {
   id: number;
   link: string;
 }
+
+export interface IFilter {
+  filter: string;
+  type: string;
+}

@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { IFilter } from '../../models/Shared';
 
 interface IProps {
-  onSelect: (definedOptions: string[]) => void;
+  onSelect: (definedOptions: IFilter[]) => void;
   disabled: boolean;
-  selected: string[];
-  definedOptions: string[];
+  selected: IFilter[];
+  definedOptions: IFilter[];
   placeholder: string;
   id: string;
 }
@@ -19,6 +20,7 @@ const SearchAllOptions = (props: IProps) => {
       <Typeahead
         id={props.id} // for accessibility
         options={props.disabled ? [] : props.definedOptions}
+        labelKey={(option: IFilter) => option.filter}
         disabled={props.disabled}
         multiple={true}
         clearButton={true}
