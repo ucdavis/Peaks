@@ -35,21 +35,18 @@
         link = "https://peaks.ucdavis.edu/" + notificationGroup.First().Team.Slug + "/Confirm/Confirm";
       }
       <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="10px">
-        <mj-column width="90%" vertical-align="top">
-          <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
-          <h2>Team: @teamName</h2>
+       <mj-column vertical-align="top">
+          <mj-text padding="0px 0px 0px 16px">
+            <h2>Team: @teamName</h2>
           </mj-text>
         </mj-column>
       </mj-section>
 
         @foreach (var notification in notificationGroup)
         {
-          <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" border-top="0px" border-bottom="0px" padding-bottom="3px" padding-top="0px">
-          @* This is just for padding with the standard background color and no column border*@
-          </mj-section>
-          <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="0px">
-            <mj-column width="90%" vertical-align="top" border-left="4px solid #203F60" padding-left="10px">
-              <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
+              <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
+            <mj-column vertical-align="top" border-left="4px solid #203F60">
+              <mj-text padding="0px 0px 0px 8px">
               <p><b>@notification.DateTimeCreated.ToPacificTime().ToString("g")</b>: @notification.Details</p>
               </mj-text>
             </mj-column>
