@@ -144,6 +144,39 @@ const EquipmentTableContainer = (props: IProps) => {
     );
   };
 
+  const checkAllFilters = (equipment: IEquipment) => {
+    const filters = allFilters;
+    return filters.every(
+      f =>
+        (equipment &&
+          f.type === 'tag' &&
+          !!equipment.tags &&
+          equipment.tags.toLowerCase().indexOf(f.filter.toLowerCase()) !==
+            -1) ||
+        (f.type === 'equipmentType' &&
+          !!equipment.type &&
+          equipment.type.toLowerCase().indexOf(f.filter.toLowerCase()) !==
+            -1) ||
+        (f.type === 'equipmentProtectionLevel' &&
+          !!equipment.protectionLevel &&
+          equipment.protectionLevel
+            .toLowerCase()
+            .indexOf(f.filter.toLowerCase()) !== -1) ||
+        (f.type === 'equipmentAvailabilityLevel' &&
+          !!equipment.availabilityLevel &&
+          equipment.availabilityLevel
+            .toLowerCase()
+            .indexOf(f.filter.toLowerCase()) !== -1) ||
+        (f.type === 'teamSpace' &&
+          !!equipment.space &&
+          f.filter
+            .toLowerCase()
+            .includes(
+              `${equipment.space.roomNumber} ${equipment.space.bldgName}`.toLowerCase()
+            ))
+    );
+  };
+
   // actually filter equipment list
   let filteredEquipment = props.equipment;
   if (tagFilters.length > 0) {
@@ -201,6 +234,11 @@ const EquipmentTableContainer = (props: IProps) => {
     })),
     ...props.teamSpaces.map(x => ({ filter: x, type: 'teamSpace' }))
   ];
+
+  let filteredAllEquipment = props.equipment;
+  if (allFilters.length > 0) {
+    filteredAllEquipment = filteredAllEquipment.filter(x => checkAllFilters(x));
+  }
 
   return (
     <div>
@@ -283,7 +321,7 @@ const EquipmentTableContainer = (props: IProps) => {
         />
       </div>
       <EquipmentTable
-        equipment={filteredEquipment}
+        equipment={filteredAllEquipment}
         onRevoke={props.openRevokeModal}
         onDelete={props.openDeleteModal}
         onAdd={props.openAssignModal}
