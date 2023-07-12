@@ -2,8 +2,6 @@ import * as React from 'react';
 import { useState } from 'react';
 import { IEquipment } from '../../models/Equipment';
 import EquipmentTable from './EquipmentTable';
-import SearchCustomOptions from '../Shared/SearchCustomOptions';
-import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 import SearchAllOptions from '../Shared/SearchAllOptions';
 import { IFilter } from '../../models/Shared';
 
@@ -21,211 +19,127 @@ interface IProps {
   openEditModal?: (equipment: IEquipment) => void;
 }
 
-// TODO: allow searching on serial number, name, etc in this component
 const EquipmentTableContainer = (props: IProps) => {
   // array of {filter: string, type: string}, where type is either a predefined type or 'any'
   // predfined types, e.g. tags, will only filter on that property of the equipment
   // state is changed inside the SearchAllOptions component
   const [allFilters, setAllFilters] = useState<IFilter[]>([]);
-  // state. array of strings from each filter's selected values
-  const [tagFilters, setTagFilters] = useState<string[]>([]);
-  const [attributeFilters, setAttributeFilters] = useState<string[]>([]);
-  const [equipmentTypeFilters, setEquipmentTypeFilters] = useState<string[]>(
-    []
-  );
-  const [equipmentProtectionFilters, setEquipmentProtectionFilters] = useState<
-    string[]
-  >([]);
-  const [
-    equipmentAvailabilityFilters,
-    setEquipmentAvailabilityFilters
-  ] = useState<string[]>([]);
-  const [managedSystemFilters, setManagedSystemFilters] = useState<string[]>(
-    []
-  );
-  const [makeFilters, setMakeFilters] = useState<string[]>([]);
-  const [modelFilters, setModelFilters] = useState<string[]>([]);
-  const [teamSpacesFilters, setTeamSpacesFilters] = useState<string[]>([]);
 
-  // filter functions
-  const checkTagFilters = (equipment: IEquipment, filters: string[]) => {
-    return filters.every(
-      f =>
-        !!equipment &&
-        !!equipment.tags &&
-        equipment.tags.toLowerCase().indexOf(f.toLowerCase()) !== -1
+  // how to apply filters
+  // TODO: allow searching on serial number, name, etc in this component
+  const checkTagFilter = (equipment: IEquipment, filter: string) => {
+    return (
+      !!equipment &&
+      !!equipment.tags &&
+      equipment.tags.toLowerCase().indexOf(filter.toLowerCase()) !== -1
     );
   };
-  const checkAttributeFilters = (equipment: IEquipment, filters: string[]) => {
-    for (const filter of filters) {
-      // make sure the equipment has attributes, and that the filter matches
-      // either the key or the value of one of the attributes
-      if (
-        !!equipment.attributes &&
-        equipment.attributes.findIndex(
-          x =>
-            //indexOf() will return -1 if the substring is not found
-            x.key.toLowerCase().indexOf(filter.toLowerCase()) !== -1 ||
-            (!!x.value && // have to check that value exists. attributes can have a key with no value
-              x.value.toLowerCase().indexOf(filter.toLowerCase()) !== -1)
-          // findIndex() will return -1 if there is not an element of the array where the above condition is true
-        ) !== -1
-      ) {
-        return true;
-      }
+  const checkAttributeFilter = (equipment: IEquipment, filter: string) => {
+    // make sure the equipment has attributes, and that the filter matches
+    // either the key or the value of one of the attributes
+    if (
+      !!equipment.attributes &&
+      equipment.attributes.findIndex(
+        // findIndex() will return -1 if there is not an element of the array that matches our filter
+        x =>
+          x.key.toLowerCase().indexOf(filter.toLowerCase()) !== -1 ||
+          //indexOf() will return -1 if the substring is not found
+          (!!x.value && // have to check that value exists. attributes can have a key with no value
+            x.value.toLowerCase().indexOf(filter.toLowerCase()) !== -1)
+      ) !== -1
+    ) {
+      return true;
     }
     return false;
   };
-  const checkEquipmentTypeFilters = (equipment: IEquipment) => {
-    const filters = equipmentTypeFilters;
-    return filters.every(
-      f =>
-        (equipment &&
-          !!equipment.type &&
-          equipment.type.toLowerCase().indexOf(f.toLowerCase())) !== -1 ||
-        (equipment && !equipment.type && f === 'Default')
+  const checkEquipmentTypeFilter = (equipment: IEquipment, filter: string) => {
+    return (
+      (equipment &&
+        !!equipment.type &&
+        equipment.type.toLowerCase().indexOf(filter.toLowerCase())) !== -1 ||
+      (equipment && !equipment.type && filter === 'Default')
     );
   };
-  const checkEquipmentProtectionFilters = (equipment: IEquipment) => {
-    const filters = equipmentProtectionFilters;
-    return filters.every(
-      f =>
-        equipment &&
-        !!equipment.protectionLevel &&
-        equipment.protectionLevel.toLowerCase().indexOf(f.toLowerCase()) !== -1
+  const checkEquipmentProtectionFilter = (
+    equipment: IEquipment,
+    filter: string
+  ) => {
+    return (
+      equipment &&
+      !!equipment.protectionLevel &&
+      equipment.protectionLevel.toLowerCase().indexOf(filter.toLowerCase()) !==
+        -1
     );
   };
-  const checkEquipmentAvailabilityFilters = (equipment: IEquipment) => {
-    const filters = equipmentAvailabilityFilters;
-    return filters.every(
-      f =>
-        equipment &&
-        !!equipment.availabilityLevel &&
-        equipment.availabilityLevel.toLowerCase().indexOf(f.toLowerCase()) !==
-          -1
+  const checkEquipmentAvailabilityFilter = (
+    equipment: IEquipment,
+    filter: string
+  ) => {
+    return (
+      equipment &&
+      !!equipment.availabilityLevel &&
+      equipment.availabilityLevel
+        .toLowerCase()
+        .indexOf(filter.toLowerCase()) !== -1
     );
   };
-  const checkManagedSystemFilters = (equipment: IEquipment) => {
-    const filters = managedSystemFilters;
-    return filters.every(
-      f =>
-        equipment &&
-        !!equipment.systemManagementId &&
-        equipment.systemManagementId.toLowerCase().indexOf(f) !== -1
+  const checkManagedSystemFilter = (equipment: IEquipment, filter: string) => {
+    return (
+      equipment &&
+      !!equipment.systemManagementId &&
+      equipment.systemManagementId
+        .toLowerCase()
+        .indexOf(filter.toLowerCase()) !== -1
     );
   };
-  const checkMakeFilters = (equipment: IEquipment) => {
-    const filters = makeFilters;
-    return filters.every(
-      f =>
-        equipment &&
-        !!equipment.make &&
-        equipment.make.toLowerCase().indexOf(f.toLowerCase()) !== -1
+  const checkMakeFilter = (equipment: IEquipment, filter: string) => {
+    return (
+      equipment &&
+      !!equipment.make &&
+      equipment.make.toLowerCase().indexOf(filter.toLowerCase()) !== -1
     );
   };
-  const checkModelFilters = (equipment: IEquipment) => {
-    const filters = modelFilters;
-    return filters.every(
-      f =>
-        equipment &&
-        !!equipment.model &&
-        equipment.model.toLowerCase().indexOf(f.toLowerCase()) !== -1
+  const checkModelFilter = (equipment: IEquipment, filter: string) => {
+    return (
+      equipment &&
+      !!equipment.model &&
+      equipment.model.toLowerCase().indexOf(filter.toLowerCase()) !== -1
     );
   };
-  const checkTeamSpacesFilters = (equipment: IEquipment) => {
-    const filters = teamSpacesFilters;
-    return filters.every(
-      f =>
-        equipment &&
-        !!equipment.space &&
-        // matches exactly from our list of options
-        // TODO: allow for partial matches, e.g. search for all equipment in a building
-        f
-          .toLowerCase()
-          .includes(
-            `${equipment.space.roomNumber} ${equipment.space.bldgName}`.toLowerCase()
-          )
+  const checkTeamSpacesFilter = (equipment: IEquipment, filter: string) => {
+    return (
+      equipment &&
+      !!equipment.space &&
+      // matches exactly from our list of options
+      // TODO: allow for partial matches, e.g. search for all equipment in a building
+      filter
+        .toLowerCase()
+        .includes(
+          `${equipment.space.roomNumber} ${equipment.space.bldgName}`.toLowerCase()
+        )
     );
   };
 
   const checkAllFilters = (equipment: IEquipment) => {
     const filters = allFilters;
+
     return filters.every(
       f =>
         !!equipment &&
-        ((f.type === 'tag' &&
-          !!equipment.tags &&
-          equipment.tags.toLowerCase().indexOf(f.filter.toLowerCase()) !==
-            -1) ||
+        ((f.type === 'tag' && checkTagFilter(equipment, f.filter)) ||
           (f.type === 'equipmentType' &&
-            !!equipment.type &&
-            equipment.type.toLowerCase().indexOf(f.filter.toLowerCase()) !==
-              -1) ||
+            checkEquipmentTypeFilter(equipment, f.filter)) ||
           (f.type === 'equipmentProtectionLevel' &&
-            !!equipment.protectionLevel &&
-            equipment.protectionLevel
-              .toLowerCase()
-              .indexOf(f.filter.toLowerCase()) !== -1) ||
+            checkEquipmentProtectionFilter(equipment, f.filter)) ||
           (f.type === 'equipmentAvailabilityLevel' &&
-            !!equipment.availabilityLevel &&
-            equipment.availabilityLevel
-              .toLowerCase()
-              .indexOf(f.filter.toLowerCase()) !== -1) ||
+            checkEquipmentAvailabilityFilter(equipment, f.filter)) ||
           (f.type === 'teamSpace' &&
-            !!equipment.space &&
-            f.filter
-              .toLowerCase()
-              .includes(
-                `${equipment.space.roomNumber} ${equipment.space.bldgName}`.toLowerCase()
-              )))
+            checkTeamSpacesFilter(equipment, f.filter)))
     );
   };
 
-  // actually filter equipment list
-  let filteredEquipment = props.equipment;
-  if (tagFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkTagFilters(x, tagFilters)
-    );
-  }
-  if (attributeFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkAttributeFilters(x, attributeFilters)
-    );
-  }
-  if (equipmentTypeFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkEquipmentTypeFilters(x)
-    );
-  }
-  if (equipmentProtectionFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkEquipmentProtectionFilters(x)
-    );
-  }
-  if (equipmentAvailabilityFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkEquipmentAvailabilityFilters(x)
-    );
-  }
-  if (managedSystemFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkManagedSystemFilters(x)
-    );
-  }
-  if (makeFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x => checkMakeFilters(x));
-  }
-  if (modelFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x => checkModelFilters(x));
-  }
-  if (teamSpacesFilters.length > 0) {
-    filteredEquipment = filteredEquipment.filter(x =>
-      checkTeamSpacesFilters(x)
-    );
-  }
-
   const allOptions: IFilter[] = [
+    // add all predefined options here
     ...props.tags.map(x => ({ filter: x, type: 'tag' })),
     ...props.equipmentTypes.map(x => ({ filter: x, type: 'equipmentType' })),
     ...props.equipmentProtectionLevels.map(x => ({
@@ -254,74 +168,6 @@ const EquipmentTableContainer = (props: IProps) => {
           disabled={false}
           placeholder='Search for All'
           id='searchAll'
-        />
-        <SearchDefinedOptions
-          definedOptions={props.tags}
-          selected={tagFilters}
-          onSelect={setTagFilters}
-          disabled={false}
-          placeholder='Search for Tags'
-          id='searchTagsEquipment'
-        />
-        <SearchCustomOptions
-          selected={attributeFilters}
-          onSelect={setAttributeFilters}
-          disabled={false}
-          placeholder='Search for Attributes'
-          id='searchAttributes'
-        />
-        <SearchDefinedOptions
-          definedOptions={props.equipmentTypes}
-          selected={equipmentTypeFilters}
-          onSelect={setEquipmentTypeFilters}
-          disabled={false}
-          placeholder='Search for Equipment Types'
-          id='searchEquipmentTypes'
-        />
-        <SearchDefinedOptions
-          definedOptions={props.equipmentProtectionLevels}
-          selected={equipmentProtectionFilters}
-          onSelect={setEquipmentProtectionFilters}
-          disabled={false}
-          placeholder='Search Protection Level'
-          id='equipmentProtectionLevels'
-        />
-        <SearchDefinedOptions
-          definedOptions={props.equipmentAvailabilityLevels}
-          selected={equipmentAvailabilityFilters}
-          onSelect={setEquipmentAvailabilityFilters}
-          disabled={false}
-          placeholder='Search Availability Level'
-          id='equipmentAvailabilityLevels'
-        />
-        <SearchCustomOptions
-          selected={managedSystemFilters}
-          onSelect={setManagedSystemFilters}
-          disabled={false}
-          placeholder='Search for Managed System Id'
-          id='searchBigfix'
-        />
-        <SearchCustomOptions
-          selected={makeFilters}
-          onSelect={setMakeFilters}
-          disabled={false}
-          placeholder='Search for Make'
-          id='searchMake'
-        />
-        <SearchCustomOptions
-          selected={modelFilters}
-          onSelect={setModelFilters}
-          disabled={false}
-          placeholder='Search for Model'
-          id='searchModel'
-        />
-        <SearchDefinedOptions
-          definedOptions={props.teamSpaces}
-          selected={teamSpacesFilters}
-          onSelect={setTeamSpacesFilters}
-          disabled={false}
-          placeholder='Search for Team Spaces'
-          id='searchTeamSpaces'
         />
       </div>
       <EquipmentTable
