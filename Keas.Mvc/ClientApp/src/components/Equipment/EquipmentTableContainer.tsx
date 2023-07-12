@@ -21,7 +21,11 @@ interface IProps {
   openEditModal?: (equipment: IEquipment) => void;
 }
 
+// TODO: allow searching on serial number, name, etc in this component
 const EquipmentTableContainer = (props: IProps) => {
+  // array of {filter: string, type: string}, where type is either a predefined type or 'any'
+  // predfined types, e.g. tags, will only filter on that property of the equipment
+  // state is changed inside the SearchAllOptions component
   const [allFilters, setAllFilters] = useState<IFilter[]>([]);
   // state. array of strings from each filter's selected values
   const [tagFilters, setTagFilters] = useState<string[]>([]);
@@ -148,32 +152,32 @@ const EquipmentTableContainer = (props: IProps) => {
     const filters = allFilters;
     return filters.every(
       f =>
-        (equipment &&
-          f.type === 'tag' &&
+        !!equipment &&
+        ((f.type === 'tag' &&
           !!equipment.tags &&
           equipment.tags.toLowerCase().indexOf(f.filter.toLowerCase()) !==
             -1) ||
-        (f.type === 'equipmentType' &&
-          !!equipment.type &&
-          equipment.type.toLowerCase().indexOf(f.filter.toLowerCase()) !==
-            -1) ||
-        (f.type === 'equipmentProtectionLevel' &&
-          !!equipment.protectionLevel &&
-          equipment.protectionLevel
-            .toLowerCase()
-            .indexOf(f.filter.toLowerCase()) !== -1) ||
-        (f.type === 'equipmentAvailabilityLevel' &&
-          !!equipment.availabilityLevel &&
-          equipment.availabilityLevel
-            .toLowerCase()
-            .indexOf(f.filter.toLowerCase()) !== -1) ||
-        (f.type === 'teamSpace' &&
-          !!equipment.space &&
-          f.filter
-            .toLowerCase()
-            .includes(
-              `${equipment.space.roomNumber} ${equipment.space.bldgName}`.toLowerCase()
-            ))
+          (f.type === 'equipmentType' &&
+            !!equipment.type &&
+            equipment.type.toLowerCase().indexOf(f.filter.toLowerCase()) !==
+              -1) ||
+          (f.type === 'equipmentProtectionLevel' &&
+            !!equipment.protectionLevel &&
+            equipment.protectionLevel
+              .toLowerCase()
+              .indexOf(f.filter.toLowerCase()) !== -1) ||
+          (f.type === 'equipmentAvailabilityLevel' &&
+            !!equipment.availabilityLevel &&
+            equipment.availabilityLevel
+              .toLowerCase()
+              .indexOf(f.filter.toLowerCase()) !== -1) ||
+          (f.type === 'teamSpace' &&
+            !!equipment.space &&
+            f.filter
+              .toLowerCase()
+              .includes(
+                `${equipment.space.roomNumber} ${equipment.space.bldgName}`.toLowerCase()
+              )))
     );
   };
 
