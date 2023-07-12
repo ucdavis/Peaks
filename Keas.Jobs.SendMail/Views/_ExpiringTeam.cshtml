@@ -21,27 +21,26 @@
 
 }
 
-    <mj-section border-top="4px solid #203F60" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="20px">
-      <mj-column width="100%" vertical-align="top">
-        <mj-text padding-top="0px" padding-bottom="0px" font-size="20px" line-height="25px" color="#1F1F1F">
+    <mj-section border-top="4px solid #203F60" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="10px 0px 10px 0px">
+      <mj-column>
+        <mj-text font-size="16px" line-height="24px" color="#1F1F1F">
           The team @teamName has @count expiring @itemPluralize in PEAKS.
         </mj-text>
-       
       </mj-column>
     </mj-section>
         
     @if (accessCount > 0)
     {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="10px">
-        <mj-column width="90%" vertical-align="top">
-          <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
-          <h2>Access</h2>
-          </mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="0px">
-        <mj-column width="90%" vertical-align="top" border-left="4px solid #203F60" padding-left="10px">
-          <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
+    <mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
+          <mj-column>
+            <mj-text font-size="14px" line-height="0px" padding="0px 0px 4px 8px">
+            <h2>Access</h2>
+            </mj-text>
+          </mj-column>
+    </mj-section>
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
+        <mj-column border-left="4px solid #3dae2b" padding-left="10px">
+          <mj-text padding="0px">
             <p><b>@accessCount</b> expiring @(accessCount == 1 ? "item" : "items")</p>
           </mj-text>
         </mj-column>      
@@ -50,16 +49,16 @@
 
     @if (keyCount > 0)
     {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="10px">
-        <mj-column width="90%" vertical-align="top">
-          <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
-          <h2>Keys</h2>
-          </mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="0px">
-        <mj-column width="90%" vertical-align="top" border-left="4px solid #203F60" padding-left="10px">
-          <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
+    <mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
+          <mj-column>
+            <mj-text font-size="14px" line-height="0px" padding="0px 0px 4px 8px">
+            <h2>Keys</h2>
+            </mj-text>
+          </mj-column>
+    </mj-section>
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
+        <mj-column border-left="4px solid #00b2e3" padding-left="10px">
+          <mj-text padding="0px">
             <p><b>@keyCount</b> expiring @(keyCount == 1 ? "item" : "items")</p>
           </mj-text>
         </mj-column>      
@@ -68,16 +67,16 @@
 
     @if (equipmentCount > 0)
     {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="10px">
-        <mj-column width="90%" vertical-align="top">
-          <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
+  <mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
+        <mj-column>
+          <mj-text font-size="14px" line-height="0px" padding="0px 0px 4px 8px">
           <h2>Equipment</h2>
           </mj-text>
         </mj-column>
-      </mj-section>
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="0px">
-        <mj-column width="90%" vertical-align="top" border-left="4px solid #203F60" padding-left="10px">
-          <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
+  </mj-section>
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
+        <mj-column border-left="4px solid #daaa00" padding-left="10px">
+          <mj-text padding="0px">
             <p><b>@equipmentCount</b> expiring @(equipmentCount == 1 ? "item" : "items")</p>
           </mj-text>
         </mj-column>      
@@ -86,16 +85,16 @@
 
     @if (workstationCount > 0)
     {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="10px">
-        <mj-column width="90%" vertical-align="top">
-          <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
-          <h2>Workstations</h2>
-          </mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="20px" padding-top="0px">
-        <mj-column width="90%" vertical-align="top" border-left="4px solid #203F60" padding-left="10px">
-          <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
+<mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
+      <mj-column>
+        <mj-text font-size="14px" line-height="0px" padding="0px 0px 4px 8px">
+        <h2>Workstation</h2>
+        </mj-text>
+      </mj-column>
+</mj-section>
+      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
+        <mj-column border-left="4px solid #76236c" padding-left="10px">
+          <mj-text padding="0px">
             <p><b>@workstationCount</b> expiring @(workstationCount == 1 ? "item" : "items")</p>
           </mj-text>
         </mj-column>      
