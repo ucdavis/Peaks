@@ -299,10 +299,11 @@ const AccessContainer = () => {
   }
 
   if (loading) {
-      return <div>          
-          <img src="/images/Peaks-loader.gif" alt="loading" />
-          <h3>Loading...</h3>
-      </div>;
+    return (
+      <div className='loading-wrapper'>
+        <img src='/images/Peaks-loader.gif' alt='loading' />
+      </div>
+    );
   }
   const { containerAction, assetType, containerId } = params;
   const activeAsset = !assetType || assetType === 'access';

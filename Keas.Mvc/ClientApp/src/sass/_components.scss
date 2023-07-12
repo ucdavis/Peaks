@@ -502,3 +502,10 @@ button:focus {
     color: inherit;
   }
 }
+.loading-wrapper {
+  text-align: center;
+  transition: 0.5s ease;
+  img {
+    width: 250px;
+  }
+}
