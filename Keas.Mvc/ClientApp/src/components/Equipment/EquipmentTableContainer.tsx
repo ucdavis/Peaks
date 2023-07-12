@@ -25,6 +25,14 @@ const EquipmentTableContainer = (props: IProps) => {
   // state is changed inside the SearchAllOptions component
   const [allFilters, setAllFilters] = useState<IFilter[]>([]);
 
+  const changeAllFilters = (selectedFilters: any[]) => {
+    const filters = selectedFilters.map((x: any) => ({
+      filter: !!x?.filter ? x.filter : x.label,
+      type: !!x?.type ? x.type : 'any'
+    }));
+    setAllFilters(filters);
+  };
+
   // how to apply filters
   // TODO: allow searching on serial number, name, etc in this component
   const checkTagFilter = (equipment: IEquipment, filter: string) => {
@@ -164,7 +172,7 @@ const EquipmentTableContainer = (props: IProps) => {
         <SearchAllOptions
           selected={allFilters}
           definedOptions={allOptions}
-          onSelect={setAllFilters}
+          onSelect={changeAllFilters}
           disabled={false}
           placeholder='Search for All'
           id='searchAll'

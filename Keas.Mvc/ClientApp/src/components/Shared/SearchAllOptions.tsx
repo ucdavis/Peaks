@@ -4,7 +4,10 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { IFilter } from '../../models/Shared';
 
 interface IProps {
-  onSelect: (definedOptions: IFilter[]) => void;
+  // if it's a "new selection" it will be an object
+  // object will look like: { customOption: true, id: 'id-1', label: 'search text'}
+  // handled in the onSelect prop to give us IFilter[]
+  onSelect: (filters: any[]) => void;
   disabled: boolean;
   selected: IFilter[];
   definedOptions: IFilter[];
@@ -20,7 +23,7 @@ const SearchAllOptions = (props: IProps) => {
       <Typeahead
         id={props.id} // for accessibility
         options={props.definedOptions}
-        labelKey={(option: IFilter) => option.filter}
+        labelKey='filter'
         disabled={props.disabled}
         multiple={true}
         clearButton={true}
@@ -28,8 +31,8 @@ const SearchAllOptions = (props: IProps) => {
           props.onSelect(selected);
         }}
         selected={props.selected}
-        highlightOnlyResult={true}
         placeholder={props.placeholder}
+        allowNew={true}
         renderMenuItemChildren={(option: IFilter, { text }) => (
           <>
             <Highlighter search={text}>{option.filter}</Highlighter>
