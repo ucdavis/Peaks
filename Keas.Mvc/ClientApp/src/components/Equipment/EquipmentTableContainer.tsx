@@ -33,7 +33,8 @@ const EquipmentTableContainer = (props: IProps) => {
     setAllFilters(filters);
   };
   const removeFilter = (filter: IFilter) => {
-    const filters = allFilters.filter(x => x.filter !== filter.filter);
+    const index = allFilters.indexOf(filter);
+    const filters = allFilters.slice(index, 1);
     setAllFilters(filters);
   };
 

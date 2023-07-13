@@ -42,10 +42,11 @@ const SearchAllOptions = (props: IProps) => {
             </div>
           </>
         )}
-        renderToken={(option, index) => (
+        renderToken={(option: IFilter) => (
           <Token
+            key={`${option.filter}-${option.type}`}
             onRemove={() => props.onRemove(option)}
-          >{`(${option.type.toLocaleString()}) ${option.filter}`}</Token>
+          >{`(${option.type}) ${option.filter}`}</Token>
         )}
       />
     </div>
