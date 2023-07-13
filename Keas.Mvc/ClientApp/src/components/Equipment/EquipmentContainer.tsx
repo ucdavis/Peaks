@@ -17,6 +17,7 @@ import EquipmentDetails from './EquipmentDetails';
 import EquipmentList from './EquipmentList';
 import EquipmentTableContainer from './EquipmentTableContainer';
 import RevokeEquipment from './RevokeEquipment';
+import PeaksLoader from '../Shared/PeaksLoader';
 
 interface IProps {
   person?: IPerson;
@@ -124,7 +125,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
   }
 
   if (loading) {
-    return <h2>Loading...</h2>;
+    return <PeaksLoader />;
   }
 
   const { action, assetType, id } = params;

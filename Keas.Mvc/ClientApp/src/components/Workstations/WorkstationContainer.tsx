@@ -16,6 +16,7 @@ import RevokeWorkstation from '../Workstations/RevokeWorkstation';
 import WorkstationDetails from '../Workstations/WorkstationDetails';
 import WorkstationList from './../Workstations/WorkstationList';
 import DeleteWorkstation from './DeleteWorkstation';
+import PeaksLoader from '../Shared/PeaksLoader';
 
 interface IProps {
   assetInUseUpdated?: (
@@ -444,7 +445,7 @@ const WorkstationContainer = (props: IProps) => {
     return null;
   }
   if (loading) {
-    return <div>Loading Workstations...</div>;
+    return <PeaksLoader />;
   }
   const { action, assetType, id } = params;
   const activeAsset = assetType === 'workstations';

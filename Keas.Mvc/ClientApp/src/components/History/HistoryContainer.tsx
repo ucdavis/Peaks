@@ -4,6 +4,7 @@ import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IHistory } from '../../models/Shared';
 import HistoryList from './HistoryList';
+import PeaksLoader from '../Shared/PeaksLoader';
 
 interface IProps {
   controller: string;
@@ -45,7 +46,7 @@ const HistoryContainer = (props: IProps) => {
   }, []);
 
   if (loading) {
-    return <h2>Loading...</h2>;
+    return <PeaksLoader />;
   }
 
   return (

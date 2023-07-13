@@ -12,6 +12,7 @@ import CreatePerson from './CreatePerson';
 import PeopleTable from './PeopleTable';
 import PersonDetails from './PersonDetails';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import PeaksLoader from '../Shared/PeaksLoader';
 
 const PeopleContainer = props => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -258,7 +259,7 @@ const PeopleContainer = props => {
   }
 
   if (loading) {
-    return <h2>Loading...</h2>;
+    return <PeaksLoader />;
   }
 
   const { containerAction: personAction, containerId: personId } = params;
