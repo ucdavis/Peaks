@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Highlighter, Typeahead } from 'react-bootstrap-typeahead';
+import { Highlighter, Token, Typeahead } from 'react-bootstrap-typeahead';
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { IFilter } from '../../models/Shared';
 
@@ -8,6 +8,7 @@ interface IProps {
   // object will look like: { customOption: true, id: 'id-1', label: 'search text'}
   // handled in the onSelect prop to give us IFilter[]
   onSelect: (filters: any[]) => void;
+  onRemove: (filter: IFilter) => void;
   disabled: boolean;
   selected: IFilter[];
   definedOptions: IFilter[];
@@ -40,6 +41,11 @@ const SearchAllOptions = (props: IProps) => {
               <small>{option.type}</small>
             </div>
           </>
+        )}
+        renderToken={(option, index) => (
+          <Token
+            onRemove={() => props.onRemove(option)}
+          >{`(${option.type.toLocaleString()}) ${option.filter}`}</Token>
         )}
       />
     </div>

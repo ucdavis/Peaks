@@ -32,6 +32,10 @@ const EquipmentTableContainer = (props: IProps) => {
     }));
     setAllFilters(filters);
   };
+  const removeFilter = (filter: IFilter) => {
+    const filters = allFilters.filter(x => x.filter !== filter.filter);
+    setAllFilters(filters);
+  };
 
   // how to apply filters
   // TODO: allow searching on serial number, name, etc in this component
@@ -142,7 +146,17 @@ const EquipmentTableContainer = (props: IProps) => {
           (f.type === 'equipmentAvailabilityLevel' &&
             checkEquipmentAvailabilityFilter(equipment, f.filter)) ||
           (f.type === 'teamSpace' &&
-            checkTeamSpacesFilter(equipment, f.filter)))
+            checkTeamSpacesFilter(equipment, f.filter)) ||
+          (f.type === 'any' &&
+            (checkTagFilter(equipment, f.filter) ||
+              checkEquipmentTypeFilter(equipment, f.filter) ||
+              checkEquipmentProtectionFilter(equipment, f.filter) ||
+              checkEquipmentAvailabilityFilter(equipment, f.filter) ||
+              checkTeamSpacesFilter(equipment, f.filter) ||
+              checkAttributeFilter(equipment, f.filter) ||
+              checkMakeFilter(equipment, f.filter) ||
+              checkModelFilter(equipment, f.filter) ||
+              checkManagedSystemFilter(equipment, f.filter))))
     );
   };
 
@@ -173,6 +187,7 @@ const EquipmentTableContainer = (props: IProps) => {
           selected={allFilters}
           definedOptions={allOptions}
           onSelect={changeAllFilters}
+          onRemove={removeFilter}
           disabled={false}
           placeholder='Search for All'
           id='searchAll'
