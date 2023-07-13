@@ -16,6 +16,7 @@ import KeySerialDetails from './KeySerialDetails';
 import KeySerialList from './KeySerialList';
 import KeySerialTable from './KeySerialTable';
 import RevokeKeySerial from './RevokeKeySerial';
+import PeaksLoader from '../Shared/PeaksLoader';
 
 interface IProps {
   selectedPerson?: IPerson;
@@ -422,7 +423,7 @@ const KeySerialContainer = (props: IProps) => {
   }
 
   if (loading) {
-    return <h2>Loading...</h2>;
+    return <PeaksLoader />;
   }
 
   const { action, assetType, id } = params;

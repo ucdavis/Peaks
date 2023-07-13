@@ -20,6 +20,7 @@ import SpacesDetails from './SpacesDetails';
 import SpacesList from './SpacesList';
 import SpacesTable from './SpacesTable';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import PeaksLoader from '../Shared/PeaksLoader';
 
 interface IProps {
   selectedKeyInfo?: IKeyInfo;
@@ -76,7 +77,7 @@ const SpacesContainer = (props: IProps) => {
     return <Denied viewName='Spaces' />;
   }
   if (loading) {
-    return <h2>Loading...</h2>;
+    return <PeaksLoader />;
   }
   const { containerAction, containerId, action, id } = params;
   const onKeysTab = !!props.selectedKeyInfo;
