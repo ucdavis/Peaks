@@ -108,9 +108,8 @@ namespace Keas.Core.Services
         private async Task<AlternateView> RenderEmail(string view, object model = null)
         {
             var mjml = await RazorTemplateEngine.RenderAsync(view, model);
-            var xml = _mjmlRenderer.FixXML(mjml);
 
-            var (html, errors) = _mjmlRenderer.Render(xml);
+            var (html, errors) = _mjmlRenderer.Render(mjml);
 
             if (errors.Any())
             {
@@ -553,7 +552,7 @@ namespace Keas.Core.Services
                     User = user,
                     Details = "This is our details",
                     DateTimeCreated = DateTime.UtcNow,
-                    Team = new Team { Id = 1, Name = "Test" },
+                    Team = new Team { Id = 1, Name = "Test’" },
                     NeedsAccept = true
                 },
                 new Notification

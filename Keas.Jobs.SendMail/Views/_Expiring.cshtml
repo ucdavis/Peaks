@@ -24,76 +24,88 @@
       </mj-column>
     </mj-section>
         
-<mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
-      <mj-column>
-        <mj-text font-size="14px" line-height="0px" padding="0px 0px 4px 8px">
-        <h2>Access</h2>
-        </mj-text>
-      </mj-column>
-</mj-section>
-    @foreach (var item in Model.AccessAssignments)
+    @if (Model.AccessAssignments.Any())
     {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
-        <mj-column border-left="4px solid #3dae2b" padding-left="10px">
-          <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
-            <p>@item.Access.Name expiring <b>@item.ExpiresAt.ToPacificTime().ToString("d")</b></p>
+      <mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
+        <mj-column>
+          <mj-text font-size="14px" line-height="0px" padding="0px 0px 4px 8px">
+          <h2>Access</h2>
           </mj-text>
-        </mj-column>      
+        </mj-column>
       </mj-section>
+      @foreach (var item in Model.AccessAssignments)
+      {
+        <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
+          <mj-column border-left="4px solid #3dae2b" padding-left="10px">
+            <mj-text padding-top="0px" padding-left="0px" padding-bottom="0px">
+              <p>@item.Access.Name expiring <b>@item.ExpiresAt.ToPacificTime().ToString("d")</b></p>
+            </mj-text>
+          </mj-column>      
+        </mj-section>
+      }
     }
 
-<mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
-      <mj-column>
-        <mj-text font-size="14px" line-height="0px" padding="0px 0px 4px 8px">
-        <h2>Keys</h2>
-        </mj-text>
-      </mj-column>
-</mj-section>
-    @foreach (var item in Model.KeySerials)
+    @if (Model.KeySerials.Any())
     {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
-        <mj-column border-left="4px solid #00b2e3" padding-left="10px">
-          <mj-text padding="0px">
-            <p>@item.Key.Title expiring <b>@item.KeySerialAssignment.ExpiresAt.ToPacificTime().ToString("d")</b></p>
+      <mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
+        <mj-column>
+          <mj-text font-size="14px" line-height="0px" padding="0px 0px 4px 8px">
+          <h2>Keys</h2>
           </mj-text>
-        </mj-column>      
+        </mj-column>
       </mj-section>
+      @foreach (var item in Model.KeySerials)
+      {
+        <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
+          <mj-column border-left="4px solid #00b2e3" padding-left="10px">
+            <mj-text padding="0px">
+              <p>@item.Key.Title expiring <b>@item.KeySerialAssignment.ExpiresAt.ToPacificTime().ToString("d")</b></p>
+            </mj-text>
+          </mj-column>      
+        </mj-section>
+      }
     }
 
-<mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
-      <mj-column>
-        <mj-text font-size="14px" line-height="0px" padding="0px 0px 4px 8px">
-        <h2>Equipment</h2>
-        </mj-text>
-      </mj-column>
-</mj-section>
-    @foreach (var item in Model.Equipment)
+    @if (Model.Equipment.Any())
     {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
-        <mj-column border-left="4px solid #daaa00" padding-left="10px">
-          <mj-text padding="0px">
-            <p>@item.Name expiring <b>@item.Assignment.ExpiresAt.ToPacificTime().ToString("d")</b></p>
+      <mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
+        <mj-column>
+          <mj-text font-size="14px" line-height="0px" padding="0px 0px 4px 8px">
+          <h2>Equipment</h2>
           </mj-text>
-        </mj-column>      
+        </mj-column>
       </mj-section>
+      @foreach (var item in Model.Equipment)
+      {
+        <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
+          <mj-column border-left="4px solid #daaa00" padding-left="10px">
+            <mj-text padding="0px">
+              <p>@item.Name expiring <b>@item.Assignment.ExpiresAt.ToPacificTime().ToString("d")</b></p>
+            </mj-text>
+          </mj-column>      
+        </mj-section>
+      }
     }
 
-  <mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
+    @if (Model.Workstations.Any())
+    {
+      <mj-section padding-left="8px" border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding-bottom="0px" padding-top="20px">
         <mj-column>
           <mj-text font-size="14px" line-height="0px" padding="0px 0px 4px 8px">
           <h2>Workstation</h2>
           </mj-text>
         </mj-column>
-  </mj-section>
-    @foreach (var item in Model.Workstations)
-    {
-      <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
-        <mj-column border-left="4px solid #76236c" padding-left="10px">
-          <mj-text padding="0px">
-            <p>@item.Name expiring <b>@item.Assignment.ExpiresAt.ToPacificTime().ToString("d")</b></p>
-          </mj-text>
-        </mj-column>      
       </mj-section>
+      @foreach (var item in Model.Workstations)
+      {
+        <mj-section border-left="1px solid #c7c8cc" border-right="1px solid #c7c8cc" background-color="#ffffff" padding="0px 0px 0px 16px">
+          <mj-column border-left="4px solid #76236c" padding-left="10px">
+            <mj-text padding="0px">
+              <p>@item.Name expiring <b>@item.Assignment.ExpiresAt.ToPacificTime().ToString("d")</b></p>
+            </mj-text>
+          </mj-column>      
+        </mj-section>
+      }
     }
 
     @await Html.PartialAsync("_EmailButton", new EmailButtonModel 
