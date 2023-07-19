@@ -71,8 +71,8 @@ table {
   ul {
     list-style-type: none;
     padding-left: 15px;
-    border-left:4px solid $borders;
-    margin-left:6px;
+    border-left: 4px solid $borders;
+    margin-left: 6px;
     li {
       font-family: $sans-bold;
       line-height: 2;
@@ -95,7 +95,7 @@ table {
 
 .report-list.people-color {
   ul {
-    border-color:$people;
+    border-color: $people;
   }
   h3 i {
     color: $people;
@@ -104,7 +104,7 @@ table {
 
 .report-list.equipment-color {
   ul {
-    border-color:$equipment;
+    border-color: $equipment;
   }
   h3 i {
     color: $equipment;
@@ -113,7 +113,7 @@ table {
 
 .report-list.access-color {
   ul {
-    border-color:$access;
+    border-color: $access;
   }
   h3 i {
     color: $access;
@@ -122,16 +122,16 @@ table {
 
 .report-list.keys-color {
   ul {
-    border-color:$keys;
+    border-color: $keys;
   }
   h3 i {
-    color: $keys
+    color: $keys;
   }
 }
 
 .report-list.spaces-color {
   ul {
-    border-color:$spaces;
+    border-color: $spaces;
   }
   h3 i {
     color: $spaces;
@@ -140,7 +140,7 @@ table {
 
 .report-list.general-color {
   ul {
-    border-color:$history;
+    border-color: $history;
   }
   h3 i {
     color: $history;
@@ -148,11 +148,23 @@ table {
 }
 
 .report-list.documents-color {
-    ul {
-        border-color: $documents;
-    }
+  ul {
+    border-color: $documents;
+  }
 
-    h3 i {
-        color: $documents;
+  h3 i {
+    color: $documents;
+  }
+}
+// quick actions
+.quick-actions {
+  .list-group-item {
+    margin-bottom: 0px;
+    a {
+      color: $primary-font;
+      &:hover {
+        color: $a-link;
+      }
     }
+  }
 }
