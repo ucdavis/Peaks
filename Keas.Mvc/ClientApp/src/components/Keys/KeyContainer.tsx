@@ -22,6 +22,7 @@ import KeyDetailContainer from './KeyDetailContainer';
 import KeyList from './KeyList';
 import KeyTable from './KeyTable';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import PeaksLoader from '../Shared/PeaksLoader';
 
 interface IProps {
   assetInUseUpdated?: (
@@ -539,7 +540,7 @@ const KeyContainer = (props: IProps) => {
   }
 
   if (loading) {
-    return <h2>Loading...</h2>;
+    return <PeaksLoader />;
   }
 
   const { space } = props;

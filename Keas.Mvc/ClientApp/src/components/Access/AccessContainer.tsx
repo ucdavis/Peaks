@@ -14,6 +14,7 @@ import AccessTable from './AccessTable';
 import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import PeaksLoader from '../Shared/PeaksLoader';
 
 const AccessContainer = () => {
   const [accesses, setAccesses] = useState<IAccess[]>([]);
@@ -299,7 +300,7 @@ const AccessContainer = () => {
   }
 
   if (loading) {
-    return <h2>Loading...</h2>;
+    return <PeaksLoader />;
   }
   const { containerAction, assetType, containerId } = params;
   const activeAsset = !assetType || assetType === 'access';

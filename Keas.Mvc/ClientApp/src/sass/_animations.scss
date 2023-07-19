@@ -17,3 +17,87 @@
     animation: yfliprotate 500ms;
   }
 }
+$loading-time: 3s;
+#people {
+  animation: people-bounce $loading-time infinite;
+  fill: #1f1f1f;
+}
+@keyframes people-bounce {
+  0%,
+  20%,
+  100% {
+    transform: translateY(0px);
+    fill: #1f1f1f;
+  }
+  15% {
+    transform: translateY(-10px);
+    fill: #c10230;
+  }
+}
+#equipment {
+  animation: equipment-bounce $loading-time infinite;
+  fill: #1f1f1f;
+}
+@keyframes equipment-bounce {
+  0%,
+  20%,
+  40%,
+  100% {
+    transform: translateY(0px);
+    fill: #1f1f1f;
+  }
+  35% {
+    transform: translateY(-10px);
+    fill: #daaa00;
+  }
+}
+#access {
+  animation: access-bounce $loading-time infinite;
+  fill: #1f1f1f;
+}
+@keyframes access-bounce {
+  0%,
+  40%,
+  60%,
+  100% {
+    transform: translateY(0px);
+    fill: #1f1f1f;
+  }
+  55% {
+    transform: translateY(-10px);
+    fill: #3dae2b;
+  }
+}
+#keys {
+  animation: keys-bounce $loading-time infinite;
+  fill: #1f1f1f;
+}
+@keyframes keys-bounce {
+  0%,
+  60%,
+  80%,
+  100% {
+    transform: translateY(0px);
+    fill: #1f1f1f;
+  }
+  75% {
+    transform: translateY(-10px);
+    fill: #00b2e3;
+  }
+}
+#spaces {
+  animation: spaces-bounce $loading-time infinite;
+  fill: #1f1f1f;
+}
+@keyframes spaces-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0px);
+    fill: #1f1f1f;
+  }
+  95% {
+    transform: translateY(-10px);
+    fill: #481268;
+  }
+}
