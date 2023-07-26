@@ -160,12 +160,18 @@ table {
 .quick-actions {
   .list-group-item {
     margin-bottom: 0px;
-    padding: 1rem 1.25rem;
     a {
       color: $primary-font;
+      padding: 1rem 1.25rem;
       &:hover {
         color: $a-link;
       }
+    }
+  }
+  .list-peaks-buttons {
+    a {
+      border-left: 1px solid $borders;
+      width: 40px;
     }
   }
 }
