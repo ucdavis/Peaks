@@ -6,7 +6,7 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-@if(Model.PendingItems)
+@if (Model.PendingItems)
 {
     var currentSlug = TempData["TeamName"] as string;
     if (Model.TeamsWithPendingAssignments.Any(a => a.Slug != null && a.Slug == currentSlug))
@@ -33,64 +33,69 @@
     }
 }
 <div class="card">
-  <div class="card-header-primary">
-    <div class="row justify-content-between">
-        <div class="card-head">
-        <h2>Welcome to Peaks, @User.GetNameClaim()</h2>
+    <div class="card-header-primary">
+        <div class="row justify-content-between">
+            <div class="card-head">
+                <h2>Welcome to Peaks, @User.GetNameClaim()</h2>
+            </div>
         </div>
     </div>
-  </div>
-  <div class="card-content">
-    <div class="row justify-content-between">
-        <div class="col-md-6">
-            <p style="margin-top:0px;">You are viewing peaks with the team: <u>@TempData["TeamName"]</u></p>
-            <p><b>Quick Actions</b></p>
-            <ul class="quick-actions list-group">
-                
-                <li class="list-group-item">
-                        <a asp-controller="Confirm" asp-action="MyStuff">MyStuff</a>
-                </li>
-                   @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
-                  { 
-                      <li class="list-group-item">
-                        <a asp-controller="TeamAdmin">Administer Team</a>
-                    </li>
-                  }
-                    @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded)
-                  {
-                      <li class="list-group-item">
-                          <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "People")'>Team Assets</a>
-                      </li>
-                      <li class="list-group-item">
-                    <div class="row justify-content-between">
-                        <span style="margin-left:12px;">View</span>
-                        <div style="margin-right:-12px;" class="list-peaks-buttons">
-                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "people")'>
-                            <i class="fas fa-users"></i></a>
-                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "equipment")'>
-                            <i class="fas fa-hdd"></i></a>
-                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "access")'>
-                            <i class="fas fa-address-card"></i></a>
-                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "keys")'>
-                            <i class="fas fa-key"></i></a> 
-                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "spaces")'>
-                            <i class="fas fa-building"></i></a> 
-                        </div>
-                    </div>
-                  </li>
-                   } 
-                    
-                   
-                  
-                </ul>
-        </div>
-        <div class="col-md-4">
-            <img class="img-fluid" src="/media/people-working-flat-design.png" alt="Flat design graphic of people working">
-        </div>
-    </div>
-          
-    
+    <div class="card-content">
+        <div class="row justify-content-between">
+            <div class="col-md-6">
+                <p style="margin-top:0px;">You are viewing peaks with the team: <u>@TempData["TeamName"]</u></p>
+                <p><b>Quick Actions</b></p>
+                <ul class="quick-actions list-group">
 
-               
+                    <li class="list-group-item">
+                        <a asp-controller="Confirm" asp-action="MyStuff">MyStuff</a>
+                    </li>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
+                    {
+                        <li class="list-group-item">
+                            <a asp-controller="TeamAdmin">Administer Team</a>
+                        </li>
+                    }
+                    @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded)
+                    {
+                        <li class="list-group-item">
+                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "People")'>Team Assets</a>
+                        </li>
+                        <li class="list-group-item">
+                            <div class="row justify-content-between">
+                                <span style="margin-left:12px;">View</span>
+                                <div style="margin-right:-12px;" class="list-peaks-buttons">
+                                    <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "people")'>
+                                        <i class="fas fa-users"></i>
+                                    </a>
+                                    <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "equipment")'>
+                                        <i class="fas fa-hdd"></i>
+                                    </a>
+                                    <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "access")'>
+                                        <i class="fas fa-address-card"></i>
+                                    </a>
+                                    <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "keys")'>
+                                        <i class="fas fa-key"></i>
+                                    </a>
+                                    <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "spaces")'>
+                                        <i class="fas fa-building"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    }
+
+
+
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <img class="img-fluid" src="/media/people-working-flat-design.png" alt="Flat design graphic of people working">
+            </div>
+        </div>
+
+
+
+
     </div>
 </div>
