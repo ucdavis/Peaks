@@ -502,6 +502,15 @@ button:focus {
     color: inherit;
   }
 }
+
+// modal
+
+.modal-header {
+  h2 {
+    overflow-wrap: anywhere;
+  }
+}
+
 .loading-wrapper {
   text-align: center;
 }
