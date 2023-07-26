@@ -49,6 +49,7 @@
 
                     <li class="list-group-item">
                         <a asp-controller="Confirm" asp-action="MyStuff">MyStuff</a>
+<<<<<<< HEAD
                     </li>
                     @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
                     {
@@ -120,6 +121,41 @@
 
 
 
+=======
+                </li>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded)
+                  {
+                      <li class="list-group-item">
+                          <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "People")'>Team Assets</a>
+                      </li>
+                     
+                   } 
+                    
+                      @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
+                  { 
+                      <li class="list-group-item">
+                        <a asp-controller="TeamAdmin">Administer Team</a>
+                    </li>
+                     <li class="list-group-item">
+                    <div class="row justify-content-between">
+                        <span style="margin-left:12px;">View</span>
+                        <div style="margin-right:-12px;" class="list-peaks-buttons">
+                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "people")'>
+                            <i class="fas fa-users"></i></a>
+                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "equipment")'>
+                            <i class="fas fa-hdd"></i></a>
+                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "access")'>
+                            <i class="fas fa-address-card"></i></a>
+                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "keys")'>
+                            <i class="fas fa-key"></i></a> 
+                            <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "spaces")'>
+                            <i class="fas fa-building"></i></a> 
+                        </div>
+                    </div>
+                  </li>
+                  }
+                  
+>>>>>>> cyd-issues
                 </ul>
             </div>
             <div class="col-md-4">
