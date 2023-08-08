@@ -9,10 +9,10 @@ interface IProps {
 }
 
 const EquipmentAssignmentValues = (props: IProps) => {
-  if (!props.selectedEquipment || !props.selectedEquipment.assignment) {
+  if (!props.selectedEquipment) {
     return null;
   }
-  
+
   return (
     <div>
       <div className='row justify-content-between mt-5'>
@@ -21,7 +21,10 @@ const EquipmentAssignmentValues = (props: IProps) => {
           color='link'
           onClick={() => props.openUpdateModal(props.selectedEquipment)}
         >
-          <i className='fas fa-edit fa-xs' /> Update Assignment
+          <i className='fas fa-edit fa-xs' />{' '}
+          {!!props.selectedEquipment.assignment
+            ? 'Update Assignment'
+            : 'Assign Equipment'}
         </Button>
       </div>
       <div className='wrapperasset'>
@@ -31,7 +34,11 @@ const EquipmentAssignmentValues = (props: IProps) => {
             type='text'
             className='form-control'
             disabled={true}
-            value={props.selectedEquipment.assignment.person.name}
+            value={
+              !!props.selectedEquipment.assignment
+                ? props.selectedEquipment.assignment.person.name
+                : ''
+            }
           />
         </div>
         <div className='form-group'>
@@ -40,9 +47,13 @@ const EquipmentAssignmentValues = (props: IProps) => {
             type='text'
             className='form-control'
             disabled={true}
-            value={DateUtil.formatExpiration(
-              props.selectedEquipment.assignment.expiresAt
-            )}
+            value={
+              !!props.selectedEquipment.assignment
+                ? DateUtil.formatExpiration(
+                    props.selectedEquipment.assignment.expiresAt
+                  )
+                : ''
+            }
           />
         </div>
       </div>

@@ -9,10 +9,7 @@ interface IProps {
 }
 
 const KeySerialAssignmentValues = (props: IProps) => {
-  if (
-    !props.selectedKeySerial ||
-    !props.selectedKeySerial.keySerialAssignment
-  ) {
+  if (!props.selectedKeySerial) {
     return null;
   }
 
@@ -24,7 +21,10 @@ const KeySerialAssignmentValues = (props: IProps) => {
           color='link'
           onClick={() => props.openUpdateModal(props.selectedKeySerial)}
         >
-          <i className='fas fa-edit fa-xs' /> Update Assignment
+          <i className='fas fa-edit fa-xs' />{' '}
+          {!!props.selectedKeySerial.keySerialAssignment
+            ? 'Update Assignment'
+            : 'Assign Key'}
         </Button>
       </div>
       <div className='wrapperasset'>
@@ -34,7 +34,11 @@ const KeySerialAssignmentValues = (props: IProps) => {
             type='text'
             className='form-control'
             disabled={true}
-            value={props.selectedKeySerial.keySerialAssignment.person.name}
+            value={
+              !!props.selectedKeySerial.keySerialAssignment
+                ? props.selectedKeySerial.keySerialAssignment.person.name
+                : ''
+            }
           />
         </div>
         <div className='form-group'>
@@ -43,9 +47,13 @@ const KeySerialAssignmentValues = (props: IProps) => {
             type='text'
             className='form-control'
             disabled={true}
-            value={DateUtil.formatExpiration(
-              props.selectedKeySerial.keySerialAssignment.expiresAt
-            )}
+            value={
+              !!props.selectedKeySerial.keySerialAssignment
+                ? DateUtil.formatExpiration(
+                    props.selectedKeySerial.keySerialAssignment.expiresAt
+                  )
+                : ''
+            }
           />
         </div>
       </div>
