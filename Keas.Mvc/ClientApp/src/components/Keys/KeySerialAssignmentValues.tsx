@@ -24,7 +24,7 @@ const KeySerialAssignmentValues = (props: IProps) => {
           <i className='fas fa-edit fa-xs' />{' '}
           {!!props.selectedKeySerial.keySerialAssignment
             ? 'Update Assignment'
-            : 'Assign Key'}
+            : 'Assign Key Serial'}
         </Button>
       </div>
       <div className='wrapperasset'>
