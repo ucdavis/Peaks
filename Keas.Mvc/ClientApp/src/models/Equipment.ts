@@ -23,21 +23,21 @@ export interface IEquipment {
 
 export const equipmentSchema: ObjectSchema<IEquipment> = object({
   assignment: mixed<IEquipmentAssignment>().nullable(),
-  attributes: array<IEquipmentAttribute>().notRequired().nullable(),
-  availabilityLevel: string().max(2).notRequired().nullable(),
   equipmentAssignmentId: number().nullable(),
   id: number(),
   make: string().notRequired().nullable(),
   model: string().notRequired().nullable(),
   name: string().required().max(64),
-  notes: string().notRequired().nullable(),
-  protectionLevel: string().max(2).notRequired().nullable(),
-  serialNumber: string().notRequired().nullable(),
   space: mixed<ISpace>().notRequired().nullable(),
-  systemManagementId: string().max(16).notRequired().nullable(),
+  serialNumber: string().notRequired().nullable(),
   tags: string().notRequired().nullable(),
   teamId: number().notRequired().nullable(),
-  type: string().notRequired().nullable()
+  type: string().notRequired().nullable(),
+  protectionLevel: string().max(2).notRequired().nullable(),
+  availabilityLevel: string().max(2).notRequired().nullable(),
+  systemManagementId: string().max(16).notRequired().nullable(),
+  notes: string().notRequired().nullable(),
+  attributes: array<IEquipmentAttribute>().notRequired().nullable()
 });
 
 export interface IEquipmentAssignment {

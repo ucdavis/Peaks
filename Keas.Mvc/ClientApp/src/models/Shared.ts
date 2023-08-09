@@ -8,6 +8,11 @@ import { IKeySerial } from './KeySerials';
 import { IPerson } from './People';
 import { IWorkstation } from './Workstations';
 
+export interface IAssignmentSchema {
+  date: Date;
+  person: IPerson;
+}
+
 export const assignmentSchema: ObjectSchema<IAssignmentSchema> = object({
   date: date()
     .nullable()
@@ -21,11 +26,6 @@ export const assignmentSchema: ObjectSchema<IAssignmentSchema> = object({
 export interface IValidationError {
   message: string;
   path: string;
-}
-
-export interface IAssignmentSchema {
-  date: Date;
-  person: IPerson;
 }
 
 export const yupAssetValidation = (
