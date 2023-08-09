@@ -1,4 +1,4 @@
-import * as yup from 'yup';
+import { array, ObjectSchema, number, object, string } from 'yup';
 import { IKeySerial } from './KeySerials';
 import { ISpace } from './Spaces';
 
@@ -22,9 +22,11 @@ export interface IKey {
   keyXSpaces?: IKeySpaceAssociation[];
 }
 
-export const keySchema = yup.object<IKey>().shape({
-  code: yup
-    .string()
+export const keySchema: ObjectSchema<IKey> = object({
+  id: number(),
+  teamId: number(),
+  name: string().required().max(64),
+  code: string()
     .required()
     .max(64)
     .test(
@@ -35,22 +37,10 @@ export const keySchema = yup.object<IKey>().shape({
         return context.checkIfKeyCodeIsValid(value, this.parent.id);
       }
     ),
-  id: yup.number(),
-  keyXSpaces: yup.array<IKeySpaceAssociation>().nullable(),
-  name: yup
-    .string()
-    .required()
-    .max(64),
-  notes: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  serials: yup.array<IKeySerial>().nullable(),
-  tags: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  teamId: yup.number()
+  notes: string().notRequired().nullable(),
+  tags: string().notRequired().nullable(),
+  serials: array<IKeySerial>().nullable(),
+  keyXSpaces: array<IKeySpaceAssociation>().nullable()
 });
 
 export interface IKeySpaceAssociation {

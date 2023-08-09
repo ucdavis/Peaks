@@ -49,7 +49,7 @@ export interface IPersonInfo {
   workstationCount: number;
 }
 
-export const personSchema: ObjectSchema<IPerson> = object().shape({
+export const personSchema: ObjectSchema<IPerson> = object({
   active: boolean().notRequired().nullable(),
   category: string().notRequired().nullable(),
   email: string()
@@ -72,7 +72,7 @@ export const personSchema: ObjectSchema<IPerson> = object().shape({
   name: string(),
   notes: string().notRequired().nullable(),
   startDate: date().notRequired().nullable(),
-  supervisor: object<IPerson>().notRequired().nullable(),
+  supervisor: mixed<IPerson>().notRequired().nullable(),
   supervisorId: number().notRequired().nullable(),
   tags: string().notRequired().nullable(),
   teamId: number(),
