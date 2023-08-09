@@ -1,4 +1,4 @@
-import * as yup from 'yup';
+import { ObjectSchema, number, object, string, mixed } from 'yup';
 import { IPerson } from './People';
 import { ISpace } from './Spaces';
 
@@ -12,26 +12,14 @@ export interface IWorkstation {
   assignment?: IWorkstationAssignment;
 }
 
-export const workstationSchema = yup.object<IWorkstation>().shape({
-  assignment: yup
-    .object<IWorkstationAssignment>()
-    .notRequired()
-    .nullable(),
-  id: yup.number(),
-  name: yup
-    .string()
-    .required()
-    .max(64),
-  notes: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  space: yup.object<ISpace>().required(),
-  tags: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  teamId: yup.number()
+export const workstationSchema: ObjectSchema<IWorkstation> = object({
+  id: number(),
+  name: string().required().max(64),
+  space: mixed<ISpace>().required(),
+  tags: string().notRequired().nullable(),
+  notes: string().notRequired().nullable(),
+  teamId: number(),
+  assignment: mixed<IWorkstationAssignment>().notRequired().nullable()
 });
 
 export interface IWorkstationAssignment {
