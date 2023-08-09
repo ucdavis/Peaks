@@ -1,4 +1,12 @@
-import * as yup from 'yup';
+import {
+  ObjectSchema,
+  boolean,
+  date,
+  mixed,
+  number,
+  object,
+  string
+} from 'yup';
 
 export interface IUser {
   firstName: string;
@@ -41,17 +49,10 @@ export interface IPersonInfo {
   workstationCount: number;
 }
 
-export const personSchema = yup.object<IPerson>().shape({
-  active: yup
-    .boolean()
-    .notRequired()
-    .nullable(),
-  category: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  email: yup
-    .string()
+export const personSchema: ObjectSchema<IPerson> = object().shape({
+  active: boolean().notRequired().nullable(),
+  category: string().notRequired().nullable(),
+  email: string()
     .max(256)
     .required()
     .test(
@@ -62,57 +63,21 @@ export const personSchema = yup.object<IPerson>().shape({
         return context.validateEmail(value);
       }
     ),
-  endDate: yup
-    .date()
-    .notRequired()
-    .nullable(),
-  firstName: yup
-    .string()
-    .max(50)
-    .required('First name is a required field.'),
-  homePhone: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  id: yup.number(),
-  isSupervisor: yup
-    .boolean()
-    .notRequired()
-    .nullable(),
-  lastName: yup
-    .string()
-    .max(50)
-    .required('Last name is a required field.'),
-  name: yup.string(),
-  notes: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  startDate: yup
-    .date()
-    .notRequired()
-    .nullable(),
-  supervisor: yup
-    .object<IPerson>()
-    .notRequired()
-    .nullable(),
-  supervisorId: yup
-    .number()
-    .notRequired()
-    .nullable(),
-  tags: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  teamId: yup.number(),
-  teamPhone: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  title: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  user: yup.object<IUser>().nullable(),
-  userId: yup.string()
+  endDate: date().notRequired().nullable(),
+  firstName: string().max(50).required('First name is a required field.'),
+  homePhone: string().notRequired().nullable(),
+  id: number(),
+  isSupervisor: boolean().notRequired().nullable(),
+  lastName: string().max(50).required('Last name is a required field.'),
+  name: string(),
+  notes: string().notRequired().nullable(),
+  startDate: date().notRequired().nullable(),
+  supervisor: object<IPerson>().notRequired().nullable(),
+  supervisorId: number().notRequired().nullable(),
+  tags: string().notRequired().nullable(),
+  teamId: number(),
+  teamPhone: string().notRequired().nullable(),
+  title: string().notRequired().nullable(),
+  user: mixed<IUser>().nullable(),
+  userId: string()
 });
