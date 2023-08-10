@@ -1,4 +1,4 @@
-import * as yup from 'yup';
+import { array, ObjectSchema, number, object, string } from 'yup';
 import { IPerson } from './People';
 
 export interface IAccess {
@@ -10,9 +10,8 @@ export interface IAccess {
   teamId: number;
 }
 
-export const accessSchema = yup.object<IAccess>().shape({
-  assignments: yup
-    .array<IAccessAssignment>()
+export const accessSchema: ObjectSchema<IAccess> = object({
+  assignments: array<IAccessAssignment>()
     .nullable()
     .test(
       'checkValidAssignmentToPerson',
@@ -30,20 +29,11 @@ export const accessSchema = yup.object<IAccess>().shape({
         return valid;
       }
     ),
-  id: yup.number(),
-  name: yup
-    .string()
-    .required()
-    .max(64),
-  notes: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  tags: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  teamId: yup.number()
+  id: number(),
+  name: string().required().max(64),
+  notes: string().notRequired().nullable(),
+  tags: string().notRequired().nullable(),
+  teamId: number()
 });
 
 export interface IAccessAssignment {

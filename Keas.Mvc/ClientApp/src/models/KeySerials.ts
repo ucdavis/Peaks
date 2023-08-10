@@ -1,4 +1,4 @@
-import * as yup from 'yup';
+import { ObjectSchema, number, object, string, mixed } from 'yup';
 import { IKey } from './Keys';
 import { IPerson } from './People';
 
@@ -12,16 +12,9 @@ export interface IKeySerial {
   keySerialAssignment?: IKeySerialAssignment;
 }
 
-export const keySerialSchema = yup.object<IKeySerial>().shape({
-  id: yup.number(),
-  key: yup.object<IKey>(),
-  keySerialAssignment: yup.object<IKeySerialAssignment>().nullable(),
-  notes: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  number: yup
-    .string()
+export const keySerialSchema: ObjectSchema<IKeySerial> = object({
+  id: number(),
+  number: string()
     .required('Serial Number is required.')
     .max(64)
     .test(
@@ -39,11 +32,14 @@ export const keySerialSchema = yup.object<IKeySerial>().shape({
         );
       }
     ),
-  status: yup
-    .string()
+  status: string()
     .oneOf(['Active', 'Lost', 'Destroyed', 'Special', 'Dog ate'])
     .default('Active')
-    .required()
+    .required(),
+  notes: string().notRequired().nullable(),
+  key: mixed<IKey>(),
+  keyId: number().notRequired().nullable(),
+  keySerialAssignment: mixed<IKeySerialAssignment>().nullable()
 });
 
 export interface IKeySerialAssignment {

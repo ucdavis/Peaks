@@ -1,4 +1,4 @@
-import * as yup from 'yup';
+import { array, ObjectSchema, mixed, number, object, string } from 'yup';
 import { IPerson } from './People';
 import { ISpace } from './Spaces';
 
@@ -21,65 +21,23 @@ export interface IEquipment {
   attributes: IEquipmentAttribute[];
 }
 
-export const equipmentSchema = yup.object<IEquipment>().shape({
-  assignment: yup.object<IEquipmentAssignment>().nullable(),
-  attributes: yup
-    .array<IEquipmentAttribute>()
-    .notRequired()
-    .nullable(),
-  availabilityLevel: yup
-    .string()
-    .max(2)
-    .notRequired()
-    .nullable(),
-  equipmentAssignmentId: yup.number().nullable(),
-  id: yup.number(),
-  make: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  model: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  name: yup
-    .string()
-    .required()
-    .max(64),
-  notes: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  protectionLevel: yup
-    .string()
-    .max(2)
-    .notRequired()
-    .nullable(),
-  serialNumber: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  space: yup
-    .object<ISpace>()
-    .notRequired()
-    .nullable(),
-  systemManagementId: yup
-    .string()
-    .max(16)
-    .notRequired()
-    .nullable(),
-  tags: yup
-    .string()
-    .notRequired()
-    .nullable(),
-  teamId: yup
-    .number()
-    .notRequired()
-    .nullable(),
-  type: yup
-    .string()
-    .notRequired()
-    .nullable()
+export const equipmentSchema: ObjectSchema<IEquipment> = object({
+  assignment: mixed<IEquipmentAssignment>().nullable(),
+  equipmentAssignmentId: number().nullable(),
+  id: number(),
+  make: string().notRequired().nullable(),
+  model: string().notRequired().nullable(),
+  name: string().required().max(64),
+  space: mixed<ISpace>().notRequired().nullable(),
+  serialNumber: string().notRequired().nullable(),
+  tags: string().notRequired().nullable(),
+  teamId: number().notRequired().nullable(),
+  type: string().notRequired().nullable(),
+  protectionLevel: string().max(2).notRequired().nullable(),
+  availabilityLevel: string().max(2).notRequired().nullable(),
+  systemManagementId: string().max(16).notRequired().nullable(),
+  notes: string().notRequired().nullable(),
+  attributes: array<IEquipmentAttribute>().notRequired().nullable()
 });
 
 export interface IEquipmentAssignment {

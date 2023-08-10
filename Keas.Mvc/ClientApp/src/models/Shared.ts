@@ -1,5 +1,5 @@
 import { endOfDay } from 'date-fns';
-import * as yup from 'yup';
+import { ObjectSchema, object, date, mixed } from 'yup';
 import { ValidateOptions, ValidationError } from 'yup';
 import { IAccess } from './Access';
 import { IEquipment } from './Equipment';
@@ -8,14 +8,17 @@ import { IKeySerial } from './KeySerials';
 import { IPerson } from './People';
 import { IWorkstation } from './Workstations';
 
-export const assignmentSchema = yup.object().shape({
-  date: yup
-    .date()
+export interface IAssignmentSchema {
+  date: Date;
+  person: IPerson;
+}
+
+export const assignmentSchema: ObjectSchema<IAssignmentSchema> = object({
+  date: date()
     .nullable()
     .required('A date is required for this assignment.')
     .min(endOfDay(new Date()), 'You must choose a date after today.'),
-  person: yup
-    .object<IPerson>()
+  person: mixed<IPerson>()
     .nullable()
     .required('A person is required for this assignment.')
 });
@@ -25,13 +28,8 @@ export interface IValidationError {
   path: string;
 }
 
-export interface IAssignmentSchema {
-  date: Date;
-  person: IPerson;
-}
-
 export const yupAssetValidation = (
-  schema: yup.ObjectSchema<
+  schema: ObjectSchema<
     IKey | IKeySerial | IEquipment | IWorkstation | IPerson | IAccess
   >,
   asset: IKey | IKeySerial | IEquipment | IWorkstation | IPerson | IAccess,
