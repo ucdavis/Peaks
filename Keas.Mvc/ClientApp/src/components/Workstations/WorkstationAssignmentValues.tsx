@@ -9,24 +9,22 @@ interface IProps {
 }
 
 const WorkstationAssignmentValues = (props: IProps) => {
-  if (
-    !props.selectedWorkstation ||
-    !props.selectedWorkstation.assignment
-  ) {
+  if (!props.selectedWorkstation) {
     return null;
   }
-  
+
   return (
     <div>
       <div className='row justify-content-between mt-5'>
         <h3>Assignment Details</h3>
         <Button
           color='link'
-          onClick={() =>
-            props.openUpdateModal(props.selectedWorkstation)
-          }
+          onClick={() => props.openUpdateModal(props.selectedWorkstation)}
         >
-          <i className='fas fa-edit fa-xs' /> Update Assignment
+          <i className='fas fa-edit fa-xs' />{' '}
+          {!!props.selectedWorkstation.assignment
+            ? 'Update Assignment'
+            : 'Assign Workstation'}
         </Button>
       </div>
 
@@ -37,7 +35,11 @@ const WorkstationAssignmentValues = (props: IProps) => {
             type='text'
             className='form-control'
             disabled={true}
-            value={props.selectedWorkstation.assignment.person.name}
+            value={
+              !!props.selectedWorkstation.assignment
+                ? props.selectedWorkstation.assignment.person.name
+                : ''
+            }
           />
         </div>
         <div className='form-group'>
@@ -46,9 +48,13 @@ const WorkstationAssignmentValues = (props: IProps) => {
             type='text'
             className='form-control'
             disabled={true}
-            value={DateUtil.formatExpiration(
-              props.selectedWorkstation.assignment.expiresAt
-            )}
+            value={
+              !!props.selectedWorkstation.assignment
+                ? DateUtil.formatExpiration(
+                    props.selectedWorkstation.assignment.expiresAt
+                  )
+                : ''
+            }
           />
         </div>
       </div>
