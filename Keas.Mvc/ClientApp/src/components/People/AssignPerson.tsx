@@ -46,7 +46,7 @@ const AssignPerson = (props: IProps) => {
             placeholder='Search for person by name or email'
             labelKey={(option: IPerson) => `${option.name} (${option.email})`}
             filterBy={() => true} // don't filter on top of our search
-            renderMenuItemChildren={(option, propsData, index) => (
+            renderMenuItemChildren={(option: any, propsData, index) => (
               <div>
                 <div>
                   <Highlighter key='name' search={propsData.text}>
@@ -61,7 +61,7 @@ const AssignPerson = (props: IProps) => {
               </div>
             )}
             onSearch={onSearch}
-            onChange={selected => {
+            onChange={(selected: any) => {
               if (selected && selected.length === 1) {
                 props.onSelect(selected[0]);
               }
@@ -99,7 +99,7 @@ const AssignPerson = (props: IProps) => {
     setIsSearchLoading(true);
     let newPeople: IPerson[] = null;
     try {
-        newPeople = await context.fetch(
+      newPeople = await context.fetch(
         `/api/${context.team.slug}/people/searchPeople?q=${query}`
       );
     } catch (err) {

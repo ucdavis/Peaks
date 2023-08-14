@@ -34,7 +34,7 @@ const SearchEquipment = (props: IProps) => {
             labelKey='label'
             filterBy={() => true} // don't filter on top of our search
             allowNew={false}
-            renderMenuItemChildren={(option, props, index) => (
+            renderMenuItemChildren={(option: any, props, index) => (
               <div className={!!option.equipment.assignment ? 'disabled' : ''}>
                 <div>
                   <Highlighter key='equipment.name' search={props.text}>
@@ -58,7 +58,7 @@ const SearchEquipment = (props: IProps) => {
               </div>
             )}
             onSearch={onSearch}
-            onChange={selected => {
+            onChange={(selected: any[]) => {
               if (selected && selected.length === 1) {
                 if (
                   !!selected[0].equipment &&

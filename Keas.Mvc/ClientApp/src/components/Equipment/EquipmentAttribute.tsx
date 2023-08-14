@@ -24,7 +24,7 @@ const EquipmentAttribute = (props: IProps) => {
         disabled={props.disabledEdit}
         options={props.commonKeys}
         selected={props.attribute.key ? [props.attribute.key] : []}
-        onChange={selected => {
+        onChange={(selected: any) => {
           if (selected && selected.length === 1) {
             props.changeProperty(props.index, 'key', selected[0]);
           } else {
@@ -63,11 +63,7 @@ const EquipmentAttribute = (props: IProps) => {
             disabled={props.disabledEdit}
             value={props.attribute.value}
             onChange={e =>
-              props.changeProperty(
-                props.index,
-                'value',
-                e.target.value
-              )
+              props.changeProperty(props.index, 'value', e.target.value)
             }
           />
         </td>

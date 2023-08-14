@@ -34,7 +34,7 @@ const SearchWorkstations = (props: IProps) => {
             labelKey='name'
             filterBy={() => true} // don't filter on top of our search
             allowNew={false}
-            renderMenuItemChildren={(option, propsData, index) => (
+            renderMenuItemChildren={(option: any, propsData, index) => (
               <div className={!!option.assignment ? 'disabled' : ''}>
                 <div>
                   <Highlighter key='name' search={propsData.text}>
@@ -56,7 +56,7 @@ const SearchWorkstations = (props: IProps) => {
               </div>
             )}
             onSearch={onSearch}
-            onChange={selected => {
+            onChange={(selected: any) => {
               if (selected && selected.length === 1) {
                 if (!!selected[0] && !!selected[0].assignment) {
                   props.openDetailsModal(selected[0]);

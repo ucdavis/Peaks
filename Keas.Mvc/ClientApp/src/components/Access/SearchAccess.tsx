@@ -31,7 +31,7 @@ const SearchAccess = (props: IProps) => {
             labelKey='name'
             filterBy={() => true} // don't filter on top of our search
             allowNew={false}
-            renderMenuItemChildren={(option, propsData, index) => (
+            renderMenuItemChildren={(option: any, propsData, index) => (
               <div>
                 <Highlighter key='name' search={propsData.text}>
                   {option.name}
@@ -39,7 +39,7 @@ const SearchAccess = (props: IProps) => {
               </div>
             )}
             onSearch={onSearch}
-            onChange={selected => {
+            onChange={(selected: any[]) => {
               if (selected && selected.length === 1) {
                 onSelected(selected[0]);
               }

@@ -22,7 +22,7 @@ const SearchDefinedOptions = (props: IProps) => {
         disabled={props.disabled}
         multiple={true}
         clearButton={true}
-        onChange={selected => {
+        onChange={(selected: string[]) => {
           props.onSelect(selected);
         }}
         selected={props.selected}
