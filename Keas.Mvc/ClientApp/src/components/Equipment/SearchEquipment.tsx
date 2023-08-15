@@ -6,6 +6,7 @@ import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IEquipment, IEquipmentLabel } from '../../models/Equipment';
 import { ISpace } from '../../models/Spaces';
+import SearchAsyncOptions from '../Shared/SearchAsyncOptions';
 
 interface IProps {
   onDeselect: () => void;
@@ -26,13 +27,12 @@ const SearchEquipment = (props: IProps) => {
       <div>
         <label>Pick an equipment to assign</label>
         <div>
-          <AsyncTypeahead
+          <SearchAsyncOptions
             id='searchEquipment' // for accessibility
             isLoading={isSearchLoading}
             minLength={3}
             placeholder='Search for equipment by name or by serial number'
             labelKey='label'
-            filterBy={() => true} // don't filter on top of our search
             allowNew={false}
             renderMenuItemChildren={(option: any, props, index) => (
               <div className={!!option.equipment.assignment ? 'disabled' : ''}>

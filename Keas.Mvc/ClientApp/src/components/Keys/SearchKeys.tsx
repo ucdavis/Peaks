@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { useContext, useState } from 'react';
-import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
+import { Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
 import { IKeyInfo } from '../../models/Keys';
+import SearchAsyncOptions from '../Shared/SearchAsyncOptions';
 
 interface IProps {
   defaultKeyInfo?: IKeyInfo;
@@ -99,14 +100,13 @@ const SearchKeys = (props: IProps) => {
   };
 
   return (
-    <AsyncTypeahead
+    <SearchAsyncOptions
       id='searchKeys' // for accessibility
       defaultSelected={defaultKeyInfo ? [defaultKeyInfo] : []}
       isLoading={isSearchLoading}
       minLength={2}
       placeholder='Search for key by name or by serial number'
       labelKey='code'
-      filterBy={noopTrue} // don't filter on top of our search
       allowNew={props.allowNew}
       renderMenuItemChildren={renderItem}
       onSearch={onSearch}
