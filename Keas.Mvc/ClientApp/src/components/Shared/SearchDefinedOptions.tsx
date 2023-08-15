@@ -7,8 +7,9 @@ interface IProps {
   disabled: boolean;
   selected: string[];
   definedOptions: string[];
-  placeHolder: string;
+  placeholder: string;
   id: string;
+  inputProps?: any;
 }
 
 // user searches and picks from a list of pre-defined options
@@ -20,6 +21,7 @@ const SearchDefinedOptions = (props: IProps) => {
         id={props.id} // for accessibility
         options={props.disabled ? [] : props.definedOptions}
         disabled={props.disabled}
+        allowNew={false}
         multiple={true}
         clearButton={true}
         onChange={(selected: string[]) => {
@@ -28,6 +30,7 @@ const SearchDefinedOptions = (props: IProps) => {
         selected={props.selected}
         highlightOnlyResult={true}
         placeholder={props.placeholder}
+        inputProps={props.inputProps}
       />
     </div>
   );
