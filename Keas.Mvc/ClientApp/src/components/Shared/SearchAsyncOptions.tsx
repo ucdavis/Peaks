@@ -21,7 +21,7 @@ interface IProps {
 }
 
 // async typeahead with defined options pulled from the server
-const SearchDefinedOptions = (props: IProps) => {
+const SearchAsyncOptions = (props: IProps) => {
   return (
     <AsyncTypeahead
       id={props.id} // for accessibility
@@ -42,4 +42,4 @@ const SearchDefinedOptions = (props: IProps) => {
   );
 };
 
-export default SearchDefinedOptions;
+export default SearchAsyncOptions;
