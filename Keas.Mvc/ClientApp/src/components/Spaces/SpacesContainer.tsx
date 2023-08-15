@@ -114,7 +114,7 @@ const SpacesContainer = (props: IProps) => {
           selected={tagFilters}
           onSelect={filterTags}
           disabled={false}
-          placeHolder='Search for Tags'
+          placeholder='Search for Tags'
           id='searchTagsSpaces'
         />
         <SpacesTable

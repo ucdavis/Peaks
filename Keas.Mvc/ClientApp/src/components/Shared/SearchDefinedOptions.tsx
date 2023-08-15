@@ -27,7 +27,7 @@ const SearchDefinedOptions = (props: IProps) => {
         }}
         selected={props.selected}
         highlightOnlyResult={true}
-        placeholder={props.placeHolder}
+        placeholder={props.placeholder}
       />
     </div>
   );

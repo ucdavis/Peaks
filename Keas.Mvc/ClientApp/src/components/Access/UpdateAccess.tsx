@@ -94,7 +94,7 @@ const UpdateAccess = (props: IProps) => {
             disabled={true}
             onSelect={() => {}}
             selected={assignment.access.tags.split(',')}
-            placeHolder='Search for Tags'
+            placeholder='Search for Tags'
             id='searchTagsUpdateAccess'
           />
         </>
