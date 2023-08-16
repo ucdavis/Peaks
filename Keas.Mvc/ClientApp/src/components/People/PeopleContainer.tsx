@@ -231,7 +231,14 @@ const PeopleContainer = props => {
     // update already existing entry in key
     const updatePeople = [...people];
     updatePeople.splice(index, 1);
-    setPeople(updatePeople);
+    const updatedPeopleWithSupervisorRemoved = updatePeople.map(p => {
+      if (p.person.supervisorId === person.id) {
+        p.person.supervisorId = null;
+        p.person.supervisor = null;
+      }
+      return p;
+    });
+    setPeople(updatedPeopleWithSupervisorRemoved);
   };
 
   const goToKeyDetails = (key: IKey) => {
