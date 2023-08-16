@@ -18,7 +18,7 @@
   }
 }
 $loading-time: 3s;
-#people {
+#people-svg {
   animation: people-bounce $loading-time infinite;
   fill: #1f1f1f;
 }
@@ -34,7 +34,7 @@ $loading-time: 3s;
     fill: #c10230;
   }
 }
-#equipment {
+#equipment-svg {
   animation: equipment-bounce $loading-time infinite;
   fill: #1f1f1f;
 }
@@ -51,7 +51,7 @@ $loading-time: 3s;
     fill: #daaa00;
   }
 }
-#access {
+#access-svg {
   animation: access-bounce $loading-time infinite;
   fill: #1f1f1f;
 }
@@ -68,7 +68,7 @@ $loading-time: 3s;
     fill: #3dae2b;
   }
 }
-#keys {
+#keys-svg {
   animation: keys-bounce $loading-time infinite;
   fill: #1f1f1f;
 }
@@ -85,7 +85,7 @@ $loading-time: 3s;
     fill: #00b2e3;
   }
 }
-#spaces {
+#spaces-svg {
   animation: spaces-bounce $loading-time infinite;
   fill: #1f1f1f;
 }
