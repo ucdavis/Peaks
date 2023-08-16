@@ -13,15 +13,6 @@ interface IProps {
   allowNew: boolean;
 }
 
-interface IState {
-  isSearchLoading: boolean;
-  keysInfo: IKeyInfo[];
-}
-
-const noopTrue = () => {
-  return true;
-};
-
 // Search for existing key then send selection back to parent
 const SearchKeys = (props: IProps) => {
   const [isSearchLoading, setIsSearchLoading] = useState<boolean>(false);
