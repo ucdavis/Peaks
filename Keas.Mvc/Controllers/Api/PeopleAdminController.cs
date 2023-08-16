@@ -139,6 +139,14 @@ namespace Keas.Mvc.Controllers.Api
                     _context.TeamPermissions.RemoveRange(teamPermissionsToDelete);
                 }
 
+                //Unsupervise any people that this person supervised
+                var peopleToUnsupervise = await _context.People.Where(a => a.SupervisorId == personToUpdate.Id).ToArrayAsync();
+                foreach (var personToUnsupervise in peopleToUnsupervise)
+                {
+                    personToUnsupervise.SupervisorId = null;
+                    personToUnsupervise.Supervisor = null;
+                }
+
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
