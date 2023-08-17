@@ -22,6 +22,7 @@ interface IProps {
 
 // async typeahead with defined options pulled from the server
 const SearchAsyncOptions = (props: IProps) => {
+  let ref;
   return (
     <AsyncTypeahead
       id={props.id} // for accessibility
@@ -38,6 +39,10 @@ const SearchAsyncOptions = (props: IProps) => {
       }}
       options={props.options}
       defaultSelected={props.defaultSelected ? props.defaultSelected : []}
+      onBlur={() => {
+        ref.hideMenu();
+      }}
+      ref={el => (ref = el)}
     />
   );
 };
