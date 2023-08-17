@@ -514,3 +514,19 @@ button:focus {
 .loading-wrapper {
   text-align: center;
 }
+
+// RBT token
+
+.rbt-token {
+  line-height: inherit !important;
+  .rbt-token-remove-button {
+    align-self: center;
+  }
+  .rbt-token-label {
+    padding: 0 0.5rem;
+    margin-right: 4px;
+  }
+  .rbt-close {
+    margin-right: 4px;
+  }
+}

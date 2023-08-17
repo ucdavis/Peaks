@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Typeahead } from 'react-bootstrap-typeahead';
 import { IEquipmentAttribute } from '../../models/Equipment';
+import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
   attribute: IEquipmentAttribute;
@@ -18,13 +18,13 @@ const EquipmentAttribute = (props: IProps) => {
         ? 'form-control is-invalid'
         : 'form-control';
     return (
-      <Typeahead
+      <SearchDefinedOptions
         id={`attribute-${props.index}`} // for accessibility
-        allowNew={false}
         disabled={props.disabledEdit}
-        options={props.commonKeys}
+        definedOptions={props.commonKeys}
+        placeholder=''
         selected={props.attribute.key ? [props.attribute.key] : []}
-        onChange={selected => {
+        onSelect={(selected: any) => {
           if (selected && selected.length === 1) {
             props.changeProperty(props.index, 'key', selected[0]);
           } else {
@@ -63,11 +63,7 @@ const EquipmentAttribute = (props: IProps) => {
             disabled={props.disabledEdit}
             value={props.attribute.value}
             onChange={e =>
-              props.changeProperty(
-                props.index,
-                'value',
-                e.target.value
-              )
+              props.changeProperty(props.index, 'value', e.target.value)
             }
           />
         </td>

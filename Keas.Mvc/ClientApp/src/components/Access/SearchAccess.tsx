@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useContext, useState } from 'react';
-import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
+import { Highlighter } from 'react-bootstrap-typeahead';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IAccess } from '../../models/Access';
+import SearchAsyncOptions from '../Shared/SearchAsyncOptions';
 
 interface IProps {
   selectedAccess?: IAccess;
@@ -23,15 +24,14 @@ const SearchAccess = (props: IProps) => {
       <div>
         <label>Pick an access to assign</label>
         <div>
-          <AsyncTypeahead
+          <SearchAsyncOptions
             id='searchAccesses' // for accessibility
             isLoading={isSearchLoading}
             minLength={3}
             placeholder='Search for access by name or by serial number'
             labelKey='name'
-            filterBy={() => true} // don't filter on top of our search
             allowNew={false}
-            renderMenuItemChildren={(option, propsData, index) => (
+            renderMenuItemChildren={(option: any, propsData, index) => (
               <div>
                 <Highlighter key='name' search={propsData.text}>
                   {option.name}
@@ -39,7 +39,7 @@ const SearchAccess = (props: IProps) => {
               </div>
             )}
             onSearch={onSearch}
-            onChange={selected => {
+            onChange={(selected: any[]) => {
               if (selected && selected.length === 1) {
                 onSelected(selected[0]);
               }

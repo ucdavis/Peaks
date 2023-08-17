@@ -121,7 +121,7 @@ const KeyContainer = (props: IProps) => {
           disabled={false}
           selected={tagFilters}
           onSelect={onTagsFiltered}
-          placeHolder='Search for Tags'
+          placeholder='Search for Tags'
           id='searchTagsKeys'
         />
         <KeyTable
