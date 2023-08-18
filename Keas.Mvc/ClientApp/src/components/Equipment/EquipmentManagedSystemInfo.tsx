@@ -38,6 +38,7 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
         toggle={modalToggle}
         size='lg'
         className='equipment-color'
+        scrollable={true}
       >
         <div className='modal-header row justify-content-between'>
           <h2>Computer Details</h2>
@@ -90,7 +91,8 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
       } else {
         return (
           <p>
-            Not a valid Managed System id, please make sure to enter a valid Managed System id.
+            Not a valid Managed System id, please make sure to enter a valid
+            Managed System id.
           </p>
         );
       }
