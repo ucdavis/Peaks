@@ -143,6 +143,7 @@ const CreatePerson = (props: IProps) => {
         toggle={confirmClose}
         size='lg'
         className='people-color'
+        scrollable={false}
       >
         <div className='modal-header row justify-content-between'>
           <h2>Add Person</h2>

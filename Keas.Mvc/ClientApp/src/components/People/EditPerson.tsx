@@ -101,6 +101,7 @@ const EditPerson = (props: IProps) => {
         toggle={confirmClose}
         size='lg'
         className='people-color'
+        scrollable={true}
       >
         <div className='modal-header row justify-content-between'>
           <h2>Edit Person</h2>
