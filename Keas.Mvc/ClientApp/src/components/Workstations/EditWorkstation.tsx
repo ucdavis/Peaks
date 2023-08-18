@@ -87,6 +87,7 @@ const EditWorkstation = (props: IProps) => {
       toggle={confirmClose}
       size='lg'
       className='spaces-color'
+      scrollable={true}
     >
       <div className='modal-header row justify-content-between'>
         <h2>Edit Workstation</h2>
