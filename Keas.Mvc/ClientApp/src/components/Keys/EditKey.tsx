@@ -43,7 +43,7 @@ const EditKey = (props: IProps) => {
 
   const { searchableTags } = props;
   const changeProperty = (property: string, value: string) => {
-    setKey({...key, [property]: value})
+    setKey({ ...key, [property]: value });
   };
 
   // clear everything out on close
@@ -86,6 +86,7 @@ const EditKey = (props: IProps) => {
       toggle={confirmClose}
       size='lg'
       className='keys-color'
+      scrollable={true}
     >
       <div className='modal-header row justify-content-between'>
         <h2>Edit Key</h2>

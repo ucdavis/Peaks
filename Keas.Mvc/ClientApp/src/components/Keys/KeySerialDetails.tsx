@@ -24,11 +24,11 @@ const KeySerialDetails = (props: IProps) => {
   const { selectedKeySerial } = props;
 
   useEffect(() => {
-      if (!props.selectedKeySerial) {
-        return;
-      }
-      fetchDetails(props.selectedKeySerial.id);
-  }, [])
+    if (!props.selectedKeySerial) {
+      return;
+    }
+    fetchDetails(props.selectedKeySerial.id);
+  }, []);
 
   if (!selectedKeySerial) {
     return null;
@@ -63,6 +63,7 @@ const KeySerialDetails = (props: IProps) => {
         toggle={props.closeModal}
         size='lg'
         className='keys-color'
+        scrollable={true}
       >
         <div className='modal-header row justify-content-between'>
           <h2>
