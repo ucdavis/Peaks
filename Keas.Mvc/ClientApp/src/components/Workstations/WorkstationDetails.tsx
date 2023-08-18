@@ -61,7 +61,6 @@ const WorkstationDetails = (props: IProps) => {
         toggle={props.closeModal}
         size='lg'
         className='spaces-color'
-        scrollable={true}
       >
         <div className='modal-header row justify-content-between'>
           <h2>Details for {workstation.name}</h2>

@@ -38,7 +38,6 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
         toggle={modalToggle}
         size='lg'
         className='equipment-color'
-        scrollable={true}
       >
         <div className='modal-header row justify-content-between'>
           <h2>Computer Details</h2>
