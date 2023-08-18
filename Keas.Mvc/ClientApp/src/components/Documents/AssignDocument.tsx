@@ -99,6 +99,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
         toggle={() => setShow(false)}
         size='lg'
         className='documents-color'
+        scrollable={true}
       >
         <div className='modal-header row justify-content-between'>
           <h2>Assign Document for Signature</h2>
