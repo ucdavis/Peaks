@@ -54,6 +54,7 @@ const CreateKey = (props: IProps) => {
         toggle={confirmClose}
         size='lg'
         className='keys-color'
+        scrollable={false}
       >
         <div className='modal-header row justify-content-between'>
           <h2>Create Key</h2>

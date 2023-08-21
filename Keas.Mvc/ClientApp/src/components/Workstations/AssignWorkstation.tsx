@@ -132,6 +132,7 @@ const AssignWorkstation = (props: IProps) => {
         toggle={confirmClose}
         size='lg'
         className='spaces-color'
+        scrollable={!!workstation && !!workstation.teamId} // will be false if we are creating a new workstation
       >
         <div className='modal-header row justify-content-between'>
           <h2>

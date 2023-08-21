@@ -45,6 +45,7 @@ const DisassociateSpace = (props: IProps) => {
         toggle={closeModal}
         size='lg'
         className='keys-color'
+        scrollable={true}
       >
         <div className='modal-header row justify-content-between'>
           <h2>Disassociate Key and Space</h2>

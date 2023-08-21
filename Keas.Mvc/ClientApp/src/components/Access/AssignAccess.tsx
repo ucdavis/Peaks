@@ -139,6 +139,7 @@ const AssignAccess = (props: IProps) => {
       toggle={confirmClose}
       size='lg'
       className='access-color'
+      scrollable={!!access && !!access.teamId} // will be false when we are creating a new access
     >
       <div className='modal-header row justify-content-between'>
         <h2>

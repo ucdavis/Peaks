@@ -90,7 +90,8 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
       } else {
         return (
           <p>
-            Not a valid Managed System id, please make sure to enter a valid Managed System id.
+            Not a valid Managed System id, please make sure to enter a valid
+            Managed System id.
           </p>
         );
       }

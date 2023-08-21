@@ -17,6 +17,7 @@ const AccessModal: React.FunctionComponent<IProps> = (
       toggle={props.closeModal}
       size='lg'
       className='access-color'
+      scrollable={true}
     >
       <div className='modal-header row justify-content-between'>
         {props.header}
