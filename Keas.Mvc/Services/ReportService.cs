@@ -16,7 +16,7 @@ namespace Keas.Mvc.Services
 {
     public interface IReportService
     {
-        Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug);
+        Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug, bool hideInactive = true);
         Task<IList<WorkstationReportModel>> WorkStations(Group group);
         Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug);
         List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
@@ -84,14 +84,19 @@ namespace Keas.Mvc.Services
             };
         }
 
-        public async Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug)
+        public async Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug, bool hideInactive = true)
         {
             if (team == null)
             {
                 team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
             }
+            var workstations = _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(WorkstationProjection());
+            if (hideInactive)
+            {
+                workstations = workstations.Where(a => a.Active);
+            }
 
-            return await _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(WorkstationProjection()).ToListAsync();
+            return await workstations.ToListAsync();
 
         }
 
