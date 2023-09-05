@@ -44,8 +44,8 @@ const KeySerialListItem = (props: IProps) => {
         <span className='text-mono'>{keySerial.status}</span>
       </td>
       <td>
-        {keySerial.keySerialAssignment
-          ? keySerial.keySerialAssignment.person.name
+        {!!keySerial.keySerialAssignment?.person
+          ? `${keySerial.keySerialAssignment.person.lastName}, ${keySerial.keySerialAssignment.person.firstName}`
           : ''}
       </td>
       <td>

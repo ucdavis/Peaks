@@ -59,7 +59,9 @@ const WorkstationListItem = (props: IProps) => {
           : ''}
       </td>
       <td>
-        {hasAssignment ? props.workstationEntity.assignment.person.name : ''}
+        {hasAssignment
+          ? `${props.workstationEntity.assignment.person.lastName}, ${props.workstationEntity.assignment.person.firstName}`
+          : ''}
       </td>
       <td>
         {hasAssignment

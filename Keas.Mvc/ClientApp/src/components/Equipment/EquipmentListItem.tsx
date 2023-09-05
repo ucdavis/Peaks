@@ -51,7 +51,9 @@ const EquipmentListItem = (props: IProps) => {
       <td>{props.equipmentEntity.serialNumber}</td>
       <td>{props.equipmentEntity.name}</td>
       <td>
-        {hasAssignment ? props.equipmentEntity.assignment.person.name : ''}
+        {hasAssignment
+          ? `${props.equipmentEntity.assignment.person.lastName}, ${props.equipmentEntity.assignment.person.firstName}`
+          : ''}
       </td>
       <td>
         {hasAssignment
