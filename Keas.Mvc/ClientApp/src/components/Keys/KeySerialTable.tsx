@@ -49,7 +49,10 @@ const statusFilter = (rows: any[], id, filterValue) => {
   }
   if (filterValue === 'inactive') {
     return rows.filter(
-      r => getRowStatus(r) === 'Lost' || getRowStatus(r) === 'Destroyed' || getRowStatus(r) === 'Dog ate'
+      r =>
+        getRowStatus(r) === 'Lost' ||
+        getRowStatus(r) === 'Destroyed' ||
+        getRowStatus(r) === 'Dog ate'
     );
   }
   if (filterValue === 'special') {
@@ -114,7 +117,7 @@ const KeySerialTable = (props: IProps) => {
         Header: 'Assignment',
         accessor: (keySerial: IKeySerial) =>
           keySerial.keySerialAssignment
-            ? keySerial.keySerialAssignment.person.name
+            ? `${keySerial.keySerialAssignment.person.lastName}, ${keySerial.keySerialAssignment.person.firstName}`
             : null,
         id: 'assignedTo'
       },

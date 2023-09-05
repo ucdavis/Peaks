@@ -67,7 +67,10 @@ const AccessTable = (props: IProps) => {
       },
       {
         Header: 'Assigned To',
-        accessor: x => x.assignments.map(a => a.person.name).join(','),
+        accessor: x =>
+          x.assignments
+            .map(a => `${a.person.lastName}, ${a.person.firstName}`)
+            .join('; '),
         id: 'assignedTo'
       },
       {
