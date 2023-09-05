@@ -65,7 +65,8 @@ namespace Keas.Mvc.Services
                 Assignment = !a.WorkstationAssignmentId.HasValue ? null : new AssignmentReportModel
                 {
                     PersonId = a.Assignment.PersonId,
-                    FullName = a.Assignment.Person.Name,
+                    FirstName = a.Assignment.Person.FirstName,
+                    LastName = a.Assignment.Person.LastName,
                     UserId = a.Assignment.Person.UserId,
                     Email = a.Assignment.Person.Email,
                     ExpiryDateTime = a.Assignment.ExpiresAt,
@@ -185,7 +186,8 @@ namespace Keas.Mvc.Services
                 Assignment = !a.EquipmentAssignmentId.HasValue ? null : new AssignmentReportModel
                 {
                     PersonId = a.Assignment.PersonId,
-                    FullName = a.Assignment.Person.Name,
+                    FirstName = a.Assignment.Person.FirstName,
+                    LastName = a.Assignment.Person.LastName,
                     UserId = a.Assignment.Person.UserId,
                     Email = a.Assignment.Person.Email,
                     ExpiryDateTime = a.Assignment.ExpiresAt,
@@ -279,7 +281,8 @@ namespace Keas.Mvc.Services
                 Assignments = a.Assignments.Count <= 0 ? null : a.Assignments.Select(b => new AssignmentReportModel
                 {
                     PersonId = b.PersonId,
-                    FullName = b.Person.Name,
+                    FirstName = b.Person.FirstName,
+                    LastName = b.Person.LastName,
                     UserId = b.Person.UserId,
                     Email = b.Person.Email,
                     ExpiryDateTime = b.ExpiresAt,
@@ -314,7 +317,8 @@ namespace Keas.Mvc.Services
                     Assignment = !b.KeySerialAssignmentId.HasValue || b.KeySerialAssignment == null ? null : new AssignmentReportModel
                     {
                         PersonId = b.KeySerialAssignment.PersonId,
-                        FullName = b.KeySerialAssignment.Person.Name,
+                        FirstName = b.KeySerialAssignment.Person.FirstName,
+                        LastName = b.KeySerialAssignment.Person.LastName,
                         UserId = b.KeySerialAssignment.Person.UserId,
                         Email = b.KeySerialAssignment.Person.Email,
                         ExpiryDateTime = b.KeySerialAssignment.ExpiresAt,

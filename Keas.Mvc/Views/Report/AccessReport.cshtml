@@ -54,7 +54,7 @@
                                 <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
                                 <td>@item.Tags.Replace(",", ", ")</td>
                                 <td>@item.Notes</td>
-                                <td>@($"{assignment.FullName} ({assignment.UserId})")</td>
+                                <td>@($"{assignment.LastName}, {assignment.FirstName} ({assignment.UserId})")</td>
                                 <td>@assignment.Email</td>
                                 <td>@assignment.ExpiryDateTime.ToPacificTime().ToShortDateString()</td>
 

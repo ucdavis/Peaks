@@ -5,8 +5,8 @@ namespace Keas.Mvc.Models.ReportModels
     public class AssignmentReportModel
     {
         public int PersonId { get; set; }
-        public string FullName { get; set; }
-
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public string UserId { get; set; }
         public string Email { get; set; }
         public DateTime ExpiryDateTime { get; set; }
