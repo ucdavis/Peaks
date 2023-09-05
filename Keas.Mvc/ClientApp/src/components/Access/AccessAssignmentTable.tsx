@@ -28,7 +28,8 @@ const accessAssignTable: React.FunctionComponent<IProps> = (
   const columns: Column<IAccessAssignment>[] = [
     {
       Header: 'Name',
-      accessor: row => `${row.person.lastName}, ${row.person.firstName}`
+      accessor: row =>
+        !!row.person ? `${row.person.lastName}, ${row.person.firstName}` : ``
     },
     {
       Cell: row => (

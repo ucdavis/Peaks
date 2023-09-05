@@ -44,7 +44,9 @@ const PeopleTable = (props: IProps) => {
       {
         Header: 'Supervisor',
         accessor: row =>
-          `${row.person.supervisor?.lastName}, ${row.person.supervisor?.firstName}`
+          !!row.person?.supervisor
+            ? `${row.person.supervisor.lastName}, ${row.person.supervisor.firstName}`
+            : ``
       },
       {
         Header: 'Keys',

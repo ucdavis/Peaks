@@ -116,9 +116,9 @@ const KeySerialTable = (props: IProps) => {
       {
         Header: 'Assignment',
         accessor: (keySerial: IKeySerial) =>
-          keySerial.keySerialAssignment
+          !!keySerial.keySerialAssignment
             ? `${keySerial.keySerialAssignment.person.lastName}, ${keySerial.keySerialAssignment.person.firstName}`
-            : null,
+            : ``,
         id: 'assignedTo'
       },
       {
