@@ -41,7 +41,7 @@ namespace Keas.Mvc.Models.ReportModels
             {
                 if (!string.IsNullOrWhiteSpace(SupervisorEmail))
                 {
-                    return $"{SupervisorFirstName} {SupervisorLastName} ({SupervisorEmail})";
+                    return $"{SupervisorLastName}, {SupervisorFirstName} ({SupervisorEmail})";
                 }
 
                 return string.Empty;

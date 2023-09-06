@@ -63,7 +63,7 @@
                         <td>@Html.DisplayFor(a=> item.Access.Name)
                         </td>
                         <td>
-                            @Html.DisplayFor(a=> item.Person.Name)
+                            @Html.DisplayFor(a=> item.Person.LastName), @Html.DisplayFor(a=> item.Person.FirstName)
                         </td>
                         <td>
                             @Html.DisplayFor(a => item.ExpiresAt)
@@ -80,7 +80,7 @@
                         <td>@Html.DisplayFor(a => item.Key.Name) @Html.DisplayFor(a => item.Key.Code)-@Html.DisplayFor(a => item.Number)
                         </td>
                         <td>
-                            @Html.DisplayFor(a => item.KeySerialAssignment.Person.Name)
+                            @Html.DisplayFor(a => item.KeySerialAssignment.Person.LastName), @Html.DisplayFor(a => item.KeySerialAssignment.Person.FirstName)
                         </td>
                         <td>
                             @Html.DisplayFor(a => item.KeySerialAssignment.ExpiresAt)
@@ -98,7 +98,7 @@
                             @Html.DisplayFor(a => item.Name)
                         </td>
                         <td>
-                            @Html.DisplayFor(a => item.Assignment.Person.Name)
+                            @Html.DisplayFor(a => item.Assignment.Person.LastName), @Html.DisplayFor(a => item.Assignment.Person.FirstName)
                         </td>
                         <td>
                             @Html.DisplayFor(a => item.Assignment.ExpiresAt)
@@ -116,7 +116,7 @@
                             @Html.DisplayFor(a => item.Name)
                         </td>
                         <td>
-                            @Html.DisplayFor(a => item.Assignment.Person.Name)
+                            @Html.DisplayFor(a => item.Assignment.Person.LastName), @Html.DisplayFor(a => item.Assignment.Person.FirstName)
                         </td>
                         <td>
                             @Html.DisplayFor(a => item.Assignment.ExpiresAt)
