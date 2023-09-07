@@ -64,7 +64,7 @@
                 <td>@Html.DisplayFor(a => item.Key.Name) @Html.DisplayFor(a => item.Key.Code)-@Html.DisplayFor(a => item.Number)
                 </td>
                 <td>
-                    @Html.DisplayFor(a => item.KeySerialAssignment.Person.Name)
+                    @Html.DisplayFor(a => item.KeySerialAssignment.Person.LastName), @Html.DisplayFor(a => item.KeySerialAssignment.Person.FirstName)
                 </td> 
                 <td>
                     @Html.DisplayFor(a => item.KeySerialAssignment.Person.Email)
@@ -86,7 +86,7 @@
                     @Html.DisplayFor(a => item.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(a => item.Assignment.Person.Name)
+                    @Html.DisplayFor(a => item.Assignment.Person.LastName), @Html.DisplayFor(a => item.Assignment.Person.FirstName)
                 </td> 
                 <td>
                     @Html.DisplayFor(a => item.Assignment.Person.Email)
@@ -108,7 +108,7 @@
                     @Html.DisplayFor(a => item.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(a => item.Assignment.Person.Name)
+                    @Html.DisplayFor(a => item.Assignment.Person.LastName), @Html.DisplayFor(a => item.Assignment.Person.FirstName)
                 </td> 
                 <td>
                     @Html.DisplayFor(a => item.Assignment.Person.Email)
