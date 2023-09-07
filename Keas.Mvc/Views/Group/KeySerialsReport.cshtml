@@ -65,7 +65,7 @@
                                 <td>@serial.Notes</td>
                                 @if (serial.IsAssigned)
                                 {
-                                    <td>@($"{serial.Assignment.LastName}, {serial.Assignment.FirstName} ({serial.Assignment.UserId})")</td>
+                                    <td>@serial.Assignment.NameAndUserId</td>
                                     <td>@serial.Assignment.Email</td>
                                     <td>@serial.Assignment.ExpiryDateTime.ToPacificTime().ToShortDateString()</td>
                                 }
