@@ -107,7 +107,7 @@ describe('Equipment Container', () => {
       const rowContent = match.textContent;
       if (rowContent.includes('Dell Desktop')) {
         foundIt = true;
-        expect(rowContent).toContain('Eren Yeager'); // confirm assigned person is displayed
+        expect(rowContent).toContain('Yeager, Eren'); // confirm assigned person is displayed
         expect(rowContent).toContain('4DVNPD2'); // confirm serial number are displayed
       }
     });
