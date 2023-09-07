@@ -42,7 +42,7 @@
         {
             <tr>                
                 <td>
-                    @Html.DisplayFor(a=> item.Name)
+                    @Html.DisplayFor(a=> item.LastName), @Html.DisplayFor(a=> item.FirstName)
                 </td>
                 <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.Id)'>Details</a>
