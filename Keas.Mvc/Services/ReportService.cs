@@ -603,7 +603,7 @@ namespace Keas.Mvc.Services
             {
                 Type = "Access",
                 ItemName = a.Access.Name,
-                PersonName = a.Person != null ? a.Person.Name : $"Missing Person: {a.Id}",
+                PersonName = a.Person != null ? $"{a.Person.LastName}, {a.Person.FirstName}" : $"Missing Person: {a.Id}",
                 PersonActive = a.Person.Active,
                 ExpiresAt = a.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Access.Team.Slug,
@@ -617,7 +617,8 @@ namespace Keas.Mvc.Services
             {
                 Type = "Key",
                 ItemName = $"{a.Key.Name} {a.Key.Code}-{a.Number}",
-                PersonName = a.KeySerialAssignment.Person != null ? a.KeySerialAssignment.Person.Name : $"Missing Person {a.KeySerialAssignment.Id}",
+                PersonName = a.KeySerialAssignment.Person != null ? $"{a.KeySerialAssignment.Person.LastName}, {a.KeySerialAssignment.Person.FirstName}" 
+                    : $"Missing Person {a.KeySerialAssignment.Id}",
                 PersonActive = a.KeySerialAssignment.Person.Active,
                 ExpiresAt = a.KeySerialAssignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
@@ -630,7 +631,7 @@ namespace Keas.Mvc.Services
             {
                 Type = "Equipment",
                 ItemName = a.Name,
-                PersonName = a.Assignment.Person != null ? a.Assignment.Person.Name : $"Missing Person: {a.Assignment.Id}",
+                PersonName = a.Assignment.Person != null ? $"{a.Assignment.Person.LastName}, {a.Assignment.Person.FirstName}" : $"Missing Person: {a.Assignment.Id}",
                 PersonActive = a.Assignment.Person.Active,
                 ExpiresAt = a.Assignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
@@ -644,7 +645,7 @@ namespace Keas.Mvc.Services
             {
                 Type = "Workstation",
                 ItemName = a.Name,
-                PersonName = a.Assignment.Person != null ? a.Assignment.Person.Name : $"Missing Person: {a.Assignment.Id}",
+                PersonName = a.Assignment.Person != null ? $"{a.Assignment.Person.LastName}, {a.Assignment.Person.FirstName}" : $"Missing Person: {a.Assignment.Id}",
                 PersonActive = a.Assignment.Person.Active,
                 ExpiresAt = a.Assignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
