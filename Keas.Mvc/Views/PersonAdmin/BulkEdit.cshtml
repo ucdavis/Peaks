@@ -97,7 +97,7 @@
                 @foreach (var item in Model.BulkPersons)
                 {
                     <tr id="@item.Id">
-                        <td>@item.Name</td>
+                        <td>@item.LastName, @item.FirstName</td>
                         <td>@item.Email</td>
                         <td>@item.Category</td>
                         <td>@Html.DisplayFor(a => item.StartDate)</td>
