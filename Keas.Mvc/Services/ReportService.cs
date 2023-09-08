@@ -16,8 +16,8 @@ namespace Keas.Mvc.Services
 {
     public interface IReportService
     {
-        Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug);
-        Task<IList<WorkstationReportModel>> WorkStations(Group group);
+        Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug, bool hideInactive = true);
+        Task<IList<WorkstationReportModel>> WorkStations(Group group, bool hideInactive = true);
         Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug);
         List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
         Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug, bool hideInactive = true);
@@ -85,20 +85,34 @@ namespace Keas.Mvc.Services
             };
         }
 
-        public async Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug)
+        public async Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug, bool hideInactive = true)
         {
             if (team == null)
             {
                 team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
             }
 
-            return await _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(WorkstationProjection()).ToListAsync();
+            var workstations = _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(WorkstationProjection());
+            if (hideInactive)
+            {
+                workstations = workstations.Where(a => a.Active);
+            }
+
+
+            return await workstations.ToListAsync();
 
         }
 
-        public async Task<IList<WorkstationReportModel>> WorkStations(Group group)
+        public async Task<IList<WorkstationReportModel>> WorkStations(Group group, bool hideInactive = true)
         {
-            return await _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id)).Select(WorkstationProjection()).ToListAsync();
+
+            var workstations = _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id)).Select(WorkstationProjection());
+            if (hideInactive)
+            {
+                workstations = workstations.Where(a => a.Active);
+            }
+
+            return await workstations.ToListAsync();
         }
 
         public async Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug)
