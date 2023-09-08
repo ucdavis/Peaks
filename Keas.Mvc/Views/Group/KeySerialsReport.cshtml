@@ -8,17 +8,26 @@
 
 <a asp-action="Index" asp-route-id="@ViewBag.Group.Id" class="btn btn-link">Back to Group Home</a>
 
-<div class="card">
+<div class="card keys-color">
     <div class="card-header-spaces">
         <div class="card-head">
             <h2>Group: @ViewBag.Group.Name</h2>
             <h3>Key Serials with Spaces Report</h3>
-            <small class="form-text text-muted">To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).</small>
-            <small class="form-text text-muted">If you have filtered the report with the Search feature, only the filtered results will be exported.</small>
-            <small class="form-text text-muted">You can filter the table with the data that isn't displayed on the screen (such as notes).</small>
         </div>
     </div>
     <div class="card-content">
+        <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
+        <ul>
+            <li>
+                To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).
+            </li>
+            <li>
+                If you have filtered the report with the Search feature, only the filtered results will be exported.
+            </li>
+            <li>
+                You can filter the table with the data that isn't displayed on the screen (such as notes).
+            </li>
+        </ul>
         <table id="keys" class="table dataTable">
             <thead>
                 <tr>
