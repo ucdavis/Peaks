@@ -16,8 +16,8 @@ namespace Keas.Mvc.Services
 {
     public interface IReportService
     {
-        Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug);
-        Task<IList<WorkstationReportModel>> WorkStations(Group group);
+        Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug, bool hideInactive = true);
+        Task<IList<WorkstationReportModel>> WorkStations(Group group, bool hideInactive = true);
         Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug);
         List<FeedPeopleSpaceModel> GetPeopleFeedIncludeSpace(string teamSlug);
         Task<IList<EquipmentReportModel>> EquipmentList(Team team, string teamSlug, bool hideInactive = true);
@@ -65,7 +65,8 @@ namespace Keas.Mvc.Services
                 Assignment = !a.WorkstationAssignmentId.HasValue ? null : new AssignmentReportModel
                 {
                     PersonId = a.Assignment.PersonId,
-                    FullName = a.Assignment.Person.Name,
+                    FirstName = a.Assignment.Person.FirstName,
+                    LastName = a.Assignment.Person.LastName,
                     UserId = a.Assignment.Person.UserId,
                     Email = a.Assignment.Person.Email,
                     ExpiryDateTime = a.Assignment.ExpiresAt,
@@ -84,20 +85,34 @@ namespace Keas.Mvc.Services
             };
         }
 
-        public async Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug)
+        public async Task<IList<WorkstationReportModel>> WorkStations(Team team, string teamSlug, bool hideInactive = true)
         {
             if (team == null)
             {
                 team = await _context.Teams.SingleAsync(a => a.Slug == teamSlug);
             }
 
-            return await _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(WorkstationProjection()).ToListAsync();
+            var workstations = _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.TeamId == team.Id).Select(WorkstationProjection());
+            if (hideInactive)
+            {
+                workstations = workstations.Where(a => a.Active);
+            }
+
+
+            return await workstations.ToListAsync();
 
         }
 
-        public async Task<IList<WorkstationReportModel>> WorkStations(Group group)
+        public async Task<IList<WorkstationReportModel>> WorkStations(Group group, bool hideInactive = true)
         {
-            return await _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id)).Select(WorkstationProjection()).ToListAsync();
+
+            var workstations = _context.Workstations.IgnoreQueryFilters().AsNoTracking().Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id)).Select(WorkstationProjection());
+            if (hideInactive)
+            {
+                workstations = workstations.Where(a => a.Active);
+            }
+
+            return await workstations.ToListAsync();
         }
 
         public async Task<List<FeedPeopleModel>> GetPeopleFeed(string teamSlug)
@@ -185,7 +200,8 @@ namespace Keas.Mvc.Services
                 Assignment = !a.EquipmentAssignmentId.HasValue ? null : new AssignmentReportModel
                 {
                     PersonId = a.Assignment.PersonId,
-                    FullName = a.Assignment.Person.Name,
+                    FirstName = a.Assignment.Person.FirstName,
+                    LastName = a.Assignment.Person.LastName,
                     UserId = a.Assignment.Person.UserId,
                     Email = a.Assignment.Person.Email,
                     ExpiryDateTime = a.Assignment.ExpiresAt,
@@ -279,7 +295,8 @@ namespace Keas.Mvc.Services
                 Assignments = a.Assignments.Count <= 0 ? null : a.Assignments.Select(b => new AssignmentReportModel
                 {
                     PersonId = b.PersonId,
-                    FullName = b.Person.Name,
+                    FirstName = b.Person.FirstName,
+                    LastName = b.Person.LastName,
                     UserId = b.Person.UserId,
                     Email = b.Person.Email,
                     ExpiryDateTime = b.ExpiresAt,
@@ -314,7 +331,8 @@ namespace Keas.Mvc.Services
                     Assignment = !b.KeySerialAssignmentId.HasValue || b.KeySerialAssignment == null ? null : new AssignmentReportModel
                     {
                         PersonId = b.KeySerialAssignment.PersonId,
-                        FullName = b.KeySerialAssignment.Person.Name,
+                        FirstName = b.KeySerialAssignment.Person.FirstName,
+                        LastName = b.KeySerialAssignment.Person.LastName,
                         UserId = b.KeySerialAssignment.Person.UserId,
                         Email = b.KeySerialAssignment.Person.Email,
                         ExpiryDateTime = b.KeySerialAssignment.ExpiresAt,
@@ -360,7 +378,8 @@ namespace Keas.Mvc.Services
                 .Where(a => a.TeamId == team.Id && a.Documents.Any(x => x.Active && x.Status != "Completed"))
                 .Select(s => new IncompleteDocumentReportModel()
                 {
-                    Name = s.Name,
+                    FirstName = s.FirstName,
+                    LastName = s.LastName,
                     Email = s.Email,
                     PersonId = s.Id,
                     IncompleteDocumentCount = s.Documents.Count(w => w.Active && w.Status != "Completed"),
@@ -406,7 +425,8 @@ namespace Keas.Mvc.Services
                 .Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id) && a.Documents.Any(x => x.Active && x.Status != "Completed"))
                 .Select(s => new IncompleteDocumentReportModel()
                 {
-                    Name = s.Name,
+                    FirstName = s.FirstName,
+                    LastName = s.LastName,
                     Email = s.Email,
                     PersonId = s.Id,
                     IncompleteDocumentCount = s.Documents.Count(w => w.Active && w.Status != "Completed"),
@@ -583,7 +603,7 @@ namespace Keas.Mvc.Services
             {
                 Type = "Access",
                 ItemName = a.Access.Name,
-                PersonName = a.Person != null ? a.Person.Name : $"Missing Person: {a.Id}",
+                PersonName = a.Person != null ? $"{a.Person.LastName}, {a.Person.FirstName}" : $"Missing Person: {a.Id}",
                 PersonActive = a.Person.Active,
                 ExpiresAt = a.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Access.Team.Slug,
@@ -597,7 +617,8 @@ namespace Keas.Mvc.Services
             {
                 Type = "Key",
                 ItemName = $"{a.Key.Name} {a.Key.Code}-{a.Number}",
-                PersonName = a.KeySerialAssignment.Person != null ? a.KeySerialAssignment.Person.Name : $"Missing Person {a.KeySerialAssignment.Id}",
+                PersonName = a.KeySerialAssignment.Person != null ? $"{a.KeySerialAssignment.Person.LastName}, {a.KeySerialAssignment.Person.FirstName}" 
+                    : $"Missing Person {a.KeySerialAssignment.Id}",
                 PersonActive = a.KeySerialAssignment.Person.Active,
                 ExpiresAt = a.KeySerialAssignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
@@ -610,7 +631,7 @@ namespace Keas.Mvc.Services
             {
                 Type = "Equipment",
                 ItemName = a.Name,
-                PersonName = a.Assignment.Person != null ? a.Assignment.Person.Name : $"Missing Person: {a.Assignment.Id}",
+                PersonName = a.Assignment.Person != null ? $"{a.Assignment.Person.LastName}, {a.Assignment.Person.FirstName}" : $"Missing Person: {a.Assignment.Id}",
                 PersonActive = a.Assignment.Person.Active,
                 ExpiresAt = a.Assignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
@@ -624,7 +645,7 @@ namespace Keas.Mvc.Services
             {
                 Type = "Workstation",
                 ItemName = a.Name,
-                PersonName = a.Assignment.Person != null ? a.Assignment.Person.Name : $"Missing Person: {a.Assignment.Id}",
+                PersonName = a.Assignment.Person != null ? $"{a.Assignment.Person.LastName}, {a.Assignment.Person.FirstName}" : $"Missing Person: {a.Assignment.Id}",
                 PersonActive = a.Assignment.Person.Active,
                 ExpiresAt = a.Assignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,

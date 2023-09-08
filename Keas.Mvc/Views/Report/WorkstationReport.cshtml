@@ -1,5 +1,5 @@
 @using Keas.Core.Extensions
-@model System.Collections.Generic.IList<Keas.Mvc.Models.ReportModels.WorkstationReportModel>
+@model Keas.Mvc.Models.ReportModels.WorkstationReportViewModel
 
 @{
     ViewBag.Title = "Workstations";
@@ -14,19 +14,37 @@
         </div>
     </div>
     <div class="card-content">
-        <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
-                        <ul>
-                            
-                            <li>
-                                To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).
-                            </li>
-                            <li>
-                                If you have filtered the report with the Search feature, only the filtered results will be exported.
-                            </li>
-                            <li>
-                                You can filter the table with the data that isn't displayed on the screen (such as notes).
-                            </li>
-                        </ul>
+        <form asp-action="WorkstationReport" method="get">
+
+
+            <div class="row align-items-start">
+                <div class="col-md-6 col-lg-4">
+                    <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
+                    <ul>
+
+                        <li>
+                            To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).
+                        </li>
+                        <li>
+                            If you have filtered the report with the Search feature, only the filtered results will be exported.
+                        </li>
+                        <li>
+                            You can filter the table with the data that isn't displayed on the screen (such as notes).
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <h3>Filters</h3>
+                    <div class="form-group">
+                        <label asp-for="HideInactive" class="form-check-label"></label>
+                        <input asp-for="HideInactive" class="peaks-checkbox" />
+                    </div>
+                    <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                </div>
+            </div>
+
+        </form>
+
         <table id="workstations" class="table dataTable">
             <thead>
                 <tr>
@@ -48,7 +66,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var item in Model.WorkstationList)
                 {
                     <tr>
                         <td>@item.Name</td>
@@ -59,7 +77,7 @@
                         <td>@item.Notes</td>
                         @if (item.IsAssigned)
                         {
-                            <td>@($"{item.Assignment.FullName} ({item.Assignment.UserId})")</td>
+                            <td>@item.Assignment.NameAndUserId</td>
                             <td>@item.Assignment.Email</td>
                             <td>@item.Assignment.ExpiryDateTime.ToPacificTime().ToShortDateString()</td>
                         }

@@ -33,7 +33,7 @@ const PeopleTable = (props: IProps) => {
       },
       {
         Header: 'Name',
-        accessor: row => row.person.lastName + ', ' + row.person.firstName,
+        accessor: row => `${row.person.lastName}, ${row.person.firstName}`,
         filter: 'contains',
         id: 'name'
       },
@@ -43,7 +43,10 @@ const PeopleTable = (props: IProps) => {
       },
       {
         Header: 'Supervisor',
-        accessor: row => row.person.supervisor?.name
+        accessor: row =>
+          !!row.person?.supervisor
+            ? `${row.person.supervisor.lastName}, ${row.person.supervisor.firstName}`
+            : ``
       },
       {
         Header: 'Keys',

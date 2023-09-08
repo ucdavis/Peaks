@@ -76,7 +76,10 @@ const EquipmentTable = (props: IProps) => {
       },
       {
         Header: 'Assigned To',
-        accessor: e => e.assignment?.person?.name
+        accessor: e =>
+          !!e.assignment?.person
+            ? `${e.assignment?.person?.lastName}, ${e.assignment?.person?.firstName}`
+            : ``
       },
       {
         Cell: row => (

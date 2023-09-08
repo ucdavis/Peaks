@@ -147,11 +147,15 @@ namespace Keas.Mvc.Controllers
         }
 
         [Authorize(Policy = AccessCodes.Codes.SpaceMasterAccess)]
-        public async Task<IActionResult> WorkstationReport()
+        public async Task<IActionResult> WorkstationReport(bool hideInactive = true)
         {
-            var worstations = await _reportService.WorkStations(null, Team);
+            var model = new WorkstationReportViewModel
+            {
+                HideInactive = hideInactive,
+                WorkstationList = await _reportService.WorkStations(null, Team, hideInactive)
+            };
 
-            return View(worstations);
+            return View(model);
         }
 
         [Authorize(Policy = AccessCodes.Codes.EquipMasterAccess)]

@@ -10,7 +10,7 @@
     <div class="card documents-color">
         <div class="card-header-documents">
             <div class="card-head">
-                <h2>Completed documents</h2>
+                <h2>Completed Documents</h2>
             </div>
         </div>
         <div class="card-content">
@@ -59,7 +59,7 @@
                 @foreach (var item in Model.Docs)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(a=> item.Person.Name)</td>
+                        <td>@Html.DisplayFor(a=> item.Person.LastName), @Html.DisplayFor(a => item.Person.FirstName)</td>
                         <td>@Html.DisplayFor(a=> item.Name)</td>
                         <td>
                             @item.CreatedAt.ToPacificTime().ToString("d")
