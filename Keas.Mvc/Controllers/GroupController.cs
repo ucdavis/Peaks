@@ -64,7 +64,7 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> WorkstationReport(int id)
+        public async Task<IActionResult> WorkstationReport(int id, bool hideInactive = true)
         {
             var group = await GetGroup(id);
 
@@ -74,11 +74,18 @@ namespace Keas.Mvc.Controllers
                 return RedirectToAction("NoAccess", "Home");
             }
 
-            ViewBag.Group = group;
+            var model = new WorkstationReportViewModel
+            {
+                HideInactive = hideInactive,
+                Group = group,
+                WorkstationList = await _reportService.WorkStations(group, hideInactive)
+            };
 
-            var worstations = await _reportService.WorkStations(group);
+            //ViewBag.Group = group;
 
-            return View(worstations);
+            //var worstations = await _reportService.WorkStations(group);
+
+            return View(model);
         }
 
         public async Task<IActionResult> EquipmentReport(int id, bool hideInactive = true)
