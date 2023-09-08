@@ -154,7 +154,6 @@ namespace Keas.Mvc.Controllers
                 HideInactive = hideInactive,
                 WorkstationList = await _reportService.WorkStations(null, Team, hideInactive)
             };
-            //var worstations = await _reportService.WorkStations(null, Team);
 
             return View(model);
         }

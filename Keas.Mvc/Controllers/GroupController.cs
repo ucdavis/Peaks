@@ -81,10 +81,6 @@ namespace Keas.Mvc.Controllers
                 WorkstationList = await _reportService.WorkStations(group, hideInactive)
             };
 
-            //ViewBag.Group = group;
-
-            //var worstations = await _reportService.WorkStations(group);
-
             return View(model);
         }
 
