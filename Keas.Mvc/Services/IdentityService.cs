@@ -26,6 +26,7 @@ namespace Keas.Mvc.Services
         Task<(Person Person, int peopleCount)> GetOrCreatePersonFromKerberos(string kerb, int teamId, Team team, string actorName, string actorId, string notes);
         Task<string> GetTitle(string iamId);
         Task<string> GetIamSupervisor(string iamId);
+        Task<int> UpdateUsersFromLastModifiedDateInIam(DateTime modifiedAfterDate);
     }
 
     public class IdentityService : IIdentityService
@@ -284,6 +285,56 @@ namespace Keas.Mvc.Services
             }
 
             return iam;
+        }
+
+        /// <summary>
+        /// Note, this may or will contain IAM ids that do not exist in peaks.
+        /// </summary>
+        /// <param name="modifiedAfterDate"></param>
+        /// <returns></returns>
+        public async Task<int> UpdateUsersFromLastModifiedDateInIam(DateTime modifiedAfterDate)
+        {
+            var count = 0;
+            try
+            {
+                var clientws = new IetClient(_authSettings.IamKey);
+                var result = await clientws.People.Search(PeopleSearchField.modifyDateAfter, modifiedAfterDate.ToString("yyyy-MM-dd"));
+                if (result.ResponseData.Results.Length > 0)
+                {
+                    var iamIds = result.ResponseData.Results.Select(a => a.IamId).ToList();
+                    var users = await _context.Users.Where(a => iamIds.Contains(a.Iam)).Include(a => a.People).ToListAsync();
+                    foreach (var user in users)
+                    {
+                        var ietData = result.ResponseData.Results.Where(a => a.IamId == user.Iam).FirstOrDefault();
+                        if (ietData != null)
+                        {
+                            //if (user.FirstName != ietData.DFirstName || user.LastName != ietData.DLastName || user.pronouns != ietData.DPronouns) //if we add pronouns
+                            if (user.FirstName != ietData.DFirstName || user.LastName != ietData.DLastName)
+                            {
+                                count++;
+                                user.FirstName = ietData.DFirstName;
+                                user.LastName = ietData.DLastName;
+                                //user.pronouns = ietData.DPronouns; //if we add pronouns
+
+                                foreach (var person in user.People)
+                                {
+                                    person.FirstName = ietData.DFirstName;
+                                    person.LastName = ietData.DLastName;                                    
+                                }
+                            }
+                        }
+                    }
+                    if(count > 0)
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error($"Getting List of Users to Update.", ex);
+            }
+            return count;
         }
 
         public async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
