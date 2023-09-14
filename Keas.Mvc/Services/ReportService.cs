@@ -39,6 +39,7 @@ namespace Keas.Mvc.Services
         Task<List<InactiveSpaceReportModel>> InactiveSpaces(string teamSlug); //Not sure if this one can be done with a group
 
         Task<CompletedDocsReportModel> CompletedDocuments(Team team, string teamSlug, DateTime? start, DateTime? end);
+        Task<CompletedDocsReportModel> CompletedDocuments(Group group, DateTime? start = null, DateTime? end = null);
     }
 
 
@@ -412,9 +413,52 @@ namespace Keas.Mvc.Services
                 end = end.Value.FromPacificTime().Date;
             }
 
-            var docs = await _context.Documents.AsNoTracking().Include(a => a.Person).Where(a => a.TeamId == team.Id && a.Active && a.Person.Active && a.CreatedAt >= start && a.CreatedAt <= end && a.Status == "Completed").ToListAsync();
 
-            var model = new CompletedDocsReportModel { Start = start.Value.ToPacificTime().Date, End = end.Value.ToPacificTime().Date, Docs = docs };
+            var model = new CompletedDocsReportModel
+            {
+                Start = start.Value.ToPacificTime().Date,
+                End = end.Value.ToPacificTime().Date,
+                Items = await _context.Documents.AsNoTracking()
+                    .Include(a => a.Person)
+                    .Where(a => a.TeamId == team.Id && a.Active && a.Person.Active && a.CreatedAt >= start && a.CreatedAt <= end && a.Status == "Completed")
+                    .Select(CompletedDocsProjection())
+                    .ToArrayAsync()
+            };
+
+            return model;
+        }
+
+        public async Task<CompletedDocsReportModel> CompletedDocuments(Group group, DateTime? start = null, DateTime? end = null)
+        {
+            if (!start.HasValue)
+            {
+                start = DateTime.UtcNow.AddDays(-30).Date;
+            }
+            else
+            {
+                start = start.Value.FromPacificTime().Date;
+            }
+            if (!end.HasValue)
+            {
+                end = DateTime.UtcNow.AddDays(1).Date;
+            }
+            else
+            {
+                end = end.Value.FromPacificTime().Date;
+            }            
+            
+
+            var model = new CompletedDocsReportModel 
+            {
+                Group = group,  
+                Start = start.Value.ToPacificTime().Date, 
+                End = end.Value.ToPacificTime().Date, 
+                Items = await _context.Documents.AsNoTracking()
+                    .Include(a => a.Team).Include(a => a.Person)
+                    .Where(a => a.Team.Groups.Any(g => g.GroupId == group.Id) && a.Active && a.Person.Active && a.CreatedAt >= start && a.CreatedAt <= end && a.Status == "Completed")
+                    .Select(CompletedDocsProjection())
+                    .ToArrayAsync()
+            };
 
             return model;
         }
@@ -650,6 +694,20 @@ namespace Keas.Mvc.Services
                 ExpiresAt = a.Assignment.ExpiresAt.ToPacificTime(),
                 TeamSlug = a.Team.Slug,
                 DetailsLink = $"/{a.Team.Slug}/spaces/details/{a.SpaceId}", //This is really only needed for the non group one?
+            };
+        }
+
+        public Expression<Func<Document, CompletedDocsReportModelItem>> CompletedDocsProjection()
+        {
+            return a => new CompletedDocsReportModelItem
+            {
+                PersonName = a.Person.NameV2,
+                DocName = a.Name,
+                CreatedAt = a.CreatedAt.ToPacificTime(),
+                CompletedAt = a.CompletedAt.ToPacificTime(),
+                TeamSlug = a.Team.Slug,
+                TeamName = a.Team.Name,
+                DetailsLink = $"/{a.Team.Slug}/people/details/{a.PersonId}",                   
             };
         }
     }
