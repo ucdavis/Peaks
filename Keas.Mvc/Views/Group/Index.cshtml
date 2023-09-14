@@ -48,10 +48,13 @@
             </div>
 
             <div class="report-list documents-color col-md-3">
-                <h3><i class="fas fa-file-alt fa-xs"></i> Incomplete Documents Reports</h3>
+                <h3><i class="fas fa-file-alt fa-xs"></i> Documents Reports</h3>
                 <ul>
                     <li>
                         <a asp-action="IncompleteDocumentsReport" asp-route-id="@Model.Group.Id">View All Incomplete Docs <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
+                    </li>
+                    <li>
+                        <a asp-action="CompletedDocumentsReport" asp-route-id="@Model.Group.Id">Completed Documents <i class="fas fa-chevron-right fa-sm" aria-hidden="true"></i></a>
                     </li>
                 </ul> 
             </div>
