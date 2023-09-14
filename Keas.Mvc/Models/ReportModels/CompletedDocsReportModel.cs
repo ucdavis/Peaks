@@ -18,7 +18,6 @@ namespace Keas.Mvc.Models.ReportModels
         public DateTime End { get; set; }
 
         public Group Group { get; set; }
-        public List<Document> Docs {get;set;}
 
         public CompletedDocsReportModelItem[] Items { get; set; }
     }
