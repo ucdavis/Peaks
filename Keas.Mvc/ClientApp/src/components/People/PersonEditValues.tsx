@@ -1,14 +1,12 @@
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
 import { FormFeedback, FormGroup, Input, Label } from 'reactstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/free-solid-svg-icons';
-import DatePicker from 'react-date-picker';
 import { IPerson } from '../../models/People';
 import { IValidationError } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';
 import AssignPerson from './AssignPerson';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import AssignDate from '../Shared/AssignDate';
 
 interface IProps {
   changeProperty?: (property: string, value: any) => void;
@@ -143,32 +141,30 @@ const PersonEditValues = (props: IProps) => {
       <FormGroup>
         <Label for='Start Date'>Start Date</Label>
         <br />
-        <DatePicker
+        <AssignDate
           disabled={props.isDeleting}
-          value={
+          isRequired={false}
+          date={
             props.selectedPerson && props.selectedPerson.startDate
               ? new Date(props.selectedPerson.startDate)
               : null
           }
-          onChange={changeStartDate}
-          format='MM/dd/yyyy'
-          clearIcon={<FontAwesomeIcon icon={faTrash} pull='right' />}
+          onChangeDate={changeStartDate}
         />
       </FormGroup>
 
       <FormGroup>
         <Label for='End Date'>End Date</Label>
         <br />
-        <DatePicker
+        <AssignDate
           disabled={props.isDeleting}
-          value={
+          isRequired={false}
+          date={
             props.selectedPerson && props.selectedPerson.endDate
               ? new Date(props.selectedPerson.endDate)
               : null
           }
-          onChange={changeEndDate}
-          format='MM/dd/yyyy'
-          clearIcon={<FontAwesomeIcon icon={faTrash} pull='right' />}
+          onChangeDate={changeEndDate}
         />
       </FormGroup>
 
