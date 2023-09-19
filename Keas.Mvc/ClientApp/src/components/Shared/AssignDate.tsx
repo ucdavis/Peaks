@@ -27,8 +27,6 @@ const AssignDate = (props: IProps) => {
           clearIcon={null}
           value={props.date}
           onChange={props.onChangeDate}
-          calendarClassName={'react-datepicker-calendar-custom'}
-          className={'react-date-picker-custom'}
         />
         {props.error && props.error.path === 'date' && (
           <div className='invalid-feedback d-block'>{props.error.message}</div>
