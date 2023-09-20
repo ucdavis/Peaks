@@ -157,6 +157,20 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> CompletedDocumentsReport(int id, DateTime? start = null, DateTime? end = null)
+        {
+            var group = await GetGroup(id);
+
+            if (group == null)
+            {
+                ErrorMessage = "Group not found or no access to Group";
+                return RedirectToAction("NoAccess", "Home");
+            }
+
+            var model =  await _reportService.CompletedDocuments(group, start, end);
+            return View(model);
+        }
+
         public async Task<IActionResult> PeopleLeavingWithAssets(int id)
         {
             var group = await GetGroup(id);

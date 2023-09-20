@@ -42,6 +42,16 @@ namespace Keas.Core.Domain
             }
          }
 
+        [StringLength(256)]
+        [Display(Name = "Name")]
+        public string NameV2
+        {
+            get
+            {
+                return $"{LastName}, {FirstName}";
+            }
+        }
+
         [Required]
         [StringLength(256)]
         [EmailAddress]

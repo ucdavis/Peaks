@@ -72,6 +72,11 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"Name\")]",
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)256)]",
             }));
+            expectedFields.Add(new NameAndType("NameV2", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.DisplayAttribute(Name = \"Name\")]",
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)256)]",
+            }));
             expectedFields.Add(new NameAndType("Notes", "System.String", new List<string>
             {
                 "[System.ComponentModel.DataAnnotations.DataTypeAttribute((System.ComponentModel.DataAnnotations.DataType)9)]",
