@@ -34,6 +34,17 @@ namespace Keas.Mvc.Controllers
             return Content(xxx.ToString());
         }
 
+        /// <summary>
+        /// Don't run this against prod during work hours.  It will take a long time.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IActionResult> UpdateAllFromIam()
+        {
+            var xxx = await _identityService.UpdateAllUsersFromIam();
+
+            return Content(xxx.ToString());
+        }
+
         public async Task<IActionResult> Index()
         {
             var model = new TeamsAndGroupsModel();

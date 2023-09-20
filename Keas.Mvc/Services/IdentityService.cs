@@ -27,6 +27,7 @@ namespace Keas.Mvc.Services
         Task<string> GetTitle(string iamId);
         Task<string> GetIamSupervisor(string iamId);
         Task<int> UpdateUsersFromLastModifiedDateInIam(DateTime modifiedAfterDate);
+        Task<int> UpdateAllUsersFromIam();
     }
 
     public class IdentityService : IIdentityService
@@ -335,17 +336,78 @@ namespace Keas.Mvc.Services
                         }
                     }   
 
-                    if(count > 0)
-                    {
-                        Log.Information($"Updating {count} users from Iam.");
-                        await _context.SaveChangesAsync();
-                    }
+
+                    Log.Information($"Updating {count} users from Iam.");
+
                 }
             }
             catch (Exception ex)
             {
                 Log.Error($"Getting List of Users to Update.", ex);
             }
+            return count;
+        }
+
+        /// <summary>
+        /// Don't run this on prod during working hours.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<int> UpdateAllUsersFromIam()
+        {
+            Log.Information("UpdateAllUsersFromIam - Starting");
+            var clientws = new IetClient(_authSettings.IamKey);
+            //Take 100 users at a time and check them against IAM
+            var count = 0;
+            var currentBatch = 0;
+            var userIamIds = await _context.Users.Where(a => a.Iam != null).Select(a => a.Iam).ToListAsync();
+            var batches = Batch(userIamIds, 100);
+            foreach (var batch in batches)
+            {
+                currentBatch++;
+                Log.Information($"UpdateAllUsersFromIam - Starting batch number {currentBatch} .");
+                var batchCount = 0;
+                //Pause for 5 seconds to not overload IAM
+                await Task.Delay(5000);
+
+                var users = await _context.Users.Where(a => batch.Contains(a.Iam)).Include(a => a.People).ToListAsync();
+                foreach (var user in users)
+                {
+                    var result = await clientws.People.Search(PeopleSearchField.iamId, user.Iam);
+                    if (result != null && result.ResponseData.Results.Length > 0)
+                    {
+                        var ietData = result.ResponseData.Results.Where(a => a.IamId == user.Iam).FirstOrDefault();
+                        if(ietData == null)
+                        {
+                            continue;
+                        }
+
+                        if (user.FirstName != ietData.DFirstName || user.LastName != ietData.DLastName)
+                        {
+                            count++;
+                            batchCount++;
+                            user.FirstName = ietData.DFirstName;
+                            user.LastName = ietData.DLastName;
+                            //user.pronouns = ietData.DPronouns; //if we add pronouns
+                            foreach (var person in user.People)
+                            {
+                                person.FirstName = ietData.DFirstName;
+                                person.LastName = ietData.DLastName;
+                            }
+                            Log.Information($"Updating {user.Iam} from Iam.");
+                        }
+                    }
+                }
+                if (batchCount > 0)
+                {
+                    Log.Information($"UpdateAllUsersFromIam - Updated {batchCount} users .");
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            
+            Log.Information($"UpdateAllUsersFromIam - Updated total of {count} users .");
+            
+
             return count;
         }
 
