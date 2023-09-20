@@ -9,7 +9,7 @@ interface IProps {
   selectedAccessAssignment: IAccessAssignment;
   isModalOpen: boolean;
   closeModal: () => void;
-  openEditModal: (access: IAccess) => void;
+  openEditAccessModal: (access: IAccess) => void;
   openUpdateModal: (accessAssignment: IAccessAssignment) => void;
   onRevoke: (accessAssignment: IAccessAssignment) => void;
   updateSelectedAccessAssignment: (accessAssignment: IAccessAssignment) => void;
@@ -63,7 +63,7 @@ const RevokeAccessAssignment = (props: IProps) => {
           <AccessEditValues
             selectedAccess={selectedAccessAssignment.access}
             disableEditing={true}
-            openEditModal={props.openEditModal}
+            openEditModal={props.openEditAccessModal}
             goToAccessDetails={props.goToAccessDetails}
           />
           <AccessAssignmentEditValues

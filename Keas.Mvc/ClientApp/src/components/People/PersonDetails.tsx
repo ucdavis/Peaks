@@ -7,7 +7,7 @@ import { IKey } from '../../models/Keys';
 import { IPerson, IPersonInfo } from '../../models/People';
 import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
-import AssignmentContainer from '../Access/AccessAssignmentContainer';
+import AccessAssignmentContainer from '../Access/AccessAssignmentContainer';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
 import HistoryContainer from '../History/HistoryContainer';
 import KeySerialContainer from '../Keys/KeySerialContainer';
@@ -98,7 +98,7 @@ const PersonDetails = (props: IProps) => {
         person={props.selectedPersonInfo.person}
         assetInUseUpdated={props.inUseUpdated}
       />
-      <AssignmentContainer
+      <AccessAssignmentContainer
         person={props.selectedPersonInfo.person}
         onRevokeSuccess={() =>
           props.inUseUpdated('access', 0, props.selectedPersonInfo.id, -1)
@@ -118,8 +118,8 @@ const PersonDetails = (props: IProps) => {
       {canEdit && (
         <HistoryContainer
           controller='peopleAdmin'
-                  id={props.selectedPersonInfo.person.id}
-                  showLink={true}
+          id={props.selectedPersonInfo.person.id}
+          showLink={true}
         />
       )}
     </div>

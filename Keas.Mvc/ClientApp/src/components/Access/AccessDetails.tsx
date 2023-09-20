@@ -15,8 +15,9 @@ interface IProps {
   modal: boolean;
   closeModal: () => void;
   selectedAccess: IAccess;
-  editAccess: (accaess: IAccess) => void;
+  editAccess: (access: IAccess) => void;
   openDeleteModal: (access: IAccess) => void;
+  openEditAccessModal: (access: IAccess) => void;
   updateSelectedAccess: (access: IAccess, id?: number) => void;
 }
 
@@ -143,6 +144,7 @@ const AccessDetails = (props: IProps) => {
           access.assignments.splice(access.assignments.indexOf(assignment), 1);
           props.updateSelectedAccess(access);
         }}
+        openEditAccessModal={props.openEditAccessModal}
       />
       <HistoryContainer controller='access' id={access.id} />
     </div>

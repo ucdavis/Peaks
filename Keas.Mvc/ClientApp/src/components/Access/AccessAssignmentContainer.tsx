@@ -21,9 +21,10 @@ interface IProps {
   access?: IAccess;
   onRevokeSuccess?: (assignment: IAccessAssignment) => any;
   onAssignSuccess: () => void;
+  openEditAccessModal: (access: IAccess) => void;
 }
 
-const AssignmentContainer = (props: IProps) => {
+const AccessAssignmentContainer = (props: IProps) => {
   const context = useContext(Context);
   const params: IMatchParams = useParams();
   const history = useHistory();
@@ -77,12 +78,12 @@ const AssignmentContainer = (props: IProps) => {
     getAssignments();
   }, [context, params.id, props.person]);
 
-  const showRevokeModal = (assignment: IAccessAssignment) => {
+  const openRevokeModal = (assignment: IAccessAssignment) => {
     setSelectedAssignment(assignment);
     history.push(`${getBaseUrl()}/accessAssignment/revoke/${assignment.id}`);
   };
 
-  const showEditModal = (assignment: IAccessAssignment) => {
+  const openUpdateModal = (assignment: IAccessAssignment) => {
     setSelectedAssignment(assignment);
     history.push(`${getBaseUrl()}/accessAssignment/update/${assignment.id}`);
   };
@@ -197,7 +198,7 @@ const AssignmentContainer = (props: IProps) => {
     props.onAssignSuccess();
   };
 
-  const openDetails = (access: IAccess) => {
+  const openAccessDetails = (access: IAccess) => {
     history.push(`/${context.team.slug}/access/details/${access.id}`);
   };
 
@@ -221,9 +222,14 @@ const AssignmentContainer = (props: IProps) => {
     <div>
       {isRevokeModalShown && (
         <RevokeAccessAssignment
-          assignment={selectedAssignment}
-          revoke={callRevoke}
-          cancelRevoke={hideModals}
+          selectedAccessAssignment={selectedAssignment}
+          isModalOpen={isRevokeModalShown}
+          closeModal={hideModals}
+          openEditAccessModal={props.openEditAccessModal}
+          openUpdateModal={openUpdateModal}
+          onRevoke={callRevoke}
+          updateSelectedAccessAssignment={setSelectedAssignment}
+          goToAccessDetails={openAccessDetails}
         />
       )}
       {isEditModalShown && (
@@ -246,11 +252,11 @@ const AssignmentContainer = (props: IProps) => {
       <AccessAssignmentCard openAssignModal={openAssignModal}>
         {props.person ? (
           <AccessList
-            showDetails={openDetails}
+            showDetails={openAccessDetails}
             personView={true}
             access={assignments.map(assignment => assignment.access)}
             onRevoke={access =>
-              showRevokeModal(
+              openRevokeModal(
                 assignments.find(
                   assignment =>
                     assignment.accessId === access.id &&
@@ -262,8 +268,8 @@ const AssignmentContainer = (props: IProps) => {
         ) : (
           <AssignmentTable
             assignments={assignments}
-            onRevoke={showRevokeModal}
-            onEdit={showEditModal}
+            onRevoke={openRevokeModal}
+            onEdit={openUpdateModal}
           />
         )}
       </AccessAssignmentCard>
@@ -271,4 +277,4 @@ const AssignmentContainer = (props: IProps) => {
   );
 };
 
-export default AssignmentContainer;
+export default AccessAssignmentContainer;
