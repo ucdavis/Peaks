@@ -10,8 +10,8 @@ import AccessAssignmentCard from './AccessAssignmentCard';
 import AssignmentTable from './AccessAssignmentTable';
 import AccessList from './AccessList';
 import AssignAccess from './AssignAccess';
-import RevokeAccess from './RevokeAccess';
-import UpdateAccess from './UpdateAccess';
+import RevokeAccessAssignment from './RevokeAccessAssignment';
+import UpdateAccessAssignment from './UpdateAccessAssignment';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 
@@ -101,7 +101,7 @@ const AssignmentContainer = (props: IProps) => {
         }
       );
     } catch (err) {
-      toast.error("Error revoking access for user");
+      toast.error('Error revoking access for user');
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -220,14 +220,14 @@ const AssignmentContainer = (props: IProps) => {
   return (
     <div>
       {isRevokeModalShown && (
-        <RevokeAccess
+        <RevokeAccessAssignment
           assignment={selectedAssignment}
           revoke={callRevoke}
           cancelRevoke={hideModals}
         />
       )}
       {isEditModalShown && (
-        <UpdateAccess
+        <UpdateAccessAssignment
           assignment={selectedAssignment}
           update={callUpdate}
           cancelUpdate={hideModals}

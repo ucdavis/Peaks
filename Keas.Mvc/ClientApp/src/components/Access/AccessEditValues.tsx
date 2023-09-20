@@ -12,6 +12,7 @@ interface IProps {
   children?: JSX.Element;
   openEditModal?: (access: IAccess) => void;
   onAccessUpdate?: (access: IAccess) => void;
+  goToAccessDetails?: (access: IAccess) => void;
 }
 
 const AccessEditValues = (props: IProps) => {
