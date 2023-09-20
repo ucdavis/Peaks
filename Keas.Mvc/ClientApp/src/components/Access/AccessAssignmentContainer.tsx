@@ -10,8 +10,8 @@ import AccessAssignmentCard from './AccessAssignmentCard';
 import AssignmentTable from './AccessAssignmentTable';
 import AccessList from './AccessList';
 import AssignAccess from './AssignAccess';
-import RevokeAccessAssignment from './RevokeAccessAssignment';
-import UpdateAccessAssignment from './UpdateAccessAssignment';
+import RevokeAccess from './RevokeAccess';
+import UpdateAccess from './UpdateAccess';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 
@@ -21,10 +21,9 @@ interface IProps {
   access?: IAccess;
   onRevokeSuccess?: (assignment: IAccessAssignment) => any;
   onAssignSuccess: () => void;
-  openEditAccessModal: (access: IAccess) => void;
 }
 
-const AccessAssignmentContainer = (props: IProps) => {
+const AssignmentContainer = (props: IProps) => {
   const context = useContext(Context);
   const params: IMatchParams = useParams();
   const history = useHistory();
@@ -78,12 +77,12 @@ const AccessAssignmentContainer = (props: IProps) => {
     getAssignments();
   }, [context, params.id, props.person]);
 
-  const openRevokeModal = (assignment: IAccessAssignment) => {
+  const showRevokeModal = (assignment: IAccessAssignment) => {
     setSelectedAssignment(assignment);
     history.push(`${getBaseUrl()}/accessAssignment/revoke/${assignment.id}`);
   };
 
-  const openUpdateModal = (assignment: IAccessAssignment) => {
+  const showEditModal = (assignment: IAccessAssignment) => {
     setSelectedAssignment(assignment);
     history.push(`${getBaseUrl()}/accessAssignment/update/${assignment.id}`);
   };
@@ -102,7 +101,7 @@ const AccessAssignmentContainer = (props: IProps) => {
         }
       );
     } catch (err) {
-      toast.error('Error revoking access for user');
+      toast.error("Error revoking access for user");
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -198,7 +197,7 @@ const AccessAssignmentContainer = (props: IProps) => {
     props.onAssignSuccess();
   };
 
-  const openAccessDetails = (access: IAccess) => {
+  const openDetails = (access: IAccess) => {
     history.push(`/${context.team.slug}/access/details/${access.id}`);
   };
 
@@ -221,19 +220,14 @@ const AccessAssignmentContainer = (props: IProps) => {
   return (
     <div>
       {isRevokeModalShown && (
-        <RevokeAccessAssignment
-          selectedAccessAssignment={selectedAssignment}
-          isModalOpen={isRevokeModalShown}
-          closeModal={hideModals}
-          openEditAccessModal={props.openEditAccessModal}
-          openUpdateModal={openUpdateModal}
-          onRevoke={callRevoke}
-          updateSelectedAccessAssignment={setSelectedAssignment}
-          goToAccessDetails={openAccessDetails}
+        <RevokeAccess
+          assignment={selectedAssignment}
+          revoke={callRevoke}
+          cancelRevoke={hideModals}
         />
       )}
       {isEditModalShown && (
-        <UpdateAccessAssignment
+        <UpdateAccess
           assignment={selectedAssignment}
           update={callUpdate}
           cancelUpdate={hideModals}
@@ -252,11 +246,11 @@ const AccessAssignmentContainer = (props: IProps) => {
       <AccessAssignmentCard openAssignModal={openAssignModal}>
         {props.person ? (
           <AccessList
-            showDetails={openAccessDetails}
+            showDetails={openDetails}
             personView={true}
             access={assignments.map(assignment => assignment.access)}
             onRevoke={access =>
-              openRevokeModal(
+              showRevokeModal(
                 assignments.find(
                   assignment =>
                     assignment.accessId === access.id &&
@@ -268,8 +262,8 @@ const AccessAssignmentContainer = (props: IProps) => {
         ) : (
           <AssignmentTable
             assignments={assignments}
-            onRevoke={openRevokeModal}
-            onEdit={openUpdateModal}
+            onRevoke={showRevokeModal}
+            onEdit={showEditModal}
           />
         )}
       </AccessAssignmentCard>
@@ -277,4 +271,4 @@ const AccessAssignmentContainer = (props: IProps) => {
   );
 };
 
-export default AccessAssignmentContainer;
+export default AssignmentContainer;
