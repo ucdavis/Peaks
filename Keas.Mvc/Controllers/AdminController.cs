@@ -8,6 +8,7 @@ using Keas.Core.Domain;
 using Keas.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Keas.Mvc.Services;
+using Keas.Core.Extensions;
 
 namespace Keas.Mvc.Controllers
 {
@@ -24,6 +25,13 @@ namespace Keas.Mvc.Controllers
             _context = context;
             _identityService = identityService;
             _userService = userService;
+        }
+
+        public async Task<IActionResult> UpdateFromIam()
+        {
+            var xxx = await _identityService.UpdateUsersFromLastModifiedDateInIam(System.DateTime.UtcNow.ToPacificTime().Date.AddDays(-1));
+
+            return Content(xxx.ToString());
         }
 
         public async Task<IActionResult> Index()
