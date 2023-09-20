@@ -302,30 +302,42 @@ namespace Keas.Mvc.Services
                 if (result.ResponseData.Results.Length > 0)
                 {
                     var iamIds = result.ResponseData.Results.Select(a => a.IamId).ToList();
-                    var users = await _context.Users.Where(a => iamIds.Contains(a.Iam)).Include(a => a.People).ToListAsync();
-                    foreach (var user in users)
-                    {
-                        var ietData = result.ResponseData.Results.Where(a => a.IamId == user.Iam).FirstOrDefault();
-                        if (ietData != null)
-                        {
-                            //if (user.FirstName != ietData.DFirstName || user.LastName != ietData.DLastName || user.pronouns != ietData.DPronouns) //if we add pronouns
-                            if (user.FirstName != ietData.DFirstName || user.LastName != ietData.DLastName)
-                            {
-                                count++;
-                                user.FirstName = ietData.DFirstName;
-                                user.LastName = ietData.DLastName;
-                                //user.pronouns = ietData.DPronouns; //if we add pronouns
 
-                                foreach (var person in user.People)
+                    var batches = Batch(iamIds, 100);
+                    foreach (var batch in batches)
+                    {
+                        var batchCount = 0;
+                        var users = await _context.Users.Where(a => batch.Contains(a.Iam)).Include(a => a.People).ToListAsync();
+                        foreach (var user in users)
+                        {
+                            var ietData = result.ResponseData.Results.Where(a => a.IamId == user.Iam).FirstOrDefault();
+                            if (ietData != null)
+                            {
+                                if (user.FirstName != ietData.DFirstName || user.LastName != ietData.DLastName)
                                 {
-                                    person.FirstName = ietData.DFirstName;
-                                    person.LastName = ietData.DLastName;                                    
+                                    count++;
+                                    batchCount++;
+                                    user.FirstName = ietData.DFirstName;
+                                    user.LastName = ietData.DLastName;
+                                    //user.pronouns = ietData.DPronouns; //if we add pronouns
+                                    foreach (var person in user.People)
+                                    {
+                                        person.FirstName = ietData.DFirstName;
+                                        person.LastName = ietData.DLastName;
+                                    }
+                                    Log.Information($"Updating {user.Iam} from Iam.");
                                 }
                             }
                         }
-                    }
+                        if(batchCount > 0)
+                        {
+                            await _context.SaveChangesAsync();
+                        }
+                    }   
+
                     if(count > 0)
                     {
+                        Log.Information($"Updating {count} users from Iam.");
                         await _context.SaveChangesAsync();
                     }
                 }
@@ -335,6 +347,30 @@ namespace Keas.Mvc.Services
                 Log.Error($"Getting List of Users to Update.", ex);
             }
             return count;
+        }
+
+        private static IEnumerable<IEnumerable<TSource>> Batch<TSource>(IEnumerable<TSource> source, int size)
+        {
+            TSource[] bucket = null;
+            var count = 0;
+
+            foreach (var item in source)
+            {
+                if (bucket == null)
+                    bucket = new TSource[size];
+
+                bucket[count++] = item;
+                if (count != size)
+                    continue;
+
+                yield return bucket;
+
+                bucket = null;
+                count = 0;
+            }
+
+            if (bucket != null && count > 0)
+                yield return bucket.Take(count);
         }
 
         public async Task<string> BulkLoadPeople(string ppsCode, string teamslug, string actorName, string actorId)
