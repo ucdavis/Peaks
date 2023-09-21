@@ -39,8 +39,10 @@ namespace Keas.Core.Services
             var count = 0;
             try
             {
+                Log.Information($"Update IAM by Modified Date - Starting for date {modifiedAfterDate}");
                 var clientws = new IetClient(_authSettings.IamKey);
                 var result = await clientws.People.Search(PeopleSearchField.modifyDateAfter, modifiedAfterDate.ToString("yyyy-MM-dd"));
+                Log.Information($"Update IAM by Modified Date - Number Changed: {result.ResponseData.Results.Length}");
                 if (result.ResponseData.Results.Length > 0)
                 {
                     var iamIds = result.ResponseData.Results.Select(a => a.IamId).ToList();
@@ -67,7 +69,7 @@ namespace Keas.Core.Services
                                         person.FirstName = ietData.DFirstName;
                                         person.LastName = ietData.DLastName;
                                     }
-                                    Log.Information($"Updating {user.Iam} from Iam.");
+                                    Log.Information($"Update IAM by Modified Date - Updating {user.Iam} from Iam.");
                                 }
                             }
                         }
@@ -78,13 +80,13 @@ namespace Keas.Core.Services
                     }
 
 
-                    Log.Information($"Updating {count} users from Iam.");
+                    Log.Information($"Update IAM by Modified Date - Updating {count} users from Iam.");
 
                 }
             }
             catch (Exception ex)
             {
-                Log.Error($"Getting List of Users to Update.", ex);
+                Log.Error("Update IAM by Modified Date - Getting List of Users to Update.", ex);
             }
             return count;
         }
