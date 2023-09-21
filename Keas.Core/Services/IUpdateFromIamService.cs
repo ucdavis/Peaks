@@ -121,7 +121,7 @@ namespace Keas.Core.Services
                     if (result != null && result.ResponseData.Results.Length > 0)
                     {
                         var ietData = result.ResponseData.Results.Where(a => a.IamId == user.Iam).FirstOrDefault();
-                        if (ietData == null)
+                        if (ietData == null || string.IsNullOrWhiteSpace(ietData.DFirstName) || string.IsNullOrWhiteSpace(ietData.DLastName))
                         {
                             continue;
                         }
