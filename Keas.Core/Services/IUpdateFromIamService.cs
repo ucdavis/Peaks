@@ -55,7 +55,8 @@ namespace Keas.Core.Services
                         foreach (var user in users)
                         {
                             var ietData = result.ResponseData.Results.Where(a => a.IamId == user.Iam).FirstOrDefault();
-                            if (ietData != null)
+                            //Possible to get null data back for a user. Probably because they are going away
+                            if (ietData != null && !string.IsNullOrWhiteSpace(ietData.DFirstName) && !string.IsNullOrWhiteSpace(ietData.DLastName))
                             {
                                 if (user.FirstName != ietData.DFirstName || user.LastName != ietData.DLastName)
                                 {
@@ -87,6 +88,7 @@ namespace Keas.Core.Services
             catch (Exception ex)
             {
                 Log.Error("Update IAM by Modified Date - Getting List of Users to Update.", ex);
+                Log.Error($"Update IAM by Modified Date - Exception Message: {ex.Message} -- {ex.InnerException.Message}");
             }
             return count;
         }
@@ -119,7 +121,7 @@ namespace Keas.Core.Services
                     if (result != null && result.ResponseData.Results.Length > 0)
                     {
                         var ietData = result.ResponseData.Results.Where(a => a.IamId == user.Iam).FirstOrDefault();
-                        if (ietData == null)
+                        if (ietData == null || string.IsNullOrWhiteSpace(ietData.DFirstName) || string.IsNullOrWhiteSpace(ietData.DLastName))
                         {
                             continue;
                         }
