@@ -99,6 +99,15 @@ stages:
             projects: './Keas.Jobs.SendMail/Keas.Jobs.SendMail.csproj'
             arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
 
+        - task: DotNetCoreCLI@2
+          displayName: 'Publish Keas.Jobs.LivedName'
+          inputs:
+            command: 'publish'
+            publishWebProjects: false
+            zipAfterPublish: false
+            projects: './Keas.Jobs.LivedName/Keas.Jobs.LivedName.csproj'
+            arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
+
         - task: PublishBuildArtifacts@1
           displayName: 'Publish Artifact'
           inputs:
