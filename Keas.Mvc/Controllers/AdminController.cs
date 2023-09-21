@@ -9,6 +9,7 @@ using Keas.Core.Models;
 using Microsoft.AspNetCore.Authorization;
 using Keas.Mvc.Services;
 using Keas.Core.Extensions;
+using Keas.Core.Services;
 
 namespace Keas.Mvc.Controllers
 {
@@ -19,17 +20,19 @@ namespace Keas.Mvc.Controllers
         private readonly IIdentityService _identityService;
 
         private readonly IUserService _userService;
+        private readonly IUpdateFromIamService _updateFromIamService;
 
-        public AdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService)
+        public AdminController(ApplicationDbContext context, IIdentityService identityService, IUserService userService, IUpdateFromIamService updateFromIamService)
         {
             _context = context;
             _identityService = identityService;
             _userService = userService;
+            _updateFromIamService = updateFromIamService;
         }
 
         public async Task<IActionResult> UpdateFromIam()
         {
-            var xxx = await _identityService.UpdateUsersFromLastModifiedDateInIam(System.DateTime.UtcNow.ToPacificTime().Date.AddDays(-1));
+            var xxx = await _updateFromIamService.UpdateUsersFromLastModifiedDateInIam(System.DateTime.UtcNow.ToPacificTime().Date.AddDays(-1));
 
             return Content(xxx.ToString());
         }
@@ -40,7 +43,7 @@ namespace Keas.Mvc.Controllers
         /// <returns></returns>
         public async Task<IActionResult> UpdateAllFromIam()
         {
-            var xxx = await _identityService.UpdateAllUsersFromIam();
+            var xxx = await _updateFromIamService.UpdateAllUsersFromIam();
 
             return Content(xxx.ToString());
         }
