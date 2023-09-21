@@ -8,6 +8,7 @@ using Elastic.Apm.NetCoreAll;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Core.Models;
+using Keas.Core.Services;
 using Keas.Mvc.Attributes;
 using Keas.Mvc.Handlers;
 using Keas.Mvc.Helpers;
@@ -61,6 +62,7 @@ namespace Keas.Mvc
             });
 
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
+            services.Configure<IamAuthSettings>(Configuration.GetSection("Authentication")); //Yes, pretty much the same as above. Just in core instead.
             services.Configure<KfsApiSettings>(Configuration.GetSection("KfsApi"));
             services.Configure<ServiceNowSettings>(Configuration.GetSection("ServiceNow"));
             services.Configure<SuperuserSettings>(Configuration.GetSection("Superuser"));
@@ -69,6 +71,7 @@ namespace Keas.Mvc
 
             // setup services
             services.AddScoped<IIdentityService, IdentityService>();
+            services.AddScoped<IUpdateFromIamService, UpdateFromIamService>();
             services.AddScoped<ISecurityService, SecurityService>();
 
             services.AddDistributedMemoryCache();

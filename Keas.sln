@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Keas.Mvc", "Keas.Mvc\Keas.Mvc.csproj", "{F4FC64F5-A41F-4DCF-9AFC-71A82DA3C34A}"
 EndProject
@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dest", "Dest", "{7980177D-8
 		emails-template\dist\keas-notification.html = emails-template\dist\keas-notification.html
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Keas.Jobs.LivedName", "Keas.Jobs.LivedName\Keas.Jobs.LivedName.csproj", "{41CE1747-268A-429B-BFB5-C54AB53C37BF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{37EDA0C6-8728-4DA0-A204-F5168082067D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37EDA0C6-8728-4DA0-A204-F5168082067D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37EDA0C6-8728-4DA0-A204-F5168082067D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41CE1747-268A-429B-BFB5-C54AB53C37BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41CE1747-268A-429B-BFB5-C54AB53C37BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41CE1747-268A-429B-BFB5-C54AB53C37BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41CE1747-268A-429B-BFB5-C54AB53C37BF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +78,7 @@ Global
 		{37EDA0C6-8728-4DA0-A204-F5168082067D} = {6E8D7F17-56E5-456C-BD9B-977B8B9FEBCD}
 		{C8C38CD2-AA12-4F8F-AFF6-C660531175FD} = {544D7171-AFA4-4E21-9A5D-592B185CEBC6}
 		{7980177D-8422-4D90-838D-0735E50055F9} = {544D7171-AFA4-4E21-9A5D-592B185CEBC6}
+		{41CE1747-268A-429B-BFB5-C54AB53C37BF} = {6E8D7F17-56E5-456C-BD9B-977B8B9FEBCD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EDD8B297-A515-4C06-BC3D-6B3890332B35}
