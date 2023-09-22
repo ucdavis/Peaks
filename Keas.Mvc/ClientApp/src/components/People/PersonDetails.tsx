@@ -53,12 +53,15 @@ const PersonDetails = (props: IProps) => {
         <div className='card-header-people'>
           <div className='card-head row justify-content-between'>
             <div className='row justify-content-between'>
-              <h2>{props.selectedPersonInfo.person.name} </h2>
-              <div className='discreet'>
-                {!!props.selectedPersonInfo.person.user?.pronouns &&
-                  props.selectedPersonInfo.person.user.pronouns}
-              </div>
+              <h2>
+                {props.selectedPersonInfo.person.name}{' '}
+                <div className='discreet'>
+                  {!!props.selectedPersonInfo.person.user?.pronouns &&
+                    props.selectedPersonInfo.person.user.pronouns}
+                </div>
+              </h2>
             </div>
+
             {canEdit && (
               <div className='row justify-content-between'>
                 <EditPerson
