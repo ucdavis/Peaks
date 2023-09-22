@@ -52,7 +52,13 @@ const PersonDetails = (props: IProps) => {
       <div className='card'>
         <div className='card-header-people'>
           <div className='card-head row justify-content-between'>
-            <h2>{props.selectedPersonInfo.person.name}</h2>
+            <div className='row justify-content-between'>
+              <h2>{props.selectedPersonInfo.person.name} </h2>
+              <div className='discreet'>
+                {!!props.selectedPersonInfo.person.user?.pronouns &&
+                  props.selectedPersonInfo.person.user.pronouns}
+              </div>
+            </div>
             {canEdit && (
               <div className='row justify-content-between'>
                 <EditPerson
@@ -118,8 +124,8 @@ const PersonDetails = (props: IProps) => {
       {canEdit && (
         <HistoryContainer
           controller='peopleAdmin'
-                  id={props.selectedPersonInfo.person.id}
-                  showLink={true}
+          id={props.selectedPersonInfo.person.id}
+          showLink={true}
         />
       )}
     </div>
