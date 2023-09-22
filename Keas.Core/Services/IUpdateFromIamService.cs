@@ -58,13 +58,13 @@ namespace Keas.Core.Services
                             //Possible to get null data back for a user. Probably because they are going away
                             if (ietData != null && !string.IsNullOrWhiteSpace(ietData.DFirstName) && !string.IsNullOrWhiteSpace(ietData.DLastName))
                             {
-                                if (user.FirstName != ietData.DFirstName || user.LastName != ietData.DLastName)
+                                if (user.FirstName != ietData.DFirstName || user.LastName != ietData.DLastName || user.Pronouns != ietData.DPronouns)
                                 {
                                     count++;
                                     batchCount++;
                                     user.FirstName = ietData.DFirstName;
                                     user.LastName = ietData.DLastName;
-                                    //user.pronouns = ietData.DPronouns; //if we add pronouns
+                                    user.Pronouns = ietData.DPronouns;
                                     foreach (var person in user.People)
                                     {
                                         person.FirstName = ietData.DFirstName;
@@ -126,13 +126,13 @@ namespace Keas.Core.Services
                             continue;
                         }
 
-                        if (user.FirstName != ietData.DFirstName || user.LastName != ietData.DLastName)
+                        if (user.FirstName != ietData.DFirstName || user.LastName != ietData.DLastName || user.Pronouns != ietData.DPronouns)
                         {
                             count++;
                             batchCount++;
                             user.FirstName = ietData.DFirstName;
                             user.LastName = ietData.DLastName;
-                            //user.pronouns = ietData.DPronouns; //if we add pronouns
+                            user.Pronouns = ietData.DPronouns;
                             foreach (var person in user.People)
                             {
                                 person.FirstName = ietData.DFirstName;

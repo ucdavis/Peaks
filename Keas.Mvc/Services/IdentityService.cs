@@ -172,7 +172,8 @@ namespace Keas.Mvc.Services
                 LastName = ucdKerbPerson.LastName,
                 Id = ucdKerbPerson.UserId,
                 Email = email,
-                Iam = iamId
+                Iam = iamId,
+                Pronouns = ucdKerbPerson.DPronouns
             };
             return user;
         }
