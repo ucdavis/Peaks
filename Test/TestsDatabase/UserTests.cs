@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -96,6 +96,10 @@ namespace Test.TestsDatabase
                 "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)256)]"
             }));
             expectedFields.Add(new NameAndType("People", "System.Collections.Generic.List`1[Keas.Core.Domain.Person]", new List<string>()));
+            expectedFields.Add(new NameAndType("Pronouns", "System.String", new List<string>
+            {
+                "[System.ComponentModel.DataAnnotations.StringLengthAttribute((Int32)50)]"
+            }));
             expectedFields.Add(new NameAndType("TeamPermissions", "System.Collections.Generic.List`1[Keas.Core.Domain.TeamPermission]", new List<string>()));
 
 
