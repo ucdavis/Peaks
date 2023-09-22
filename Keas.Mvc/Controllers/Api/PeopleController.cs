@@ -77,6 +77,14 @@ namespace Keas.Mvc.Controllers.Api
                     FirstName = r.FirstName,
                     LastName = r.LastName,
                     Email = r.Email,
+                    User = r.UserId == null ? null : new User
+                    {
+                        Id = r.UserId,
+                        FirstName = r.FirstName,
+                        LastName = r.LastName,
+                        Email = r.Email,
+                        Pronouns = r.Pronouns
+                    },
                     Tags = r.Tags,
                     TeamId = r.TeamId,
                     Notes = r.Notes,

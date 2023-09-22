@@ -12,6 +12,7 @@ export interface IUser {
   firstName: string;
   lastName: string;
   name: string;
+  pronouns: string;
   email: string;
   id: string;
   iam: string;
