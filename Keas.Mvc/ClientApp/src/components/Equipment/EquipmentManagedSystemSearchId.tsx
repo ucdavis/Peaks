@@ -118,7 +118,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
       // if no error occured except Not Found
       if (isValidSearch) {
         // If listOfComputers' length is not 0 then  display the computers, else display an error message
-        if (listOfComputers.length > 0) {
+        if (!!listOfComputers && listOfComputers.length > 0) {
           return (
             <Table>
               <tbody>
