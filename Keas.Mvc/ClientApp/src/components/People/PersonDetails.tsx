@@ -41,6 +41,16 @@ const PersonDetails = (props: IProps) => {
 
   const canEdit = PermissionsUtil.canEditPeople(context.permissions);
 
+  // this is the only place we render pronouns. if we use them elsewhere, we should move this to a util
+  const formatPronouns = (pronouns: string) => {
+    pronouns = pronouns.trim();
+    if (pronouns.startsWith('(') && pronouns.endsWith(')')) {
+      return pronouns; // if user has, say "(they/them" then that's their problem and i don't care
+    } else {
+      return `(${pronouns})`;
+    }
+  };
+
   return (
     <div>
       <div>
@@ -57,7 +67,9 @@ const PersonDetails = (props: IProps) => {
                 {props.selectedPersonInfo.person.name}{' '}
                 <div className='discreet'>
                   {!!props.selectedPersonInfo.person.user?.pronouns &&
-                    props.selectedPersonInfo.person.user.pronouns}
+                    formatPronouns(
+                      props.selectedPersonInfo.person.user.pronouns
+                    )}
                 </div>
               </h2>
             </div>
