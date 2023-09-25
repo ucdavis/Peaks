@@ -74,7 +74,6 @@ const EditAccess = (props: IProps) => {
       toggle={confirmClose}
       size='lg'
       className='access-color'
-      scrollable={true}
     >
       <div className='modal-header row justify-content-between'>
         <h2>Edit Access</h2>

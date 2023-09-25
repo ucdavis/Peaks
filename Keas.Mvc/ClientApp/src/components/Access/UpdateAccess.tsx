@@ -1,5 +1,4 @@
 import * as React from 'react';
-import DatePicker from 'react-date-picker';
 import { useState } from 'react';
 import { Alert, Button } from 'reactstrap';
 import { IAccess, IAccessAssignment } from '../../models/Access';
@@ -8,6 +7,7 @@ import { DateUtil } from '../../util/dates';
 import { format, startOfDay } from 'date-fns';
 import AccessModal from './AccessModal';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import AssignDate from '../Shared/AssignDate';
 
 interface IProps {
   assignment?: IAccessAssignment;
@@ -99,12 +99,10 @@ const UpdateAccess = (props: IProps) => {
           />
         </>
       )}
-      <DatePicker
-        format='MM/dd/yyyy'
-        required={true}
-        clearIcon={null}
-        value={new Date(props.assignment.expiresAt)}
-        onChange={_changeDate}
+      <AssignDate
+        isRequired={true}
+        date={new Date(props.assignment.expiresAt)}
+        onChangeDate={_changeDate}
       />
       <p>Expires At {DateUtil.formatExpiration(assignment.expiresAt)}</p>
       {dateError && <div className='invalid-feedback d-block'>{dateError}</div>}
