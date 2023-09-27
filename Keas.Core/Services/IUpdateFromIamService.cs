@@ -159,7 +159,7 @@ namespace Keas.Core.Services
                         if (string.IsNullOrWhiteSpace(ietData.CampusEmail))
                         {
                             //Investigate these
-                            Log.Information($"Missing CampusEmail IAM: {user.Iam}");
+                            Log.Warning($"Missing CampusEmail IAM: {user.Iam}");
                         }
                     }
                 }
