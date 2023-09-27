@@ -37,6 +37,7 @@ namespace Keas.Core.Services
         public async Task<int> UpdateUsersFromLastModifiedDateInIam(DateTime modifiedAfterDate)
         {
             var count = 0;
+            var emailCount = 0;
             try
             {
                 Log.Information($"Update IAM by Modified Date - Starting for date {modifiedAfterDate}");
@@ -51,6 +52,7 @@ namespace Keas.Core.Services
                     foreach (var batch in batches)
                     {
                         var batchCount = 0;
+                        var emailBatchCount = 0;
                         var users = await _context.Users.Where(a => batch.Contains(a.Iam)).Include(a => a.People).ToListAsync();
                         foreach (var user in users)
                         {
@@ -72,16 +74,25 @@ namespace Keas.Core.Services
                                     }
                                     Log.Information($"Update IAM by Modified Date - Updating {user.Iam} from Iam.");
                                 }
+
+                                //The only value we know about for email from this query is the person.CampusEmail This is probably the best one to use anyway.
+                                if(!string.IsNullOrWhiteSpace(ietData.CampusEmail) && user.Email != ietData.CampusEmail)
+                                {
+                                    user.Email = ietData.CampusEmail;
+                                    emailCount++;
+                                    emailBatchCount++;
+                                    Log.Information($"Update IAM by Modified Date - Updating {user.Iam} email from Iam.");
+                                }
                             }
                         }
-                        if (batchCount > 0)
+                        if (batchCount > 0 || emailBatchCount > 0)
                         {
                             await _context.SaveChangesAsync();
                         }
                     }
 
 
-                    Log.Information($"Update IAM by Modified Date - Updating {count} users from Iam.");
+                    Log.Information($"Update IAM by Modified Date - Updating {count} users from Iam. And updating {emailCount} emails");
 
                 }
             }
@@ -139,6 +150,16 @@ namespace Keas.Core.Services
                                 person.LastName = ietData.DLastName;
                             }
                             Log.Information($"Updating {user.Iam} from Iam.");
+                        }
+                        if(!string.IsNullOrWhiteSpace(ietData.CampusEmail) && user.Email != ietData.CampusEmail)
+                        {
+                            user.Email = ietData.CampusEmail;
+                            Log.Information($"Updating {user.Iam} email from Iam.");
+                        }
+                        if (string.IsNullOrWhiteSpace(ietData.CampusEmail))
+                        {
+                            //Investigate these
+                            Log.Information($"Missing CampusEmail IAM: {user.Iam}");
                         }
                     }
                 }
