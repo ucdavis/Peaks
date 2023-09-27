@@ -25,17 +25,17 @@ const WorkstationEditValues = (props: IProps) => {
 
   return (
     <div>
-      {props.disableEditing && props.openEditModal && (
-        <div className='row justify-content-between'>
-          <h3>Workstation Details</h3>
+      <div className='row justify-content-between'>
+        <h3>Workstation Details</h3>
+        {props.disableEditing && props.openEditModal && (
           <Button
             color='link'
             onClick={() => props.openEditModal(props.selectedWorkstation)}
           >
             <i className='fas fa-edit fa-xs' /> Edit Workstation
           </Button>
-        </div>
-      )}
+        )}
+      </div>
       <div className='wrapperasset'>
         <FormGroup>
           <Label for='name'>Name</Label>

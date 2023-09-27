@@ -64,12 +64,10 @@ const KeySerialEditValues = (props: IProps) => {
 
   return (
     <div>
-      {props.disableEditing && props.openEditModal && (
-        <div className='row justify-content-between'>
-          <h3>Key Details</h3>
-          {renderEditKeySerial()}
-        </div>
-      )}
+      <div className='row justify-content-between'>
+        <h3>Key Details</h3>
+        {props.disableEditing && props.openEditModal && renderEditKeySerial()}
+      </div>
       <div className='wrapperasset'>
         <FormGroup>
           <Label for='key.name'>Key Name</Label>
