@@ -101,7 +101,7 @@ const AssignmentContainer = (props: IProps) => {
         }
       );
     } catch (err) {
-      toast.error("Error revoking access for user");
+      toast.error('Error revoking access for user');
       throw new Error(); // throw error so modal doesn't close
     }
 
@@ -221,9 +221,11 @@ const AssignmentContainer = (props: IProps) => {
     <div>
       {isRevokeModalShown && (
         <RevokeAccess
-          assignment={selectedAssignment}
-          revoke={callRevoke}
-          cancelRevoke={hideModals}
+          key={`revoke-access-${selectedAssignment.id}`}
+          selectedAccessAssignment={selectedAssignment}
+          revokeAccessAssignment={callRevoke}
+          closeModal={hideModals}
+          modal={isRevokeModalShown}
         />
       )}
       {isEditModalShown && (
