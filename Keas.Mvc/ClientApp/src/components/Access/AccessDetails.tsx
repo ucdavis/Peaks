@@ -9,6 +9,7 @@ import AccessAssignmentContainer from './AccessAssignmentContainer';
 import HistoryContainer from '../History/HistoryContainer';
 import EditAccess from './EditAccess';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import AccessEditValues from './AccessEditValues';
 
 interface IProps {
   goBack: () => void;
@@ -18,6 +19,7 @@ interface IProps {
   editAccess: (accaess: IAccess) => void;
   openDeleteModal: (access: IAccess) => void;
   updateSelectedAccess: (access: IAccess, id?: number) => void;
+  openEditModal: (access: IAccess) => void;
 }
 
 const AccessDetails = (props: IProps) => {
@@ -111,31 +113,19 @@ const AccessDetails = (props: IProps) => {
           </Button>
         </div>
       </div>
+      {access.tags && (
+        <p>
+          <i className='fas fa-tags mr-2' aria-hidden='true' />
+          {access.tags}
+        </p>
+      )}
       {access.notes && (
-        <>
-          <p>
-            <b>Notes:</b>
-          </p>
-          <p>{access.notes}</p>
-        </>
+        <p>
+          <i className='fas fa-comment-alt mr-2' aria-hidden='true' />
+          {access.notes}
+        </p>
       )}
-
-      {access.tags.length > 0 && (
-        <>
-          <p>
-            <b>Tags</b>
-          </p>
-          <SearchDefinedOptions
-            definedOptions={[]}
-            disabled={true}
-            onSelect={() => {}}
-            selected={access.tags.split(',')}
-            placeholder='Search for Tags'
-            id='searchTagsAccessDetails'
-          />
-        </>
-      )}
-
+      <br />
       <AccessAssignmentContainer
         access={props.selectedAccess}
         onAssignSuccess={() => props.updateSelectedAccess(access)}
@@ -143,6 +133,7 @@ const AccessDetails = (props: IProps) => {
           access.assignments.splice(access.assignments.indexOf(assignment), 1);
           props.updateSelectedAccess(access);
         }}
+        openEditModal={props.openEditModal}
       />
       <HistoryContainer controller='access' id={access.id} />
     </div>
