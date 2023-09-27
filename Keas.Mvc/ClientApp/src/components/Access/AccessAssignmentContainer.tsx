@@ -21,13 +21,14 @@ interface IProps {
   access?: IAccess;
   onRevokeSuccess?: (assignment: IAccessAssignment) => any;
   onAssignSuccess: () => void;
+  openEditModal?: (access: IAccess) => void;
 }
 
 const AssignmentContainer = (props: IProps) => {
   const context = useContext(Context);
   const params: IMatchParams = useParams();
   const history = useHistory();
-  const [assignments, setAssignments] = useState<IAccessAssignment[]>(
+  const [accessAssignments, setAssignments] = useState<IAccessAssignment[]>(
     (props.access &&
       props.access.assignments.map(assignment => ({
         ...assignment,
@@ -37,7 +38,7 @@ const AssignmentContainer = (props: IProps) => {
   );
   const [selectedAssignment, setSelectedAssignment] = useState<
     IAccessAssignment
-  >(assignments.find(el => el.id === parseInt(params.id, 10)));
+  >(accessAssignments.find(el => el.id === parseInt(params.id, 10)));
 
   useEffect(() => {
     if (!PermissionsUtil.canViewAccess(context.permissions)) {
@@ -77,22 +78,22 @@ const AssignmentContainer = (props: IProps) => {
     getAssignments();
   }, [context, params.id, props.person]);
 
-  const showRevokeModal = (assignment: IAccessAssignment) => {
+  const openRevokeModal = (assignment: IAccessAssignment) => {
     setSelectedAssignment(assignment);
     history.push(`${getBaseUrl()}/accessAssignment/revoke/${assignment.id}`);
   };
 
-  const showEditModal = (assignment: IAccessAssignment) => {
+  const openUpdateModal = (assignment: IAccessAssignment) => {
     setSelectedAssignment(assignment);
     history.push(`${getBaseUrl()}/accessAssignment/update/${assignment.id}`);
   };
 
-  const hideModals = () => {
+  const closeModals = () => {
     setSelectedAssignment(null);
     history.replace(getBaseUrl());
   };
 
-  const callRevoke = async assignment => {
+  const revokeAssignment = async assignment => {
     try {
       await context.fetch(
         `/api/${context.team.slug}/access/revoke/${assignment.id}`,
@@ -107,17 +108,21 @@ const AssignmentContainer = (props: IProps) => {
 
     toast.success('Access revoked sucessfully!');
 
-    const assignmentsData = assignments;
-    assignmentsData.splice(assignments.indexOf(assignment), 1);
+    const assignmentsData = accessAssignments;
+    assignmentsData.splice(accessAssignments.indexOf(assignment), 1);
     setAssignments(assignmentsData);
-    hideModals();
+    closeModals();
 
     if (props.onRevokeSuccess) {
       props.onRevokeSuccess(assignment);
     }
   };
 
-  const callUpdate = async (access: IAccess, date: any, person: IPerson) => {
+  const updateAssignment = async (
+    access: IAccess,
+    date: any,
+    person: IPerson
+  ) => {
     const assignUrl = `/api/${context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
     let accessAssignment: IAccessAssignment = null;
     try {
@@ -139,9 +144,9 @@ const AssignmentContainer = (props: IProps) => {
       throw new Error(); // throw error so modal doesn't close
     }
 
-    const assignmentsData = assignments;
+    const assignmentsData = accessAssignments;
     setAssignments(assignmentsData);
-    hideModals();
+    closeModals();
   };
 
   const openAssignModal = () => {
@@ -152,7 +157,11 @@ const AssignmentContainer = (props: IProps) => {
     );
   };
 
-  const callAssign = async (access: IAccess, date: any, person: IPerson) => {
+  const assignAssignment = async (
+    access: IAccess,
+    date: any,
+    person: IPerson
+  ) => {
     if (access.id === 0) {
       access.teamId = context.team.id;
       try {
@@ -191,8 +200,8 @@ const AssignmentContainer = (props: IProps) => {
       throw new Error(); // throw error so modal doesn't close
     }
 
-    const assignmentsData = assignments;
-    assignments.push(accessAssignment);
+    const assignmentsData = accessAssignments;
+    accessAssignments.push(accessAssignment);
     setAssignments(assignmentsData);
     props.onAssignSuccess();
   };
@@ -210,39 +219,43 @@ const AssignmentContainer = (props: IProps) => {
   if (!PermissionsUtil.canViewAccess(context.permissions)) {
     return <Denied viewName='Access' />;
   }
-  const { action, assetType } = params;
+  const { action, assetType, id } = params;
   const isRevokeModalShown =
     assetType === 'accessAssignment' && action === 'revoke';
   const isEditModalShown =
     assetType === 'accessAssignment' && action === 'update';
   const isAssignModalShown = assetType === 'access' && action === 'assign';
 
+  const selectedId = parseInt(id, 10);
+
   return (
     <div>
       {isRevokeModalShown && (
         <RevokeAccess
-          key={`revoke-access-${selectedAssignment.id}`}
+          key={`revoke-access-${selectedId}`}
           selectedAccessAssignment={selectedAssignment}
-          revokeAccessAssignment={callRevoke}
-          closeModal={hideModals}
+          revokeAccessAssignment={revokeAssignment}
+          closeModal={closeModals}
           modal={isRevokeModalShown}
+          openUpdateModal={openUpdateModal}
+          openEditModal={props.openEditModal}
         />
       )}
       {isEditModalShown && (
         <UpdateAccess
           assignment={selectedAssignment}
-          update={callUpdate}
-          cancelUpdate={hideModals}
+          update={updateAssignment}
+          cancelUpdate={closeModals}
         />
       )}
       {isAssignModalShown && (
         <AssignAccess
-          closeModal={hideModals}
+          closeModal={closeModals}
           modal={isAssignModalShown}
           person={props.person}
           tags={context.tags}
           selectedAccess={props.access}
-          onCreate={callAssign}
+          onCreate={assignAssignment}
         />
       )}
       <AccessAssignmentCard openAssignModal={openAssignModal}>
@@ -250,10 +263,10 @@ const AssignmentContainer = (props: IProps) => {
           <AccessList
             showDetails={openDetails}
             personView={true}
-            access={assignments.map(assignment => assignment.access)}
+            access={accessAssignments.map(assignment => assignment.access)}
             onRevoke={access =>
-              showRevokeModal(
-                assignments.find(
+              openRevokeModal(
+                accessAssignments.find(
                   assignment =>
                     assignment.accessId === access.id &&
                     assignment.personId === props.person.id
@@ -263,9 +276,9 @@ const AssignmentContainer = (props: IProps) => {
           />
         ) : (
           <AssignmentTable
-            assignments={assignments}
-            onRevoke={showRevokeModal}
-            onEdit={showEditModal}
+            assignments={accessAssignments}
+            onRevoke={openRevokeModal}
+            onEdit={openUpdateModal}
           />
         )}
       </AccessAssignmentCard>

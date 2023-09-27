@@ -8,7 +8,7 @@ interface IProps {
   modal: boolean;
   closeModal: () => void;
   openEditModal?: (access: IAccess) => void;
-  openUpdateModal?: (access: IAccess) => void;
+  openUpdateModal: (accessAssignment: IAccessAssignment) => void;
   revokeAccessAssignment: (accessAssignment: IAccessAssignment) => void;
   selectedAccessAssignment: IAccessAssignment;
 }
@@ -65,7 +65,7 @@ const RevokeAccess = (props: IProps) => {
           />
           <AccessAssignmentValues
             selectedAccessAssignment={props.selectedAccessAssignment}
-            // openUpdateModal={props.openUpdateModal}
+            openUpdateModal={props.openUpdateModal}
           />
           {!isValidToRevoke() && (
             <div>The access you have chosen does not have an assignment</div>
