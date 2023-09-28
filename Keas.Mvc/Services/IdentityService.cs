@@ -223,11 +223,24 @@ namespace Keas.Mvc.Services
 
         private async Task<string> GetEmailForUser(KerberosResult ucdKerbPerson, IetClient clientws)
         {
-            if(!string.IsNullOrWhiteSpace(ucdKerbPerson.CampusEmail))
+            //This one appears to be null. Get the person instead.
+            //if(!string.IsNullOrWhiteSpace(ucdKerbPerson.CampusEmail))
+            //{
+            //    //This is the preferred email
+            //    return ucdKerbPerson.CampusEmail;
+            //}
+
+            var ucdPersonResult = await clientws.People.Get(ucdKerbPerson.IamId);
+            if (ucdPersonResult != null && ucdPersonResult.ResponseData.Results.Length > 0)
             {
-                //This is the preferred email
-                return ucdKerbPerson.CampusEmail;
+                var email = ucdPersonResult.ResponseData.Results.Where(a => a.CampusEmail != null).FirstOrDefault();
+                if (email != null)
+                {
+                    //This is the preferred email
+                    return email.CampusEmail;
+                }
             }
+
             var ucdContactResult = await clientws.Contacts.Get(ucdKerbPerson.IamId);
 
             if (ucdContactResult.ResponseData.Results.Length == 0)
