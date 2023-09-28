@@ -200,24 +200,15 @@ namespace Keas.Mvc.Services
 
             var ucdKerbPerson = ucdKerbResult.ResponseData.Results.First();
 
-            // find their email
-            var ucdContactResult = await clientws.Contacts.Get(ucdKerbPerson.IamId);
+            var email = await GetEmailForUser(ucdKerbPerson, clientws);
 
-            if (ucdContactResult.ResponseData.Results.Length == 0)
+            //There used to be code here where it retunred null if the contact result was zero. That was moved into the GetEmailForUser method above.
+            if (email == null)
             {
                 return null;
             }
 
-            var ucdContact = ucdContactResult.ResponseData.Results.First();
-            var rtValue = CreateUser(ucdContact.Email, ucdKerbPerson, ucdKerbPerson.IamId);
-
-            if (string.IsNullOrWhiteSpace(rtValue.Email))
-            {
-                if (!string.IsNullOrWhiteSpace(ucdKerbPerson.UserId))
-                {
-                    rtValue.Email = $"{ucdKerbPerson.UserId}@ucdavis.edu";
-                }
-            }
+            var rtValue = CreateUser(email, ucdKerbPerson, ucdKerbPerson.IamId);
 
             var results = new List<ValidationResult>();
             var isValid = Validator.TryValidateObject(rtValue, new ValidationContext(rtValue), results);
@@ -228,6 +219,49 @@ namespace Keas.Mvc.Services
 
 
             return rtValue;
+        }
+
+        private async Task<string> GetEmailForUser(KerberosResult ucdKerbPerson, IetClient clientws)
+        {
+            //This one appears to be null. Get the person instead.
+            //if(!string.IsNullOrWhiteSpace(ucdKerbPerson.CampusEmail))
+            //{
+            //    //This is the preferred email
+            //    return ucdKerbPerson.CampusEmail;
+            //}
+
+            var ucdPersonResult = await clientws.People.Get(ucdKerbPerson.IamId);
+            if (ucdPersonResult != null && ucdPersonResult.ResponseData.Results.Length > 0)
+            {
+                var email = ucdPersonResult.ResponseData.Results.Where(a => a.CampusEmail != null).FirstOrDefault();
+                if (email != null)
+                {
+                    //This is the preferred email
+                    return email.CampusEmail;
+                }
+            }
+
+            var ucdContactResult = await clientws.Contacts.Get(ucdKerbPerson.IamId);
+
+            if (ucdContactResult.ResponseData.Results.Length == 0)
+            {
+                //So if there are no contact details, we will return null instead of trying to fake the email. This matches up with current processing, but maybe it is wrong?
+                return null;
+            }
+
+            if (ucdContactResult.ResponseData.Results.Length > 0)
+            {
+                var ucdContact = ucdContactResult.ResponseData.Results.Where(a => a.Email != null).FirstOrDefault();
+                if (ucdContact != null)
+                {
+                    //Or try to get the contact email
+                    return ucdContact.Email;
+                }
+            }
+
+            //Or just use the kerb with email. Might be ok.
+            return $"{ucdKerbPerson.UserId}@ucdavis.edu";
+
         }
 
         public async Task<PPSDepartmentResult> GetPpsDepartment(string ppsCode)

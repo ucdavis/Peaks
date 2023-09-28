@@ -37,6 +37,7 @@ namespace Keas.Core.Services
         public async Task<int> UpdateUsersFromLastModifiedDateInIam(DateTime modifiedAfterDate)
         {
             var count = 0;
+            var emailCount = 0;
             try
             {
                 Log.Information($"Update IAM by Modified Date - Starting for date {modifiedAfterDate}");
@@ -51,6 +52,7 @@ namespace Keas.Core.Services
                     foreach (var batch in batches)
                     {
                         var batchCount = 0;
+                        var emailBatchCount = 0;
                         var users = await _context.Users.Where(a => batch.Contains(a.Iam)).Include(a => a.People).ToListAsync();
                         foreach (var user in users)
                         {
@@ -72,16 +74,25 @@ namespace Keas.Core.Services
                                     }
                                     Log.Information($"Update IAM by Modified Date - Updating {user.Iam} from Iam.");
                                 }
+
+                                //The only value we know about for email from this query is the person.CampusEmail This is probably the best one to use anyway.
+                                if(!string.IsNullOrWhiteSpace(ietData.CampusEmail) && user.Email != ietData.CampusEmail)
+                                {
+                                    Log.Information($"Update IAM by Modified Date - Updating user {user.Iam} email from {user.Email} to {ietData.CampusEmail}.");
+                                    user.Email = ietData.CampusEmail;
+                                    emailCount++;
+                                    emailBatchCount++;          
+                                }
                             }
                         }
-                        if (batchCount > 0)
+                        if (batchCount > 0 || emailBatchCount > 0)
                         {
                             await _context.SaveChangesAsync();
                         }
                     }
 
 
-                    Log.Information($"Update IAM by Modified Date - Updating {count} users from Iam.");
+                    Log.Information($"Update IAM by Modified Date - Updating {count} users from Iam. And updating {emailCount} emails");
 
                 }
             }
@@ -103,6 +114,7 @@ namespace Keas.Core.Services
             var clientws = new IetClient(_authSettings.IamKey);
             //Take 100 users at a time and check them against IAM
             var count = 0;
+            var emailCount = 0;
             var currentBatch = 0;
             var userIamIds = await _context.Users.Where(a => a.Iam != null).Select(a => a.Iam).ToListAsync();
             var batches = Batch(userIamIds, 100);
@@ -111,6 +123,7 @@ namespace Keas.Core.Services
                 currentBatch++;
                 Log.Information($"UpdateAllUsersFromIam - Starting batch number {currentBatch} .");
                 var batchCount = 0;
+                var emailBatchCount = 0;
                 //Pause for 5 seconds to not overload IAM
                 await Task.Delay(5000);
 
@@ -140,9 +153,23 @@ namespace Keas.Core.Services
                             }
                             Log.Information($"Updating {user.Iam} from Iam.");
                         }
+                        var email = await GetEmailForUser(ietData, clientws);
+                        if (!string.IsNullOrWhiteSpace(email) && user.Email != email)
+                        {
+                            Log.Information($"Updating user {user.Iam} email from {user.Email} to {email}.");
+                            user.Email = email;
+                            emailCount++;
+                            emailBatchCount++;
+                            
+                        }
+                        if (string.IsNullOrWhiteSpace(ietData.CampusEmail))
+                        {
+                            //Investigate these
+                            Log.Warning($"Missing CampusEmail IAM: {user.Iam}");
+                        }
                     }
                 }
-                if (batchCount > 0)
+                if (batchCount > 0 || emailBatchCount > 0)
                 {
                     Log.Information($"UpdateAllUsersFromIam - Updated {batchCount} users .");
                     await _context.SaveChangesAsync();
@@ -178,6 +205,40 @@ namespace Keas.Core.Services
 
             if (bucket != null && count > 0)
                 yield return bucket.Take(count);
+        }
+
+        /// <summary>
+        /// This is a little different from the method in the Identity Service.
+        /// </summary>
+        /// <param name="ucdKerbPerson"></param>
+        /// <param name="clientws"></param>
+        /// <returns></returns>
+        private async Task<string> GetEmailForUser(PeopleResult ucdPerson, IetClient clientws)
+        {
+            if (!string.IsNullOrWhiteSpace(ucdPerson.CampusEmail))
+            {
+                //This is the preferred email
+                return ucdPerson.CampusEmail;
+            }
+            var ucdContactResult = await clientws.Contacts.Get(ucdPerson.IamId);
+
+            if (ucdContactResult.ResponseData.Results.Length == 0)
+            {
+                return null;
+            }
+
+            if (ucdContactResult.ResponseData.Results.Length > 0)
+            {
+                var ucdContact = ucdContactResult.ResponseData.Results.Where(a => a.Email != null).FirstOrDefault();
+                if (ucdContact != null)
+                {
+                    //Or try to get the contact email
+                    return ucdContact.Email;
+                }
+            }
+
+            return null;
+
         }
     }
 }
