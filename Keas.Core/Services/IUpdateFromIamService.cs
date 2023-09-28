@@ -153,8 +153,9 @@ namespace Keas.Core.Services
                         }
                         if(!string.IsNullOrWhiteSpace(ietData.CampusEmail) && user.Email != ietData.CampusEmail)
                         {
+                            Log.Information($"Updating user {user.Iam} email from {user.Email} to {ietData.CampusEmail}.");
                             user.Email = ietData.CampusEmail;
-                            Log.Information($"Updating {user.Iam} email from Iam.");
+                            
                         }
                         if (string.IsNullOrWhiteSpace(ietData.CampusEmail))
                         {
