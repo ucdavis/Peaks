@@ -5,7 +5,7 @@ import { DateUtil } from '../../util/dates';
 
 interface IProps {
   selectedAccessAssignment: IAccessAssignment;
-  openUpdateModal?: (access: IAccessAssignment) => void;
+  openUpdateModal: (access: IAccessAssignment) => void;
 }
 
 const AccessAssignmentValues = (props: IProps) => {

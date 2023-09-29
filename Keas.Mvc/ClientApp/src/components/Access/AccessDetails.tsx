@@ -8,8 +8,6 @@ import { IAccess } from '../../models/Access';
 import AccessAssignmentContainer from './AccessAssignmentContainer';
 import HistoryContainer from '../History/HistoryContainer';
 import EditAccess from './EditAccess';
-import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
-import AccessEditValues from './AccessEditValues';
 
 interface IProps {
   goBack: () => void;
