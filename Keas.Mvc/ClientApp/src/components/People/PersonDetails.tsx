@@ -108,6 +108,7 @@ const PersonDetails = (props: IProps) => {
         onAssignSuccess={() =>
           props.inUseUpdated('access', 0, props.selectedPersonInfo.id, 1)
         }
+        goToAccessDetails={props.goToAccessDetails}
       />
       <WorkstationContainer
         person={props.selectedPersonInfo.person}

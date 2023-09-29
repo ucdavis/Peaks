@@ -14,6 +14,8 @@ import RevokeAccess from './RevokeAccess';
 import UpdateAccessAssignment from './UpdateAccessAssignment';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
+import AccessAssignmentDetails from './AccessAssignmentDetails';
+import AccessAssignmentTable from './AccessAssignmentTable';
 
 // List of assignments passed by props, since this container can be in multiple places
 interface IProps {
@@ -22,7 +24,7 @@ interface IProps {
   onRevokeSuccess?: (assignment: IAccessAssignment) => any;
   onAssignSuccess: () => void;
   openEditModal?: (access: IAccess) => void;
-  goToAccessDetails?: (access: IAccess) => void;
+  goToAccessDetails?: (access: IAccess) => void; // only supplied in person container
 }
 
 const AccessAssignmentContainer = (props: IProps) => {
@@ -79,6 +81,16 @@ const AccessAssignmentContainer = (props: IProps) => {
     getAssignments();
   }, [context, params.id, props.person]);
 
+  const getBaseUrl = () => {
+    return props.person
+      ? `/${context.team.slug}/people/details/${props.person.id}`
+      : `/${context.team.slug}/access/details/${props.access.id}`;
+  };
+
+  // const openDetails = (access: IAccess) => {
+  //   history.push(`/${context.team.slug}/access/details/${access.id}`);
+  // };
+
   const openRevokeModal = (assignment: IAccessAssignment) => {
     setSelectedAssignment(assignment);
     history.push(`${getBaseUrl()}/accessAssignment/revoke/${assignment.id}`);
@@ -87,6 +99,19 @@ const AccessAssignmentContainer = (props: IProps) => {
   const openUpdateModal = (assignment: IAccessAssignment) => {
     setSelectedAssignment(assignment);
     history.push(`${getBaseUrl()}/accessAssignment/update/${assignment.id}`);
+  };
+
+  const openDetailsModal = (assignment: IAccessAssignment) => {
+    setSelectedAssignment(assignment);
+    history.push(`${getBaseUrl()}/accessAssignment/details/${assignment.id}`);
+  };
+
+  const openAssignModal = () => {
+    history.push(
+      `${getBaseUrl()}/access/assign${
+        props.access ? '/' + props.access.id : ''
+      }`
+    );
   };
 
   const closeModals = () => {
@@ -150,14 +175,6 @@ const AccessAssignmentContainer = (props: IProps) => {
     closeModals();
   };
 
-  const openAssignModal = () => {
-    history.push(
-      `${getBaseUrl()}/access/assign${
-        props.access ? '/' + props.access.id : ''
-      }`
-    );
-  };
-
   const assignAssignment = async (
     access: IAccess,
     date: any,
@@ -207,16 +224,6 @@ const AccessAssignmentContainer = (props: IProps) => {
     props.onAssignSuccess();
   };
 
-  const openDetails = (access: IAccess) => {
-    history.push(`/${context.team.slug}/access/details/${access.id}`);
-  };
-
-  const getBaseUrl = () => {
-    return props.person
-      ? `/${context.team.slug}/people/details/${props.person.id}`
-      : `/${context.team.slug}/access/details/${props.access.id}`;
-  };
-
   if (!PermissionsUtil.canViewAccess(context.permissions)) {
     return <Denied viewName='Access' />;
   }
@@ -225,19 +232,32 @@ const AccessAssignmentContainer = (props: IProps) => {
     assetType === 'accessAssignment' && action === 'revoke';
   const isEditModalShown =
     assetType === 'accessAssignment' && action === 'update';
+  const isDetailsModalShown =
+    assetType === 'accessAssignment' && action === 'details';
   const isAssignModalShown = assetType === 'access' && action === 'assign';
 
   const selectedId = parseInt(id, 10);
 
   return (
     <div>
+      {isDetailsModalShown && (
+        <AccessAssignmentDetails
+          selectedAccessAssignment={selectedAssignment}
+          isModalOpen={isDetailsModalShown}
+          closeModal={closeModals}
+          openEditModal={props.openEditModal}
+          openUpdateModal={openUpdateModal}
+          updateSelectedAccessAssignment={setSelectedAssignment}
+          goToAccessDetails={props.goToAccessDetails}
+        />
+      )}
       {isRevokeModalShown && (
         <RevokeAccess
           key={`revoke-access-${selectedId}`}
           selectedAccessAssignment={selectedAssignment}
           revokeAccessAssignment={revokeAssignment}
           closeModal={closeModals}
-          modal={isRevokeModalShown}
+          isModalOpen={isRevokeModalShown}
           openUpdateModal={openUpdateModal}
           openEditModal={props.openEditModal}
         />
@@ -262,7 +282,15 @@ const AccessAssignmentContainer = (props: IProps) => {
       <AccessAssignmentCard openAssignModal={openAssignModal}>
         {props.person ? (
           <AccessList
-            showDetails={openDetails}
+            showDetails={access =>
+              openDetailsModal(
+                accessAssignments.find(
+                  assignment =>
+                    assignment.accessId === access.id &&
+                    assignment.personId === props.person.id
+                )
+              )
+            }
             personView={true}
             access={accessAssignments.map(assignment => assignment.access)}
             onRevoke={access =>
@@ -276,10 +304,11 @@ const AccessAssignmentContainer = (props: IProps) => {
             }
           />
         ) : (
-          <AssignmentTable
-            assignments={accessAssignments}
+          <AccessAssignmentTable
+            accessAssignments={accessAssignments}
+            showDetails={openDetailsModal}
             onRevoke={openRevokeModal}
-            onEdit={openUpdateModal}
+            onUpdate={openUpdateModal}
           />
         )}
       </AccessAssignmentCard>
