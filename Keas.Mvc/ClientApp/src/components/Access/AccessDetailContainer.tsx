@@ -20,7 +20,7 @@ interface IProps {
   openEditModal: (access: IAccess) => void;
 }
 
-const AccessDetails = (props: IProps) => {
+const AccessDetailContainer = (props: IProps) => {
   const context = useContext(Context);
   const history = useHistory();
   const [shouldOpenEditModal, setShouldOpenEditModal] = useState<boolean>(
@@ -32,7 +32,7 @@ const AccessDetails = (props: IProps) => {
       return;
     }
     fetchDetails(props.selectedAccess.id);
-  }, [props.selectedAccess.id]);
+  }, [props.selectedAccess]);
 
   if (!props.selectedAccess) {
     return null;
@@ -138,4 +138,4 @@ const AccessDetails = (props: IProps) => {
   );
 };
 
-export default AccessDetails;
+export default AccessDetailContainer;

@@ -67,10 +67,7 @@ const AccessAssignmentDetails = (props: IProps) => {
         className='access-color'
       >
         <div className='modal-header row justify-content-between'>
-          <h2>
-            Details for {selectedAccessAssignment.access.name}
-            {selectedAccessAssignment.person.name}
-          </h2>
+          <h2>Details for {selectedAccessAssignment.access.name} Assignment</h2>
           <Button color='link' onClick={props.closeModal}>
             <i className='fas fa-times fa-lg' />
           </Button>

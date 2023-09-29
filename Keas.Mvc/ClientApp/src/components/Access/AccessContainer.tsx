@@ -9,7 +9,7 @@ import { IPerson } from '../../models/People';
 import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
-import AccessDetails from './AccessDetails';
+import AccessDetailContainer from './AccessDetails';
 import AccessTable from './AccessTable';
 import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
@@ -152,7 +152,7 @@ const AccessContainer = () => {
 
   const renderDetails = (selectedId: number, access: IAccess) => {
     return (
-      <AccessDetails
+      <AccessDetailContainer
         goBack={() => history.push(getBaseUrl() + '/access')}
         key={`details-access-${selectedId}`}
         selectedAccess={access}
