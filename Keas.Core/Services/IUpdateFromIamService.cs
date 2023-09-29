@@ -162,7 +162,7 @@ namespace Keas.Core.Services
                             emailBatchCount++;
                             
                         }
-                        if (string.IsNullOrWhiteSpace(ietData.CampusEmail))
+                        if (string.IsNullOrWhiteSpace(email))
                         {
                             //Investigate these
                             Log.Warning($"Missing CampusEmail IAM: {user.Iam}");
