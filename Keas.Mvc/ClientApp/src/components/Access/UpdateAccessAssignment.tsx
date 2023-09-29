@@ -1,113 +1,179 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { Alert, Button } from 'reactstrap';
-import { IAccess, IAccessAssignment } from '../../models/Access';
+import { useEffect, useState } from 'react';
+import { Alert, Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { IAccess, IAccessAssignment, accessSchema } from '../../models/Access';
 import { IPerson } from '../../models/People';
 import { DateUtil } from '../../util/dates';
-import { format, startOfDay } from 'date-fns';
+import { addYears, format, startOfDay } from 'date-fns';
 import AccessModal from './AccessModal';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 import AssignDate from '../Shared/AssignDate';
+import AccessEditValues from './AccessEditValues';
+import { IValidationError, yupAssetValidation } from '../../models/Shared';
 
 interface IProps {
-  assignment?: IAccessAssignment;
-  update: (access: IAccess, date: any, person: IPerson) => Promise<void>;
-  cancelUpdate: () => void;
+  isModalOpen: boolean;
+  person?: IPerson;
+  accessAssignment: IAccessAssignment; // and valid assignment
+  closeModal: () => void;
+  onUpdate: (access: IAccess, date: any, person: IPerson) => Promise<void>;
 }
 
 const UpdateAccessAssignment = (props: IProps) => {
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [dateError, setDateError] = useState<string>(null);
-  const [error, setError] = useState<string>('');
-  const [date, setDate] = useState<Date>(new Date(props.assignment?.expiresAt));
+  const [error, setError] = useState<IValidationError>({
+    message: '',
+    path: ''
+  });
+  const [date, setDate] = useState<Date>(
+    !!props.accessAssignment
+      ? new Date(props.accessAssignment.expiresAt)
+      : addYears(startOfDay(new Date()), 3)
+  );
+  const [validState, setValidState] = useState<boolean>(false);
 
-  const valid = !!props.assignment;
-  const assignment = props.assignment;
+  useEffect(() => {
+    if (!props.accessAssignment) {
+      return;
+    }
+    const validateState = () => {
+      const error = yupAssetValidation(
+        accessSchema,
+        props.accessAssignment.access,
+        {
+          // assume it is valid to update an assignment to the same person
+        },
+        { date: date, person: props.accessAssignment.person }
+      );
+
+      setError(error);
+      setValidState(error.message === '');
+    };
+
+    validateState();
+  }, [date, props.person]);
+
+  const valid = !!props.accessAssignment;
+  const assignment = props.accessAssignment;
   const { person } = assignment || { person: null };
 
-  const _callUpdate = () => {
+  // assign the selected access even if we have to create it
+  const updateSelected = async () => {
+    if (!validState || submitting) {
+      return;
+    }
+
     setSubmitting(true);
+    const personData = props.person ? props.person : person;
+
     try {
-      props.update(
-        props.assignment.access,
+      await props.onUpdate(
+        props.accessAssignment.access,
         format(date, 'MM/dd/yyyy'),
-        props.assignment.person
+        props.accessAssignment.person
       );
-    } catch (e) {
-      setError('Error -- ' + e.message + ' -- Please try again later');
+    } finally {
       setSubmitting(false);
     }
+    closeModal();
   };
 
-  const _changeDate = (newDate: Date) => {
-    const now = new Date();
-
-    if (newDate > now) {
-      setDateError(null);
-      setDate(startOfDay(new Date(newDate)));
-      props.assignment.expiresAt = newDate;
-    } else {
-      setDateError('You must choose a date after today');
-    }
+  const changeDate = (newDate: Date) => {
+    setDate(startOfDay(new Date(newDate)));
   };
 
   if (!valid) {
     return (
       <AccessModal
         isOpen={true}
-        closeModal={props.cancelUpdate}
+        closeModal={props.closeModal}
         header={<h1>Assignment not found</h1>}
       />
     );
   }
+  // clear everything out on close
+  const confirmClose = () => {
+    if (!confirm('Please confirm you want to close!')) {
+      return;
+    }
 
+    closeModal();
+  };
+
+  const closeModal = () => {
+    setDate(addYears(startOfDay(new Date()), 3));
+    setError({
+      message: '',
+      path: ''
+    });
+    setSubmitting(false);
+    setValidState(false);
+    props.closeModal();
+  };
   return (
-    <AccessModal
-      isOpen={true}
-      closeModal={props.cancelUpdate}
-      header={
-        <h1>
-          Edit Access for {person.firstName} {person.lastName}
-        </h1>
-      }
-      footer={
+    <Modal
+      isOpen={props.isModalOpen}
+      toggle={confirmClose}
+      size='lg'
+      className='access-color'
+      // scrollable={!!access && !!access.teamId} // will be false when we are creating a new access
+      // modal is too short for this to render properly on mobile
+    >
+      <div className='modal-header row justify-content-between'>
+        <h2>
+          Update Access to {props.accessAssignment.access.name} for{' '}
+          {props.accessAssignment.person.firstName}{' '}
+          {props.accessAssignment.person.lastName}
+        </h2>
+        <Button color='link' onClick={closeModal}>
+          <i className='fas fa-times fa-lg' />
+        </Button>
+      </div>
+      <ModalBody>
+        <div className='container-fluid'>
+          <form>
+            <div className='form-group'>
+              <label>Assigned To</label>
+              <input
+                type='text'
+                className='form-control'
+                disabled={true}
+                value={
+                  !!props.accessAssignment.person
+                    ? props.accessAssignment.person.name
+                    : ''
+                }
+              />
+            </div>
+            <AssignDate
+              date={date}
+              isRequired={true}
+              error={error}
+              onChangeDate={changeDate}
+            />
+            <div>
+              <div className='row justify-content-between'>
+                <h3>Assign Exisiting Access</h3>
+              </div>
+              <AccessEditValues
+                selectedAccess={props.accessAssignment.access}
+                disableEditing={true}
+                error={error}
+              ></AccessEditValues>
+            </div>
+          </form>
+        </div>
+      </ModalBody>
+      <ModalFooter>
         <Button
           color='primary'
-          onClick={_callUpdate}
-          disabled={submitting || dateError !== null}
+          onClick={updateSelected}
+          disabled={!validState || submitting}
         >
-          Update {submitting && <i className='fas fa-circle-notch fa-spin' />}
-        </Button>
-      }
-    >
-      {error && <Alert color='danger'>{error}</Alert>}
-      <h1>Access Name: {assignment.access.name}</h1>
-      <h2>Notes: </h2>
-      <p>{assignment.access.notes}</p>
-      {assignment.access.tags.length > 0 && (
-        <>
-          <p>
-            <b>Tags</b>
-          </p>
-          <SearchDefinedOptions
-            definedOptions={[]}
-            disabled={true}
-            onSelect={() => {}}
-            selected={assignment.access.tags.split(',')}
-            placeholder='Search for Tags'
-            id='searchTagsUpdateAccess'
-          />
-        </>
-      )}
-      <AssignDate
-        isRequired={true}
-        date={new Date(props.assignment.expiresAt)}
-        onChangeDate={_changeDate}
-      />
-      <p>Expires At {DateUtil.formatExpiration(assignment.expiresAt)}</p>
-      {dateError && <div className='invalid-feedback d-block'>{dateError}</div>}
-    </AccessModal>
+          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+        </Button>{' '}
+      </ModalFooter>
+    </Modal>
   );
 };
-
 export default UpdateAccessAssignment;

@@ -7,7 +7,6 @@ import { IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
 import { IMatchParams } from '../../models/Shared';
 import AccessAssignmentCard from './AccessAssignmentCard';
-import AssignmentTable from './AccessAssignmentTable';
 import AccessList from './AccessList';
 import AssignAccess from './AssignAccess';
 import RevokeAccess from './RevokeAccess';
@@ -86,10 +85,6 @@ const AccessAssignmentContainer = (props: IProps) => {
       ? `/${context.team.slug}/people/details/${props.person.id}`
       : `/${context.team.slug}/access/details/${props.access.id}`;
   };
-
-  // const openDetails = (access: IAccess) => {
-  //   history.push(`/${context.team.slug}/access/details/${access.id}`);
-  // };
 
   const openRevokeModal = (assignment: IAccessAssignment) => {
     setSelectedAssignment(assignment);
@@ -230,7 +225,7 @@ const AccessAssignmentContainer = (props: IProps) => {
   const { action, assetType, id } = params;
   const isRevokeModalShown =
     assetType === 'accessAssignment' && action === 'revoke';
-  const isEditModalShown =
+  const isUpdateModalShown =
     assetType === 'accessAssignment' && action === 'update';
   const isDetailsModalShown =
     assetType === 'accessAssignment' && action === 'details';
@@ -262,15 +257,18 @@ const AccessAssignmentContainer = (props: IProps) => {
           openEditModal={props.openEditModal}
         />
       )}
-      {isEditModalShown && (
+      {isUpdateModalShown && (
         <UpdateAccessAssignment
-          assignment={selectedAssignment}
-          update={updateAssignment}
-          cancelUpdate={closeModals}
+          key={`update-accessAssignment-${selectedId}`}
+          accessAssignment={selectedAssignment}
+          onUpdate={updateAssignment}
+          closeModal={closeModals}
+          isModalOpen={isUpdateModalShown}
         />
       )}
       {isAssignModalShown && (
         <AssignAccess
+          key={`assign-access-${selectedId}`}
           closeModal={closeModals}
           modal={isAssignModalShown}
           person={props.person}
@@ -292,6 +290,7 @@ const AccessAssignmentContainer = (props: IProps) => {
               )
             }
             personView={true}
+            personId={props.person.id}
             access={accessAssignments.map(assignment => assignment.access)}
             onRevoke={access =>
               openRevokeModal(
