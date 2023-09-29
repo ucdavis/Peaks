@@ -9,7 +9,6 @@ interface IProps {
   disableEditing: boolean;
   tags?: string[];
   error?: IValidationError;
-  children?: JSX.Element;
   onAccessUpdate?: (access: IAccess) => void;
   goToAccessDetails?: (access: IAccess) => void;
 }
@@ -98,7 +97,6 @@ const AccessEditValues = (props: IProps) => {
             <i className='fas fa-link fa-xs' /> View Access Details
           </Button>
         )}
-        {props.children}
       </div>
     </div>
   );
