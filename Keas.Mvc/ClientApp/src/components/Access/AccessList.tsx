@@ -4,7 +4,8 @@ import AccessListItem from './AccessListItem';
 
 interface IProps {
   access: IAccess[];
-  personView: boolean;
+  personView: boolean; // is always true but i'm leaving /shrug -river
+  personId: number; // for showing the right expiration date
   onDelete?: (access: IAccess) => void;
   onAdd?: (access: IAccess) => void;
   onRevoke?: (access: IAccess) => void;
@@ -23,6 +24,7 @@ const AccessList = (props: IProps) => {
           key={x.id.toString()}
           accessEntity={x}
           personView={props.personView}
+          personId={props.personId}
           onDelete={props.onDelete}
           onAdd={props.onAdd}
           onRevoke={props.onRevoke}

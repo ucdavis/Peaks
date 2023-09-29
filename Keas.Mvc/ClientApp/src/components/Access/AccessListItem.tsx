@@ -7,6 +7,7 @@ import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 interface IProps {
   accessEntity: IAccess;
   personView: boolean;
+  personId: number;
   onDelete?: (access: IAccess) => void;
   onAdd?: (access: IAccess) => void;
   onRevoke?: (access: IAccess) => void;
@@ -17,9 +18,19 @@ const AccessListItem = (props: IProps) => {
   const hasAssignment = props.accessEntity.assignments.length > 0;
   const canAdd = !props.personView || !hasAssignment;
   const dates = props.accessEntity.assignments.map(x => x.expiresAt);
-  const expirationDate = hasAssignment
-    ? DateUtil.formatFirstExpiration(dates)
-    : '';
+  let expirationDate;
+  if (hasAssignment) {
+    if (props.personView && props.personId) {
+      expirationDate = DateUtil.formatExpiration(
+        props.accessEntity.assignments.find(x => x.person.id === props.personId)
+          .expiresAt
+      );
+    } else {
+      expirationDate = DateUtil.formatFirstExpiration(dates);
+    }
+  } else {
+    expirationDate = '';
+  }
 
   const actions: IAction[] = [];
   if (!!props.onAdd && canAdd) {
