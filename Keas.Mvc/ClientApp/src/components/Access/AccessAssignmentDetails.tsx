@@ -79,7 +79,6 @@ const AccessAssignmentDetails = (props: IProps) => {
           <AccessEditValues
             selectedAccess={selectedAccessAssignment.access}
             disableEditing={true}
-            openEditModal={props.openEditModal}
             goToAccessDetails={props.goToAccessDetails}
           />
           <AccessAssignmentValues

@@ -10,7 +10,6 @@ interface IProps {
   tags?: string[];
   error?: IValidationError;
   children?: JSX.Element;
-  openEditModal?: (access: IAccess) => void;
   onAccessUpdate?: (access: IAccess) => void;
   goToAccessDetails?: (access: IAccess) => void;
 }
@@ -36,14 +35,6 @@ const AccessEditValues = (props: IProps) => {
     <div>
       <div className='row justify-content-between'>
         <h3>Access Details</h3>
-        {props.disableEditing && props.openEditModal && (
-          <Button
-            color='link'
-            onClick={() => props.openEditModal(props.selectedAccess)}
-          >
-            <i className='fas fa-edit fa-xs' /> Edit Access
-          </Button>
-        )}
       </div>
       <div className='wrapperasset'>
         <FormGroup>

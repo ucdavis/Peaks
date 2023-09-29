@@ -61,7 +61,6 @@ const RevokeAccess = (props: IProps) => {
           <AccessEditValues
             selectedAccess={props.selectedAccessAssignment.access}
             disableEditing={true}
-            openEditModal={props.openEditModal}
           />
           <AccessAssignmentValues
             selectedAccessAssignment={props.selectedAccessAssignment}
