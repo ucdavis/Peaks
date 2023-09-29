@@ -8,13 +8,11 @@ interface IFilterOption {
 }
 
 // UI for expiration column filter
-export function ExpirationColumnFilter({
-  column: { filterValue, setFilter }
-}) {
+export function ExpirationColumnFilter({ column: { filterValue, setFilter } }) {
   // Render a multi-select box
   return (
     <select
-    className="form-control"
+      className='form-control'
       value={filterValue}
       style={{ width: '100%' }}
       onChange={e => {
@@ -83,6 +81,8 @@ const getRowExpiresAt = (row: any) =>
     ? DateUtil.getFirstExpiration(
         row.original.assignments.map(y => y.expiresAt)
       )
+    : !!row.original.expiresAt // if on AccessAssignmentTable (it does not have .assignment property, it is the assignment itself)
+    ? row.original.expiresAt
     : row.original.assignment?.expiresAt;
 
 export class ReactTableExpirationUtil {
@@ -150,7 +150,7 @@ export class ReactTableExpirationUtil {
     return (filter, onChange) => {
       return (
         <select
-        className="form-control"
+          className='form-control'
           onChange={e => onChange(e.target.value)}
           style={{ width: '100%' }}
           value={filter ? filter.value : 'all'}
