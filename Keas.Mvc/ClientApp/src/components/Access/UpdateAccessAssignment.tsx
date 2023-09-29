@@ -1,12 +1,9 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Alert, Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
 import { IAccess, IAccessAssignment, accessSchema } from '../../models/Access';
 import { IPerson } from '../../models/People';
-import { DateUtil } from '../../util/dates';
 import { addYears, format, startOfDay } from 'date-fns';
-import AccessModal from './AccessModal';
-import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 import AssignDate from '../Shared/AssignDate';
 import AccessEditValues from './AccessEditValues';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
@@ -53,7 +50,6 @@ const UpdateAccessAssignment = (props: IProps) => {
     validateState();
   }, [date, props.person]);
 
-  const valid = !!props.accessAssignment;
   const assignment = props.accessAssignment;
   const { person } = assignment || { person: null };
 
@@ -64,8 +60,6 @@ const UpdateAccessAssignment = (props: IProps) => {
     }
 
     setSubmitting(true);
-    const personData = props.person ? props.person : person;
-
     try {
       await props.onUpdate(
         props.accessAssignment.access,
@@ -82,15 +76,6 @@ const UpdateAccessAssignment = (props: IProps) => {
     setDate(startOfDay(new Date(newDate)));
   };
 
-  if (!valid) {
-    return (
-      <AccessModal
-        isOpen={true}
-        closeModal={props.closeModal}
-        header={<h1>Assignment not found</h1>}
-      />
-    );
-  }
   // clear everything out on close
   const confirmClose = () => {
     if (!confirm('Please confirm you want to close!')) {

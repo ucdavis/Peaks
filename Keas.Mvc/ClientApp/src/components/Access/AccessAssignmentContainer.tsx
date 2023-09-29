@@ -6,7 +6,6 @@ import { Context } from '../../Context';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
 import { IMatchParams } from '../../models/Shared';
-import AccessAssignmentCard from './AccessAssignmentCard';
 import AccessList from './AccessList';
 import AssignAccess from './AssignAccess';
 import RevokeAccess from './RevokeAccess';
@@ -15,6 +14,7 @@ import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 import AccessAssignmentDetails from './AccessAssignmentDetails';
 import AccessAssignmentTable from './AccessAssignmentTable';
+import { Button } from 'reactstrap';
 
 // List of assignments passed by props, since this container can be in multiple places
 interface IProps {
@@ -277,40 +277,53 @@ const AccessAssignmentContainer = (props: IProps) => {
           onCreate={assignAssignment}
         />
       )}
-      <AccessAssignmentCard openAssignModal={openAssignModal}>
-        {props.person ? (
-          <AccessList
-            showDetails={access =>
-              openDetailsModal(
-                accessAssignments.find(
-                  assignment =>
-                    assignment.accessId === access.id &&
-                    assignment.personId === props.person.id
+      <div className='card access-color'>
+        <div className='card-header-access'>
+          <div className='card-head row justify-content-between'>
+            <h2>
+              <i className='fas fa-address-card fa-xs' /> Assignments
+            </h2>
+            <Button color='link' onClick={openAssignModal}>
+              <i className='fas fa-plus fa-sm' aria-hidden='true' /> Assign
+              Access
+            </Button>
+          </div>
+        </div>
+        <div className='card-content'>
+          {props.person ? (
+            <AccessList
+              showDetails={access =>
+                openDetailsModal(
+                  accessAssignments.find(
+                    assignment =>
+                      assignment.accessId === access.id &&
+                      assignment.personId === props.person.id
+                  )
                 )
-              )
-            }
-            personView={true}
-            personId={props.person.id}
-            access={accessAssignments.map(assignment => assignment.access)}
-            onRevoke={access =>
-              openRevokeModal(
-                accessAssignments.find(
-                  assignment =>
-                    assignment.accessId === access.id &&
-                    assignment.personId === props.person.id
+              }
+              personView={true}
+              personId={props.person.id}
+              access={accessAssignments.map(assignment => assignment.access)}
+              onRevoke={access =>
+                openRevokeModal(
+                  accessAssignments.find(
+                    assignment =>
+                      assignment.accessId === access.id &&
+                      assignment.personId === props.person.id
+                  )
                 )
-              )
-            }
-          />
-        ) : (
-          <AccessAssignmentTable
-            accessAssignments={accessAssignments}
-            showDetails={openDetailsModal}
-            onRevoke={openRevokeModal}
-            onUpdate={openUpdateModal}
-          />
-        )}
-      </AccessAssignmentCard>
+              }
+            />
+          ) : (
+            <AccessAssignmentTable
+              accessAssignments={accessAssignments}
+              showDetails={openDetailsModal}
+              onRevoke={openRevokeModal}
+              onUpdate={openUpdateModal}
+            />
+          )}{' '}
+        </div>
+      </div>
     </div>
   );
 };

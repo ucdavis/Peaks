@@ -7,7 +7,6 @@ import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import AssignPerson from '../People/AssignPerson';
 import AssignDate from '../Shared/AssignDate';
-import AccessAssignmentCard from './AccessAssignmentCard';
 import AccessAssignmentTable from './AccessAssignmentTable';
 import AccessEditValues from './AccessEditValues';
 import SearchAccess from './SearchAccess';
@@ -19,6 +18,7 @@ interface IProps {
   tags: string[];
   closeModal: () => void;
   onCreate: (access: IAccess, date: any, person: IPerson) => Promise<void>;
+  openDetailsModal?: (access: IAccess) => void;
 }
 
 const AssignAccess = (props: IProps) => {
@@ -211,13 +211,7 @@ const AssignAccess = (props: IProps) => {
                   disableEditing={true}
                   tags={props.tags}
                   error={error}
-                >
-                  <AccessAssignmentCard disableEditing={true}>
-                    <AccessAssignmentTable
-                      accessAssignments={access.assignments}
-                    />
-                  </AccessAssignmentCard>
-                </AccessEditValues>
+                />
               </div>
             )}
           </form>

@@ -19,24 +19,6 @@ interface IProps {
   showDetails?: (assignment: IAccessAssignment) => void;
   disableEditing?: boolean;
 }
-// UI for Key status column filter
-const KeyStatusColumnFilter = ({ column: { filterValue, setFilter } }) => {
-  // Render a multi-select box
-  return (
-    <select
-      value={filterValue}
-      style={{ width: '100%' }}
-      onChange={e => {
-        setFilter(e.target.value || undefined);
-      }}
-    >
-      <option value='all'>Show All</option>
-      <option value='active'>Active</option>
-      <option value='inactive'>Inactive</option>
-      <option value='special'>Special</option>
-    </select>
-  );
-};
 
 const AccessAssignmentTable = (props: IProps) => {
   const renderDropdownColumn = data => {
