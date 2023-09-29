@@ -7,7 +7,7 @@ interface IProps {
   personView: boolean;
   onDelete?: (access: IAccess) => void;
   onAdd?: (access: IAccess) => void;
-  onRevoke?: (assignment: IAccess) => void;
+  onRevoke?: (access: IAccess) => void;
   showDetails: (access: IAccess) => void;
 }
 

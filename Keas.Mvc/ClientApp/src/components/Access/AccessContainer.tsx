@@ -161,6 +161,7 @@ const AccessContainer = () => {
         editAccess={editAccess}
         openDeleteModal={openDeleteModal}
         updateSelectedAccess={updateAccessFromDetails}
+        openEditModal={openEditModal}
       />
     );
   };

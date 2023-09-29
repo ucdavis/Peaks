@@ -5,7 +5,7 @@ import { IAccess, IAccessAssignment } from '../../models/Access';
 import AccessEditValues from './AccessEditValues';
 import AccessAssignmentValues from './AccessAssignmentValues';
 interface IProps {
-  modal: boolean;
+  isModalOpen: boolean;
   closeModal: () => void;
   openEditModal?: (access: IAccess) => void;
   openUpdateModal: (accessAssignment: IAccessAssignment) => void;
@@ -41,7 +41,7 @@ const RevokeAccess = (props: IProps) => {
   return (
     <div>
       <Modal
-        isOpen={props.modal}
+        isOpen={props.isModalOpen}
         toggle={props.closeModal}
         size='lg'
         className='access-color'

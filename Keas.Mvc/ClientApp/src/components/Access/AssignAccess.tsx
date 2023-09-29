@@ -213,7 +213,9 @@ const AssignAccess = (props: IProps) => {
                   error={error}
                 >
                   <AccessAssignmentCard disableEditing={true}>
-                    <AccessAssignmentTable assignments={access.assignments} />
+                    <AccessAssignmentTable
+                      accessAssignments={access.assignments}
+                    />
                   </AccessAssignmentCard>
                 </AccessEditValues>
               </div>

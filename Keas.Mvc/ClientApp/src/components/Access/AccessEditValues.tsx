@@ -12,6 +12,7 @@ interface IProps {
   children?: JSX.Element;
   openEditModal?: (access: IAccess) => void;
   onAccessUpdate?: (access: IAccess) => void;
+  goToAccessDetails?: (access: IAccess) => void;
 }
 
 const AccessEditValues = (props: IProps) => {
@@ -21,22 +22,29 @@ const AccessEditValues = (props: IProps) => {
     );
   }
 
+  const goToAccessDetails = () => {
+    if (!props.selectedAccess) {
+      return;
+    }
+    props.goToAccessDetails(props.selectedAccess);
+  };
+
   const access = props.selectedAccess;
   const error = props.error;
 
   return (
     <div>
-      {props.disableEditing && props.openEditModal && (
-        <div className='row justify-content-between'>
-          <h3>Access Details</h3>
+      <div className='row justify-content-between'>
+        <h3>Access Details</h3>
+        {props.disableEditing && props.openEditModal && (
           <Button
             color='link'
             onClick={() => props.openEditModal(props.selectedAccess)}
           >
             <i className='fas fa-edit fa-xs' /> Edit Access
           </Button>
-        </div>
-      )}
+        )}
+      </div>
       <div className='wrapperasset'>
         <FormGroup>
           <Label for='name'>Name</Label>
@@ -94,6 +102,11 @@ const AccessEditValues = (props: IProps) => {
             {error && error.path === 'tags' && error.message}
           </FormFeedback>
         </FormGroup>
+        {props.goToAccessDetails && (
+          <Button color='link' onClick={() => goToAccessDetails()}>
+            <i className='fas fa-link fa-xs' /> View Access Details
+          </Button>
+        )}
         {props.children}
       </div>
     </div>
