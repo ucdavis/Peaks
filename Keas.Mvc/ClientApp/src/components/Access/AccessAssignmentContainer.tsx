@@ -111,7 +111,7 @@ const AccessAssignmentContainer = (props: IProps) => {
 
   const closeModals = () => {
     setSelectedAssignment(null);
-    history.replace(getBaseUrl());
+    history.push(`${getBaseUrl()}`);
   };
 
   const revokeAssignment = async assignment => {
@@ -132,7 +132,6 @@ const AccessAssignmentContainer = (props: IProps) => {
     const assignmentsData = accessAssignments;
     assignmentsData.splice(accessAssignments.indexOf(assignment), 1);
     setAssignments(assignmentsData);
-    closeModals();
 
     if (props.onRevokeSuccess) {
       props.onRevokeSuccess(assignment);
@@ -150,11 +149,23 @@ const AccessAssignmentContainer = (props: IProps) => {
       accessAssignment = await context.fetch(assignUrl, {
         method: 'POST'
       });
-
       accessAssignment.access = {
+        // our backend doesn't return recursive data,
         ...access,
-        assignments: [...access.assignments, accessAssignment]
+        assignments: [...access.assignments] // so we have to copy from our original object
       };
+      const index = accessAssignment.access.assignments.findIndex(
+        a => a.id === accessAssignment.id
+      );
+      if (index < 0)
+        // should not happen since we are always updating an existing assignment
+        // not sure what we do here lol
+        throw Error('Error updating access assignment');
+      else {
+        // not sure it matters much to our state here, but the RequestedBy info could have changed
+        // and just generally a good idea to have our state reflect the server's
+        accessAssignment.access.assignments[index] = accessAssignment;
+      }
       toast.success('Access updated successfully!');
     } catch (err) {
       const errorMessage =
@@ -165,9 +176,19 @@ const AccessAssignmentContainer = (props: IProps) => {
       throw new Error(); // throw error so modal doesn't close
     }
 
-    const assignmentsData = accessAssignments;
-    setAssignments(assignmentsData);
-    closeModals();
+    let updatedAssignments = [...accessAssignments];
+    const index = updatedAssignments.findIndex(
+      a => a.id === accessAssignment.id
+    );
+    if (index < 0) {
+      // should not happen since we are always updating an existing assignment
+      toast.error(
+        'congratulations, you found an error that should not happen! please report this to the dev team for a gold star'
+      );
+      throw new Error();
+    }
+    updatedAssignments[index] = accessAssignment;
+    setAssignments(updatedAssignments);
   };
 
   const assignAssignment = async (

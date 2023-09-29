@@ -48,10 +48,7 @@ const UpdateAccessAssignment = (props: IProps) => {
     };
 
     validateState();
-  }, [date, props.person]);
-
-  const assignment = props.accessAssignment;
-  const { person } = assignment || { person: null };
+  }, [date, props.person, props.accessAssignment]);
 
   // assign the selected access even if we have to create it
   const updateSelected = async () => {
@@ -105,11 +102,7 @@ const UpdateAccessAssignment = (props: IProps) => {
       // modal is too short for this to render properly on mobile
     >
       <div className='modal-header row justify-content-between'>
-        <h2>
-          Update Access to {props.accessAssignment.access.name} for{' '}
-          {props.accessAssignment.person.firstName}{' '}
-          {props.accessAssignment.person.lastName}
-        </h2>
+        <h2>Update Access</h2>
         <Button color='link' onClick={closeModal}>
           <i className='fas fa-times fa-lg' />
         </Button>
@@ -124,7 +117,7 @@ const UpdateAccessAssignment = (props: IProps) => {
                 className='form-control'
                 disabled={true}
                 value={
-                  !!props.accessAssignment.person
+                  !!props.accessAssignment?.person
                     ? props.accessAssignment.person.name
                     : ''
                 }
@@ -141,10 +134,10 @@ const UpdateAccessAssignment = (props: IProps) => {
                 <h3>Assign Exisiting Access</h3>
               </div>
               <AccessEditValues
-                selectedAccess={props.accessAssignment.access}
+                selectedAccess={props.accessAssignment?.access}
                 disableEditing={true}
                 error={error}
-              ></AccessEditValues>
+              />
             </div>
           </form>
         </div>

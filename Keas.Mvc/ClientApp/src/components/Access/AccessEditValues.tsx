@@ -62,7 +62,9 @@ const AccessEditValues = (props: IProps) => {
             type='textarea'
             className='form-control'
             readOnly={props.disableEditing}
-            value={props.selectedAccess.notes || ''}
+            value={
+              !!props.selectedAccess?.notes ? props.selectedAccess.notes : ''
+            }
             onChange={e =>
               props.onAccessUpdate({ ...access, notes: e.target.value })
             }
