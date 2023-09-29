@@ -11,7 +11,7 @@ import AssignmentTable from './AccessAssignmentTable';
 import AccessList from './AccessList';
 import AssignAccess from './AssignAccess';
 import RevokeAccess from './RevokeAccess';
-import UpdateAccess from './UpdateAccess';
+import UpdateAccessAssignment from './UpdateAccessAssignment';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
 
@@ -22,9 +22,10 @@ interface IProps {
   onRevokeSuccess?: (assignment: IAccessAssignment) => any;
   onAssignSuccess: () => void;
   openEditModal?: (access: IAccess) => void;
+  goToAccessDetails?: (access: IAccess) => void;
 }
 
-const AssignmentContainer = (props: IProps) => {
+const AccessAssignmentContainer = (props: IProps) => {
   const context = useContext(Context);
   const params: IMatchParams = useParams();
   const history = useHistory();
@@ -242,7 +243,7 @@ const AssignmentContainer = (props: IProps) => {
         />
       )}
       {isEditModalShown && (
-        <UpdateAccess
+        <UpdateAccessAssignment
           assignment={selectedAssignment}
           update={updateAssignment}
           cancelUpdate={closeModals}
@@ -286,4 +287,4 @@ const AssignmentContainer = (props: IProps) => {
   );
 };
 
-export default AssignmentContainer;
+export default AccessAssignmentContainer;

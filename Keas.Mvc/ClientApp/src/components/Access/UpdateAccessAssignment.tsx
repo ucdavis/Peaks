@@ -15,7 +15,7 @@ interface IProps {
   cancelUpdate: () => void;
 }
 
-const UpdateAccess = (props: IProps) => {
+const UpdateAccessAssignment = (props: IProps) => {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [dateError, setDateError] = useState<string>(null);
   const [error, setError] = useState<string>('');
@@ -110,4 +110,4 @@ const UpdateAccess = (props: IProps) => {
   );
 };
 
-export default UpdateAccess;
+export default UpdateAccessAssignment;
