@@ -14,7 +14,7 @@ interface IProps {
   modal: boolean;
   closeModal: () => void;
   selectedAccess: IAccess;
-  editAccess: (accaess: IAccess) => void;
+  editAccess: (access: IAccess) => void;
   openDeleteModal: (access: IAccess) => void;
   updateSelectedAccess: (access: IAccess, id?: number) => void;
   openEditModal: (access: IAccess) => void;

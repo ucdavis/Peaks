@@ -138,65 +138,13 @@ const AccessAssignmentContainer = (props: IProps) => {
     }
   };
 
-  const updateAssignment = async (
-    access: IAccess,
-    date: any,
-    person: IPerson
-  ) => {
-    const assignUrl = `/api/${context.team.slug}/access/assign?accessId=${access.id}&personId=${person.id}&date=${date}`;
-    let accessAssignment: IAccessAssignment = null;
-    try {
-      accessAssignment = await context.fetch(assignUrl, {
-        method: 'POST'
-      });
-      accessAssignment.access = {
-        // our backend doesn't return recursive data,
-        ...access,
-        assignments: [...access.assignments] // so we have to copy from our original object
-      };
-      const index = accessAssignment.access.assignments.findIndex(
-        a => a.id === accessAssignment.id
-      );
-      if (index < 0)
-        // should not happen since we are always updating an existing assignment
-        // not sure what we do here lol
-        throw Error('Error updating access assignment');
-      else {
-        // not sure it matters much to our state here, but the RequestedBy info could have changed
-        // and just generally a good idea to have our state reflect the server's
-        accessAssignment.access.assignments[index] = accessAssignment;
-      }
-      toast.success('Access updated successfully!');
-    } catch (err) {
-      const errorMessage =
-        err.message === ''
-          ? 'Error updating access'
-          : `Error updating access, ${err.message}`;
-      toast.error(errorMessage);
-      throw new Error(); // throw error so modal doesn't close
-    }
-
-    let updatedAssignments = [...accessAssignments];
-    const index = updatedAssignments.findIndex(
-      a => a.id === accessAssignment.id
-    );
-    if (index < 0) {
-      // should not happen since we are always updating an existing assignment
-      toast.error(
-        'congratulations, you found an error that should not happen! please report this to the dev team for a gold star'
-      );
-      throw new Error();
-    }
-    updatedAssignments[index] = accessAssignment;
-    setAssignments(updatedAssignments);
-  };
-
-  const assignAssignment = async (
+  const assignAccessAssignment = async (
     access: IAccess,
     date: any,
     person: IPerson
   ) => {
     if (access.id === 0) {
+      // if we are creating a new access (on person details page)
       access.teamId = context.team.id;
       try {
         access = await context.fetch(
@@ -223,20 +171,48 @@ const AccessAssignmentContainer = (props: IProps) => {
       accessAssignment = await context.fetch(assignUrl, {
         method: 'POST'
       });
-      access.assignments.push(accessAssignment);
-      toast.success('Access assigned successfully!');
+
+      // TODO: figure out if we actually need this nested data
+      // not sure if there's a way to stop the backend from returning accessAssignment.access.assignments
+      const index = accessAssignment.access.assignments.findIndex(
+        a => a.id === accessAssignment.id
+      );
+      if (index < 0) {
+        // if we have created a new access, add the assignment we just created
+        accessAssignment.access = {
+          // to the object we just created
+          ...access,
+          assignments: [accessAssignment]
+        };
+      } else {
+        accessAssignment.access = {
+          // our backend doesn't return recursive data,
+          ...access,
+          assignments: [...access.assignments] // so we have to copy from our original object
+        };
+      }
+      accessAssignment.person = person;
+      toast.success('Access updated successfully!');
     } catch (err) {
       const errorMessage =
         err.message === ''
-          ? 'Error assigning access'
-          : `Error assigning access, ${err.message}`;
+          ? 'Error updating access'
+          : `Error updating access, ${err.message}`;
       toast.error(errorMessage);
       throw new Error(); // throw error so modal doesn't close
     }
 
-    const assignmentsData = accessAssignments;
-    accessAssignments.push(accessAssignment);
-    setAssignments(assignmentsData);
+    let updatedAssignments = [...accessAssignments];
+    const index = updatedAssignments.findIndex(
+      a => a.id === accessAssignment.id
+    );
+    if (index < 0) {
+      // if we have created a new access, add to our state
+      updatedAssignments.push(accessAssignment);
+    } else {
+      updatedAssignments[index] = accessAssignment;
+    }
+    setAssignments(updatedAssignments);
     props.onAssignSuccess();
   };
 
@@ -282,7 +258,7 @@ const AccessAssignmentContainer = (props: IProps) => {
         <UpdateAccessAssignment
           key={`update-accessAssignment-${selectedId}`}
           accessAssignment={selectedAssignment}
-          onUpdate={updateAssignment}
+          onUpdate={assignAccessAssignment}
           closeModal={closeModals}
           isModalOpen={isUpdateModalShown}
         />
@@ -295,7 +271,7 @@ const AccessAssignmentContainer = (props: IProps) => {
           person={props.person}
           tags={context.tags}
           selectedAccess={props.access}
-          onCreate={assignAssignment}
+          onCreate={assignAccessAssignment}
         />
       )}
       <div className='card access-color'>

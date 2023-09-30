@@ -9,7 +9,7 @@ import { IPerson } from '../../models/People';
 import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
-import AccessDetailContainer from './AccessDetails';
+import AccessDetailContainer from './AccessDetailContainer';
 import AccessTable from './AccessTable';
 import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
