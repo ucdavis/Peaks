@@ -54,8 +54,11 @@ const AccessAssignmentContainer = (props: IProps) => {
       return;
     }
 
-    // assume that props.person is valid
     const fetchAssignments = async (): Promise<IAccessAssignment[]> => {
+      if (!props.person) {
+        // assume that props.person is valid
+        throw Error('Cannot fetch assignments, no person was provided');
+      }
       const accessFetchUrl = `/api/${context.team.slug}/access/listAssigned?personId=${props.person.id}`;
       let accesses: IAccess[] = null;
       try {
