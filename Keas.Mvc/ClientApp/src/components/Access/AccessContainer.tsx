@@ -260,7 +260,7 @@ const AccessContainer = () => {
 
   const openAssignModal = (access: IAccess) => {
     history.push(
-      `${getBaseUrl()}/access/details/${access.id}/assign/${access.id}`
+      `${getBaseUrl()}/access/details/${access.id}/access/assign/${access.id}`
     );
   };
 
