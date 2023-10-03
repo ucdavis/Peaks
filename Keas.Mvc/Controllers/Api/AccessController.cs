@@ -78,9 +78,25 @@ namespace Keas.Mvc.Controllers.Api
         {
             var accessListQuery = _context.Access
                 .Where(x => x.Team.Slug == Team)
-                .Include(x => x.Assignments)
-                .ThenInclude(x => x.Person)
-                .Include(x => x.Team)
+                .Select(x => new Access
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Notes = x.Notes,
+                    Tags = x.Tags,
+                    Active = x.Active,
+                    Assignments = x.Assignments.Select(y => new AccessAssignment {
+                        AccessId = y.AccessId,
+                        Access = null, // don't send nested/recursive access data
+                        ExpiresAt = y.ExpiresAt,
+                        Id = y.Id,
+                        Person = y.Person,
+                        PersonId = y.PersonId,
+                    }).ToList(),
+                    Team = x.Team,
+                })
+                // .Include(x => x.Assignments)
+                // .ThenInclude(x => x.Person)
                 .AsNoTracking();
 
             switch (filter)
