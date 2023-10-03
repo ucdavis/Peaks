@@ -43,7 +43,7 @@ const AccessEditValues = (props: IProps) => {
             className='form-control'
             readOnly={props.disableEditing}
             value={
-              props.selectedAccess && props.selectedAccess.name
+              !!props.selectedAccess && props.selectedAccess.name
                 ? props.selectedAccess.name
                 : ''
             }

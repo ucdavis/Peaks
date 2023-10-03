@@ -235,6 +235,10 @@ const AccessAssignmentContainer = (props: IProps) => {
       {isDetailsModalShown && (
         <AccessAssignmentDetails
           selectedAccessAssignment={selectedAssignment}
+          selectedAccess={
+            // if we are on /access/details, use the actual access so edits are reflected
+            !!props.access ? props.access : selectedAssignment?.access
+          }
           isModalOpen={isDetailsModalShown}
           closeModal={closeModals}
           openEditModal={props.openEditModal}

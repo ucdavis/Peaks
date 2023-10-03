@@ -7,7 +7,6 @@ import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import AssignPerson from '../People/AssignPerson';
 import AssignDate from '../Shared/AssignDate';
-import AccessAssignmentTable from './AccessAssignmentTable';
 import AccessEditValues from './AccessEditValues';
 import SearchAccess from './SearchAccess';
 
