@@ -12,6 +12,7 @@ interface IProps {
   isModalOpen: boolean;
   person?: IPerson;
   accessAssignment: IAccessAssignment; // and valid assignment
+  selectedAccess: IAccess;
   closeModal: () => void;
   onUpdate: (access: IAccess, date: any, person: IPerson) => Promise<void>;
 }
@@ -36,7 +37,7 @@ const UpdateAccessAssignment = (props: IProps) => {
     const validateState = () => {
       const error = yupAssetValidation(
         accessSchema,
-        props.accessAssignment.access,
+        props.selectedAccess,
         {
           // assume it is valid to update an assignment to the same person
         },
@@ -48,7 +49,7 @@ const UpdateAccessAssignment = (props: IProps) => {
     };
 
     validateState();
-  }, [date, props.person, props.accessAssignment]);
+  }, [date, props.person, props.selectedAccess, props.accessAssignment]);
 
   // assign the selected access even if we have to create it
   const updateSelected = async () => {
@@ -59,7 +60,7 @@ const UpdateAccessAssignment = (props: IProps) => {
     setSubmitting(true);
     try {
       await props.onUpdate(
-        props.accessAssignment.access,
+        props.selectedAccess,
         format(date, 'MM/dd/yyyy'),
         props.accessAssignment.person
       );
@@ -134,7 +135,7 @@ const UpdateAccessAssignment = (props: IProps) => {
                 <h3>Assign Exisiting Access</h3>
               </div>
               <AccessEditValues
-                selectedAccess={props.accessAssignment?.access}
+                selectedAccess={props.selectedAccess}
                 disableEditing={true}
                 error={error}
               />

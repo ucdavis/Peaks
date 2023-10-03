@@ -20,8 +20,8 @@ import { Button } from 'reactstrap';
 interface IProps {
   person?: IPerson;
   access?: IAccess;
-  onRevokeSuccess?: (assignment: IAccessAssignment) => any;
-  onAssignSuccess: () => void;
+  onRevokeSuccess?: (assignments: IAccessAssignment[]) => any;
+  onAssignSuccess: (assignments: IAccessAssignment[]) => void;
   openEditModal?: (access: IAccess) => void;
   goToAccessDetails?: (access: IAccess) => void; // only supplied in person container
 }
@@ -30,17 +30,24 @@ const AccessAssignmentContainer = (props: IProps) => {
   const context = useContext(Context);
   const params: IMatchParams = useParams();
   const history = useHistory();
+  const accessWithoutAssignments = !!props.access && {
+    ...props.access,
+    assignments: []
+  };
   const [accessAssignments, setAssignments] = useState<IAccessAssignment[]>(
     (props.access &&
       props.access.assignments.map(assignment => ({
         ...assignment,
-        access: props.access
+        access: accessWithoutAssignments // we use assignment.access
       }))) ||
       []
   );
   const [selectedAssignment, setSelectedAssignment] = useState<
     IAccessAssignment
   >(accessAssignments.find(el => el.id === parseInt(params.id, 10)));
+  const selectedAccess = !!props.access // if we are on /access/details, use the actual access so edits are reflected
+    ? props.access
+    : selectedAssignment?.access;
 
   useEffect(() => {
     if (!PermissionsUtil.canViewAccess(context.permissions)) {
@@ -129,12 +136,12 @@ const AccessAssignmentContainer = (props: IProps) => {
 
     toast.success('Access revoked sucessfully!');
 
-    const assignmentsData = accessAssignments;
+    const assignmentsData: IAccessAssignment[] = [...accessAssignments];
     assignmentsData.splice(accessAssignments.indexOf(assignment), 1);
     setAssignments(assignmentsData);
 
     if (props.onRevokeSuccess) {
-      props.onRevokeSuccess(assignment);
+      props.onRevokeSuccess(assignmentsData);
     }
   };
 
@@ -172,25 +179,6 @@ const AccessAssignmentContainer = (props: IProps) => {
         method: 'POST'
       });
 
-      // TODO: figure out if we actually need this nested data
-      // not sure if there's a way to stop the backend from returning accessAssignment.access.assignments
-      const index = accessAssignment.access.assignments.findIndex(
-        a => a.id === accessAssignment.id
-      );
-      if (index < 0) {
-        // if we have created a new access, add the assignment we just created
-        accessAssignment.access = {
-          // to the object we just created
-          ...access,
-          assignments: [accessAssignment]
-        };
-      } else {
-        accessAssignment.access = {
-          // our backend doesn't return recursive data,
-          ...access,
-          assignments: [...access.assignments] // so we have to copy from our original object
-        };
-      }
       accessAssignment.person = person;
       toast.success('Access assigned successfully!');
     } catch (err) {
@@ -213,7 +201,7 @@ const AccessAssignmentContainer = (props: IProps) => {
       updatedAssignments[index] = accessAssignment;
     }
     setAssignments(updatedAssignments);
-    props.onAssignSuccess();
+    props.onAssignSuccess(updatedAssignments);
   };
 
   if (!PermissionsUtil.canViewAccess(context.permissions)) {
@@ -235,10 +223,7 @@ const AccessAssignmentContainer = (props: IProps) => {
       {isDetailsModalShown && (
         <AccessAssignmentDetails
           selectedAccessAssignment={selectedAssignment}
-          selectedAccess={
-            // if we are on /access/details, use the actual access so edits are reflected
-            !!props.access ? props.access : selectedAssignment?.access
-          }
+          selectedAccess={selectedAccess}
           isModalOpen={isDetailsModalShown}
           closeModal={closeModals}
           openEditModal={props.openEditModal}
@@ -256,6 +241,7 @@ const AccessAssignmentContainer = (props: IProps) => {
           isModalOpen={isRevokeModalShown}
           openUpdateModal={openUpdateModal}
           openEditModal={props.openEditModal}
+          selectedAccess={selectedAccess}
         />
       )}
       {isUpdateModalShown && (
@@ -265,6 +251,7 @@ const AccessAssignmentContainer = (props: IProps) => {
           onUpdate={assignAccessAssignment}
           closeModal={closeModals}
           isModalOpen={isUpdateModalShown}
+          selectedAccess={selectedAccess}
         />
       )}
       {isAssignModalShown && (
@@ -274,7 +261,7 @@ const AccessAssignmentContainer = (props: IProps) => {
           modal={isAssignModalShown}
           person={props.person}
           tags={context.tags}
-          selectedAccess={props.access}
+          selectedAccess={selectedAccess}
           onCreate={assignAccessAssignment}
         />
       )}

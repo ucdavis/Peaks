@@ -1,8 +1,5 @@
 import * as React from 'react';
-import { useContext, useEffect } from 'react';
-import { toast } from 'react-toastify';
 import { Button, Modal, ModalBody } from 'reactstrap';
-import { Context } from '../../Context';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import AccessEditValues from './AccessEditValues';
 import AccessAssignmentValues from './AccessAssignmentValues';

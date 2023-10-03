@@ -11,12 +11,14 @@ interface IProps {
   openUpdateModal: (accessAssignment: IAccessAssignment) => void;
   revokeAccessAssignment: (accessAssignment: IAccessAssignment) => void;
   selectedAccessAssignment: IAccessAssignment;
+  selectedAccess: IAccess;
 }
 
 const RevokeAccess = (props: IProps) => {
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const { selectedAccess, selectedAccessAssignment } = props;
 
-  if (!props.selectedAccessAssignment || !props.selectedAccessAssignment) {
+  if (!selectedAccessAssignment || !selectedAccessAssignment) {
     return null;
   }
   const revokeAccess = async () => {
@@ -25,7 +27,7 @@ const RevokeAccess = (props: IProps) => {
     }
     setSubmitting(true);
     try {
-      await props.revokeAccessAssignment(props.selectedAccessAssignment);
+      await props.revokeAccessAssignment(selectedAccessAssignment);
     } catch (err) {
       setSubmitting(false);
       return;
@@ -35,7 +37,7 @@ const RevokeAccess = (props: IProps) => {
   };
 
   const isValidToRevoke = () => {
-    return props.selectedAccessAssignment !== null;
+    return selectedAccessAssignment !== null;
   };
 
   return (
@@ -49,8 +51,8 @@ const RevokeAccess = (props: IProps) => {
       >
         <div className='modal-header row justify-content-between'>
           <h2>
-            Revoke {props.selectedAccessAssignment.access.name} from{' '}
-            {props.selectedAccessAssignment.person.name}
+            Revoke {selectedAccess.name} from{' '}
+            {selectedAccessAssignment.person.name}
           </h2>
           <Button color='link' onClick={props.closeModal}>
             <i className='fas fa-times fa-lg' />
@@ -59,11 +61,11 @@ const RevokeAccess = (props: IProps) => {
 
         <ModalBody>
           <AccessEditValues
-            selectedAccess={props.selectedAccessAssignment.access}
+            selectedAccess={selectedAccess}
             disableEditing={true}
           />
           <AccessAssignmentValues
-            selectedAccessAssignment={props.selectedAccessAssignment}
+            selectedAccessAssignment={selectedAccessAssignment}
             openUpdateModal={props.openUpdateModal}
           />
           {!isValidToRevoke() && (

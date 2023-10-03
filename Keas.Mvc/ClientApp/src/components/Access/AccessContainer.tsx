@@ -38,14 +38,6 @@ const AccessContainer = () => {
         toast.error('Error loading access list. Please refresh and try again.');
       }
 
-      accessesData = accessesData.map(a => ({
-        ...a,
-        assignments: a.assignments.map(assignment => ({
-          ...assignment,
-          access: a
-        }))
-      }));
-
       setAccesses(accessesData);
       setLoading(false);
     };

@@ -4,10 +4,11 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
-import { IAccess } from '../../models/Access';
+import { IAccess, IAccessAssignment } from '../../models/Access';
 import AccessAssignmentContainer from './AccessAssignmentContainer';
 import HistoryContainer from '../History/HistoryContainer';
 import EditAccess from './EditAccess';
+import { PermissionsUtil } from '../../util/permissions';
 
 interface IProps {
   goBack: () => void;
@@ -28,47 +29,61 @@ const AccessDetailContainer = (props: IProps) => {
   );
 
   useEffect(() => {
-    if (!props.selectedAccess) {
+    if (!PermissionsUtil.canViewAccess(context.permissions)) {
       return;
     }
-    fetchDetails(props.selectedAccess.id);
-  }, [props.selectedAccess]);
 
-  if (!props.selectedAccess) {
+    const { selectedAccess } = props;
+    if (selectedAccess) {
+      return;
+    }
+
+    const fetchDetails = async (id: number) => {
+      const url = `/api/${context.team.slug}/access/details/${id}`;
+      let access: IAccess = null;
+      try {
+        access = await context.fetch(url);
+      } catch (err) {
+        if (err.message === 'Not Found') {
+          toast.error(
+            'The access you were trying to view could not be found. It may have been deleted.'
+          );
+          props.updateSelectedAccess(null, id);
+          props.closeModal();
+        } else {
+          toast.error(
+            'Error fetching access details. Please refresh the page to try again.'
+          );
+        }
+        return;
+      }
+      props.updateSelectedAccess(access);
+    };
+
+    fetchDetails(selectedAccess.id);
+  }, [context, props]);
+
+  const { selectedAccess } = props;
+  if (!selectedAccess) {
     return null;
   }
 
-  const access = props.selectedAccess;
-
-  const fetchDetails = async (id: number) => {
-    const url = `/api/${context.team.slug}/access/details/${id}`;
-    let access: IAccess = null;
-    try {
-      access = await context.fetch(url);
-    } catch (err) {
-      if (err.message === 'Not Found') {
-        toast.error(
-          'The access you were trying to view could not be found. It may have been deleted.'
-        );
-        props.updateSelectedAccess(null, id);
-        props.closeModal();
-      } else {
-        toast.error(
-          'Error fetching access details. Please refresh the page to try again.'
-        );
-      }
-      return;
-    }
-    props.updateSelectedAccess(access);
-  };
-
   const closeModals = () => {
     setShouldOpenEditModal(false);
-    history.push(`${getBaseUrl()}/access/details/${props.selectedAccess.id}`);
+    history.push(`${getBaseUrl()}/access/details/${selectedAccess.id}`);
   };
 
   const getBaseUrl = () => {
     return `/${context.team.slug}`;
+  };
+
+  const onAssignSuccess = (assignments: IAccessAssignment[]) => {
+    const updatedAccess = { ...selectedAccess, assignments: assignments };
+    props.updateSelectedAccess(updatedAccess);
+  };
+  const onRevokeSuccess = (assignments: IAccessAssignment[]) => {
+    const updatedAccess = { ...selectedAccess, assignments: assignments };
+    props.updateSelectedAccess(updatedAccess);
   };
 
   return (
@@ -78,8 +93,8 @@ const AccessDetailContainer = (props: IProps) => {
           key={`edit-access-${props.selectedAccess.id}`}
           onEdit={props.editAccess}
           closeModal={closeModals}
-          modal={!!access}
-          selectedAccess={access}
+          modal={!!selectedAccess}
+          selectedAccess={selectedAccess}
           tags={context.tags}
         />
       ) : null}
@@ -89,7 +104,7 @@ const AccessDetailContainer = (props: IProps) => {
         </Button>
       </div>
       <div className='d-flex flex-row flex-wrap-reverse justify-content-between'>
-        <h2>Details for {access.name}</h2>
+        <h2>Details for {selectedAccess.name}</h2>
         <div>
           <Button
             color='link'
@@ -103,7 +118,7 @@ const AccessDetailContainer = (props: IProps) => {
           <Button
             color='link'
             onClick={() => {
-              props.openDeleteModal(access);
+              props.openDeleteModal(selectedAccess);
             }}
           >
             <i className='fas fa-trash fa-sm fa-fw mr-2' aria-hidden='true' />
@@ -111,29 +126,26 @@ const AccessDetailContainer = (props: IProps) => {
           </Button>
         </div>
       </div>
-      {access.tags && (
+      {selectedAccess.tags && (
         <p>
           <i className='fas fa-tags mr-2' aria-hidden='true' />
-          {access.tags}
+          {selectedAccess.tags}
         </p>
       )}
-      {access.notes && (
+      {selectedAccess.notes && (
         <p>
           <i className='fas fa-comment-alt mr-2' aria-hidden='true' />
-          {access.notes}
+          {selectedAccess.notes}
         </p>
       )}
       <br />
       <AccessAssignmentContainer
         access={props.selectedAccess}
-        onAssignSuccess={() => props.updateSelectedAccess(access)}
-        onRevokeSuccess={assignment => {
-          access.assignments.splice(access.assignments.indexOf(assignment), 1);
-          props.updateSelectedAccess(access);
-        }}
+        onAssignSuccess={onAssignSuccess}
+        onRevokeSuccess={onRevokeSuccess}
         openEditModal={props.openEditModal}
       />
-      <HistoryContainer controller='access' id={access.id} />
+      <HistoryContainer controller='access' id={selectedAccess.id} />
     </div>
   );
 };
