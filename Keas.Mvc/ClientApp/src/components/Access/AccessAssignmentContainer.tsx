@@ -192,7 +192,7 @@ const AccessAssignmentContainer = (props: IProps) => {
         };
       }
       accessAssignment.person = person;
-      toast.success('Access updated successfully!');
+      toast.success('Access assigned successfully!');
     } catch (err) {
       const errorMessage =
         err.message === ''
@@ -304,7 +304,7 @@ const AccessAssignmentContainer = (props: IProps) => {
               }
               personView={true}
               personId={props.person.id}
-              access={accessAssignments.map(assignment => assignment.access)}
+              accesses={accessAssignments.map(assignment => assignment.access)}
               onRevoke={access =>
                 openRevokeModal(
                   accessAssignments.find(

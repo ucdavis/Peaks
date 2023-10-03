@@ -3,7 +3,7 @@ import { IAccess } from '../../models/Access';
 import AccessListItem from './AccessListItem';
 
 interface IProps {
-  access: IAccess[];
+  accesses: IAccess[];
   personView: boolean; // is always true but i'm leaving /shrug -river
   personId: number; // for showing the right expiration date
   onDelete?: (access: IAccess) => void;
@@ -14,12 +14,12 @@ interface IProps {
 
 const AccessList = (props: IProps) => {
   const access =
-    !props.access || props.access.length < 1 ? (
+    !props.accesses || props.accesses.length < 1 ? (
       <tr>
         <td colSpan={5}>No Accesses Found</td>
       </tr>
     ) : (
-      props.access.map(x => (
+      props.accesses.map(x => (
         <AccessListItem
           key={x.id.toString()}
           accessEntity={x}
