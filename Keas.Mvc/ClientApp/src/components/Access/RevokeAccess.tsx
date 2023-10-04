@@ -7,7 +7,6 @@ import AccessAssignmentValues from './AccessAssignmentValues';
 interface IProps {
   isModalOpen: boolean;
   closeModal: () => void;
-  openEditModal?: (access: IAccess) => void;
   openUpdateModal: (accessAssignment: IAccessAssignment) => void;
   revokeAccessAssignment: (accessAssignment: IAccessAssignment) => void;
   selectedAccessAssignment: IAccessAssignment;

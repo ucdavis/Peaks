@@ -143,7 +143,6 @@ const AccessDetailContainer = (props: IProps) => {
         access={props.selectedAccess}
         onAssignSuccess={onAssignSuccess}
         onRevokeSuccess={onRevokeSuccess}
-        openEditModal={props.openEditModal}
       />
       <HistoryContainer controller='access' id={selectedAccess.id} />
     </div>

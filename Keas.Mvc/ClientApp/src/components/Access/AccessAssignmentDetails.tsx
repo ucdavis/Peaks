@@ -9,7 +9,6 @@ interface IProps {
   selectedAccessAssignment: IAccessAssignment;
   selectedAccess: IAccess;
   closeModal: () => void;
-  openEditModal: (access: IAccess) => void;
   openUpdateModal: (accessAssignment: IAccessAssignment) => void;
   updateSelectedAccessAssignment: (
     accessAssignment: IAccessAssignment,

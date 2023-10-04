@@ -22,7 +22,6 @@ interface IProps {
   access?: IAccess;
   onRevokeSuccess?: (assignments: IAccessAssignment[]) => any;
   onAssignSuccess: (assignments: IAccessAssignment[]) => void;
-  openEditModal?: (access: IAccess) => void;
   goToAccessDetails?: (access: IAccess) => void; // only supplied in person container
 }
 
@@ -233,7 +232,6 @@ const AccessAssignmentContainer = (props: IProps) => {
           selectedAccess={selectedAccess}
           isModalOpen={isDetailsModalShown}
           closeModal={closeModals}
-          openEditModal={props.openEditModal}
           openUpdateModal={openUpdateModal}
           updateSelectedAccessAssignment={setSelectedAssignment}
           goToAccessDetails={props.goToAccessDetails}
@@ -247,7 +245,6 @@ const AccessAssignmentContainer = (props: IProps) => {
           closeModal={closeModals}
           isModalOpen={isRevokeModalShown}
           openUpdateModal={openUpdateModal}
-          openEditModal={props.openEditModal}
           selectedAccess={selectedAccess}
         />
       )}
