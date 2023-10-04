@@ -62,7 +62,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Include(x => x.Person)
                 .Include(x => x.Access);
             // gives an array of assignments for this person, and the access object without recursive data 
-            // 
+            // should match Access.ts
             var assignments = await result.Select(x => new {
                 AccessId = x.AccessId,
                 Access = new  {
@@ -73,13 +73,14 @@ namespace Keas.Mvc.Controllers.Api
                     x.Access.Active,
                     x.Access.Team,
                     x.Access.TeamId,
+                    // x.Access.Assignments = null -> don't send recursive data
+                    // to avoid sending all other assignments for this access, just send the count
                     NumberOfAssignments = x.Access.Assignments.Count,
-                }, // don't send nested/recursive access data
+                }, 
                 x.ExpiresAt,
                 x.Id,
                 x.Person,
                 x.PersonId,
-                    // should match Access.ts
         }).AsNoTracking().ToArrayAsync();
 
             return Json(assignments);
