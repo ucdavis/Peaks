@@ -181,7 +181,25 @@ const AccessAssignmentContainer = (props: IProps) => {
       accessAssignment = await context.fetch(assignUrl, {
         method: 'POST'
       });
-
+      // TODO: figure out if we actually need this nested data
+      // not sure if there's a way to stop the backend from returning accessAssignment.access.assignments
+      const index = accessAssignment.access.assignments.findIndex(
+        a => a.id === accessAssignment.id
+      );
+      if (index < 0) {
+        // if we have created a new access, add the assignment we just created
+        accessAssignment.access = {
+          // to the object we just created
+          ...access,
+          assignments: [accessAssignment]
+        };
+      } else {
+        accessAssignment.access = {
+          // our backend doesn't return recursive data,
+          ...access,
+          assignments: [...access.assignments] // so we have to copy from our original object
+        };
+      }
       accessAssignment.person = person;
       toast.success('Access assigned successfully!');
     } catch (err) {

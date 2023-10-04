@@ -59,8 +59,25 @@ namespace Keas.Mvc.Controllers.Api
         {
             var assignedAccess = await _context.Access
                 .Where(x => x.Active && x.Team.Slug == Team && x.Assignments.Any(y => y.Person.Id == personId))
-                .Include(x => x.Assignments).ThenInclude(x => x.Person)
-                .Include(x => x.Team)
+                .Select(x => new Access
+                {
+                    // should match Access.ts
+                    Id = x.Id,
+                    Name = x.Name,
+                    Notes = x.Notes,
+                    Tags = x.Tags,
+                    Active = x.Active,
+                    Assignments = x.Assignments.Select(y => new AccessAssignment {
+                        AccessId = y.AccessId,
+                        Access = null, // don't send nested/recursive access data
+                        ExpiresAt = y.ExpiresAt,
+                        Id = y.Id,
+                        Person = y.Person,
+                        PersonId = y.PersonId,
+                    }).ToList(),
+                    Team = x.Team,
+                    TeamId = x.TeamId
+                })
                 .AsNoTracking().ToArrayAsync();
 
             return Json(assignedAccess);
@@ -80,6 +97,7 @@ namespace Keas.Mvc.Controllers.Api
                 .Where(x => x.Team.Slug == Team)
                 .Select(x => new Access
                 {
+                    // should match Access.ts
                     Id = x.Id,
                     Name = x.Name,
                     Notes = x.Notes,
@@ -94,9 +112,8 @@ namespace Keas.Mvc.Controllers.Api
                         PersonId = y.PersonId,
                     }).ToList(),
                     Team = x.Team,
+                    TeamId = x.TeamId
                 })
-                // .Include(x => x.Assignments)
-                // .ThenInclude(x => x.Person)
                 .AsNoTracking();
 
             switch (filter)
