@@ -6,7 +6,7 @@ import { Context } from '../../Context';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
 import { IMatchParams } from '../../models/Shared';
-import AccessList from './AccessList';
+import AccessAssignmentList from './AccessList';
 import AssignAccess from './AssignAccess';
 import RevokeAccess from './RevokeAccess';
 import UpdateAccessAssignment from './UpdateAccessAssignment';
@@ -54,40 +54,26 @@ const AccessAssignmentContainer = (props: IProps) => {
       return;
     }
 
-    const fetchAssignments = async (): Promise<IAccessAssignment[]> => {
+    const fetchAssignments = async (): Promise<void> => {
       if (!props.person) {
-        // assume that props.person is valid
-        throw Error('Cannot fetch assignments, no person was provided');
+        // only want to fetch assignments if we are on a person page, otherwise they are passed in by props.access
+        return;
       }
       const accessFetchUrl = `/api/${context.team.slug}/access/listAssigned?personId=${props.person.id}`;
-      let accesses: IAccess[] = null;
+      let updatedAccessAssignments: IAccessAssignment[] = null;
       try {
-        accesses = await context.fetch(accessFetchUrl);
+        updatedAccessAssignments = await context.fetch(accessFetchUrl);
       } catch (err) {
         toast.error('Error loading access list. Please refresh and try again.');
       }
 
-      return accesses.map(access => ({
-        ...access.assignments.find(
-          assignment =>
-            assignment.accessId === access.id &&
-            assignment.personId === props.person.id
-        ),
-        access
-      }));
+      setAssignments(updatedAccessAssignments);
+      setSelectedAssignment(
+        updatedAccessAssignments.find(el => el.id === parseInt(params.id, 10))
+      );
     };
 
-    const getAssignments = async () => {
-      if (props.person) {
-        const assignmentsData = await fetchAssignments();
-        setAssignments(assignmentsData);
-        setSelectedAssignment(
-          assignmentsData.find(el => el.id === parseInt(params.id, 10))
-        );
-      }
-    };
-
-    getAssignments();
+    fetchAssignments();
   }, [context, params.id, props.person]);
 
   const getBaseUrl = () => {
@@ -300,28 +286,12 @@ const AccessAssignmentContainer = (props: IProps) => {
         </div>
         <div className='card-content'>
           {props.person ? (
-            <AccessList
-              showDetails={access =>
-                openDetailsModal(
-                  accessAssignments.find(
-                    assignment =>
-                      assignment.accessId === access.id &&
-                      assignment.personId === props.person.id
-                  )
-                )
-              }
+            <AccessAssignmentList
+              showDetails={openDetailsModal}
               personView={true}
               personId={props.person.id}
-              accesses={accessAssignments.map(assignment => assignment.access)}
-              onRevoke={access =>
-                openRevokeModal(
-                  accessAssignments.find(
-                    assignment =>
-                      assignment.accessId === access.id &&
-                      assignment.personId === props.person.id
-                  )
-                )
-              }
+              accessAssignments={accessAssignments}
+              onRevoke={openRevokeModal}
             />
           ) : (
             <AccessAssignmentTable

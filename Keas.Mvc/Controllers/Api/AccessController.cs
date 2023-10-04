@@ -48,7 +48,7 @@ namespace Keas.Mvc.Controllers.Api
         {
             var access = await _context.Access.Include(x => x.Assignments).ThenInclude(x => x.Person)
                 .Where(x => x.Team.Slug == Team && x.Active &&
-                EF.Functions.Like(x.Name, q.EfStartsWith())) //|| x.SerialNumber.StartsWith(q, comparison)))
+                EF.Functions.Like(x.Name, q.EfStartsWith())) 
                 .AsNoTracking().ToListAsync();
             return Json(access);
         }
@@ -57,30 +57,32 @@ namespace Keas.Mvc.Controllers.Api
         [ProducesResponseType(typeof(IEnumerable<Access>), StatusCodes.Status200OK)]
         public async Task<IActionResult> ListAssigned(int personId)
         {
-            var assignedAccess = await _context.Access
-                .Where(x => x.Active && x.Team.Slug == Team && x.Assignments.Any(y => y.Person.Id == personId))
-                .Select(x => new Access
-                {
+            var result =  _context.AccessAssignments
+                .Where(x => x.PersonId == personId && x.Access.Team.Slug == Team)
+                .Include(x => x.Person)
+                .Include(x => x.Access);
+            // gives an array of assignments for this person, and the access object without recursive data 
+            // 
+            var assignments = await result.Select(x => new {
+                AccessId = x.AccessId,
+                Access = new  {
+                    Id = x.Access.Id,
+                    x.Access.Name,
+                    x.Access.Notes,
+                    x.Access.Tags,
+                    x.Access.Active,
+                    x.Access.Team,
+                    x.Access.TeamId,
+                    NumberOfAssignments = x.Access.Assignments.Count,
+                }, // don't send nested/recursive access data
+                x.ExpiresAt,
+                x.Id,
+                x.Person,
+                x.PersonId,
                     // should match Access.ts
-                    Id = x.Id,
-                    Name = x.Name,
-                    Notes = x.Notes,
-                    Tags = x.Tags,
-                    Active = x.Active,
-                    Assignments = x.Assignments.Select(y => new AccessAssignment {
-                        AccessId = y.AccessId,
-                        Access = null, // don't send nested/recursive access data
-                        ExpiresAt = y.ExpiresAt,
-                        Id = y.Id,
-                        Person = y.Person,
-                        PersonId = y.PersonId,
-                    }).ToList(),
-                    Team = x.Team,
-                    TeamId = x.TeamId
-                })
-                .AsNoTracking().ToArrayAsync();
+        }).AsNoTracking().ToArrayAsync();
 
-            return Json(assignedAccess);
+            return Json(assignments);
         }
 
 
