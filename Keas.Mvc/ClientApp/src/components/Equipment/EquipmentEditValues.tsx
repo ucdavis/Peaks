@@ -80,17 +80,17 @@ const EquipmentEditValues = (props: IProps) => {
 
   return (
     <div>
-      {props.disableEditing && props.openEditModal && (
-        <div className='row justify-content-between'>
-          <h3>Equipment Details</h3>
+      <div className='row justify-content-between'>
+        <h3>Equipment Details</h3>
+        {props.disableEditing && props.openEditModal && (
           <Button
             color='link'
             onClick={() => props.openEditModal(props.selectedEquipment)}
           >
             <i className='fas fa-edit fa-xs' /> Edit Equipment
           </Button>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className='wrapperasset'>
         <FormGroup>

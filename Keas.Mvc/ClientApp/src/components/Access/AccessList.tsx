@@ -1,29 +1,30 @@
 import * as React from 'react';
-import { IAccess } from '../../models/Access';
-import AccessListItem from './AccessListItem';
+import { IAccess, IAccessAssignment } from '../../models/Access';
+import AccessAssignmentListItem from './AccessListItem';
 
 interface IProps {
-  access: IAccess[];
-  personView: boolean;
-  onDelete?: (access: IAccess) => void;
+  accessAssignments: IAccessAssignment[];
+  personView: boolean; // is always true but i'm leaving /shrug -river
+  personId: number; // for showing the right expiration date
   onAdd?: (access: IAccess) => void;
-  onRevoke?: (assignment: IAccess) => void;
-  showDetails: (access: IAccess) => void;
+  onRevoke?: (accessAssignment: IAccessAssignment) => void;
+  showDetails: (accessAssignment: IAccessAssignment) => void;
 }
 
-const AccessList = (props: IProps) => {
+// this is only accessed on person details
+const AccessAssignmentList = (props: IProps) => {
   const access =
-    !props.access || props.access.length < 1 ? (
+    !props.accessAssignments || props.accessAssignments.length < 1 ? (
       <tr>
         <td colSpan={5}>No Accesses Found</td>
       </tr>
     ) : (
-      props.access.map(x => (
-        <AccessListItem
+      props.accessAssignments.map(x => (
+        <AccessAssignmentListItem
           key={x.id.toString()}
-          accessEntity={x}
+          assignment={x}
           personView={props.personView}
-          onDelete={props.onDelete}
+          personId={props.personId}
           onAdd={props.onAdd}
           onRevoke={props.onRevoke}
           showDetails={props.showDetails}
@@ -47,4 +48,4 @@ const AccessList = (props: IProps) => {
   );
 };
 
-export default AccessList;
+export default AccessAssignmentList;

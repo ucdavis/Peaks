@@ -9,93 +9,91 @@ import {
 import { ReactTable } from '../Shared/ReactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { Column, TableState } from 'react-table';
+import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
+import { Button } from 'reactstrap';
 
 interface IProps {
-  assignments: IAccessAssignment[];
+  accessAssignments: IAccessAssignment[];
   onRevoke?: (assignment: IAccessAssignment) => void;
-  onEdit?: (assignment: IAccessAssignment) => void;
+  onUpdate?: (assignment: IAccessAssignment) => void;
+  showDetails?: (assignment: IAccessAssignment) => void;
   disableEditing?: boolean;
 }
 
-const accessAssignTable: React.FunctionComponent<IProps> = (
-  props: React.PropsWithChildren<IProps>
-): React.ReactElement => {
-  const options = [...ReactTableExpirationUtil.defaultFilterOptions];
-  options.splice(
-    options.findIndex(v => v.value === 'unassigned'),
-    1
-  );
-  const columns: Column<IAccessAssignment>[] = [
-    {
-      Header: 'Name',
-      accessor: row =>
-        !!row.person ? `${row.person.lastName}, ${row.person.firstName}` : ``
-    },
-    {
-      Cell: row => (
-        <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
-      ),
-      Filter: ExpirationColumnFilter,
-      filter: 'expiration',
-      Header: 'Expiration',
-      accessor: 'expiresAt'
-    },
-    {
-      Cell: row => (
-        <div>
-          <button
-            type='button'
-            className='btn btn-outline-danger'
-            disabled={props.disableEditing || !props.onRevoke}
-            onClick={() =>
-              props.onRevoke &&
-              props.onRevoke(
-                props.assignments.find(
-                  (el: IAccessAssignment) => row.value === el.personId
-                )
-              )
-            }
-          >
-            <i className='fas fa-trash' />
-          </button>
-          <button
-            type='button'
-            className='btn btn-outline-primary'
-            disabled={props.disableEditing || !props.onEdit}
-            onClick={() =>
-              props.onEdit &&
-              props.onEdit(
-                props.assignments.find(
-                  (el: IAccessAssignment) => row.value === el.personId
-                )
-              )
-            }
-          >
-            <i className='fas fa-edit' />
-          </button>
-        </div>
-      ),
-      Header: 'Actions',
-      accessor: 'personId'
+const AccessAssignmentTable = (props: IProps) => {
+  const renderDropdownColumn = data => {
+    const accessAssignment = data.row.original;
+
+    const actions: IAction[] = [];
+
+    if (!!props.onRevoke && !!accessAssignment) {
+      actions.push({
+        onClick: () => props.onRevoke(accessAssignment),
+        title: 'Revoke'
+      });
     }
-  ];
+
+    return <ListActionsDropdown actions={actions} />;
+  };
+
+  const { accessAssignments } = props;
+  const columns: Column<IAccessAssignment>[] = React.useMemo(
+    () => [
+      {
+        Cell: data => (
+          <Button
+            color='link'
+            onClick={() => props.showDetails(data.row.original)}
+          >
+            Details
+          </Button>
+        ),
+        Header: ' ',
+        maxWidth: 150
+      },
+      {
+        Header: 'Assignment',
+        accessor: (accessAssignment: IAccessAssignment) =>
+          !!accessAssignment
+            ? `${accessAssignment.person.lastName}, ${accessAssignment.person.firstName}`
+            : ``,
+        id: 'assignedTo'
+      },
+      {
+        Cell: row => (
+          <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
+        ),
+        Filter: ExpirationColumnFilter,
+        filter: 'expiration',
+        Header: 'Expiration',
+        accessor: row => row.expiresAt,
+        id: 'expiresAt'
+      },
+      {
+        Cell: renderDropdownColumn,
+        Header: 'Actions'
+      }
+    ],
+    []
+  );
+
+  const accessAssignmentData = React.useMemo(() => accessAssignments, [
+    accessAssignments
+  ]);
 
   const initialState: Partial<TableState<any>> = {
-    sortBy: [{ id: 'name' }],
+    sortBy: [{ id: 'assignedTo' }, { id: 'expiresAt' }],
     pageSize: ReactTableUtil.getPageSize()
   };
 
   return (
-    <div>
-      <h3>Assigned to:</h3>
-      <ReactTable
-        data={props.assignments}
-        columns={columns}
-        initialState={initialState}
-        filterTypes={{ expiration: expirationFilter }}
-      />
-    </div>
+    <ReactTable
+      data={accessAssignmentData}
+      columns={columns}
+      initialState={initialState}
+      filterTypes={{ expiration: expirationFilter }}
+    />
   );
 };
 
-export default accessAssignTable;
+export default AccessAssignmentTable;

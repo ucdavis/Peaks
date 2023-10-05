@@ -3,6 +3,7 @@ import { IPerson } from './People';
 
 export interface IAccess {
   assignments: IAccessAssignment[];
+  numberOfAssignments?: number; // created and only used in Controller/ListAssigned (person page)
   id: number;
   name: string;
   notes: string;

@@ -13,6 +13,7 @@ import PeopleTable from './PeopleTable';
 import PersonDetails from './PersonDetails';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 import PeaksLoader from '../Shared/PeaksLoader';
+import { IAccess } from '../../models/Access';
 
 const PeopleContainer = props => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -85,6 +86,7 @@ const PeopleContainer = props => {
         onEdit={editPerson}
         onDelete={deletePerson}
         goToKeyDetails={goToKeyDetails}
+        goToAccessDetails={goToAccessDetails}
       />
     );
   };
@@ -243,6 +245,10 @@ const PeopleContainer = props => {
 
   const goToKeyDetails = (key: IKey) => {
     history.push(`/${context.team.slug}/keys/details/${key.id}`);
+  };
+
+  const goToAccessDetails = (access: IAccess) => {
+    history.push(`/${context.team.slug}/access/details/${access.id}`);
   };
 
   const openCreateModal = () => {

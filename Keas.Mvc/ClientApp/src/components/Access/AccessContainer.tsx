@@ -9,7 +9,7 @@ import { IPerson } from '../../models/People';
 import { IMatchParams } from '../../models/Shared';
 import { PermissionsUtil } from '../../util/permissions';
 import Denied from '../Shared/Denied';
-import AccessDetails from './AccessDetails';
+import AccessDetailContainer from './AccessDetailContainer';
 import AccessTable from './AccessTable';
 import AssignAccess from './AssignAccess';
 import DeleteAccess from './DeleteAccess';
@@ -37,14 +37,6 @@ const AccessContainer = () => {
       } catch (err) {
         toast.error('Error loading access list. Please refresh and try again.');
       }
-
-      accessesData = accessesData.map(a => ({
-        ...a,
-        assignments: a.assignments.map(assignment => ({
-          ...assignment,
-          access: a
-        }))
-      }));
 
       setAccesses(accessesData);
       setLoading(false);
@@ -152,7 +144,7 @@ const AccessContainer = () => {
 
   const renderDetails = (selectedId: number, access: IAccess) => {
     return (
-      <AccessDetails
+      <AccessDetailContainer
         goBack={() => history.push(getBaseUrl() + '/access')}
         key={`details-access-${selectedId}`}
         selectedAccess={access}
@@ -161,6 +153,7 @@ const AccessContainer = () => {
         editAccess={editAccess}
         openDeleteModal={openDeleteModal}
         updateSelectedAccess={updateAccessFromDetails}
+        openEditModal={openEditModal}
       />
     );
   };
@@ -267,7 +260,7 @@ const AccessContainer = () => {
 
   const openAssignModal = (access: IAccess) => {
     history.push(
-      `${getBaseUrl()}/access/details/${access.id}/assign/${access.id}`
+      `${getBaseUrl()}/access/details/${access.id}/access/assign/${access.id}`
     );
   };
 

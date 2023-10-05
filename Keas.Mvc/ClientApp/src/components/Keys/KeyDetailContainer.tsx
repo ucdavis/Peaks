@@ -78,9 +78,23 @@ const KeyDetailContainer = (props: IProps) => {
           <i className='fas fa-arrow-left fa-xs' /> Return to Table
         </Button>
       </div>
-      <h2 className='mb-3'>
-        {selectedKeyInfo.key.name} - {selectedKeyInfo.key.code}
-      </h2>
+
+      <div className='d-flex flex-row flex-wrap-reverse justify-content-between'>
+        <h2 className='mb-3'>
+          {selectedKeyInfo.key.name} - {selectedKeyInfo.key.code}
+        </h2>
+        <div>
+          <Button
+            color='link'
+            onClick={() => {
+              setShouldOpenEditModal(true);
+            }}
+          >
+            <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
+            Edit Key
+          </Button>
+        </div>
+      </div>
       {selectedKeyInfo.key.tags && (
         <p>
           <i className='fas fa-tags mr-2' aria-hidden='true' />
@@ -93,11 +107,7 @@ const KeyDetailContainer = (props: IProps) => {
           {selectedKeyInfo.key.notes}
         </p>
       )}
-      <div className='mb-3'>
-        <Button color='link' onClick={() => setShouldOpenEditModal(true)}>
-          <i className='fas fa-edit fa-xs' /> Edit Key
-        </Button>
-      </div>
+      <br />
       <KeySerialContainer
         {...props.route}
         selectedKey={selectedKeyInfo.key}

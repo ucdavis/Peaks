@@ -9,9 +9,8 @@ interface IProps {
   disableEditing: boolean;
   tags?: string[];
   error?: IValidationError;
-  children?: JSX.Element;
-  openEditModal?: (access: IAccess) => void;
   onAccessUpdate?: (access: IAccess) => void;
+  goToAccessDetails?: (access: IAccess) => void;
 }
 
 const AccessEditValues = (props: IProps) => {
@@ -21,22 +20,21 @@ const AccessEditValues = (props: IProps) => {
     );
   }
 
+  const goToAccessDetails = () => {
+    if (!props.selectedAccess) {
+      return;
+    }
+    props.goToAccessDetails(props.selectedAccess);
+  };
+
   const access = props.selectedAccess;
   const error = props.error;
 
   return (
     <div>
-      {props.disableEditing && props.openEditModal && (
-        <div className='row justify-content-between'>
-          <h3>Access Details</h3>
-          <Button
-            color='link'
-            onClick={() => props.openEditModal(props.selectedAccess)}
-          >
-            <i className='fas fa-edit fa-xs' /> Edit Access
-          </Button>
-        </div>
-      )}
+      <div className='row justify-content-between'>
+        <h3>Access Details</h3>
+      </div>
       <div className='wrapperasset'>
         <FormGroup>
           <Label for='name'>Name</Label>
@@ -45,7 +43,7 @@ const AccessEditValues = (props: IProps) => {
             className='form-control'
             readOnly={props.disableEditing}
             value={
-              props.selectedAccess && props.selectedAccess.name
+              !!props.selectedAccess && props.selectedAccess.name
                 ? props.selectedAccess.name
                 : ''
             }
@@ -64,7 +62,9 @@ const AccessEditValues = (props: IProps) => {
             type='textarea'
             className='form-control'
             readOnly={props.disableEditing}
-            value={props.selectedAccess.notes || ''}
+            value={
+              !!props.selectedAccess?.notes ? props.selectedAccess.notes : ''
+            }
             onChange={e =>
               props.onAccessUpdate({ ...access, notes: e.target.value })
             }
@@ -94,7 +94,11 @@ const AccessEditValues = (props: IProps) => {
             {error && error.path === 'tags' && error.message}
           </FormFeedback>
         </FormGroup>
-        {props.children}
+        {props.goToAccessDetails && (
+          <Button color='link' onClick={() => goToAccessDetails()}>
+            <i className='fas fa-link fa-xs' /> View Access Details
+          </Button>
+        )}
       </div>
     </div>
   );

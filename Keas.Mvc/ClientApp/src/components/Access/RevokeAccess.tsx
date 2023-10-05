@@ -1,77 +1,87 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Alert, Button } from 'reactstrap';
-import { IAccessAssignment } from '../../models/Access';
-import { DateUtil } from '../../util/dates';
-import AccessModal from './AccessModal';
-import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
-
+import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { IAccess, IAccessAssignment } from '../../models/Access';
+import AccessEditValues from './AccessEditValues';
+import AccessAssignmentValues from './AccessAssignmentValues';
 interface IProps {
-  assignment?: IAccessAssignment;
-  revoke: (accessAssignment: IAccessAssignment) => Promise<void>;
-  cancelRevoke: () => void;
+  isModalOpen: boolean;
+  closeModal: () => void;
+  openUpdateModal: (accessAssignment: IAccessAssignment) => void;
+  revokeAccessAssignment: (accessAssignment: IAccessAssignment) => void;
+  selectedAccessAssignment: IAccessAssignment;
+  selectedAccess: IAccess;
 }
 
 const RevokeAccess = (props: IProps) => {
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
+  const { selectedAccess, selectedAccessAssignment } = props;
 
-  const valid = !!props.assignment;
-  const assignment = props.assignment;
-  const { person } = assignment || { person: null };
-
-  const callRevoke = () => {
+  if (!selectedAccessAssignment || !selectedAccessAssignment) {
+    return null;
+  }
+  const revokeAccess = async () => {
+    if (!isValidToRevoke()) {
+      return;
+    }
     setSubmitting(true);
     try {
-      props.revoke(props.assignment);
-    } catch (e) {
-      setError('Error -- ' + e.message + ' -- Please try again later');
+      await props.revokeAccessAssignment(selectedAccessAssignment);
+    } catch (err) {
       setSubmitting(false);
+      return;
     }
+    setSubmitting(false);
+    props.closeModal();
   };
 
-  return valid ? (
-    <AccessModal
-      isOpen={true}
-      closeModal={props.cancelRevoke}
-      header={
-        <h1>
-          Revoke Access for {person.firstName} {person.lastName}
-        </h1>
-      }
-      footer={
-        <Button color='primary' onClick={callRevoke} disabled={submitting}>
-          Revoke {submitting && <i className='fas fa-circle-notch fa-spin' />}
-        </Button>
-      }
-    >
-      {error && <Alert color='danger'>{error}</Alert>}
-      <h1>Access Name: {assignment.access.name}</h1>
-      <h2>Notes: </h2>
-      <p>{assignment.access.notes}</p>
-      {assignment.access.tags.length > 0 && (
-        <>
-          <p>
-            <b>Tags</b>
-          </p>
-          <SearchDefinedOptions
-            definedOptions={[]}
-            disabled={true}
-            onSelect={() => {}}
-            selected={assignment.access.tags.split(',')}
-            placeholder='Search for Tags'
-            id='searchTagsRevokeAccess'
+  const isValidToRevoke = () => {
+    return selectedAccessAssignment !== null;
+  };
+
+  return (
+    <div>
+      <Modal
+        isOpen={props.isModalOpen}
+        toggle={props.closeModal}
+        size='lg'
+        className='access-color'
+        scrollable={true}
+      >
+        <div className='modal-header row justify-content-between'>
+          <h2>
+            Revoke {selectedAccess.name} from{' '}
+            {selectedAccessAssignment.person.name}
+          </h2>
+          <Button color='link' onClick={props.closeModal}>
+            <i className='fas fa-times fa-lg' />
+          </Button>
+        </div>
+
+        <ModalBody>
+          <AccessEditValues
+            selectedAccess={selectedAccess}
+            disableEditing={true}
           />
-        </>
-      )}
-      <p>Expires At {DateUtil.formatExpiration(assignment.expiresAt)}</p>
-    </AccessModal>
-  ) : (
-    <AccessModal
-      isOpen={true}
-      closeModal={props.cancelRevoke}
-      header={<h1>Assignment not found</h1>}
-    />
+          <AccessAssignmentValues
+            selectedAccessAssignment={selectedAccessAssignment}
+            openUpdateModal={props.openUpdateModal}
+          />
+          {!isValidToRevoke() && (
+            <div>The access you have chosen does not have an assignment</div>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button
+            color='primary'
+            onClick={() => revokeAccess()}
+            disabled={!isValidToRevoke() || submitting}
+          >
+            Revoke {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          </Button>{' '}
+        </ModalFooter>
+      </Modal>
+    </div>
   );
 };
 
