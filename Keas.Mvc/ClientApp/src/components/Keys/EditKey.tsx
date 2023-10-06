@@ -24,18 +24,17 @@ const EditKey = (props: IProps) => {
   const [validState, setValidState] = useState<boolean>(false);
   const formRef: React.RefObject<HTMLFormElement> = useRef(null);
 
-  const validateState = () => {
-    const checkIfKeyCodeIsValid = props.checkIfKeyCodeIsValid;
-    const error = yupAssetValidation(keySchema, key, {
-      context: { checkIfKeyCodeIsValid }
-    });
-    setError(error);
-    setValidState(error.message === '');
-  };
-
   useEffect(() => {
+    const validateState = () => {
+      const checkIfKeyCodeIsValid = props.checkIfKeyCodeIsValid;
+      const error = yupAssetValidation(keySchema, key, {
+        context: { checkIfKeyCodeIsValid }
+      });
+      setError(error);
+      setValidState(error.message === '');
+    };
     validateState();
-  }, [key]);
+  }, [key, props.checkIfKeyCodeIsValid]);
 
   if (!key) {
     return null;

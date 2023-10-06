@@ -43,7 +43,7 @@ const CreateKey = (props: IProps) => {
     };
 
     validateState();
-  }, [key]);
+  }, [key, props.checkIfKeyCodeIsValid]);
 
   const renderModal = () => {
     const { searchableTags } = props;

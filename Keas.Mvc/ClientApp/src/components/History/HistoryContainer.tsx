@@ -22,20 +22,18 @@ const HistoryContainer = (props: IProps) => {
   const reloadHistories = async () => {
     setReloading(true);
     setReloaded(false);
-    const histories = await getHistories();
     setHistories(histories);
     setReloading(false);
     setReloaded(true);
   };
 
-  const getHistories = async () => {
-    const historyFetchUrl = `/api/${context.team.slug}/${props.controller}/getHistory/${props.id}`;
-
-    const histories = await context.fetch(historyFetchUrl);
-    return histories;
-  };
-
   useEffect(() => {
+    const getHistories = async () => {
+      const historyFetchUrl = `/api/${context.team.slug}/${props.controller}/getHistory/${props.id}`;
+
+      const histories = await context.fetch(historyFetchUrl);
+      return histories;
+    };
     const retrieveHistories = async () => {
       const historyData = await getHistories();
       setHistories(historyData);
@@ -43,7 +41,7 @@ const HistoryContainer = (props: IProps) => {
     };
     setLoading(true);
     retrieveHistories();
-  }, []);
+  }, [context, props.controller, props.id]);
 
   if (loading) {
     return <PeaksLoader />;

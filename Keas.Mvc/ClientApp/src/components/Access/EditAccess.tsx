@@ -23,6 +23,11 @@ const EditAccess = (props: IProps) => {
   });
 
   useEffect(() => {
+    const validateState = () => {
+      const error = yupAssetValidation(accessSchema, access);
+      setError(error);
+      setValidState(error.message === '');
+    };
     validateState();
   }, [access]);
 
@@ -56,12 +61,6 @@ const EditAccess = (props: IProps) => {
     setSubmit(false);
     setValidState(false);
     props.closeModal();
-  };
-
-  const validateState = () => {
-    const error = yupAssetValidation(accessSchema, access);
-    setError(error);
-    setValidState(error.message === '');
   };
 
   if (!access) {

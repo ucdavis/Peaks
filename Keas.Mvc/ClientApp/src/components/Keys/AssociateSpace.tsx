@@ -29,6 +29,34 @@ const AssociateSpace = (props: IProps) => {
   const [validState, setValidState] = useState<boolean>(false);
 
   useEffect(() => {
+    const validateState = () => {
+      let valid = true;
+      let error = '';
+
+      // ensure both values are set
+      if (!selectedKeyInfo) {
+        valid = false;
+      } else if (error !== '') {
+        valid = false;
+      }
+
+      // check for existing association
+      if (
+        selectedKeyInfo?.key.keyXSpaces &&
+        selectedKeyInfo?.key.keyXSpaces.length
+      ) {
+        const isDuplicate = selectedKeyInfo.key.keyXSpaces.some(
+          x => x.spaceId === selectedSpace.id
+        );
+        if (isDuplicate) {
+          valid = false;
+          error = 'This space and key are already associated.';
+        }
+      }
+
+      setValidState(valid);
+      setError(error);
+    };
     validateState();
   }, [selectedKeyInfo, selectedSpace]);
 
@@ -151,35 +179,6 @@ const AssociateSpace = (props: IProps) => {
 
   const onSelectSpace = (space: ISpace) => {
     setSelectedSpace(space);
-  };
-
-  const validateState = () => {
-    let valid = true;
-    let error = '';
-
-    // ensure both values are set
-    if (!selectedKeyInfo) {
-      valid = false;
-    } else if (error !== '') {
-      valid = false;
-    }
-
-    // check for existing association
-    if (
-      selectedKeyInfo?.key.keyXSpaces &&
-      selectedKeyInfo?.key.keyXSpaces.length
-    ) {
-      const isDuplicate = selectedKeyInfo.key.keyXSpaces.some(
-        x => x.spaceId === selectedSpace.id
-      );
-      if (isDuplicate) {
-        valid = false;
-        error = 'This space and key are already associated.';
-      }
-    }
-
-    setValidState(valid);
-    setError(error);
   };
 
   return (
