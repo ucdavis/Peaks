@@ -249,6 +249,10 @@ const KeySerialContainer = (props: IProps) => {
   };
 
   const revokeKeySerial = async (keySerial: IKeySerial) => {
+    if (!window.confirm('Are you sure you want to revoke item?')) {
+      return false;
+    }
+
     const { team } = context;
 
     // call API to actually revoke
