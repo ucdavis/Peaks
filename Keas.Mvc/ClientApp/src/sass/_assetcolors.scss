@@ -24,7 +24,9 @@
   p a {
     color: $people;
   }
-  .fa-info-circle {
+  .fa-info-circle,
+  .fa-tags,
+  .fa-comment-alt {
     color: $people;
   }
   .card-header-people {
@@ -72,7 +74,9 @@
     }
   }
 
-  .fa-info-circle {
+  .fa-info-circle,
+  .fa-tags,
+  .fa-comment-alt {
     color: $keys;
   }
   .card-header-keys {
@@ -105,7 +109,9 @@
     }
   }
 
-  .fa-info-circle {
+  .fa-info-circle,
+  .fa-tags,
+  .fa-comment-alt {
     color: $spaces;
   }
   .card-header-spaces {
@@ -138,7 +144,9 @@
       background-color: lighten($equipment, 5);
     }
   }
-  .fa-info-circle {
+  .fa-info-circle,
+  .fa-tags,
+  .fa-comment-alt {
     color: $equipment;
   }
   .card-header-equipment {
@@ -175,7 +183,9 @@
     }
   }
 
-  .fa-info-circle {
+  .fa-info-circle,
+  .fa-tags,
+  .fa-comment-alt {
     color: $access;
   }
   .card-header-access {
