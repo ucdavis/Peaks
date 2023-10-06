@@ -21,7 +21,7 @@ const DeleteWorkstation = (props: IProps) => {
   const deleteWorkstation = async () => {
     if (
       props.selectedWorkstation.assignment !== null &&
-      !confirm(
+      !window.confirm(
         'This workstation is currently assigned, are you sure you want to delete it?'
       )
     ) {

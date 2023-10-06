@@ -24,7 +24,7 @@ const DeleteEquipment = (props: IProps) => {
   const deleteEquipment = async () => {
     if (
       props.selectedEquipment.assignment !== null &&
-      !confirm(
+      !window.confirm(
         'This equipment is currently assigned, are you sure you want to delete it?'
       )
     ) {

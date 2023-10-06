@@ -331,7 +331,7 @@ const KeyContainer = (props: IProps) => {
   };
 
   const deleteKey = async (key: IKey) => {
-    if (!confirm('Are you sure you want to delete item?')) {
+    if (!window.confirm('Are you sure you want to delete item?')) {
       return false;
     }
     try {
