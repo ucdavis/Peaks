@@ -51,41 +51,7 @@
     }
   }
 }
-.keys-color {
-  td a {
-    color: $keys;
-  }
-  .btn-link {
-    color: $keys;
-    border-color: $keys;
-    &:hover {
-      color: (darken($keys, 10));
-      text-decoration: none;
-    }
-  }
-  .btn-primary {
-    background-color: $keys;
-    &:active,
-    &:focus {
-      background-color: darken($keys, 5);
-    }
-    &:hover {
-      background-color: lighten($keys, 5);
-    }
-  }
 
-  .fa-info-circle,
-  .fa-tags,
-  .fa-comment-alt {
-    color: $keys;
-  }
-  .card-header-keys {
-    border-bottom: 4px solid $keys;
-  }
-  .fa-ellipsis-h:before {
-    color: $keys;
-  }
-}
 .spaces-color {
   td a {
     color: $spaces;
@@ -120,6 +86,41 @@
 
   .fa-ellipsis-h:before {
     color: $spaces;
+  }
+}
+.keys-color {
+  td a {
+    color: $keys;
+  }
+  .btn-link {
+    color: $keys;
+    border-color: $keys;
+    &:hover {
+      color: (darken($keys, 10));
+      text-decoration: none;
+    }
+  }
+  .btn-primary {
+    background-color: $keys;
+    &:active,
+    &:focus {
+      background-color: darken($keys, 5);
+    }
+    &:hover {
+      background-color: lighten($keys, 5);
+    }
+  }
+
+  .fa-info-circle,
+  .fa-tags,
+  .fa-comment-alt {
+    color: $keys;
+  }
+  .card-header-keys {
+    border-bottom: 4px solid $keys;
+  }
+  .fa-ellipsis-h:before {
+    color: $keys;
   }
 }
 .equipment-color {
