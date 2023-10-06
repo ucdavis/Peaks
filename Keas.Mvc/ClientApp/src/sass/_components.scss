@@ -431,17 +431,6 @@ ol.breadcrumb {
   text-align: right !important;
 }
 
-.keys-anomaly {
-  color: $keys !important;
-  border-color: $keys;
-  &:hover {
-    color: (darken($keys, 10));
-    text-decoration: none;
-  }
-  &.fa-ellipsis-h:before {
-    color: $keys;
-  }
-}
 #Name-error {
   color: $people;
 }
