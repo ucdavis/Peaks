@@ -1,4 +1,5 @@
 ﻿import * as React from 'react';
+import { useState } from 'react';
 import {
   Dropdown,
   DropdownItem,
@@ -11,55 +12,33 @@ interface IProps {
   className?: string; // for spaces/details/keys action buttons
 }
 
-interface IState {
-  isOpen: boolean;
-}
-
 export interface IAction {
   title: string;
   onClick: () => void;
 }
 
-export default class ListActionsDropdown extends React.Component<
-  IProps,
-  IState
-> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isOpen: false
-    };
-  }
+const ListActionsDropdown = (props: IProps) => {
+  const [isOpen, toggle] = useState(false);
+  const { actions } = props;
 
-  public render() {
-    const { actions } = this.props;
-
-    return (
-      <Dropdown
-        direction='start'
-        isOpen={this.state.isOpen}
-        toggle={this.toggle}
-      >
-        <DropdownToggle color='link'>
-          <i
-            className={`fas fa-ellipsis-h fa-lg ${this.props.className}`}
-            aria-hidden='true'
-          />
-        </DropdownToggle>
-        <DropdownMenu>{actions.map(this.renderAction)}</DropdownMenu>
-      </Dropdown>
-    );
-  }
-
-  private renderAction(action: IAction) {
+  const renderAction = (action: IAction) => {
     return (
       <DropdownItem key={action.title} onClick={action.onClick}>
         {action.title}
       </DropdownItem>
     );
-  }
-
-  private toggle = () => {
-    this.setState({ isOpen: !this.state.isOpen });
   };
-}
+
+  return (
+    <Dropdown direction='start' isOpen={isOpen} toggle={() => toggle(!isOpen)}>
+      <DropdownToggle color='link'>
+        <i
+          className={`fas fa-ellipsis-h fa-lg ${props.className}`}
+          aria-hidden='true'
+        />
+      </DropdownToggle>
+      <DropdownMenu>{actions.map(renderAction)}</DropdownMenu>
+    </Dropdown>
+  );
+};
+export default ListActionsDropdown;
