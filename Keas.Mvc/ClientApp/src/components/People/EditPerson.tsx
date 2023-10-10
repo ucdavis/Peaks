@@ -52,7 +52,7 @@ const EditPerson = (props: IProps) => {
 
   // clear everything out on close
   const confirmClose = () => {
-    if (!confirm('Please confirm you want to close!')) {
+    if (!window.confirm('Please confirm you want to close!')) {
       return;
     }
 

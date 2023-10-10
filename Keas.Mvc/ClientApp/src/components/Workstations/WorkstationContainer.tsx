@@ -241,7 +241,7 @@ const WorkstationContainer = (props: IProps) => {
   };
 
   const revokeWorkstation = async (workstation: IWorkstation) => {
-    if (!confirm('Are you sure you want to revoke workstation?')) {
+    if (!window.confirm('Are you sure you want to revoke workstation?')) {
       return false;
     }
     // call API to actually revoke
@@ -287,7 +287,7 @@ const WorkstationContainer = (props: IProps) => {
   };
 
   const deleteWorkstation = async (workstation: IWorkstation) => {
-    if (!confirm('Are you sure you want to delete item?')) {
+    if (!window.confirm('Are you sure you want to delete item?')) {
       return false;
     }
     try {

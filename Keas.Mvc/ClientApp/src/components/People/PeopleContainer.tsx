@@ -207,7 +207,7 @@ const PeopleContainer = props => {
       return;
     }
 
-    if (!confirm('Are you sure you want to delete person?')) {
+    if (!window.confirm('Are you sure you want to delete person?')) {
       return false;
     }
 

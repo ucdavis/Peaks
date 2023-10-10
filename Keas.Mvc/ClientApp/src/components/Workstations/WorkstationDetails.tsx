@@ -25,35 +25,34 @@ const WorkstationDetails = (props: IProps) => {
     if (!props.selectedWorkstation) {
       return;
     }
+    const fetchDetails = async (id: number) => {
+      const url = `/api/${context.team.slug}/workstations/details/${id}`;
+      let workstation: IWorkstation = null;
+      try {
+        workstation = await context.fetch(url);
+      } catch (err) {
+        if (err.message === 'Not Found') {
+          toast.error(
+            'The workstation you were trying to view could not be found. It may have been deleted.'
+          );
+          props.updateSelectedWorkstation(null, id);
+          props.closeModal();
+        } else {
+          toast.error(
+            'Error fetching workstation details. Please refresh the page to try again.'
+          );
+        }
+        return;
+      }
+      props.updateSelectedWorkstation(workstation);
+    };
+
     fetchDetails(props.selectedWorkstation.id);
-  }, []);
+  }, [context, props]);
 
   if (!props.selectedWorkstation) {
     return null;
   }
-
-  const fetchDetails = async (id: number) => {
-    const url = `/api/${context.team.slug}/workstations/details/${id}`;
-    let workstation: IWorkstation = null;
-    try {
-      workstation = await context.fetch(url);
-    } catch (err) {
-      if (err.message === 'Not Found') {
-        toast.error(
-          'The workstation you were trying to view could not be found. It may have been deleted.'
-        );
-        props.updateSelectedWorkstation(null, id);
-        props.closeModal();
-      } else {
-        toast.error(
-          'Error fetching workstation details. Please refresh the page to try again.'
-        );
-      }
-      return;
-    }
-    props.updateSelectedWorkstation(workstation);
-  };
-
   return (
     <div>
       <Modal

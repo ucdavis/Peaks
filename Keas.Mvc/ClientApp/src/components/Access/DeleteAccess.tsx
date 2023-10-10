@@ -21,7 +21,7 @@ const DeleteAccess = (props: IProps) => {
   const deleteAccess = async () => {
     if (
       props.selectedAccess.assignments.length > 0 &&
-      !confirm(
+      !window.confirm(
         'This access is currently assigned, are you sure you want to delete it?'
       )
     ) {

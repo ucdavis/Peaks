@@ -21,7 +21,7 @@ const DeleteKey = (props: IProps) => {
   const deleteKey = async () => {
     if (
       !!props.selectedKeyInfo.serialsInUseCount &&
-      !confirm(
+      !window.confirm(
         'This key has serials that are currently assigned, are you sure you want to delete it?'
       )
     ) {

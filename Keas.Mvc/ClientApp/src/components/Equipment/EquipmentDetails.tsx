@@ -24,37 +24,36 @@ const EquipmentDetails = (props: IProps) => {
     if (!props.selectedEquipment) {
       return;
     }
+    const fetchDetails = async (id: number) => {
+      const url = `/api/${context.team.slug}/equipment/details/${id}`;
+      let equipment: IEquipment = null;
+      try {
+        equipment = await context.fetch(url);
+      } catch (err) {
+        if (err.message === 'Not Found') {
+          toast.error(
+            'The equipment you were trying to view could not be found. It may have been deleted.'
+          );
+          props.updateSelectedEquipment(null, id);
+          props.closeModal();
+        } else {
+          toast.error(
+            'Error fetching equipment details. Please refresh the page to try again.'
+          );
+        }
+        return;
+      }
+      props.updateSelectedEquipment(equipment);
+    };
 
     fetchDetails(props.selectedEquipment.id);
-  }, []);
+  }, [props.selectedEquipment, context, props]);
 
   if (!props.selectedEquipment) {
     return null;
   }
 
   const equipment = props.selectedEquipment;
-
-  const fetchDetails = async (id: number) => {
-    const url = `/api/${context.team.slug}/equipment/details/${id}`;
-    let equipment: IEquipment = null;
-    try {
-      equipment = await context.fetch(url);
-    } catch (err) {
-      if (err.message === 'Not Found') {
-        toast.error(
-          'The equipment you were trying to view could not be found. It may have been deleted.'
-        );
-        props.updateSelectedEquipment(null, id);
-        props.closeModal();
-      } else {
-        toast.error(
-          'Error fetching equipment details. Please refresh the page to try again.'
-        );
-      }
-      return;
-    }
-    props.updateSelectedEquipment(equipment);
-  };
 
   return (
     <div>

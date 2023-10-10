@@ -23,6 +23,11 @@ const EditAccess = (props: IProps) => {
   });
 
   useEffect(() => {
+    const validateState = () => {
+      const error = yupAssetValidation(accessSchema, access);
+      setError(error);
+      setValidState(error.message === '');
+    };
     validateState();
   }, [access]);
 
@@ -44,7 +49,7 @@ const EditAccess = (props: IProps) => {
 
   // clear everything out on close
   const confirmClose = () => {
-    if (!confirm('Please confirm you want to close!')) {
+    if (!window.confirm('Please confirm you want to close!')) {
       return;
     }
     closeModal();
@@ -56,12 +61,6 @@ const EditAccess = (props: IProps) => {
     setSubmit(false);
     setValidState(false);
     props.closeModal();
-  };
-
-  const validateState = () => {
-    const error = yupAssetValidation(accessSchema, access);
-    setError(error);
-    setValidState(error.message === '');
   };
 
   if (!access) {
