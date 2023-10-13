@@ -9,6 +9,7 @@ interface IProps {
   onAdd?: (equipment: IEquipment) => void;
   showDetails?: (equipment: IEquipment) => void;
   onEdit?: (equipment: IEquipment) => void;
+  onDuplicate?: (equipment: IEquipment) => void;
 }
 
 const EquipmentList = (props: IProps) => {
@@ -27,6 +28,7 @@ const EquipmentList = (props: IProps) => {
           onAdd={props.onAdd}
           showDetails={props.showDetails}
           onEdit={props.onEdit}
+          onDuplicate={props.onDuplicate}
         />
       ))
     );

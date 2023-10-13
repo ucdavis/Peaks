@@ -17,6 +17,7 @@ interface IProps {
   openAssignModal?: (equipment: IEquipment) => void;
   openDetailsModal?: (equipment: IEquipment) => void;
   openEditModal?: (equipment: IEquipment) => void;
+  openDuplicateModal?: (equipment: IEquipment) => void;
 }
 
 const EquipmentTableContainer = (props: IProps) => {
@@ -258,6 +259,7 @@ const EquipmentTableContainer = (props: IProps) => {
         onAdd={props.openAssignModal}
         showDetails={props.openDetailsModal}
         onEdit={props.openEditModal}
+        onDuplicate={props.openDuplicateModal}
       />
     </div>
   );
