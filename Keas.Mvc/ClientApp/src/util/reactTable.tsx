@@ -75,15 +75,25 @@ export function expirationFilter(rows: any[], id, filterValue) {
   return rows;
 }
 
-// row expiration is either the date of the soonest expiration if there are multiple, or just the expiration value if it exists
-const getRowExpiresAt = (row: any) =>
-  row.original.assignments
-    ? DateUtil.getFirstExpiration(
-        row.original.assignments.map(y => y.expiresAt)
-      )
-    : !!row.original.expiresAt // if on AccessAssignmentTable (it does not have .assignment property, it is the assignment itself)
-    ? row.original.expiresAt
-    : row.original.assignment?.expiresAt;
+const getRowExpiresAt = (row: any) => {
+  if (!!row.original.assignments) {
+    // if on AccessTable, get soonest expiration date
+    return DateUtil.getFirstExpiration(
+      row.original.assignments.map(y => y.expiresAt)
+    );
+  }
+  if (!!row.original.expiresAt) {
+    // if on AccessAssignmentTable (it does not have .assignment property, it is the assignment itself)
+    return row.original.expiresAt;
+  }
+  if (!!row.original.keySerialAssignment) {
+    // KeySerialTable
+    return row.original.keySerialAssignment?.expiresAt;
+  }
+  // EquipmentTable
+  return row.original.assignment?.expiresAt;
+  // filtering for KeyTable is handled in KeyTable.tsx
+};
 
 export class ReactTableExpirationUtil {
   public static defaultFilterOptions: IFilterOption[] = [
