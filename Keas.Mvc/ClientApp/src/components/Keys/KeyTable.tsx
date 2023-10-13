@@ -16,13 +16,11 @@ interface IProps {
 }
 
 // UI for serial column filter
-const SerialColumnFilter = ({
-  column: { filterValue, setFilter }
-}) => {
+const SerialColumnFilter = ({ column: { filterValue, setFilter } }) => {
   // Render a multi-select box
   return (
     <select
-    className="form-control"
+      className='form-control'
       value={filterValue}
       style={{ width: '100%' }}
       onChange={e => {
@@ -44,9 +42,7 @@ const serialFilter = (rows: any[], id, filterValue) => {
     return rows;
   }
   if (filterValue === 'unassigned') {
-    return rows.filter(
-      r => getRowSerialsInUse(r) === 0 && getRowSerialsTotal(r) > 0
-    );
+    return rows.filter(r => getRowSerialsInUse(r) < getRowSerialsTotal(r));
   }
   if (filterValue === 'assigned') {
     return rows.filter(r => getRowSerialsInUse(r) > 0);
