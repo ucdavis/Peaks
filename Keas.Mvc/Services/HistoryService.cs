@@ -15,6 +15,7 @@ namespace Keas.Mvc.Services
         Task<History> KeySerialCreated(KeySerial keySerial);
         Task<History> AccessCreated(Access access);
         Task<History> EquipmentCreated(Equipment equipment);
+        Task<History> EquipmentDuplicated(Equipment equipment);
         Task<History> KeyUpdated(Key key);
         Task<History> KeySerialUpdated(KeySerial keySerial);
         Task<History> AccessUpdated(Access access);
@@ -121,6 +122,21 @@ namespace Keas.Mvc.Services
                 ActorId = person.UserId,
                 AssetType = "Equipment",
                 ActionType = "Created",
+                Equipment = equipment,
+            };
+            _context.Histories.Add(historyEntry);
+            return historyEntry;
+        }
+
+        public async Task<History> EquipmentDuplicated(Equipment equipment)
+        {
+            var person = await _securityService.GetPerson(equipment.TeamId);
+            var historyEntry = new History
+            {
+                Description = equipment.GetDescription(nameof(Equipment), equipment.Title, person, "Created as a copy of an existing asset"),
+                ActorId = person.UserId,
+                AssetType = "Equipment",
+                ActionType = "Duplicated",
                 Equipment = equipment,
             };
             _context.Histories.Add(historyEntry);
