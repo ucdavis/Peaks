@@ -154,14 +154,14 @@ namespace Keas.Mvc.Controllers.Api
         [ProducesResponseType(typeof(IEnumerable<Workstation>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetTagsInSpace(int spaceId)
         {
-            var tags = await _context.Workstations
-                .Where(x => x.Active
-                    && x.SpaceId == spaceId
-                    && !string.IsNullOrWhiteSpace(x.Tags))
-                .Select(x => x.Tags)
-                .ToArrayAsync();
+            var teamId = await _context.Teams.Where(a => a.Slug == Team).Select(s => s.Id).SingleAsync();
 
-            return Json(string.Join(",", tags));
+            var sql = SpaceQueries.GetTagsInSpace;            
+
+            var result = _context.Database.GetDbConnection().Query(sql, new { teamId, spaceId });
+            var tags = removeDuplications(result.FirstOrDefault().Tags);
+
+            return Json(tags);
         }
 
         [HttpGet("{id}")]
