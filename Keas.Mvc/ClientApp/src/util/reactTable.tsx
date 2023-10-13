@@ -35,6 +35,29 @@ export class ReactTableExpirationUtil {
     }
   ];
 
+  public static accessFilterOptions: IFilterOption[] = [
+    {
+      displayText: 'Show All',
+      value: 'all'
+    }, // no unassigned
+    {
+      displayText: 'Expired',
+      value: 'expired'
+    },
+    {
+      displayText: 'All Unexpired',
+      value: 'unexpired'
+    },
+    {
+      displayText: 'Expiring within 3 weeks',
+      value: '3weeks'
+    },
+    {
+      displayText: 'Expiring within 6 weeks',
+      value: '6weeks'
+    }
+  ];
+
   public static sortMethod(a, b) {
     if (!b) {
       return -1;
@@ -138,6 +161,26 @@ export class ReactTableExpirationUtil {
         }}
       >
         {ReactTableExpirationUtil.defaultFilterOptions.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.displayText}
+          </option>
+        ))}
+      </select>
+    );
+  }
+
+  public static AccessFilterHeader({ column: { filterValue, setFilter } }) {
+    // Render a multi-select box
+    return (
+      <select
+        className='form-control'
+        value={filterValue}
+        style={{ width: '100%' }}
+        onChange={e => {
+          setFilter(e.target.value || undefined);
+        }}
+      >
+        {ReactTableExpirationUtil.accessFilterOptions.map(option => (
           <option key={option.value} value={option.value}>
             {option.displayText}
           </option>

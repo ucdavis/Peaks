@@ -59,7 +59,7 @@ const AccessAssignmentTable = (props: IProps) => {
         Cell: row => (
           <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
         ),
-        Filter: ReactTableExpirationUtil.FilterHeader,
+        Filter: ReactTableExpirationUtil.AccessFilterHeader,
         filter: 'expiration',
         Header: 'Expiration',
         accessor: row => row.expiresAt,

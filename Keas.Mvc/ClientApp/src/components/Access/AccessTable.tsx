@@ -80,7 +80,7 @@ const AccessTable = (props: IProps) => {
         Cell: row => (
           <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
         ),
-        Filter: ReactTableExpirationUtil.FilterHeader,
+        Filter: ReactTableExpirationUtil.AccessFilterHeader,
         filter: 'expiration',
         Header: 'First Expiration',
         accessor: x =>
