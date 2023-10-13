@@ -298,7 +298,11 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
           body: JSON.stringify(selectedEquipment),
           method: 'POST'
         });
-        toast.success('Equipment created successfully!');
+        toast.success(
+          !!duplicate
+            ? 'Equipment duplicated successfully!'
+            : 'Equipment created successfully!'
+        );
       } catch (err) {
         const errorMessage =
           err.message === ''
