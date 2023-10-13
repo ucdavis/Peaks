@@ -147,6 +147,7 @@ export class ReactTableExpirationUtil {
   }
 }
 
+// AccessTable.tsx
 export class ReactTableNumberOfAssignmentsUtil {
   public static FilterHeader = ({ column: { filterValue, setFilter } }) => {
     // filterValue will be something like ['<', '15'] or ['=', '3'] or ['>', '5']
@@ -207,4 +208,107 @@ export class ReactTableNumberOfAssignmentsUtil {
     }
     return rows;
   };
+}
+
+// KeyTable.tsx
+export class ReactTableKeySerialUtil {
+  // UI for serial column filter
+  public static FilterHeader = ({ column: { filterValue, setFilter } }) => {
+    // Render a multi-select box
+    return (
+      <select
+        className='form-control'
+        value={filterValue}
+        style={{ width: '100%' }}
+        onChange={e => {
+          setFilter(e.target.value || undefined);
+        }}
+      >
+        <option value='all'>Show All</option>
+        <option value='unassigned'>Unassigned</option>
+        <option value='assigned'>Assigned</option>
+        <option value='hasSerial'>Has Serial</option>
+        <option value='noSerial'>No Serial</option>
+      </select>
+    );
+  };
+
+  public static filterFunction = (rows: any[], id, filterValue) => {
+    if (filterValue === 'all') {
+      return rows;
+    }
+    if (filterValue === 'unassigned') {
+      return rows.filter(
+        r =>
+          ReactTableKeySerialUtil.getRowSerialsInUse(r) <
+          ReactTableKeySerialUtil.getRowSerialsTotal(r)
+      );
+    }
+    if (filterValue === 'assigned') {
+      return rows.filter(
+        r => ReactTableKeySerialUtil.getRowSerialsInUse(r) > 0
+      );
+    }
+    if (filterValue === 'hasSerial') {
+      return rows.filter(
+        r => ReactTableKeySerialUtil.getRowSerialsTotal(r) > 0
+      );
+    }
+    if (filterValue === 'noSerial') {
+      return rows.filter(
+        r => ReactTableKeySerialUtil.getRowSerialsTotal(r) === 0
+      );
+    }
+    return rows;
+  };
+
+  static getRowSerialsInUse = (row: any) => row.original?.serialsInUseCount;
+  static getRowSerialsTotal = (row: any) => row.original?.serialsTotalCount;
+}
+
+// KeySerialTable.tsx
+export class ReactTableKeyStatusUtil {
+  public static FilterHeader = ({ column: { filterValue, setFilter } }) => {
+    return (
+      <select
+        value={filterValue}
+        style={{ width: '100%' }}
+        onChange={e => {
+          setFilter(e.target.value || undefined);
+        }}
+      >
+        <option value='all'>Show All</option>
+        <option value='active'>Active</option>
+        <option value='inactive'>Inactive</option>
+        <option value='special'>Special</option>
+      </select>
+    );
+  };
+
+  public static filterFunction = (rows: any[], id, filterValue) => {
+    if (filterValue === 'all') {
+      return rows;
+    }
+    if (filterValue === 'active') {
+      return rows.filter(
+        r => ReactTableKeyStatusUtil.getRowStatus(r) === 'Active'
+      );
+    }
+    if (filterValue === 'inactive') {
+      return rows.filter(
+        r =>
+          ReactTableKeyStatusUtil.getRowStatus(r) === 'Lost' ||
+          ReactTableKeyStatusUtil.getRowStatus(r) === 'Destroyed' ||
+          ReactTableKeyStatusUtil.getRowStatus(r) === 'Dog ate'
+      );
+    }
+    if (filterValue === 'special') {
+      return rows.filter(
+        r => ReactTableKeyStatusUtil.getRowStatus(r) === 'Special'
+      );
+    }
+    return rows;
+  };
+
+  static getRowStatus = (row: any) => row.original?.status;
 }

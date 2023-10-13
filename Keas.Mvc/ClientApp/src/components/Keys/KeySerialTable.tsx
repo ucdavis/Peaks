@@ -6,7 +6,10 @@ import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
 import { Column, TableState } from 'react-table';
-import { ReactTableExpirationUtil } from '../../util/reactTable';
+import {
+  ReactTableExpirationUtil,
+  ReactTableKeyStatusUtil
+} from '../../util/reactTable';
 
 interface IProps {
   keySerials: IKeySerial[];
@@ -16,49 +19,6 @@ interface IProps {
   showDetails?: (keySerial: IKeySerial) => void;
   onEdit?: (keySerial: IKeySerial) => void;
 }
-
-// UI for Key status column filter
-const KeyStatusColumnFilter = ({ column: { filterValue, setFilter } }) => {
-  // Render a multi-select box
-  return (
-    <select
-      value={filterValue}
-      style={{ width: '100%' }}
-      onChange={e => {
-        setFilter(e.target.value || undefined);
-      }}
-    >
-      <option value='all'>Show All</option>
-      <option value='active'>Active</option>
-      <option value='inactive'>Inactive</option>
-      <option value='special'>Special</option>
-    </select>
-  );
-};
-
-// Logic to control what rows get displayed
-const statusFilter = (rows: any[], id, filterValue) => {
-  if (filterValue === 'all') {
-    return rows;
-  }
-  if (filterValue === 'active') {
-    return rows.filter(r => getRowStatus(r) === 'Active');
-  }
-  if (filterValue === 'inactive') {
-    return rows.filter(
-      r =>
-        getRowStatus(r) === 'Lost' ||
-        getRowStatus(r) === 'Destroyed' ||
-        getRowStatus(r) === 'Dog ate'
-    );
-  }
-  if (filterValue === 'special') {
-    return rows.filter(r => getRowStatus(r) === 'Special');
-  }
-  return rows;
-};
-
-const getRowStatus = (row: any) => row.original?.status;
 
 const KeySerialTable = (props: IProps) => {
   const renderDropdownColumn = data => {
@@ -105,7 +65,7 @@ const KeySerialTable = (props: IProps) => {
         id: 'keyCodeSN'
       },
       {
-        Filter: KeyStatusColumnFilter,
+        Filter: ReactTableKeyStatusUtil.FilterHeader,
         filter: 'status',
         Header: 'Status',
         accessor: 'status'
@@ -150,7 +110,7 @@ const KeySerialTable = (props: IProps) => {
       initialState={initialState}
       filterTypes={{
         expiration: ReactTableExpirationUtil.filterFunction,
-        status: statusFilter
+        status: ReactTableKeyStatusUtil.filterFunction
       }}
     />
   );

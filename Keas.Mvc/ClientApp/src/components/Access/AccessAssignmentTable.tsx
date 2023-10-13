@@ -1,16 +1,12 @@
 import * as React from 'react';
 import { IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
-import {
-  ExpirationColumnFilter,
-  expirationFilter,
-  ReactTableExpirationUtil
-} from '../../util/reactTable';
 import { ReactTable } from '../Shared/ReactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { Column, TableState } from 'react-table';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { Button } from 'reactstrap';
+import { ReactTableExpirationUtil } from '../../util/reactTable';
 
 interface IProps {
   accessAssignments: IAccessAssignment[];
@@ -63,7 +59,7 @@ const AccessAssignmentTable = (props: IProps) => {
         Cell: row => (
           <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
         ),
-        Filter: ExpirationColumnFilter,
+        Filter: ReactTableExpirationUtil.FilterHeader,
         filter: 'expiration',
         Header: 'Expiration',
         accessor: row => row.expiresAt,
@@ -91,7 +87,7 @@ const AccessAssignmentTable = (props: IProps) => {
       data={accessAssignmentData}
       columns={columns}
       initialState={initialState}
-      filterTypes={{ expiration: expirationFilter }}
+      filterTypes={{ expiration: ReactTableExpirationUtil.filterFunction }}
     />
   );
 };
