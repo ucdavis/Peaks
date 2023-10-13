@@ -5,6 +5,7 @@ import { DateUtil } from '../../util/dates';
 import {
   ExpirationColumnFilter,
   expirationFilter,
+  IFilterOption,
   ReactTableExpirationUtil
 } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
@@ -40,6 +41,52 @@ const AccessTable = (props: IProps) => {
     }
 
     return <ListActionsDropdown actions={actions} />;
+  };
+
+  const filterOptions: IFilterOption[] = [
+    {
+      displayText: 'Show All',
+      value: 'all'
+    }, // no "unassigned" option
+    {
+      displayText: 'Expired',
+      value: 'expired'
+    },
+    {
+      displayText: 'All Unexpired',
+      value: 'unexpired'
+    },
+    {
+      displayText: 'Expiring within 3 weeks',
+      value: '3weeks'
+    },
+    {
+      displayText: 'Expiring within 6 weeks',
+      value: '6weeks'
+    }
+  ];
+
+  // UI for expiration column filter
+  const AccessExpirationColumnFilter = ({
+    column: { filterValue, setFilter }
+  }) => {
+    // Render a multi-select box
+    return (
+      <select
+        className='form-control'
+        value={filterValue}
+        style={{ width: '100%' }}
+        onChange={e => {
+          setFilter(e.target.value || undefined);
+        }}
+      >
+        {filterOptions.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.displayText}
+          </option>
+        ))}
+      </select>
+    );
   };
 
   const columns: Column<IAccess>[] = React.useMemo(
@@ -79,9 +126,9 @@ const AccessTable = (props: IProps) => {
         Cell: row => (
           <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
         ),
-        Filter: ExpirationColumnFilter,
+        Filter: AccessExpirationColumnFilter,
         filter: 'expiration',
-        Header: 'Expiration',
+        Header: 'First Expiration',
         accessor: x =>
           DateUtil.getFirstExpiration(x.assignments.map(y => y.expiresAt)),
         sortType: (a, b) =>

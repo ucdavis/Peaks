@@ -2,7 +2,7 @@ import { addWeeks, isAfter, isBefore, isSameDay, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { DateUtil } from './dates';
 
-interface IFilterOption {
+export interface IFilterOption {
   value: string;
   displayText: string;
 }
