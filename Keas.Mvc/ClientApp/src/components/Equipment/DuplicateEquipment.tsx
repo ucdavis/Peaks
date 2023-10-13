@@ -186,20 +186,32 @@ const DuplicateEquipment = (props: IProps) => {
                 onChangeDate={changeDate}
               />
             )}
-            <div>
+            {!!equipment && !equipment.teamId && (
+              <div>
+                <EquipmentEditValues
+                  selectedEquipment={equipment}
+                  commonAttributeKeys={props.commonAttributeKeys}
+                  changeProperty={changeProperty}
+                  disableEditing={false}
+                  updateAttributes={updateAttributes}
+                  space={props.space}
+                  tags={props.tags}
+                  equipmentTypes={props.equipmentTypes}
+                  error={error}
+                  duplicate={true}
+                />
+              </div>
+            )}
+            {!!equipment && !!equipment.teamId && (
+              // this is just for once user hits "Go!"
               <EquipmentEditValues
                 selectedEquipment={equipment}
                 commonAttributeKeys={props.commonAttributeKeys}
-                changeProperty={changeProperty}
-                disableEditing={false}
-                updateAttributes={updateAttributes}
-                space={props.space}
+                disableEditing={true}
                 tags={props.tags}
-                equipmentTypes={props.equipmentTypes}
                 error={error}
-                duplicate={true}
               />
-            </div>
+            )}
           </Form>
         </div>
       </ModalBody>
