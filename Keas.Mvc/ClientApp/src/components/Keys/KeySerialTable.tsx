@@ -2,14 +2,11 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IKeySerial } from '../../models/KeySerials';
 import { DateUtil } from '../../util/dates';
-import {
-  ExpirationColumnFilter,
-  expirationFilter
-} from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
 import { Column, TableState } from 'react-table';
+import { ReactTableExpirationUtil } from '../../util/reactTable';
 
 interface IProps {
   keySerials: IKeySerial[];
@@ -125,7 +122,7 @@ const KeySerialTable = (props: IProps) => {
         Cell: row => (
           <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
         ),
-        Filter: ExpirationColumnFilter,
+        Filter: ReactTableExpirationUtil.FilterHeader,
         filter: 'expiration',
         Header: 'Expiration',
         accessor: row => row.keySerialAssignment?.expiresAt,
@@ -151,7 +148,10 @@ const KeySerialTable = (props: IProps) => {
       data={keySerialData}
       columns={columns}
       initialState={initialState}
-      filterTypes={{ expiration: expirationFilter, status: statusFilter }}
+      filterTypes={{
+        expiration: ReactTableExpirationUtil.filterFunction,
+        status: statusFilter
+      }}
     />
   );
 };
