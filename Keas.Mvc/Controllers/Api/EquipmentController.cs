@@ -263,6 +263,68 @@ namespace Keas.Mvc.Controllers.Api
             return Json(equipment);
         }
 
+        // is the same as creating, except we add to the history that it was duplicated
+        [HttpPost]
+        [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public async Task<IActionResult> Duplicate([FromBody]Equipment equipment)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            if (equipment.Id != 0) // if creating new equipment, this should always be 0
+            {
+                return BadRequest();
+            }
+            //Validate passed team matches equipment team.
+            if (!await _securityService.IsTeamValid(Team, equipment.TeamId))
+            {
+                return BadRequest("Invalid Team");
+            }
+
+
+            if (string.IsNullOrWhiteSpace(equipment.Type))
+            {
+                equipment.Type = EquipmentTypes.Default;
+            }
+            if (!EquipmentTypes.Types.Contains(equipment.Type))
+            {
+                return BadRequest("Invalid Equipment Type");
+            }
+
+
+            if (equipment.Space != null)
+            {
+                //Validate Team has space.
+                if (!await _securityService.IsSpaceInTeam(Team, equipment.Space.Id))
+                {
+                    return BadRequest("Space not in Team");
+                }
+                var space = await _context.Spaces.SingleAsync(x => x.Id == equipment.Space.Id);
+                equipment.Space = space;
+            }
+
+            UpdateTypeSpecificFields(equipment);
+            if (EquipmentTypes.Is3Types.Contains(equipment.Type, StringComparer.OrdinalIgnoreCase))
+            {
+                if (!ProtectionLevels.Levels.Contains(equipment.ProtectionLevel))
+                {
+                    return BadRequest("Invalid Protection Level");
+                }
+                if (!AvailabilityLevels.Levels.Contains(equipment.AvailabilityLevel))
+                {
+                    return BadRequest("Invalid Availability Level");
+                }
+            }
+
+            _context.Equipment.Add(equipment);
+            await _eventService.TrackDuplicateEquipment(equipment);
+            await _context.SaveChangesAsync();
+
+            return Json(equipment);
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(Equipment), StatusCodes.Status200OK)]
         public async Task<IActionResult> Assign(int equipmentId, int personId, string date)

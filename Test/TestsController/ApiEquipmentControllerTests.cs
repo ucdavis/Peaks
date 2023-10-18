@@ -62,7 +62,7 @@ namespace Test.TestsController
         [Fact]
         public void TestControllerContainsExpectedNumberOfPublicMethods()
         {
-            ControllerReflection.ControllerPublicMethods(17);
+            ControllerReflection.ControllerPublicMethods(18);
         }
 
         [Fact]
@@ -187,6 +187,17 @@ namespace Test.TestsController
             responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("SearchAttributes", 3 + countAdjustment, "SearchAttributes", showListOfAttributes: false);
             responseType.ElementAt(0).Type.GenericTypeArguments.ElementAt(0).Name.ShouldBe("Equipment");
             responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
+
+            //17
+            ControllerReflection.MethodExpectedAttribute<HttpPostAttribute>("Duplicate", 4 + countAdjustment, "Duplicate", showListOfAttributes: false);
+            ControllerReflection.MethodExpectedAttribute<AsyncStateMachineAttribute>("Duplicate", 4 + countAdjustment, "Duplicate", showListOfAttributes: false);
+            responseType = ControllerReflection.MethodExpectedAttribute<ProducesResponseTypeAttribute>("Duplicate", 4 + countAdjustment, "Duplicate", showListOfAttributes: false);
+            responseType.ElementAt(0).Type.Name.ShouldBe("Equipment");
+            responseType.ElementAt(0).StatusCode.ShouldBe(StatusCodes.Status200OK);
+            response2 = ControllerReflection.MethodExpectedAttribute<ConsumesAttribute>("Duplicate", 4 + countAdjustment, "Duplicate", showListOfAttributes: false);
+            response2.Count().ShouldBe(1);
+            response2.ElementAt(0).ContentTypes.Count.ShouldBe(1);
+            response2.ElementAt(0).ContentTypes.ElementAt(0).ShouldBe(MediaTypeNames.Application.Json);
 
         }
 

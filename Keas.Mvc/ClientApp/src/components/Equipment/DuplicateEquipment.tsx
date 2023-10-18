@@ -13,14 +13,15 @@ import { ISpace } from '../../models/Spaces';
 import AssignPerson from '../People/AssignPerson';
 import AssignDate from '../Shared/AssignDate';
 import EquipmentEditValues from './EquipmentEditValues';
-import SearchEquipment from './SearchEquipment';
 
 interface IProps {
-  onCreate: (person: IPerson, equipment: IEquipment, date: any) => void;
+  onDuplicate: (
+    person: IPerson,
+    equipment: IEquipment,
+    date: any,
+    duplicate?: boolean
+  ) => void;
   modal: boolean;
-  onAddNew: () => void;
-  openDetailsModal: (equipment: IEquipment) => void;
-  openEditModal: (equipment: IEquipment) => void;
   closeModal: () => void;
   selectedEquipment: IEquipment;
   person?: IPerson;
@@ -30,34 +31,47 @@ interface IProps {
   equipmentTypes: string[];
 }
 
-const AssignEquipment = (props: IProps) => {
+const DuplicateEquipment = (props: IProps) => {
   // if we are on the person page, we use that person and don't allow changing it
-  // if we are creating, we initialize with a new object, a new date, and no person (unless we are on the person page)
-  // if we are assigning, we initialize with the selected asset, a new date and the person from the assignment
-  // if we are updating an assignment, we initialize with the selected asset, the date of the assignment, and the person from the assignment
-  const [date, setDate] = useState<Date>(
-    !!props.selectedEquipment && !!props.selectedEquipment.assignment
-      ? new Date(props.selectedEquipment.assignment.expiresAt)
-      : addYears(startOfDay(new Date()), 3)
-  );
-  const [equipment, setEquipment] = useState<IEquipment>(
-    props.selectedEquipment
-  );
+  // if we are duplicating an assignment, we initialize with the selected asset, a new date, and no person (unless we are on the person page)
   const [error, setError] = useState<IValidationError>({
     message: '',
     path: ''
   });
-  const [person, setPerson] = useState<IPerson>(
-    !!props.selectedEquipment && !!props.selectedEquipment.assignment
-      ? props.selectedEquipment.assignment.person
-      : props.person
-  );
+  const [date, setDate] = useState<Date>(addYears(startOfDay(new Date()), 3));
+  const [equipment, setEquipment] = useState<IEquipment>(() => {
+    // copy the selected equipment but clear unique fields
+    if (!!props.selectedEquipment) {
+      // equip may not be loaded yet
+      return {
+        attributes: props.selectedEquipment.attributes.map(a => {
+          return { ...a, equipmentId: 0, id: 0 };
+        }),
+        availabilityLevel: props.selectedEquipment.availabilityLevel,
+        id: 0,
+        make: props.selectedEquipment.make,
+        model: props.selectedEquipment.model,
+        name: props.selectedEquipment.name,
+        notes: props.selectedEquipment.notes,
+        protectionLevel: props.selectedEquipment.protectionLevel,
+        serialNumber: '', // serial number is not duplicated
+        space: props.selectedEquipment.space,
+        systemManagementId: '', // system management id is not duplicated
+        tags: props.selectedEquipment.tags,
+        teamId: 0,
+        type: props.selectedEquipment.type
+      };
+    }
+    return null;
+  });
+  const [person, setPerson] = useState<IPerson>(props.person);
+
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [validState, setValidState] = useState<boolean>(false);
 
   useEffect(() => {
     const validateState = () => {
-      const error = yupAssetValidation(
+      let error = yupAssetValidation(
         equipmentSchema,
         equipment,
         {}, // no context
@@ -68,7 +82,7 @@ const AssignEquipment = (props: IProps) => {
     };
 
     validateState();
-  }, [date, equipment, person]);
+  }, [date, equipment, person, props.selectedEquipment]);
 
   const changeProperty = (property: string, value: string) => {
     setEquipment({ ...equipment, [property]: value });
@@ -110,31 +124,18 @@ const AssignEquipment = (props: IProps) => {
     const personData = props.person ? props.person : person;
     const equipmentData = equipment;
     equipmentData.attributes = equipmentData.attributes.filter(x => !!x.key);
-
     try {
-      await props.onCreate(
+      await props.onDuplicate(
         personData,
         equipmentData,
-        format(date, 'MM/dd/yyyy')
+        format(date, 'MM/dd/yyyy'),
+        true
       );
     } catch (e) {
       setSubmitting(false);
       return;
     }
     closeModal();
-  };
-
-  // once we have either selected or created the equipment we care about
-  const onSelected = (selectedEquipment: IEquipment) => {
-    setEquipment(selectedEquipment);
-  };
-
-  const onDeselected = () => {
-    setEquipment(null);
-    setError({
-      message: '',
-      path: ''
-    });
   };
 
   const onSelectPerson = (selectedPerson: IPerson) => {
@@ -158,11 +159,7 @@ const AssignEquipment = (props: IProps) => {
       scrollable={!!equipment && !!equipment.teamId} // will be false when we are creating a new equipment
     >
       <div className='modal-header row justify-content-between'>
-        <h2>
-          {props.selectedEquipment || props.person
-            ? 'Assign Equipment'
-            : 'Add Equipment'}
-        </h2>
+        <h2>Duplicate Equipment</h2>
         <Button color='link' onClick={closeModal}>
           <i className='fas fa-times fa-lg' />
         </Button>
@@ -174,12 +171,11 @@ const AssignEquipment = (props: IProps) => {
               person={person}
               label='Assign To'
               onSelect={onSelectPerson}
-              isRequired={equipment && equipment.teamId !== 0}
+              isRequired={equipment && equipment.teamId !== 0} //teamId is 0 on create or dupe
               disabled={
-                !!props.person ||
-                (!!props.selectedEquipment &&
-                  !!props.selectedEquipment.assignment)
-              } // disable if we are on person page or updating
+                !!props.person || //if on person page
+                (!!equipment && !!equipment.assignment) // if updating currently assigned (taken care of in initial state)
+              }
               error={error}
             />
             {(!!person || !!props.person) && (
@@ -190,60 +186,31 @@ const AssignEquipment = (props: IProps) => {
                 onChangeDate={changeDate}
               />
             )}
-            {!equipment && (
-              <div className='form-group'>
-                <SearchEquipment
-                  selectedEquipment={equipment}
-                  onSelect={onSelected}
-                  onDeselect={onDeselected}
-                  space={props.space}
-                  openDetailsModal={props.openDetailsModal}
-                />
-              </div>
-            )}
-            {equipment &&
-            !equipment.teamId && ( // if we are creating a new equipment, edit properties
-                <div>
-                  <div className='row justify-content-between'>
-                    <h3>Create New Equipment</h3>
-                    <Button color='link' onClick={onDeselected}>
-                      Clear{' '}
-                      <i className='fas fa-times fa-sm' aria-hidden='true' />
-                    </Button>
-                  </div>
-
-                  <EquipmentEditValues
-                    selectedEquipment={equipment}
-                    commonAttributeKeys={props.commonAttributeKeys}
-                    changeProperty={changeProperty}
-                    disableEditing={false}
-                    updateAttributes={updateAttributes}
-                    space={props.space}
-                    tags={props.tags}
-                    equipmentTypes={props.equipmentTypes}
-                    error={error}
-                  />
-                </div>
-              )}
-            {equipment && !!equipment.teamId && (
+            {!!equipment && !equipment.teamId && (
               <div>
-                <div className='row justify-content-between'>
-                  <h3>Assign Existing Equipment</h3>
-                  <Button color='link' onClick={onDeselected}>
-                    Clear{' '}
-                    <i className='fas fa-times fa-sm' aria-hidden='true' />
-                  </Button>
-                </div>
-
                 <EquipmentEditValues
                   selectedEquipment={equipment}
                   commonAttributeKeys={props.commonAttributeKeys}
-                  disableEditing={true}
-                  openEditModal={props.openEditModal}
+                  changeProperty={changeProperty}
+                  disableEditing={false}
+                  updateAttributes={updateAttributes}
+                  space={props.space}
                   tags={props.tags}
+                  equipmentTypes={props.equipmentTypes}
                   error={error}
+                  duplicate={true}
                 />
               </div>
+            )}
+            {!!equipment && !!equipment.teamId && (
+              // this is just for once user hits "Go!"
+              <EquipmentEditValues
+                selectedEquipment={equipment}
+                commonAttributeKeys={props.commonAttributeKeys}
+                disableEditing={true}
+                tags={props.tags}
+                error={error}
+              />
             )}
           </Form>
         </div>
@@ -261,4 +228,4 @@ const AssignEquipment = (props: IProps) => {
   );
 };
 
-export default AssignEquipment;
+export default DuplicateEquipment;

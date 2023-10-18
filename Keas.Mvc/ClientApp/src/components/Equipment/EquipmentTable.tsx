@@ -15,6 +15,7 @@ interface IProps {
   onAdd?: (equipment: IEquipment) => void;
   showDetails?: (equipment: IEquipment) => void;
   onEdit?: (equipment: IEquipment) => void;
+  onDuplicate?: (equipment: IEquipment) => void;
 }
 
 const EquipmentTable = (props: IProps) => {
@@ -42,6 +43,13 @@ const EquipmentTable = (props: IProps) => {
       actions.push({
         onClick: () => props.onDelete(equipmentEntity),
         title: 'Delete'
+      });
+    }
+
+    if (!!props.onDuplicate) {
+      actions.push({
+        onClick: () => props.onDuplicate(equipmentEntity),
+        title: 'Duplicate'
       });
     }
 

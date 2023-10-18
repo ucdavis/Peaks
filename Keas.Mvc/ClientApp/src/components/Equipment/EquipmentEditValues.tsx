@@ -1,5 +1,12 @@
 import * as React from 'react';
-import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
+import {
+  Button,
+  FormFeedback,
+  FormGroup,
+  FormText,
+  Input,
+  Label
+} from 'reactstrap';
 import { IEquipment, IEquipmentAttribute } from '../../models/Equipment';
 import { IValidationError } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';
@@ -19,6 +26,7 @@ interface IProps {
   updateAttributes?: (attribute: IEquipmentAttribute[]) => void;
   openEditModal?: (equipment: IEquipment) => void; // if disableEditing is true, this needs to be supplied
   error?: IValidationError;
+  duplicate?: boolean;
 }
 
 const EquipmentEditValues = (props: IProps) => {
@@ -145,6 +153,9 @@ const EquipmentEditValues = (props: IProps) => {
           <FormFeedback>
             {error && error.path === 'name' && error.message}
           </FormFeedback>
+          {props.duplicate && (
+            <FormText>Serial Number is not duplicated.</FormText>
+          )}
         </FormGroup>
         {shouldShowForType(
           props.selectedEquipment.type,
@@ -272,6 +283,9 @@ const EquipmentEditValues = (props: IProps) => {
             <FormFeedback>
               {error && error.path === 'systemManagementId' && error.message}
             </FormFeedback>
+            {props.duplicate && (
+              <FormText>System Management ID is not duplicated.</FormText>
+            )}
           </FormGroup>
         )}
         <FormGroup>

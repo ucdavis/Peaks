@@ -18,6 +18,7 @@ import EquipmentList from './EquipmentList';
 import EquipmentTableContainer from './EquipmentTableContainer';
 import RevokeEquipment from './RevokeEquipment';
 import PeaksLoader from '../Shared/PeaksLoader';
+import DuplicateEquipment from './DuplicateEquipment';
 
 interface IProps {
   person?: IPerson;
@@ -144,6 +145,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
             onAdd={openAssignModal}
             showDetails={openDetailsModal}
             onEdit={openEditModal}
+            onDuplicate={openDuplicateModal}
           />
           {props.person && (
             <a
@@ -171,6 +173,7 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
             openAssignModal={openAssignModal}
             openDetailsModal={openDetailsModal}
             openEditModal={openEditModal}
+            openDuplicateModal={openDuplicateModal}
           />
         </div>
       );
@@ -192,6 +195,23 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
         commonAttributeKeys={commonAttributeKeys}
         openDetailsModal={openDetailsModal}
         openEditModal={openEditModal}
+        equipmentTypes={equipmentTypes}
+      />
+    );
+  };
+
+  const renderDuplicateModal = (selectedId: number, equipment: IEquipment) => {
+    return (
+      <DuplicateEquipment
+        key={`duplicate-equipment-${selectedId}`}
+        onDuplicate={createAndMaybeAssignEquipment} // sends duplicate = true
+        modal={true}
+        closeModal={closeModals}
+        selectedEquipment={equipment}
+        person={props.person}
+        space={props.space}
+        tags={context.tags}
+        commonAttributeKeys={commonAttributeKeys}
         equipmentTypes={equipmentTypes}
       />
     );
@@ -259,7 +279,8 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
   const createAndMaybeAssignEquipment = async (
     person: IPerson,
     selectedEquipment: IEquipment,
-    date: any
+    date: any,
+    duplicate?: boolean
   ) => {
     let updateTotalAssetCount = false;
     let updateInUseAssetCount = false;
@@ -270,14 +291,18 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     if (selectedEquipment.id === 0) {
       selectedEquipment.teamId = context.team.id;
       try {
-        selectedEquipment = await context.fetch(
-          `/api/${context.team.slug}/equipment/create`,
-          {
-            body: JSON.stringify(selectedEquipment),
-            method: 'POST'
-          }
+        const url = !!duplicate
+          ? `/api/${context.team.slug}/equipment/duplicate`
+          : `/api/${context.team.slug}/equipment/create`;
+        selectedEquipment = await context.fetch(url, {
+          body: JSON.stringify(selectedEquipment),
+          method: 'POST'
+        });
+        toast.success(
+          !!duplicate
+            ? 'Equipment duplicated successfully!'
+            : 'Equipment created successfully!'
         );
-        toast.success('Equipment created successfully!');
       } catch (err) {
         const errorMessage =
           err.message === ''
@@ -541,6 +566,10 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
     history.push(`${getBaseUrl()}/equipment/assign/${selectedEquipment.id}`);
   };
 
+  const openDuplicateModal = (selectedEquipment: IEquipment) => {
+    history.push(`${getBaseUrl()}/equipment/duplicate/${selectedEquipment.id}`);
+  };
+
   const openCreateModal = () => {
     history.push(`${getBaseUrl()}/equipment/create`);
   };
@@ -612,6 +641,9 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
         {activeAsset &&
           action === 'delete' &&
           renderDeleteModal(selectedId, detailEquipment)}
+        {activeAsset &&
+          action === 'duplicate' &&
+          renderDuplicateModal(selectedId, detailEquipment)}
       </div>
     </div>
   );
