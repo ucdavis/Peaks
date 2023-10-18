@@ -2,14 +2,14 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IKeySerial } from '../../models/KeySerials';
 import { DateUtil } from '../../util/dates';
-import {
-  ExpirationColumnFilter,
-  expirationFilter
-} from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
 import { Column, TableState } from 'react-table';
+import {
+  ReactTableExpirationUtil,
+  ReactTableKeyStatusUtil
+} from '../../util/reactTable';
 
 interface IProps {
   keySerials: IKeySerial[];
@@ -19,49 +19,6 @@ interface IProps {
   showDetails?: (keySerial: IKeySerial) => void;
   onEdit?: (keySerial: IKeySerial) => void;
 }
-
-// UI for Key status column filter
-const KeyStatusColumnFilter = ({ column: { filterValue, setFilter } }) => {
-  // Render a multi-select box
-  return (
-    <select
-      value={filterValue}
-      style={{ width: '100%' }}
-      onChange={e => {
-        setFilter(e.target.value || undefined);
-      }}
-    >
-      <option value='all'>Show All</option>
-      <option value='active'>Active</option>
-      <option value='inactive'>Inactive</option>
-      <option value='special'>Special</option>
-    </select>
-  );
-};
-
-// Logic to control what rows get displayed
-const statusFilter = (rows: any[], id, filterValue) => {
-  if (filterValue === 'all') {
-    return rows;
-  }
-  if (filterValue === 'active') {
-    return rows.filter(r => getRowStatus(r) === 'Active');
-  }
-  if (filterValue === 'inactive') {
-    return rows.filter(
-      r =>
-        getRowStatus(r) === 'Lost' ||
-        getRowStatus(r) === 'Destroyed' ||
-        getRowStatus(r) === 'Dog ate'
-    );
-  }
-  if (filterValue === 'special') {
-    return rows.filter(r => getRowStatus(r) === 'Special');
-  }
-  return rows;
-};
-
-const getRowStatus = (row: any) => row.original?.status;
 
 const KeySerialTable = (props: IProps) => {
   const renderDropdownColumn = data => {
@@ -108,7 +65,7 @@ const KeySerialTable = (props: IProps) => {
         id: 'keyCodeSN'
       },
       {
-        Filter: KeyStatusColumnFilter,
+        Filter: ReactTableKeyStatusUtil.FilterHeader,
         filter: 'status',
         Header: 'Status',
         accessor: 'status'
@@ -125,7 +82,7 @@ const KeySerialTable = (props: IProps) => {
         Cell: row => (
           <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
         ),
-        Filter: ExpirationColumnFilter,
+        Filter: ReactTableExpirationUtil.FilterHeader,
         filter: 'expiration',
         Header: 'Expiration',
         accessor: row => row.keySerialAssignment?.expiresAt,
@@ -151,7 +108,10 @@ const KeySerialTable = (props: IProps) => {
       data={keySerialData}
       columns={columns}
       initialState={initialState}
-      filterTypes={{ expiration: expirationFilter, status: statusFilter }}
+      filterTypes={{
+        expiration: ReactTableExpirationUtil.filterFunction,
+        status: ReactTableKeyStatusUtil.filterFunction
+      }}
     />
   );
 };

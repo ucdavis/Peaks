@@ -3,9 +3,8 @@ import { Button } from 'reactstrap';
 import { IAccess } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
 import {
-  ExpirationColumnFilter,
-  expirationFilter,
-  ReactTableExpirationUtil
+  ReactTableExpirationUtil,
+  ReactTableNumberOfAssignmentsUtil
 } from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
@@ -63,7 +62,9 @@ const AccessTable = (props: IProps) => {
       {
         Header: 'Number of Assignments',
         accessor: x => x.assignments.length,
-        id: 'numAssignments'
+        id: 'numAssignments',
+        filter: 'numAssignments',
+        Filter: ReactTableNumberOfAssignmentsUtil.FilterHeader
       },
       {
         Header: 'Assigned To',
@@ -79,9 +80,9 @@ const AccessTable = (props: IProps) => {
         Cell: row => (
           <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
         ),
-        Filter: ExpirationColumnFilter,
+        Filter: ReactTableExpirationUtil.AccessFilterHeader,
         filter: 'expiration',
-        Header: 'Expiration',
+        Header: 'First Expiration',
         accessor: x =>
           DateUtil.getFirstExpiration(x.assignments.map(y => y.expiresAt)),
         sortType: (a, b) =>
@@ -111,7 +112,10 @@ const AccessTable = (props: IProps) => {
       data={accessData}
       columns={columns}
       initialState={initialState}
-      filterTypes={{ expiration: expirationFilter }}
+      filterTypes={{
+        expiration: ReactTableExpirationUtil.filterFunction,
+        numAssignments: ReactTableNumberOfAssignmentsUtil.filterFunction
+      }}
     />
   );
 };

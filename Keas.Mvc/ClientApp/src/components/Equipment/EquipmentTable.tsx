@@ -2,14 +2,11 @@ import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IEquipment } from '../../models/Equipment';
 import { DateUtil } from '../../util/dates';
-import {
-  ExpirationColumnFilter,
-  expirationFilter
-} from '../../util/reactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
 import { Column, TableState } from 'react-table';
+import { ReactTableExpirationUtil } from '../../util/reactTable';
 
 interface IProps {
   equipment: IEquipment[];
@@ -85,7 +82,7 @@ const EquipmentTable = (props: IProps) => {
         Cell: row => (
           <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
         ),
-        Filter: ExpirationColumnFilter,
+        Filter: ReactTableExpirationUtil.FilterHeader,
         filter: 'expiration',
         Header: 'Expiration',
         accessor: e => e.assignment?.expiresAt,
@@ -112,7 +109,7 @@ const EquipmentTable = (props: IProps) => {
       data={equipmentData}
       columns={columns}
       initialState={initialState}
-      filterTypes={{ expiration: expirationFilter }}
+      filterTypes={{ expiration: ReactTableExpirationUtil.filterFunction }}
     />
   );
 };
