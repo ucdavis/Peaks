@@ -40,7 +40,6 @@ const RevokeWorkstation = (props: IProps) => {
         toggle={props.closeModal}
         size='lg'
         className='spaces-color'
-        scrollable={true}
       >
         <div className='modal-header row justify-content-between'>
           <h2>Revoke {props.selectedWorkstation.name}</h2>

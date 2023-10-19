@@ -54,7 +54,6 @@ const RevokeKeySerial = (props: IProps) => {
         toggle={props.closeModal}
         size='lg'
         className='keys-color'
-        scrollable={true}
       >
         <div className='modal-header row justify-content-between'>
           <h2>
