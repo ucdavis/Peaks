@@ -424,6 +424,10 @@ const WorkstationContainer = (props: IProps) => {
     history.push(`${getBaseUrl()}/workstations/revoke/${workstation.id}`);
   };
 
+  const openDeleteModal = (workstation: IWorkstation) => {
+    history.push(`${getBaseUrl()}/workstations/delete/${workstation.id}`);
+  };
+
   const closeModals = () => {
     if (!!props.person && !props.space) {
       history.push(`${getBaseUrl()}`);
@@ -472,7 +476,7 @@ const WorkstationContainer = (props: IProps) => {
           onEdit={openEditModal}
           onAdd={openAssignModal}
           onCreate={openCreateModal}
-          onDelete={deleteWorkstation}
+          onDelete={openDeleteModal}
           onRevoke={openRevokeModal}
         />
 
