@@ -156,7 +156,6 @@ const DuplicateEquipment = (props: IProps) => {
       toggle={confirmClose}
       size='lg'
       className='equipment-color'
-      scrollable={!!equipment && !!equipment.teamId} // will be false when we are creating a new equipment
     >
       <div className='modal-header row justify-content-between'>
         <h2>Duplicate Equipment</h2>

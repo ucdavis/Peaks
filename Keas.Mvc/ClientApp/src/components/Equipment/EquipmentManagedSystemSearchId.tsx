@@ -52,7 +52,6 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
         toggle={modalToggle}
         size='lg'
         className='equipment-color'
-        scrollable={true}
       >
         <div className='modal-header row justify-content-between'>
           <h2>Search by Computer Property</h2>

@@ -57,7 +57,6 @@ const DeletePerson = (props: IProps) => {
         toggle={toggleModal}
         size='lg'
         className='people-color'
-        scrollable={true}
       >
         <div className='modal-header row justify-content-between'>
           <h2>Delete {props.selectedPersonInfo.person.name}</h2>

@@ -104,7 +104,6 @@ const EditEquipment = (props: IProps) => {
       toggle={confirmClose}
       size='lg'
       className='equipment-color'
-      scrollable={true}
     >
       <div className='modal-header row justify-content-between'>
         <h2>Edit Equipment</h2>

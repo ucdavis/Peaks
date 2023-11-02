@@ -153,7 +153,6 @@ const AssignKeySerial = (props: IProps) => {
       toggle={confirmClose}
       size='lg'
       className='keys-color'
-      scrollable={!!keySerial && !!keySerial.id} // will be false when we are creating a new key serial
     >
       <div className='modal-header row justify-content-between'>
         <h2>
