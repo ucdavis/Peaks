@@ -207,7 +207,7 @@
               <td><a href="@Model.DocumentUrlResolver(document.EnvelopeId)" target="_blank">View</a></td>
             </tr>
             }
-            @if(!Model.Workstations.Any()){
+            @if(!Model.Documents.Any()){
               <tr>
                 <td colspan="4">You have no documents assigned.</td>
               </tr>
