@@ -1,0 +1,52 @@
+@using Keas.Core.Extensions
+@model Keas.Mvc.Models.MyStaffListModel
+
+@{
+    ViewData["Title"] = "MyStaff";
+}
+
+<div class="card">
+  <div class="card-header-primary">
+    <div class="row justify-content-between">
+      <div class="card-head">
+        <h2>MyStaff</h2>
+      </div>
+    </div>
+  </div>
+  <div class="card-content">
+    <div class="card people-color">
+      <div class="card-header-people">
+        <div class="card-head">
+          <h2><i class="fas fa-hdd fa-xs"></i> People</h2></div>
+      </div>
+      <div class="card-content">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Stuff</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var person in Model.People) {
+            <tr>
+              <td>@Html.DisplayFor(modelItem => person.NameV2)</td>
+              <td>@Html.DisplayFor(modelItem => person.Email)</td>
+              <td>
+                @Html.ActionLink("View", "StaffStuff", "Supervisor", new { underlingId= @person.Id })
+              </td>
+            </tr>
+            }
+            @if(!Model.People.Any()){
+              <tr>
+                <td colspan="4">You do not supervise anyone.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

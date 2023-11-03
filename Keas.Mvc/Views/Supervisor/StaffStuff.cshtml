@@ -1,0 +1,250 @@
+@using Keas.Core.Extensions
+@model Keas.Mvc.Models.MyStaffListItem
+
+@{
+    ViewData["Title"] = "Staff Stuff";
+}
+@if(Model.PendingItems){
+    var currentSlug = TempData["TeamName"] as string;
+    if (Model.TeamsWithPendingAssignments.Any(a => a.Slug != null && a.Slug == currentSlug))
+    {
+        <div class="alert alert-warning">
+            <div class="row justify-content-between align-middle">
+                <p>You have pending items!</p>
+                <a asp-controller="Confirm" asp-action="Confirm">Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
+            </div>
+        </div>
+    }
+    if (Model.TeamsWithPendingAssignments.Any(a => a.Slug != currentSlug))
+    {
+        <h3>You have items pending in other teams:</h3>
+        foreach (var teamWithPending in Model.TeamsWithPendingAssignments.Where(a => a.Slug != currentSlug))
+        {
+            <div class="alert alert-warning">
+                <div class="row justify-content-between align-middle">
+                    <p>You have pending items in team @teamWithPending.Name!</p>
+                    <a href='@string.Format("/{0}/Confirm/Confirm", teamWithPending.Slug)'>Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
+                </div>
+            </div>
+        }
+    }
+}
+<div class="card">
+  <div class="card-header-primary">
+    <div class="row justify-content-between">
+      <div class="card-head">
+        <h2>MyStuff</h2>
+      </div>
+    </div>
+  </div>
+  <div class="card-content">
+    <div class="card keys-color">
+      <div class="card-header-keys">
+        <div class="card-head">
+  <h2><i class="fas fa-key fa-xs"></i> Keys</h2>
+        </div>
+      </div>
+      <div class="card-content">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Serial</th>
+              <th>Name</th>
+              <th>Expiration</th>
+              <th>Accepted?</th>              
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var serial in Model.KeySerials) {
+            <tr>
+              <td>@serial.Key.Code</td>
+              <td>@serial.Number</td>
+              <td>@serial.Key.Name</td>
+              <td>@serial.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>
+              <td>@serial.KeySerialAssignment.ConfirmedAt.AcceptedWithDate()</td>            
+            </tr>
+            }
+
+            @if (!Model.KeySerials.Any()) {
+              <tr>
+                <td colspan="4">You have no Keys assigned.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card equipment-color">
+      <div class="card-header-equipment">
+        <div class="card-head">
+          <h2><i class="fas fa-hdd fa-xs"></i> Equipment</h2></div>
+      </div>
+      <div class="card-content">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Serial Number</th>
+              <th>Name</th>
+              <th>Make</th>
+              <th>Model</th>
+              <th>Room</th>
+              <th>Expiration</th>
+              <th>Accepted?</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var equipment in Model.Equipment) {
+            <tr>
+              <td>@equipment.SerialNumber</td>
+              <td>@equipment.Name</td>
+              <td>@equipment.Make</td>
+              <td>@equipment.Model</td>
+              <td>@equipment.Space?.ShortName</td>
+              <td>@equipment.Assignment.ExpiresAt.ToShortDateString()</td>
+              <td>@equipment.Assignment.ConfirmedAt.AcceptedWithDate()</td>
+            </tr>
+            }
+            @if(!Model.Equipment.Any()){
+              <tr>
+                <td colspan="4">You have no equipment assigned.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card access-color">
+      <div class="card-header-access">
+        <div class="card-head">
+          <h2><i class="fas fa-address-card fa-xs"></i> Access</h2></div>
+      </div>
+      <div class="card-content">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Expiration</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var access in Model.Access) {
+            <tr>
+              <td>@access.Name</td>
+              <td>@access.Assignments.First().ExpiresAt.ToShortDateString()</td>
+            </tr>
+            }
+             @if(!Model.Access.Any()){
+              <tr>
+                <td colspan="2">You have no access assigned.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <div class="card spaces-color">
+      <div class="card-header-spaces">
+        <div class="card-head">
+          <h2><i class="fas fa-building fa-xs"></i> Workstations</h2></div>
+      </div>
+      <div class="card-content">
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Room</th>
+              <th>Expiration</th>
+              <th>Accepted?</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var workstation in Model.Workstations) {
+            <tr>
+              <td>@workstation.Title</td>
+              <td>@workstation.Space.ShortName</td>
+              <td>@workstation.Assignment.ExpiresAt.ToShortDateString()</td>
+              <td>@workstation.Assignment.ConfirmedAt.AcceptedWithDate()</td>
+            </tr>
+            }
+            @if(!Model.Workstations.Any()){
+              <tr>
+                <td colspan="4">You have no workstations assigned.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <div class="card documents-color">
+      <div class="card-header-documents">
+        <div class="card-head">
+          <h2><i class="fas fa-briefcase fa-xs"></i> Documents</h2></div>
+      </div>
+      <div class="card-content">
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var document in Model.Documents) {
+            <tr>
+              <td>@document.Name</td>
+              <td>@document.Status</td>
+              <td>@(document.CompletedAt.HasValue ? document.CompletedAt : document.CreatedAt)</td>
+              <td><a href="@Model.DocumentUrlResolver(document.EnvelopeId)" target="_blank">View</a></td>
+            </tr>
+            }
+            @if(!Model.Workstations.Any()){
+              <tr>
+                <td colspan="4">You have no documents assigned.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+
+      </div>
+    </div>
+
+    <div class="card history-color">
+      <div class="card-head">
+        <h2><i class="fas fa-history fa-xs"></i> History</h2></div>
+      <div class="card-content">
+
+
+        <table class="table">
+          <thead>
+            <tr>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var history in Model.Histories) {
+            <tr>
+              <td>@history.ActedDate.ToShortDateString()</td>
+              <td>@history.Description</td>
+            </tr>
+            }
+            @if(!Model.Histories.Any()){
+              <tr>
+                <td colspan="2">No history to display</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
