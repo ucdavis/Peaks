@@ -34,7 +34,7 @@
               <td>@Html.DisplayFor(modelItem => person.NameV2)</td>
               <td>@Html.DisplayFor(modelItem => person.Email)</td>
               <td>
-                @Html.ActionLink("View", "StaffStuff", "Supervisor", new { underlingId= @person.Id })
+                @Html.ActionLink("View", "StaffStuff", "Supervisor", new { id= @person.Id })
               </td>
             </tr>
             }

@@ -33,7 +33,7 @@
   <div class="card-header-primary">
     <div class="row justify-content-between">
       <div class="card-head">
-        <h2>MyStuff</h2>
+        <h2>@Model.Person.Name's Stuff</h2>
       </div>
     </div>
   </div>
@@ -68,7 +68,7 @@
 
             @if (!Model.KeySerials.Any()) {
               <tr>
-                <td colspan="4">You have no Keys assigned.</td>
+                <td colspan="4">@Model.Person.Name has no Keys assigned.</td>
               </tr>
             }
           </tbody>
@@ -107,7 +107,7 @@
             }
             @if(!Model.Equipment.Any()){
               <tr>
-                <td colspan="4">You have no equipment assigned.</td>
+                <td colspan="4">@Model.Person.Name has no equipment assigned.</td>
               </tr>
             }
           </tbody>
@@ -137,7 +137,7 @@
             }
              @if(!Model.Access.Any()){
               <tr>
-                <td colspan="2">You have no access assigned.</td>
+                <td colspan="2">@Model.Person.Name has no access assigned.</td>
               </tr>
             }
           </tbody>
@@ -173,7 +173,7 @@
             }
             @if(!Model.Workstations.Any()){
               <tr>
-                <td colspan="4">You have no workstations assigned.</td>
+                <td colspan="4">@Model.Person.Name has no workstations assigned.</td>
               </tr>
             }
           </tbody>
@@ -207,9 +207,9 @@
               <td><a href="@Model.DocumentUrlResolver(document.EnvelopeId)" target="_blank">View</a></td>
             </tr>
             }
-            @if(!Model.Workstations.Any()){
+            @if(!Model.Documents.Any()){
               <tr>
-                <td colspan="4">You have no documents assigned.</td>
+                <td colspan="4">@Model.Person.Name has no documents assigned.</td>
               </tr>
             }
           </tbody>

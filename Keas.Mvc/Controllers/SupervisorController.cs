@@ -44,14 +44,17 @@ namespace Keas.Mvc.Controllers
             return View(viewmodel);
         }
 
-        public async Task<IActionResult> StaffStuff(int underlingId)
+        public async Task<IActionResult> StaffStuff(int id) // id of staff being viewed
         {   
             var supervisor = await _securityService.GetPerson(Team);
             if(supervisor == null){
                  Message = "You are not yet added to the system.";
                 return RedirectToAction("NoAccess","Home");
             }
-            var underling = await _context.People.Include(p=> p.Team).FirstOrDefaultAsync(p=> p.Id==underlingId && p.SupervisorId == supervisor.Id);
+            var underling = await _context.People.Include(p=> p.Team).FirstOrDefaultAsync(p=> p.Id==id && p.SupervisorId == supervisor.Id);
+            if(underling == null){
+                return RedirectToAction("AccessDenied","Account"); // is this the best way to do this? -river
+            }
             var viewmodel = await MyStaffListItem.Create(_context, underling);
 
             return View(viewmodel);

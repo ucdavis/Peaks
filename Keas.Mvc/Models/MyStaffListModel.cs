@@ -30,6 +30,7 @@ namespace Keas.Mvc.Models
 
     public class MyStaffListItem
     {
+        public Person Person { get; set;}
         public List<KeySerial> KeySerials { get; set; }
         public List<Equipment> Equipment { get; set; }
         public List<Access> Access { get; set; }
@@ -45,6 +46,7 @@ namespace Keas.Mvc.Models
         {   
             var viewModel = new MyStaffListItem
             {
+                Person = person,
                 KeySerials = await context.KeySerials.Include(s=> s.Key).ThenInclude(k=> k.KeyXSpaces).ThenInclude(kxp=> kxp.Space).Include(s=> s.KeySerialAssignment)
                     .Where(s=> s.KeySerialAssignment.Person==person).AsNoTracking().ToListAsync(),
                 Equipment = await context.Equipment.Include(e => e.Space).Include(e=> e.Assignment).Where(e => e.Assignment.Person == person).AsNoTracking().ToListAsync(),
