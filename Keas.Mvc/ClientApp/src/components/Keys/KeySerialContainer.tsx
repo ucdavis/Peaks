@@ -44,12 +44,12 @@ const KeySerialContainer = (props: IProps) => {
   const context = useContext(Context);
   const history = useHistory();
   const params: IMatchParams = useParams();
+  const { selectedPerson, selectedKey } = props;
 
   useEffect(() => {
     if (!PermissionsUtil.canViewKeys(context.permissions)) {
       return;
     }
-    const { selectedPerson, selectedKey } = props;
 
     // are we getting the person's key or the team's?
     let keyFetchUrl = '';
@@ -80,7 +80,7 @@ const KeySerialContainer = (props: IProps) => {
     };
 
     fetchKeySerials();
-  }, [context, props]);
+  }, [context, selectedPerson, selectedKey]);
 
   const renderAssignModal = (selectedId: number, keySerial: IKeySerial) => {
     return (

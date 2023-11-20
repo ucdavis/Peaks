@@ -28,7 +28,8 @@ const KeySerialDetails = (props: IProps) => {
       return;
     }
     fetchDetails(props.selectedKeySerial.id);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.selectedKeySerial.id, context]);
 
   if (!selectedKeySerial) {
     return null;
