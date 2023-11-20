@@ -19,10 +19,11 @@ interface IProps {
 
 const WorkstationDetails = (props: IProps) => {
   const context = useContext(Context);
-  const workstation = props.selectedWorkstation;
+  const { selectedWorkstation: workstation } = props;
+  const workstationId = workstation?.id;
 
   useEffect(() => {
-    if (!props.selectedWorkstation) {
+    if (!workstationId) {
       return;
     }
     const fetchDetails = async (id: number) => {
@@ -47,10 +48,10 @@ const WorkstationDetails = (props: IProps) => {
       props.updateSelectedWorkstation(workstation);
     };
 
-    fetchDetails(props.selectedWorkstation.id);
+    fetchDetails(workstationId);
     // it wants us to add props.closeModal and props.updateSelectedWorkstation to the dependency array, but that causes an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.selectedWorkstation, context]);
+  }, [workstationId, context]);
 
   if (!props.selectedWorkstation) {
     return null;

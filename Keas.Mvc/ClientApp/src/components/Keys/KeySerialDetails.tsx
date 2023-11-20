@@ -22,14 +22,15 @@ interface IProps {
 const KeySerialDetails = (props: IProps) => {
   const context = useContext(Context);
   const { selectedKeySerial } = props;
+  const keySerialId = selectedKeySerial?.id;
 
   useEffect(() => {
-    if (!props.selectedKeySerial) {
+    if (!keySerialId) {
       return;
     }
-    fetchDetails(props.selectedKeySerial.id);
+    fetchDetails(selectedKeySerial.id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.selectedKeySerial, context]);
+  }, [keySerialId, context]);
 
   if (!selectedKeySerial) {
     return null;
