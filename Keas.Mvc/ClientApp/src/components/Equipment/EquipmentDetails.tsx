@@ -49,7 +49,7 @@ const EquipmentDetails = (props: IProps) => {
     fetchDetails(props.selectedEquipment.id);
     // it wants us to add props.closeModal and props.updateSelectedEquipment to the dependency array, but that causes an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.selectedEquipment.id, context]);
+  }, [props.selectedEquipment, context]);
 
   if (!props.selectedEquipment) {
     return null;

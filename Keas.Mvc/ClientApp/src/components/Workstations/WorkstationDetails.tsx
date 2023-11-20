@@ -50,7 +50,7 @@ const WorkstationDetails = (props: IProps) => {
     fetchDetails(props.selectedWorkstation.id);
     // it wants us to add props.closeModal and props.updateSelectedWorkstation to the dependency array, but that causes an infinite loop
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.selectedWorkstation.id, context]);
+  }, [props.selectedWorkstation, context]);
 
   if (!props.selectedWorkstation) {
     return null;
