@@ -14,7 +14,6 @@ using Keas.Core.Domain;
 
 namespace Keas.Mvc.Controllers
 {
-    [Authorize(Policy = AccessCodes.Codes.AnyRole)]
     public class ReportController : SuperController
     {
         private readonly ApplicationDbContext _context;
@@ -35,6 +34,7 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        [Authorize(Policy = AccessCodes.Codes.AnyRole)]
         public async Task<ActionResult> PersonActions(DateTime? startDate, DateTime? endDate)
         {
             var team = await _context.Teams.SingleAsync(a => a.Slug == Team);
@@ -64,13 +64,14 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        [Authorize(Policy = AccessCodes.Codes.AnyRole)]
         public async Task<ActionResult> ExpiringItems(DateTime? expiresBefore = null, string showType = "All")
         {
             var model = await _reportService.ExpiringItems(null, Team, expiresBefore, showType);
             return View(model);
         }
 
-
+        [Authorize(Policy = AccessCodes.Codes.AnyRole)]
         public async Task<ActionResult> SupervisorDirectReports(int personID = 0)
         {
             var model = await SupervisorReportViewModel.Create(_context, Team, personID);
@@ -132,6 +133,7 @@ namespace Keas.Mvc.Controllers
         }
         
        
+        [Authorize(Policy = AccessCodes.Codes.AnyRole)]
         public async Task<IActionResult> UnAcceptedItems(string showType = "All")
         {
             var userRoles = await _securityService.GetUserRoleNamesInTeamOrAdmin(Team);
@@ -140,6 +142,7 @@ namespace Keas.Mvc.Controllers
 
         }
 
+        [Authorize(Policy = AccessCodes.Codes.AnyRole)]
         public async Task<IActionResult> KeyValues()
         {
             var model = await KeyValueReportViewModel.Create(_context, Team);
@@ -187,11 +190,13 @@ namespace Keas.Mvc.Controllers
             return View(await _reportService.EquipmentHistory(null, Team, id)) ;
         }
 
+        [Authorize(Policy = AccessCodes.Codes.AnyRole)]
         public async Task<IActionResult> PersonEquipmentHistoryReport(int id)
         {
             return View(await _reportService.PersonEquipmentHistory(null, Team, id));
         }
 
+        [Authorize(Policy = AccessCodes.Codes.AnyRole)]
         public async Task<IActionResult> AccessReport()
         {
             var accessList = await _reportService.AccessList(null, Team);
@@ -238,6 +243,7 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        [Authorize(Policy = AccessCodes.Codes.AnyRole)]
         public async Task<IActionResult> PeopleInTeam(bool hideInactive = true)
         {
             var team = await _context.Teams.SingleAsync(a => a.Slug == Team);
@@ -256,6 +262,7 @@ namespace Keas.Mvc.Controllers
             return View(model);
         }
 
+        [Authorize(Policy = AccessCodes.Codes.AnyRole)]
         public async Task<IActionResult> PeopleLeavingWithAssets()
         {
             var theDate = DateTime.UtcNow.AddDays(30).Date;
@@ -265,6 +272,7 @@ namespace Keas.Mvc.Controllers
             return View(peopleQuery);
         }
 
+        [Authorize(Policy = AccessCodes.Codes.AnyRole)]
         public async Task<IActionResult> InActiveSpaces()
         {
             var spaceQuery = await _reportService.InactiveSpaces(Team);

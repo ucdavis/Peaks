@@ -139,6 +139,9 @@
                             <li class='@(activeMenu == "MyStuff" ? "nav-item nav-active" : "nav-item")'>
                                 <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
                             </li>
+                            <li class='@(activeMenu == "Report" ? "nav-item nav-active" : "nav-item")'>
+                                <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
+                            </li>
                         }
 
                         if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded || (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.PersonManagerAccess)).Succeeded)
