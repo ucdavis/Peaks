@@ -63,10 +63,11 @@
                 <div class="card-content">
                     @foreach (var grp in Model.Groups)
                     {
+                        var groupUsers = string.Join("; ", grp.Group.GroupPermissions.Select(a => $"{a.User.FirstName} {a.User.LastName}<{a.User.Email}>"));
                         <h4>Group Name:</h4>
                         <p>@grp.Group.Name</p>
-                        <h4>Contact:</h4>
-                        <p>@grp.Group.GroupPermissions.First().User.Email</p>
+                        <h4>Contact(s):</h4>
+                        <p><a href="mailto: @groupUsers">@groupUsers</a></p>
                         <hr/>
                     }
                 </div>

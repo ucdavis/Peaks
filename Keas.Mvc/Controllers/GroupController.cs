@@ -56,6 +56,7 @@ namespace Keas.Mvc.Controllers
                     gtci.FirstDeptAdmin = $"{firstTeamPermission.User.FirstName} {firstTeamPermission.User.LastName} - ({firstTeamPermission.User.Id}) - {firstTeamPermission.User.Email}";
                 }
 
+                gtci.AllDeptAdmins = string.Join("; ", allTeamPermissions.Where(a => a.TeamId == teamPermission.TeamId).Select(a => $"{a.User.FirstName} {a.User.LastName}<{a.User.Email}>"));
                 gtci.InGroup = teamIds.Contains(teamPermission.TeamId);
 
                 model.TeamContact.Add(gtci);

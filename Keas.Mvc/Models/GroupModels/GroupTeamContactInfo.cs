@@ -11,5 +11,6 @@ namespace Keas.Mvc.Models.GroupModels
         public string TeamSlug { get; set; }
         public string FirstDeptAdmin { get; set; }
         public bool InGroup { get; set; } = true;
+        public string AllDeptAdmins { get; set; }
     }
 }
