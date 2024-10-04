@@ -126,7 +126,8 @@ namespace Keas.Mvc.Controllers
             {
                 if (foundInSpaces == null)
                 {
-                    ErrorMessage = "Warning, Org is valid, but not used in spaces.";
+                    //ErrorMessage = "Warning, Org is valid, but not used in spaces.";
+                    ModelState.AddModelError("OrgCode", "Chart and OrgCode are not valid or not used in spaces");
                 }
             }
 

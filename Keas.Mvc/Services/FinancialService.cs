@@ -28,8 +28,11 @@ namespace Keas.Mvc.Services
         public async Task<bool> ValidateFISOrg(string chart, string orgCode)
         {
             //https://kfs.ucdavis.edu/kfs-prd/api-docs/ //Documentation 
-            // https://kfs.ucdavis.edu:443/kfs-prd/remoting/rest/org/6/xxxx/isvalid           
-            
+            // https://kfs.ucdavis.edu:443/kfs-prd/remoting/rest/org/6/xxxx/isvalid
+            // 
+
+            return true; //Hack!
+
             string validationUrl = $"{_kfsApiSettings.FinancialLookupUrl}/org/{chart}/{orgCode}/isvalid";
             
             using (var client = new HttpClient())
