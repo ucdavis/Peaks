@@ -331,6 +331,7 @@ namespace Keas.Mvc.Services
 
             foreach (var id in iamIds.ResponseData.Results)
             {
+                var somethingUpdated = false;
                 var user = await _context.Users.SingleOrDefaultAsync(u => u.Iam == id.IamId);
                 if (user == null)
                 {
@@ -352,6 +353,10 @@ namespace Keas.Mvc.Services
                                 warning.Append($" IAM ID {id.IamId} failed to save.");
                             }
                         }
+                        if(personResult.peopleCount > 0)
+                        {
+                            somethingUpdated = true;
+                        }
                     }
                     else
                     {
@@ -372,6 +377,10 @@ namespace Keas.Mvc.Services
 
                         warning.Append($" IAM ID {id.IamId} {extraName}failed to save.");
                     }
+                    if (somethingUpdated)
+                    {
+                        await _context.SaveChangesAsync();
+                    }
                 }
                 else
                 {
@@ -387,6 +396,7 @@ namespace Keas.Mvc.Services
                         //User is in team, but deactivated
                         deactivaedPerson.Active = true;
                         await _notificationService.PersonUpdated(deactivaedPerson, team, teamslug, actorName, actorId, PersonNotification.Actions.Reactivated, $"Bulk Load from PPS code: {ppsCode}");
+                        somethingUpdated = true;
                     }
                     else
                     {
@@ -403,12 +413,17 @@ namespace Keas.Mvc.Services
                         _context.People.Add(newPerson);
                         await _context.SaveChangesAsync(); //Need to save person so it has an id for notification below
                         await _notificationService.PersonUpdated(newPerson, team, teamslug, actorName, actorId, PersonNotification.Actions.Added, $"Bulk Load from PPS code: {ppsCode}");
+                        somethingUpdated = true;
                     }
-
+                    if(somethingUpdated)
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    
                     newpeople += 1;
                 }
             }
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); //Just in case we missed sonmething
             string returnMessage = newpeople.ToString() + " new people added to the team. " + warning.ToString();
             return returnMessage;
         }
