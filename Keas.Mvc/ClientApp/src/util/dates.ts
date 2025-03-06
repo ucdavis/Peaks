@@ -10,6 +10,24 @@ export class DateUtil {
     return format(new Date(date), 'MM/dd/yyyy');
   }
 
+  public static formatDateFromUtc(date: Date): string {
+    if (date === null) {
+      return '';
+    }
+
+    let str = date.toString();
+    if (!str.endsWith('Z')) {
+      str += 'Z';
+    }
+
+    return format(
+      new Date(str).toLocaleString('en-US', {
+        timeZone: 'America/Los_Angeles'
+      }),
+      'MM/dd/yyyy'
+    );
+  }
+
   public static formatExpiration(expiration: Date): string {
     if (expiration === null) {
       return '';
