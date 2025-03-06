@@ -13,7 +13,7 @@ const HistoryListItem = (props: IProps) => {
   const context = useContext(Context);
   return (
     <tr>
-      <td>{DateUtil.formatDate(props.history.actedDate, true)}</td>
+      <td>{DateUtil.formatDateFromUtc(props.history.actedDate)}</td>
       <td>{props.history.description}</td>
       <td>
         {props.showLink && props.history.link != null && (

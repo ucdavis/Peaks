@@ -2,16 +2,31 @@ import { format, min } from 'date-fns';
 import { IHasExpiration } from '../models/Shared';
 
 export class DateUtil {
-  public static formatDate(date: Date, convertToPST: boolean = false): string {
+  public static formatDate(date: Date): string {
+    if (date === null) {
+      return '';
+    }
+
+    return format(date, 'MM/dd/yyyy');
+  }
+
+  public static formatDateFromUtc(date: Date): string {
     if (date === null) {
       return '';
     }
 
     let dateToFormat = new Date(date);
-    if (convertToPST) {
-      // Convert from UTC to PST (UTC-8)
-      dateToFormat = new Date(dateToFormat.getTime() - 8 * 60 * 60 * 1000);
+
+    let str = date.toString();
+    if (!str.endsWith('Z')) {
+      str += 'Z';
     }
+
+    dateToFormat = new Date(
+      new Date(str).toLocaleString('en-US', {
+        timeZone: 'America/Los_Angeles'
+      })
+    );
 
     return format(dateToFormat, 'MM/dd/yyyy');
   }
