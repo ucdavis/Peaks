@@ -2,12 +2,18 @@ import { format, min } from 'date-fns';
 import { IHasExpiration } from '../models/Shared';
 
 export class DateUtil {
-  public static formatDate(date: Date): string {
+  public static formatDate(date: Date, convertToPST: boolean = false): string {
     if (date === null) {
       return '';
     }
 
-    return format(new Date(date), 'MM/dd/yyyy');
+    let dateToFormat = new Date(date);
+    if (convertToPST) {
+      // Convert from UTC to PST (UTC-8)
+      dateToFormat = new Date(dateToFormat.getTime() - 8 * 60 * 60 * 1000);
+    }
+
+    return format(dateToFormat, 'MM/dd/yyyy');
   }
 
   public static formatExpiration(expiration: Date): string {
