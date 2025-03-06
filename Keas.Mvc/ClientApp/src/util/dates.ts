@@ -7,7 +7,7 @@ export class DateUtil {
       return '';
     }
 
-    return format(date, 'MM/dd/yyyy');
+    return format(new Date(date), 'MM/dd/yyyy');
   }
 
   public static formatDateFromUtc(date: Date): string {
@@ -15,20 +15,17 @@ export class DateUtil {
       return '';
     }
 
-    let dateToFormat = new Date(date);
-
     let str = date.toString();
     if (!str.endsWith('Z')) {
       str += 'Z';
     }
 
-    dateToFormat = new Date(
+    return format(
       new Date(str).toLocaleString('en-US', {
         timeZone: 'America/Los_Angeles'
-      })
+      }),
+      'MM/dd/yyyy'
     );
-
-    return format(dateToFormat, 'MM/dd/yyyy');
   }
 
   public static formatExpiration(expiration: Date): string {
