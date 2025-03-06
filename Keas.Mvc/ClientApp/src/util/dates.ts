@@ -21,9 +21,11 @@ export class DateUtil {
     }
 
     return format(
-      new Date(str).toLocaleString('en-US', {
-        timeZone: 'America/Los_Angeles'
-      }),
+      new Date(
+        new Date(str).toLocaleString('en-US', {
+          timeZone: 'America/Los_Angeles'
+        })
+      ),
       'MM/dd/yyyy'
     );
   }
