@@ -24,8 +24,9 @@
                 @if (Model.TeamApiCode != null)
                 {
                     <div class="card-content">
-                        <p><b>Current API Code:</b></p>
-                        <p>@Html.DisplayFor(model => model.TeamApiCode.ApiCode)</p>
+                        <div><b>Current API Code:</b> @Html.DisplayFor(model => model.TeamApiCode.ApiCode)</div>
+                        <div><b>Team Slug:</b> @Model.Slug</div>
+                        <div><b>Team Id:</b> @Model.Id</div>
                     </div>
                 }
                 <div style="padding: 19px 20px 20px;">
