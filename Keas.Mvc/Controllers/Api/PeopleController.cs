@@ -251,12 +251,20 @@ namespace Keas.Mvc.Controllers.Api
                     else
                     {
                         //Force lookup. Don't trust passed user
-                        person.User = await _identityService.GetByKerberos(person.UserId);
+                        user = await _identityService.GetByKerberos(person.UserId);
+                        person.User = user;
                     }
 
                     if (person.User == null)
                     {
                         return NotFound();
+                    }
+
+                    //Need to have API call validated so it doesn't create a dup person
+                    if(await _context.People.IgnoreQueryFilters().Where(a => a.TeamId == team.Id && a.UserId == user.Id).AnyAsync())
+                    {
+                        ModelState.AddModelError("UserId", "This user is already added to this team.");
+                        return BadRequest(ModelState);
                     }
 
                     if (person.Supervisor != null)
