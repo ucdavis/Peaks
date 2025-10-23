@@ -9,7 +9,7 @@ trigger:
 name: 1.1.$(Date:yyMM).$(build.buildId)
 
 pool:
-  vmImage: 'windows-2019'
+  vmImage: 'windows-latest'
 
 variables:
   solution: '**/*.sln'
