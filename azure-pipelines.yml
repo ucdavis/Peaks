@@ -4,111 +4,111 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
-- master
+  - master
 
 name: 1.1.$(Date:yyMM).$(build.buildId)
 
 pool:
-  vmImage: 'windows-2019'
+  vmImage: "windows-latest"
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+  solution: "**/*.sln"
+  buildPlatform: "Any CPU"
+  buildConfiguration: "Release"
 
 stages:
-- stage: Build
-  jobs:
-  - job:
-    steps:
-    - task: NodeTool@0
-      inputs:
-       versionSpec: '18.16.x'
-    - task: UseDotNet@2
-      displayName: 'Use .NET Core 6.0.407 sdk'
-      inputs:
-       packageType: sdk
-       version: 6.0.407
-       installationPath: $(Agent.ToolsDirectory)/dotnet
-       
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'restore'
+  - stage: Build
+    jobs:
+      - job:
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "20.x"
+          - task: UseDotNet@2
+            displayName: "Use .NET Core 6.0.407 sdk"
+            inputs:
+              packageType: sdk
+              version: 6.0.407
+              installationPath: $(Agent.ToolsDirectory)/dotnet
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Build Keas.Mvc'
-      inputs:
-        command: 'build'
-        projects: './Keas.Mvc/Keas.Mvc.csproj'
-        arguments: '--configuration $(BuildConfiguration) /property:Version=$(build.buildNumber)'
+          - task: DotNetCoreCLI@2
+            inputs:
+              command: "restore"
 
-    - task: Npm@1
-      inputs:
-        command: 'install'
-        workingDir: './Keas.Mvc'
+          - task: DotNetCoreCLI@2
+            displayName: "Build Keas.Mvc"
+            inputs:
+              command: "build"
+              projects: "./Keas.Mvc/Keas.Mvc.csproj"
+              arguments: "--configuration $(BuildConfiguration) /property:Version=$(build.buildNumber)"
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Run Server Tests'
-      inputs:
-        command: 'test'
+          - task: Npm@1
+            inputs:
+              command: "install"
+              workingDir: "./Keas.Mvc"
 
-    - task: Npm@1
-      displayName: 'Run Client Tests'
-      inputs:
-        command: 'custom'
-        workingDir: './Keas.Mvc/ClientApp'
-        customCommand: 'run citest'
+          - task: DotNetCoreCLI@2
+            displayName: "Run Server Tests"
+            inputs:
+              command: "test"
 
-    - task: PublishTestResults@2
-      displayName: 'Publish Client Tests'
-      inputs:
-        testResultsFormat: 'VSTest'
-        testResultsFiles: '**/test-results.trx'
-        testRunTitle: 'Client Tests'
+          - task: Npm@1
+            displayName: "Run Client Tests"
+            inputs:
+              command: "custom"
+              workingDir: "./Keas.Mvc/ClientApp"
+              customCommand: "run citest"
 
-- stage: Publish
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
-  jobs:
-    - job:
-      steps:
-        - task: NodeTool@0
-          inputs:
-           versionSpec: '18.16.x'
-        - task: UseDotNet@2
-          displayName: 'Use .NET Core 6.0.407 sdk'
-          inputs:
-           packageType: sdk
-           version: 6.0.407
-           installationPath: $(Agent.ToolsDirectory)/dotnet
-        - task: DotNetCoreCLI@2
-          displayName: 'Publish Keas.Mvc'
-          inputs:
-            command: 'publish'
-            publishWebProjects: true
-            zipAfterPublish: false
-            modifyOutputPath: false
-            projects: './Keas.Mvc/Keas.Mvc.csproj'
-            arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/'
+          - task: PublishTestResults@2
+            displayName: "Publish Client Tests"
+            inputs:
+              testResultsFormat: "VSTest"
+              testResultsFiles: "**/test-results.trx"
+              testRunTitle: "Client Tests"
 
-        - task: DotNetCoreCLI@2
-          displayName: 'Publish Keas.Jobs.SendMail'
-          inputs:
-            command: 'publish'
-            publishWebProjects: false
-            zipAfterPublish: false
-            projects: './Keas.Jobs.SendMail/Keas.Jobs.SendMail.csproj'
-            arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
+  - stage: Publish
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    jobs:
+      - job:
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: "20.x"
+          - task: UseDotNet@2
+            displayName: "Use .NET Core 6.0.407 sdk"
+            inputs:
+              packageType: sdk
+              version: 6.0.407
+              installationPath: $(Agent.ToolsDirectory)/dotnet
+          - task: DotNetCoreCLI@2
+            displayName: "Publish Keas.Mvc"
+            inputs:
+              command: "publish"
+              publishWebProjects: true
+              zipAfterPublish: false
+              modifyOutputPath: false
+              projects: "./Keas.Mvc/Keas.Mvc.csproj"
+              arguments: "--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/"
 
-        - task: DotNetCoreCLI@2
-          displayName: 'Publish Keas.Jobs.LivedName'
-          inputs:
-            command: 'publish'
-            publishWebProjects: false
-            zipAfterPublish: false
-            projects: './Keas.Jobs.LivedName/Keas.Jobs.LivedName.csproj'
-            arguments: '--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/app_data/jobs/triggered'
+          - task: DotNetCoreCLI@2
+            displayName: "Publish Keas.Jobs.SendMail"
+            inputs:
+              command: "publish"
+              publishWebProjects: false
+              zipAfterPublish: false
+              projects: "./Keas.Jobs.SendMail/Keas.Jobs.SendMail.csproj"
+              arguments: "--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/app_data/jobs/triggered"
 
-        - task: PublishBuildArtifacts@1
-          displayName: 'Publish Artifact'
-          inputs:
-            PathtoPublish: '$(build.artifactstagingdirectory)'
+          - task: DotNetCoreCLI@2
+            displayName: "Publish Keas.Jobs.LivedName"
+            inputs:
+              command: "publish"
+              publishWebProjects: false
+              zipAfterPublish: false
+              projects: "./Keas.Jobs.LivedName/Keas.Jobs.LivedName.csproj"
+              arguments: "--configuration $(BuildConfiguration) --output $(build.artifactstagingdirectory)/app_data/jobs/triggered"
+
+          - task: PublishBuildArtifacts@1
+            displayName: "Publish Artifact"
+            inputs:
+              PathtoPublish: "$(build.artifactstagingdirectory)"
