@@ -36,6 +36,8 @@ Get the app settings from Box and put them in your secrets location
 
 //This is the current version of node we are using
 
+`>=20.0.0`
+Old one:
 `nvm use 18.16.0`
 
 // when you are ready to debug locally
