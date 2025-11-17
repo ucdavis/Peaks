@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
@@ -13,9 +13,9 @@ namespace Keas.Core.Domain
 
         [StringLength(1)]
         [Required]
-        public string Chart { get; set; }
+        public string Chart { get; set; } = "X";
 
-        [StringLength(4)]
+        [StringLength(6)]
         [Required]
         public string OrgCode { get; set; }
         
@@ -23,7 +23,7 @@ namespace Keas.Core.Domain
         public Team Team { get; set; }
         public int TeamId { get; set; }
 
-        public string ChartAndOrg => string.Format("{0}-{1}", Chart, OrgCode);
+        public string ChartAndOrg => string.Format("{0}", OrgCode);
 
     }
 }

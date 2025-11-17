@@ -9,10 +9,9 @@ namespace Keas.Mvc.Models
     public class FISOrgAddModel
     {
         [StringLength(1)]
-        [Required]
         public string Chart { get; set; }
 
-        [StringLength(4)]
+        [StringLength(6)]
         [Required]
         [Display(Name = "Org Code")]
         public string OrgCode { get; set; }
