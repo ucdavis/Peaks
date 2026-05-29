@@ -47,7 +47,17 @@ namespace Keas.Jobs.SendMail
             var emailService = provider.GetService<IEmailService>();
 
             var counter = 0;
-            var usersWithPendingNotifications = dbContext.Notifications.Where(a => a.Pending).Select(s => s.User).Distinct().ToArray();
+            var usersWithPendingNotifications = dbContext.Notifications
+                .Where(a => a.Pending && a.UserId != null)
+                .Select(a => a.UserId)
+                .Distinct()
+                .Join(
+                    dbContext.Users,
+                    userId => userId,
+                    user => user.Id,
+                    (userId, user) => user)
+                .AsNoTracking()
+                .ToArray();
             if (usersWithPendingNotifications.Any())
             {
                 foreach (var user in usersWithPendingNotifications)

@@ -589,7 +589,14 @@ namespace Keas.Core.Services
                 return;
             }
 
-            var notifications = _dbContext.Notifications.Where(a => a.Pending && a.User == user).Include(a => a.Team).Include(a => a.User).OrderBy(a => a.TeamId).ThenBy(a => a.DateTimeCreated).ToArray().GroupBy(a => a.TeamId);
+            var notifications = _dbContext.Notifications
+                .Where(a => a.Pending && a.UserId == user.Id)
+                .Include(a => a.Team)
+                .Include(a => a.User)
+                .OrderBy(a => a.TeamId)
+                .ThenBy(a => a.DateTimeCreated)
+                .ToArray()
+                .GroupBy(a => a.TeamId);
             if (!notifications.Any())
             {
                 return;
