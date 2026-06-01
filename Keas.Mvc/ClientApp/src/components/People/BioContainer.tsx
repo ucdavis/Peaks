@@ -56,6 +56,7 @@ const BioContainer = (props: IProps) => {
               <div className='person-label-list'>
                 {props.person.email && <p className='person-label'>Email</p>}
                 {props.person.userId && <p className='person-label'>User Id</p>}
+                {props.person.user?.email && <p className='person-label'>User email2</p>}
                 {props.person.homePhone && <p className='person-label'>Home</p>}
                 {props.person.teamPhone && <p className='person-label'>Team</p>}
                 {props.person.supervisor && (
@@ -65,6 +66,7 @@ const BioContainer = (props: IProps) => {
               <div>
                 {props.person.email && <p>{props.person.email}</p>}
                 {props.person.userId && <p>{props.person.userId}</p>}
+                {props.person.user?.email && <p>{props.person.user?.email}</p>}
                 {props.person.homePhone && <p>{props.person.homePhone}</p>}
                 {props.person.teamPhone && <p>{props.person.teamPhone}</p>}
                 {props.person.supervisor && (
