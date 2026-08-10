@@ -17,13 +17,21 @@ const DeletePerson = (props: IProps) => {
     return null;
   }
 
-  const checkValidToDelete = () => {
-    return !(
+  const hasAssignedAssets = () => {
+    return (
       props.selectedPersonInfo.accessCount > 0 ||
       props.selectedPersonInfo.equipmentCount > 0 ||
       props.selectedPersonInfo.keyCount > 0 ||
       props.selectedPersonInfo.workstationCount > 0
     );
+  };
+
+  const hasTeamPermissions = () => {
+    return props.selectedPersonInfo.teamPermissionCount > 0;
+  };
+
+  const checkValidToDelete = () => {
+    return !hasAssignedAssets() && !hasTeamPermissions();
   };
 
   const deletePerson = async () => {
@@ -71,10 +79,16 @@ const DeletePerson = (props: IProps) => {
             disableEditing={true}
             isDeleting={true}
           />
-          {!checkValidToDelete() && (
+          {hasAssignedAssets() && (
             <div>
               The person you have selected currently has assets assigned to
               them. Please revoke everything before deleting.
+            </div>
+          )}
+          {hasTeamPermissions() && (
+            <div>
+              This person has one or more team permissions. Remove those
+              permissions before deleting the person.
             </div>
           )}
         </ModalBody>

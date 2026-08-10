@@ -81,4 +81,5 @@ export interface IPersonInfo {
   equipmentCount: number;
   keyCount: number;
   workstationCount: number;
+  teamPermissionCount: number;
 }
