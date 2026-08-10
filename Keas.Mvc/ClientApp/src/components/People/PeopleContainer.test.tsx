@@ -192,4 +192,53 @@ describe('People Container', () => {
 
     expect(accessAssignmentContainerContent).toBe('AccessAssignmentContainer');
   });
+
+  it('Prevents deleting a person with team permissions', async () => {
+    const peopleWithTeamPermission = [
+      {
+        ...fakePeople[0],
+        accessCount: 0,
+        equipmentCount: 0,
+        keyCount: 0,
+        workstationCount: 0,
+        teamPermissionCount: 1
+      },
+      ...fakePeople.slice(1)
+    ];
+
+    jest
+      .spyOn(contextObject, 'fetch')
+      .mockImplementation(() => Promise.resolve(peopleWithTeamPermission));
+
+    render(
+      <Context.Provider value={contextObject}>
+        <MemoryRouter initialEntries={['/caes-cru/people/details/123']}>
+          {routes}
+        </MemoryRouter>
+      </Context.Provider>,
+      container
+    );
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const deleteButton = Array.from(container.querySelectorAll('button')).find(
+      button => button.textContent.includes('Delete Person')
+    ) as HTMLButtonElement;
+
+    await act(async () => {
+      deleteButton.click();
+    });
+
+    const modal = document.querySelector('.modal-content');
+    expect(modal.textContent).toContain(
+      'This person has one or more team permissions. Remove those permissions before deleting the person.'
+    );
+
+    const confirmButton = Array.from(modal.querySelectorAll('button')).find(
+      button => button.textContent.includes('Go!')
+    ) as HTMLButtonElement;
+    expect(confirmButton.disabled).toBeTruthy();
+  });
 });
