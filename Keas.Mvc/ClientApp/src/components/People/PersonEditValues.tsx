@@ -150,6 +150,7 @@ const PersonEditValues = (props: IProps) => {
               : null
           }
           onChangeDate={changeStartDate}
+          label='Set the start date'
         />
       </FormGroup>
 
@@ -165,6 +166,7 @@ const PersonEditValues = (props: IProps) => {
               : null
           }
           onChangeDate={changeEndDate}
+          label='Set the end date'
         />
       </FormGroup>
 
