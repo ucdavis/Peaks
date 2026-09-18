@@ -67,7 +67,11 @@ namespace Keas.Mvc.Controllers.Api
 
             var sql = PeopleQueries.List;
 
+
             var result = _context.Database.GetDbConnection().Query(sql, new { teamId, active1, active2 });
+
+
+
 
             var people = result.Select(r => new
             {
@@ -80,9 +84,9 @@ namespace Keas.Mvc.Controllers.Api
                     User = r.UserId == null ? null : new User
                     {
                         Id = r.UserId,
-                        FirstName = r.FirstName,
-                        LastName = r.LastName,
-                        Email = r.Email,
+                        FirstName = r.UFirstName,
+                        LastName = r.ULastName,
+                        Email = r.UEmail,
                         Pronouns = r.Pronouns
                     },
                     Tags = r.Tags,

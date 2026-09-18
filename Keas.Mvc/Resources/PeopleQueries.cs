@@ -1,6 +1,6 @@
 public static class PeopleQueries
 {
-    public static string List = @"select People.*, U.Pronouns, SUP.FirstName SupervisorFirstName, SUP.LastName SupervisorLastName, SUP.Email SupervisorEmail, SUP.UserId SupervisorUserId, EquipmentCount, AccessCount, KeyCount, WorkstationCount,
+    public static string List = @"select People.*, U.Pronouns, U.Email as UEmail, U.FirstName as UFirstName, U.LastName as ULastName, SUP.FirstName SupervisorFirstName, SUP.LastName SupervisorLastName, SUP.Email SupervisorEmail, SUP.UserId SupervisorUserId, EquipmentCount, AccessCount, KeyCount, WorkstationCount,
     cast(CASE WHEN EXISTS(SELECT * FROM People emp WHERE emp.SupervisorId = people.id) THEN 1 ELSE 0 END as bit) as isSupervisor
 from (select People.Id, count(E.Id) as EquipmentCount
       from People
