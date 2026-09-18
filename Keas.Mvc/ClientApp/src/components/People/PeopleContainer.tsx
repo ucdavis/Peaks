@@ -161,7 +161,8 @@ const PeopleContainer = props => {
       id: person.id,
       keyCount: 0,
       person,
-      workstationCount: 0
+      workstationCount: 0,
+      teamPermissionCount: 0
     };
     setPeople(prevPeople => [...prevPeople, personInfo]);
   };

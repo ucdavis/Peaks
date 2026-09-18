@@ -117,6 +117,10 @@ namespace Keas.Mvc.Controllers.Api
             {
                 ModelState.AddModelError("WorkstationAssignments", "Remove Workstation Assignments first");
             }
+            if (await _context.TeamPermissions.AnyAsync(a => a.TeamId == person.TeamId && a.UserId == person.UserId))
+            {
+                ModelState.AddModelError("TeamPermissions", "Remove Team Permissions first");
+            }
 
             if (!ModelState.IsValid)
             {
@@ -131,13 +135,6 @@ namespace Keas.Mvc.Controllers.Api
                 personToUpdate.Active = false;
 
                 await _notificationService.PersonUpdated(person, null, Team, personActing.Name, personActing.UserId, PersonNotification.Actions.Deactivated, String.Empty);
-
-                //Remove any Admin roles for that team
-                var teamPermissionsToDelete = await _context.TeamPermissions.Where(a => a.TeamId == person.TeamId && a.UserId == personToUpdate.UserId).ToArrayAsync();
-                if (teamPermissionsToDelete.Any())
-                {
-                    _context.TeamPermissions.RemoveRange(teamPermissionsToDelete);
-                }
 
                 //Unsupervise any people that this person supervised
                 var peopleToUnsupervise = await _context.People.Where(a => a.SupervisorId == personToUpdate.Id).ToArrayAsync();
