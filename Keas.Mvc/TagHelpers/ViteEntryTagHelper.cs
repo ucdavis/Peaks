@@ -51,14 +51,6 @@ namespace Keas.Mvc.TagHelpers
                 var origin = (_configuration["Vite:DevServerUrl"] ?? "http://localhost:5179").TrimEnd('/');
                 if (StylesOnly)
                 {
-                    var source = Src;
-                    if ((source.EndsWith(".scss") || source.EndsWith(".css")) && emitted.Add(source))
-                    {
-                        var style = new TagBuilder("link");
-                        style.Attributes["rel"] = "stylesheet";
-                        style.Attributes["href"] = origin + "/" + source + "?direct";
-                        html.AppendHtml(style);
-                    }
                     output.Content.SetHtmlContent(html);
                     return;
                 }
@@ -76,7 +68,7 @@ namespace Keas.Mvc.TagHelpers
                         "window.__vite_plugin_react_preamble_installed__ = true;");
                     html.AppendHtml(refresh);
                 }
-                if (emitted.Add(Src)) html.AppendHtml(Asset(origin + "/" + Src));
+                if (emitted.Add(Src)) html.AppendHtml(Module(origin + "/" + Src));
             }
             else
             {
@@ -99,22 +91,19 @@ namespace Keas.Mvc.TagHelpers
                     foreach (var css in chunk.Css)
                     {
                         if (!emitted.Add(css)) continue;
-                        html.AppendHtml(Asset(ViewContext.HttpContext.Request.PathBase + "/vite/" + css));
+                        html.AppendHtml(Stylesheet(ViewContext.HttpContext.Request.PathBase + "/vite/" + css));
                     }
                     foreach (var import in chunk.Imports) AppendStyles(import);
                 }
                 if (StylesOnly) AppendStyles(Src);
-                if ((!StylesOnly || IsStylesheet(entry.File)) && emitted.Add(entry.File))
-                    html.AppendHtml(Asset(ViewContext.HttpContext.Request.PathBase + "/vite/" + entry.File));
+                if (!StylesOnly && emitted.Add(entry.File))
+                    html.AppendHtml(Module(ViewContext.HttpContext.Request.PathBase + "/vite/" + entry.File));
             }
             output.Content.SetHtmlContent(html);
         }
 
-        private static bool IsStylesheet(string source) => source.EndsWith(".css", StringComparison.OrdinalIgnoreCase);
-
-        private static TagBuilder Asset(string source)
+        private static TagBuilder Stylesheet(string source)
         {
-            if (!IsStylesheet(source)) return Module(source);
             var tag = new TagBuilder("link");
             tag.TagRenderMode = TagRenderMode.SelfClosing;
             tag.Attributes["rel"] = "stylesheet";

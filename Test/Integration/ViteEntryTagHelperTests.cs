@@ -17,24 +17,10 @@ namespace Test.Integration
     public class ViteEntryTagHelperTests
     {
         [Fact]
-        public void DevelopmentStylesLoadWithoutReactAndShareTheViteClient()
-        {
-            var view = new ViewContext { HttpContext = new DefaultHttpContext() };
-            var css = Render("src/styles.css", "Development", true, null, view, stylesOnly: true);
-            Assert.Contains("rel=\"stylesheet\"", css);
-            Assert.Contains("href=\"http://localhost:5179/src/styles.css?direct\"", css);
-            Assert.DoesNotContain("<script", css);
-            Assert.DoesNotContain("@react-refresh", css);
-            Assert.Equal("", Render("src/styles.css", "Development", true, null, view, stylesOnly: true));
-            var script = Render("src/shell.tsx", "Development", true, null, view, react: true);
-            Assert.Contains("@react-refresh", script);
-            Assert.Contains("@vite/client", script);
-        }
-
-        [Fact]
         public void DevelopmentEntriesShareOneRefreshRuntime()
         {
             var view = new ViewContext { HttpContext = new DefaultHttpContext() };
+            Assert.Equal("", Render("src/shell.tsx", "Development", true, null, view, stylesOnly: true));
             var first = Render("src/shell.tsx", "Development", true, null, view, react: true);
             var second = Render("src/page.tsx", "Development", true, null, view, react: true);
             Assert.Contains("@react-refresh", first);
@@ -55,18 +41,15 @@ namespace Test.Integration
             try
             {
                 File.WriteAllText(Path.Combine(root, "vite", ".vite", "manifest.json"),
-                    "{\"src/styles.css\":{\"file\":\"assets/styles-123.css\"},\"src/page.tsx\":{\"file\":\"assets/page-123.js\",\"css\":[\"assets/page-123.css\"],\"imports\":[\"shared\"]}," +
+                    "{\"src/page.tsx\":{\"file\":\"assets/page-123.js\",\"css\":[\"assets/page-123.css\"],\"imports\":[\"shared\"]}," +
                     "\"shared\":{\"file\":\"assets/shared.js\",\"css\":[\"assets/shared.css\"],\"imports\":[\"nested\"]}," +
                     "\"nested\":{\"file\":\"assets/nested.js\",\"css\":[\"assets/nested.css\"]}}");
                 var view = new ViewContext { HttpContext = new DefaultHttpContext() };
                 view.HttpContext.Request.PathBase = "/peaks";
-                var css = Render("src/styles.css", environment, enabled, root, view, stylesOnly: true);
-                Assert.Contains("href=\"/peaks/vite/assets/styles-123.css\"", css);
-                Assert.Contains("rel=\"stylesheet\"", css);
-                Assert.DoesNotContain("<script", css);
-                Assert.Equal("", Render("src/styles.css", environment, enabled, root, view));
                 var styles = Render("src/page.tsx", environment, enabled, root, view, stylesOnly: true);
                 Assert.DoesNotContain("<script", styles);
+                Assert.Contains("rel=\"stylesheet\"", styles);
+                Assert.Equal("", Render("src/page.tsx", environment, enabled, root, view, stylesOnly: true));
                 var html = Render("src/page.tsx", environment, enabled, root, view);
                 Assert.Contains("/peaks/vite/assets/page-123.js", html);
                 Assert.Contains("/peaks/vite/assets/page-123.css", styles);
