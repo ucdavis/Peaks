@@ -10,17 +10,23 @@ import SpacesContainer from './SpacesContainer';
 let container: Element = null;
 
 // mock out the sub containers, at least for now
-vi.mock('../Equipment/EquipmentContainer', () => ({ default: () => {
-  return <div id='EquipmentContainer'>EquipmentContainer</div>;
-} }));
+vi.mock('../Equipment/EquipmentContainer', () => ({
+  default: () => {
+    return <div id='EquipmentContainer'>EquipmentContainer</div>;
+  }
+}));
 
-vi.mock('../Keys/KeyContainer', () => ({ default: () => {
-  return <div id='KeyContainer'>KeyContainer</div>;
-} }));
+vi.mock('../Keys/KeyContainer', () => ({
+  default: () => {
+    return <div id='KeyContainer'>KeyContainer</div>;
+  }
+}));
 
-vi.mock('../Workstations/WorkstationContainer', () => ({ default: () => {
-  return <div id='WorkstationContainer'>WorkstationContainer</div>;
-} }));
+vi.mock('../Workstations/WorkstationContainer', () => ({
+  default: () => {
+    return <div id='WorkstationContainer'>WorkstationContainer</div>;
+  }
+}));
 
 beforeEach(() => {
   // setup a DOM element as a render target
@@ -47,9 +53,9 @@ describe('Space Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake spaces
-      vi
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeSpaces));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeSpaces)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -70,9 +76,9 @@ describe('Space Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake spaces
-      vi
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeSpaces));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeSpaces)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -106,9 +112,9 @@ describe('Space Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake spaces
-      vi
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeSpaces));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeSpaces)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -128,9 +134,9 @@ describe('Space Container', () => {
   it('Shows spaces details', async () => {
     await act(async () => {
       // spy on our context's fetch handler to return fake spaces
-      vi
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeSpaces));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeSpaces)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(

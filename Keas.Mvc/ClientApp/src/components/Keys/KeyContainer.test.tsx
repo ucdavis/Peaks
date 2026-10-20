@@ -9,17 +9,23 @@ import KeyContainer from '../Keys/KeyContainer';
 
 let container: Element = null;
 
-vi.mock('../Spaces/SpacesContainer', () => ({ default: () => {
-  return <div id='SpacesContainer'>SpacesContainer</div>;
-} }));
+vi.mock('../Spaces/SpacesContainer', () => ({
+  default: () => {
+    return <div id='SpacesContainer'>SpacesContainer</div>;
+  }
+}));
 
-vi.mock('../Keys/KeySerialContainer', () => ({ default: () => {
-  return <div id='KeySerialContainer'>KeySerialContainer</div>;
-} }));
+vi.mock('../Keys/KeySerialContainer', () => ({
+  default: () => {
+    return <div id='KeySerialContainer'>KeySerialContainer</div>;
+  }
+}));
 
-vi.mock('../History/HistoryContainer', () => ({ default: () => {
-  return <div id='HistoryContainer'>HistoryContainer</div>;
-} }));
+vi.mock('../History/HistoryContainer', () => ({
+  default: () => {
+    return <div id='HistoryContainer'>HistoryContainer</div>;
+  }
+}));
 
 beforeEach(() => {
   // setup a DOM element as a render target
@@ -46,9 +52,9 @@ describe('Key Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake keys
-      vi
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeKeys)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -69,9 +75,9 @@ describe('Key Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake keys
-      vi
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeKeys)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -93,9 +99,9 @@ describe('Key Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake keys
-      vi
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeKeys)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -127,9 +133,9 @@ describe('Key Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake keys
-      vi
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeKeys)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -149,9 +155,9 @@ describe('Key Container', () => {
   it('Shows keys details', async () => {
     await act(async () => {
       // spy on our context's fetch handler to return fake keys
-      vi
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeys));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeKeys)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
