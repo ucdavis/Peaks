@@ -138,7 +138,9 @@ namespace Keas.Mvc.Infrastructure.Vite
         {
             try
             {
-                if (_process != null && !_process.HasExited) _process.Kill(entireProcessTree: true);
+                if (_process == null) return;
+                if (!_process.HasExited) _process.Kill(entireProcessTree: true);
+                _process.WaitForExit();
             }
             catch (InvalidOperationException) { /* Already exited. */ }
             catch (Win32Exception exception)

@@ -101,17 +101,22 @@ namespace Test.Integration
             await fixture.AssertProcessExited();
         }
 
-        [Fact]
-        public async Task ShutdownKillsOnlyItsChildIfGracefulStopDoesNotFinish()
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public async Task ShutdownKillsOnlyItsChildIfGracefulStopDoesNotFinish(bool dispose)
         {
             using var fixture = new ServerFixture();
             fixture.WriteServerScript(ignoreInputEnd: true);
             using var server = fixture.CreateServer();
             await server.StartAsync(CancellationToken.None);
+            using var process = Process.GetProcessById(int.Parse(File.ReadAllText(fixture.PidFile)));
 
-            await server.StopAsync(CancellationToken.None);
+            if (dispose) server.Dispose();
+            else await server.StopAsync(CancellationToken.None);
 
-            await fixture.AssertProcessExited();
+            Assert.True(process.HasExited, "Shutdown must wait for the owned process to exit.");
+            Directory.Delete(fixture.ClientDirectory, recursive: true);
             fixture.AssertPortAvailable();
             fixture.Lifetime.Verify(x => x.StopApplication(), Times.Never);
         }
