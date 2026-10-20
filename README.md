@@ -12,42 +12,29 @@
 **K**eys
 **S**pace
 
-# Build + Run
+# Build and run
 
-Have a recent version of NodeJS installed (https://nodejs.org/)
+Install the .NET SDK selected by [`global.json`](global.json). Use Node.js 20 to match the [CI pipeline](azure-pipelines.yml), with npm 10 or newer as required by the [frontend package](Keas.Mvc/ClientApp/package.json).
 
-Install the SDK selected by [`global.json`](global.json).
+With NVM for Windows:
 
-See [the .NET 10 upgrade and release checks](docs/dotnet-10-upgrade.md) for validation, TEST acceptance, and rollback requirements.
+```sh
+nvm install 20
+nvm use 20
+```
 
-Get the app settings from Box and put them in your secrets location
+Get the application settings from Box and configure the website's user secrets.
 
-### [If you don't have visual studio]
+From the repository root, install the frontend dependencies and start the website:
 
-// Go to the Keas.Mvc website directory
+```sh
+cd Keas.Mvc/ClientApp
+npm install
+cd ..
+dotnet restore
+npm start
+```
 
-// first time, or when modules change
+`npm start` runs `dotnet watch run` from `Keas.Mvc`.
 
-`npm install`
-
-`dotnet restore`
-
-// To use NVM for windows
-
-`nvm list available`
-
-`nvm install 18.16.0`
-
-//This is the current version of node we are using
-
-`>=20.0.0`
-Old one:
-`nvm use 18.16.0`
-
-// when you are ready to debug locally
-
-`npm run debug`
-
-### [If you have visual studio]
-
-// Just open it up and run the project!
+With Visual Studio, open `Keas.sln` and run `Keas.Mvc` after completing the dependency and secrets setup.
