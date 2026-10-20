@@ -10,7 +10,6 @@ import * as RoutesModule from './pages/assets/routes';
 import 'react-toastify/dist/ReactToastify.css';
 import './sass/site.scss';
 
-
 import { Context } from './Context';
 
 const routes = RoutesModule.routes;

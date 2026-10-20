@@ -2,10 +2,22 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'react', 'react-hooks'],
-  extends: ['eslint:recommended', 'plugin:react/recommended', 'plugin:react-hooks/recommended', 'prettier'],
+  extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
+    'prettier'
+  ],
   env: { browser: true, es2021: true },
   settings: { react: { version: '17.0' } },
-  globals: { describe: 'readonly', it: 'readonly', expect: 'readonly', beforeEach: 'readonly', afterEach: 'readonly', vi: 'readonly' },
+  globals: {
+    describe: 'readonly',
+    it: 'readonly',
+    expect: 'readonly',
+    beforeEach: 'readonly',
+    afterEach: 'readonly',
+    vi: 'readonly'
+  },
   rules: {
     'no-unused-vars': 'off',
     'no-undef': 'off', // TypeScript checks names, including types and browser declarations.
@@ -18,6 +30,6 @@ module.exports = {
     'react/no-unescaped-entities': 'warn',
     'react/jsx-key': 'warn',
     'no-redeclare': 'off',
-    '@typescript-eslint/no-redeclare': ['error', { builtinGlobals: false }],
-  },
+    '@typescript-eslint/no-redeclare': ['error', { builtinGlobals: false }]
+  }
 };

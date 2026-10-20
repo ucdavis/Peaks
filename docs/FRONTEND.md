@@ -4,9 +4,8 @@ PEAKS uses Razor for HTML, authentication, anti-forgery tokens and routing. Reac
 and React Router 5 render the asset routes inside the shared layout. Vite builds
 and serves frontend assets; it does not serve the application's pages or APIs.
 
-Use Node 22.18 or newer on the Node 22 line, npm 10+, and the SDK in `global.json`.
-Run `npm ci` in `Keas.Mvc/ClientApp`, then `npm start` in `Keas.Mvc`.
-The Project launch profile opens https://localhost:44332. Trust the ASP.NET
+Follow the [README setup instructions](../README.md#build-and-run) to install
+dependencies and start the application. Trust the ASP.NET
 Core development certificate with `dotnet dev-certs https --trust` if needed.
 Visual Studio's Project and IIS Express launch profiles both enable Vite.
 
@@ -52,8 +51,13 @@ npm run test:launcher
 npm run build
 ```
 
-Run `npm run build` before `dotnet test Test/Test.csproj` from the repository root;
-the server integration tests request real built assets.
+Before running server tests, build the frontend assets that the integration tests
+request. From the repository root:
+
+```sh
+npm --prefix Keas.Mvc/ClientApp run build
+dotnet test Test/Test.csproj
+```
 
 `npm test` runs Vitest once; `npm run testwatch` watches. The eight existing test
 files still use React 17's rendering APIs. CI writes JUnit results to
@@ -73,4 +77,6 @@ Before approving deployment, verify authenticated asset deep links and refresh,
 React navigation, an authorized API write with its anti-forgery token, representative
 report/admin pages, global styles and images, React/CSS HMR, and normal startup
 and shutdown. A build alone does not establish those behaviors. Windows Visual
-Studio F5 requires a separate check on Windows.
+Studio F5 requires a separate check on Windows. Live CAS sign-in and complete
+SQL Server-backed data flows remain pending manual acceptance checks for this
+migration.

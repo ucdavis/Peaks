@@ -14,7 +14,12 @@ export default defineConfig({
       reporter: ['text', 'cobertura'],
       reportsDirectory: './coverage',
       include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.test.*', 'src/components/specs/**', 'src/**/*.d.ts', 'src/setupTests.ts'],
-    },
-  },
+      exclude: [
+        'src/**/*.test.*',
+        'src/components/specs/**',
+        'src/**/*.d.ts',
+        'src/setupTests.ts'
+      ]
+    }
+  }
 });
