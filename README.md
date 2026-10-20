@@ -15,7 +15,7 @@
 
 Have a recent version of NodeJS installed (https://nodejs.org/)
 
-Install the .NET 10 SDK selected by `global.json`. The website, libraries, and both Windows WebJobs target .NET 10.
+Install the SDK selected by [`global.json`](global.json).
 
 See [the .NET 10 upgrade and release checks](docs/dotnet-10-upgrade.md) for validation, TEST acceptance, and rollback requirements.
 

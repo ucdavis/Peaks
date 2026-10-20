@@ -1,6 +1,6 @@
 # .NET 10 upgrade
 
-The website, shared libraries, tests, SendMail, and LivedName target .NET 10. `global.json` and both Azure DevOps stages select SDK 10.0.402. EF Core, ASP.NET packages, and job configuration dependencies use 10.0.13. Serilog's ASP.NET integration and console sink are aligned with .NET 10. The obsolete CLI scaffolding tool and redundant ASP.NET 2.2 DataAnnotations package are removed.
+The website, shared libraries, tests, SendMail, and LivedName target .NET 10. See [`global.json`](../global.json) for the SDK selection and [`azure-pipelines.yml`](../azure-pipelines.yml) for the Windows build and publish configuration. The project files own dependency versions, including the upgraded EF Core, ASP.NET, job configuration, and Serilog packages. The obsolete CLI scaffolding tool and redundant ASP.NET 2.2 DataAnnotations package are removed.
 
 Windows hosting, Node 20 in CI, the frontend, schedules, and the classic release pipeline remain in place. No database migration is included. Production deployment requires separate approval.
 
@@ -9,7 +9,7 @@ Windows hosting, Node 20 in CI, the frontend, schedules, and the classic release
 - All three SQL entry points explicitly use compatibility level 140. Read-only metadata checks on October 20, 2026 confirmed level 140 on TEST and production, with zero DML triggers and zero computed columns. Both connections had VIEW DEFINITION permission, so the zero counts were not caused by hidden metadata. No database settings were changed.
 - Controller endpoints retain pre-upgrade cookie redirects through `AllowCookieRedirect()`. The HTTP regression test failed with 401 instead of 302 before this change, then passed. XHR requests still return 401; no authorization requirement is relaxed.
 - The existing Razor renderer and MJML pipeline render the SendMail job's actual notification view, shared layout, and acceptance button in a regression test without sending mail.
-- The new SQL client dependency selected an older vulnerable PKCS package. The shared library explicitly selects the .NET 10 servicing version, 10.0.13.
+- The new SQL client dependency selected an older vulnerable PKCS package. The explicit reference and its rationale are in [`Keas.Core.csproj`](../Keas.Core/Keas.Core.csproj).
 - SQL connections now inherit the newer SqlClient encryption default. Azure SQL reads were checked with the upgraded provider; local SQL installations need a trusted server certificate or an explicit development-only connection-string policy.
 
 References: [EF 7 breaking changes](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-7.0/breaking-changes), [EF 8 breaking changes](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-8.0/breaking-changes), [EF 10 breaking changes](https://learn.microsoft.com/en-us/ef/core/what-is-new/ef-core-10.0/breaking-changes), and [ASP.NET 10 cookie redirects](https://learn.microsoft.com/en-us/aspnet/core/breaking-changes/10/cookie-authentication-api-endpoints?view=aspnetcore-10.0).
