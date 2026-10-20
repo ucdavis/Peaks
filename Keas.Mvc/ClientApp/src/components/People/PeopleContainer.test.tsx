@@ -10,29 +10,29 @@ import PeopleContainer from '../People/PeopleContainer';
 let container: Element = null;
 
 // mock out the sub containers, at least for now
-jest.mock('../Access/AccessAssignmentContainer', () => () => {
+vi.mock('../Access/AccessAssignmentContainer', () => ({ default: () => {
   return <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>;
-});
+} }));
 
-jest.mock('../Equipment/EquipmentContainer', () => () => {
+vi.mock('../Equipment/EquipmentContainer', () => ({ default: () => {
   return <div id='EquipmentContainer'>EquipmentContainer</div>;
-});
+} }));
 
-jest.mock('../Keys/KeySerialContainer', () => () => {
+vi.mock('../Keys/KeySerialContainer', () => ({ default: () => {
   return <div id='KeySerialContainer'>KeySerialContainer</div>;
-});
+} }));
 
-jest.mock('../Workstations/WorkstationContainer', () => () => {
+vi.mock('../Workstations/WorkstationContainer', () => ({ default: () => {
   return <div id='WorkstationContainer'>WorkstationContainer</div>;
-});
+} }));
 
-jest.mock('../History/HistoryContainer', () => () => {
+vi.mock('../History/HistoryContainer', () => ({ default: () => {
   return <div id='HistoryContainer'>HistoryContainer</div>;
-});
+} }));
 
-jest.mock('../Documents/DocumentsContainer', () => () => {
+vi.mock('../Documents/DocumentsContainer', () => ({ default: () => {
   return <div id='DocumentsContainer'>DocumentsContainer</div>;
-});
+} }));
 
 beforeEach(() => {
   // setup a DOM element as a render target
@@ -59,7 +59,7 @@ describe('People Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake people
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakePeople));
 
@@ -84,7 +84,7 @@ describe('People Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake people
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakePeople));
 
@@ -108,7 +108,7 @@ describe('People Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake people
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakePeople));
 
@@ -143,7 +143,7 @@ describe('People Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake people
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakePeople));
 
@@ -165,7 +165,7 @@ describe('People Container', () => {
   it('Shows person details', async () => {
     await act(async () => {
       // spy on our context's fetch handler to return fake people
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakePeople));
 

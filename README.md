@@ -14,13 +14,13 @@
 
 # Build and run
 
-Install the .NET SDK selected by [`global.json`](global.json). Use Node.js 20 to match the [CI pipeline](azure-pipelines.yml), with npm 10 or newer as required by the [frontend package](Keas.Mvc/ClientApp/package.json).
+Install the .NET SDK selected by [`global.json`](global.json). Use Node.js 22.18 or newer on Node 22 to match the [CI pipeline](azure-pipelines.yml), with npm 10 or newer as required by the [frontend package](Keas.Mvc/ClientApp/package.json).
 
 With NVM for Windows:
 
 ```sh
-nvm install 20
-nvm use 20
+nvm install 22
+nvm use 22
 ```
 
 Get the application settings from Box and configure the website's user secrets.
@@ -29,12 +29,14 @@ From the repository root, install the frontend dependencies and start the websit
 
 ```sh
 cd Keas.Mvc/ClientApp
-npm install
+npm ci
 cd ..
 dotnet restore
 npm start
 ```
 
-`npm start` runs `dotnet watch run` from `Keas.Mvc`.
+`npm start` runs `dotnet watch run` from `Keas.Mvc`. The development launch profile starts Vite automatically and waits for its readiness. MVC serves the website at https://localhost:44332; Vite serves assets at http://localhost:5179.
+
+See [frontend development](docs/FRONTEND.md) for test commands, asset publishing, configuration and verification.
 
 With Visual Studio, open `Keas.sln` and run `Keas.Mvc` after completing the dependency and secrets setup.

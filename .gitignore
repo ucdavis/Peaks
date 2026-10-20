@@ -307,3 +307,8 @@ __pycache__/
 
 # VS undocumented serviceDependencies files
 **/Properties/serviceDependencies.*
+
+# Generated Vite assets and frontend test output
+Keas.Mvc/wwwroot/vite/
+Keas.Mvc/ClientApp/coverage/
+Keas.Mvc/ClientApp/test-results/

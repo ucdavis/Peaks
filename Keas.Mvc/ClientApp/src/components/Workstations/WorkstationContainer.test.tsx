@@ -7,9 +7,9 @@ import { ISpace } from '../../models/Spaces';
 import { fakeWorkstations } from '../specs/mockData/Workstation';
 import WorkstationContainer from '../Workstations/WorkstationContainer';
 
-jest.mock('../History/HistoryContainer', () => () => {
+vi.mock('../History/HistoryContainer', () => ({ default: () => {
   return <div id='HistoryContainer'>HistoryContainer</div>;
-});
+} }));
 
 let container: Element = null;
 const selectedSpace: ISpace = {
@@ -51,7 +51,7 @@ describe('Workstation Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake workstations
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeWorkstations));
 
@@ -75,7 +75,7 @@ describe('Workstation Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake key workstations
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeWorkstations));
 
@@ -99,7 +99,7 @@ describe('Workstation Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake workstations
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeWorkstations));
 
@@ -132,7 +132,7 @@ describe('Workstation Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake workstations
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeWorkstations));
 
@@ -154,7 +154,7 @@ describe('Workstation Container', () => {
   it('Shows workstation details', async () => {
     await act(async () => {
       // spy on our context's fetch handler to return fake workstations
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeWorkstations));
 

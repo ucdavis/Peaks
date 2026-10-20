@@ -9,17 +9,17 @@ import KeyContainer from '../Keys/KeyContainer';
 
 let container: Element = null;
 
-jest.mock('../Spaces/SpacesContainer', () => () => {
+vi.mock('../Spaces/SpacesContainer', () => ({ default: () => {
   return <div id='SpacesContainer'>SpacesContainer</div>;
-});
+} }));
 
-jest.mock('../Keys/KeySerialContainer', () => () => {
+vi.mock('../Keys/KeySerialContainer', () => ({ default: () => {
   return <div id='KeySerialContainer'>KeySerialContainer</div>;
-});
+} }));
 
-jest.mock('../History/HistoryContainer', () => () => {
+vi.mock('../History/HistoryContainer', () => ({ default: () => {
   return <div id='HistoryContainer'>HistoryContainer</div>;
-});
+} }));
 
 beforeEach(() => {
   // setup a DOM element as a render target
@@ -46,7 +46,7 @@ describe('Key Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake keys
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeKeys));
 
@@ -69,7 +69,7 @@ describe('Key Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake keys
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeKeys));
 
@@ -93,7 +93,7 @@ describe('Key Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake keys
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeKeys));
 
@@ -127,7 +127,7 @@ describe('Key Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake keys
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeKeys));
 
@@ -149,7 +149,7 @@ describe('Key Container', () => {
   it('Shows keys details', async () => {
     await act(async () => {
       // spy on our context's fetch handler to return fake keys
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeKeys));
 

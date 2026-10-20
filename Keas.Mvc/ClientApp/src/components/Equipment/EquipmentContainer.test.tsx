@@ -9,9 +9,9 @@ import EquipmentContainer from '../Equipment/EquipmentContainer';
 
 let container: Element = null;
 
-jest.mock('../History/HistoryContainer', () => () => (
+vi.mock('../History/HistoryContainer', () => ({ default: () => (
   <div id='HistoryContainer'>HistoryContainer</div>
-));
+) }));
 
 beforeEach(() => {
   // setup a DOM element as a render target
@@ -38,7 +38,7 @@ describe('Equipment Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake equipment
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeEquipment));
 
@@ -61,7 +61,7 @@ describe('Equipment Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake equipment
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeEquipment));
 
@@ -85,7 +85,7 @@ describe('Equipment Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake equipment
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeEquipment));
 
@@ -119,7 +119,7 @@ describe('Equipment Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake equipment
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeEquipment));
 
@@ -141,7 +141,7 @@ describe('Equipment Container', () => {
   it('Shows equipment details', async () => {
     await act(async () => {
       // spy on our context's fetch handler to return fake equipment
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeEquipment));
 

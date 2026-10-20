@@ -10,17 +10,17 @@ import SpacesContainer from './SpacesContainer';
 let container: Element = null;
 
 // mock out the sub containers, at least for now
-jest.mock('../Equipment/EquipmentContainer', () => () => {
+vi.mock('../Equipment/EquipmentContainer', () => ({ default: () => {
   return <div id='EquipmentContainer'>EquipmentContainer</div>;
-});
+} }));
 
-jest.mock('../Keys/KeyContainer', () => () => {
+vi.mock('../Keys/KeyContainer', () => ({ default: () => {
   return <div id='KeyContainer'>KeyContainer</div>;
-});
+} }));
 
-jest.mock('../Workstations/WorkstationContainer', () => () => {
+vi.mock('../Workstations/WorkstationContainer', () => ({ default: () => {
   return <div id='WorkstationContainer'>WorkstationContainer</div>;
-});
+} }));
 
 beforeEach(() => {
   // setup a DOM element as a render target
@@ -47,7 +47,7 @@ describe('Space Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake spaces
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeSpaces));
 
@@ -70,7 +70,7 @@ describe('Space Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake spaces
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeSpaces));
 
@@ -106,7 +106,7 @@ describe('Space Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake spaces
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeSpaces));
 
@@ -128,7 +128,7 @@ describe('Space Container', () => {
   it('Shows spaces details', async () => {
     await act(async () => {
       // spy on our context's fetch handler to return fake spaces
-      jest
+      vi
         .spyOn(contextObject, 'fetch')
         .mockImplementation(() => Promise.resolve(fakeSpaces));
 

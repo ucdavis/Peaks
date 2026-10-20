@@ -1,3 +1,4 @@
+import 'vite/modulepreload-polyfill';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { BrowserRouter, Switch } from 'react-router-dom';
@@ -8,6 +9,7 @@ import * as RoutesModule from './pages/assets/routes';
 
 import 'react-toastify/dist/ReactToastify.css';
 import './sass/site.scss';
+
 
 import { Context } from './Context';
 
