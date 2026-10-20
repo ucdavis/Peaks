@@ -38,3 +38,28 @@ npm start
 `npm start` runs `dotnet watch run` from `Keas.Mvc`.
 
 With Visual Studio, open `Keas.sln` and run `Keas.Mvc` after completing the dependency and secrets setup.
+
+## Optional local development login
+
+To bypass CAS locally, enable the login screen with a personal user secret:
+
+```sh
+dotnet user-secrets set "LocalLogin:Enabled" "true" --project Keas.Mvc
+```
+
+Run the app in `Development` and open `/login`. Enter the Kerberos ID or email
+of an existing user in your configured database, or choose **Sign in with CAS**.
+Local login uses that user's current database permissions and does not create
+accounts or grant roles. Peaks has no account-level active flag. Unknown or
+ambiguous identities are rejected. Local sessions log out back to `/login`,
+where you can choose another user; cached permissions are cleared on sign-in
+and logout. CAS sessions keep their normal CAS logout behavior.
+
+The feature is disabled by default and unavailable outside `Development`, even
+if the setting is enabled. Keep development instances bound to localhost because
+anyone who can reach an enabled instance can sign in as an existing user. No
+tracked launch settings need to change. To disable the feature:
+
+```sh
+dotnet user-secrets remove "LocalLogin:Enabled" --project Keas.Mvc
+```
