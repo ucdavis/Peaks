@@ -1,5 +1,5 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# ASP.NET Core
+# Build, test, and package the website and Windows WebJobs.
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
@@ -25,10 +25,10 @@ stages:
             inputs:
               versionSpec: "20.x"
           - task: UseDotNet@2
-            displayName: "Use .NET Core 6.0.407 sdk"
+            displayName: "Use .NET 10 SDK"
             inputs:
               packageType: sdk
-              version: 6.0.407
+              version: 10.0.402
               installationPath: $(Agent.ToolsDirectory)/dotnet
 
           - task: DotNetCoreCLI@2
@@ -75,10 +75,10 @@ stages:
             inputs:
               versionSpec: "20.x"
           - task: UseDotNet@2
-            displayName: "Use .NET Core 6.0.407 sdk"
+            displayName: "Use .NET 10 SDK"
             inputs:
               packageType: sdk
-              version: 6.0.407
+              version: 10.0.402
               installationPath: $(Agent.ToolsDirectory)/dotnet
           - task: DotNetCoreCLI@2
             displayName: "Publish Keas.Mvc"

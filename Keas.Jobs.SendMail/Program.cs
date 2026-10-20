@@ -144,7 +144,7 @@ namespace Keas.Jobs.SendMail
             services.AddOptions();
             services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(
                 Configuration.GetConnectionString("DefaultConnection"),
-                sqlOptions => sqlOptions.CommandTimeout(90)));
+                sqlOptions => sqlOptions.UseCompatibilityLevel(140).CommandTimeout(90)));
 
             services.AddTransient<IEmailService, EmailService>();
             services.AddTransient<IMjmlRenderer, MjmlRenderer>();

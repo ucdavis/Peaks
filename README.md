@@ -3,6 +3,7 @@
 
 [![forthebadge](http://forthebadge.com/images/badges/uses-html.svg)](http://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/contains-technical-debt.svg)](https://forthebadge.com)
+
 # PEAKS (formerly Keas)
 
 **P**eople
@@ -11,38 +12,29 @@
 **K**eys
 **S**pace
 
-# Build + Run
+# Build and run
 
-Have a recent version of NodeJS installed (https://nodejs.org/)
+Install the .NET SDK selected by [`global.json`](global.json). Use Node.js 20 to match the [CI pipeline](azure-pipelines.yml), with npm 10 or newer as required by the [frontend package](Keas.Mvc/ClientApp/package.json).
 
-Have latest version of .Net Core installed (https://www.microsoft.com/net/core)
+With NVM for Windows:
 
-Get the app settings from Box and put them in your secrets location
+```sh
+nvm install 20
+nvm use 20
+```
 
-### [If you don't have visual studio]
-// Go to the Keas.Mvc website directory 
+Get the application settings from Box and configure the website's user secrets.
 
-// first time, or when modules change
+From the repository root, install the frontend dependencies and start the website:
 
-`npm install`
+```sh
+cd Keas.Mvc/ClientApp
+npm install
+cd ..
+dotnet restore
+npm start
+```
 
-`dotnet restore`
+`npm start` runs `dotnet watch run` from `Keas.Mvc`.
 
-// To use NVM for windows
-
-`nvm list available`
-
-`nvm install 18.16.0`
-
-//This is the current version of node we are using
-
-`>=20.0.0`
-Old one:
-`nvm use 18.16.0`
-
-// when you are ready to debug locally
-
-`npm run debug`
-
-### [If you have visual studio]
-// Just open it up and run the project!
+With Visual Studio, open `Keas.sln` and run `Keas.Mvc` after completing the dependency and secrets setup.
