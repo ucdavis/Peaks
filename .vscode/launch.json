@@ -10,7 +10,7 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/Keas.Mvc/bin/Debug/net6/Keas.Mvc.dll",
+      "program": "${workspaceFolder}/Keas.Mvc/bin/Debug/net10.0/Keas.Mvc.dll",
       "args": [],
       "cwd": "${workspaceFolder}/Keas.Mvc",
       "stopAtEntry": false,
@@ -32,7 +32,7 @@
       "request": "launch",
       "preLaunchTask": "buildSendMail",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/Keas.Jobs.SendMail/bin/Debug/net6/Keas.Jobs.SendMail.dll",
+      "program": "${workspaceFolder}/Keas.Jobs.SendMail/bin/Debug/net10.0/Keas.Jobs.SendMail.dll",
       "args": [],
       "cwd": "${workspaceFolder}/Keas.Jobs.SendMail",
       "stopAtEntry": false,
