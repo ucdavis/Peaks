@@ -53,7 +53,8 @@ namespace Keas.Jobs.LivedName
         {
             IServiceCollection services = new ServiceCollection();
             services.AddOptions();
-            services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContextPool<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                        sqlOptions => sqlOptions.UseCompatibilityLevel(140)));
 
             services.Configure<IamAuthSettings>(Configuration.GetSection("Authentication"));
 

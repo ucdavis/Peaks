@@ -15,7 +15,9 @@
 
 Have a recent version of NodeJS installed (https://nodejs.org/)
 
-Have latest version of .Net Core installed (https://www.microsoft.com/net/core)
+Install the .NET 10 SDK selected by `global.json`. The website, libraries, and both Windows WebJobs target .NET 10.
+
+See [the .NET 10 upgrade and release checks](docs/dotnet-10-upgrade.md) for validation, TEST acceptance, and rollback requirements.
 
 Get the app settings from Box and put them in your secrets location
 

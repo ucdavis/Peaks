@@ -86,7 +86,8 @@ namespace Keas.Mvc
             {
                 services.AddDbContextPool<ApplicationDbContext>(o =>
                 {
-                    o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                    o.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
+                        sqlOptions => sqlOptions.UseCompatibilityLevel(140));
 #if DEBUG
                     o.EnableSensitiveDataLogging();
 #endif
@@ -273,7 +274,8 @@ namespace Keas.Mvc
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers(); // map api controllers via attributes - necessary for being picked up by SwaggerGen
+                // Preserve pre-.NET 10 browser redirects to login; XHRs still receive 401/403.
+                endpoints.MapControllers().AllowCookieRedirect(); // map attribute routes for SwaggerGen
 
                 // SPA reqeusts all map to single asset action which injects bootstrapping info into window.App
                 endpoints.MapControllerRoute(
