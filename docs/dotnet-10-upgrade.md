@@ -18,15 +18,15 @@ References: [EF 7 breaking changes](https://learn.microsoft.com/en-us/ef/core/wh
 
 October 20, 2026, macOS ARM64:
 
-| Check | Result |
-| --- | --- |
-| Original .NET 6 Release tests, isolated 6.0.36 runtime | 121 passed, 1 existing skip |
-| .NET 10 solution build | Passed, including both jobs |
-| .NET 10 tests, Release and Debug | 126 passed, 1 existing skip |
-| Frontend tests | 8 suites, 35 tests passed |
-| Website publish including npm install and production build | Passed |
-| Both job publishes | Passed |
-| Read-only EF 10 SQL queries on TEST and production | Parameterized Contains, pending notifications, and expiry queries checked with bounded samples |
+| Check                                                      | Result                                                                                         |
+| ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| Original .NET 6 Release tests, isolated 6.0.36 runtime     | 121 passed, 1 existing skip                                                                    |
+| .NET 10 solution build                                     | Passed, including both jobs                                                                    |
+| .NET 10 tests, Release and Debug                           | 126 passed, 1 existing skip                                                                    |
+| Frontend tests                                             | 8 suites, 35 tests passed                                                                      |
+| Website publish including npm install and production build | Passed                                                                                         |
+| Both job publishes                                         | Passed                                                                                         |
+| Read-only EF 10 SQL queries on TEST and production         | Parameterized Contains, pending notifications, and expiry queries checked with bounded samples |
 
 Commands used for repeatable local checks:
 

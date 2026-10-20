@@ -3,6 +3,7 @@
 
 [![forthebadge](http://forthebadge.com/images/badges/uses-html.svg)](http://forthebadge.com)
 [![forthebadge](https://forthebadge.com/images/badges/contains-technical-debt.svg)](https://forthebadge.com)
+
 # PEAKS (formerly Keas)
 
 **P**eople
@@ -22,7 +23,8 @@ See [the .NET 10 upgrade and release checks](docs/dotnet-10-upgrade.md) for vali
 Get the app settings from Box and put them in your secrets location
 
 ### [If you don't have visual studio]
-// Go to the Keas.Mvc website directory 
+
+// Go to the Keas.Mvc website directory
 
 // first time, or when modules change
 
@@ -47,4 +49,5 @@ Old one:
 `npm run debug`
 
 ### [If you have visual studio]
+
 // Just open it up and run the project!
