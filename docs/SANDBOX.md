@@ -26,11 +26,10 @@ The SQL and HTTP ports bind only to `127.0.0.1`. The image includes no user secr
 ```bash
 docker compose -f .devcontainer/docker-compose.sandbox.yml ps
 docker compose -f .devcontainer/docker-compose.sandbox.yml logs --tail=100 initialize app
-python3 dev/smoke-sandbox.py
 docker compose -f .devcontainer/docker-compose.sandbox.yml down
 ```
 
-`down` keeps data and cookie keys. Rebuild with the original `up --build -d --wait` command after changing source. This is a compiled image with no source mounts or hot reload. The `/login` health check confirms the HTTP process is ready after database initialization; the smoke script additionally checks real login, team authorization, the people API and compiled frontend assets.
+`down` keeps data and cookie keys. Rebuild with the original `up --build -d --wait` command after changing source. This is a compiled image with no source mounts or hot reload. The `/login` health check confirms the HTTP process is ready after database initialization.
 
 To discard only this sandbox's data and cookie keys:
 
@@ -51,14 +50,13 @@ export ConnectionStrings__DefaultConnection="Server=127.0.0.1,${SANDBOX_SQL_PORT
 
 `sql` is SQL Server's reported server name, even when the connection uses a loopback port. Always inspect the generated migration and SQL before applying it. See [database workflow](database/README.md) for existing-database adoption and legacy model/schema differences.
 
-Run the executable SQL tests and future-migration rehearsal:
+Run the SQL integration tests:
 
 ```bash
 export PEAKS_TEST_SQL="$ConnectionStrings__DefaultConnection"
 dotnet test Test -c Release --filter FullyQualifiedName~SqlServerMigrationTests
-python3 dev/verify-migration-workflow.py
 ```
 
-Tests create randomly named databases on the local server and delete only those databases. The rehearsal copies Core and DbTool into a temporary directory, scaffolds a no-change migration, verifies its actual operations are empty, adds a temporary nullable property, then verifies applying and rolling back that migration preserves an existing row. It never edits the application model in this checkout.
+Tests create randomly named databases on the local server and delete only those databases.
 
-The database-backed tests skip when `PEAKS_TEST_SQL` is absent; the model snapshot and explicit-connection checks still run. Run these tests, the rehearsal and the sandbox HTTP smoke test locally. GitHub automation is deferred until test coverage is broader; see [issue #1390](https://github.com/ucdavis/Peaks/issues/1390). The existing Azure pipeline continues running the full server/frontend suite and publishing normally.
+The database-backed tests skip when `PEAKS_TEST_SQL` is absent; the model snapshot and explicit-connection checks still run. Run these tests locally. GitHub automation is deferred until test coverage is broader; see [issue #1390](https://github.com/ucdavis/Peaks/issues/1390). The existing Azure pipeline continues running the full server/frontend suite and publishing normally.
