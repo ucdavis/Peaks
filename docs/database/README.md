@@ -20,8 +20,8 @@ Use .NET SDK from `global.json`; the local tool manifest pins `dotnet-ef` to the
 
 ```bash
 ./Keas.Core/createMigration.sh MeaningfulChangeName
-dotnet ef migrations script --project Keas.Core --startup-project Keas.DbTool -c Release --output /tmp/peaks-migration.sql
-dotnet ef migrations has-pending-model-changes --project Keas.Core --startup-project Keas.DbTool -c Release
+dotnet ef migrations script --project Keas.Core --startup-project Keas.DbTool --configuration Release --output /tmp/peaks-migration.sql
+dotnet ef migrations has-pending-model-changes --project Keas.Core --startup-project Keas.DbTool --configuration Release
 ```
 
 The design-time factory configures SQL Server without a connection. Scaffolding neither starts the app nor reads a deployed connection. Direct `dotnet ef database update` requires an explicit `--connection`. Updates through `updateDatabase.sh` use `ConnectionStrings__DefaultConnection` and require an explicitly named server and database. The script previews the target unless `--apply` is supplied. `--to MigrationId` supports reviewed rollback of later migrations.
