@@ -1,12 +1,15 @@
-namespace Keas.DbTool;
+using System;
+using System.Threading.Tasks;
 
-public static class Program
+namespace Keas.Mvc.Database;
+
+public static class DatabaseCommand
 {
-    public static async Task<int> Main(string[] args)
+    public static async Task<int> RunAsync(string[] args)
     {
-        if (args.Length == 0)
+        if (args.Length == 0 || (args[0] != "migrate" && args[0] != "seed-sandbox"))
         {
-            Console.Error.WriteLine("Usage: Keas.DbTool <migrate|seed-sandbox> [options]. See docs/database/README.md.");
+            Console.Error.WriteLine("Usage: Keas.Mvc database <migrate|seed-sandbox> [options]. See docs/database/README.md.");
             return 2;
         }
         try

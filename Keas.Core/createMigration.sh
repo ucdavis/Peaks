@@ -7,5 +7,5 @@ fi
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT_DIR"
 dotnet tool restore
-dotnet restore Keas.DbTool
-dotnet ef migrations add "$1" --project Keas.Core --startup-project Keas.DbTool --configuration Release
+dotnet restore Keas.Mvc
+dotnet ef migrations add "$1" --project Keas.Core --startup-project Keas.Mvc --configuration Release

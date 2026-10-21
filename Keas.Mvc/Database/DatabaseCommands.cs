@@ -1,8 +1,12 @@
+using System.Collections.Generic;
+using System.Linq;
+using System;
+using System.Threading.Tasks;
 using Keas.Core.Data;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
-namespace Keas.DbTool;
+namespace Keas.Mvc.Database;
 
 public static class DatabaseCommands
 {

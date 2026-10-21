@@ -9,7 +9,7 @@ using Microsoft.Data.SqlClient;
 
 namespace Test.Integration;
 
-// Read-only catalog inspection for baseline regression tests, never shipped in DbTool.
+// Read-only catalog inspection for baseline regression tests, never shipped in the application.
 internal static class SqlServerSchema
 {
     public static async Task<JsonArray> CaptureObjectsAsync(SqlConnection connection, SqlTransaction transaction = null)

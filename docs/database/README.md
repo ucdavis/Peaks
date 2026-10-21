@@ -1,6 +1,6 @@
 # EF migrations
 
-Peaks has one application model and one `ApplicationDbContext`. Migrations and the model snapshot live in `Keas.Core/Migrations`. `Keas.DbTool` runs explicit migrations and seeds disposable sandboxes using that same context. It has no second EF model, web host, startup seeding, or user-secret lookup. One-time existing-database adoption is maintained separately.
+Peaks has one application model and one `ApplicationDbContext`. Migrations and the model snapshot live in `Keas.Core/Migrations`. `Keas.Mvc database` runs explicit migrations and seeds disposable sandboxes using that same context. This command exits before normal web startup, configuration loading, and runtime initialization. It does not start the web host or read user secrets. One-time existing-database adoption is maintained separately.
 
 The baseline preserves the physical schema; the EF snapshot records the application model. They intentionally differ in nullability, mapped columns, relationships and view handling. Review the affected database objects before each future migration. Existing environments retain their historical differences, including TEST's narrower columns, missing notification indexes and untrusted foreign keys. Recording the baseline does not reconcile those differences.
 
@@ -18,13 +18,15 @@ Use .NET SDK from `global.json`; the local tool manifest pins `dotnet-ef` to the
 
 ```bash
 ./Keas.Core/createMigration.sh MeaningfulChangeName
-dotnet ef migrations script --project Keas.Core --startup-project Keas.DbTool --configuration Release --output /tmp/peaks-migration.sql
-dotnet ef migrations has-pending-model-changes --project Keas.Core --startup-project Keas.DbTool --configuration Release
+dotnet ef migrations script --project Keas.Core --startup-project Keas.Mvc --configuration Release --output /tmp/peaks-migration.sql
+dotnet ef migrations has-pending-model-changes --project Keas.Core --startup-project Keas.Mvc --configuration Release
 ```
 
-The design-time factory configures SQL Server without a connection. Scaffolding neither starts the app nor reads a deployed connection. Direct `dotnet ef database update` requires an explicit `--connection`. Updates through `updateDatabase.sh` use `ConnectionStrings__DefaultConnection` and require an explicitly named server and database. The script previews the target unless `--apply` is supplied. `--to MigrationId` supports reviewed rollback of later migrations. Existing-database migrations connect directly to the target and support contained users without access to `master`. Add `--create-database` only when database creation is intended; this explicit path verifies the server through `master` and allows EF to create a missing database. Preview never creates a database, and connection failures never automatically select the creation path.
+The design-time factory configures SQL Server without a connection. Scaffolding neither starts the app nor reads a deployed connection. Direct `dotnet ef database update` requires an explicit `--connection`. Updates through `updateDatabase.sh` invoke `Keas.Mvc database migrate`, use `ConnectionStrings__DefaultConnection` and require an explicitly named server and database. The script previews the target unless `--apply` is supplied. `--to MigrationId` supports reviewed rollback of later migrations. Existing-database migrations connect directly to the target and support contained users without access to `master`. Add `--create-database` only when database creation is intended; this explicit path verifies the server through `master` and allows EF to create a missing database. Preview never creates a database, and connection failures never automatically select the creation path.
 
 EF compares the new model to the snapshot, not to a live database. It cannot discover legacy differences or new changes to unmapped tables, views, procedures and columns. Before approving a future migration, compare its affected live objects to the model's assumptions. Customize operations where legacy differences require it; add new versioned SQL resources for unmapped objects. Never rewrite an already adopted baseline. Use the sandbox to rehearse applying and rolling back each reviewed migration.
+
+The sandbox initializer uses the same published MVC executable with `database migrate` and `database seed-sandbox`. Seeding still requires `PEAKS_SANDBOX=1` and the exact Compose `sql/PeaksSandbox` target. Normal MVC startup does not run either command.
 
 ## Existing databases and rollback
 
@@ -36,6 +38,6 @@ The baseline's `Down` always refuses to run; `updateDatabase.sh --to 0` also ref
 
 ## Schema regression tests
 
-`Test/Fixtures/baseline-schema.json` stores fingerprints of the reviewed catalog captures for fresh baseline creation. The catalog reader and SQL live only in the test project; they are not included in DbTool. Existing-environment adoption tests and TEST-specific fixture differences are preserved with the separate utility. Tests compare all 47 objects, including column types/defaults/nullability, ordered index keys and includes, foreign keys and trust flags, check constraints, and view/procedure definitions. Only JSON property order and line endings are normalized. The fixture records its source revision; do not replace expected fingerprints with unreviewed migration output. A mutation test changes real SQL metadata and module definitions to verify rejection.
+`Test/Fixtures/baseline-schema.json` stores fingerprints of the reviewed catalog captures for fresh baseline creation. The catalog reader and SQL live only in the test project; they are not included in the application. Existing-environment adoption tests and TEST-specific fixture differences are preserved with the separate utility. Tests compare all 47 objects, including column types/defaults/nullability, ordered index keys and includes, foreign keys and trust flags, check constraints, and view/procedure definitions. Only JSON property order and line endings are normalized. The fixture records its source revision; do not replace expected fingerprints with unreviewed migration output. A mutation test changes real SQL metadata and module definitions to verify rejection.
 
 PPS import execution coverage remains deferred in [issue #1390](https://github.com/ucdavis/Peaks/issues/1390).
