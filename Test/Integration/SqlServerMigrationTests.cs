@@ -208,6 +208,140 @@ namespace Test.Integration
             finally { await db.Execute("REVERT"); }
         }
 
+        [SqlServerFact]
+        public async Task MigrateSupportsContainedUsersWithoutMasterAccess()
+        {
+            await using var db = await SandboxDatabase.Create();
+            var containment = await db.Scalar("SELECT value_in_use FROM sys.configurations WHERE name='contained database authentication'");
+            try
+            {
+                await db.Execute($"EXEC sp_configure 'contained database authentication', 1; RECONFIGURE; ALTER DATABASE [{db.Name}] SET CONTAINMENT=PARTIAL;");
+                await db.Execute("CREATE USER ContainedMigrator WITH PASSWORD='FixtureOnly123!'; ALTER ROLE db_owner ADD MEMBER ContainedMigrator;");
+                var builder = new SqlConnectionStringBuilder(db.ConnectionString) { UserID = "ContainedMigrator", Password = "FixtureOnly123!" };
+                var identity = await DatabaseCommands.IdentityAsync(db.Connection);
+                var args = new[] { "migrate", "--server", identity.Server, "--database", db.Name };
+                await DatabaseCommands.RunAsync(builder.ConnectionString, args);
+                Assert.Equal(0, Convert.ToInt32(await db.Scalar("SELECT COUNT(*) FROM sys.tables")));
+                foreach (var wrong in new[]
+                {
+                    new[] { "migrate", "--server", "wrong-server", "--database", db.Name, "--apply" },
+                    new[] { "migrate", "--server", identity.Server, "--database", "wrong-database", "--apply" }
+                })
+                    await Assert.ThrowsAsync<InvalidOperationException>(() => DatabaseCommands.RunAsync(builder.ConnectionString, wrong));
+                await DatabaseCommands.RunAsync(builder.ConnectionString, args.Append("--apply").ToArray());
+                Assert.Equal(DatabaseCommands.BaselineId, await db.Scalar("SELECT MigrationId FROM dbo.__EFMigrationsHistory"));
+                Assert.Equal(41, Convert.ToInt32(await db.Scalar("SELECT COUNT(*) FROM sys.tables WHERE name<>'__EFMigrationsHistory'")));
+                builder.InitialCatalog = "master";
+                await using var master = new SqlConnection(builder.ConnectionString);
+                await Assert.ThrowsAsync<SqlException>(() => master.OpenAsync());
+            }
+            finally
+            {
+                SqlConnection.ClearAllPools();
+                await db.Execute($"DROP USER IF EXISTS ContainedMigrator; ALTER DATABASE [{db.Name}] SET CONTAINMENT=NONE; EXEC sp_configure 'contained database authentication', {containment}; RECONFIGURE;");
+            }
+        }
+
+        [SqlServerFact]
+        public async Task MigrateCreatesDatabaseOnlyWithExplicitOptInAndApply()
+        {
+            await using var db = await SandboxDatabase.Create(createDatabase: false);
+            await using var master = new SqlConnection(new SqlConnectionStringBuilder(db.ConnectionString) { InitialCatalog = "master" }.ConnectionString);
+            await master.OpenAsync();
+            var identity = await DatabaseCommands.IdentityAsync(master);
+            var args = new[] { "migrate", "--server", identity.Server, "--database", db.Name };
+            await Assert.ThrowsAsync<SqlException>(() => DatabaseCommands.RunAsync(db.ConnectionString, args.Append("--apply").ToArray()));
+            await DatabaseCommands.RunAsync(db.ConnectionString, args.Append("--create-database").ToArray());
+            await using var exists = new SqlCommand($"SELECT DB_ID(N'{db.Name}')", master);
+            Assert.Equal(DBNull.Value, await exists.ExecuteScalarAsync());
+            await DatabaseCommands.RunAsync(db.ConnectionString, args.Concat(new[] { "--create-database", "--apply" }).ToArray());
+            SqlConnection.ClearPool(db.Connection); // Discard the cached login failure from the missing-database probe.
+            await db.Connection.OpenAsync();
+            Assert.Equal(DatabaseCommands.BaselineId, await db.Scalar("SELECT MigrationId FROM dbo.__EFMigrationsHistory"));
+        }
+
+        [SqlServerFact]
+        public async Task AdoptionChecksDatabaseAndServerDdlTriggersBeforeCreatingHistory()
+        {
+            foreach (var scope in new[] { "DATABASE", "ALL SERVER" })
+                foreach (var triggerEvent in new[] { "CREATE_TABLE", "DDL_TABLE_EVENTS", "CREATE_VIEW" })
+                {
+                    await using var db = await SandboxDatabase.Create();
+                    await db.Execute("CREATE TABLE dbo.KeepMe (Value int); INSERT dbo.KeepMe VALUES (42);");
+                    var inventory = await db.Capture();
+                    var trigger = "AdoptionGuard_" + Guid.NewGuid().ToString("N");
+                    await db.Execute($"CREATE TRIGGER [{trigger}] ON {scope} FOR {triggerEvent} AS IF DB_NAME()=N'{db.Name}' AND EVENTDATA().value('(/EVENT_INSTANCE/ObjectName)[1]', 'nvarchar(128)')=N'__EFMigrationsHistory' UPDATE dbo.KeepMe SET Value=99;");
+                    try
+                    {
+                        if (triggerEvent != "CREATE_VIEW")
+                        {
+                            foreach (var extra in new[] { Array.Empty<string>(), new[] { "--apply" } })
+                            {
+                                var error = await Assert.ThrowsAsync<InvalidOperationException>(() => db.Command("adopt", inventory, extra));
+                                Assert.Contains(trigger, error.Message);
+                                Assert.Equal(42, Convert.ToInt32(await db.Scalar("SELECT Value FROM dbo.KeepMe")));
+                                Assert.Equal(0, Convert.ToInt32(await db.Scalar("SELECT COUNT(*) FROM sys.tables WHERE name='__EFMigrationsHistory'")));
+                            }
+                            await db.Execute($"DISABLE TRIGGER [{trigger}] ON {scope}");
+                        }
+                        await db.Command("adopt", inventory);
+                        await db.Command("adopt", inventory, "--apply");
+                        Assert.Equal(42, Convert.ToInt32(await db.Scalar("SELECT Value FROM dbo.KeepMe")));
+                        Assert.Equal(DatabaseCommands.BaselineId, await db.Scalar("SELECT MigrationId FROM dbo.__EFMigrationsHistory"));
+                        // An enabled CREATE_TABLE trigger cannot fire when history already exists.
+                        await db.Execute($"ENABLE TRIGGER [{trigger}] ON {scope}");
+                        await db.Command("adopt", inventory, "--apply");
+                        await db.Command("unadopt", inventory, "--apply");
+                        Assert.Equal(42, Convert.ToInt32(await db.Scalar("SELECT Value FROM dbo.KeepMe")));
+                    }
+                    finally { await db.Execute($"DROP TRIGGER [{trigger}] ON {scope}"); }
+                }
+        }
+
+        [SqlServerFact]
+        public async Task AdoptionRequiresVisibilityOfServerDdlTriggers()
+        {
+            await using var db = await SandboxDatabase.Create();
+            await db.Execute("CREATE TABLE dbo.KeepMe (Value int); INSERT dbo.KeepMe VALUES (42);");
+            var inventory = await db.Capture();
+            var login = "AdoptionUser_" + Guid.NewGuid().ToString("N");
+            var trigger = "AdoptionGuard_" + Guid.NewGuid().ToString("N");
+            await db.Execute($"CREATE LOGIN [{login}] WITH PASSWORD='FixtureOnly123!'; CREATE USER [{login}] FOR LOGIN [{login}]; ALTER ROLE db_owner ADD MEMBER [{login}];");
+            try
+            {
+                await db.Execute($"CREATE TRIGGER [{trigger}] ON ALL SERVER FOR CREATE_TABLE AS IF DB_NAME()=N'{db.Name}' UPDATE dbo.KeepMe SET Value=99;");
+                try
+                {
+                    var limited = new SqlConnectionStringBuilder(db.ConnectionString) { UserID = login, Password = "FixtureOnly123!" }.ConnectionString;
+                    var identity = await DatabaseCommands.IdentityAsync(db.Connection);
+                    var args = new[] { "adopt", "--schema", inventory, "--server", identity.Server, "--database", db.Name };
+                    foreach (var extra in new[] { Array.Empty<string>(), new[] { "--apply" } })
+                    {
+                        var error = await Assert.ThrowsAsync<InvalidOperationException>(() => DatabaseCommands.RunAsync(limited, args.Concat(extra).ToArray()));
+                        Assert.Contains("VIEW ANY DEFINITION", error.Message);
+                    }
+                    await using (var master = new SqlConnection(new SqlConnectionStringBuilder(db.ConnectionString) { InitialCatalog = "master" }.ConnectionString))
+                    {
+                        await master.OpenAsync();
+                        await using var grant = new SqlCommand($"GRANT VIEW ANY DEFINITION TO [{login}]", master);
+                        await grant.ExecuteNonQueryAsync();
+                    }
+                    var visibleError = await Assert.ThrowsAsync<InvalidOperationException>(() => DatabaseCommands.RunAsync(limited, args.Append("--apply").ToArray()));
+                    Assert.Contains(trigger, visibleError.Message);
+                    await db.Execute($"DISABLE TRIGGER [{trigger}] ON ALL SERVER");
+                    await DatabaseCommands.RunAsync(limited, args.Append("--apply").ToArray());
+                    Assert.Equal(42, Convert.ToInt32(await db.Scalar("SELECT Value FROM dbo.KeepMe")));
+                    Assert.Equal(DatabaseCommands.BaselineId, await db.Scalar("SELECT MigrationId FROM dbo.__EFMigrationsHistory"));
+                }
+                finally { await db.Execute($"DROP TRIGGER [{trigger}] ON ALL SERVER"); }
+            }
+            finally
+            {
+                SqlConnection.ClearAllPools();
+                await db.Execute($"DROP USER [{login}]; DROP LOGIN [{login}];");
+            }
+        }
+
         private static async Task SeedBehavior(ApplicationDbContext context)
         {
             var team = new Team { Name = "Regression", Slug = "regression" };
@@ -291,7 +425,7 @@ namespace Test.Integration
             public SqlConnection Connection { get; private set; }
             public ApplicationDbContext Context { get; private set; }
             private SandboxDatabase(string master) { Master = master; System.IO.Directory.CreateDirectory(Directory); }
-            public static async Task<SandboxDatabase> Create()
+            public static async Task<SandboxDatabase> Create(bool createDatabase = true)
             {
                 var builder = new SqlConnectionStringBuilder(Environment.GetEnvironmentVariable("PEAKS_TEST_SQL"));
                 var host = builder.DataSource.Split(',')[0];
@@ -299,16 +433,17 @@ namespace Test.Integration
                     throw new InvalidOperationException("Migration tests only allow disposable loopback/Compose SQL Server.");
                 builder.InitialCatalog = "master";
                 var db = new SandboxDatabase(builder.ConnectionString);
-                await using (var master = new SqlConnection(db.Master))
-                {
-                    await master.OpenAsync();
-                    await using var create = new SqlCommand($"CREATE DATABASE [{db.Name}] COLLATE SQL_Latin1_General_CP1_CI_AS", master);
-                    await create.ExecuteNonQueryAsync();
-                }
+                if (createDatabase)
+                    await using (var master = new SqlConnection(db.Master))
+                    {
+                        await master.OpenAsync();
+                        await using var create = new SqlCommand($"CREATE DATABASE [{db.Name}] COLLATE SQL_Latin1_General_CP1_CI_AS", master);
+                        await create.ExecuteNonQueryAsync();
+                    }
                 builder.InitialCatalog = db.Name;
                 db.ConnectionString = builder.ConnectionString;
                 db.Connection = new SqlConnection(db.ConnectionString);
-                await db.Connection.OpenAsync();
+                if (createDatabase) await db.Connection.OpenAsync();
                 db.Context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
                     .UseSqlServer(builder.ConnectionString, sql => sql.UseCompatibilityLevel(140)).Options);
                 return db;
@@ -342,7 +477,7 @@ namespace Test.Integration
                 SqlConnection.ClearAllPools();
                 await using var master = new SqlConnection(Master);
                 await master.OpenAsync();
-                await using var drop = new SqlCommand($"ALTER DATABASE [{Name}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE [{Name}];", master);
+                await using var drop = new SqlCommand($"IF DB_ID(N'{Name}') IS NOT NULL BEGIN ALTER DATABASE [{Name}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE [{Name}]; END", master);
                 await drop.ExecuteNonQueryAsync();
                 System.IO.Directory.Delete(Directory, true);
             }

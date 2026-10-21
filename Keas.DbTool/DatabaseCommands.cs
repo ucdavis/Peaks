@@ -20,7 +20,7 @@ public static class DatabaseCommands
         var options = new Dictionary<string, string>(StringComparer.Ordinal);
         for (var i = 1; i < args.Length; i++)
         {
-            if (args[i] == "--apply") options.Add(args[i], "true");
+            if (args[i] is "--apply" or "--create-database") options.Add(args[i], "true");
             else if (args[i].StartsWith("--", StringComparison.Ordinal) && i + 1 < args.Length)
                 options.Add(args[i], args[++i]);
             else throw new InvalidOperationException("Invalid command arguments.");
@@ -33,7 +33,7 @@ public static class DatabaseCommands
             "verify" => new[] { "--schema", "--server", "--database" },
             "adopt" => new[] { "--schema", "--server", "--database", "--apply" },
             "unadopt" => new[] { "--schema", "--server", "--database", "--apply" },
-            "migrate" => new[] { "--server", "--database", "--to", "--apply" },
+            "migrate" => new[] { "--server", "--database", "--to", "--apply", "--create-database" },
             _ => throw new InvalidOperationException("Unknown database command.")
         };
         if (options.Keys.Except(allowed).Any()) throw new InvalidOperationException("Unknown option for this command.");
@@ -43,14 +43,18 @@ public static class DatabaseCommands
         {
             var expectedServer = Required("--server");
             var expectedDatabase = Required("--database");
-            // A missing database is allowed only for explicit creation on the named server.
-            var master = new SqlConnectionStringBuilder(connectionString) { InitialCatalog = "master" };
-            await using (var server = new SqlConnection(master.ConnectionString))
+            var target = new SqlConnectionStringBuilder(connectionString);
+            if (!string.Equals(target.InitialCatalog, expectedDatabase, StringComparison.Ordinal))
+                throw new InvalidOperationException("Target identity differs from --server/--database. No migrations applied.");
+            // Existing databases need no master login. Creation is an explicit, separate path.
+            var createDatabase = options.ContainsKey("--create-database");
+            if (createDatabase) target.InitialCatalog = "master";
+            await using (var targetConnection = new SqlConnection(target.ConnectionString))
             {
-                await server.OpenAsync();
-                var identity = await IdentityAsync(server);
+                await targetConnection.OpenAsync();
+                var identity = await IdentityAsync(targetConnection);
                 if (!string.Equals(identity.Server, expectedServer, StringComparison.OrdinalIgnoreCase)
-                    || !string.Equals(new SqlConnectionStringBuilder(connectionString).InitialCatalog, expectedDatabase, StringComparison.Ordinal))
+                    || !string.Equals(identity.Database, createDatabase ? "master" : expectedDatabase, StringComparison.Ordinal))
                     throw new InvalidOperationException("Target identity differs from --server/--database. No migrations applied.");
             }
             if (options.GetValueOrDefault("--to") == "0")
@@ -106,6 +110,7 @@ public static class DatabaseCommands
         var historyExists = Convert.ToInt32(await ScalarAsync(connection,
             "SELECT COUNT(*) FROM sys.tables WHERE object_id=OBJECT_ID(N'dbo.__EFMigrationsHistory')", transaction)) == 1;
         if (historyExists) await ValidateHistoryAsync(connection, transaction);
+        else if (command == "adopt") await ValidateHistoryCreationAsync(connection, transaction);
         if (command == "verify")
         {
             await transaction.RollbackAsync();
@@ -200,6 +205,32 @@ public static class DatabaseCommands
             }
         }
         return differences;
+    }
+
+    private static async Task ValidateHistoryCreationAsync(SqlConnection connection, SqlTransaction transaction)
+    {
+        // Event-group subscriptions are expanded into individual events in these catalogs.
+        var databaseTrigger = await ScalarAsync(connection, """
+            SELECT TOP (1) t.name FROM sys.triggers t
+            JOIN sys.trigger_events e ON e.object_id=t.object_id
+            WHERE t.parent_class=0 AND t.is_disabled=0 AND e.type_desc=N'CREATE_TABLE'
+            ORDER BY t.name
+            """, transaction);
+        if (databaseTrigger is string databaseTriggerName)
+            throw new InvalidOperationException($"Enabled database CREATE_TABLE trigger '{databaseTriggerName}' prevents history-only adoption.");
+
+        // Azure SQL Database has no server-scoped triggers. SQL Server and MI do.
+        if (Convert.ToInt32(await ScalarAsync(connection, "SELECT SERVERPROPERTY('EngineEdition')", transaction)) == 5) return;
+        if (Convert.ToInt32(await ScalarAsync(connection, "SELECT COALESCE(HAS_PERMS_BY_NAME(NULL,NULL,'VIEW ANY DEFINITION'),0)", transaction)) != 1)
+            throw new InvalidOperationException("Server VIEW ANY DEFINITION permission is required to check DDL triggers before creating migration history.");
+        var serverTrigger = await ScalarAsync(connection, """
+            SELECT TOP (1) t.name FROM sys.server_triggers t
+            JOIN sys.server_trigger_events e ON e.object_id=t.object_id
+            WHERE t.is_disabled=0 AND e.type_desc=N'CREATE_TABLE'
+            ORDER BY t.name
+            """, transaction);
+        if (serverTrigger is string serverTriggerName)
+            throw new InvalidOperationException($"Enabled server CREATE_TABLE trigger '{serverTriggerName}' prevents history-only adoption.");
     }
 
     private static async Task ValidateHistoryAsync(SqlConnection connection, SqlTransaction transaction)

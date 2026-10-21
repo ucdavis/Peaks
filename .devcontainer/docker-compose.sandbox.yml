@@ -34,7 +34,7 @@ services:
       PEAKS_SANDBOX: "1"
     entrypoint: ["/bin/sh", "-c"]
     command:
-      - dotnet /app/dbtool/Keas.DbTool.dll migrate --server sql --database PeaksSandbox --apply && dotnet /app/dbtool/Keas.DbTool.dll seed-sandbox
+      - dotnet /app/dbtool/Keas.DbTool.dll migrate --server sql --database PeaksSandbox --create-database --apply && dotnet /app/dbtool/Keas.DbTool.dll seed-sandbox
     depends_on:
       sql:
         condition: service_healthy
