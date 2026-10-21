@@ -61,4 +61,4 @@ python3 dev/verify-migration-workflow.py
 
 Tests create randomly named databases on the local server and delete only those databases. The rehearsal copies Core and DbTool into a temporary directory, scaffolds a no-change migration, verifies its actual operations are empty, adds a temporary nullable property, then verifies applying and rolling back that migration preserves an existing row. It never edits the application model in this checkout.
 
-The SQL tests skip when `PEAKS_TEST_SQL` is absent. The GitHub migration workflow supplies a disposable SQL Server and requires these tests, the rehearsal and the sandbox HTTP smoke test. The existing Azure pipeline continues running the full server/frontend suite and publishing normally.
+The database-backed tests skip when `PEAKS_TEST_SQL` is absent; the model snapshot and explicit-connection checks still run. The GitHub migration workflow supplies a disposable SQL Server and requires these tests, the rehearsal and the sandbox HTTP smoke test. The existing Azure pipeline continues running the full server/frontend suite and publishing normally.

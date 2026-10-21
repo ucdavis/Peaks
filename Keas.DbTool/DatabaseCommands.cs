@@ -76,8 +76,10 @@ public static class DatabaseCommands
             var objects = await CaptureObjectsAsync(connection);
             var inventory = new JsonObject
             {
-                ["formatVersion"] = 1, ["server"] = actualIdentity.Server,
-                ["database"] = actualIdentity.Database, ["capturedAtUtc"] = DateTimeOffset.UtcNow.ToString("O"),
+                ["formatVersion"] = 1,
+                ["server"] = actualIdentity.Server,
+                ["database"] = actualIdentity.Database,
+                ["capturedAtUtc"] = DateTimeOffset.UtcNow.ToString("O"),
                 ["objects"] = objects
             };
             await File.WriteAllTextAsync(Required("--output"), inventory.ToJsonString(JsonOptions) + "\n");
