@@ -48,7 +48,7 @@ export ConnectionStrings__DefaultConnection="Server=127.0.0.1,${SANDBOX_SQL_PORT
 ./Keas.Core/updateDatabase.sh --server sql --database PeaksSandbox --apply
 ```
 
-`sql` is SQL Server's reported server name, even when the connection uses a loopback port. Always inspect the generated migration and SQL before applying it. See [database workflow](database/README.md) for existing-database adoption and legacy model/schema differences.
+`sql` is SQL Server's reported server name, even when the connection uses a loopback port. Always inspect the generated migration and SQL before applying it. See [database workflow](database/README.md) for migration safeguards, legacy model/schema differences, and the separate one-time adoption prerequisite.
 
 Run the SQL integration tests:
 

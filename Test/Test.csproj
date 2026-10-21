@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Fixtures\catalog.sql" LogicalName="Test.catalog.sql" />
     <None Update="Fixtures\*.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="appsettings.test.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

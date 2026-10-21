@@ -23,7 +23,7 @@ export SANDBOX_SQL_PORT=14339
 docker compose -f .devcontainer/docker-compose.sandbox.yml up --build -d --wait
 ```
 
-Open <http://localhost:5285/login> and enter `sandbox-admin`. Use a unique project name and ports for each worktree. See [sandbox setup, reset and tests](docs/SANDBOX.md), and [EF migrations and adoption](docs/database/README.md).
+Open <http://localhost:5285/login> and enter `sandbox-admin`. Use a unique project name and ports for each worktree. See [sandbox setup, reset and tests](docs/SANDBOX.md), and [EF migration workflow](docs/database/README.md).
 
 # Build and run
 

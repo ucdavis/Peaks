@@ -1,6 +1,6 @@
 {
   "source": "Reviewed catalog captures at commit 803ae4880de49b2e68e83c76ac251cfd5388e256, excluding backup tables and the Azure automatic index from fresh creation.",
-  "fingerprint": "SHA-256 of each complete catalog object as compact UTF-8 JSON: ordinal property order, original array order, LF line endings. TEST contains only overrides. Do not regenerate from migration output.",
+  "fingerprint": "SHA-256 of each complete catalog object as compact UTF-8 JSON: ordinal property order, original array order, LF line endings. Do not regenerate from migration output.",
   "baseline": {
     "dbo.Access": "58A976EDFBC19CBE1A44EA3E39ABBD8DA2EB5AFA1958E4ABD1CDB4461E2698A5",
     "dbo.AccessAssignments": "B37F3D1773D8C5E18FCA72ACCB65E2AB31294D560E439384968F8C2FFE94B9D3",
@@ -49,33 +49,5 @@
     "dbo.vRooms": "242E99CBFE461EF91B06EE57D77EDB352A41B7423400974AB21F951509907E0F",
     "dbo.vSpaceRooms": "A80C3EE429B13474FBF4DBCDD03D0F7BF5E02AD62C125D192EEEB534B82077AC",
     "dbo.vSpaces": "3E80078F1F7533A51CA24209F843B55FFB449084E1EF22D657165971F761F51C"
-  },
-  "testOverrides": {
-    "dbo.DeptSpace": "F81B681EC17C8539D26157A3289420E4251BA63A48695CDD44823B912A1B75C7",
-    "dbo.FISOrgs": "2D93E3481C04D9FFC44D3A630083242CC7F3ECBFB929BE5C152F7F44C170B10B",
-    "dbo.Histories": "15804AF7F74DF3363F26D326B6AA5E17EB15A963088C859A5D85157A36A6D093",
-    "dbo.KeySerialAssignments": "533B668D09DD57303ECCAE6F7055F41B88651139153FB3246745777C963FA5D0",
-    "dbo.KeySerials": "85FC0810EFA34D2225D79B92BEDE207443A8544FC66FBB64BA1EDF0EBDC8A755",
-    "dbo.KeyXSpaces": "B4530D3B4754D3D3A87CD5E8CCB5661E2838F51A2E31BDD948235A3C0D6BC2F2",
-    "dbo.Keys": "6D3DF6EF0ACA8B1378D98BD0B20B9D58CA2945E5F08DFD9C8C7EEF9F54595569",
-    "dbo.Notifications": "0D63F846A765BF228ACB755E4A16EA721DDC03182E57FDE3E54B986E24EECD41"
-  },
-  "untrustedTestForeignKeys": {
-    "Histories": [
-      "FK_Histories_Access_AccessId",
-      "FK_Histories_Equipment_EquipmentId",
-      "FK_Histories_Keys_KeyId",
-      "FK_Histories_KeySerials_KeySerialId",
-      "FK_Histories_Users_ActorId",
-      "FK_Histories_Workstations_WorkstationId"
-    ],
-    "Keys": ["FK_Keys_Teams_TeamId"],
-    "KeySerialAssignments": [
-      "FK_KeySerialAssignments_KeySerial_KeySerialId",
-      "FK_KeySerialAssignments_Users_RequestedById"
-    ],
-    "KeySerials": ["FK_KeySerials_Keys_KeyId", "FK_KeySerials_Teams_TeamId"],
-    "KeyXSpaces": ["FK_KeyXSpaces_Keys_KeyId"],
-    "Notifications": ["FK_Notifications_Histories_HistoryId"]
   }
 }

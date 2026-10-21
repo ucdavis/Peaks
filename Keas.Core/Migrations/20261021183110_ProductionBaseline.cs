@@ -17,7 +17,7 @@ namespace Keas.Core.Migrations
                 IF EXISTS (SELECT 1 FROM sys.objects WHERE is_ms_shipped=0
                     AND type IN ('U','V','P','FN','IF','TF','TR','SO')
                     AND NOT (schema_id=SCHEMA_ID('dbo') AND name='__EFMigrationsHistory'))
-                    THROW 51000, 'Existing schema detected. Do not run the creation baseline here. Verify and adopt with Keas.DbTool and the approved environment inventory.', 1;
+                    THROW 51000, 'Existing schema detected. Do not run the creation baseline here. Verify and adopt with the separate baseline-adoption utility and the approved environment inventory.', 1;
                 IF CONVERT(nvarchar(128),DATABASEPROPERTYEX(DB_NAME(),'Collation')) <> N'SQL_Latin1_General_CP1_CI_AS'
                     THROW 51000, 'Fresh Peaks databases require SQL_Latin1_General_CP1_CI_AS collation.', 1;
                 """);
@@ -29,7 +29,7 @@ namespace Keas.Core.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            throw new InvalidOperationException("The baseline cannot drop application objects. Use guarded unadopt for migration history, or reset the disposable sandbox volume.");
+            throw new InvalidOperationException("The baseline cannot drop application objects. Use the separate baseline-adoption utility for migration history, or reset the disposable sandbox volume.");
         }
     }
 }

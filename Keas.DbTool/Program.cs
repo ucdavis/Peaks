@@ -1,6 +1,3 @@
-using Keas.Core.Data;
-using Microsoft.EntityFrameworkCore;
-
 namespace Keas.DbTool;
 
 public static class Program
@@ -9,7 +6,7 @@ public static class Program
     {
         if (args.Length == 0)
         {
-            Console.Error.WriteLine("Usage: Keas.DbTool <capture|verify|adopt|unadopt|migrate> [options]. See docs/database/README.md.");
+            Console.Error.WriteLine("Usage: Keas.DbTool <migrate|seed-sandbox> [options]. See docs/database/README.md.");
             return 2;
         }
         try
