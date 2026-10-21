@@ -57,7 +57,7 @@ try {
     using var cmd = context.Database.GetDbConnection().CreateCommand();
     cmd.CommandText = "INSERT dbo.Teams (Name,Slug,MigrationProbe) VALUES ('Keep me','keep-me',17); SELECT MigrationProbe FROM dbo.Teams WHERE Slug='keep-me'";
     if (Convert.ToInt32(await cmd.ExecuteScalarAsync()) != 17) throw new Exception("Additive migration did not persist the new value.");
-    await context.GetService<IMigrator>().MigrateAsync("20261021183110_ProductionBaseline");
+    await context.GetService<IMigrator>().MigrateAsync(migrations.Migrations.Keys.Reverse().Skip(1).First());
     cmd.CommandText = "SELECT CASE WHEN COL_LENGTH('dbo.Teams','MigrationProbe') IS NULL AND (SELECT COUNT(*) FROM dbo.Teams WHERE Slug='keep-me')=1 THEN 1 ELSE 0 END";
     if (Convert.ToInt32(await cmd.ExecuteScalarAsync()) != 1) throw new Exception("Rollback failed to preserve existing data or remove the new column.");
 } finally {

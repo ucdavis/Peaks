@@ -1,4 +1,3 @@
-using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -10,9 +9,8 @@ namespace Keas.Core.Data
     {
         public ApplicationDbContext CreateDbContext(string[] args)
         {
-            const string connection = "Server=localhost;Database=PeaksMigrationDesign;Integrated Security=True;TrustServerCertificate=True";
             var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseSqlServer(connection, sql => sql.UseCompatibilityLevel(140))
+                .UseSqlServer(sql => sql.UseCompatibilityLevel(140))
                 .Options;
             return new ApplicationDbContext(options);
         }

@@ -24,7 +24,7 @@ dotnet ef migrations script --project Keas.Core --startup-project Keas.DbTool -c
 dotnet ef migrations has-pending-model-changes --project Keas.Core --startup-project Keas.DbTool -c Release
 ```
 
-The design-time factory always uses a dummy local connection. Scaffolding neither starts the app nor reads a deployed connection. Actual updates use `ConnectionStrings__DefaultConnection` and require an explicitly named server and database. `updateDatabase.sh` previews the target unless `--apply` is supplied. `--to MigrationId` supports reviewed rollback of later migrations.
+The design-time factory configures SQL Server without a connection. Scaffolding neither starts the app nor reads a deployed connection. Direct `dotnet ef database update` requires an explicit `--connection`. Updates through `updateDatabase.sh` use `ConnectionStrings__DefaultConnection` and require an explicitly named server and database. The script previews the target unless `--apply` is supplied. `--to MigrationId` supports reviewed rollback of later migrations.
 
 EF compares the new model to the snapshot, not to a live database. It cannot discover legacy differences or new changes to unmapped tables, views, procedures and columns. Before approving a future migration, compare its affected live objects to the model's assumptions. Customize operations where legacy differences require it; add new versioned SQL resources for unmapped objects. Never rewrite an already adopted baseline. The sandbox tests prove the unchanged model generates no operations and an additive model change can be applied and rolled back.
 
@@ -72,3 +72,5 @@ The October 21 read-only checks found 2,371 Documents, no null/missing Person re
 Of 42,070 PersonNotifications, 106 referenced missing People. Of those, 102 had Pending set, but none had both Pending and a nonempty recipient email. Their saved person name/email and history remain intact. Team navigation on notifications and PPS departments is retained even where physical FKs are absent. Notifications has about 2.52 million rows; attempts to verify all Team references timed out. That data-integrity question remains unresolved and adoption does not add a Team FK or claim to validate it.
 
 These counts are historical evidence, not live assertions or fresh data guarantees. Behavior-affecting reconciliation remains separate work.
+
+PPS import regression coverage through `IdentityService.BulkLoadPeople` is explicitly deferred for this change. The SQL tests check PPS department navigation loading, not import execution, inactive-person reactivation, or import notification persistence.

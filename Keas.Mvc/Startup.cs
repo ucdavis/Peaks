@@ -155,6 +155,10 @@ namespace Keas.Mvc
             //Added for Email Template View Engine
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
+            services.Configure<CookieTempDataProviderOptions>(options =>
+            {
+                if (!string.IsNullOrEmpty(localCookieSuffix)) options.Cookie.Name = ".Peaks.TempData." + localCookieSuffix;
+            });
             services.Configure<SparkpostSettings>(Configuration.GetSection("Sparkpost"));
 
             // Used by dynamic scripts/styles loader

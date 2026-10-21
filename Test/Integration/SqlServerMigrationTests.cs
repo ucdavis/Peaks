@@ -32,14 +32,23 @@ namespace Test.Integration
         {
             using var context = new ApplicationDbContextFactory().CreateDbContext(Array.Empty<string>());
             Assert.False(context.Database.HasPendingModelChanges());
-            Assert.Equal(new[] { DatabaseCommands.BaselineId }, context.Database.GetMigrations());
+            Assert.Equal(DatabaseCommands.BaselineId, context.Database.GetMigrations().First());
+        }
+
+        [Fact]
+        public async Task DesignTimeContextRequiresAnExplicitConnection()
+        {
+            await using var context = new ApplicationDbContextFactory().CreateDbContext(Array.Empty<string>());
+            Assert.True(context.Database.IsSqlServer());
+            Assert.Null(context.Database.GetConnectionString());
+            await Assert.ThrowsAsync<InvalidOperationException>(() => context.Database.OpenConnectionAsync());
         }
 
         [SqlServerFact]
         public async Task FreshCreationMatchesProductionSchemaAndCannotDropBaseline()
         {
             await using var db = await SandboxDatabase.Create();
-            await db.Context.Database.MigrateAsync();
+            await db.Context.Database.MigrateAsync(DatabaseCommands.BaselineId);
             var expected = JsonNode.Parse(await File.ReadAllTextAsync(InventoryPath("production")))["objects"].AsArray();
             foreach (var backup in expected.Where(o => o["name"].GetValue<string>().EndsWith("_20250421_bak", StringComparison.Ordinal)).ToArray())
                 expected.Remove(backup);
@@ -55,7 +64,7 @@ namespace Test.Integration
         public async Task IdempotentSqlScriptCreatesSchemaAndCanBeRepeated()
         {
             await using var db = await SandboxDatabase.Create();
-            var script = db.Context.GetService<IMigrator>().GenerateScript(options: MigrationsSqlGenerationOptions.Idempotent);
+            var script = db.Context.GetService<IMigrator>().GenerateScript(toMigration: DatabaseCommands.BaselineId, options: MigrationsSqlGenerationOptions.Idempotent);
             for (var run = 0; run < 2; run++)
             {
                 foreach (var batch in SqlBatches(script))
@@ -71,7 +80,7 @@ namespace Test.Integration
             foreach (var testShape in new[] { false, true })
             {
                 await using var db = await SandboxDatabase.Create();
-                await db.Context.Database.MigrateAsync();
+                await db.Context.Database.MigrateAsync(DatabaseCommands.BaselineId);
                 if (testShape)
                 {
                     await db.Execute("ALTER TABLE dbo.DeptSpace DROP COLUMN Room_Share_Station_Count, Room_Name; ALTER TABLE dbo.FISOrgs ALTER COLUMN OrgCode nvarchar(4) NOT NULL; DROP INDEX IX_Notifications_Pending_UserId ON dbo.Notifications; DROP INDEX IX_Notifications_Team_DateCreated ON dbo.Notifications;");
@@ -84,7 +93,22 @@ namespace Test.Integration
                 }
                 else
                     await db.Execute("CREATE TABLE dbo.Bldg_20250421_bak (Marker int NOT NULL); INSERT dbo.Bldg_20250421_bak VALUES (42);");
-                await SeedBehavior(db.Context);
+                await db.Execute("""
+                    INSERT dbo.Teams (Name,Slug) VALUES ('Regression','regression');
+                    DECLARE @team int = SCOPE_IDENTITY();
+                    INSERT dbo.Users (Id,FirstName,LastName,Email) VALUES ('fixture','Fixture','User','fixture@example.test');
+                    INSERT dbo.People (FirstName,LastName,Email,TeamId,Active) VALUES
+                        ('Active','Person','active@example.test',@team,1),
+                        ('Inactive','Person','inactive@example.test',@team,0);
+                    INSERT dbo.Documents (Name,TeamId,PersonId,EnvelopeId,TemplateId,Status,CreatedAt,Active)
+                        SELECT FirstName,@team,Id,'fixture','fixture','created',SYSUTCDATETIME(),1 FROM dbo.People;
+                    INSERT dbo.PersonNotifications (TeamId,PersonId,PersonName,PersonEmail,NotificationEmail,Action,ActorId,ActorName,Pending,ActionDate)
+                        VALUES (@team,2147483647,'Historical person','past@example.test','','Added','fixture','Fixture User',1,SYSUTCDATETIME());
+                    INSERT dbo.Histories (Description,ActorId,ActedDate) VALUES ('Fixture history','fixture',SYSUTCDATETIME());
+                    DECLARE @history int = SCOPE_IDENTITY();
+                    INSERT dbo.Notifications (TeamId,UserId,HistoryId,Pending,DateTimeCreated) VALUES (@team,'fixture',@history,1,SYSUTCDATETIME());
+                    INSERT dbo.TeamPpsDepartments (TeamId,PpsDepartmentCode,DepartmentName) VALUES (@team,'ABCDEF','Fixture department');
+                    """);
                 await db.Execute("DROP TABLE dbo.__EFMigrationsHistory;");
                 var inventory = await db.Capture();
                 var before = await db.AllRows();
@@ -92,11 +116,10 @@ namespace Test.Integration
                 Assert.Equal(0, Convert.ToInt32(await db.Scalar("SELECT COUNT(*) FROM sys.tables WHERE name='__EFMigrationsHistory'")));
                 await db.Command("adopt", inventory, "--apply");
                 await db.Command("adopt", inventory, "--apply");
-                await db.Context.Database.MigrateAsync(); // no pending baseline after adoption
+                await db.Context.Database.MigrateAsync(DatabaseCommands.BaselineId);
                 Assert.Equal(before, await db.AllRows());
                 Assert.Empty(DatabaseCommands.Differences(JsonNode.Parse(await File.ReadAllTextAsync(inventory))["objects"].AsArray(), await DatabaseCommands.CaptureObjectsAsync(db.Connection)));
                 Assert.Equal(1, Convert.ToInt32(await db.Scalar("SELECT COUNT(*) FROM dbo.__EFMigrationsHistory")));
-                await AssertBehavior(db.Context);
                 await db.Execute("INSERT dbo.__EFMigrationsHistory VALUES ('20990101000000_Future', '10.0.13')");
                 await Assert.ThrowsAsync<InvalidOperationException>(() => db.Command("unadopt", inventory, "--apply"));
                 await db.Execute("DELETE dbo.__EFMigrationsHistory WHERE MigrationId='20990101000000_Future'");
@@ -109,11 +132,20 @@ namespace Test.Integration
         }
 
         [SqlServerFact]
+        public async Task CurrentSchemaPreservesDocumentVisibilityAndNotificationTeamLoading()
+        {
+            await using var db = await SandboxDatabase.Create();
+            await db.Context.Database.MigrateAsync();
+            await SeedBehavior(db.Context);
+            await AssertBehavior(db.Context);
+        }
+
+        [SqlServerFact]
         public async Task CreationRefusesAnExistingUnregisteredDatabase()
         {
             await using var db = await SandboxDatabase.Create();
             await db.Execute("CREATE TABLE dbo.KeepMe (Id int); INSERT dbo.KeepMe VALUES (123)");
-            var error = await Assert.ThrowsAsync<SqlException>(() => db.Context.Database.MigrateAsync());
+            var error = await Assert.ThrowsAsync<SqlException>(() => db.Context.Database.MigrateAsync(DatabaseCommands.BaselineId));
             Assert.Contains("Verify and adopt", error.Message);
             Assert.Equal(123, Convert.ToInt32(await db.Scalar("SELECT Id FROM dbo.KeepMe")));
             Assert.Equal(0, Convert.ToInt32(await db.Scalar("SELECT COUNT(*) FROM sys.tables WHERE name='People'")));
@@ -123,7 +155,7 @@ namespace Test.Integration
         public async Task AdoptionRejectsDriftIdentityAndHistoryConflicts()
         {
             await using var db = await SandboxDatabase.Create();
-            await db.Context.Database.MigrateAsync();
+            await db.Context.Database.MigrateAsync(DatabaseCommands.BaselineId);
             var inventory = await db.Capture();
             await Assert.ThrowsAsync<InvalidOperationException>(() => DatabaseCommands.RunAsync(db.ConnectionString,
                 new[] { "adopt", "--schema", inventory, "--server", "wrong-server", "--database", db.Name, "--apply" }));
@@ -155,7 +187,7 @@ namespace Test.Integration
         public async Task AdoptionRejectsChangedModulesAndUnsafeHistory()
         {
             await using var db = await SandboxDatabase.Create();
-            await db.Context.Database.MigrateAsync();
+            await db.Context.Database.MigrateAsync(DatabaseCommands.BaselineId);
             var inventory = await db.Capture();
             await db.Execute("ALTER VIEW dbo.vRooms AS SELECT 1 AS Unexpected");
             var error = await Assert.ThrowsAsync<InvalidOperationException>(() => db.Command("adopt", inventory, "--apply"));
