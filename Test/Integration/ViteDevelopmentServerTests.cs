@@ -89,14 +89,12 @@ namespace Test.Integration
         public async Task UnexpectedExitStopsTheApplicationInsteadOfLeavingBrokenAssetLinks()
         {
             using var fixture = new ServerFixture();
-            fixture.WriteServerScript();
+            fixture.WriteServerScript("console.log('PEAKS_VITE_READY:' + process.env.PEAKS_VITE_TOKEN); setTimeout(() => process.exit(43), 250);");
             var stopped = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             fixture.Lifetime.Setup(x => x.StopApplication()).Callback(() => stopped.TrySetResult());
             using var server = fixture.CreateServer();
 
             await server.StartAsync(CancellationToken.None);
-            using var process = Process.GetProcessById(int.Parse(File.ReadAllText(fixture.PidFile)));
-            process.Kill();
             await stopped.Task.WaitAsync(TimeSpan.FromSeconds(5));
 
             fixture.Lifetime.Verify(x => x.StopApplication(), Times.Once);

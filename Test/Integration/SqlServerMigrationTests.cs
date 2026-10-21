@@ -2,6 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -49,15 +53,39 @@ namespace Test.Integration
         {
             await using var db = await SandboxDatabase.Create();
             await db.Context.Database.MigrateAsync(DatabaseCommands.BaselineId);
-            var expected = JsonNode.Parse(await File.ReadAllTextAsync(InventoryPath("production")))["objects"].AsArray();
-            foreach (var backup in expected.Where(o => o["name"].GetValue<string>().EndsWith("_20250421_bak", StringComparison.Ordinal)).ToArray())
-                expected.Remove(backup);
-            var indexes = expected.Single(o => o["name"].GetValue<string>() == "KeySerialAssignments")["indexes"].AsArray();
-            indexes.Remove(indexes.Single(i => i["name"].GetValue<string>() == "nci_msft_1_KeySerialAssignments_E1E481049847DD46716CAB3B3F5C9B0E"));
-            Assert.Empty(DatabaseCommands.Differences(expected, await DatabaseCommands.CaptureObjectsAsync(db.Connection)));
-            Assert.Equal(41, expected.Count(o => o["type"].GetValue<string>().Trim() == "U"));
+            var actual = await DatabaseCommands.CaptureObjectsAsync(db.Connection);
+            Assert.Empty(SchemaDifferences(await SchemaFixture(), actual));
+            Assert.Equal(41, actual.Count(o => o["type"].GetValue<string>().Trim() == "U"));
             await Assert.ThrowsAsync<InvalidOperationException>(() => db.Context.GetService<IMigrator>().MigrateAsync("0"));
             Assert.Equal(41, Convert.ToInt32(await db.Scalar("SELECT COUNT(*) FROM sys.tables WHERE name<>'__EFMigrationsHistory'")));
+        }
+
+        [SqlServerFact]
+        public async Task CompactSchemaFixtureRejectsChangedMetadataAndModules()
+        {
+            await using var db = await SandboxDatabase.Create();
+            await db.Context.Database.MigrateAsync(DatabaseCommands.BaselineId);
+            var fixture = await SchemaFixture();
+            Assert.Empty(SchemaDifferences(fixture, await DatabaseCommands.CaptureObjectsAsync(db.Connection)));
+            foreach (var change in new[]
+            {
+                ("dbo.FISOrgs", "ALTER TABLE dbo.FISOrgs ALTER COLUMN OrgCode nvarchar(5) NOT NULL"),
+                ("dbo.Teams", "ALTER TABLE dbo.Teams ALTER COLUMN Name nvarchar(128) NULL"),
+                ("dbo.Teams", "ALTER TABLE dbo.Teams ADD DEFAULT (NEWID()) FOR ApiCode"),
+                ("dbo.Notifications", "DROP INDEX IX_Notifications_Team_DateCreated ON dbo.Notifications; CREATE INDEX IX_Notifications_Team_DateCreated ON dbo.Notifications(TeamId,DateTimeCreated DESC) INCLUDE(Details)"),
+                ("dbo.Documents", "ALTER TABLE dbo.Documents NOCHECK CONSTRAINT FK_Documents_People_PersonId"),
+                ("dbo.vRooms", "ALTER VIEW dbo.vRooms AS SELECT 1 AS Unexpected"),
+                ("dbo.usp_TruncateAndReloadLoadingSpaces", "ALTER PROCEDURE dbo.usp_TruncateAndReloadLoadingSpaces AS SELECT 1 AS Unexpected")
+            })
+            {
+                await using var transaction = (SqlTransaction)await db.Connection.BeginTransactionAsync();
+                await using var command = new SqlCommand(change.Item2, db.Connection, transaction);
+                await command.ExecuteNonQueryAsync();
+                Assert.Equal(new[] { "Schema differs for " + change.Item1 },
+                    SchemaDifferences(fixture, await DatabaseCommands.CaptureObjectsAsync(db.Connection, transaction)));
+                await transaction.RollbackAsync();
+            }
+            Assert.Empty(SchemaDifferences(fixture, await DatabaseCommands.CaptureObjectsAsync(db.Connection)));
         }
 
         [SqlServerFact]
@@ -77,6 +105,7 @@ namespace Test.Integration
         [SqlServerFact]
         public async Task AdoptionPreservesRowsAndSchemaForBothEnvironmentShapes()
         {
+            var fixture = await SchemaFixture();
             foreach (var testShape in new[] { false, true })
             {
                 await using var db = await SandboxDatabase.Create();
@@ -84,12 +113,10 @@ namespace Test.Integration
                 if (testShape)
                 {
                     await db.Execute("ALTER TABLE dbo.DeptSpace DROP COLUMN Room_Share_Station_Count, Room_Name; ALTER TABLE dbo.FISOrgs ALTER COLUMN OrgCode nvarchar(4) NOT NULL; DROP INDEX IX_Notifications_Pending_UserId ON dbo.Notifications; DROP INDEX IX_Notifications_Team_DateCreated ON dbo.Notifications;");
-                    var expectedTest = JsonNode.Parse(await File.ReadAllTextAsync(InventoryPath("test")))["objects"].AsArray();
-                    foreach (var table in expectedTest)
-                        foreach (var foreignKey in table["foreignKeys"]?.AsArray() ?? new JsonArray())
-                            if (foreignKey["is_not_trusted"].GetValue<bool>())
-                                await db.Execute($"ALTER TABLE [dbo].[{table["name"]}] NOCHECK CONSTRAINT [{foreignKey["name"]}]; ALTER TABLE [dbo].[{table["name"]}] CHECK CONSTRAINT [{foreignKey["name"]}];");
-                    Assert.Empty(DatabaseCommands.Differences(expectedTest, await DatabaseCommands.CaptureObjectsAsync(db.Connection)));
+                    foreach (var table in fixture["untrustedTestForeignKeys"].AsObject())
+                        foreach (var foreignKey in table.Value.AsArray())
+                            await db.Execute($"ALTER TABLE [dbo].[{table.Key}] NOCHECK CONSTRAINT [{foreignKey.GetValue<string>()}]; ALTER TABLE [dbo].[{table.Key}] CHECK CONSTRAINT [{foreignKey.GetValue<string>()}];");
+                    Assert.Empty(SchemaDifferences(fixture, await DatabaseCommands.CaptureObjectsAsync(db.Connection), testShape: true));
                 }
                 else
                     await db.Execute("CREATE TABLE dbo.Bldg_20250421_bak (Marker int NOT NULL); INSERT dbo.Bldg_20250421_bak VALUES (42);");
@@ -374,11 +401,30 @@ namespace Test.Integration
             Assert.Equal("ABCDEF", (await context.Teams.Include(t => t.PpsDepartments).SingleAsync()).PpsDepartments.Single().PpsDepartmentCode);
         }
 
-        private static string InventoryPath(string environment)
+        private static async Task<JsonObject> SchemaFixture() =>
+            JsonNode.Parse(await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "baseline-schema.json"))).AsObject();
+
+        private static List<string> SchemaDifferences(JsonObject fixture, JsonArray actual, bool testShape = false)
         {
-            var directory = new DirectoryInfo(AppContext.BaseDirectory);
-            while (directory != null && !File.Exists(Path.Combine(directory.FullName, "Keas.sln"))) directory = directory.Parent;
-            return Path.Combine(directory?.FullName ?? throw new InvalidOperationException("Cannot locate repository inventories."), "docs", "database", environment + "-schema-2026-10-21.json");
+            var expected = fixture["baseline"].AsObject().ToDictionary(p => p.Key, p => p.Value.GetValue<string>());
+            if (testShape)
+                foreach (var entry in fixture["testOverrides"].AsObject()) expected[entry.Key] = entry.Value.GetValue<string>();
+            // Fingerprint every catalog field. Sort object properties, preserve ordered arrays,
+            // and normalize SQL line endings so checkout/platform formatting does not matter.
+            static JsonNode Canonical(JsonNode node) => node switch
+            {
+                JsonObject obj => new JsonObject(obj.OrderBy(p => p.Key, StringComparer.Ordinal)
+                    .Select(p => KeyValuePair.Create(p.Key, Canonical(p.Value))).ToArray()),
+                JsonArray array => new JsonArray(array.Select(Canonical).ToArray()),
+                JsonValue value when value.TryGetValue<string>(out var text) => JsonValue.Create(text.Replace("\r\n", "\n")),
+                _ => node?.DeepClone()
+            };
+            var jsonOptions = new JsonSerializerOptions { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+            var fingerprints = actual.ToDictionary(o => $"{o["schema"]}.{o["name"]}",
+                o => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Canonical(o).ToJsonString(jsonOptions)))));
+            return expected.Keys.Union(fingerprints.Keys).OrderBy(k => k, StringComparer.Ordinal)
+                .Where(k => !expected.TryGetValue(k, out var wanted) || !fingerprints.TryGetValue(k, out var found) || wanted != found)
+                .Select(k => $"Schema differs for {k}").ToList();
         }
 
         // Execute EF's emitted SQL batches while leaving GO inside quoted module definitions intact.
