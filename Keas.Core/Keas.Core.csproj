@@ -10,11 +10,19 @@
     <PackageReference Include="ietws" Version="0.2.22" />
     <PackageReference Include="libphonenumber-csharp" Version="8.12.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive; compile</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Mjml.Net" Version="1.23.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Razor.Templating.Core" Version="1.8.0" />
     <!-- EF SQL Server brings an older vulnerable PKCS dependency; use the .NET 10 servicing version. -->
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
     <PackageReference Include="Serilog" Version="4.3.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations/Sql/**/*.sql" />
   </ItemGroup>
 </Project>

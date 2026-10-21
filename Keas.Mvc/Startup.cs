@@ -42,9 +42,12 @@ namespace Keas.Mvc
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _environment;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration as IConfigurationRoot;
+            _environment = environment;
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -70,9 +73,18 @@ namespace Keas.Mvc
             services.AddScoped<ISecurityService, SecurityService>();
 
             services.AddDistributedMemoryCache();
+            var localCookieSuffix = _environment.IsDevelopment() && Configuration.GetValue<bool>("LocalLogin:Enabled")
+                ? Configuration["LocalLogin:CookieSuffix"] : null;
+            if (!string.IsNullOrEmpty(localCookieSuffix) && !Regex.IsMatch(localCookieSuffix, "^[a-z0-9][a-z0-9_-]{0,63}$"))
+                throw new InvalidOperationException("LocalLogin:CookieSuffix must be a Compose project name of at most 64 characters.");
+            services.AddAntiforgery(options =>
+            {
+                if (!string.IsNullOrEmpty(localCookieSuffix)) options.Cookie.Name = ".Peaks.Antiforgery." + localCookieSuffix;
+            });
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromHours(1);
+                if (!string.IsNullOrEmpty(localCookieSuffix)) options.Cookie.Name = ".Peaks.Session." + localCookieSuffix;
             });
 
 
@@ -113,6 +125,8 @@ namespace Keas.Mvc
             .AddCookie(options =>
                 {
                     options.LoginPath = new PathString("/login");
+                    if (!string.IsNullOrEmpty(localCookieSuffix))
+                        options.Cookie.Name = ".Peaks.Local." + localCookieSuffix;
                 })
             .AddCAS();
             services.AddAuthorization(options =>

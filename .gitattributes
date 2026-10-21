@@ -1,0 +1,4 @@
+# Existing C# and solution files use CRLF; retain their line endings in small edits.
+* whitespace=cr-at-eol
+# Captured SQL definitions intentionally retain their original trailing spaces.
+Keas.Core/Migrations/Sql/** -text whitespace=-blank-at-eol,cr-at-eol

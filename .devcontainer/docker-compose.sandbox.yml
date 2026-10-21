@@ -1,0 +1,79 @@
+# Standalone sandbox; each worktree must choose a distinct project name.
+name: ${SANDBOX_PROJECT:?Set SANDBOX_PROJECT to a unique name for this checkout}
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    hostname: sql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: SandboxOnly123!
+      MSSQL_COLLATION: SQL_Latin1_General_CP1_CI_AS
+    ports:
+      - "127.0.0.1:${SANDBOX_SQL_PORT:-14339}:1433"
+    volumes:
+      - sandbox-sql:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' -b -o /dev/null"]
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 30
+
+  initialize:
+    build:
+      context: ..
+      dockerfile: .devcontainer/sandbox.Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: Server=sql;Database=PeaksSandbox;User ID=sa;Password=SandboxOnly123!;Encrypt=False;TrustServerCertificate=True;
+      PEAKS_SANDBOX: "1"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - dotnet /app/dbtool/Keas.DbTool.dll migrate --server sql --database PeaksSandbox --apply && dotnet /app/dbtool/Keas.DbTool.dll seed-sandbox
+    depends_on:
+      sql:
+        condition: service_healthy
+
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/sandbox.Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      Dev__UseSql: "Yes"
+      Vite__UseDevServer: "false"
+      LocalLogin__Enabled: "true"
+      LocalLogin__CookieSuffix: ${COMPOSE_PROJECT_NAME}
+      ConnectionStrings__DefaultConnection: Server=sql;Database=PeaksSandbox;User ID=sa;Password=SandboxOnly123!;Encrypt=False;TrustServerCertificate=True;
+      Superuser__Kerb: sandbox-admin
+      Superuser__FirstName: Sandbox
+      Superuser__LastName: Admin
+      Superuser__Email: admin@example.test
+      Authentication__CasBaseUrl: http://127.0.0.1:1/cas/
+      KfsApi__FinancialLookupUrl: http://127.0.0.1:1/
+      ServiceNow__ApiBasePath: http://127.0.0.1:1/
+      DocumentSigning__ApiBasePath: http://127.0.0.1:1/
+      DocumentSigning__AuthServer: 127.0.0.1:1
+    ports:
+      - "127.0.0.1:${SANDBOX_PORT:-5285}:8080"
+    volumes:
+      - sandbox-keys:/home/app/.aspnet/DataProtection-Keys
+    depends_on:
+      initialize:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--max-time", "3", "http://localhost:8080/login"]
+      interval: 5s
+      timeout: 4s
+      start_period: 30s
+      retries: 12
+    networks:
+      default:
+        aliases:
+          - sandbox.test
+
+volumes:
+  sandbox-sql:
+  sandbox-keys:
