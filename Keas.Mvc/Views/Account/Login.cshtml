@@ -1,0 +1,34 @@
+@model LocalLoginModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Development login - Peaks</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 34rem; margin: 4rem auto; padding: 0 1rem; line-height: 1.5; }
+        label, input { display: block; }
+        input { box-sizing: border-box; width: 100%; padding: .6rem; margin: .5rem 0; }
+        button { padding: .6rem 1rem; margin-top: 1rem; }
+        .field-validation-error { color: #a00; }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Development login</h1>
+        <p>Sign in as an existing Peaks user with their current permissions. This option is enabled only for local development.</p>
+        <form action="@Url.Content("~/login/local")" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl" />
+            <label asp-for="Login"></label>
+            <input asp-for="Login" autocomplete="username" autofocus aria-describedby="login-error" />
+            <span asp-validation-for="Login" id="login-error"></span>
+            <button type="submit">Sign in locally</button>
+        </form>
+        <p><a href="@Url.Action("Login", "Account", new { returnUrl = Model.ReturnUrl, useCas = true })">Sign in with CAS</a></p>
+    </main>
+</body>
+</html>
