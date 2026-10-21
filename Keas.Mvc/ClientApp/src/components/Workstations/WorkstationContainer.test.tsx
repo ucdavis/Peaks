@@ -7,9 +7,11 @@ import { ISpace } from '../../models/Spaces';
 import { fakeWorkstations } from '../specs/mockData/Workstation';
 import WorkstationContainer from '../Workstations/WorkstationContainer';
 
-jest.mock('../History/HistoryContainer', () => () => {
-  return <div id='HistoryContainer'>HistoryContainer</div>;
-});
+vi.mock('../History/HistoryContainer', () => ({
+  default: () => {
+    return <div id='HistoryContainer'>HistoryContainer</div>;
+  }
+}));
 
 let container: Element = null;
 const selectedSpace: ISpace = {
@@ -51,9 +53,9 @@ describe('Workstation Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake workstations
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeWorkstations));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeWorkstations)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -75,9 +77,9 @@ describe('Workstation Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake key workstations
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeWorkstations));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeWorkstations)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -99,9 +101,9 @@ describe('Workstation Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake workstations
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeWorkstations));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeWorkstations)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -132,9 +134,9 @@ describe('Workstation Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake workstations
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeWorkstations));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeWorkstations)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -154,9 +156,9 @@ describe('Workstation Container', () => {
   it('Shows workstation details', async () => {
     await act(async () => {
       // spy on our context's fetch handler to return fake workstations
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeWorkstations));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeWorkstations)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(

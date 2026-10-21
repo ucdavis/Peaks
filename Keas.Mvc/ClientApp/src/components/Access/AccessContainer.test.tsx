@@ -10,13 +10,17 @@ import AccessContainer from '../Access/AccessContainer';
 let container: Element = null;
 
 // mock out the sub containers, at least for now
-jest.mock('../Access/AccessAssignmentContainer', () => () => {
-  return <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>;
-});
+vi.mock('../Access/AccessAssignmentContainer', () => ({
+  default: () => {
+    return <div id='AccessAssignmentContainer'>AccessAssignmentContainer</div>;
+  }
+}));
 
-jest.mock('../History/HistoryContainer', () => () => {
-  return <div id='HistoryContainer'>HistoryContainer</div>;
-});
+vi.mock('../History/HistoryContainer', () => ({
+  default: () => {
+    return <div id='HistoryContainer'>HistoryContainer</div>;
+  }
+}));
 
 beforeEach(() => {
   // setup a DOM element as a render target
@@ -43,9 +47,9 @@ describe('Access Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake accesses
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeAccesses));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeAccesses)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -68,9 +72,9 @@ describe('Access Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake accesses
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeAccesses));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeAccesses)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -92,9 +96,9 @@ describe('Access Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake accesses
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeAccesses));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeAccesses)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -126,9 +130,9 @@ describe('Access Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake accesses
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeAccesses));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeAccesses)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -148,9 +152,9 @@ describe('Access Container', () => {
   it('Shows access details', async () => {
     await act(async () => {
       // spy on our context's fetch handler to return fake access
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeAccesses));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeAccesses)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(

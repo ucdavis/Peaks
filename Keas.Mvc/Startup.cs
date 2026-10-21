@@ -24,8 +24,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.AspNetCore.SpaServices;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -38,7 +36,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Serilog;
-using SpaCliMiddleware;
+using Keas.Mvc.Infrastructure.Vite;
 
 namespace Keas.Mvc
 {
@@ -56,10 +54,7 @@ namespace Keas.Mvc
         {
             services.AddHttpContextAccessor();
 
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
+            services.AddHostedService<ViteDevelopmentServer>();
 
             services.Configure<AuthSettings>(Configuration.GetSection("Authentication"));
             services.Configure<IamAuthSettings>(Configuration.GetSection("Authentication")); //Yes, pretty much the same as above. Just in core instead.
@@ -241,22 +236,6 @@ namespace Keas.Mvc
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            app.UseSpaStaticFiles(new StaticFileOptions()
-            {
-                OnPrepareResponse = (context) =>
-                {
-                    // cache our static assest, i.e. CSS and JS, for a long time
-                    if (context.Context.Request.Path.Value.StartsWith("/static"))
-                    {
-                        var headers = context.Context.Response.GetTypedHeaders();
-                        headers.CacheControl = new Microsoft.Net.Http.Headers.CacheControlHeaderValue
-                        {
-                            Public = true,
-                            MaxAge = TimeSpan.FromDays(365)
-                        };
-                    }
-                }
-            });
 
             app.UseRouting();
             app.UseSession();
@@ -299,48 +278,15 @@ namespace Keas.Mvc
                     constraints: new {controller = "(group)"}
                 );
 
-                // maybe a little hacky here, but I don't want to mess with our complex routing too much
-                // basically for our open-ended routes we have to make sure not to intercept the HMR websocket 
-                // We could do away with the isDevelopment check, but I'm leaving it just to be super safe
-                if (env.IsDevelopment())
-                {
-                    // Specific route for HMR websocket.
-                    var spaHmrSocketRegex = "^(?!ws|.*?hot-update.js(on)?).*$";
-
-                    endpoints.MapControllerRoute(
-                        name: "TeamRoutes",
-                        pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}",
-                        defaults: new { controller = "Home", action = "Index" },
-                        constraints: new { teamName = spaHmrSocketRegex });
-
-                    endpoints.MapControllerRoute(
-                        name: "default",
-                        pattern: "{controller=Home}/{action=Index}/{id?}",
-                        constraints: new { controller = spaHmrSocketRegex });
-                }
-                else
-                {
-                    endpoints.MapControllerRoute(
-                        name: "TeamRoutes",
-                        pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}",
-                        defaults: new { controller = "Home", action = "Index" });
-
-                    endpoints.MapControllerRoute(
-                        name: "default",
-                        pattern: "{controller=Home}/{action=Index}/{id?}");
-                }
+                endpoints.MapControllerRoute(
+                    name: "TeamRoutes",
+                    pattern: "{teamName}/{controller=Home}/{action=Index}/{id?}",
+                    defaults: new { controller = "Home", action = "Index" });
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            // SPA needs to kick in for all paths during development
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
-            });
         }
     }
     public class ConfigureCasOptions : IConfigureNamedOptions<CasOptions>

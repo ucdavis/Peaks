@@ -23,7 +23,7 @@ stages:
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: "20.x"
+              versionSpec: "22.x"
           - task: UseDotNet@2
             displayName: "Use .NET 10 SDK"
             inputs:
@@ -44,8 +44,12 @@ stages:
 
           - task: Npm@1
             inputs:
-              command: "install"
-              workingDir: "./Keas.Mvc"
+              command: "ci"
+              workingDir: "./Keas.Mvc/ClientApp"
+
+          - script: npm run typecheck && npm run lint && npm run build && npm run test:launcher
+            displayName: "Validate client tooling and development launcher"
+            workingDirectory: "./Keas.Mvc/ClientApp"
 
           - task: DotNetCoreCLI@2
             displayName: "Run Server Tests"
@@ -61,10 +65,18 @@ stages:
 
           - task: PublishTestResults@2
             displayName: "Publish Client Tests"
+            condition: succeededOrFailed()
             inputs:
-              testResultsFormat: "VSTest"
-              testResultsFiles: "**/test-results.trx"
+              testResultsFormat: "JUnit"
+              testResultsFiles: "**/ClientApp/test-results/junit.xml"
+              failTaskOnFailedTests: true
               testRunTitle: "Client Tests"
+
+          - task: PublishCodeCoverageResults@2
+            displayName: "Publish Client Coverage"
+            condition: succeededOrFailed()
+            inputs:
+              summaryFileLocation: "$(System.DefaultWorkingDirectory)/Keas.Mvc/ClientApp/coverage/cobertura-coverage.xml"
 
   - stage: Publish
     condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
@@ -73,7 +85,7 @@ stages:
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: "20.x"
+              versionSpec: "22.x"
           - task: UseDotNet@2
             displayName: "Use .NET 10 SDK"
             inputs:

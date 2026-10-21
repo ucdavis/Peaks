@@ -1,3 +1,4 @@
+import 'vite/modulepreload-polyfill';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { BrowserRouter, Switch } from 'react-router-dom';

@@ -6,9 +6,11 @@ import { Context } from '../../Context';
 import { fakeKeySerials } from '../specs/mockData/KeySerial';
 import KeySerialContainer from '../Keys/KeySerialContainer';
 
-jest.mock('../History/HistoryContainer', () => () => {
-  return <div id='HistoryContainer'>HistoryContainer</div>;
-});
+vi.mock('../History/HistoryContainer', () => ({
+  default: () => {
+    return <div id='HistoryContainer'>HistoryContainer</div>;
+  }
+}));
 
 let container: Element = null;
 const selectedKey = {
@@ -50,9 +52,9 @@ describe('Key Serial Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake key serials
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeySerials));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeKeySerials)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -76,9 +78,9 @@ describe('Key Serial Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake key serials
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeySerials));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeKeySerials)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -100,9 +102,9 @@ describe('Key Serial Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake key serials
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeySerials));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeKeySerials)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -133,9 +135,9 @@ describe('Key Serial Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake key serials
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeySerials));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeKeySerials)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -155,9 +157,9 @@ describe('Key Serial Container', () => {
   it('Shows key serial details', async () => {
     await act(async () => {
       // spy on our context's fetch handler to return fake key serials
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeKeySerials));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeKeySerials)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(

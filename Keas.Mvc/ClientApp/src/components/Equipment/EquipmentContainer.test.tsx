@@ -9,9 +9,9 @@ import EquipmentContainer from '../Equipment/EquipmentContainer';
 
 let container: Element = null;
 
-jest.mock('../History/HistoryContainer', () => () => (
-  <div id='HistoryContainer'>HistoryContainer</div>
-));
+vi.mock('../History/HistoryContainer', () => ({
+  default: () => <div id='HistoryContainer'>HistoryContainer</div>
+}));
 
 beforeEach(() => {
   // setup a DOM element as a render target
@@ -38,9 +38,9 @@ describe('Equipment Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake equipment
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeEquipment));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeEquipment)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -61,9 +61,9 @@ describe('Equipment Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake equipment
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeEquipment));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeEquipment)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -85,9 +85,9 @@ describe('Equipment Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake equipment
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeEquipment));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeEquipment)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -119,9 +119,9 @@ describe('Equipment Container', () => {
     // await act to make sure pending Promises complete before moving on
     await act(async () => {
       // spy on our context's fetch handler to return fake equipment
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeEquipment));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeEquipment)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
@@ -141,9 +141,9 @@ describe('Equipment Container', () => {
   it('Shows equipment details', async () => {
     await act(async () => {
       // spy on our context's fetch handler to return fake equipment
-      jest
-        .spyOn(contextObject, 'fetch')
-        .mockImplementation(() => Promise.resolve(fakeEquipment));
+      vi.spyOn(contextObject, 'fetch').mockImplementation(() =>
+        Promise.resolve(fakeEquipment)
+      );
 
       // important to add the context provider here since it includes permissions and fetch info
       render(
