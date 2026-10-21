@@ -110,7 +110,8 @@ namespace Keas.Mvc.Controllers
             {
                 return NotFound();
             }
-            var foundInSpaces = await _context.Spaces.FirstOrDefaultAsync(a => a.Active && a.ChartNum == model.Chart && a.OrgId == model.OrgCode);
+            //var foundInSpaces = await _context.Spaces.FirstOrDefaultAsync(a => a.Active && a.ChartNum == model.Chart && a.OrgId == model.OrgCode);
+            var foundInSpaces = await _context.Spaces.FirstOrDefaultAsync(a => a.Active && a.OrgId == model.OrgCode);
             if (!await _financialService.ValidateFISOrg(model.Chart, model.OrgCode))
             {
                 if (foundInSpaces != null)
@@ -131,7 +132,7 @@ namespace Keas.Mvc.Controllers
                 }
             }
 
-            var FISOrg = new FinancialOrganization { Chart = model.Chart, OrgCode = model.OrgCode, Team = team };
+            var FISOrg = new FinancialOrganization { Chart = "X", OrgCode = model.OrgCode, Team = team };
 
             if (ModelState.IsValid)
             {
