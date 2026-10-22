@@ -4,14 +4,14 @@ import { Button } from 'reactstrap';
 import { IPerson, IPersonInfo } from '../../models/People';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { ReactTable } from '../Shared/ReactTable';
-import { Column, TableState } from 'react-table';
+import { PeaksColumn as Column, PeaksInitialState } from '../Shared/tableFeatures';
 
 interface IProps {
   filtered: any[];
   people: IPersonInfo[];
   onRevoke?: (equipment: IPerson) => void;
   onAdd?: (equipment: IPerson) => void;
-  showDetails?: (equipment: IPerson) => void;
+  showDetails?: (equipment: IPersonInfo) => void;
   onEdit?: (equipment: IPerson) => void;
   updateFilters: (filters: any[]) => void;
 }
@@ -20,7 +20,7 @@ const PeopleTable = (props: IProps) => {
   const columns: Column<IPersonInfo>[] = useMemo(
     () => [
       {
-        Cell: data => (
+        cell: data => (
           <Button
             color='link'
             onClick={() => props.showDetails(data.row.original)}
@@ -28,45 +28,44 @@ const PeopleTable = (props: IProps) => {
             Details
           </Button>
         ),
-        Header: ' ',
-        maxWidth: 150
+        header: ' '
       },
       {
-        Header: 'Name',
-        accessor: row => `${row.person.lastName}, ${row.person.firstName}`,
-        filter: 'contains',
+        header: 'Name',
+        accessorFn: row => `${row.person.lastName}, ${row.person.firstName}`,
+        filterFn: 'includesString',
         id: 'name'
       },
       {
-        Header: 'Email',
-        accessor: row => row.person.email
+        header: 'Email',
+        accessorFn: row => row.person.email
       },
       {
-        Header: 'Supervisor',
-        accessor: row =>
+        header: 'Supervisor',
+        accessorFn: row =>
           !!row.person?.supervisor
             ? `${row.person.supervisor.lastName}, ${row.person.supervisor.firstName}`
             : ``
       },
       {
-        Header: 'Keys',
-        accessor: 'keyCount',
-        disableFilters: true
+        header: 'Keys',
+        accessorKey: 'keyCount',
+        enableColumnFilter: false
       },
       {
-        Header: 'Equipment',
-        accessor: 'equipmentCount',
-        disableFilters: true
+        header: 'Equipment',
+        accessorKey: 'equipmentCount',
+        enableColumnFilter: false
       },
       {
-        Header: 'Access',
-        accessor: 'accessCount',
-        disableFilters: true
+        header: 'Access',
+        accessorKey: 'accessCount',
+        enableColumnFilter: false
       },
       {
-        Header: 'Workstations',
-        accessor: 'workstationCount',
-        disableFilters: true
+        header: 'Workstations',
+        accessorKey: 'workstationCount',
+        enableColumnFilter: false
       }
     ],
     []
@@ -74,9 +73,9 @@ const PeopleTable = (props: IProps) => {
 
   const peopleData = useMemo(() => props.people, [props.people]);
 
-  const initialState: Partial<TableState<any>> = {
-    sortBy: [{ id: 'name' }],
-    pageSize: ReactTableUtil.getPageSize()
+  const initialState: PeaksInitialState = {
+    sorting: [{ id: 'name', desc: false }],
+    pagination: { pageIndex: 0, pageSize: ReactTableUtil.getPageSize() }
   };
 
   return (

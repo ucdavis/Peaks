@@ -255,7 +255,7 @@ const PeopleContainer = props => {
     history.push(`${getBaseUrl()}/people/create`);
   };
 
-  const openDetailsModal = (person: IPerson) => {
+  const openDetailsModal = (person: IPersonInfo) => {
     history.push(`${getBaseUrl()}/people/details/${person.id}`);
   };
 

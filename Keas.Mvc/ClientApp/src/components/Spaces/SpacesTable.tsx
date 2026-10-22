@@ -3,7 +3,7 @@ import { Button, UncontrolledTooltip } from 'reactstrap';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { ReactTable } from '../Shared/ReactTable';
-import { Column, TableState } from 'react-table';
+import { PeaksColumn as Column, PeaksInitialState } from '../Shared/tableFeatures';
 
 interface IProps {
   filtered: any[];
@@ -14,8 +14,10 @@ interface IProps {
 
 // UI for workstation column filter
 const SpaceWorkstationColumnFilter = ({
-  column: { filterValue, setFilter }
+  column
 }) => {
+  const filterValue = column.getFilterValue();
+  const setFilter = value => column.setFilterValue(value);
   // Render a multi-select box
   return (
     <select
@@ -35,24 +37,21 @@ const SpaceWorkstationColumnFilter = ({
 };
 
 // Logic to control what rows get displayed
-const workstationFilter = (rows: any[], id, filterValue) => {
+const workstationFilter = (row: any, id, filterValue) => {
   if (filterValue === 'all') {
-    return rows;
+    return true;
   }
   if (filterValue === 'unassigned') {
-    return rows.filter(
-      r =>
-        getRowWorkstationsTotal(r) > 0 &&
-        getRowWorkstationsInUse(r) < getRowWorkstationsTotal(r)
-    );
+    return getRowWorkstationsTotal(row) > 0 &&
+        getRowWorkstationsInUse(row) < getRowWorkstationsTotal(row);
   }
   if (filterValue === 'assigned') {
-    return rows.filter(r => getRowWorkstationsInUse(r) > 0);
+    return getRowWorkstationsInUse(row) > 0;
   }
   if (filterValue === 'any') {
-    return rows.filter(r => getRowWorkstationsTotal(r) > 0);
+    return getRowWorkstationsTotal(row) > 0;
   }
-  return rows;
+  return true;
 };
 
 const getRowWorkstationsInUse = (row: any) => row.original?.workstationsInUse;
@@ -62,7 +61,7 @@ const SpacesTable = (props: IProps) => {
   const columns: Column<ISpaceInfo>[] = React.useMemo(
     () => [
       {
-        Cell: data => (
+        cell: data => (
           <Button
             color='link'
             onClick={() => props.showDetails(data.row.original.space)}
@@ -70,11 +69,10 @@ const SpacesTable = (props: IProps) => {
             Details
           </Button>
         ),
-        Header: ' ',
-        maxWidth: 150
+        header: ' '
       },
       {
-        Cell: data => (
+        cell: data => (
           <span>
             {data.row.original.space.roomNumber}{' '}
             {data.row.original.space.bldgName}{' '}
@@ -83,36 +81,36 @@ const SpacesTable = (props: IProps) => {
             )}
           </span>
         ),
-        Header: 'Room',
-        accessor: row => row.space.roomNumber + ' ' + row.space.bldgName,
+        header: 'Room',
+        accessorFn: row => row.space.roomNumber + ' ' + row.space.bldgName,
         id: 'room'
       },
       {
-        Cell: data => <span>{data.row.original.space.roomName}</span>,
-        Header: 'Room Name',
-        accessor: key => key.space?.roomName
+        cell: data => <span>{data.row.original.space.roomName}</span>,
+        header: 'Room Name',
+        accessorFn: key => key.space?.roomName
       },
       {
-        Cell: data => <span>{data.row.original.keyCount}</span>,
-        Header: 'Keys',
-        accessor: 'keyCount',
-        disableFilters: true
+        cell: data => <span>{data.row.original.keyCount}</span>,
+        header: 'Keys',
+        accessorKey: 'keyCount',
+        enableColumnFilter: false
       },
       {
-        Cell: data => <span>{data.row.original.equipmentCount}</span>,
-        Header: 'Equipment',
-        accessor: 'equipmentCount',
-        disableFilters: true
+        cell: data => <span>{data.row.original.equipmentCount}</span>,
+        header: 'Equipment',
+        accessorKey: 'equipmentCount',
+        enableColumnFilter: false
       },
       {
-        Cell: row => (
+        cell: row => (
           <span>
-            {row.value.workstationsInUse} / {row.value.workstationsTotal}
+            {row.getValue().workstationsInUse} / {row.getValue().workstationsTotal}
           </span>
         ),
-        Filter: SpaceWorkstationColumnFilter,
-        filter: 'workstation',
-        Header: header => (
+        meta: { Filter: SpaceWorkstationColumnFilter },
+        filterFn: workstationFilter,
+        header: header => (
           <div>
             Workstations{' '}
             <i id='workstationsTooltip' className='fas fa-info-circle' />
@@ -121,14 +119,14 @@ const SpacesTable = (props: IProps) => {
             </UncontrolledTooltip>
           </div>
         ),
-        accessor: spaceInfo => {
+        accessorFn: spaceInfo => {
           return {
             workstationsInUse: spaceInfo.workstationsInUse,
             workstationsTotal: spaceInfo.workstationsTotal
           };
         },
         id: 'workstationsCount',
-        disableSortBy: true
+        enableSorting: false
       }
     ],
     []
@@ -136,9 +134,9 @@ const SpacesTable = (props: IProps) => {
 
   const spacesData = React.useMemo(() => props.spaces, [props.spaces]);
 
-  const initialState: Partial<TableState<any>> = {
-    sortBy: [{ id: 'room' }],
-    pageSize: ReactTableUtil.getPageSize()
+  const initialState: PeaksInitialState = {
+    sorting: [{ id: 'room', desc: false }],
+    pagination: { pageIndex: 0, pageSize: ReactTableUtil.getPageSize() }
   };
 
   return (
@@ -146,7 +144,6 @@ const SpacesTable = (props: IProps) => {
       data={spacesData}
       columns={columns}
       initialState={initialState}
-      filterTypes={{ workstation: workstationFilter }}
     />
   );
 };

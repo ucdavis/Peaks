@@ -3,7 +3,7 @@ import { IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
 import { ReactTable } from '../Shared/ReactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
-import { Column, TableState } from 'react-table';
+import { PeaksColumn as Column, PeaksInitialState } from '../Shared/tableFeatures';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { Button } from 'reactstrap';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
@@ -36,7 +36,7 @@ const AccessAssignmentTable = (props: IProps) => {
   const columns: Column<IAccessAssignment>[] = React.useMemo(
     () => [
       {
-        Cell: data => (
+        cell: data => (
           <Button
             color='link'
             onClick={() => props.showDetails(data.row.original)}
@@ -44,30 +44,29 @@ const AccessAssignmentTable = (props: IProps) => {
             Details
           </Button>
         ),
-        Header: ' ',
-        maxWidth: 150
+        header: ' '
       },
       {
-        Header: 'Assignment',
-        accessor: (accessAssignment: IAccessAssignment) =>
+        header: 'Assignment',
+        accessorFn: (accessAssignment: IAccessAssignment) =>
           !!accessAssignment
             ? `${accessAssignment.person.lastName}, ${accessAssignment.person.firstName}`
             : ``,
         id: 'assignedTo'
       },
       {
-        Cell: row => (
-          <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
+        cell: row => (
+          <span>{row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}</span>
         ),
-        Filter: ReactTableExpirationUtil.AccessFilterHeader,
-        filter: 'expiration',
-        Header: 'Expiration',
-        accessor: row => row.expiresAt,
+        meta: { Filter: ReactTableExpirationUtil.AccessFilterHeader },
+        filterFn: ReactTableExpirationUtil.filterFunction,
+        header: 'Expiration',
+        accessorFn: row => row.expiresAt,
         id: 'expiresAt'
       },
       {
-        Cell: renderDropdownColumn,
-        Header: 'Actions'
+        cell: renderDropdownColumn,
+        header: 'Actions'
       }
     ],
     []
@@ -77,9 +76,9 @@ const AccessAssignmentTable = (props: IProps) => {
     accessAssignments
   ]);
 
-  const initialState: Partial<TableState<any>> = {
-    sortBy: [{ id: 'assignedTo' }, { id: 'expiresAt' }],
-    pageSize: ReactTableUtil.getPageSize()
+  const initialState: PeaksInitialState = {
+    sorting: [{ id: 'assignedTo', desc: false }, { id: 'expiresAt', desc: false }],
+    pagination: { pageIndex: 0, pageSize: ReactTableUtil.getPageSize() }
   };
 
   return (
@@ -87,7 +86,6 @@ const AccessAssignmentTable = (props: IProps) => {
       data={accessAssignmentData}
       columns={columns}
       initialState={initialState}
-      filterTypes={{ expiration: ReactTableExpirationUtil.filterFunction }}
     />
   );
 };

@@ -92,64 +92,62 @@ export class ReactTableExpirationUtil {
   };
 
   // custom filter function for expirations
-  public static filterFunction(rows: any[], id, filterValue) {
+  public static filterFunction(row: any, id, filterValue) {
     if (filterValue === 'all') {
-      return rows;
+      return true;
     }
     if (filterValue === 'unassigned') {
-      return rows.filter(r => !ReactTableExpirationUtil.getRowExpiresAt(r));
+      return !ReactTableExpirationUtil.getRowExpiresAt(row);
     }
     if (filterValue === 'expired') {
-      return rows.filter(
-        r =>
-          !!ReactTableExpirationUtil.getRowExpiresAt(r) &&
-          !isAfter(
-            new Date(ReactTableExpirationUtil.getRowExpiresAt(r)),
-            new Date()
-          )
+      return (
+        !!ReactTableExpirationUtil.getRowExpiresAt(row) &&
+        !isAfter(
+          new Date(ReactTableExpirationUtil.getRowExpiresAt(row)),
+          new Date()
+        )
       );
     }
     if (filterValue === 'unexpired') {
-      return rows.filter(
-        r =>
-          !!ReactTableExpirationUtil.getRowExpiresAt(r) &&
-          isAfter(
-            new Date(ReactTableExpirationUtil.getRowExpiresAt(r)),
-            new Date()
-          )
+      return (
+        !!ReactTableExpirationUtil.getRowExpiresAt(row) &&
+        isAfter(
+          new Date(ReactTableExpirationUtil.getRowExpiresAt(row)),
+          new Date()
+        )
       );
     }
     if (filterValue === '3weeks') {
-      return rows.filter(
-        r =>
-          !!ReactTableExpirationUtil.getRowExpiresAt(r) &&
-          isAfter(
-            new Date(ReactTableExpirationUtil.getRowExpiresAt(r)),
-            new Date()
-          ) &&
-          isBefore(
-            new Date(ReactTableExpirationUtil.getRowExpiresAt(r)),
-            addWeeks(startOfDay(new Date()), 3)
-          )
+      return (
+        !!ReactTableExpirationUtil.getRowExpiresAt(row) &&
+        isAfter(
+          new Date(ReactTableExpirationUtil.getRowExpiresAt(row)),
+          new Date()
+        ) &&
+        isBefore(
+          new Date(ReactTableExpirationUtil.getRowExpiresAt(row)),
+          addWeeks(startOfDay(new Date()), 3)
+        )
       );
     }
     if (filterValue === '6weeks') {
-      return rows.filter(
-        r =>
-          !!ReactTableExpirationUtil.getRowExpiresAt(r) &&
-          isAfter(
-            new Date(ReactTableExpirationUtil.getRowExpiresAt(r)),
-            new Date()
-          ) &&
-          isBefore(
-            new Date(ReactTableExpirationUtil.getRowExpiresAt(r)),
-            addWeeks(startOfDay(new Date()), 6)
-          )
+      return (
+        !!ReactTableExpirationUtil.getRowExpiresAt(row) &&
+        isAfter(
+          new Date(ReactTableExpirationUtil.getRowExpiresAt(row)),
+          new Date()
+        ) &&
+        isBefore(
+          new Date(ReactTableExpirationUtil.getRowExpiresAt(row)),
+          addWeeks(startOfDay(new Date()), 6)
+        )
       );
     }
-    return rows;
+    return true;
   }
-  public static FilterHeader({ column: { filterValue, setFilter } }) {
+  public static FilterHeader({ column }) {
+    const filterValue = column.getFilterValue();
+    const setFilter = value => column.setFilterValue(value);
     // Render a multi-select box
     return (
       <select
@@ -169,7 +167,9 @@ export class ReactTableExpirationUtil {
     );
   }
 
-  public static AccessFilterHeader({ column: { filterValue, setFilter } }) {
+  public static AccessFilterHeader({ column }) {
+    const filterValue = column.getFilterValue();
+    const setFilter = value => column.setFilterValue(value);
     // Render a multi-select box
     return (
       <select
@@ -192,7 +192,9 @@ export class ReactTableExpirationUtil {
 
 // AccessTable.tsx
 export class ReactTableNumberOfAssignmentsUtil {
-  public static FilterHeader = ({ column: { filterValue, setFilter } }) => {
+  public static FilterHeader = ({ column }) => {
+    const filterValue = column.getFilterValue();
+    const setFilter = value => column.setFilterValue(value);
     // filterValue will be something like ['<', '15'] or ['=', '3'] or ['>', '5']
     // defaults to '='
     return (
@@ -229,34 +231,32 @@ export class ReactTableNumberOfAssignmentsUtil {
 
   // custom filter function for number of assignments
   public static filterFunction = (
-    rows: any[],
+    row: any,
     id,
     filterValue: [string, string]
   ) => {
     if (filterValue?.[0] === '<' && !!filterValue?.[1]) {
-      return rows.filter(
-        r => Number(r.values.numAssignments) < Number(filterValue?.[1])
-      );
+      return Number(row.getValue('numAssignments')) < Number(filterValue?.[1]);
     }
     if ((!filterValue?.[0] || filterValue?.[0] === '=') && !!filterValue?.[1]) {
       // default to equals
-      return rows.filter(
-        r => Number(r.values.numAssignments) === Number(filterValue?.[1])
+      return (
+        Number(row.getValue('numAssignments')) === Number(filterValue?.[1])
       );
     }
     if (filterValue?.[0] === '>' && !!filterValue?.[1]) {
-      return rows.filter(
-        r => Number(r.values.numAssignments) > Number(filterValue?.[1])
-      );
+      return Number(row.getValue('numAssignments')) > Number(filterValue?.[1]);
     }
-    return rows;
+    return true;
   };
 }
 
 // KeyTable.tsx
 export class ReactTableKeySerialUtil {
   // UI for serial column filter
-  public static FilterHeader = ({ column: { filterValue, setFilter } }) => {
+  public static FilterHeader = ({ column }) => {
+    const filterValue = column.getFilterValue();
+    const setFilter = value => column.setFilterValue(value);
     // Render a multi-select box
     return (
       <select
@@ -276,33 +276,26 @@ export class ReactTableKeySerialUtil {
     );
   };
 
-  public static filterFunction = (rows: any[], id, filterValue) => {
+  public static filterFunction = (row: any, id, filterValue) => {
     if (filterValue === 'all') {
-      return rows;
+      return true;
     }
     if (filterValue === 'unassigned') {
-      return rows.filter(
-        r =>
-          ReactTableKeySerialUtil.getRowSerialsInUse(r) <
-          ReactTableKeySerialUtil.getRowSerialsTotal(r)
+      return (
+        ReactTableKeySerialUtil.getRowSerialsInUse(row) <
+        ReactTableKeySerialUtil.getRowSerialsTotal(row)
       );
     }
     if (filterValue === 'assigned') {
-      return rows.filter(
-        r => ReactTableKeySerialUtil.getRowSerialsInUse(r) > 0
-      );
+      return ReactTableKeySerialUtil.getRowSerialsInUse(row) > 0;
     }
     if (filterValue === 'hasSerial') {
-      return rows.filter(
-        r => ReactTableKeySerialUtil.getRowSerialsTotal(r) > 0
-      );
+      return ReactTableKeySerialUtil.getRowSerialsTotal(row) > 0;
     }
     if (filterValue === 'noSerial') {
-      return rows.filter(
-        r => ReactTableKeySerialUtil.getRowSerialsTotal(r) === 0
-      );
+      return ReactTableKeySerialUtil.getRowSerialsTotal(row) === 0;
     }
-    return rows;
+    return true;
   };
 
   static getRowSerialsInUse = (row: any) => row.original?.serialsInUseCount;
@@ -311,7 +304,9 @@ export class ReactTableKeySerialUtil {
 
 // KeySerialTable.tsx
 export class ReactTableKeyStatusUtil {
-  public static FilterHeader = ({ column: { filterValue, setFilter } }) => {
+  public static FilterHeader = ({ column }) => {
+    const filterValue = column.getFilterValue();
+    const setFilter = value => column.setFilterValue(value);
     return (
       <select
         value={filterValue}
@@ -328,29 +323,24 @@ export class ReactTableKeyStatusUtil {
     );
   };
 
-  public static filterFunction = (rows: any[], id, filterValue) => {
+  public static filterFunction = (row: any, id, filterValue) => {
     if (filterValue === 'all') {
-      return rows;
+      return true;
     }
     if (filterValue === 'active') {
-      return rows.filter(
-        r => ReactTableKeyStatusUtil.getRowStatus(r) === 'Active'
-      );
+      return ReactTableKeyStatusUtil.getRowStatus(row) === 'Active';
     }
     if (filterValue === 'inactive') {
-      return rows.filter(
-        r =>
-          ReactTableKeyStatusUtil.getRowStatus(r) === 'Lost' ||
-          ReactTableKeyStatusUtil.getRowStatus(r) === 'Destroyed' ||
-          ReactTableKeyStatusUtil.getRowStatus(r) === 'Dog ate'
+      return (
+        ReactTableKeyStatusUtil.getRowStatus(row) === 'Lost' ||
+        ReactTableKeyStatusUtil.getRowStatus(row) === 'Destroyed' ||
+        ReactTableKeyStatusUtil.getRowStatus(row) === 'Dog ate'
       );
     }
     if (filterValue === 'special') {
-      return rows.filter(
-        r => ReactTableKeyStatusUtil.getRowStatus(r) === 'Special'
-      );
+      return ReactTableKeyStatusUtil.getRowStatus(row) === 'Special';
     }
-    return rows;
+    return true;
   };
 
   static getRowStatus = (row: any) => row.original?.status;

@@ -52,3 +52,16 @@
     }
   }
 }
+
+.table-sort-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+  &:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+}
