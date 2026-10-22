@@ -173,34 +173,36 @@
                             <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "Help" ? "bg-primary/10 text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "Help" ? "page" : null)' asp-controller="Help" asp-action="Index">Help</a>
                         </li>
                     }
-                    <li class="mt-2 min-w-0 border-t border-main-border pt-3 lg:ml-auto lg:mt-0 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0">
-                        <p class="m-0  text-xs font-semibold text-base-content/70">
-                            @if (!string.IsNullOrWhiteSpace(TempData["TeamName"] as string))
-                                    {
-                                        @TempData["TeamName"]
-                                    }
-                        </p>
-                      <details class="group relative" data-navigation-dropdown>
-                        <summary class="inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer list-none text-base-content hover:text-primary [&::-webkit-details-marker]:hidden">
-                            Change Team <i class="fas fa-chevron-down ml-auto text-xs transition-transform group-open:rotate-180" aria-hidden="true"></i>
-                        </summary>
-                        <div class="relative z-50 mt-1 max-h-[60vh] w-full overflow-y-auto rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-80">
-                            @foreach (var teamItem in await TeamsManager.GetMyTeams())
-                            {
-                                <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" href='@string.Format("/{0}/home/index", teamItem.Key)' >@teamItem.Value</a>
-                            }
-                            <div class="my-2 border-t border-main-border"></div>
-                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
-                            <div class="my-2 border-t border-main-border"></div>
-                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh Permissions</a>
-                        </div>
-                      </details>
+                    <li class="mt-2 min-w-0 pt-3 lg:ml-auto lg:mt-0 lg:pl-4 lg:pt-0">
+                        <details class="group relative" data-navigation-dropdown>
+                            <summary class="inline-flex w-full max-w-full cursor-pointer list-none items-center gap-2 pe-4 py-2 text-lg font-semibold text-base-content transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:max-w-72 [&::-webkit-details-marker]:hidden">
+                                <span class="min-w-0 truncate text-lg font-semibold text-current">@(string.IsNullOrWhiteSpace(TempData["TeamName"] as string) ? "Choose team" : TempData["TeamName"])</span>
+                                <i class="fas fa-chevron-down shrink-0 text-xs transition-transform group-open:rotate-180" aria-hidden="true"></i>
+                            </summary>
+                            <div class="relative z-50 mt-1 max-h-[60vh] w-full overflow-y-auto rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-80">
+                                @foreach (var teamItem in await TeamsManager.GetMyTeams())
+                                {
+                                    <a class="flex items-center py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" href='@string.Format("/{0}/home/index", teamItem.Key)'>@teamItem.Value</a>
+                                }
+                                <div class="my-2 border-t border-main-border"></div>
+                                <a class="flex items-center py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
+                            </div>
+                        </details>
                     </li>
-                    <li class="min-w-0 border-t border-main-border pt-3 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0">
-                        <p class="m-0  text-xs font-semibold text-base-content/70">@User.GetNameClaim()</p>
-                        <form class="m-0" asp-area="" asp-controller="Account" asp-action="Logout2" method="post" id="logoutForm">
-                            <button class="inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer text-base-content hover:text-primary" type="submit">Sign out</button>
-                        </form>
+                    <li class="min-w-0">
+                        <details class="group relative" data-navigation-dropdown>
+                            <summary class="inline-flex w-full max-w-full cursor-pointer list-none items-center gap-2 pe-4 py-2 text-lg font-semibold text-base-content transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:max-w-64 [&::-webkit-details-marker]:hidden">
+                                <span class="min-w-0 truncate text-lg font-semibold text-current">@User.GetNameClaim()</span>
+                                <i class="fas fa-chevron-down shrink-0 text-xs transition-transform group-open:rotate-180" aria-hidden="true"></i>
+                            </summary>
+                            <div class="relative z-50 mt-1 w-full rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-64">
+                                <a class="flex items-center py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh permissions</a>
+                                <div class="my-2 border-t border-main-border"></div>
+                                <form class="m-0" asp-area="" asp-controller="Account" asp-action="Logout2" method="post" id="logoutForm">
+                                    <button class="flex w-full cursor-pointer items-center py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" type="submit">Sign out</button>
+                                </form>
+                            </div>
+                        </details>
                     </li>
                 </ul>
                     </div>
