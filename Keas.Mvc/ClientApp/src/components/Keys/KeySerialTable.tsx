@@ -5,7 +5,10 @@ import { DateUtil } from '../../util/dates';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { PeaksColumn as Column, PeaksInitialState } from '../Shared/tableFeatures';
+import {
+  PeaksColumn as Column,
+  PeaksInitialState
+} from '../Shared/tableFeatures';
 import {
   ReactTableExpirationUtil,
   ReactTableKeyStatusUtil
@@ -72,14 +75,16 @@ const KeySerialTable = (props: IProps) => {
       {
         header: 'Assignment',
         accessorFn: (keySerial: IKeySerial) =>
-          !!keySerial.keySerialAssignment
+          keySerial.keySerialAssignment
             ? `${keySerial.keySerialAssignment.person.lastName}, ${keySerial.keySerialAssignment.person.firstName}`
             : ``,
         id: 'assignedTo'
       },
       {
         cell: row => (
-          <span>{row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}</span>
+          <span>
+            {row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}
+          </span>
         ),
         meta: { Filter: ReactTableExpirationUtil.FilterHeader },
         filterFn: ReactTableExpirationUtil.filterFunction,
@@ -98,7 +103,10 @@ const KeySerialTable = (props: IProps) => {
   const keySerialData = React.useMemo(() => keySerials, [keySerials]);
 
   const initialState: PeaksInitialState = {
-    sorting: [{ id: 'status', desc: false }, { id: 'keyCodeSN', desc: false }],
+    sorting: [
+      { id: 'status', desc: false },
+      { id: 'keyCodeSN', desc: false }
+    ],
     pagination: { pageIndex: 0, pageSize: ReactTableUtil.getPageSize() }
   };
 

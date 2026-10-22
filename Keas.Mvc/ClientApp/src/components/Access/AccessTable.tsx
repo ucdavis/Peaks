@@ -9,7 +9,11 @@ import {
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { PeaksColumn as Column, PeaksInitialState, withOriginalOrder } from '../Shared/tableFeatures';
+import {
+  PeaksColumn as Column,
+  PeaksInitialState,
+  withOriginalOrder
+} from '../Shared/tableFeatures';
 
 interface IProps {
   accesses: IAccess[];
@@ -24,14 +28,14 @@ const AccessTable = (props: IProps) => {
     const accessEntity: IAccess = data.row.original;
     const actions: IAction[] = [];
 
-    if (!!props.onAdd) {
+    if (props.onAdd) {
       actions.push({
         onClick: () => props.onAdd(accessEntity),
         title: 'Assign'
       });
     }
 
-    if (!!props.onDelete) {
+    if (props.onDelete) {
       actions.push({
         onClick: () => props.onDelete(accessEntity),
         title: 'Delete'
@@ -70,14 +74,16 @@ const AccessTable = (props: IProps) => {
         accessorFn: x =>
           x.assignments
             .map(a =>
-              !!a.person ? `${a.person.lastName}, ${a.person.firstName}` : ``
+              a.person ? `${a.person.lastName}, ${a.person.firstName}` : ``
             )
             .join('; '),
         id: 'assignedTo'
       },
       {
         cell: row => (
-          <span>{row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}</span>
+          <span>
+            {row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}
+          </span>
         ),
         meta: { Filter: ReactTableExpirationUtil.AccessFilterHeader },
         filterFn: ReactTableExpirationUtil.filterFunction,

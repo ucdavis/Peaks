@@ -72,17 +72,17 @@ export class ReactTableExpirationUtil {
     }
   }
   public static getRowExpiresAt = (row: any) => {
-    if (!!row.original.assignments) {
+    if (row.original.assignments) {
       // if on AccessTable, get soonest expiration date
       return DateUtil.getFirstExpiration(
         row.original.assignments.map(y => y.expiresAt)
       );
     }
-    if (!!row.original.expiresAt) {
+    if (row.original.expiresAt) {
       // if on AccessAssignmentTable (it does not have .assignment property, it is the assignment itself)
       return row.original.expiresAt;
     }
-    if (!!row.original.keySerialAssignment) {
+    if (row.original.keySerialAssignment) {
       // KeySerialTable
       return row.original.keySerialAssignment?.expiresAt;
     }
@@ -148,7 +148,6 @@ export class ReactTableExpirationUtil {
   public static FilterHeader({ column }) {
     const filterValue = column.getFilterValue();
     const setFilter = value => column.setFilterValue(value);
-    // Render a multi-select box
     return (
       <select
         className='form-control'
@@ -170,7 +169,6 @@ export class ReactTableExpirationUtil {
   public static AccessFilterHeader({ column }) {
     const filterValue = column.getFilterValue();
     const setFilter = value => column.setFilterValue(value);
-    // Render a multi-select box
     return (
       <select
         className='form-control'
@@ -257,7 +255,6 @@ export class ReactTableKeySerialUtil {
   public static FilterHeader = ({ column }) => {
     const filterValue = column.getFilterValue();
     const setFilter = value => column.setFilterValue(value);
-    // Render a multi-select box
     return (
       <select
         className='form-control'

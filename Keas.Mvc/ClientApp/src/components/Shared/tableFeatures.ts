@@ -14,6 +14,7 @@ import {
 } from '@tanstack/react-table';
 import type { ComponentType } from 'react';
 
+// Preserve v7's original-index tie-break in the primary sort direction.
 export const withOriginalOrder = (
   sortFn: SortFn<any, any>
 ): SortFn<any, any> => (a, b, columnId) => {
@@ -34,6 +35,7 @@ export const peaksFeatures = tableFeatures({
   sortedRowModel: createSortedRowModel(),
   paginatedRowModel: createPaginatedRowModel(),
   filterFns: {
+    // Preserve v7 text matching, including searchable "null" and "undefined".
     includesString: constructFilterFn({
       resolveDataValue: value => String(value).toLowerCase(),
       resolveFilterValue: value => String(value).toLowerCase(),

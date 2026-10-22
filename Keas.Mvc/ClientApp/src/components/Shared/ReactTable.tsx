@@ -90,7 +90,8 @@ export const ReactTable = <T extends object>({
                         type='button'
                         className='table-sort-button'
                         onClick={event => {
-                          const multi = event.shiftKey && column.getCanMultiSort();
+                          const multi =
+                            event.shiftKey && column.getCanMultiSort();
                           column.toggleSorting(
                             !multi && table.state.sorting.length > 1
                               ? column.getFirstSortDir() === 'desc'

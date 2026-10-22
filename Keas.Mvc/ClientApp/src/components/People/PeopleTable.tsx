@@ -4,7 +4,10 @@ import { Button } from 'reactstrap';
 import { IPerson, IPersonInfo } from '../../models/People';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { ReactTable } from '../Shared/ReactTable';
-import { PeaksColumn as Column, PeaksInitialState } from '../Shared/tableFeatures';
+import {
+  PeaksColumn as Column,
+  PeaksInitialState
+} from '../Shared/tableFeatures';
 
 interface IProps {
   filtered: any[];
@@ -43,7 +46,7 @@ const PeopleTable = (props: IProps) => {
       {
         header: 'Supervisor',
         accessorFn: row =>
-          !!row.person?.supervisor
+          row.person?.supervisor
             ? `${row.person.supervisor.lastName}, ${row.person.supervisor.firstName}`
             : ``
       },

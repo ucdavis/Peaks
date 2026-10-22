@@ -3,7 +3,10 @@ import { Button, UncontrolledTooltip } from 'reactstrap';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { ReactTable } from '../Shared/ReactTable';
-import { PeaksColumn as Column, PeaksInitialState } from '../Shared/tableFeatures';
+import {
+  PeaksColumn as Column,
+  PeaksInitialState
+} from '../Shared/tableFeatures';
 
 interface IProps {
   filtered: any[];
@@ -13,12 +16,9 @@ interface IProps {
 }
 
 // UI for workstation column filter
-const SpaceWorkstationColumnFilter = ({
-  column
-}) => {
+const SpaceWorkstationColumnFilter = ({ column }) => {
   const filterValue = column.getFilterValue();
   const setFilter = value => column.setFilterValue(value);
-  // Render a multi-select box
   return (
     <select
       className='form-control'
@@ -42,8 +42,10 @@ const workstationFilter = (row: any, id, filterValue) => {
     return true;
   }
   if (filterValue === 'unassigned') {
-    return getRowWorkstationsTotal(row) > 0 &&
-        getRowWorkstationsInUse(row) < getRowWorkstationsTotal(row);
+    return (
+      getRowWorkstationsTotal(row) > 0 &&
+      getRowWorkstationsInUse(row) < getRowWorkstationsTotal(row)
+    );
   }
   if (filterValue === 'assigned') {
     return getRowWorkstationsInUse(row) > 0;
@@ -76,7 +78,7 @@ const SpacesTable = (props: IProps) => {
           <span>
             {data.row.original.space.roomNumber}{' '}
             {data.row.original.space.bldgName}{' '}
-            {!!!data.row.original.space.active && (
+            {!data.row.original.space.active && (
               <span className='text-danger'> (Inactive)</span>
             )}
           </span>
@@ -105,7 +107,8 @@ const SpacesTable = (props: IProps) => {
       {
         cell: row => (
           <span>
-            {row.getValue().workstationsInUse} / {row.getValue().workstationsTotal}
+            {row.getValue().workstationsInUse} /{' '}
+            {row.getValue().workstationsTotal}
           </span>
         ),
         meta: { Filter: SpaceWorkstationColumnFilter },

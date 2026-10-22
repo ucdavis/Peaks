@@ -5,7 +5,10 @@ import { DateUtil } from '../../util/dates';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { PeaksColumn as Column, PeaksInitialState } from '../Shared/tableFeatures';
+import {
+  PeaksColumn as Column,
+  PeaksInitialState
+} from '../Shared/tableFeatures';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
 
 interface IProps {
@@ -39,14 +42,14 @@ const EquipmentTable = (props: IProps) => {
       });
     }
 
-    if (!!props.onDelete) {
+    if (props.onDelete) {
       actions.push({
         onClick: () => props.onDelete(equipmentEntity),
         title: 'Delete'
       });
     }
 
-    if (!!props.onDuplicate) {
+    if (props.onDuplicate) {
       actions.push({
         onClick: () => props.onDuplicate(equipmentEntity),
         title: 'Duplicate'
@@ -81,13 +84,15 @@ const EquipmentTable = (props: IProps) => {
       {
         header: 'Assigned To',
         accessorFn: e =>
-          !!e.assignment?.person
+          e.assignment?.person
             ? `${e.assignment?.person?.lastName}, ${e.assignment?.person?.firstName}`
             : ``
       },
       {
         cell: row => (
-          <span>{row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}</span>
+          <span>
+            {row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}
+          </span>
         ),
         meta: { Filter: ReactTableExpirationUtil.FilterHeader },
         filterFn: ReactTableExpirationUtil.filterFunction,

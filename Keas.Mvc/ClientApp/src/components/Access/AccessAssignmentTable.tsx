@@ -3,7 +3,10 @@ import { IAccessAssignment } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
 import { ReactTable } from '../Shared/ReactTable';
 import { ReactTableUtil } from '../../util/tableUtil';
-import { PeaksColumn as Column, PeaksInitialState } from '../Shared/tableFeatures';
+import {
+  PeaksColumn as Column,
+  PeaksInitialState
+} from '../Shared/tableFeatures';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { Button } from 'reactstrap';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
@@ -49,14 +52,16 @@ const AccessAssignmentTable = (props: IProps) => {
       {
         header: 'Assignment',
         accessorFn: (accessAssignment: IAccessAssignment) =>
-          !!accessAssignment
+          accessAssignment
             ? `${accessAssignment.person.lastName}, ${accessAssignment.person.firstName}`
             : ``,
         id: 'assignedTo'
       },
       {
         cell: row => (
-          <span>{row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}</span>
+          <span>
+            {row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}
+          </span>
         ),
         meta: { Filter: ReactTableExpirationUtil.AccessFilterHeader },
         filterFn: ReactTableExpirationUtil.filterFunction,
@@ -77,7 +82,10 @@ const AccessAssignmentTable = (props: IProps) => {
   ]);
 
   const initialState: PeaksInitialState = {
-    sorting: [{ id: 'assignedTo', desc: false }, { id: 'expiresAt', desc: false }],
+    sorting: [
+      { id: 'assignedTo', desc: false },
+      { id: 'expiresAt', desc: false }
+    ],
     pagination: { pageIndex: 0, pageSize: ReactTableUtil.getPageSize() }
   };
 

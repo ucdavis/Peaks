@@ -4,7 +4,10 @@ import { IKey, IKeyInfo } from '../../models/Keys';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { PeaksColumn as Column, PeaksInitialState } from '../Shared/tableFeatures';
+import {
+  PeaksColumn as Column,
+  PeaksInitialState
+} from '../Shared/tableFeatures';
 import { ReactTableKeySerialUtil } from '../../util/reactTable';
 
 interface IProps {
@@ -96,7 +99,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
 
     const actions: IAction[] = [];
 
-    if (!!this.props.onDelete) {
+    if (this.props.onDelete) {
       actions.push({
         onClick: () => this.props.onDelete(key),
         title: 'Delete'
