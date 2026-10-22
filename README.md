@@ -36,6 +36,8 @@ nvm install 22
 nvm use 22
 ```
 
+Before running with SQL Server, review the [startup migration prerequisites](docs/database/README.md#automatic-startup-migrations).
+
 Get the application settings from Box and configure the website's user secrets.
 
 From the repository root, install the frontend dependencies and start the website:

@@ -1,6 +1,6 @@
 # Docker sandbox
 
-The sandbox builds the current checkout and runs Peaks with disposable SQL Server 2022. A separate initialization container creates the database, applies the real EF migrations and adds fictional users and a team. Normal app startup also applies pending SQL Server migrations before initializing seed records and serving requests. With initialization complete and no new migrations, startup leaves the schema unchanged.
+The sandbox builds the current checkout and runs Peaks with disposable SQL Server 2022. A separate initialization container creates the database, applies the real EF migrations and adds fictional users and a team. See [automatic startup migrations](database/README.md#automatic-startup-migrations) for the app startup behavior.
 
 ## Start
 
