@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { render, cleanup, act } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router';
-import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeKeySerials } from '../specs/mockData/KeySerial';
 import KeySerialContainer from '../Keys/KeySerialContainer';
@@ -12,7 +11,7 @@ vi.mock('../History/HistoryContainer', () => ({
   }
 }));
 
-let container: Element = null;
+let container: HTMLElement = null;
 const selectedKey = {
   code: 'ADD',
   keyXSpaces: null,
@@ -35,7 +34,7 @@ beforeEach(() => {
 
 afterEach(() => {
   // cleanup on exiting
-  unmountComponentAtNode(container);
+  cleanup();
   container.remove();
   container = null;
 });
@@ -63,7 +62,7 @@ describe('Key Serial Container', () => {
             <KeySerialContainer selectedKey={selectedKey} />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -89,7 +88,7 @@ describe('Key Serial Container', () => {
             <KeySerialContainer selectedKey={selectedKey} />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -113,7 +112,7 @@ describe('Key Serial Container', () => {
             <KeySerialContainer selectedKey={selectedKey} />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -146,7 +145,7 @@ describe('Key Serial Container', () => {
             <KeySerialContainer selectedKey={selectedKey} />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
     const matches = container.querySelectorAll('.rt-tr-group');
@@ -172,7 +171,7 @@ describe('Key Serial Container', () => {
             </Route>
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 

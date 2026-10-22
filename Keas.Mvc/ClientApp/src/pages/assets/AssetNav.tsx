@@ -3,7 +3,9 @@ import { NavLink } from 'react-router-dom';
 import { Context } from '../../Context';
 import { PermissionsUtil } from '../../util/permissions';
 
-export default class AssetNav extends React.Component<{}, {}> {
+export default class AssetNav extends React.Component<React.PropsWithChildren<{}>> {
+  declare context: React.ContextType<typeof Context>;
+
   public render() {
     return (
       <div>

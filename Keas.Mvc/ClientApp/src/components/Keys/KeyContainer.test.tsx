@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { render, cleanup, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { routes } from '../../pages/assets/routes';
 import { fakeKeys } from '../specs/mockData/Key';
 import KeyContainer from '../Keys/KeyContainer';
 
-let container: Element = null;
+let container: HTMLElement = null;
 
 vi.mock('../Spaces/SpacesContainer', () => ({
   default: () => {
@@ -35,7 +34,7 @@ beforeEach(() => {
 
 afterEach(() => {
   // cleanup on exiting
-  unmountComponentAtNode(container);
+  cleanup();
   container.remove();
   container = null;
 });
@@ -63,7 +62,7 @@ describe('Key Container', () => {
             <KeyContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -86,7 +85,7 @@ describe('Key Container', () => {
             <KeyContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -110,7 +109,7 @@ describe('Key Container', () => {
             <KeyContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -144,7 +143,7 @@ describe('Key Container', () => {
             <KeyContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
     const matches = container.querySelectorAll('.rt-tr-group');
@@ -166,7 +165,7 @@ describe('Key Container', () => {
             {routes}
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 

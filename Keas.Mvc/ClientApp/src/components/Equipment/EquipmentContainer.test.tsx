@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { render, cleanup, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeEquipment } from '../specs/mockData/Equipment';
 import { routes } from '../../pages/assets/routes';
 import EquipmentContainer from '../Equipment/EquipmentContainer';
 
-let container: Element = null;
+let container: HTMLElement = null;
 
 vi.mock('../History/HistoryContainer', () => ({
   default: () => <div id='HistoryContainer'>HistoryContainer</div>
@@ -21,7 +20,7 @@ beforeEach(() => {
 
 afterEach(() => {
   // cleanup on exiting
-  unmountComponentAtNode(container);
+  cleanup();
   container.remove();
   container = null;
 });
@@ -49,7 +48,7 @@ describe('Equipment Container', () => {
             <EquipmentContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -72,7 +71,7 @@ describe('Equipment Container', () => {
             <EquipmentContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -96,7 +95,7 @@ describe('Equipment Container', () => {
             <EquipmentContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -130,7 +129,7 @@ describe('Equipment Container', () => {
             <EquipmentContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
     const matches = container.querySelectorAll('.rt-tr-group');
@@ -152,7 +151,7 @@ describe('Equipment Container', () => {
             {routes}
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 

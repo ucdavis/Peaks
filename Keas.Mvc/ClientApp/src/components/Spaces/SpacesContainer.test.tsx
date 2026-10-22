@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { render, cleanup, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakeSpaces } from '../specs/mockData/Space';
 import { routes } from '../../pages/assets/routes';
 import SpacesContainer from './SpacesContainer';
 
-let container: Element = null;
+let container: HTMLElement = null;
 
 // mock out the sub containers, at least for now
 vi.mock('../Equipment/EquipmentContainer', () => ({
@@ -36,7 +35,7 @@ beforeEach(() => {
 
 afterEach(() => {
   // cleanup on exiting
-  unmountComponentAtNode(container);
+  cleanup();
   container.remove();
   container = null;
 });
@@ -64,7 +63,7 @@ describe('Space Container', () => {
             <SpacesContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -87,7 +86,7 @@ describe('Space Container', () => {
             <SpacesContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -123,7 +122,7 @@ describe('Space Container', () => {
             <SpacesContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
     const matches = container.querySelectorAll('.rt-tr-group');
@@ -145,7 +144,7 @@ describe('Space Container', () => {
             {routes}
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
