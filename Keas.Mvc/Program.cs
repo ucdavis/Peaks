@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using Elastic.Apm.SerilogEnricher;
 using Keas.Core.Data;
+using Keas.Mvc.Database;
 using Keas.Mvc.Helpers;
 using Keas.Mvc.Models;
 using Microsoft.AspNetCore.Hosting;
@@ -20,6 +21,10 @@ namespace Keas.Mvc
     {
         public static int Main(string[] args)
         {
+            // Explicit maintenance commands exit before configuration, user secrets, logging, or web startup.
+            if (args.Length > 0 && args[0] == "database")
+                return DatabaseCommand.RunAsync(args[1..]).GetAwaiter().GetResult();
+
 #if DEBUG
             Serilog.Debugging.SelfLog.Enable(msg => Debug.WriteLine(msg));
 #endif
@@ -30,7 +35,7 @@ namespace Keas.Mvc
             var isDevelopment = string.Equals(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT"), "development", StringComparison.OrdinalIgnoreCase);
             var builder = new ConfigurationBuilder()
                 .SetBasePath(System.IO.Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);                
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
             //only add secrets in development
             if (isDevelopment)

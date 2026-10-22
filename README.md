@@ -12,6 +12,19 @@
 **K**eys
 **S**pace
 
+## Run the Docker sandbox
+
+Run the app and real SQL Server migrations with fictional data and local login. Docker Desktop must be running.
+
+```bash
+export SANDBOX_PROJECT=peaks-my-feature
+export SANDBOX_PORT=5285
+export SANDBOX_SQL_PORT=14339
+docker compose -f .devcontainer/docker-compose.sandbox.yml up --build -d --wait
+```
+
+Open <http://localhost:5285/login> and enter `sandbox-admin`. Use a unique project name and ports for each worktree. See [sandbox setup, reset and tests](docs/SANDBOX.md), and [EF migration workflow](docs/database/README.md).
+
 # Build and run
 
 Install the .NET SDK selected by [`global.json`](global.json). Use Node.js 22.18 or newer on Node 22 to match the [CI pipeline](azure-pipelines.yml), with npm 10 or newer as required by the [frontend package](Keas.Mvc/ClientApp/package.json).
@@ -22,6 +35,8 @@ With NVM for Windows:
 nvm install 22
 nvm use 22
 ```
+
+Before running with SQL Server, review the [startup migration prerequisites](docs/database/README.md#automatic-startup-migrations).
 
 Get the application settings from Box and configure the website's user secrets.
 

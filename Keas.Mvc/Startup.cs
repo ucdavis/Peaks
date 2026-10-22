@@ -42,9 +42,12 @@ namespace Keas.Mvc
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly IWebHostEnvironment _environment;
+
+        public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             Configuration = configuration as IConfigurationRoot;
+            _environment = environment;
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -70,9 +73,18 @@ namespace Keas.Mvc
             services.AddScoped<ISecurityService, SecurityService>();
 
             services.AddDistributedMemoryCache();
+            var localCookieSuffix = _environment.IsDevelopment() && Configuration.GetValue<bool>("LocalLogin:Enabled")
+                ? Configuration["LocalLogin:CookieSuffix"] : null;
+            if (!string.IsNullOrEmpty(localCookieSuffix) && !Regex.IsMatch(localCookieSuffix, "^[a-z0-9][a-z0-9_-]{0,63}$"))
+                throw new InvalidOperationException("LocalLogin:CookieSuffix must be a Compose project name of at most 64 characters.");
+            services.AddAntiforgery(options =>
+            {
+                if (!string.IsNullOrEmpty(localCookieSuffix)) options.Cookie.Name = ".Peaks.Antiforgery." + localCookieSuffix;
+            });
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromHours(1);
+                if (!string.IsNullOrEmpty(localCookieSuffix)) options.Cookie.Name = ".Peaks.Session." + localCookieSuffix;
             });
 
 
@@ -113,6 +125,8 @@ namespace Keas.Mvc
             .AddCookie(options =>
                 {
                     options.LoginPath = new PathString("/login");
+                    if (!string.IsNullOrEmpty(localCookieSuffix))
+                        options.Cookie.Name = ".Peaks.Local." + localCookieSuffix;
                 })
             .AddCAS();
             services.AddAuthorization(options =>
@@ -120,27 +134,31 @@ namespace Keas.Mvc
                 // Assets can be managed by role or auth token (API)
                 options.AddPolicy(AccessCodes.Codes.EquipMasterAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.EquipmentMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.KeyMasterAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.KeyMaster, Role.Codes.DepartmentalAdmin)));
-                options.AddPolicy(AccessCodes.Codes.AccessMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin)));
-                options.AddPolicy(AccessCodes.Codes.SpaceMasterAccess, policy=> policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.SpaceMaster,Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy(AccessCodes.Codes.AccessMasterAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.AccessMaster, Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy(AccessCodes.Codes.SpaceMasterAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.SpaceMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.DocumentMasterAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.DocumentMaster, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.PersonManagerAccess, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.PersonManager, Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.AnyRole, policy => policy.Requirements.Add(new VerifyRoleOrAuthToken(Role.Codes.SpaceMaster, Role.Codes.DepartmentalAdmin, Role.Codes.AccessMaster, Role.Codes.DocumentMaster, Role.Codes.EquipmentMaster, Role.Codes.KeyMaster, Role.Codes.PersonManager)));
 
                 // these require direct role access (no API access)
-                options.AddPolicy(AccessCodes.Codes.DepartmentAdminAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin)));
+                options.AddPolicy(AccessCodes.Codes.DepartmentAdminAccess, policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin)));
                 options.AddPolicy(AccessCodes.Codes.SystemAdminAccess, policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.Admin)));
-                options.AddPolicy(AccessCodes.Codes.DepartmentOrSystemAdminAccess, policy=> policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
+                options.AddPolicy(AccessCodes.Codes.DepartmentOrSystemAdminAccess, policy => policy.Requirements.Add(new VerifyRoleAccess(Role.Codes.DepartmentalAdmin, Role.Codes.Admin)));
             });
 
             services.AddScoped<IAuthorizationHandler, VerifyRoleOrAuthTokenHandler>();
             services.AddScoped<IAuthorizationHandler, VerifyRoleAccessHandler>();
-            
+
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSingleton<AutoValidateAntiforgeryTokenOrApiAuthorizationFilter>();
 
             //Added for Email Template View Engine
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
+            services.Configure<CookieTempDataProviderOptions>(options =>
+            {
+                if (!string.IsNullOrEmpty(localCookieSuffix)) options.Cookie.Name = ".Peaks.TempData." + localCookieSuffix;
+            });
             services.Configure<SparkpostSettings>(Configuration.GetSection("Sparkpost"));
 
             // Used by dynamic scripts/styles loader
@@ -157,11 +175,13 @@ namespace Keas.Mvc
             services.AddScoped<IReportService, ReportService>();
             services.AddScoped<ITeamsManager, TeamsManager>();
             services.AddScoped<IServiceNowService, ServiceNowService>();
-            services.AddMvc(options => {
+            services.AddMvc(options =>
+            {
                 options.Filters.Add<SerilogControllerActionFilter>();
             })
                 .AddXmlSerializerFormatters()
-                .AddNewtonsoftJson(options => {
+                .AddNewtonsoftJson(options =>
+                {
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 });
 
@@ -275,7 +295,7 @@ namespace Keas.Mvc
                     name: "GroupRoutes",
                     pattern: "{controller}/{action=Index}/{id?}",
                     defaults: null,
-                    constraints: new {controller = "(group)"}
+                    constraints: new { controller = "(group)" }
                 );
 
                 endpoints.MapControllerRoute(
