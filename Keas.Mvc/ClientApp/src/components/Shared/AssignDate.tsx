@@ -47,7 +47,7 @@ const AssignDate = (props: IProps) => {
         type='text'
         className='form-control'
         disabled={true}
-        value={!!props.date ? DateUtil.formatExpiration(props.date) : ''}
+        value={props.date ? DateUtil.formatExpiration(props.date) : ''}
       />
     </FormGroup>
   );
