@@ -27,6 +27,20 @@ namespace Keas.Mvc.Helpers
 
         public void Initialize()
         {
+            if (_context.Database.IsSqlServer())
+            {
+                // Require the configured database to exist; startup must not create a mistyped target.
+                _context.Database.OpenConnection();
+                try
+                {
+                    _context.Database.Migrate();
+                }
+                finally
+                {
+                    _context.Database.CloseConnection();
+                }
+            }
+
             // Create All Roles
             CreateOrFindRole(new Role { Name = "KeyMaster" });
             CreateOrFindRole(new Role { Name = "EquipMaster" });

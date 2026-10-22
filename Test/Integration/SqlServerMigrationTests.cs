@@ -12,7 +12,10 @@ using System.Threading.Tasks;
 using Keas.Core.Data;
 using Keas.Core.Domain;
 using Keas.Mvc.Database;
+using Keas.Mvc.Helpers;
+using Keas.Mvc.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -31,6 +34,108 @@ namespace Test.Integration
 
     public class SqlServerMigrationTests
     {
+        [SqlServerFact]
+        public async Task StartupAppliesPendingMigrationsBeforeInitializingData()
+        {
+            await using var db = await SandboxDatabase.Create();
+
+            new DbInitializer(db.Context, new SuperuserSettings()).Initialize();
+
+            Assert.Equal(DatabaseCommands.BaselineId, await db.Scalar("SELECT MigrationId FROM dbo.__EFMigrationsHistory"));
+            Assert.True(await db.Context.Roles.AnyAsync(role => role.Name == "Admin" && role.IsAdmin));
+            Assert.True(await db.Context.EquipmentAttributeKeys.AnyAsync(key => key.Key == "Service Tag"));
+        }
+
+        [SqlServerFact]
+        public async Task RepeatedStartupPreservesRegisteredSchemaAndAllExistingData()
+        {
+            await using var db = await SandboxDatabase.Create();
+            await db.Context.Database.MigrateAsync();
+            await SeedBehavior(db.Context);
+            var initializer = new DbInitializer(db.Context, new SuperuserSettings());
+            initializer.Initialize();
+            var before = await SqlServerSchema.CaptureObjectsAsync(db.Connection);
+
+            async Task<string> Fingerprint()
+            {
+                using var hash = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+                foreach (var table in before.Where(o => o["type"].GetValue<string>().Trim() == "U"))
+                {
+                    var name = table["name"].GetValue<string>();
+                    await using var command = new SqlCommand($"SELECT (SELECT t.* FOR JSON PATH, WITHOUT_ARRAY_WRAPPER, INCLUDE_NULL_VALUES) FROM dbo.[{name.Replace("]", "]]")}] t", db.Connection);
+                    await using var reader = await command.ExecuteReaderAsync();
+                    var rows = new List<string>();
+                    while (await reader.ReadAsync()) rows.Add(reader.GetString(0));
+                    rows.Sort(StringComparer.Ordinal);
+                    hash.AppendData(Encoding.UTF8.GetBytes(name + "\n"));
+                    foreach (var row in rows) hash.AppendData(Encoding.UTF8.GetBytes(row + "\n"));
+                }
+                return Convert.ToHexString(hash.GetHashAndReset());
+            }
+
+            var fingerprint = await Fingerprint();
+            initializer.Initialize();
+            initializer.Initialize();
+
+            Assert.True(JsonNode.DeepEquals(before, await SqlServerSchema.CaptureObjectsAsync(db.Connection)));
+            Assert.Equal(fingerprint, await Fingerprint());
+            Assert.Equal(1, Convert.ToInt32(await db.Scalar("SELECT COUNT(*) FROM dbo.__EFMigrationsHistory")));
+            Assert.Equal(DatabaseCommands.BaselineId, await db.Scalar("SELECT MigrationId FROM dbo.__EFMigrationsHistory"));
+            await AssertBehavior(db.Context);
+        }
+
+        [SqlServerFact]
+        public async Task StartupRefusesUnregisteredSchemaBeforeSeeding()
+        {
+            await using var db = await SandboxDatabase.Create();
+            await db.Context.Database.MigrateAsync();
+            await db.Execute("DELETE FROM dbo.__EFMigrationsHistory; INSERT dbo.Users(Id, FirstName, LastName, Email) VALUES ('keep', 'Existing', 'User', 'keep@example.test')");
+            var before = await SqlServerSchema.CaptureObjectsAsync(db.Connection);
+
+            var error = Assert.Throws<SqlException>(() => new DbInitializer(db.Context, new SuperuserSettings()).Initialize());
+
+            Assert.Contains("Verify and adopt", error.Message);
+            Assert.True(JsonNode.DeepEquals(before, await SqlServerSchema.CaptureObjectsAsync(db.Connection)));
+            Assert.Equal("keep", await db.Scalar("SELECT Id FROM dbo.Users"));
+            Assert.Equal(0, await db.Context.Roles.CountAsync());
+            Assert.Equal(0, await db.Context.EquipmentAttributeKeys.CountAsync());
+            Assert.Equal(0, Convert.ToInt32(await db.Scalar("SELECT COUNT(*) FROM dbo.__EFMigrationsHistory")));
+        }
+
+        [SqlServerFact]
+        public async Task StartupDoesNotCreateAMissingDatabase()
+        {
+            await using var db = await SandboxDatabase.Create(createDatabase: false);
+
+            var error = Assert.Throws<InvalidOperationException>(() => new DbInitializer(db.Context, new SuperuserSettings()).Initialize());
+            Assert.IsType<SqlException>(error.InnerException);
+
+            await using var master = new SqlConnection(new SqlConnectionStringBuilder(db.ConnectionString) { InitialCatalog = "master" }.ConnectionString);
+            await master.OpenAsync();
+            await using var exists = new SqlCommand("SELECT DB_ID(@name)", master);
+            exists.Parameters.AddWithValue("@name", db.Name);
+            Assert.Equal(DBNull.Value, await exists.ExecuteScalarAsync());
+        }
+
+        [Fact]
+        public async Task SqliteStartupKeepsExistingInitializationWithoutSqlServerMigrations()
+        {
+            await using var connection = new SqliteConnection("Data Source=:memory:");
+            await connection.OpenAsync();
+            await using var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>().UseSqlite(connection).Options);
+            await context.Database.EnsureCreatedAsync();
+
+            var initializer = new DbInitializer(context, new SuperuserSettings());
+            initializer.Initialize();
+            initializer.Initialize();
+
+            Assert.Equal(8, await context.Roles.CountAsync());
+            Assert.Equal(11, await context.EquipmentAttributeKeys.CountAsync());
+            await using var history = connection.CreateCommand();
+            history.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE name='__EFMigrationsHistory'";
+            Assert.Equal(0L, await history.ExecuteScalarAsync());
+        }
+
         [Fact]
         public void SnapshotMatchesUnchangedApplicationModel()
         {

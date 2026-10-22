@@ -8,7 +8,13 @@ The baseline preserves the physical schema; the EF snapshot records the applicat
 
 `20261021183110_ProductionBaseline` creates 41 application/import tables, four views and two stored procedures through SQL embedded in Core. Fresh creation excludes historical backup tables and the Azure automatic KeySerialAssignments index. Those existing objects are retained when an existing database is registered with the baseline.
 
-Fresh databases require `SQL_Latin1_General_CP1_CI_AS`. The SQL Server provider uses compatibility level 140, matching the existing app. SQLite retains its existing development/test behavior and does not run these SQL Server migrations. No call to `Database.Migrate` was added to application startup.
+Fresh databases require `SQL_Latin1_General_CP1_CI_AS`. The SQL Server provider uses compatibility level 140, matching the existing app. SQLite retains its existing development/test behavior and does not run these SQL Server migrations.
+
+## Automatic startup migrations
+
+Normal MVC startup applies all pending SQL Server migrations before initializing roles, users and attribute keys, and before accepting HTTP requests. Migration failures terminate startup with a nonzero exit code. The configured database must already exist; startup opens it before running migrations and never falls back to database creation. The application database identity needs the permissions required by each migration.
+
+Existing databases must have the initial baseline registered before deploying this startup behavior. Registration records `20261021183110_ProductionBaseline` in `dbo.__EFMigrationsHistory` without running its table-creation SQL. Once registered, startup leaves the schema alone until a later migration is deployed. An unregistered existing schema is refused, not automatically adopted. Fresh, empty databases receive the baseline normally. EF's SQL Server migration lock coordinates migration execution between instances; deploy later migrations only after reviewing their compatibility with any still-running application or WebJob versions.
 
 The manual [IS3 maintenance script](maintenance/PopulateIs3Fields.sql) is retained and never runs as part of a migration or initializer.
 
@@ -26,13 +32,13 @@ The design-time factory configures SQL Server without a connection. Scaffolding 
 
 EF compares the new model to the snapshot, not to a live database. It cannot discover legacy differences or new changes to unmapped tables, views, procedures and columns. Before approving a future migration, compare its affected live objects to the model's assumptions. Customize operations where legacy differences require it; add new versioned SQL resources for unmapped objects. Never rewrite an already adopted baseline. Use the sandbox to rehearse applying and rolling back each reviewed migration.
 
-The sandbox initializer uses the same published MVC executable with `database migrate` and `database seed-sandbox`. Seeding still requires `PEAKS_SANDBOX=1` and the exact Compose `sql/PeaksSandbox` target. Normal MVC startup does not run either command.
+The sandbox initializer uses the same published MVC executable with `database migrate` and `database seed-sandbox`. Seeding still requires `PEAKS_SANDBOX=1` and the exact Compose `sql/PeaksSandbox` target. Normal MVC startup calls EF migrations directly and does not run sandbox seeding.
 
 ## Existing databases and rollback
 
 The one-time `capture`, `verify`, `adopt`, and `unadopt` commands are not shipped in this project. The preserved utility and its original tests are pinned to Peaks commit `14eb2b5a1df81fe2d2301255533f34bdd246138d`. The operator maintains a standalone `peaks-baseline-adoption` copy with its own Core source, runnable build, source hashes, dependency locks, instructions, and validation evidence. That copy has no dependency on a current Peaks checkout. The same source can be recovered from that commit if needed.
 
-An existing database must have its baseline registered before normal migrations run. Use the preserved utility for that one-time operation. It requires an explicitly named target and a reviewed inventory, and changes migration history only. TEST was adopted on October 21, 2026. Production adoption requires separate approval, fresh schema verification, and current recovery readiness. Test fixtures are not adoption inventories.
+An existing database must have its baseline registered before normal migrations run, including automatic startup migrations. Use the preserved utility for that one-time operation. It requires an explicitly named target and a reviewed inventory, and changes migration history only. TEST was adopted on October 21, 2026. Production adoption requires explicit approval, fresh schema verification, and current recovery readiness. Test fixtures are not adoption inventories.
 
 The baseline's `Down` always refuses to run; `updateDatabase.sh --to 0` also refuses. Neither can drop application objects. Reversing adoption is a separate operation using the preserved utility, supported only before any later migration exists. It removes the baseline history row and retains an empty history table. After later migrations have been applied, use their separately reviewed rollback operations. To reset local development completely, remove only the named sandbox's volumes as documented in [SANDBOX.md](../SANDBOX.md).
 
