@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "scripts": {
     "start": "vite",
-    "build": "npm run typecheck && vite build",
+    "build": "npm run icons:generate && npm run typecheck && vite build",
+    "icons:generate": "node scripts/generate-heroicons.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "testwatch": "vitest",
@@ -14,6 +15,7 @@
     "test:launcher": "node --test scripts/dev-server.test.mjs"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@tanstack/react-table": "9.3.1",
     "date-fns": "2.14.0",
     "isomorphic-fetch": "2.2.1",

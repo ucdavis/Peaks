@@ -1,3 +1,4 @@
+import { KeyIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
@@ -44,7 +45,7 @@ const KeyListItem = (props: IProps) => {
       <td>{keyInfo.key.name}</td>
       <td>{keyInfo.key.code}</td>
       <td className=''>
-        <i className='fas fa-key' /> {keyInfo.serialsInUseCount} /{' '}
+        <KeyIcon data-icon="key" className='hero-icon size-5' /> {keyInfo.serialsInUseCount} /{' '}
         {keyInfo.serialsTotalCount}
       </td>
       <td>

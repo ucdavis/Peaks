@@ -1,3 +1,4 @@
+import { InformationCircleIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import {
   Button,
@@ -95,7 +96,7 @@ const EquipmentEditValues = (props: IProps) => {
             color='link'
             onClick={() => props.openEditModal(props.selectedEquipment)}
           >
-            <i className='fas fa-edit fa-xs' /> Edit Equipment
+            <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' /> Edit Equipment
           </Button>
         )}
       </div>
@@ -169,7 +170,7 @@ const EquipmentEditValues = (props: IProps) => {
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                <i className='fas fa-info-circle' />
+                <InformationCircleIcon data-icon="information-circle" className='hero-icon size-5' />
               </a>
               <Input
                 type='select'
@@ -197,7 +198,7 @@ const EquipmentEditValues = (props: IProps) => {
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                <i className='fas fa-info-circle' />
+                <InformationCircleIcon data-icon="information-circle" className='hero-icon size-5' />
               </a>
               <Input
                 type='select'

@@ -1,3 +1,4 @@
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useTable, flexRender } from '@tanstack/react-table';
 import { ColumnFilterHeaders } from './Filtering';
@@ -61,13 +62,11 @@ export const ReactTable = <T extends object>({
                     {label}
                     <span aria-hidden='true'>
                       {sorted && (
-                        <i
-                          className={
-                            sorted === 'desc'
-                              ? 'fas fa-long-arrow-alt-down'
-                              : 'fas fa-long-arrow-alt-up'
-                          }
-                        />
+                        sorted === 'desc' ? (
+                          <ArrowDownIcon className='hero-icon size-4' aria-hidden='true' />
+                        ) : (
+                          <ArrowUpIcon className='hero-icon size-4' aria-hidden='true' />
+                        )
                       )}
                     </span>
                   </>

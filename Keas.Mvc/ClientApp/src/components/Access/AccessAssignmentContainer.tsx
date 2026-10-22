@@ -1,3 +1,4 @@
+import { IdentificationIcon, PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -254,10 +255,10 @@ const AccessAssignmentContainer = (props: IProps) => {
         <div className='card-header-access'>
           <div className='card-head row justify-content-between'>
             <h2>
-              <i className='fas fa-address-card fa-xs' /> Assignments
+              <IdentificationIcon data-icon="identification" className='hero-icon size-4' /> Assignments
             </h2>
             <Button color='link' onClick={openAssignModal}>
-              <i className='fas fa-plus fa-sm' aria-hidden='true' /> Assign
+              <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Assign
               Access
             </Button>
           </div>

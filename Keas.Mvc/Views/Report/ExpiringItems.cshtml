@@ -26,13 +26,13 @@
                             <select class="form-control" asp-for="ShowType" asp-items="@(new SelectList(Model.ItemList))"></select>
                         </div>
                         <div class="form-group">
-                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                            <hero-icon name="arrow-path" class="size-4"></hero-icon><input type="submit" value="Refresh Report" class="btn btn-link" />
                         </div>
                     </div>
                 </div>
             </div>
 
-           
+
             <br>
             <br>
             <table id="dtExpiringItems" class="table dataTable">
@@ -49,7 +49,7 @@
                     </th>
                     <th>
                         Expiration
-                    </th>           
+                    </th>
                     <th>
                         Link
                     </th>
@@ -67,7 +67,7 @@
                         </td>
                         <td>
                             @Html.DisplayFor(a => item.ExpiresAt)
-                        </td>               
+                        </td>
                         <td>
                             <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "access", item.AccessId)' >Details</a>
                         </td>
@@ -139,8 +139,8 @@
 }
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ImportJS");}        
-    
+    @{await Html.RenderPartialAsync("_ImportJS");}
+
     <script type="text/javascript">
         $('.dataTable').DataTable({
             "dom": 'lBfrtip',

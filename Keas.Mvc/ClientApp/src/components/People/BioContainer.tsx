@@ -1,3 +1,4 @@
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext } from 'react';
 import { Button } from 'reactstrap';
@@ -91,10 +92,8 @@ const BioContainer = (props: IProps) => {
               rel='noopener noreferrer'
             >
               <Button color='link'>
-                <i
-                  className='fas fa-search fa-sm fa-fw mr-2'
-                  aria-hidden='true'
-                />
+                <MagnifyingGlassIcon data-icon="magnifying-glass" className='hero-icon size-4 mr-2'
+                  aria-hidden='true' />
                 See who this person supervises
               </Button>
             </a>

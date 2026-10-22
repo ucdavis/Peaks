@@ -1,3 +1,4 @@
+import { ArrowPathIcon, InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -26,7 +27,7 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
           getManagedSystemComputerInfo(props.managedSystemId || '');
         }}
       >
-        <i className='fas fa-info-circle ml-2' />
+        <InformationCircleIcon data-icon="information-circle" className='hero-icon size-5 ml-2' />
       </a>
     );
   };
@@ -42,7 +43,7 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
         <div className='modal-header row justify-content-between'>
           <h2>Computer Details</h2>
           <Button color='link' onClick={modalToggle}>
-            <i className='fas fa-times fa-lg' />
+            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
 
@@ -57,7 +58,7 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
     if (isFetched) {
       return renderComputerInfo();
     } else {
-      return <i className='fas fa-3x fa-spinner fa-pulse' />;
+      return <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-12 animate-spin' />;
     }
   };
 

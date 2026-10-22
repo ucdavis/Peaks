@@ -11,7 +11,7 @@
         <div class="alert alert-warning">
             <div class="row justify-content-between align-middle">
                 <p>You have pending items!</p>
-                <a asp-controller="Confirm" asp-action="Confirm">Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
+                <a asp-controller="Confirm" asp-action="Confirm">Go to Accept page <hero-icon name="arrow-right" class="size-4"></hero-icon></a>
             </div>
         </div>
     }
@@ -23,7 +23,7 @@
             <div class="alert alert-warning">
                 <div class="row justify-content-between align-middle">
                     <p>You have pending items in team @teamWithPending.Name!</p>
-                    <a href='@string.Format("/{0}/Confirm/Confirm", teamWithPending.Slug)'>Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
+                    <a href='@string.Format("/{0}/Confirm/Confirm", teamWithPending.Slug)'>Go to Accept page <hero-icon name="arrow-right" class="size-4"></hero-icon></a>
                 </div>
             </div>
         }
@@ -41,7 +41,7 @@
     <div class="card keys-color">
       <div class="card-header-keys">
         <div class="card-head">
-  <h2><i class="fas fa-key fa-xs"></i> Keys</h2>
+  <h2><hero-icon name="key" class="size-4"></hero-icon> Keys</h2>
         </div>
       </div>
       <div class="card-content">
@@ -52,7 +52,7 @@
               <th>Serial</th>
               <th>Name</th>
               <th>Expiration</th>
-              <th>Accepted?</th>              
+              <th>Accepted?</th>
             </tr>
           </thead>
           <tbody>
@@ -62,7 +62,7 @@
               <td>@serial.Number</td>
               <td>@serial.Key.Name</td>
               <td>@serial.KeySerialAssignment.ExpiresAt.ToShortDateString()</td>
-              <td>@serial.KeySerialAssignment.ConfirmedAt.AcceptedWithDate()</td>            
+              <td>@serial.KeySerialAssignment.ConfirmedAt.AcceptedWithDate()</td>
             </tr>
             }
 
@@ -78,7 +78,7 @@
     <div class="card equipment-color">
       <div class="card-header-equipment">
         <div class="card-head">
-          <h2><i class="fas fa-hdd fa-xs"></i> Equipment</h2></div>
+          <h2><hero-icon name="computer-desktop" class="size-4"></hero-icon> Equipment</h2></div>
       </div>
       <div class="card-content">
         <table class="table">
@@ -118,7 +118,7 @@
     <div class="card access-color">
       <div class="card-header-access">
         <div class="card-head">
-          <h2><i class="fas fa-address-card fa-xs"></i> Access</h2></div>
+          <h2><hero-icon name="identification" class="size-4"></hero-icon> Access</h2></div>
       </div>
       <div class="card-content">
         <table class="table">
@@ -149,7 +149,7 @@
     <div class="card spaces-color">
       <div class="card-header-spaces">
         <div class="card-head">
-          <h2><i class="fas fa-building fa-xs"></i> Workstations</h2></div>
+          <h2><hero-icon name="building-office-2" class="size-4"></hero-icon> Workstations</h2></div>
       </div>
       <div class="card-content">
 
@@ -185,7 +185,7 @@
     <div class="card documents-color">
       <div class="card-header-documents">
         <div class="card-head">
-          <h2><i class="fas fa-briefcase fa-xs"></i> Documents</h2></div>
+          <h2><hero-icon name="briefcase" class="size-4"></hero-icon> Documents</h2></div>
       </div>
       <div class="card-content">
 
@@ -220,7 +220,7 @@
 
     <div class="card history-color">
       <div class="card-head">
-        <h2><i class="fas fa-history fa-xs"></i> History</h2></div>
+        <h2><hero-icon name="clock" class="size-4"></hero-icon> History</h2></div>
       <div class="card-content">
 
 

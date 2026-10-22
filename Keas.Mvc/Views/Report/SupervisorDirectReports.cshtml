@@ -17,18 +17,18 @@
                             <label asp-for="PersonId" class="control-label"></label>
                              <select asp-for="PersonId" class="form-control" asp-items="@(new SelectList(Model.Supervisors, "Id", "Name"))"></select>
                              <div class="form-group">
-                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                            <hero-icon name="arrow-path" class="size-4"></hero-icon><input type="submit" value="Refresh Report" class="btn btn-link" />
                         </div>
                         </div>
-                    </div>                    
+                    </div>
                     <div class="col-sm">
-                        
+
                     </div>
                 </div>
 
            <table id="dtDirectReports" class="table dataTable">
         <thead>
-        <tr>            
+        <tr>
             <th>
                Name
             </th>
@@ -40,16 +40,16 @@
         {
         foreach (var item in Model.Reports)
         {
-            <tr>                
+            <tr>
                 <td>
                     @Html.DisplayFor(a=> item.LastName), @Html.DisplayFor(a=> item.FirstName)
                 </td>
                 <td>
                     <a href='@string.Format("/{0}/{1}/details/{2}", TempData["TeamName"], "People", item.Id)'>Details</a>
-                </td>                
+                </td>
             </tr>
         }
-        }        
+        }
         </tbody>
     </table>
 

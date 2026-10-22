@@ -1,3 +1,4 @@
+import { ArrowPathIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 ﻿import * as React from 'react';
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -70,9 +71,9 @@ const SearchUsers = (props: IProps) => {
         />
         <Button color='link' onClick={loadUser}>
           {loading ? (
-            <i className='fas fa-spin fa-spinner' />
+            <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />
           ) : (
-            <i className='fas fa-search fa-sm' />
+            <MagnifyingGlassIcon data-icon="magnifying-glass" className='hero-icon size-4' />
           )}
         </Button>
       </InputGroup>

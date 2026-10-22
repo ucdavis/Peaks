@@ -1,3 +1,4 @@
+import { ArrowLeftIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext } from 'react';
 import { RouteChildrenProps } from 'react-router';
@@ -57,7 +58,7 @@ const PersonDetails = (props: IProps) => {
     <div>
       <div>
         <Button color='link' onClick={props.goBack}>
-          <i className='fas fa-arrow-left fa-xs' /> Return to Table
+          <ArrowLeftIcon data-icon="arrow-left" className='hero-icon size-4' /> Return to Table
         </Button>
       </div>
       <br />
@@ -96,10 +97,8 @@ const PersonDetails = (props: IProps) => {
                     rel='noopener noreferrer'
                   >
                     <Button color='link'>
-                      <i
-                        className='fas fa-search fa-sm fa-fw mr-2'
-                        aria-hidden='true'
-                      />
+                      <MagnifyingGlassIcon data-icon="magnifying-glass" className='hero-icon size-4 mr-2'
+                        aria-hidden='true' />
                       Lookup Teams
                     </Button>
                   </a>

@@ -1,3 +1,4 @@
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { ModalBody, Modal, Button } from 'reactstrap';
 import { useEffect, useContext, useState } from 'react';
@@ -103,7 +104,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
         <div className='modal-header row justify-content-between'>
           <h2>Assign Document for Signature</h2>
           <Button color='link' onClick={() => setShow(false)}>
-            <i className='fas fa-times fa-lg' />
+            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
 

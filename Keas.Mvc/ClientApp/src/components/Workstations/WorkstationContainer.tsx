@@ -1,3 +1,4 @@
+import { BriefcaseIcon, PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -461,10 +462,10 @@ const WorkstationContainer = (props: IProps) => {
       <div className='card-header-spaces'>
         <div className='card-head row justify-content-between'>
           <h2>
-            <i className='fas fa-briefcase fa-xs' /> Workstations
+            <BriefcaseIcon data-icon="briefcase" className='hero-icon size-4' /> Workstations
           </h2>
           <Button color='link' onClick={() => openCreateModal()}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add
+            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add
             Workstation
           </Button>
         </div>

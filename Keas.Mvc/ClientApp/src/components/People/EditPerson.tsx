@@ -1,3 +1,4 @@
+import { ArrowPathIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
@@ -93,7 +94,7 @@ const EditPerson = (props: IProps) => {
   return (
     <div>
       <Button color='link' onClick={toggleModal}>
-        <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
+        <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4 mr-2' aria-hidden='true' />
         Edit Person
       </Button>
       <Modal
@@ -105,7 +106,7 @@ const EditPerson = (props: IProps) => {
         <div className='modal-header row justify-content-between'>
           <h2>Edit Person</h2>
           <Button color='link' onClick={closeModal}>
-            <i className='fas fa-times fa-lg' />
+            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
         <ModalBody>
@@ -129,7 +130,7 @@ const EditPerson = (props: IProps) => {
             onClick={editSelected}
             disabled={!validState || submitting}
           >
-            Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>
         </ModalFooter>
       </Modal>

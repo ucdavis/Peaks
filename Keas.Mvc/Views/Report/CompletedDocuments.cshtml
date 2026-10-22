@@ -26,13 +26,13 @@
                         <input asp-for="End" class="form-control datepicker"/>
                         <span asp-validation-for="End" class="text-danger"></span>
                         <div class="form-group">
-                            <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                            <hero-icon name="arrow-path" class="size-4"></hero-icon><input type="submit" value="Refresh Report" class="btn btn-link" />
                         </div>
                     </div>
                 </div>
             </div>
-            
-           
+
+
             <br>
             <br>
             <table id="dtDocuments" class="table dataTable">
@@ -49,7 +49,7 @@
                     </th>
                     <th>
                         Completed
-                    </th>           
+                    </th>
                     <th>
                         Link
                     </th>
@@ -81,8 +81,8 @@
 }
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ImportJS");}        
-    
+    @{await Html.RenderPartialAsync("_ImportJS");}
+
     <script type="text/javascript">
         $('.dataTable').DataTable({
             "dom": 'lBfrtip',

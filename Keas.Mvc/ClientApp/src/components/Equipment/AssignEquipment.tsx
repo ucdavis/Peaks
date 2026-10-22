@@ -1,3 +1,4 @@
+import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -163,7 +164,7 @@ const AssignEquipment = (props: IProps) => {
             : 'Add Equipment'}
         </h2>
         <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
+          <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
         </Button>
       </div>
       <ModalBody>
@@ -207,7 +208,7 @@ const AssignEquipment = (props: IProps) => {
                     <h3>Create New Equipment</h3>
                     <Button color='link' onClick={onDeselected}>
                       Clear{' '}
-                      <i className='fas fa-times fa-sm' aria-hidden='true' />
+                      <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
                     </Button>
                   </div>
 
@@ -230,7 +231,7 @@ const AssignEquipment = (props: IProps) => {
                   <h3>Assign Existing Equipment</h3>
                   <Button color='link' onClick={onDeselected}>
                     Clear{' '}
-                    <i className='fas fa-times fa-sm' aria-hidden='true' />
+                    <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
                   </Button>
                 </div>
 
@@ -253,7 +254,7 @@ const AssignEquipment = (props: IProps) => {
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

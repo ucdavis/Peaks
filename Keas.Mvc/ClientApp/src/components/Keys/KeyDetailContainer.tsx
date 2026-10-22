@@ -1,3 +1,4 @@
+import { ArrowLeftIcon, ChatBubbleLeftEllipsisIcon, PencilSquareIcon, TagIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -75,7 +76,7 @@ const KeyDetailContainer = (props: IProps) => {
       ) : null}
       <div className='mb-3'>
         <Button color='link' onClick={props.goBack}>
-          <i className='fas fa-arrow-left fa-xs' /> Return to Table
+          <ArrowLeftIcon data-icon="arrow-left" className='hero-icon size-4' /> Return to Table
         </Button>
       </div>
 
@@ -90,20 +91,20 @@ const KeyDetailContainer = (props: IProps) => {
               setShouldOpenEditModal(true);
             }}
           >
-            <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
+            <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4 mr-2' aria-hidden='true' />
             Edit Key
           </Button>
         </div>
       </div>
       {selectedKeyInfo.key.tags && (
         <p>
-          <i className='fas fa-tags mr-2' aria-hidden='true' />
+          <TagIcon data-icon="tag" className='hero-icon size-5 mr-2' aria-hidden='true' />
           {selectedKeyInfo.key.tags}
         </p>
       )}
       {selectedKeyInfo.key.notes && (
         <p>
-          <i className='fas fa-comment-alt mr-2' aria-hidden='true' />
+          <ChatBubbleLeftEllipsisIcon data-icon="chat-bubble-left-ellipsis" className='hero-icon size-5 mr-2' aria-hidden='true' />
           {selectedKeyInfo.key.notes}
         </p>
       )}

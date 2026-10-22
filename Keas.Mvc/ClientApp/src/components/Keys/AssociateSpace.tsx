@@ -1,3 +1,4 @@
+import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
@@ -191,7 +192,7 @@ const AssociateSpace = (props: IProps) => {
       <div className='modal-header row justify-content-between'>
         <h2>Assign Key</h2>
         <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
+          <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
         </Button>
       </div>
       <ModalBody>
@@ -209,7 +210,7 @@ const AssociateSpace = (props: IProps) => {
           disabled={!validState || submitting}
         >
           Go!
-          {submitting && <i className='fas fa-circle-notch fa-spin ml-2' />}
+          {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin ml-2' />}
         </Button>
       </ModalFooter>
     </Modal>

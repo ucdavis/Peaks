@@ -1,3 +1,4 @@
+import { ComputerDesktopIcon, PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -617,10 +618,10 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
       <div className='card-header-equipment'>
         <div className='card-head row justify-content-between'>
           <h2>
-            <i className='fas fa-hdd fa-xs' /> Equipment
+            <ComputerDesktopIcon data-icon="computer-desktop" className='hero-icon size-4' /> Equipment
           </h2>
           <Button color='link' onClick={openCreateModal}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Equipment
+            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Equipment
           </Button>
         </div>
       </div>

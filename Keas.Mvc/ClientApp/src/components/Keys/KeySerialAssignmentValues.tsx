@@ -1,3 +1,4 @@
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 ﻿import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IKeySerial } from '../../models/KeySerials';
@@ -21,7 +22,7 @@ const KeySerialAssignmentValues = (props: IProps) => {
           color='link'
           onClick={() => props.openUpdateModal(props.selectedKeySerial)}
         >
-          <i className='fas fa-edit fa-xs' />{' '}
+          <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' />{' '}
           {!!props.selectedKeySerial.keySerialAssignment
             ? 'Update Assignment'
             : 'Assign Key Serial'}

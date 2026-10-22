@@ -1,3 +1,4 @@
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
@@ -85,7 +86,7 @@ const AssignPerson = (props: IProps) => {
               rel='noopener noreferrer'
             >
               <Button color='link' type='button'>
-                <i className='fas fa-search fas-sm' aria-hidden='true' /> Can't
+                <MagnifyingGlassIcon data-icon="magnifying-glass" className='hero-icon size-4' aria-hidden='true' /> Can't
                 find who you're looking for?
               </Button>
             </Link>

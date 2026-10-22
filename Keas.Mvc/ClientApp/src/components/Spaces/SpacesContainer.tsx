@@ -1,3 +1,4 @@
+import { BuildingOffice2Icon, PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import {
@@ -378,12 +379,12 @@ const SpacesContainer = (props: IProps) => {
       <div className='card-header-spaces'>
         <div className='card-head row justify-content-between'>
           <h2>
-            <i className='fas fa-building fa-xs' /> Spaces
+            <BuildingOffice2Icon data-icon="building-office-2" className='hero-icon size-4' /> Spaces
           </h2>
           {shouldRenderTableView && onKeysTab && (
             <div>
               <Button color='link' onClick={() => openAssociateModal(null)}>
-                <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
+                <PlusIcon data-icon="plus" className='hero-icon size-4 mr-2' aria-hidden='true' />
                 Associate
               </Button>
               {action === 'associate' && renderAssociateModal()}

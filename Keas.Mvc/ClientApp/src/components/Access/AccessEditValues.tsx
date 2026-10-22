@@ -1,3 +1,4 @@
+import { LinkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IAccess } from '../../models/Access';
@@ -96,7 +97,7 @@ const AccessEditValues = (props: IProps) => {
         </FormGroup>
         {props.goToAccessDetails && (
           <Button color='link' onClick={() => goToAccessDetails()}>
-            <i className='fas fa-link fa-xs' /> View Access Details
+            <LinkIcon data-icon="link" className='hero-icon size-4' /> View Access Details
           </Button>
         )}
       </div>

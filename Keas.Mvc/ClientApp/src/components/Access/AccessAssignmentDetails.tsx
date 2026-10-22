@@ -1,3 +1,4 @@
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, Modal, ModalBody } from 'reactstrap';
 import { IAccess, IAccessAssignment } from '../../models/Access';
@@ -34,7 +35,7 @@ const AccessAssignmentDetails = (props: IProps) => {
         <div className='modal-header row justify-content-between'>
           <h2>Details for {selectedAccess.name} Assignment</h2>
           <Button color='link' onClick={props.closeModal}>
-            <i className='fas fa-times fa-lg' />
+            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
         <ModalBody>

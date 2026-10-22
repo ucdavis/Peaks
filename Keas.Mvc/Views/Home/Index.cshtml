@@ -14,7 +14,7 @@
         <div class="alert alert-warning">
             <div class="row justify-content-between align-middle">
                 <p>You have pending items!</p>
-                <a asp-controller="Confirm" asp-action="Confirm">Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
+                <a asp-controller="Confirm" asp-action="Confirm">Go to Accept page <hero-icon name="arrow-right" class="size-4"></hero-icon></a>
             </div>
         </div>
     }
@@ -26,7 +26,7 @@
             <div class="alert alert-warning">
                 <div class="row justify-content-between align-middle">
                     <p>You have pending items in team @teamWithPending.Name!</p>
-                    <a href='@string.Format("/{0}/Confirm/Confirm", teamWithPending.Slug)'>Go to Accept page <i class="fas fa-arrow-right fa-xs"></i></a>
+                    <a href='@string.Format("/{0}/Confirm/Confirm", teamWithPending.Slug)'>Go to Accept page <hero-icon name="arrow-right" class="size-4"></hero-icon></a>
                 </div>
             </div>
         }
@@ -66,21 +66,21 @@
                                 <span style="margin-left:12px;">View</span>
                                 <div style="margin-right:-12px;" class="list-peaks-buttons">
                                     <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "people")'>
-                                        <i class="fas fa-users"></i>
+                                        <hero-icon name="users" class="size-5"></hero-icon>
                                     </a>
                                     @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
                                     {
                                         <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "equipment")'>
-                                            <i class="fas fa-hdd"></i>
+                                            <hero-icon name="computer-desktop" class="size-5"></hero-icon>
                                         </a>
                                         <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "access")'>
-                                            <i class="fas fa-address-card"></i>
+                                            <hero-icon name="identification" class="size-5"></hero-icon>
                                         </a>
                                         <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "keys")'>
-                                            <i class="fas fa-key"></i>
+                                            <hero-icon name="key" class="size-5"></hero-icon>
                                         </a>
                                         <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "spaces")'>
-                                            <i class="fas fa-building"></i>
+                                            <hero-icon name="building-office-2" class="size-5"></hero-icon>
                                         </a>
                                     }
                                     else
@@ -88,19 +88,19 @@
                                         @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.EquipMasterAccess)).Succeeded)
                                         {
                                             <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "equipment")'>
-                                                <i class="fas fa-hdd"></i>
+                                                <hero-icon name="computer-desktop" class="size-5"></hero-icon>
                                             </a>
                                         }
                                         @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AccessMasterAccess)).Succeeded)
                                         {
                                             <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "access")'>
-                                                <i class="fas fa-address-card"></i>
+                                                <hero-icon name="identification" class="size-5"></hero-icon>
                                             </a>
                                         }
                                         @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.KeyMasterAccess)).Succeeded)
                                         {
                                             <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "keys")'>
-                                                <i class="fas fa-key"></i>
+                                                <hero-icon name="key" class="size-5"></hero-icon>
                                             </a>
                                         }
                                         @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.EquipMasterAccess)).Succeeded ||
@@ -109,7 +109,7 @@
                                        (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.SpaceMasterAccess)).Succeeded)
                                         {
                                             <a href='@string.Format("/{0}/{1}", TempData["TeamName"] , "spaces")'>
-                                                <i class="fas fa-building"></i>
+                                                <hero-icon name="building-office-2" class="size-5"></hero-icon>
                                             </a>
                                         }
                                     }

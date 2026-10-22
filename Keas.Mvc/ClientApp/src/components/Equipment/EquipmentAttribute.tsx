@@ -1,3 +1,4 @@
+import { TrashIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { IEquipmentAttribute } from '../../models/Equipment';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
@@ -74,7 +75,7 @@ const EquipmentAttribute = (props: IProps) => {
               className='btn btn-outline-danger'
               onClick={() => props.onRemove(props.index)}
             >
-              <i className='fas fa-trash' />
+              <TrashIcon data-icon="trash" className='hero-icon size-5' />
             </button>
           </td>
         )}

@@ -1,3 +1,4 @@
+import { EllipsisHorizontalIcon } from '@heroicons/react/24/outline';
 ﻿import * as React from 'react';
 import { useState } from 'react';
 import {
@@ -32,8 +33,9 @@ const ListActionsDropdown = (props: IProps) => {
   return (
     <Dropdown direction='start' isOpen={isOpen} toggle={() => toggle(!isOpen)}>
       <DropdownToggle color='link'>
-        <i
-          className={`fas fa-ellipsis-h fa-lg ${props.className}`}
+        <EllipsisHorizontalIcon
+          data-icon="ellipsis-horizontal"
+          className={`hero-icon size-6 ${props.className || ''}`}
           aria-hidden='true'
         />
       </DropdownToggle>

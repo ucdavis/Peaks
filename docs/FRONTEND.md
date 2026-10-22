@@ -33,6 +33,21 @@ profiles and leave `Vite__UseDevServer` unset or set it to `false`.
 
 ## Assets and tests
 
+### Icons
+
+Icons use the outline set from `@heroicons/react/24/outline`. React components
+import named icons directly and use `className="hero-icon size-5"` (or another
+Tailwind size). Use `animate-spin` for loading states. Keep accessible labels on
+icon-only controls; decorative SVGs should be hidden from assistive technology.
+
+Razor uses `<hero-icon name="users" class="size-5"></hero-icon>`. This renders
+an inline SVG on the server without waiting for JavaScript. Set `label` when the
+icon itself needs an accessible name. Available icons are listed in
+`ClientApp/scripts/heroicons.json`. Add entries there and run `npm run icons:generate`
+to refresh the checked-in `HeroIconPaths.g.cs`; the frontend build also runs this
+generator. It uses the installed Heroicons package so React and Razor share the
+same artwork. Font Awesome's CDN stylesheets and glyph classes are removed.
+
 ### Styles
 
 `Keas.Mvc/ClientApp/src/styles/main.css` is the stylesheet entry point. It loads

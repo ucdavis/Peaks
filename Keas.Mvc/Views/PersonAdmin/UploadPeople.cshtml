@@ -55,8 +55,8 @@
                 <div class="card-content">
                     <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
                     <p><b>KerbId<span class="space"><span class="space">,</span></span>OverrideFirstName<span class="space">,</span>OverrideLastName<span class="space">,</span>OverrideEmail<span class="space">,</span>SupervisorKerbId<span class="space">,</span>OverrideTitle<span class="space">,</span>StartDate<span class="space">,</span>EndDate<span class="space">,</span>HomePhone<span class="space">,</span>TeamPhone<span class="space">,</span>Category<span class="space">,</span>Tags<span class="space">,</span>Notes</b></p>
-                    <p>Text above copies properly. If you type the list out, omit the space after the commas.</p> 
-                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_people_example2.csv")" class="btn btn-outline-info btn-lg" role="button"><i class="fa fa-download"></i> CSV file.</a></p>
+                    <p>Text above copies properly. If you type the list out, omit the space after the commas.</p>
+                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_people_example2.csv")" class="btn btn-outline-info btn-lg" role="button"><hero-icon name="arrow-down-tray" class="size-5"></hero-icon> CSV file.</a></p>
                     <p>Note! Only the KerbId field is required, all other fields may be blank.</p>
                     <dl>
                         <dt>KerbId</dt>
@@ -82,14 +82,14 @@
                         <dt>Category</dt>
                         <dd>Optional Person Category type. If not supplied, "-- Not Set --" will be used. Possible Values: @(string.Join(", ", PersonCategories.Types))</dd>
                         <dt>Tag</dt>
-                        <dd>List of tags for this item. If more than one tag, add each separated by comma, with the entire set surrounded by quotation marks. Tags must be added to team in order to filter by them, <a asp-controller="TagsManager" asp-action="Index">Team Tags</a> . All imported items will have "Imported" added as a tag. If you wish to search by this tag, please add it to your team's tags.</dd>                        
+                        <dd>List of tags for this item. If more than one tag, add each separated by comma, with the entire set surrounded by quotation marks. Tags must be added to team in order to filter by them, <a asp-controller="TagsManager" asp-action="Index">Team Tags</a> . All imported items will have "Imported" added as a tag. If you wish to search by this tag, please add it to your team's tags.</dd>
                         <dt>Notes</dt>
                         <dd>Notes.</dd>
                     </dl>
                 </div>
             </div>
         }
-  
+
     @if (Model.ImportResult != null && Model.ImportResult.Count > 0)
     {
         <div style="padding-top: 15px">

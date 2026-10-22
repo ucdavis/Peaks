@@ -1,3 +1,4 @@
+import { DocumentTextIcon, PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { IPerson } from '../../models/People';
 import { PermissionsUtil } from '../../util/permissions';
@@ -92,10 +93,10 @@ const DocumentsContainer = (props: IProps): JSX.Element => {
       <div className='card-header-documents'>
         <div className='card-head row justify-content-between'>
           <h2>
-            <i className='fas fa-file-alt fa-xs' /> Documents
+            <DocumentTextIcon data-icon="document-text" className='hero-icon size-4' /> Documents
           </h2>
           <Button color='link' onClick={() => setAssign(true)}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Document
+            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Document
           </Button>
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -160,7 +161,7 @@ const DuplicateEquipment = (props: IProps) => {
       <div className='modal-header row justify-content-between'>
         <h2>Duplicate Equipment</h2>
         <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
+          <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
         </Button>
       </div>
       <ModalBody>
@@ -220,7 +221,7 @@ const DuplicateEquipment = (props: IProps) => {
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

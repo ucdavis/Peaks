@@ -13,9 +13,9 @@
         </div>
     </div>
     <div class="card-content">
-        <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
+        <h3><hero-icon name="information-circle" class="size-4"></hero-icon> Instructions</h3>
                         <ul>
-                            
+
                             <li>
                                 To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).
                             </li>
@@ -68,7 +68,7 @@
                             <td>@item.Active.ToYesNoString()</td>
                             <td>@item.AssignmentCount</td>
                             <td>@((!string.IsNullOrWhiteSpace(item.Notes)).ToYesNoString())</td>
-                            <td>@item.Tags.Replace(",", ", ")</td>     
+                            <td>@item.Tags.Replace(",", ", ")</td>
                             <td>@item.Notes</td>
                             <td></td>
                             <td></td>

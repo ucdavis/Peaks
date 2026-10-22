@@ -1,3 +1,4 @@
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, UncontrolledTooltip } from 'reactstrap';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
@@ -116,7 +117,7 @@ const SpacesTable = (props: IProps) => {
         header: header => (
           <div>
             Workstations{' '}
-            <i id='workstationsTooltip' className='fas fa-info-circle' />
+            <InformationCircleIcon data-icon="information-circle" id='workstationsTooltip' className='hero-icon size-5' />
             <UncontrolledTooltip placement='right' target='workstationsTooltip'>
               In Use / Total
             </UncontrolledTooltip>

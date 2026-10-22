@@ -1,3 +1,4 @@
+import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
@@ -60,7 +61,7 @@ const RevokeKeySerial = (props: IProps) => {
             Revoke for {selectedKeySerial.key.code} {selectedKeySerial.number}
           </h2>
           <Button color='link' onClick={props.closeModal}>
-            <i className='fas fa-times fa-lg' />
+            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
         <ModalBody>
@@ -81,7 +82,7 @@ const RevokeKeySerial = (props: IProps) => {
             onClick={() => revokeKeySerial()}
             disabled={!isValidToRevoke() || submitting}
           >
-            Revoke {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            Revoke {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

@@ -1,3 +1,4 @@
+import { ArrowPathIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -39,7 +40,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
           modalToggle();
         }}
       >
-        <i className='fas fa-search fa-xs mr-2' />
+        <MagnifyingGlassIcon data-icon="magnifying-glass" className='hero-icon size-4 mr-2' />
         Look Up
       </Button>
     );
@@ -56,7 +57,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
         <div className='modal-header row justify-content-between'>
           <h2>Search by Computer Property</h2>
           <Button color='link' onClick={modalToggle}>
-            <i className='fas fa-times fa-lg' />
+            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
 
@@ -161,7 +162,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
       return (
         <Button color='primary' disabled={false}>
           {' '}
-          <i className='fas fa-lg fa-spinner fa-pulse' />
+          <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-6 animate-spin' />
         </Button>
       );
     } else {

@@ -1,3 +1,4 @@
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, UncontrolledTooltip } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
@@ -53,7 +54,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
         filterFn: ReactTableKeySerialUtil.filterFunction,
         header: _ => (
           <div>
-            Serials <i id='serialTooltip' className='fas fa-info-circle' />
+            Serials <InformationCircleIcon data-icon="information-circle" id='serialTooltip' className='hero-icon size-5' />
             <UncontrolledTooltip placement='right' target='serialTooltip'>
               In Use / Total
             </UncontrolledTooltip>

@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="card-content">
-        <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
+        <h3><hero-icon name="information-circle" class="size-4"></hero-icon> Instructions</h3>
         <ul>
             <li>This report shows all people in the team who have assets assigned to them, and are inactive or have an end date that has passed or will occur within 30 days</li>
             <li>
@@ -139,8 +139,8 @@
 }
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ImportJS");}  
-    
+    @{await Html.RenderPartialAsync("_ImportJS");}
+
     <script type="text/javascript">
         $('.dataTable').DataTable({
             "dom": 'lBfrtip',

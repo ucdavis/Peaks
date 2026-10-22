@@ -7,7 +7,7 @@
     <div class="card-header-primary">
         <div class="card-head row justify-content-between">
             <h2>Members with roles in @Model.Team.Name</h2>
-            <a class="btn btn-link" asp-action="AddMemberRole"><i class="fas fa-plus fa-xs" /></i> Add new Admin Role.</a>
+            <a class="btn btn-link" asp-action="AddMemberRole"><hero-icon name="plus" class="size-4"></hero-icon> Add new Admin Role.</a>
         </div>
     </div>
     <div class="card-content">
@@ -56,7 +56,7 @@
     @{
         await Html.RenderPartialAsync("_ReportStylePartial");
     }
-} 
+}
 
 @section Scripts
 {

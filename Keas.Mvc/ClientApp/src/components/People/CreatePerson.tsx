@@ -1,3 +1,4 @@
+import { ArrowPathIcon, PlusIcon, UserIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
@@ -135,7 +136,7 @@ const CreatePerson = (props: IProps) => {
   return (
     <div>
       <Button color='link' onClick={props.onAddNew}>
-        <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Person
+        <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Person
       </Button>
       <Modal
         isOpen={props.modal}
@@ -146,7 +147,7 @@ const CreatePerson = (props: IProps) => {
         <div className='modal-header row justify-content-between'>
           <h2>Add Person</h2>
           <Button color='link' onClick={closeModal}>
-            <i className='fas fa-times fa-lg' />
+            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
         <ModalBody>
@@ -170,7 +171,7 @@ const CreatePerson = (props: IProps) => {
             {moreInfoString}
             {existingPerson && (
               <Button color='link' type='button' onClick={viewExistingPerson}>
-                <i className='fas fa-user fas-xs' aria-hidden='true' /> View
+                <UserIcon data-icon="user" className='hero-icon size-4' aria-hidden='true' /> View
                 Existing Person
               </Button>
             )}
@@ -182,7 +183,7 @@ const CreatePerson = (props: IProps) => {
             onClick={createSelected}
             disabled={!validState || submitting}
           >
-            Add {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            Add {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

@@ -1,3 +1,4 @@
+import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { Highlighter } from 'react-bootstrap-typeahead';
@@ -55,7 +56,7 @@ const SearchAccess = (props: IProps) => {
               createNew();
             }}
           >
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Create New
+            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Create New
             Access
           </Button>
         </div>

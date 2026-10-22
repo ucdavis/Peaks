@@ -1,3 +1,4 @@
+import { UsersIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -283,7 +284,7 @@ const PeopleContainer = props => {
       <div className='card-header-people'>
         <div className='card-head row justify-content-between'>
           <h2>
-            <i className='fas fa-users fa-xs' /> People
+            <UsersIcon data-icon="users" className='hero-icon size-4' /> People
           </h2>
           <CreatePerson
             onCreate={createPerson}

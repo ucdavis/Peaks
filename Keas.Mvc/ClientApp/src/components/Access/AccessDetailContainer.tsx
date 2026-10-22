@@ -1,3 +1,4 @@
+import { ArrowLeftIcon, ChatBubbleLeftEllipsisIcon, PencilSquareIcon, TagIcon, TrashIcon } from '@heroicons/react/24/outline';
 ﻿import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
@@ -100,7 +101,7 @@ const AccessDetailContainer = (props: IProps) => {
       ) : null}
       <div className='mb-3'>
         <Button color='link' onClick={props.goBack}>
-          <i className='fas fa-arrow-left fa-xs' /> Return to Table
+          <ArrowLeftIcon data-icon="arrow-left" className='hero-icon size-4' /> Return to Table
         </Button>
       </div>
       <div className='d-flex flex-row flex-wrap-reverse justify-content-between'>
@@ -112,7 +113,7 @@ const AccessDetailContainer = (props: IProps) => {
               setShouldOpenEditModal(true);
             }}
           >
-            <i className='fas fa-edit fa-sm fa-fw mr-2' aria-hidden='true' />
+            <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4 mr-2' aria-hidden='true' />
             Edit Access
           </Button>
           <Button
@@ -121,20 +122,20 @@ const AccessDetailContainer = (props: IProps) => {
               props.openDeleteModal(selectedAccess);
             }}
           >
-            <i className='fas fa-trash fa-sm fa-fw mr-2' aria-hidden='true' />
+            <TrashIcon data-icon="trash" className='hero-icon size-4 mr-2' aria-hidden='true' />
             Delete Access
           </Button>
         </div>
       </div>
       {selectedAccess.tags && (
         <p>
-          <i className='fas fa-tags mr-2' aria-hidden='true' />
+          <TagIcon data-icon="tag" className='hero-icon size-5 mr-2' aria-hidden='true' />
           {selectedAccess.tags}
         </p>
       )}
       {selectedAccess.notes && (
         <p>
-          <i className='fas fa-comment-alt mr-2' aria-hidden='true' />
+          <ChatBubbleLeftEllipsisIcon data-icon="chat-bubble-left-ellipsis" className='hero-icon size-5 mr-2' aria-hidden='true' />
           {selectedAccess.notes}
         </p>
       )}

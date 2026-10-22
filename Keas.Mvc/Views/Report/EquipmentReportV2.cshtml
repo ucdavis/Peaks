@@ -14,11 +14,11 @@
         </div>
     </div>
     <div class="card-content">
-        
+
         <form asp-action="EquipmentReportV2" method="get">
             <div class="row align-items-start">
                 <div class="col-md-6 col-lg-4">
-                    <h3><i class="fas fa-sm fa-info-circle"></i> Instructions</h3>
+                    <h3><hero-icon name="information-circle" class="size-4"></hero-icon> Instructions</h3>
                     <ul>
                         <li>
                             This report is formatted to be exactly the same as the import format except it has an Active column
@@ -40,7 +40,7 @@
                         <label asp-for="HideInactive" class="form-check-label"></label>
                         <input asp-for="HideInactive" class="peaks-checkbox" />
                     </div>
-                    <i class="fas fa-sync-alt fa-sm"></i><input type="submit" value="Refresh Report" class="btn btn-link" />
+                    <hero-icon name="arrow-path" class="size-4"></hero-icon><input type="submit" value="Refresh Report" class="btn btn-link" />
                 </div>
             </div>
 
@@ -158,8 +158,8 @@
 }
 
 @section Scripts {
-   @{await Html.RenderPartialAsync("_ImportJS");}  
-    
+   @{await Html.RenderPartialAsync("_ImportJS");}
+
     <script type="text/javascript">
         $('.dataTable').DataTable({
                 "dom": 'lBfrtip',

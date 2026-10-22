@@ -51,18 +51,6 @@
     <title>@ViewData["Title"] - PEAKS</title>
     <link rel="icon" type="image/x-icon" href="~/favicon.ico" asp-append-version="true" />
 
-    <environment names="Development">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
-    </environment>
-
-    <environment names="Staging,Production">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.6.3/css/all.min.css" 
-              rel="stylesheet"
-              integrity="sha512-f2MWjotY+JCWDlE0+QAshlykvZUtIm35A6RHwfYZPdxKgLJpL8B+VVxjpHJwZDsZaWdyHVhlIHoblFYGkmrbhg==" 
-              crossorigin="anonymous" 
-              referrerpolicy="no-referrer" />
-    </environment>
-
     <vite-entry src="src/index.tsx" styles-only="true"></vite-entry>
 
 
@@ -75,7 +63,7 @@
     <div class="content-wrapper">
       <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div class="min-w-0">
-          
+
             <a class="inline-flex items-center gap-4 rounded-md text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40" asp-area="" asp-controller="Home" asp-action="Index">
               <img class="h-10 w-auto shrink-0" src="~/media/peaks.svg" alt="" width="40" height="40">
               <div class="min-w-0">
@@ -83,7 +71,7 @@
                 <p class="text-sm text-base-content/70">People, Equipment, Access, Keys and Space</p>
               </div>
             </a>
-         
+
 
                 </div>
                 <div class="shrink-0">
@@ -100,31 +88,31 @@
     </div>
     <nav class="border-y border-main-border bg-base-100 shadow-sm" aria-label="Main navigation" data-site-navigation>
         <div class="content-wrapper">
-            <button class="my-2 inline-flex items-center gap-2 rounded-md  pe-4 py-2 text-lg  font-semibold text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden" type="button" data-navigation-toggle aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars" aria-hidden="true"></i>
+            <button class="my-2 inline-flex items-center gap-2 rounded-md pe-4 py-2 text-lg font-semibold text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden" type="button" data-navigation-toggle aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <hero-icon name="bars-3" class="size-5" aria-hidden="true"></hero-icon>
                 <span class="text-lg font-semibold text-base-content">Menu</span>
             </button>
             <div class="hidden w-full lg:block" id="navbarText">
-                <ul class="m-0 flex w-full list-none flex-col gap-1 p-0 pb-3  lg:flex-row lg:items-center lg:gap-2 lg:py-2">
+                <ul class="m-0 flex w-full list-none flex-col gap-1 p-0 pb-3 lg:flex-row lg:items-center lg:gap-2 lg:py-2">
                     @if (TempData["TeamName"] != null)
                     {
                         if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded)
                         {
                             <li class="min-w-0">
-                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "Asset" ? "text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "Asset" ? "page" : null)' href='@string.Format("/{0}/{1}", TempData["TeamName"], "People")'>Assets</a>
+                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "Asset" ? "text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "Asset" ? "page" : null)' href='@string.Format("/{0}/{1}", TempData["TeamName"], "People")'>Assets</a>
                             </li>
                             <li class="min-w-0">
-                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "MyStuff" ? "text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "MyStuff" ? "page" : null)' asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
+                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "MyStuff" ? "text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "MyStuff" ? "page" : null)' asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
                             </li>
-                
+
                             <li class="min-w-0">
-                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "Report" ? "text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "Report" ? "page" : null)' asp-controller="Report" asp-action="Index">Reports</a>
+                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "Report" ? "text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "Report" ? "page" : null)' asp-controller="Report" asp-action="Index">Reports</a>
                             </li>
                         }
                         else
                         {
                             <li class="min-w-0">
-                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "MyStuff" ? "text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "MyStuff" ? "page" : null)' asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
+                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "MyStuff" ? "text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "MyStuff" ? "page" : null)' asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
                             </li>
                         }
 
@@ -132,33 +120,33 @@
                         {
                             <li class="min-w-0">
                                 <details class="group relative" data-navigation-dropdown>
-                                    <summary class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer list-none [&::-webkit-details-marker]:hidden @(activeMenu == "Admin" ? "text-primary" : "text-base-content hover:text-primary")' >
-                                        Admin <i class="fas fa-chevron-down ml-auto text-xs transition-transform group-open:rotate-180" aria-hidden="true"></i>
+                                    <summary class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer list-none [&::-webkit-details-marker]:hidden @(activeMenu == "Admin" ? "text-primary" : "text-base-content hover:text-primary")' >
+                                        Admin <hero-icon name="chevron-down" class="size-5 ml-auto text-xs transition-transform group-open:rotate-180" aria-hidden="true"></hero-icon>
                                     </summary>
                                     <div class="relative z-50 mt-1 max-h-[60vh] w-full overflow-y-auto rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:left-0 lg:top-full lg:mt-2 lg:w-80">
                                         @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
                                         {
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-controller="TeamAdmin" asp-action="Index">Admin Home</a>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="RoledMembers" asp-controller="TeamAdmin">Team Permissions</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-controller="TeamAdmin" asp-action="Index">Admin Home</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="RoledMembers" asp-controller="TeamAdmin">Team Permissions</a>
                                             <div class="my-2 border-t border-main-border"></div>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="TagsManager">Team Tags</a>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="EquipmentAttributeKey">Team Equipment Attribute Keys</a>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="DocumentSettings">Team DocuSign Settings</a>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="AddFISOrg" asp-controller="TeamAdmin">Add New Org Code</a>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="AddPpsDepartment" asp-controller="TeamAdmin">Add PPS Department</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="TagsManager">Team Tags</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="EquipmentAttributeKey">Team Equipment Attribute Keys</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="DocumentSettings">Team DocuSign Settings</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="AddFISOrg" asp-controller="TeamAdmin">Add New Org Code</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="AddPpsDepartment" asp-controller="TeamAdmin">Add PPS Department</a>
                                             <div class="my-2 border-t border-main-border"></div>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="BulkLoadPeople" asp-controller="TeamAdmin">Bulk Load People</a>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="BulkEdit" asp-controller="PersonAdmin">Bulk Edit People</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="BulkLoadPeople" asp-controller="TeamAdmin">Bulk Load People</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="BulkEdit" asp-controller="PersonAdmin">Bulk Edit People</a>
                                             <div class="my-2 border-t border-main-border"></div>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Upload" asp-controller="TeamAdmin">CSV Imports</a>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="Report">Reports</a>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="RegenerateApiCode" asp-controller="TeamAdmin">API Code</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Upload" asp-controller="TeamAdmin">CSV Imports</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="Report">Reports</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="RegenerateApiCode" asp-controller="TeamAdmin">API Code</a>
                                         }
                                         else
                                         {
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="BulkEdit" asp-controller="PersonAdmin">Bulk Edit People</a>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="UploadPeople" asp-controller="PersonAdmin">CSV Upload People</a>
-                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="Report">Reports</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="BulkEdit" asp-controller="PersonAdmin">Bulk Edit People</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="UploadPeople" asp-controller="PersonAdmin">CSV Upload People</a>
+                                            <a class="flex items-center rounded-md py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="Report">Reports</a>
                                         }
                                     </div>
                                 </details>
@@ -166,14 +154,14 @@
                         }
 
                         <li class="min-w-0">
-                            <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "Help" ? "text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "Help" ? "page" : null)' asp-controller="Help" asp-action="Index">Help</a>
+                            <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "Help" ? "text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "Help" ? "page" : null)' asp-controller="Help" asp-action="Index">Help</a>
                         </li>
                     }
                     <li class="mt-2 min-w-0 pt-3 lg:ml-auto lg:mt-0 lg:pl-4 lg:pt-0">
                         <details class="group relative" data-navigation-dropdown>
                             <summary class="inline-flex w-full max-w-full cursor-pointer list-none items-center gap-2 pe-4 py-2 text-lg font-semibold text-base-content transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:max-w-72 [&::-webkit-details-marker]:hidden">
                                 <span class="min-w-0 truncate text-lg font-semibold text-current">@(string.IsNullOrWhiteSpace(TempData["TeamName"] as string) ? "Choose team" : TempData["TeamName"])</span>
-                                <i class="fas fa-chevron-down shrink-0 text-xs transition-transform group-open:rotate-180" aria-hidden="true"></i>
+                                <hero-icon name="chevron-down" class="size-5 shrink-0 text-xs transition-transform group-open:rotate-180" aria-hidden="true"></hero-icon>
                             </summary>
                             <div class="relative z-50 mt-1 max-h-[60vh] w-full overflow-y-auto rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-80">
                                 @foreach (var teamItem in await TeamsManager.GetMyTeams())
@@ -189,7 +177,7 @@
                         <details class="group relative" data-navigation-dropdown>
                             <summary class="inline-flex w-full max-w-full cursor-pointer list-none items-center gap-2 pe-4 py-2 text-lg font-semibold text-base-content transition-colors hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:max-w-64 [&::-webkit-details-marker]:hidden">
                                 <span class="min-w-0 truncate text-lg font-semibold text-current">@User.GetNameClaim()</span>
-                                <i class="fas fa-chevron-down shrink-0 text-xs transition-transform group-open:rotate-180" aria-hidden="true"></i>
+                                <hero-icon name="chevron-down" class="size-5 shrink-0 text-xs transition-transform group-open:rotate-180" aria-hidden="true"></hero-icon>
                             </summary>
                             <div class="relative z-50 mt-1 w-full rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-64">
                                 <a class="flex items-center py-2 text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh permissions</a>
@@ -208,7 +196,7 @@
     {
         <div class="content-wrapper">
             <div role="alert" class="alert alert-warning mt-4 shadow-none">
-                <i class="fas fa-exclamation-triangle shrink-0" aria-hidden="true"></i>
+                <hero-icon name="exclamation-triangle" class="size-5 shrink-0" aria-hidden="true"></hero-icon>
                 <span class="text-current">Beta testing. Data will not be retained.</span>
             </div>
         </div>
@@ -218,7 +206,7 @@
         <div class="content-wrapper">
             <div class="alert alert-danger">
                 <button type="button" class="float-right cursor-pointer" data-dismiss-message aria-label="Dismiss message">
-                <i class="fas fa-times"></i>
+                <hero-icon name="x-mark" class="size-5"></hero-icon>
                 </button> @TempData["ErrorMessage"]
             </div>
         </div>
@@ -228,7 +216,7 @@
         <div class="content-wrapper">
             <div class="alert alert-info">
                 <button type="button" class="float-right cursor-pointer" data-dismiss-message aria-label="Dismiss message">
-                <i class="fas fa-times"></i>
+                <hero-icon name="x-mark" class="size-5"></hero-icon>
                 </button> @TempData["Message"]
             </div>
         </div>

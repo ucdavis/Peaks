@@ -1,3 +1,4 @@
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
@@ -32,7 +33,7 @@ const WorkstationEditValues = (props: IProps) => {
             color='link'
             onClick={() => props.openEditModal(props.selectedWorkstation)}
           >
-            <i className='fas fa-edit fa-xs' /> Edit Workstation
+            <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' /> Edit Workstation
           </Button>
         )}
       </div>

@@ -3,237 +3,121 @@
 
 @{
     ViewBag.Title = "Help";
+    var contactRoles = new[]
+    {
+        (Code: Role.Codes.DepartmentalAdmin, Title: "Team Admin", Icon: "trophy", Description: ""),
+        (Code: Role.Codes.PersonManager, Title: "Person Manager", Icon: "user-circle", Description: "The people listed here can edit the details about individuals in the team. If you have a question about an assignment, try one of the other admins."),
+        (Code: Role.Codes.EquipmentMaster, Title: "Equipment Admin", Icon: "computer-desktop", Description: ""),
+        (Code: Role.Codes.AccessMaster, Title: "Access Admin", Icon: "identification", Description: ""),
+        (Code: Role.Codes.KeyMaster, Title: "Key Admin", Icon: "key", Description: ""),
+        (Code: Role.Codes.SpaceMaster, Title: "Space/Workstation Admin", Icon: "building-office-2", Description: "")
+    };
+    var contactGroups = contactRoles.Select(role => new
+    {
+        role.Title,
+        role.Icon,
+        role.Description,
+        Contacts = Model.TeamPermissions
+            .Where(permission => permission.Role.Name.Equals(role.Code, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(permission => permission.User.Name)
+            .ToList()
+    }).Where(group => group.Contacts.Any()).ToList();
+    var supportLinks = new[]
+    {
+        (Href: Url.Action("MyContacts"), Label: "Question about your stuff?", Icon: "users", Description: "Find the right contact for questions about your assigned equipment, access, keys, or space.", External: false),
+        (Href: "https://feedback.ucdavis.edu/app/Peaks", Label: "Make a Suggestion", Icon: "chat-bubble-left-right", Description: "Share an idea or feedback to help improve PEAKS.", External: true),
+        (Href: Url.Action("TechSupport"), Label: "Create Help Ticket", Icon: "lifebuoy", Description: "Get technical support for a problem or question about the application.", External: false),
+        (Href: "https://computing.caes.ucdavis.edu/documentation/peaks", Label: "FAQ", Icon: "book-open", Description: "Browse the knowledge base for guides, answers, and documentation.", External: true)
+    };
 }
 
-<div class="card">
-    <div class="card-header-primary">
-        <div class="row justify-content-between">
-            <div class="card-head">
-                <h2>Contacts</h2>
-            </div>
-            <div class="card-head">
-            </div>
-        </div>
+<div class="space-y-10 pb-8">
+    <div class="space-y-2">
+        <h1 class="m-0 text-3xl font-bold text-base-content">Help</h1>
+        <p class="m-0 text-lg text-base-content/80">Find your team's contacts, get technical support, or share feedback about PEAKS.</p>
     </div>
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.DepartmentalAdmin, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-content">
-            <div class="card primary-color">
-                <div class="card-header-primary-thick">
-                    <div class="card-head">
-                        <h2><i class="fas fa-users fa-xs"></i> Team Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.DepartmentalAdmin, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.PersonManager, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-content">
-            <div class="card people-color">
-                <div class="card-header-people">
-                    <div class="card-head">
-                        <h2><i class="fas fa-hdd fa-xs"></i> Person Manager</h2>
-                        <p class="help-block">The people listed here can edit the details about individuals in the team. If you have a question about an assignment, try one of the other admins.</p>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.PersonManager, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        <tr>
-                            <td>@item.User.Name</td>
-                            <td>@Html.DisplayFor(a => item.User.Email)</td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.EquipmentMaster, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-content">
-            <div class="card equipment-color">
-                <div class="card-header-equipment">
-                    <div class="card-head">
-                        <h2><i class="fas fa-hdd fa-xs"></i> Equipment Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.EquipmentMaster, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.AccessMaster, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-content">
-            <div class="card access-color">
-                <div class="card-header-access">
-                    <div class="card-head">
-                        <h2><i class="fas fa-address-card fa-xs"></i> Access Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.AccessMaster, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.KeyMaster, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-content">
-            <div class="card keys-color">
-                <div class="card-header-keys">
-                    <div class="card-head">
-                        <h2><i class="fas fa-key fa-xs"></i> Key Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.KeyMaster, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.SpaceMaster, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-content">
-            <div class="card spaces-color">
-                <div class="card-header-spaces">
-                    <div class="card-head">
-                        <h2><i class="fas fa-building fa-xs"></i> Space/Workstation Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.SpaceMaster, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.DocumentMaster, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-content">
-            <div class="card documents-color">
-                <div class="card-header-documents">
-                    <div class="card-head">
-                        <h2><i class="fas fa-file-alt fa-xs"></i> Document (DocuSign) Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.DocumentMaster, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-</div>
 
-<div class="card">
-    <div class="card-header-primary">
-        <div class="row justify-content-between">
-            <div class="card-head">
-                <h2>Technical Support</h2>
-                <div>Version: @ViewBag.Version</div>
+    <section aria-labelledby="contacts-heading" class="space-y-6">
+        <h2 id="contacts-heading" class="m-0 text-2xl font-bold text-base-content">Contacts</h2>
+        @if (contactGroups.Any())
+        {
+            <div class="grid items-start gap-x-8 gap-y-8 md:grid-cols-2 xl:grid-cols-3">
+                @foreach (var group in contactGroups)
+                {
+                    <section class="min-w-0 space-y-3" aria-label="@group.Title">
+                        <h3 class="m-0 flex items-center gap-2 text-lg font-bold text-base-content">
+                            <hero-icon name="@group.Icon" class="size-5 @(group.Icon == "trophy" || group.Icon == "user-circle" || group.Icon == "building-office-2" ? "text-base-content" : "text-primary")" aria-hidden="true"></hero-icon>
+                            @group.Title
+                        </h3>
+                        @if (!string.IsNullOrWhiteSpace(group.Description))
+                        {
+                            <p class="m-0 text-sm leading-6 text-base-content/70">@group.Description</p>
+                        }
+                        <table class="w-full table-fixed text-left text-sm">
+                            <caption class="sr-only">@group.Title contacts</caption>
+                            <colgroup>
+                                <col class="w-2/5" />
+                                <col class="w-3/5" />
+                            </colgroup>
+                            <thead>
+                                <tr class="border-b border-main-border">
+                                    <th scope="col" class="py-2 pe-4 font-semibold text-base-content/70">Name</th>
+                                    <th scope="col" class="py-2 font-semibold text-base-content/70">Email</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var contact in group.Contacts)
+                                {
+                                    <tr class="border-b border-main-border/60 last:border-0">
+                                        <td class="py-3 pe-4 align-top text-base-content [overflow-wrap:anywhere]">@contact.User.Name</td>
+                                        <td class="py-3 align-top [overflow-wrap:anywhere]">
+                                            @if (!string.IsNullOrWhiteSpace(contact.User.Email))
+                                            {
+                                                <a class="text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary" href="mailto:@contact.User.Email">@contact.User.Email</a>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-base-content/70">—</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </section>
+                }
             </div>
+        }
+        else
+        {
+            <p class="m-0 text-base-content/70">No team contacts are listed.</p>
+        }
+    </section>
+
+    <section aria-labelledby="support-heading" class="space-y-4">
+        <div class="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="support-heading" class="m-0 text-2xl font-bold text-base-content">Technical Support</h2>
+            <p class="m-0 text-sm text-base-content/60">Version: @ViewBag.Version</p>
         </div>
-    </div>
-    <div class="card-content">
-        <a asp-action="MyContacts" class="btn  btn-primary" style="background-color: green">Question about your stuff?</a>
-        <a href="https://feedback.ucdavis.edu/app/Peaks" class="btn btn-primary" target="_blank" ref="noopener noreferrer">Make a Suggestion</a>
-        <a asp-action="TechSupport" class="btn  btn-primary">Create Help Ticket</a>
-        <a href="https://computing.caes.ucdavis.edu/documentation/peaks" class="btn btn-primary" target="_blank" ref="noopener noreferrer">FAQ</a>
-    </div>
+        <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            @foreach (var link in supportLinks)
+            {
+                <a class="group block h-full rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-[#F2F6FC] hover:text-base-content hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+                   href="@link.Href"
+                   target="@(link.External ? "_blank" : null)"
+                   rel="@(link.External ? "noopener noreferrer" : null)">
+                    <div class="flex h-full flex-col gap-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <hero-icon name="@link.Icon" class="size-6 text-2xl text-base-content" aria-hidden="true"></hero-icon>
+                            <hero-icon name="arrow-right" class="size-5 mt-1 shrink-0 text-base-content/40 transition group-hover:translate-x-1 group-hover:text-primary" aria-hidden="true"></hero-icon>
+                        </div>
+                        <div>
+                            <h3 class="m-0 text-xl font-bold text-base-content">@link.Label</h3>
+                            <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">@link.Description</p>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </section>
 </div>

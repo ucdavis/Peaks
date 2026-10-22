@@ -1,3 +1,4 @@
+import { LinkIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
 import { IKey } from '../../models/Keys';
@@ -57,7 +58,7 @@ const KeySerialEditValues = (props: IProps) => {
   const renderEditKeySerial = () => {
     return !props.person ? (
       <Button color='link' onClick={() => props.openEditModal(keySerial)}>
-        <i className='fas fa-edit fa-xs' /> Edit Serial
+        <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' /> Edit Serial
       </Button>
     ) : null;
   };
@@ -89,7 +90,7 @@ const KeySerialEditValues = (props: IProps) => {
         </FormGroup>
         {props.goToKeyDetails && (
           <Button color='link' onClick={() => goToKeyDetails()}>
-            <i className='fas fa-link fa-xs' /> View Key Details
+            <LinkIcon data-icon="link" className='hero-icon size-4' /> View Key Details
           </Button>
         )}
         <FormGroup>

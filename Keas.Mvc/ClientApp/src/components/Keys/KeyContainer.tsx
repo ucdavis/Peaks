@@ -1,3 +1,4 @@
+import { KeyIcon, PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import {
@@ -561,7 +562,7 @@ const KeyContainer = (props: IProps) => {
       <div className='card-header-keys'>
         <div className='card-head row justify-content-between'>
           <h2>
-            <i className='fas fa-key fa-xs' /> Keys
+            <KeyIcon data-icon="key" className='hero-icon size-4' /> Keys
           </h2>
           {!onSpaceTab && (
             <CreateKey
@@ -580,7 +581,7 @@ const KeyContainer = (props: IProps) => {
                 onClick={openAssociate}
                 className='keys-anomaly'
               >
-                <i className='fas fa-plus fa-sm mr-2' aria-hidden='true' />
+                <PlusIcon data-icon="plus" className='hero-icon size-4 mr-2' aria-hidden='true' />
                 Associate
               </Button>
               {action === 'associate' &&

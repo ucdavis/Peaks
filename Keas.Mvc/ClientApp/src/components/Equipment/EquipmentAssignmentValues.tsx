@@ -1,3 +1,4 @@
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 ﻿import * as React from 'react';
 import { Button } from 'reactstrap';
 import { IEquipment } from '../../models/Equipment';
@@ -21,7 +22,7 @@ const EquipmentAssignmentValues = (props: IProps) => {
           color='link'
           onClick={() => props.openUpdateModal(props.selectedEquipment)}
         >
-          <i className='fas fa-edit fa-xs' />{' '}
+          <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' />{' '}
           {!!props.selectedEquipment.assignment
             ? 'Update Assignment'
             : 'Assign Equipment'}

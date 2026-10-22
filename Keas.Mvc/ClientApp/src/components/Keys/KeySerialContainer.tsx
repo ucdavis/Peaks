@@ -1,3 +1,4 @@
+import { KeyIcon, PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -439,10 +440,10 @@ const KeySerialContainer = (props: IProps) => {
       <div className='card-header-keys'>
         <div className='card-head row justify-content-between'>
           <h2>
-            <i className='fas fa-key fa-xs' /> Key Serials
+            <KeyIcon data-icon="key" className='hero-icon size-4' /> Key Serials
           </h2>
           <Button color='link' onClick={openCreateModal}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Key
+            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Key
             Serial
           </Button>
         </div>

@@ -1,3 +1,4 @@
+import { IdentificationIcon, PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -306,10 +307,10 @@ const AccessContainer = () => {
       <div className='card-header-access'>
         <div className='card-head row justify-content-between'>
           <h2>
-            <i className='fas fa-address-card fa-xs' /> Access
+            <IdentificationIcon data-icon="identification" className='hero-icon size-4' /> Access
           </h2>
           <Button color='link' onClick={openCreateModal}>
-            <i className='fas fa-plus fa-sm' aria-hidden='true' /> Add Access
+            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Access
           </Button>
         </div>
       </div>

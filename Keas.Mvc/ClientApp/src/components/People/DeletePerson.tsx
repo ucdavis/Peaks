@@ -1,3 +1,4 @@
+import { ArrowPathIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
@@ -49,7 +50,7 @@ const DeletePerson = (props: IProps) => {
   return (
     <div>
       <Button color='link' onClick={toggleModal}>
-        <i className='fas fa-trash fa-sm fa-fw mr-2' aria-hidden='true' />
+        <TrashIcon data-icon="trash" className='hero-icon size-4 mr-2' aria-hidden='true' />
         Delete Person
       </Button>
       <Modal
@@ -61,7 +62,7 @@ const DeletePerson = (props: IProps) => {
         <div className='modal-header row justify-content-between'>
           <h2>Delete {props.selectedPersonInfo.person.name}</h2>
           <Button color='link' onClick={toggleModal}>
-            <i className='fas fa-times fa-lg' />
+            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
 
@@ -84,7 +85,7 @@ const DeletePerson = (props: IProps) => {
             onClick={deletePerson}
             disabled={submitting || !checkValidToDelete()}
           >
-            Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+            Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

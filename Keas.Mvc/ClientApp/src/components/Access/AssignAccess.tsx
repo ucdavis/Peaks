@@ -1,3 +1,4 @@
+import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
@@ -146,7 +147,7 @@ const AssignAccess = (props: IProps) => {
             : 'Add Access'}
         </h2>
         <Button color='link' onClick={closeModal}>
-          <i className='fas fa-times fa-lg' />
+          <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
         </Button>
       </div>
       <ModalBody>
@@ -182,7 +183,7 @@ const AssignAccess = (props: IProps) => {
                     <h3>Create New Access</h3>
                     <Button color='link' onClick={onDeselected}>
                       Clear{' '}
-                      <i className='fas fa-times fa-sm' aria-hidden='true' />
+                      <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
                     </Button>
                   </div>
                   <AccessEditValues
@@ -200,7 +201,7 @@ const AssignAccess = (props: IProps) => {
                   <h3>Assign Exisiting Access</h3>
                   <Button color='link' onClick={onDeselected}>
                     Clear{' '}
-                    <i className='fas fa-times fa-sm' aria-hidden='true' />
+                    <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
                   </Button>
                 </div>
                 <AccessEditValues
@@ -220,7 +221,7 @@ const AssignAccess = (props: IProps) => {
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <i className='fas fa-circle-notch fa-spin' />}
+          Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

@@ -16,12 +16,12 @@
                 <p><b>FIS Orgs</b></p>
                 @foreach (var org in Model.FISOrgs)
                 {
-                    <p>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><i class="fas fa-trash"></i></a></p>
+                    <p>@org.ChartAndOrg <a asp-action="RemoveFISOrg" asp-route-fisorgId="@org.Id"><hero-icon name="trash" class="size-5"></hero-icon></a></p>
                 }
                 <p><b>PPS Departments</b></p>
                 @foreach (var ppsDept in Model.PpsDepartments)
                 {
-                    <p>@ppsDept.DepartmentName (@ppsDept.PpsDepartmentCode) <a asp-action="RemovePpsDepartment" asp-route-id="@ppsDept.Id"><i class="fas fa-trash"></i></a></p>
+                    <p>@ppsDept.DepartmentName (@ppsDept.PpsDepartmentCode) <a asp-action="RemovePpsDepartment" asp-route-id="@ppsDept.Id"><hero-icon name="trash" class="size-5"></hero-icon></a></p>
                 }
             </div>
         </div>
