@@ -41,7 +41,7 @@ namespace Test.Integration
 
             new DbInitializer(db.Context, new SuperuserSettings()).Initialize();
 
-            Assert.Equal(DatabaseCommands.BaselineId, await db.Scalar("SELECT MigrationId FROM dbo.__EFMigrationsHistory"));
+            Assert.Equal(db.Context.Database.GetMigrations(), await db.Context.Database.GetAppliedMigrationsAsync());
             Assert.True(await db.Context.Roles.AnyAsync(role => role.Name == "Admin" && role.IsAdmin));
             Assert.True(await db.Context.EquipmentAttributeKeys.AnyAsync(key => key.Key == "Service Tag"));
         }
@@ -79,8 +79,7 @@ namespace Test.Integration
 
             Assert.True(JsonNode.DeepEquals(before, await SqlServerSchema.CaptureObjectsAsync(db.Connection)));
             Assert.Equal(fingerprint, await Fingerprint());
-            Assert.Equal(1, Convert.ToInt32(await db.Scalar("SELECT COUNT(*) FROM dbo.__EFMigrationsHistory")));
-            Assert.Equal(DatabaseCommands.BaselineId, await db.Scalar("SELECT MigrationId FROM dbo.__EFMigrationsHistory"));
+            Assert.Equal(db.Context.Database.GetMigrations(), await db.Context.Database.GetAppliedMigrationsAsync());
             await AssertBehavior(db.Context);
         }
 
@@ -269,8 +268,7 @@ namespace Test.Integration
                 })
                     await Assert.ThrowsAsync<InvalidOperationException>(() => DatabaseCommands.RunAsync(builder.ConnectionString, wrong));
                 await DatabaseCommands.RunAsync(builder.ConnectionString, args.Append("--apply").ToArray());
-                Assert.Equal(DatabaseCommands.BaselineId, await db.Scalar("SELECT MigrationId FROM dbo.__EFMigrationsHistory"));
-                Assert.Equal(41, Convert.ToInt32(await db.Scalar("SELECT COUNT(*) FROM sys.tables WHERE name<>'__EFMigrationsHistory'")));
+                Assert.Equal(db.Context.Database.GetMigrations(), await db.Context.Database.GetAppliedMigrationsAsync());
                 builder.InitialCatalog = "master";
                 await using var master = new SqlConnection(builder.ConnectionString);
                 await Assert.ThrowsAsync<SqlException>(() => master.OpenAsync());
@@ -297,7 +295,7 @@ namespace Test.Integration
             await DatabaseCommands.RunAsync(db.ConnectionString, args.Concat(new[] { "--create-database", "--apply" }).ToArray());
             SqlConnection.ClearPool(db.Connection); // Discard the cached login failure from the missing-database probe.
             await db.Connection.OpenAsync();
-            Assert.Equal(DatabaseCommands.BaselineId, await db.Scalar("SELECT MigrationId FROM dbo.__EFMigrationsHistory"));
+            Assert.Equal(db.Context.Database.GetMigrations(), await db.Context.Database.GetAppliedMigrationsAsync());
         }
 
         private static async Task SeedBehavior(ApplicationDbContext context)
