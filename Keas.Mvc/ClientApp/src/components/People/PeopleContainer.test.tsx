@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { render, cleanup, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { fakePeople } from '../specs/TestData';
 import { routes } from '../../pages/assets/routes';
 import PeopleContainer from '../People/PeopleContainer';
 
-let container: Element = null;
+let container: HTMLElement = null;
 
 // mock out the sub containers, at least for now
 vi.mock('../Access/AccessAssignmentContainer', () => ({
@@ -54,7 +53,7 @@ beforeEach(() => {
 
 afterEach(() => {
   // cleanup on exiting
-  unmountComponentAtNode(container);
+  cleanup();
   container.remove();
   container = null;
 });
@@ -82,7 +81,7 @@ describe('People Container', () => {
             <PeopleContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -107,7 +106,7 @@ describe('People Container', () => {
             <PeopleContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -131,7 +130,7 @@ describe('People Container', () => {
             <PeopleContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -166,7 +165,7 @@ describe('People Container', () => {
             <PeopleContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
     const matches = container.querySelectorAll('.rt-tr-group');
@@ -188,7 +187,7 @@ describe('People Container', () => {
             {routes}
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 

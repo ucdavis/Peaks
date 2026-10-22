@@ -1,13 +1,12 @@
 import * as React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { render, cleanup, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { routes } from '../../pages/assets/routes';
 import { fakeAccesses } from '../specs/mockData/Access';
 import AccessContainer from '../Access/AccessContainer';
 
-let container: Element = null;
+let container: HTMLElement = null;
 
 // mock out the sub containers, at least for now
 vi.mock('../Access/AccessAssignmentContainer', () => ({
@@ -30,7 +29,7 @@ beforeEach(() => {
 
 afterEach(() => {
   // cleanup on exiting
-  unmountComponentAtNode(container);
+  cleanup();
   container.remove();
   container = null;
 });
@@ -58,7 +57,7 @@ describe('Access Container', () => {
             <AccessContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -83,7 +82,7 @@ describe('Access Container', () => {
             <AccessContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -107,7 +106,7 @@ describe('Access Container', () => {
             <AccessContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -141,7 +140,7 @@ describe('Access Container', () => {
             <AccessContainer />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
     const matches = container.querySelectorAll('.rt-tr-group');
@@ -163,7 +162,7 @@ describe('Access Container', () => {
             {routes}
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 

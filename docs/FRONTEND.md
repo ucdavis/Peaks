@@ -1,6 +1,6 @@
 # Frontend development
 
-PEAKS uses Razor for HTML, authentication, anti-forgery tokens and routing. React 17
+PEAKS uses Razor for HTML, authentication, anti-forgery tokens and routing. React 18
 and React Router 5 render the asset routes inside the shared layout. Vite builds
 and serves frontend assets; it does not serve the application's pages or APIs.
 
@@ -28,7 +28,8 @@ profiles and leave `Vite__UseDevServer` unset or set it to `false`.
 
 ## Assets and tests
 
-`src/index.tsx` preserves the existing CSS import order. Razor emits all CSS
+`src/index.tsx` delegates mounting to `renderApp.tsx`, which uses `createRoot`.
+Its imports load component styles before site styles. Razor emits all CSS
 from its manifest entry in the document head. In development, the same JavaScript
 CSS imports inject styles into the head, retaining Vite HMR and the original
 cascade order.
@@ -59,8 +60,9 @@ npm --prefix Keas.Mvc/ClientApp run build
 dotnet test Test/Test.csproj
 ```
 
-`npm test` runs Vitest once; `npm run testwatch` watches. The eight existing test
-files still use React 17's rendering APIs. CI writes JUnit results to
+`npm test` runs Vitest once; `npm run testwatch` watches. Component tests use
+Testing Library's React 18 rendering APIs; bootstrap tests exercise `renderApp`
+and unmount its root during cleanup. CI writes JUnit results to
 `test-results/junit.xml` and Cobertura coverage to `coverage/cobertura-coverage.xml`.
 The launcher tests run the real Vite server and check readiness, module/CSS
 responses, CORS, occupied-port handling and stdin shutdown. Server tests also

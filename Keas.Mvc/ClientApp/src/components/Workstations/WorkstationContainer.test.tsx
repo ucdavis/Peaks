@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
+import { render, cleanup, act } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router';
-import { act } from 'react-dom/test-utils';
 import { Context } from '../../Context';
 import { ISpace } from '../../models/Spaces';
 import { fakeWorkstations } from '../specs/mockData/Workstation';
@@ -13,7 +12,7 @@ vi.mock('../History/HistoryContainer', () => ({
   }
 }));
 
-let container: Element = null;
+let container: HTMLElement = null;
 const selectedSpace: ISpace = {
   id: 3535,
   deptName: "Dean's Office, CA&ES",
@@ -36,7 +35,7 @@ beforeEach(() => {
 
 afterEach(() => {
   // cleanup on exiting
-  unmountComponentAtNode(container);
+  cleanup();
   container.remove();
   container = null;
 });
@@ -64,7 +63,7 @@ describe('Workstation Container', () => {
             <WorkstationContainer space={selectedSpace} tags={null} />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -88,7 +87,7 @@ describe('Workstation Container', () => {
             <WorkstationContainer space={selectedSpace} tags={null} />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -112,7 +111,7 @@ describe('Workstation Container', () => {
             <WorkstationContainer space={selectedSpace} tags={null} />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 
@@ -145,7 +144,7 @@ describe('Workstation Container', () => {
             <WorkstationContainer space={selectedSpace} tags={null} />
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
     const matches = container.querySelectorAll('tbody tr');
@@ -173,7 +172,7 @@ describe('Workstation Container', () => {
             </Route>
           </MemoryRouter>
         </Context.Provider>,
-        container
+        { container }
       );
     });
 

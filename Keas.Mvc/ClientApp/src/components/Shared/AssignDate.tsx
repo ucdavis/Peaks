@@ -1,5 +1,7 @@
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
+import 'react-date-picker/dist/DatePicker.css';
+import 'react-calendar/dist/Calendar.css';
 import { FormGroup, Input, Label } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
 import { DateUtil } from '../../util/dates';
@@ -23,6 +25,10 @@ const AssignDate = (props: IProps) => {
         <br />
         <DatePicker
           format='MM/dd/yyyy'
+          monthAriaLabel='Month'
+          dayAriaLabel='Day'
+          yearAriaLabel='Year'
+          calendarAriaLabel='Toggle calendar'
           required={props.isRequired}
           clearIcon={null}
           value={props.date}
@@ -41,7 +47,7 @@ const AssignDate = (props: IProps) => {
         type='text'
         className='form-control'
         disabled={true}
-        value={!!props.date ? DateUtil.formatExpiration(props.date) : ''}
+        value={props.date ? DateUtil.formatExpiration(props.date) : ''}
       />
     </FormGroup>
   );
