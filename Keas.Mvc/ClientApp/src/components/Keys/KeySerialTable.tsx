@@ -5,7 +5,10 @@ import { DateUtil } from '../../util/dates';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { Column, TableState } from 'react-table';
+import {
+  PeaksColumn as Column,
+  PeaksInitialState
+} from '../Shared/tableFeatures';
 import {
   ReactTableExpirationUtil,
   ReactTableKeyStatusUtil
@@ -46,7 +49,7 @@ const KeySerialTable = (props: IProps) => {
   const columns: Column<IKeySerial>[] = React.useMemo(
     () => [
       {
-        Cell: data => (
+        cell: data => (
           <Button
             color='link'
             onClick={() => props.showDetails(data.row.original)}
@@ -54,43 +57,44 @@ const KeySerialTable = (props: IProps) => {
             Details
           </Button>
         ),
-        Header: ' ',
-        maxWidth: 150
+        header: ' '
       },
       {
-        Header: 'Key Code and SN',
-        accessor: (keySerial: IKeySerial) => {
+        header: 'Key Code and SN',
+        accessorFn: (keySerial: IKeySerial) => {
           return keySerial.key.code + '-' + keySerial.number;
         },
         id: 'keyCodeSN'
       },
       {
-        Filter: ReactTableKeyStatusUtil.FilterHeader,
-        filter: 'status',
-        Header: 'Status',
-        accessor: 'status'
+        meta: { Filter: ReactTableKeyStatusUtil.FilterHeader },
+        filterFn: ReactTableKeyStatusUtil.filterFunction,
+        header: 'Status',
+        accessorKey: 'status'
       },
       {
-        Header: 'Assignment',
-        accessor: (keySerial: IKeySerial) =>
-          !!keySerial.keySerialAssignment
+        header: 'Assignment',
+        accessorFn: (keySerial: IKeySerial) =>
+          keySerial.keySerialAssignment
             ? `${keySerial.keySerialAssignment.person.lastName}, ${keySerial.keySerialAssignment.person.firstName}`
             : ``,
         id: 'assignedTo'
       },
       {
-        Cell: row => (
-          <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
+        cell: row => (
+          <span>
+            {row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}
+          </span>
         ),
-        Filter: ReactTableExpirationUtil.FilterHeader,
-        filter: 'expiration',
-        Header: 'Expiration',
-        accessor: row => row.keySerialAssignment?.expiresAt,
+        meta: { Filter: ReactTableExpirationUtil.FilterHeader },
+        filterFn: ReactTableExpirationUtil.filterFunction,
+        header: 'Expiration',
+        accessorFn: row => row.keySerialAssignment?.expiresAt,
         id: 'expiresAt'
       },
       {
-        Cell: renderDropdownColumn,
-        Header: 'Actions'
+        cell: renderDropdownColumn,
+        header: 'Actions'
       }
     ],
     []
@@ -98,9 +102,12 @@ const KeySerialTable = (props: IProps) => {
 
   const keySerialData = React.useMemo(() => keySerials, [keySerials]);
 
-  const initialState: Partial<TableState<any>> = {
-    sortBy: [{ id: 'status' }, { id: 'keyCodeSN' }],
-    pageSize: ReactTableUtil.getPageSize()
+  const initialState: PeaksInitialState = {
+    sorting: [
+      { id: 'status', desc: false },
+      { id: 'keyCodeSN', desc: false }
+    ],
+    pagination: { pageIndex: 0, pageSize: ReactTableUtil.getPageSize() }
   };
 
   return (
@@ -108,10 +115,6 @@ const KeySerialTable = (props: IProps) => {
       data={keySerialData}
       columns={columns}
       initialState={initialState}
-      filterTypes={{
-        expiration: ReactTableExpirationUtil.filterFunction,
-        status: ReactTableKeyStatusUtil.filterFunction
-      }}
     />
   );
 };

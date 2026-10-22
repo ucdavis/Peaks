@@ -36,11 +36,14 @@ namespace Test.Integration
             fixture.Lifetime.Verify(x => x.StopApplication(), Times.Never);
         }
 
-        [Fact]
-        public async Task ReadyServerAcceptsRequestsAndShutdownReleasesItsPort()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(6000)]
+        public async Task ReadyServerAcceptsRequestsAndShutdownReleasesItsPort(int readyDelayMilliseconds)
         {
             using var fixture = new ServerFixture();
-            fixture.WriteServerScript();
+            fixture.WriteServerScript(
+                $"setTimeout(() => console.log('PEAKS_VITE_READY:' + process.env.PEAKS_VITE_TOKEN), {readyDelayMilliseconds});");
             using var server = fixture.CreateServer();
 
             await server.StartAsync(CancellationToken.None);
@@ -159,7 +162,7 @@ namespace Test.Integration
             public Mock<IHostApplicationLifetime> Lifetime { get; } = new Mock<IHostApplicationLifetime>();
 
             public ViteDevelopmentServer CreateServer(string environment = "Development", bool enabled = true,
-                string nodePath = "node", int startupTimeoutSeconds = 5)
+                string nodePath = "node", int? startupTimeoutSeconds = null)
             {
                 var host = new Mock<IWebHostEnvironment>();
                 host.SetupGet(x => x.EnvironmentName).Returns(environment);
@@ -170,7 +173,7 @@ namespace Test.Integration
                     ["Vite:DevServerUrl"] = Url,
                     ["Vite:ClientDirectory"] = ClientDirectory,
                     ["Vite:NodePath"] = nodePath,
-                    ["Vite:StartupTimeoutSeconds"] = startupTimeoutSeconds.ToString()
+                    ["Vite:StartupTimeoutSeconds"] = startupTimeoutSeconds?.ToString()
                 }).Build();
                 return new ViteDevelopmentServer(host.Object, configuration,
                     NullLogger<ViteDevelopmentServer>.Instance, Lifetime.Object);

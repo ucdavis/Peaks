@@ -6,9 +6,13 @@ it('preserves sorting, filtering, pagination and page size under the React 18 ro
   const data = Array.from({ length: 25 }, (_, i) => ({
     name: `Person ${String(i + 1).padStart(2, '0')}`
   }));
-  const columns = [{ Header: 'Name', accessor: 'name' }];
+  const columns = [{ header: 'Name', accessorKey: 'name' }];
   const { container } = render(
-    <ReactTable columns={columns} data={data} initialState={{ pageSize: 10 }} />
+    <ReactTable
+      columns={columns}
+      data={data}
+      initialState={{ pagination: { pageIndex: 0, pageSize: 10 } }}
+    />
   );
   const rows = () =>
     within(container.querySelector('tbody')).getAllByRole('row');
@@ -28,4 +32,60 @@ it('preserves sorting, filtering, pagination and page size under the React 18 ro
   fireEvent.change(screen.getByRole('textbox'), { target: { value: '' } });
   fireEvent.change(screen.getByRole('combobox'), { target: { value: '20' } });
   expect(rows()).toHaveLength(20);
+});
+
+it('exposes sorting as a keyboard button and announces the current direction', async () => {
+  const userEvent = (await import('@testing-library/user-event')).default;
+  const { container } = render(
+    <ReactTable
+      columns={[{ header: 'Name', accessorKey: 'name' }]}
+      data={[{ name: 'Beta' }, { name: 'Alpha' }]}
+    />
+  );
+  const button = screen.getByRole('button', { name: 'Name' });
+  button.focus();
+  userEvent.keyboard('{Enter}');
+  expect(button.closest('th')).toHaveAttribute('aria-sort', 'ascending');
+  expect(container.querySelector('tbody tr')).toHaveTextContent('Alpha');
+  userEvent.keyboard(' ');
+  expect(button.closest('th')).toHaveAttribute('aria-sort', 'descending');
+  expect(container.querySelector('tbody tr')).toHaveTextContent('Beta');
+});
+
+it('keeps keyboard multi-sort replacement and Shift toggles consistent with clicks', async () => {
+  const userEvent = (await import('@testing-library/user-event')).default;
+  const { container } = render(
+    <ReactTable
+      columns={[
+        { header: 'Status', accessorKey: 'status' },
+        { header: 'Name', accessorKey: 'name' }
+      ]}
+      data={[
+        { status: 'Active', name: 'Zulu' },
+        { status: 'Active', name: 'Alpha' },
+        { status: 'Lost', name: 'Beta' }
+      ]}
+      initialState={{
+        sorting: [
+          { id: 'status', desc: false },
+          { id: 'name', desc: false }
+        ]
+      }}
+    />
+  );
+  const status = screen.getByRole('button', { name: 'Status' });
+  const name = screen.getByRole('button', { name: 'Name' });
+  status.focus();
+  userEvent.keyboard('{Enter}');
+  expect(status.closest('th')).toHaveAttribute('aria-sort', 'ascending');
+  expect(name.closest('th')).not.toHaveAttribute('aria-sort');
+  expect(container.querySelector('tbody tr')).toHaveTextContent('Zulu');
+  name.focus();
+  userEvent.keyboard('{Shift>}{Enter}{/Shift}');
+  expect(name.closest('th')).toHaveAttribute('aria-sort', 'ascending');
+  expect(status.closest('th')).toHaveAttribute('aria-sort', 'ascending');
+  expect(container.querySelector('tbody tr')).toHaveTextContent('Alpha');
+  userEvent.keyboard(' ');
+  expect(name.closest('th')).toHaveAttribute('aria-sort', 'ascending');
+  expect(status.closest('th')).not.toHaveAttribute('aria-sort');
 });

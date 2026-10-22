@@ -9,7 +9,11 @@ import {
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { Column, TableState } from 'react-table';
+import {
+  PeaksColumn as Column,
+  PeaksInitialState,
+  withOriginalOrder
+} from '../Shared/tableFeatures';
 
 interface IProps {
   accesses: IAccess[];
@@ -24,14 +28,14 @@ const AccessTable = (props: IProps) => {
     const accessEntity: IAccess = data.row.original;
     const actions: IAction[] = [];
 
-    if (!!props.onAdd) {
+    if (props.onAdd) {
       actions.push({
         onClick: () => props.onAdd(accessEntity),
         title: 'Assign'
       });
     }
 
-    if (!!props.onDelete) {
+    if (props.onDelete) {
       actions.push({
         onClick: () => props.onDelete(accessEntity),
         title: 'Delete'
@@ -44,7 +48,7 @@ const AccessTable = (props: IProps) => {
   const columns: Column<IAccess>[] = React.useMemo(
     () => [
       {
-        Cell: data => (
+        cell: data => (
           <Button
             color='link'
             onClick={() => props.showDetails(data.row.original)}
@@ -52,49 +56,51 @@ const AccessTable = (props: IProps) => {
             Details
           </Button>
         ),
-        Header: ' ',
-        maxWidth: 150
+        header: ' '
       },
       {
-        Header: 'Name',
-        accessor: 'name'
+        header: 'Name',
+        accessorKey: 'name'
       },
       {
-        Header: 'Number of Assignments',
-        accessor: x => x.assignments.length,
+        header: 'Number of Assignments',
+        accessorFn: x => x.assignments.length,
         id: 'numAssignments',
-        filter: 'numAssignments',
-        Filter: ReactTableNumberOfAssignmentsUtil.FilterHeader
+        filterFn: ReactTableNumberOfAssignmentsUtil.filterFunction,
+        meta: { Filter: ReactTableNumberOfAssignmentsUtil.FilterHeader }
       },
       {
-        Header: 'Assigned To',
-        accessor: x =>
+        header: 'Assigned To',
+        accessorFn: x =>
           x.assignments
             .map(a =>
-              !!a.person ? `${a.person.lastName}, ${a.person.firstName}` : ``
+              a.person ? `${a.person.lastName}, ${a.person.firstName}` : ``
             )
             .join('; '),
         id: 'assignedTo'
       },
       {
-        Cell: row => (
-          <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
+        cell: row => (
+          <span>
+            {row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}
+          </span>
         ),
-        Filter: ReactTableExpirationUtil.AccessFilterHeader,
-        filter: 'expiration',
-        Header: 'First Expiration',
-        accessor: x =>
+        meta: { Filter: ReactTableExpirationUtil.AccessFilterHeader },
+        filterFn: ReactTableExpirationUtil.filterFunction,
+        header: 'First Expiration',
+        accessorFn: x =>
           DateUtil.getFirstExpiration(x.assignments.map(y => y.expiresAt)),
-        sortType: (a, b) =>
+        sortFn: withOriginalOrder((a, b) =>
           ReactTableExpirationUtil.sortMethod(
-            a.values.expiresAt,
-            b.values.expiresAt
-          ),
+            a.getValue('expiresAt'),
+            b.getValue('expiresAt')
+          )
+        ),
         id: 'expiresAt'
       },
       {
-        Cell: renderDropdownColumn,
-        Header: 'Actions'
+        cell: renderDropdownColumn,
+        header: 'Actions'
       }
     ],
     [props]
@@ -102,9 +108,9 @@ const AccessTable = (props: IProps) => {
 
   const accessData = React.useMemo(() => props.accesses, [props.accesses]);
 
-  const initialState: Partial<TableState<any>> = {
-    sortBy: [{ id: 'name' }],
-    pageSize: ReactTableUtil.getPageSize()
+  const initialState: PeaksInitialState = {
+    sorting: [{ id: 'name', desc: false }],
+    pagination: { pageIndex: 0, pageSize: ReactTableUtil.getPageSize() }
   };
 
   return (
@@ -112,10 +118,6 @@ const AccessTable = (props: IProps) => {
       data={accessData}
       columns={columns}
       initialState={initialState}
-      filterTypes={{
-        expiration: ReactTableExpirationUtil.filterFunction,
-        numAssignments: ReactTableNumberOfAssignmentsUtil.filterFunction
-      }}
     />
   );
 };

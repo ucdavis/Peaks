@@ -5,7 +5,10 @@ import { DateUtil } from '../../util/dates';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { Column, TableState } from 'react-table';
+import {
+  PeaksColumn as Column,
+  PeaksInitialState
+} from '../Shared/tableFeatures';
 import { ReactTableExpirationUtil } from '../../util/reactTable';
 
 interface IProps {
@@ -39,14 +42,14 @@ const EquipmentTable = (props: IProps) => {
       });
     }
 
-    if (!!props.onDelete) {
+    if (props.onDelete) {
       actions.push({
         onClick: () => props.onDelete(equipmentEntity),
         title: 'Delete'
       });
     }
 
-    if (!!props.onDuplicate) {
+    if (props.onDuplicate) {
       actions.push({
         onClick: () => props.onDuplicate(equipmentEntity),
         title: 'Duplicate'
@@ -59,7 +62,7 @@ const EquipmentTable = (props: IProps) => {
   const columns: Column<IEquipment>[] = React.useMemo(
     () => [
       {
-        Cell: data => (
+        cell: data => (
           <Button
             color='link'
             onClick={() => props.showDetails(data.row.original)}
@@ -67,39 +70,40 @@ const EquipmentTable = (props: IProps) => {
             Details
           </Button>
         ),
-        Header: ' ',
-        maxWidth: 150
+        header: ' '
       },
       {
-        Header: 'Serial Number',
-        accessor: 'serialNumber',
+        header: 'Serial Number',
+        accessorKey: 'serialNumber',
         id: 'serial number'
       },
       {
-        Header: 'Name',
-        accessor: 'name'
+        header: 'Name',
+        accessorKey: 'name'
       },
       {
-        Header: 'Assigned To',
-        accessor: e =>
-          !!e.assignment?.person
+        header: 'Assigned To',
+        accessorFn: e =>
+          e.assignment?.person
             ? `${e.assignment?.person?.lastName}, ${e.assignment?.person?.firstName}`
             : ``
       },
       {
-        Cell: row => (
-          <span>{row.value ? DateUtil.formatExpiration(row.value) : ''}</span>
+        cell: row => (
+          <span>
+            {row.getValue() ? DateUtil.formatExpiration(row.getValue()) : ''}
+          </span>
         ),
-        Filter: ReactTableExpirationUtil.FilterHeader,
-        filter: 'expiration',
-        Header: 'Expiration',
-        accessor: e => e.assignment?.expiresAt,
+        meta: { Filter: ReactTableExpirationUtil.FilterHeader },
+        filterFn: ReactTableExpirationUtil.filterFunction,
+        header: 'Expiration',
+        accessorFn: e => e.assignment?.expiresAt,
         id: 'expiresAt'
       },
       {
-        Cell: renderDropdownColumn,
-        Header: 'Actions',
-        defaultCanFilter: false
+        cell: renderDropdownColumn,
+        header: 'Actions',
+        enableColumnFilter: false
       }
     ],
     []
@@ -107,9 +111,9 @@ const EquipmentTable = (props: IProps) => {
 
   const equipmentData = React.useMemo(() => props.equipment, [props.equipment]);
 
-  const initialState: Partial<TableState<any>> = {
-    sortBy: [{ id: 'name' }],
-    pageSize: ReactTableUtil.getPageSize()
+  const initialState: PeaksInitialState = {
+    sorting: [{ id: 'name', desc: false }],
+    pagination: { pageIndex: 0, pageSize: ReactTableUtil.getPageSize() }
   };
 
   return (
@@ -117,7 +121,6 @@ const EquipmentTable = (props: IProps) => {
       data={equipmentData}
       columns={columns}
       initialState={initialState}
-      filterTypes={{ expiration: ReactTableExpirationUtil.filterFunction }}
     />
   );
 };

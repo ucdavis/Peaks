@@ -4,7 +4,10 @@ import { IKey, IKeyInfo } from '../../models/Keys';
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { Column, TableState } from 'react-table';
+import {
+  PeaksColumn as Column,
+  PeaksInitialState
+} from '../Shared/tableFeatures';
 import { ReactTableKeySerialUtil } from '../../util/reactTable';
 
 interface IProps {
@@ -21,7 +24,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
     const { keysInfo } = this.props;
     const columns: Column<IKeyInfo>[] = [
       {
-        Cell: data => (
+        cell: data => (
           <Button
             color='link'
             onClick={() => this.props.showDetails(data.row.original.key)}
@@ -29,27 +32,26 @@ export default class KeyTable extends React.Component<IProps, {}> {
             Details
           </Button>
         ),
-        Header: ' ',
-        maxWidth: 150
+        header: ' '
       },
       {
-        Header: 'Key Name',
+        header: 'Key Name',
         id: 'name',
-        accessor: row => row.key.name
+        accessorFn: row => row.key.name
       },
       {
-        Header: 'Key Code',
-        accessor: row => row.key.code
+        header: 'Key Code',
+        accessorFn: row => row.key.code
       },
       {
-        Cell: row => (
+        cell: row => (
           <span>
-            {row.value.serialsInUse} / {row.value.serialsTotal}
+            {row.getValue().serialsInUse} / {row.getValue().serialsTotal}
           </span>
         ),
-        Filter: ReactTableKeySerialUtil.FilterHeader,
-        filter: 'serial',
-        Header: _ => (
+        meta: { Filter: ReactTableKeySerialUtil.FilterHeader },
+        filterFn: ReactTableKeySerialUtil.filterFunction,
+        header: _ => (
           <div>
             Serials <i id='serialTooltip' className='fas fa-info-circle' />
             <UncontrolledTooltip placement='right' target='serialTooltip'>
@@ -57,30 +59,30 @@ export default class KeyTable extends React.Component<IProps, {}> {
             </UncontrolledTooltip>
           </div>
         ),
-        accessor: keyInfo => {
+        accessorFn: keyInfo => {
           return {
             serialsInUse: keyInfo.serialsInUseCount,
             serialsTotal: keyInfo.serialsTotalCount
           };
         },
         id: 'serialsCount',
-        disableSortBy: true
+        enableSorting: false
       },
       {
-        Cell: data => <span>{data.row.original.spacesCount}</span>,
-        Header: 'Spaces',
-        accessor: 'spacesCount',
-        disableFilters: true
+        cell: data => <span>{data.row.original.spacesCount}</span>,
+        header: 'Spaces',
+        accessorKey: 'spacesCount',
+        enableColumnFilter: false
       },
       {
-        Cell: this.renderDropdownColumn,
-        Header: 'Actions'
+        cell: this.renderDropdownColumn,
+        header: 'Actions'
       }
     ];
 
-    const initialState: Partial<TableState<any>> = {
-      sortBy: [{ id: 'name' }],
-      pageSize: ReactTableUtil.getPageSize()
+    const initialState: PeaksInitialState = {
+      sorting: [{ id: 'name', desc: false }],
+      pagination: { pageIndex: 0, pageSize: ReactTableUtil.getPageSize() }
     };
 
     return (
@@ -88,7 +90,6 @@ export default class KeyTable extends React.Component<IProps, {}> {
         data={keysInfo}
         columns={columns}
         initialState={initialState}
-        filterTypes={{ serial: ReactTableKeySerialUtil.filterFunction }}
       />
     );
   }
@@ -98,7 +99,7 @@ export default class KeyTable extends React.Component<IProps, {}> {
 
     const actions: IAction[] = [];
 
-    if (!!this.props.onDelete) {
+    if (this.props.onDelete) {
       actions.push({
         onClick: () => this.props.onDelete(key),
         title: 'Delete'

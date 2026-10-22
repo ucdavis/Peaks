@@ -12,6 +12,13 @@
 **K**eys
 **S**pace
 
+## Sort tables
+
+Click a sortable column heading, or tab to it and press Enter or Space, to cycle
+through ascending, descending and unsorted order. Hold Shift to sort by multiple
+columns. Keyboard focus is visible, and each sorted column exposes its direction
+to screen readers.
+
 ## Run the Docker sandbox
 
 Run the app and real SQL Server migrations with fictional data and local login. Docker Desktop must be running.
