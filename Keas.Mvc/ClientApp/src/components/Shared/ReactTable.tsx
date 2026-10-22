@@ -21,6 +21,7 @@ export const ReactTable = <T extends object>({
     defaultColumn: {
       filterFn: 'includesString',
       sortFn: 'alphanumeric',
+      sortUndefined: false,
       sortDescFirst: false
     },
     initialState: {
@@ -35,9 +36,11 @@ export const ReactTable = <T extends object>({
   const canNextPage = table.getCanNextPage();
   const pageCount = table.getPageCount();
   const pageOptions = table.getPageOptions();
-  const gotoPage = table.setPageIndex;
-  const nextPage = table.nextPage;
-  const previousPage = table.previousPage;
+  const gotoPage = (index: number) => {
+    if (index >= 0 && index < pageCount) {
+      table.setPageIndex(index);
+    }
+  };
   const setPageSize = table.setPageSize;
 
   return (
@@ -86,7 +89,15 @@ export const ReactTable = <T extends object>({
                       <button
                         type='button'
                         className='table-sort-button'
-                        onClick={column.getToggleSortingHandler()}
+                        onClick={event => {
+                          const multi = event.shiftKey && column.getCanMultiSort();
+                          column.toggleSorting(
+                            !multi && table.state.sorting.length > 1
+                              ? column.getFirstSortDir() === 'desc'
+                              : undefined,
+                            multi
+                          );
+                        }}
                       >
                         {content}
                       </button>
@@ -129,7 +140,7 @@ export const ReactTable = <T extends object>({
         </PaginationItem>
         <PaginationItem
           className='align-self-center'
-          onClick={() => previousPage()}
+          onClick={() => gotoPage(pageIndex - 1)}
           disabled={!canPreviousPage}
         >
           <PaginationLink previous />
@@ -177,7 +188,7 @@ export const ReactTable = <T extends object>({
         </PaginationItem>
         <PaginationItem
           className='align-self-center'
-          onClick={() => nextPage()}
+          onClick={() => gotoPage(pageIndex + 1)}
           disabled={!canNextPage}
         >
           <PaginationLink next />

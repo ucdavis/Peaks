@@ -9,7 +9,7 @@ import {
 import { ReactTableUtil } from '../../util/tableUtil';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 import { ReactTable } from '../Shared/ReactTable';
-import { PeaksColumn as Column, PeaksInitialState } from '../Shared/tableFeatures';
+import { PeaksColumn as Column, PeaksInitialState, withOriginalOrder } from '../Shared/tableFeatures';
 
 interface IProps {
   accesses: IAccess[];
@@ -84,11 +84,12 @@ const AccessTable = (props: IProps) => {
         header: 'First Expiration',
         accessorFn: x =>
           DateUtil.getFirstExpiration(x.assignments.map(y => y.expiresAt)),
-        sortFn: (a, b) =>
+        sortFn: withOriginalOrder((a, b) =>
           ReactTableExpirationUtil.sortMethod(
             a.getValue('expiresAt'),
             b.getValue('expiresAt')
-          ),
+          )
+        ),
         id: 'expiresAt'
       },
       {
