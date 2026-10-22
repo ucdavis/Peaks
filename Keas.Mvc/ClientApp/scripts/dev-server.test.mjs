@@ -55,10 +55,13 @@ test(
         'https://localhost:44332'
       );
       assert.match(await response.text(), /renderApp/);
-      const css = await fetch(`${origin}/src/sass/site.scss?direct`);
+      const css = await fetch(`${origin}/src/styles/main.css?direct`);
       assert.equal(css.status, 200);
       assert.match(css.headers.get('content-type'), /text\/css/);
-      assert.match(await css.text(), /\.peaks-nav/);
+      const styles = await css.text();
+      assert.match(styles, /\.content-wrapper/);
+      assert.match(styles, /--color-primary/);
+      assert.match(styles, /data-theme=.?peaks/);
       const font = await fetch(
         `${origin}/media/fonts/proximanova-regular-webfont.woff`
       );

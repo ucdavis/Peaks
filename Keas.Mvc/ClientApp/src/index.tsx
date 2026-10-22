@@ -1,5 +1,6 @@
 import 'vite/modulepreload-polyfill';
 import { renderApp } from './renderApp';
-import './sass/site.scss';
+import './styles/main.css';
+import './navigation';
 
 renderApp(document.getElementById('root'));

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import browserslistToEsbuild from 'browserslist-to-esbuild';
 
 const origin = new URL(
@@ -7,10 +8,10 @@ const origin = new URL(
 );
 
 export default defineConfig(({ command }) => ({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   // Relative build URLs allow Razor's PathBase to locate the entire asset graph.
   base: './',
-  // Sass root URLs resolve against the asset server in development.
+  // Legacy CSS root URLs resolve against the asset server in development.
   publicDir: command === 'serve' ? '../wwwroot' : false,
   server: {
     host: origin.hostname,

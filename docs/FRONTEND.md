@@ -15,6 +15,11 @@ expires. It stops only its own child process. Closing stdin also stops Vite when
 a debugger terminates .NET. An unexpected Vite exit stops the development app.
 Restart the normal app command after fixing the reported error.
 
+If `dotnet watch` crashes inside `HotReloadMSBuildWorkspace`, stop it and run
+`npm run start:stable` from `Keas.Mvc`. This disables .NET hot reload and uses
+rebuild/restart on watched changes instead. Vite still handles React and CSS HMR.
+The normal `npm start` command continues to enable .NET hot reload.
+
 Vite binds to http://localhost:5179. Browsers allow HTTP loopback resources from
 the local HTTPS page. CORS allows the three MVC launch-profile origins; custom
 MVC ports can set `FRONTEND_MVC_ORIGIN` to the exact MVC origin.
@@ -27,6 +32,40 @@ For a published build in Development, run the published DLL without launch
 profiles and leave `Vite__UseDevServer` unset or set it to `false`.
 
 ## Assets and tests
+
+### Styles
+
+`Keas.Mvc/ClientApp/src/styles/main.css` is the stylesheet entry point. It loads
+Tailwind CSS 4, daisyUI 5 and `@ucdavis/gunrock-tailwind` (the same branding package
+as Walter). The `peaks` daisyUI theme is the default and is selected explicitly on
+the shared Razor layout. Edit the shared color, surface, border, radius and size
+tokens here. Gunrock supplies the UC Davis palette and Proxima Nova font families.
+The `content-wrapper` utility gives the header, navigation, messages, page content
+and footer a centered `max-w-[1600px]` shell with responsive 1rem/1.5rem/2rem
+horizontal padding. The shared layout applies it to all pages automatically.
+Use standard classes such as `btn btn-primary`, `bg-base-200`, `text-primary-color`
+and `border-main-border`; no prefixes are required. Both React and Razor views
+are scanned for classes. Use complete class names rather than constructing them
+from string fragments.
+
+`styles/legacy.css` contains the flattened application styles, without Bootstrap.
+There is no Sass compiler or Gunrockin dependency. The legacy layer sits between
+the base reset and modern components/utilities so new classes can override it.
+Its `--legacy-rem` variable preserves old 8px/10px sizing while the document keeps
+a normal root font size for modern components. Remove legacy rules as each screen
+is migrated; put new styles and tokens in `main.css`.
+
+Bootstrap's package, CDN CSS, JavaScript and Popper script are removed. The shared
+layout uses native details dropdowns and a small menu/message handler instead.
+Navigation styling is expressed directly in Tailwind classes in `_Layout.cshtml`,
+with a collapsible stacked menu below `lg` and horizontal navigation above it.
+`src/navigation.ts` handles mobile expansion, Escape, outside-click dismissal and
+closing other open dropdowns. The legacy navigation selectors have been removed;
+the asset screen's `.react-tabs` styles remain until that separate UI is migrated.
+Reactstrap and react-bootstrap-typeahead remain temporarily because existing
+React screens still use them. A small modal compatibility block in `main.css`
+keeps Reactstrap dialogs visible, but this is not a completed screen-by-screen
+conversion: Bootstrap grid, form and utility markup still needs migration.
 
 `src/index.tsx` delegates mounting to `renderApp.tsx`, which uses `createRoot`.
 Its imports load component styles before site styles. Razor emits all CSS

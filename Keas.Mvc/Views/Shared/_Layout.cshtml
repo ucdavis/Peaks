@@ -6,7 +6,7 @@
 @inject ITeamsManager TeamsManager
 @inject IConfiguration Configuration
 <!DOCTYPE html>
-<html>
+<html lang="en" class="font-sans" data-theme="peaks">
 @{
     var currentController = this.ViewContext.RouteData.Values["controller"].ToString();
     var activeMenu = string.Empty;
@@ -51,15 +51,10 @@
     <title>@ViewData["Title"] - PEAKS</title>
 
     <environment names="Development">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" />
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css">
     </environment>
 
     <environment names="Staging,Production">
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-              rel="stylesheet"
-              integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
-              crossorigin="anonymous">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.6.3/css/all.min.css" 
               rel="stylesheet"
               integrity="sha512-f2MWjotY+JCWDlE0+QAshlykvZUtIm35A6RHwfYZPdxKgLJpL8B+VVxjpHJwZDsZaWdyHVhlIHoblFYGkmrbhg==" 
@@ -80,9 +75,9 @@
     {
         <h1 style="background-color: red; text-align: center; color: white">----------- Beta Testing. Data will not be retained. -----------</h1>
     }
-    <div class="container">
-      <div class="row justify-content-between align-items-end">
-        <div class="col-sm-8 col-md-5 col-xl-4">
+    <div class="content-wrapper">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div class="min-w-0">
           
             <a asp-area="" asp-controller="Home" asp-action="Index">
               <h1>PEAKS</h1>
@@ -91,9 +86,9 @@
          
 
                 </div>
-                <div class="col-sm-3 col-xl-2 col-ucdavis">
+                <div class="shrink-0">
                     <a target="blank" href="https://ucdavis.edu">
-                        <img class="img-fluid" src="/media/ucdavisbluelogo.svg" alt="UC Davis Logo">
+                        <img class="mx-auto w-40 max-w-full sm:w-48" src="/media/ucdavisbluelogo.svg" alt="UC Davis Logo">
                     </a>
                 </div>
 
@@ -107,102 +102,104 @@
         </div>
 
     </div>
-    <nav class="navbar navbar-expand-md">
-        <div class="container">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fas fa-bars"></i>
-                <span>Menu</span>
+    <nav class="border-y border-main-border bg-base-100 shadow-sm" aria-label="Main navigation" data-site-navigation>
+        <div class="content-wrapper">
+            <button class="my-2 inline-flex items-center gap-2 rounded-md  pe-4 py-2 text-lg  font-semibold text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lg:hidden" type="button" data-navigation-toggle aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars" aria-hidden="true"></i>
+                <span class="text-lg font-semibold text-base-content">Menu</span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarText">
-                <ul class="navbar-nav peaks-nav">
+            <div class="hidden w-full lg:block" id="navbarText">
+                <ul class="m-0 flex w-full list-none flex-col gap-1 p-0 pb-3  lg:flex-row lg:items-center lg:gap-2 lg:py-2">
                     @if (TempData["TeamName"] != null)
                     {
                         if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AnyRole)).Succeeded)
                         {
-                            <li class='@(activeMenu == "Asset" ? "nav-item nav-active" : "nav-item")'>
-                                <a class="nav-link" href='@string.Format("/{0}/{1}", TempData["TeamName"], "People")'>Assets</a>
+                            <li class="min-w-0">
+                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "Asset" ? "bg-primary/10 text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "Asset" ? "page" : null)' href='@string.Format("/{0}/{1}", TempData["TeamName"], "People")'>Assets</a>
                             </li>
-                            <li class='@(activeMenu == "MyStuff" ? "nav-item nav-active" : "nav-item")'>
-                                <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
+                            <li class="min-w-0">
+                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "MyStuff" ? "bg-primary/10 text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "MyStuff" ? "page" : null)' asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
                             </li>
                 
-                            <li class='@(activeMenu == "Report" ? "nav-item nav-active" : "nav-item")'>
-                                <a class="nav-link" asp-controller="Report" asp-action="Index">Reports</a>
+                            <li class="min-w-0">
+                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "Report" ? "bg-primary/10 text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "Report" ? "page" : null)' asp-controller="Report" asp-action="Index">Reports</a>
                             </li>
                         }
                         else
                         {
-                            <li class='@(activeMenu == "MyStuff" ? "nav-item nav-active" : "nav-item")'>
-                                <a class="nav-link" asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
+                            <li class="min-w-0">
+                                <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "MyStuff" ? "bg-primary/10 text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "MyStuff" ? "page" : null)' asp-controller="Confirm" asp-action="MyStuff">My Stuff</a>
                             </li>
                         }
 
                         if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded || (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.PersonManagerAccess)).Succeeded)
                         {
-                            <li class='@(activeMenu == "Admin" ? "nav-item nav-active" : "nav-item")'>
-                                <div class="dropdown">
-                                    <a class="dropdown-toggle nav-link" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Admin <i class="fas fa-caret-down fa-lg"></i>
-                                    </a>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li class="min-w-0">
+                                <details class="group relative" data-navigation-dropdown>
+                                    <summary class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer list-none [&::-webkit-details-marker]:hidden @(activeMenu == "Admin" ? "bg-primary/10 text-primary" : "text-base-content hover:text-primary")' >
+                                        Admin <i class="fas fa-chevron-down ml-auto text-xs transition-transform group-open:rotate-180" aria-hidden="true"></i>
+                                    </summary>
+                                    <div class="relative z-50 mt-1 max-h-[60vh] w-full overflow-y-auto rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:left-0 lg:top-full lg:mt-2 lg:w-80">
                                         @if ((await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.DepartmentAdminAccess)).Succeeded)
                                         {
-                                            <a class="dropdown-item" asp-controller="TeamAdmin" asp-action="Index">Admin Home</a>
-                                            <a class="dropdown-item" asp-action="RoledMembers" asp-controller="TeamAdmin">Team Permissions</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" asp-action="Index" asp-controller="TagsManager">Team Tags</a>
-                                            <a class="dropdown-item" asp-action="Index" asp-controller="EquipmentAttributeKey">Team Equipment Attribute Keys</a>
-                                            <a class="dropdown-item" asp-action="Index" asp-controller="DocumentSettings">Team DocuSign Settings</a>
-                                            <a class="dropdown-item" asp-action="AddFISOrg" asp-controller="TeamAdmin">Add New Org Code</a>
-                                            <a class="dropdown-item" asp-action="AddPpsDepartment" asp-controller="TeamAdmin">Add PPS Department</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" asp-action="BulkLoadPeople" asp-controller="TeamAdmin">Bulk Load People</a>
-                                            <a class="dropdown-item" asp-action="BulkEdit" asp-controller="PersonAdmin">Bulk Edit People</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" asp-action="Upload" asp-controller="TeamAdmin">CSV Imports</a>                                            
-                                            <a class="dropdown-item" asp-action="Index" asp-controller="Report">Reports</a>
-                                            <a class="dropdown-item" asp-action="RegenerateApiCode" asp-controller="TeamAdmin">API Code</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-controller="TeamAdmin" asp-action="Index">Admin Home</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="RoledMembers" asp-controller="TeamAdmin">Team Permissions</a>
+                                            <div class="my-2 border-t border-main-border"></div>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="TagsManager">Team Tags</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="EquipmentAttributeKey">Team Equipment Attribute Keys</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="DocumentSettings">Team DocuSign Settings</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="AddFISOrg" asp-controller="TeamAdmin">Add New Org Code</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="AddPpsDepartment" asp-controller="TeamAdmin">Add PPS Department</a>
+                                            <div class="my-2 border-t border-main-border"></div>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="BulkLoadPeople" asp-controller="TeamAdmin">Bulk Load People</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="BulkEdit" asp-controller="PersonAdmin">Bulk Edit People</a>
+                                            <div class="my-2 border-t border-main-border"></div>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Upload" asp-controller="TeamAdmin">CSV Imports</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="Report">Reports</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="RegenerateApiCode" asp-controller="TeamAdmin">API Code</a>
                                         }
                                         else
                                         {
-                                            <a class="dropdown-item" asp-action="BulkEdit" asp-controller="PersonAdmin">Bulk Edit People</a>
-                                            <a class="dropdown-item" asp-action="UploadPeople" asp-controller="PersonAdmin">CSV Upload People</a>
-                                            <a class="dropdown-item" asp-action="Index" asp-controller="Report">Reports</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="BulkEdit" asp-controller="PersonAdmin">Bulk Edit People</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="UploadPeople" asp-controller="PersonAdmin">CSV Upload People</a>
+                                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="Index" asp-controller="Report">Reports</a>
                                         }
                                     </div>
-                                </div>
+                                </details>
                             </li>
                         }
 
-                        <li class='@(activeMenu == "Help" ? "nav-item nav-active" : "nav-item")'>
-                            <a class='nav-link' asp-controller="Help" asp-action="Index">Help</a>
+                        <li class="min-w-0">
+                            <a class='inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary @(activeMenu == "Help" ? "bg-primary/10 text-primary" : "text-base-content hover:text-primary")' aria-current='@(activeMenu == "Help" ? "page" : null)' asp-controller="Help" asp-action="Index">Help</a>
                         </li>
                     }
-                    <li class="ml-auto nav-item dropdown nav-actions">
-                        <label>
+                    <li class="mt-2 min-w-0 border-t border-main-border pt-3 lg:ml-auto lg:mt-0 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0">
+                        <p class="m-0  text-xs font-semibold text-base-content/70">
                             @if (!string.IsNullOrWhiteSpace(TempData["TeamName"] as string))
                                     {
                                         @TempData["TeamName"]
                                     }
-                        </label>
-                        <button style="display:block;" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Change Team
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        </p>
+                      <details class="group relative" data-navigation-dropdown>
+                        <summary class="inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer list-none text-base-content hover:text-primary [&::-webkit-details-marker]:hidden">
+                            Change Team <i class="fas fa-chevron-down ml-auto text-xs transition-transform group-open:rotate-180" aria-hidden="true"></i>
+                        </summary>
+                        <div class="relative z-50 mt-1 max-h-[60vh] w-full overflow-y-auto rounded-lg border border-main-border bg-base-100 p-2 shadow-lg lg:absolute lg:right-0 lg:top-full lg:mt-2 lg:w-80">
                             @foreach (var teamItem in await TeamsManager.GetMyTeams())
                             {
-                                <a class="dropdown-item" href='@string.Format("/{0}/home/index", teamItem.Key)' class="team-link">@teamItem.Value</a>
+                                <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" href='@string.Format("/{0}/home/index", teamItem.Key)' >@teamItem.Value</a>
                             }
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh Permissions</a>
+                            <div class="my-2 border-t border-main-border"></div>
+                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" href="/confirm/selectTeam?urlredirect=home/index">Choose team</a>
+                            <div class="my-2 border-t border-main-border"></div>
+                            <a class="flex items-center rounded-md  py-2  text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="RefreshPermissions" asp-controller="Confirm">Refresh Permissions</a>
                         </div>
+                      </details>
                     </li>
-                    <li class="nav-item nav-actions" style="border-right:1px solid #c7c8cc">
-                        <label>@User.GetNameClaim()</label>
-                        <form class="flexer" asp-area="" asp-controller="Account" asp-action="Logout2" method="post" id="logoutForm">
-                            <button type="submit">Sign out</button>
+                    <li class="min-w-0 border-t border-main-border pt-3 lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0">
+                        <p class="m-0  text-xs font-semibold text-base-content/70">@User.GetNameClaim()</p>
+                        <form class="m-0" asp-area="" asp-controller="Account" asp-action="Logout2" method="post" id="logoutForm">
+                            <button class="inline-flex w-full items-center gap-2 rounded-md pe-4 py-2 text-lg  font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer text-base-content hover:text-primary" type="submit">Sign out</button>
                         </form>
                     </li>
                 </ul>
@@ -211,9 +208,9 @@
                 </nav>
     @if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"] as string))
     {
-        <div class="container">
+        <div class="content-wrapper">
             <div class="alert alert-danger">
-                <button type="button" class="close" data-dismiss="alert">
+                <button type="button" class="float-right cursor-pointer" data-dismiss-message aria-label="Dismiss message">
                 <i class="fas fa-times"></i>
                 </button> @TempData["ErrorMessage"]
             </div>
@@ -221,23 +218,23 @@
     }
     @if (!string.IsNullOrWhiteSpace(TempData["Message"] as string))
     {
-        <div class="container">
+        <div class="content-wrapper">
             <div class="alert alert-info">
-                <button type="button" class="close" data-dismiss="alert">
+                <button type="button" class="float-right cursor-pointer" data-dismiss-message aria-label="Dismiss message">
                 <i class="fas fa-times"></i>
                 </button> @TempData["Message"]
             </div>
         </div>
     }
 
-    <main role="main" class="main-content-wrapper container">
+    <main role="main" class="main-content-wrapper content-wrapper">
         @* Inject React *@
         <div id="root"></div>
 
         @RenderBody()
     </main>
 </div>
-    <footer class="container">
+    <footer class="content-wrapper">
         <p>Copyright &copy; <span id="copywrite-year"></span> The Regents of the University of California, Davis campus. All rights reserved.</p>
     </footer>
 
@@ -247,11 +244,6 @@
 
     <environment include="Development">
         <script src="~/lib/jquery/dist/jquery.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-                integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-                crossorigin="anonymous">
-        </script>
     </environment>
 
     <environment names="Staging,Production">
@@ -260,11 +252,6 @@
                 asp-fallback-test="window.jQuery"
                 crossorigin="anonymous"
                 integrity="sha384-K+ctZQ+LL8q6tP7I94W+qzQsfRV2a+AfHIi9k8z8l9ggpc8X+Ytst4yBo/hH+8Fk">
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
-                integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-                crossorigin="anonymous">
         </script>
     </environment>
 

@@ -3,9 +3,9 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-      "start": "dotnet watch run"
+      "start": "dotnet watch run",
+      "start:stable": "dotnet watch --no-hot-reload run"
     },
     "author": "UC Davis",
     "license": "MIT"
   }
-  
