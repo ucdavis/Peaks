@@ -5,6 +5,7 @@ import { IEquipmentAttribute } from '../../models/Equipment';
 import EquipmentAttribute from './EquipmentAttribute';
 
 interface IProps {
+  spacious?: boolean;
   commonKeys: string[];
   disableEdit: boolean;
   attributes: IEquipmentAttribute[];
@@ -43,6 +44,7 @@ const EquipmentAttributes = (props: IProps) => {
   const attributeList = props.attributes.map((attr, i) => (
     <EquipmentAttribute
       key={`attr-${i}`}
+      spacious={props.spacious}
       disabledEdit={props.disableEdit}
       commonKeys={props.commonKeys}
       attribute={attr}

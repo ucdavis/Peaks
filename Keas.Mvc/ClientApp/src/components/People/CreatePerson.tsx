@@ -1,8 +1,9 @@
-import { ArrowPathIcon, PlusIcon, UserIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon, PlusIcon, UserIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IPerson, personSchema } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
@@ -141,16 +142,10 @@ const CreatePerson = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={confirmClose}
-        size='lg'
         className='people-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className="text-xl font-semibold">Add Person</h2>
-          <Button color='link' onClick={closeModal}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-          </Button>
-        </div>
-        <ModalBody className='p-6'>
+        <ModalHeading>Add Person</ModalHeading>
+        <ModalBody>
           <div className='container-fluid'>
             <div className='form-group'>
               <SearchUsers updatePerson={onSelectPerson} />
@@ -177,7 +172,7 @@ const CreatePerson = (props: IProps) => {
             )}
           </div>
         </ModalBody>
-        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+        <ModalFooter>
           <Button
             color='asset'
             onClick={createSelected}

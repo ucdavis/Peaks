@@ -27,19 +27,6 @@
   text-align: center;
 }
 
-.rbt-token .rbt-token-remove-button {
-  align-self: center;
-}
-
-.rbt-token .rbt-token-label {
-  padding: 0 calc(0.5 * var(--legacy-rem));
-  margin-right: 4px;
-}
-
-.rbt-token .rbt-close {
-  margin-right: 4px;
-}
-
 .wrapperasset {
   padding-left: 16px;
   border-left: 6px solid #e8e9ed;
@@ -87,24 +74,8 @@
   border-bottom-right-radius: 4px;
 }
 
-.rbt {
-  margin-right: calc(1.6 * var(--legacy-rem));
-  min-width: 300px;
-  max-width: 500px;
-  margin-bottom: calc(1.6 * var(--legacy-rem));
-}
-
 .table tbody+tbody {
   border-top: none;
-}
-
-table .rbt {
-  margin-bottom: 0;
-}
-
-table .rbt-input-main,
-table .rbt-input-hint {
-  height: inherit;
 }
 
 .container-fluid {

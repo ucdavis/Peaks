@@ -16,7 +16,7 @@ const WorkstationAssignmentValues = (props: IProps) => {
 
   return (
     <div>
-      <div className='row justify-content-between mt-5'>
+      <div className='mb-5 mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-main-border pt-6'>
         <h3 className="text-lg font-semibold">Assignment Details</h3>
         <Button
           color='link'
@@ -29,12 +29,12 @@ const WorkstationAssignmentValues = (props: IProps) => {
         </Button>
       </div>
 
-      <div className='wrapperasset'>
+      <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
         <div className='form-group'>
           <label>Assigned To</label>
           <input
             type='text'
-            className='form-control'
+            className='input w-full'
             disabled={true}
             value={
               !!props.selectedWorkstation.assignment
@@ -47,7 +47,7 @@ const WorkstationAssignmentValues = (props: IProps) => {
           <label>Expires at</label>
           <input
             type='text'
-            className='form-control'
+            className='input w-full'
             disabled={true}
             value={
               !!props.selectedWorkstation.assignment

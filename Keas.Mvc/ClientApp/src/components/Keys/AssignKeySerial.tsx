@@ -1,8 +1,9 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Form, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button, Form } from 'reactstrap';
 import { IKey, IKeyInfo } from '../../models/Keys';
 import { IKeySerial, keySerialSchema } from '../../models/KeySerials';
 import { IPerson } from '../../models/People';
@@ -152,20 +153,12 @@ const AssignKeySerial = (props: IProps) => {
     <Modal
       isOpen={isModalOpen}
       toggle={confirmClose}
-      size='lg'
       className='keys-color'
     >
-      <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-        <h2 className="text-xl font-semibold">
-          {props.selectedKeySerial || props.person
+      <ModalHeading>{props.selectedKeySerial || props.person
             ? 'Assign Key Serial'
-            : 'Add Key Serial'}
-        </h2>
-        <Button color='link' onClick={closeModal}>
-          <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-        </Button>
-      </div>
-      <ModalBody className='p-6'>
+            : 'Add Key Serial'}</ModalHeading>
+      <ModalBody>
         <div className='container-fluid'>
           <Form>
             <AssignPerson
@@ -204,7 +197,7 @@ const AssignKeySerial = (props: IProps) => {
             {keySerial &&
             !keySerial.id && ( // if we are creating a new serial, edit properties
                 <div>
-                  <div className='row justify-content-between'>
+                  <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
                     <h3 className="text-lg font-semibold">Create New Serial</h3>
                     <Button color='link' onClick={onDeselected}>
                       Clear{' '}
@@ -236,7 +229,7 @@ const AssignKeySerial = (props: IProps) => {
               )}
             {keySerial && !!keySerial.id && (
               <div>
-                <div className='row justify-content-between'>
+                <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
                   <h3 className="text-lg font-semibold">Assign Existing Serial</h3>
                   <Button color='link' onClick={onDeselected}>
                     Clear{' '}
@@ -257,13 +250,13 @@ const AssignKeySerial = (props: IProps) => {
           </Form>
         </div>
       </ModalBody>
-      <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+      <ModalFooter>
         <Button
           color='asset'
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+          Assign {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

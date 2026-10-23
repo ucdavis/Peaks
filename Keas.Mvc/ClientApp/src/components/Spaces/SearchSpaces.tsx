@@ -1,6 +1,6 @@
-﻿import * as React from 'react';
+import * as React from 'react';
 import { useContext, useState } from 'react';
-import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
+import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Context } from '../../Context';
 import { ISpace } from '../../models/Spaces';
@@ -72,7 +72,7 @@ const SearchSpaces = (props: IProps) => {
   };
 
   return (
-    <AsyncTypeahead
+    <SearchCombobox
       id='searchSpaces' // for accessibility
       isInvalid={props.isRequired && !props.defaultSpace}
       clearButton={true}

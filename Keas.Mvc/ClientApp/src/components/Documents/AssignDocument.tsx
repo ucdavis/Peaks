@@ -1,6 +1,6 @@
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { ModalBody, Modal, ModalHeading } from '../Shared/AppModal';
 import * as React from 'react';
-import { ModalBody, Modal, Button } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { useEffect, useContext, useState } from 'react';
 import { AppContext } from '../../models/Shared';
 import { Context } from '../../Context';
@@ -75,7 +75,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
           <div className='form-group'>
             <label>Select Template To Send</label>
             <select
-              className='form-control'
+              className='input w-full'
               onChange={e => setSelectedTemplate(e.target.value)}
             >
               {templates.map(template => (
@@ -98,17 +98,11 @@ export const AssignDocument = (props: IProps): JSX.Element => {
       <Modal
         isOpen={show}
         toggle={() => setShow(false)}
-        size='lg'
         className='documents-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className="text-xl font-semibold">Assign Document for Signature</h2>
-          <Button color='link' onClick={() => setShow(false)}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-          </Button>
-        </div>
+        <ModalHeading>Assign Document for Signature</ModalHeading>
 
-        <ModalBody className='p-6'>
+        <ModalBody>
           <div className='container-fluid'>
             {loading && <div>Processing...</div>}
             {!loading && renderTemplates()}

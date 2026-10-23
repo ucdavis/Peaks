@@ -1,7 +1,7 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
-import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
+import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -27,7 +27,7 @@ const SearchWorkstations = (props: IProps) => {
       <div>
         <label>Pick a workstation to assign</label>
         <div>
-          <AsyncTypeahead
+          <SearchCombobox
             id='searchWorkstations' // for accessibility
             isLoading={isSearchLoading}
             minLength={3}

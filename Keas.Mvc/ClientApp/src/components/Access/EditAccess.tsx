@@ -1,7 +1,8 @@
-import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { accessSchema, IAccess } from '../../models/Access';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import AccessEditValues from './AccessEditValues';
@@ -72,16 +73,10 @@ const EditAccess = (props: IProps) => {
     <Modal
       isOpen={props.modal}
       toggle={confirmClose}
-      size='lg'
       className='access-color'
     >
-      <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-        <h2 className="text-xl font-semibold">Edit Access</h2>
-        <Button color='link' onClick={closeModal}>
-          <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-        </Button>
-      </div>
-      <ModalBody className='p-6'>
+      <ModalHeading>Edit Access</ModalHeading>
+      <ModalBody>
         <div className='container-fluid'>
           <form>
             <AccessEditValues
@@ -100,13 +95,13 @@ const EditAccess = (props: IProps) => {
           </form>
         </div>
       </ModalBody>
-      <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+      <ModalFooter>
         <Button
           color='asset'
           onClick={editSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+          Save changes {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

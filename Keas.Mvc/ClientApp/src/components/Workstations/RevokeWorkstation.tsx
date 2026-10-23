@@ -1,7 +1,7 @@
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IWorkstation } from '../../models/Workstations';
 import WorkstationEditValues from './WorkstationEditValues';
 
@@ -39,23 +39,17 @@ const RevokeWorkstation = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={props.closeModal}
-        size='lg'
         className='spaces-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className="text-xl font-semibold">Revoke {props.selectedWorkstation.name}</h2>
-          <Button color='link' onClick={props.closeModal}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-          </Button>
-        </div>
-        <ModalBody className='p-6'>
+        <ModalHeading>Revoke {props.selectedWorkstation.name}</ModalHeading>
+        <ModalBody>
           <WorkstationEditValues
             selectedWorkstation={props.selectedWorkstation}
             disableEditing={true}
             disableSpaceEditing={true}
           />
         </ModalBody>
-        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+        <ModalFooter>
           <Button
             color='error'
             onClick={revokeWorkstation}

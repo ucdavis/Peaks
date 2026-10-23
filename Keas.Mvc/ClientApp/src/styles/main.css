@@ -118,8 +118,9 @@ body {
 }
 
 /* Reactstrap is still used by existing screens. Keep its open dialogs usable
- * until those screens move to native dialogs and daisyUI modal-box markup. */
-@layer components {
+ * until those screens move to native dialogs and daisyUI modal-box markup.
+ * DaisyUI defines .modal in utilities, so this bridge must use that layer too. */
+@layer utilities {
   body.modal-open {
     overflow: hidden;
   }
@@ -135,9 +136,10 @@ body {
 
   .modal.show .modal-dialog {
     width: calc(100% - 2rem);
-    max-width: 40rem;
+    max-width: 72rem;
     margin: 2rem auto;
   }
+
 
   .modal.show .modal-content {
     background: var(--color-base-100);

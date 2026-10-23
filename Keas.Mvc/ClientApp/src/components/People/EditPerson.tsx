@@ -1,11 +1,11 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import {
   ArrowPathIcon,
   PencilSquareIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline';
+  } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IPerson, personSchema } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { validateEmail } from '../../util/email';
@@ -108,16 +108,10 @@ const EditPerson = (props: IProps) => {
       <Modal
         isOpen={modal}
         toggle={confirmClose}
-        size='lg'
         className='people-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className='text-xl font-semibold'>Edit Person</h2>
-          <Button color='link' onClick={closeModal}>
-            <XMarkIcon data-icon='x-mark' className='hero-icon size-6' />
-          </Button>
-        </div>
-        <ModalBody className='p-6'>
+        <ModalHeading>Edit Person</ModalHeading>
+        <ModalBody>
           <div className='container-fluid'>
             <form>
               <PersonEditValues
@@ -132,13 +126,13 @@ const EditPerson = (props: IProps) => {
             </form>
           </div>
         </ModalBody>
-        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+        <ModalFooter>
           <Button
             color='asset'
             onClick={editSelected}
             disabled={!validState || submitting}
           >
-            Go!{' '}
+            Save changes{' '}
             {submitting && (
               <ArrowPathIcon
                 data-icon='arrow-path'

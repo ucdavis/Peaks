@@ -1,7 +1,8 @@
-import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 ﻿import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IAccess } from '../../models/Access';
 import AccessEditValues from './AccessEditValues';
 
@@ -45,25 +46,19 @@ const DeleteAccess = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={props.closeModal}
-        size='lg'
         className='access-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className="text-xl font-semibold">Delete {props.selectedAccess.name}</h2>
-          <Button color='link' onClick={props.closeModal}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-          </Button>
-        </div>
+        <ModalHeading>Delete {props.selectedAccess.name}</ModalHeading>
 
-        <ModalBody className='p-6'>
+        <ModalBody>
           <AccessEditValues
             selectedAccess={props.selectedAccess}
             disableEditing={true}
           />
         </ModalBody>
-        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+        <ModalFooter>
           <Button color='error' onClick={deleteAccess} disabled={submitting}>
-            Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+            Delete {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>{' '}
         </ModalFooter>
       </Modal>

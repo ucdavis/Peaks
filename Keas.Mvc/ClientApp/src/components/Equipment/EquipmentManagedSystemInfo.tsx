@@ -1,8 +1,9 @@
-import { ArrowPathIcon, InformationCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Button, Modal, ModalBody, Table } from 'reactstrap';
+import { Button, Table } from 'reactstrap';
 import { Context } from '../../Context';
 
 interface IProps {
@@ -37,17 +38,11 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
       <Modal
         isOpen={managedSystemModal}
         toggle={modalToggle}
-        size='lg'
         className='equipment-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className="text-xl font-semibold">Computer Details</h2>
-          <Button color='link' onClick={modalToggle}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-          </Button>
-        </div>
+        <ModalHeading>Computer Details</ModalHeading>
 
-        <ModalBody className='p-6 flex justify-center'>
+        <ModalBody>
           {renderModalBody()}
         </ModalBody>
       </Modal>

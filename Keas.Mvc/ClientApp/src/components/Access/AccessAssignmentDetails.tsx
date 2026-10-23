@@ -1,6 +1,6 @@
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalHeading } from '../Shared/AppModal';
 import * as React from 'react';
-import { Button, Modal, ModalBody } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IAccess, IAccessAssignment } from '../../models/Access';
 import AccessEditValues from './AccessEditValues';
 import AccessAssignmentValues from './AccessAssignmentValues';
@@ -29,16 +29,10 @@ const AccessAssignmentDetails = (props: IProps) => {
       <Modal
         isOpen={props.isModalOpen}
         toggle={props.closeModal}
-        size='lg'
         className='access-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className="text-xl font-semibold">Details for {selectedAccess.name} Assignment</h2>
-          <Button color='link' onClick={props.closeModal}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-          </Button>
-        </div>
-        <ModalBody className='p-6'>
+        <ModalHeading>Details for {selectedAccess.name} Assignment</ModalHeading>
+        <ModalBody>
           <AccessEditValues
             selectedAccess={selectedAccess}
             disableEditing={true}

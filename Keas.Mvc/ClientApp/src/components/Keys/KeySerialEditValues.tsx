@@ -65,16 +65,16 @@ const KeySerialEditValues = (props: IProps) => {
 
   return (
     <div>
-      <div className='row justify-content-between'>
+      <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
         <h3 className="text-lg font-semibold">Key Details</h3>
         {props.disableEditing && props.openEditModal && renderEditKeySerial()}
       </div>
-      <div className='wrapperasset'>
+      <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
         <FormGroup>
           <Label for='key.name'>Key Name</Label>
           <Input
             type='text'
-            className='form-control'
+            className='input w-full'
             readOnly={true}
             value={props.keySerial.key.name ? props.keySerial.key.name : ''}
           />
@@ -83,7 +83,7 @@ const KeySerialEditValues = (props: IProps) => {
           <Label for='key.code'>Key Code</Label>
           <Input
             type='text'
-            className='form-control'
+            className='input w-full'
             readOnly={true}
             value={props.keySerial.key.code}
           />
@@ -97,7 +97,7 @@ const KeySerialEditValues = (props: IProps) => {
           <Label for='number'>Key Serial Number</Label>
           <Input
             type='text'
-            className='form-control'
+            className='input w-full'
             readOnly={props.disableEditing}
             value={numberValue}
             onChange={onChangeNumber}
@@ -112,7 +112,7 @@ const KeySerialEditValues = (props: IProps) => {
           <Label>Status</Label>
           <Input
             type='select'
-            className='form-control'
+            className='select w-full'
             value={statusValue}
             onChange={onChangeStatus}
             disabled={props.disableEditing}
@@ -128,7 +128,7 @@ const KeySerialEditValues = (props: IProps) => {
           <Label>Notes</Label>
           <Input
             type='textarea'
-            className='form-control'
+            className='textarea min-h-28 w-full'
             disabled={props.disableEditing}
             value={props.keySerial.notes || ''}
             onChange={e => props.changeProperty('notes', e.target.value)}

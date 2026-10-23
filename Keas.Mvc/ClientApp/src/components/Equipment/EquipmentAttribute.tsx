@@ -4,6 +4,7 @@ import { IEquipmentAttribute } from '../../models/Equipment';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
+  spacious?: boolean;
   attribute: IEquipmentAttribute;
   commonKeys: string[];
   disabledEdit: boolean;
@@ -16,8 +17,8 @@ const EquipmentAttribute = (props: IProps) => {
   const renderTypeahead = () => {
     const style =
       !!props.attribute.value && !props.attribute.key
-        ? 'form-control is-invalid'
-        : 'form-control';
+        ? (props.spacious ? 'input input-error w-full' : 'form-control is-invalid')
+        : (props.spacious ? 'input w-full' : 'form-control');
     return (
       <SearchDefinedOptions
         id={`attribute-${props.index}`} // for accessibility
@@ -43,7 +44,7 @@ const EquipmentAttribute = (props: IProps) => {
     return (
       <input
         type='text'
-        className='form-control'
+        className={props.spacious ? 'input w-full' : 'form-control'}
         disabled={props.disabledEdit}
         value={props.attribute.key}
       />
@@ -60,7 +61,7 @@ const EquipmentAttribute = (props: IProps) => {
         <td>
           <input
             type='text'
-            className='form-control'
+            className={props.spacious ? 'input w-full' : 'form-control'}
             disabled={props.disabledEdit}
             value={props.attribute.value}
             onChange={e =>
@@ -72,7 +73,8 @@ const EquipmentAttribute = (props: IProps) => {
           <td>
             <button
               type='button'
-              className='btn btn-outline-danger'
+              className='btn btn-ghost btn-square btn-sm text-error'
+              aria-label={`Remove attribute ${props.attribute.key || props.index + 1}`}
               onClick={() => props.onRemove(props.index)}
             >
               <TrashIcon data-icon="trash" className='hero-icon size-5' />

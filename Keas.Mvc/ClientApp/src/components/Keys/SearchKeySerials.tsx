@@ -1,7 +1,7 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
-import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
+import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { Context } from '../../Context';
@@ -38,7 +38,7 @@ const SearchKeySerials = (props: IProps) => {
       <div>
         <label>Pick a key serial to assign</label>
         <div>
-          <AsyncTypeahead
+          <SearchCombobox
             id='searchKeySerials' // for accessibility
             isInvalid={!props.selectedKey || !props.selectedKeySerial}
             isLoading={isSearchLoading}
@@ -113,6 +113,7 @@ const SearchKeySerials = (props: IProps) => {
     // check for empty
     if (!selected || selected.length <= 0) {
       props.onDeselect();
+      return;
     }
 
     // check for new selection

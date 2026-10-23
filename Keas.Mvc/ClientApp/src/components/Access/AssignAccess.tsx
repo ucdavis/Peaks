@@ -1,8 +1,9 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { accessSchema, IAccess, IAccessAssignment } from '../../models/Access';
 import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
@@ -137,20 +138,12 @@ const AssignAccess = (props: IProps) => {
     <Modal
       isOpen={props.modal}
       toggle={confirmClose}
-      size='lg'
       className='access-color'
     >
-      <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-        <h2 className="text-xl font-semibold">
-          {props.selectedAccess || props.person
+      <ModalHeading>{props.selectedAccess || props.person
             ? 'Assign Access'
-            : 'Add Access'}
-        </h2>
-        <Button color='link' onClick={closeModal}>
-          <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-        </Button>
-      </div>
-      <ModalBody className='p-6'>
+            : 'Add Access'}</ModalHeading>
+      <ModalBody>
         <div className='container-fluid'>
           <form>
             <div className='form-group'>
@@ -179,7 +172,7 @@ const AssignAccess = (props: IProps) => {
             {!!access &&
             !access.teamId && ( // if we are creating a new access, edit properties
                 <div>
-                  <div className='row justify-content-between'>
+                  <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
                     <h3 className="text-lg font-semibold">Create New Access</h3>
                     <Button color='link' onClick={onDeselected}>
                       Clear{' '}
@@ -197,7 +190,7 @@ const AssignAccess = (props: IProps) => {
               )}
             {!!access && !!access.teamId && (
               <div>
-                <div className='row justify-content-between'>
+                <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
                   <h3 className="text-lg font-semibold">Assign Exisiting Access</h3>
                   <Button color='link' onClick={onDeselected}>
                     Clear{' '}
@@ -215,13 +208,13 @@ const AssignAccess = (props: IProps) => {
           </form>
         </div>
       </ModalBody>
-      <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+      <ModalFooter>
         <Button
           color='asset'
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+          Assign {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>

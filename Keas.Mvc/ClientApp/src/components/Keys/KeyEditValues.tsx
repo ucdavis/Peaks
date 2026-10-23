@@ -64,12 +64,12 @@ const KeyEditValues = (props: IProps) => {
   };
 
   return (
-    <div>
+    <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
       <FormGroup>
         <Label for='Name'>Name</Label>
         <Input
           type='text'
-          className='form-control'
+          className='input w-full'
           readOnly={props.disableEditing}
           value={name}
           onBlur={onBlurName}
@@ -86,7 +86,7 @@ const KeyEditValues = (props: IProps) => {
         <Label for='code'>Code</Label>
         <Input
           type='text'
-          className='form-control'
+          className='input w-full'
           readOnly={props.disableEditing}
           value={code}
           onBlur={onBlurCode}
@@ -104,7 +104,7 @@ const KeyEditValues = (props: IProps) => {
         <Label>Notes</Label>
         <Input
           type='textarea'
-          className='form-control'
+          className='textarea min-h-28 w-full'
           readOnly={props.disableEditing}
           value={notes || ''}
           onChange={e => {

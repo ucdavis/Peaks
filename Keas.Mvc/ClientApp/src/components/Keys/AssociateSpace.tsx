@@ -1,7 +1,8 @@
-import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IKeyInfo } from '../../models/Keys';
 import { ISpace } from '../../models/Spaces';
 import SearchSpaces from '../Spaces/SearchSpaces';
@@ -70,7 +71,7 @@ const AssociateSpace = (props: IProps) => {
         <div className='form-group'>
           <label>Space to associate with:</label>
           <input
-            className='form-control'
+            className='input w-full'
             value={`${selectedSpace.roomNumber} ${selectedSpace.bldgName}`}
             readOnly={true}
           />
@@ -93,7 +94,7 @@ const AssociateSpace = (props: IProps) => {
         <div className='form-group'>
           <label>Key to associate with:</label>
           <input
-            className='form-control'
+            className='input w-full'
             value={`${selectedKeyInfo.key.name} - ${selectedKeyInfo.key.code}`}
             readOnly={true}
           />
@@ -186,30 +187,24 @@ const AssociateSpace = (props: IProps) => {
     <Modal
       isOpen={props.isModalOpen}
       toggle={closeModal}
-      size='lg'
       className='keys-color'
     >
-      <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-        <h2 className="text-xl font-semibold">Assign Key</h2>
-        <Button color='link' onClick={closeModal}>
-          <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-        </Button>
-      </div>
-      <ModalBody className='p-6'>
+      <ModalHeading>Assign Key</ModalHeading>
+      <ModalBody>
         {renderSearchSpace()}
 
         {renderSearchKey()}
 
         {renderCreateKey()}
       </ModalBody>
-      <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0 justify-between'>
+      <ModalFooter>
         <span className='text-danger'>{error}</span>
         <Button
           color='asset'
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Go!
+          Assign
           {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin ml-2' />}
         </Button>
       </ModalFooter>

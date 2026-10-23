@@ -1,11 +1,11 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import {
   ArrowPathIcon,
   TrashIcon,
-  XMarkIcon
-} from '@heroicons/react/24/outline';
+  } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IPerson, IPersonInfo } from '../../models/People';
 import PersonEditValues from './PersonEditValues';
 
@@ -64,19 +64,11 @@ const DeletePerson = (props: IProps) => {
       <Modal
         isOpen={modal}
         toggle={toggleModal}
-        size='lg'
         className='people-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className='text-xl font-semibold'>
-            Delete {props.selectedPersonInfo.person.name}
-          </h2>
-          <Button color='link' onClick={toggleModal}>
-            <XMarkIcon data-icon='x-mark' className='hero-icon size-6' />
-          </Button>
-        </div>
+        <ModalHeading>Delete {props.selectedPersonInfo.person.name}</ModalHeading>
 
-        <ModalBody className='p-6'>
+        <ModalBody>
           <PersonEditValues
             selectedPerson={props.selectedPersonInfo.person}
             disableEditing={true}
@@ -89,13 +81,13 @@ const DeletePerson = (props: IProps) => {
             </div>
           )}
         </ModalBody>
-        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+        <ModalFooter>
           <Button
             color='error'
             onClick={deletePerson}
             disabled={submitting || !checkValidToDelete()}
           >
-            Go!{' '}
+            Delete{' '}
             {submitting && (
               <ArrowPathIcon
                 data-icon='arrow-path'

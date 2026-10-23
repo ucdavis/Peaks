@@ -1,7 +1,8 @@
-import { ArrowPathIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon, PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IKey, keySchema } from '../../models/Keys';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import KeyEditValues from './KeyEditValues';
@@ -53,16 +54,10 @@ const CreateKey = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={confirmClose}
-        size='lg'
         className='keys-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className="text-xl font-semibold">Create Key</h2>
-          <Button color='link' onClick={closeModal}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-          </Button>
-        </div>
-        <ModalBody className='p-6'>
+        <ModalHeading>Create Key</ModalHeading>
+        <ModalBody>
           <form ref={formRef}>
             <KeyEditValues
               selectedKey={key}
@@ -73,13 +68,13 @@ const CreateKey = (props: IProps) => {
             />
           </form>
         </ModalBody>
-        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+        <ModalFooter>
           <Button
             color='asset'
             onClick={editSelected}
             disabled={!validState || submitting}
           >
-            Go!
+            Create
             {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin ml-2' />}
           </Button>
         </ModalFooter>

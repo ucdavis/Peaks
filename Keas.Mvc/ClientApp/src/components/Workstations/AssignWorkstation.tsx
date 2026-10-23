@@ -1,8 +1,9 @@
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IPerson } from '../../models/People';
 import { IValidationError, yupAssetValidation } from '../../models/Shared';
 import { ISpace } from '../../models/Spaces';
@@ -131,21 +132,13 @@ const AssignWorkstation = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={confirmClose}
-        size='lg'
         className='spaces-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className="text-xl font-semibold">
-            {props.selectedWorkstation || props.person
+        <ModalHeading>{props.selectedWorkstation || props.person
               ? 'Assign Workstation'
-              : 'Add Workstation'}
-          </h2>
-          <Button color='link' onClick={closeModal}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-          </Button>
-        </div>
+              : 'Add Workstation'}</ModalHeading>
 
-        <ModalBody className='p-6'>
+        <ModalBody>
           <div className='container-fluid'>
             <form>
               <AssignPerson
@@ -182,7 +175,7 @@ const AssignWorkstation = (props: IProps) => {
               {workstation &&
               !workstation.teamId && ( // if we are creating a new workstation, edit properties
                   <div>
-                    <div className='row justify-content-between'>
+                    <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
                       <h3 className="text-lg font-semibold">Create New Workstation</h3>
                       <Button color='link' onClick={onDeselected}>
                         Clear{' '}
@@ -201,7 +194,7 @@ const AssignWorkstation = (props: IProps) => {
                 )}
               {!!workstation && !!workstation.teamId && (
                 <div>
-                  <div className='row justify-content-between'>
+                  <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
                     <h3 className="text-lg font-semibold">Assign Existing Workstation</h3>
                     <Button color='link' onClick={onDeselected}>
                       Clear{' '}
@@ -219,13 +212,13 @@ const AssignWorkstation = (props: IProps) => {
             </form>
           </div>
         </ModalBody>
-        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+        <ModalFooter>
           <Button
             color='asset'
             onClick={assignSelected}
             disabled={!validState || submitting}
           >
-            Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+            Assign {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
           </Button>
         </ModalFooter>
       </Modal>

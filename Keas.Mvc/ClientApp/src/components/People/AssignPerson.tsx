@@ -1,7 +1,7 @@
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
-import { AsyncTypeahead, Highlighter } from 'react-bootstrap-typeahead';
+import { SearchCombobox, Highlighter } from '../Shared/SearchCombobox';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Button, FormGroup, Label } from 'reactstrap';
@@ -34,7 +34,7 @@ const AssignPerson = (props: IProps) => {
       <div>
         <FormGroup>
           <Label for='searchPeople'>{props.label}</Label>
-          <AsyncTypeahead
+          <SearchCombobox
             id='searchPeople' // for accessibility
             inputProps={{
               className: isInvalid ? 'form-control is-invalid' : ''

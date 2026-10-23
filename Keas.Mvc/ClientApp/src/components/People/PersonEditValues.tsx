@@ -39,12 +39,12 @@ const PersonEditValues = (props: IProps) => {
   };
 
   return (
-    <div className='wrapperasset'>
+    <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
       <FormGroup>
         <Label for='First Name'>First Name</Label>
         <Input
           type='text'
-          className='form-control'
+          className='input w-full'
           readOnly={props.disableEditing}
           value={
             props.selectedPerson.firstName ? props.selectedPerson.firstName : ''
@@ -61,7 +61,7 @@ const PersonEditValues = (props: IProps) => {
         <Label for='Last Name'>Last Name</Label>
         <Input
           type='text'
-          className='form-control'
+          className='input w-full'
           readOnly={props.disableEditing}
           value={
             props.selectedPerson.lastName ? props.selectedPerson.lastName : ''
@@ -78,7 +78,7 @@ const PersonEditValues = (props: IProps) => {
         <Label for='Email'>Email</Label>
         <Input
           type='text'
-          className='form-control'
+          className='input w-full'
           readOnly={props.disableEditing}
           value={props.selectedPerson.email ? props.selectedPerson.email : ''}
           onChange={e => props.changeProperty('email', e.target.value)}
@@ -93,7 +93,7 @@ const PersonEditValues = (props: IProps) => {
         <Label for='Home Phone Number'>Home Phone Number</Label>
         <Input
           type='text'
-          className='form-control'
+          className='input w-full'
           readOnly={props.disableEditing}
           value={
             props.selectedPerson.homePhone ? props.selectedPerson.homePhone : ''
@@ -110,7 +110,7 @@ const PersonEditValues = (props: IProps) => {
         <Label for='Team Phone Number'>Team Phone Number</Label>
         <Input
           type='text'
-          className='form-control'
+          className='input w-full'
           readOnly={props.disableEditing}
           value={
             props.selectedPerson.teamPhone ? props.selectedPerson.teamPhone : ''
@@ -127,7 +127,7 @@ const PersonEditValues = (props: IProps) => {
         <Label for='Title'>Title</Label>
         <Input
           type='text'
-          className='form-control'
+          className='input w-full'
           readOnly={props.disableEditing}
           value={props.selectedPerson.title ? props.selectedPerson.title : ''}
           onChange={e => props.changeProperty('title', e.target.value)}
@@ -184,7 +184,7 @@ const PersonEditValues = (props: IProps) => {
           type='select'
           disabled={props.disableEditing}
           onChange={e => props.changeProperty('category', e.target.value)}
-          className='form-control'
+          className='input w-full'
           value={
             props.selectedPerson.category ? props.selectedPerson.category : ''
           }
@@ -208,7 +208,7 @@ const PersonEditValues = (props: IProps) => {
         <Label for='Notes'>Notes</Label>
         <Input
           type='textarea'
-          className='form-control'
+          className='textarea min-h-28 w-full'
           readOnly={props.disableEditing}
           value={props.selectedPerson.notes || ''}
           onChange={e => props.changeProperty('notes', e.target.value)}

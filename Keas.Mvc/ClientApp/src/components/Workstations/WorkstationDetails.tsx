@@ -1,8 +1,8 @@
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalHeading } from '../Shared/AppModal';
 ﻿import * as React from 'react';
 import { useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Button, Modal, ModalBody } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IWorkstation } from '../../models/Workstations';
 import HistoryContainer from '../History/HistoryContainer';
@@ -62,16 +62,10 @@ const WorkstationDetails = (props: IProps) => {
       <Modal
         isOpen={props.modal}
         toggle={props.closeModal}
-        size='lg'
         className='spaces-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className="text-xl font-semibold">Details for {workstation.name}</h2>
-          <Button color='link' onClick={props.closeModal}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-          </Button>
-        </div>
-        <ModalBody className='p-6'>
+        <ModalHeading>Details for {workstation.name}</ModalHeading>
+        <ModalBody>
           <WorkstationEditValues
             selectedWorkstation={workstation}
             disableEditing={true}

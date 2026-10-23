@@ -1,7 +1,8 @@
-import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import { IKey } from '../../models/Keys';
 import { IKeySerial } from '../../models/KeySerials';
 import KeySerialAssignmentValues from './KeySerialAssignmentValues';
@@ -53,18 +54,10 @@ const RevokeKeySerial = (props: IProps) => {
       <Modal
         isOpen={props.isModalOpen}
         toggle={props.closeModal}
-        size='lg'
         className='keys-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className="text-xl font-semibold">
-            Revoke for {selectedKeySerial.key.code} {selectedKeySerial.number}
-          </h2>
-          <Button color='link' onClick={props.closeModal}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-          </Button>
-        </div>
-        <ModalBody className='p-6'>
+        <ModalHeading>Revoke for {selectedKeySerial.key.code} {selectedKeySerial.number}</ModalHeading>
+        <ModalBody>
           <KeySerialEditValues
             keySerial={selectedKeySerial}
             disableEditing={true}
@@ -76,7 +69,7 @@ const RevokeKeySerial = (props: IProps) => {
             openUpdateModal={props.openUpdateModal}
           />
         </ModalBody>
-        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+        <ModalFooter>
           <Button
             color='error'
             onClick={() => revokeKeySerial()}

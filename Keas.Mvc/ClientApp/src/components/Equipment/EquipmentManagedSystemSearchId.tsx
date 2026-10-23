@@ -1,18 +1,9 @@
-import { ArrowPathIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
+import { ArrowPathIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
-import {
-  Button,
-  Form,
-  FormFeedback,
-  FormGroup,
-  Input,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  Table
-} from 'reactstrap';
+import { Button, Form, FormFeedback, FormGroup, Input, Table } from 'reactstrap';
 import { Context } from '../../Context';
 import { IManagedSystemSearchedName } from '../../models/Equipment';
 
@@ -51,27 +42,21 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
       <Modal
         isOpen={searchModal}
         toggle={modalToggle}
-        size='lg'
         className='equipment-color'
       >
-        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-          <h2 className="text-xl font-semibold">Search by Computer Property</h2>
-          <Button color='link' onClick={modalToggle}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-          </Button>
-        </div>
+        <ModalHeading>Search by Computer Property</ModalHeading>
 
-        <ModalBody className='p-6 flex justify-center'>
+        <ModalBody>
           {renderModalBody()}
         </ModalBody>
-        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>{renderSearchButton()}</ModalFooter>
+        <ModalFooter>{renderSearchButton()}</ModalFooter>
       </Modal>
     );
   };
 
   const renderModalBody = () => {
     return (
-      <Form className='w-75'>
+      <Form className='w-full space-y-5'>
         <FormGroup className='mb-5'>
           <h3 className="text-lg font-semibold">Searchable Properties:</h3>
           <p>

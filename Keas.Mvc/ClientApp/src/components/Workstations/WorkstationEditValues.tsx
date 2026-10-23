@@ -26,7 +26,7 @@ const WorkstationEditValues = (props: IProps) => {
 
   return (
     <div>
-      <div className='row justify-content-between'>
+      <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
         <h3 className="text-lg font-semibold">Workstation Details</h3>
         {props.disableEditing && props.openEditModal && (
           <Button
@@ -37,12 +37,12 @@ const WorkstationEditValues = (props: IProps) => {
           </Button>
         )}
       </div>
-      <div className='wrapperasset'>
+      <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
         <FormGroup>
           <Label for='name'>Name</Label>
           <Input
             type='text'
-            className='form-control'
+            className='input w-full'
             readOnly={props.disableEditing}
             value={
               props.selectedWorkstation.name
@@ -62,7 +62,7 @@ const WorkstationEditValues = (props: IProps) => {
             <label>Room</label>
             <input
               type='text'
-              className='form-control'
+              className='input w-full'
               disabled={true}
               value={
                 props.selectedWorkstation.space
@@ -89,7 +89,7 @@ const WorkstationEditValues = (props: IProps) => {
           <Label for='notes'>Notes</Label>
           <Input
             type='textarea'
-            className='form-control'
+            className='textarea min-h-28 w-full'
             readOnly={props.disableEditing}
             value={props.selectedWorkstation.notes || ''}
             onChange={e => props.changeProperty('notes', e.target.value)}

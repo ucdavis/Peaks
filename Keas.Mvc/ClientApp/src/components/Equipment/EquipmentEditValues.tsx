@@ -17,6 +17,7 @@ import EquipmentManagedSystem from './EquipmentManagedSystem';
 import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
 
 interface IProps {
+  spacious?: boolean;
   changeProperty?: (property: string, value: any) => void;
   commonAttributeKeys?: string[];
   equipmentTypes?: string[];
@@ -89,7 +90,7 @@ const EquipmentEditValues = (props: IProps) => {
 
   return (
     <div>
-      <div className='row justify-content-between'>
+      <div className={props.spacious ? 'mb-5 flex flex-wrap items-center justify-between gap-3' : 'row justify-content-between'}>
         <h3 className="text-lg font-semibold">Equipment Details</h3>
         {props.disableEditing && props.openEditModal && (
           <Button
@@ -101,12 +102,15 @@ const EquipmentEditValues = (props: IProps) => {
         )}
       </div>
 
-      <div className='wrapperasset'>
+      <div className={props.spacious
+        ? 'grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&_.invalid-feedback]:text-sm [&_.invalid-feedback]:text-error'
+        : 'wrapperasset'}>
         <FormGroup>
-          <Label for='Name'>Name</Label>
+          <Label for='name'>Name</Label>
           <Input
+            id='name'
             type='text'
-            className='form-control'
+            className={props.spacious ? 'input w-full' : 'form-control'}
             readOnly={props.disableEditing}
             value={
               props.selectedEquipment.name ? props.selectedEquipment.name : ''
@@ -121,8 +125,9 @@ const EquipmentEditValues = (props: IProps) => {
         <FormGroup>
           <Label for='type'>Type</Label>
           <Input
+            id='type'
             type='select'
-            className='form-control'
+            className={props.spacious ? 'select w-full' : 'form-control'}
             value={typeValue}
             onChange={e => props.changeProperty('type', e.target.value)}
             disabled={props.disableEditing}
@@ -137,8 +142,9 @@ const EquipmentEditValues = (props: IProps) => {
         <FormGroup>
           <Label for='serialNumber'>Serial Number / Identifier</Label>
           <Input
+            id='serialNumber'
             type='text'
-            className='form-control'
+            className={props.spacious ? 'input w-full' : 'form-control'}
             readOnly={props.disableEditing}
             autoFocus={
               !props.disableEditing && props.selectedEquipment.name !== ''
@@ -173,8 +179,9 @@ const EquipmentEditValues = (props: IProps) => {
                 <InformationCircleIcon data-icon="information-circle" className='hero-icon size-5' />
               </a>
               <Input
+            id='protectionLevel'
                 type='select'
-                className='form-control'
+                className={props.spacious ? 'select w-full' : 'form-control'}
                 value={props.selectedEquipment.protectionLevel || ''}
                 onChange={e =>
                   props.changeProperty('protectionLevel', e.target.value)
@@ -201,8 +208,9 @@ const EquipmentEditValues = (props: IProps) => {
                 <InformationCircleIcon data-icon="information-circle" className='hero-icon size-5' />
               </a>
               <Input
+            id='availabilityLevel'
                 type='select'
-                className='form-control'
+                className={props.spacious ? 'select w-full' : 'form-control'}
                 value={props.selectedEquipment.availabilityLevel || ''}
                 onChange={e =>
                   props.changeProperty('availabilityLevel', e.target.value)
@@ -226,8 +234,9 @@ const EquipmentEditValues = (props: IProps) => {
           <FormGroup>
             <Label for='make'>Make</Label>
             <Input
+            id='make'
               type='text'
-              className='form-control'
+              className={props.spacious ? 'input w-full' : 'form-control'}
               readOnly={props.disableEditing}
               value={
                 props.selectedEquipment.make ? props.selectedEquipment.make : ''
@@ -244,8 +253,9 @@ const EquipmentEditValues = (props: IProps) => {
           <FormGroup>
             <Label for='model'>Model</Label>
             <Input
+            id='model'
               type='text'
-              className='form-control'
+              className={props.spacious ? 'input w-full' : 'form-control'}
               readOnly={props.disableEditing}
               value={
                 props.selectedEquipment.model
@@ -272,7 +282,7 @@ const EquipmentEditValues = (props: IProps) => {
             />
             <Input
               type='text'
-              className='form-control'
+              className={props.spacious ? 'input w-full' : 'form-control'}
               readOnly={props.disableEditing}
               value={props.selectedEquipment.systemManagementId || ''}
               maxLength={16}
@@ -289,11 +299,12 @@ const EquipmentEditValues = (props: IProps) => {
             )}
           </FormGroup>
         )}
-        <FormGroup>
+        <FormGroup className={props.spacious ? 'sm:col-span-2 lg:col-span-3' : undefined}>
           <Label for='notes'>Notes</Label>
           <Input
+            id='notes'
             type='textarea'
-            className='form-control'
+            className={props.spacious ? 'textarea min-h-28 w-full' : 'form-control'}
             readOnly={props.disableEditing}
             value={props.selectedEquipment.notes || ''}
             onChange={e => props.changeProperty('notes', e.target.value)}
@@ -303,12 +314,15 @@ const EquipmentEditValues = (props: IProps) => {
             {error && error.path === 'notes' && error.message}
           </FormFeedback>
         </FormGroup>
+        <div className={props.spacious ? 'sm:col-span-2 lg:col-span-3' : undefined}>
         <EquipmentAttributes
+          spacious={props.spacious}
           updateAttributes={props.updateAttributes}
           disableEdit={props.disableEditing}
           attributes={props.selectedEquipment.attributes}
           commonKeys={props.commonAttributeKeys}
         />
+        </div>
 
         <FormGroup>
           <Label for='tags'>Tags</Label>
@@ -335,7 +349,7 @@ const EquipmentEditValues = (props: IProps) => {
             <Label for='room'>Room</Label>
             <Input
               type='text'
-              className='form-control'
+              className={props.spacious ? 'input w-full' : 'form-control'}
               readOnly={true}
               value={
                 props.selectedEquipment.space

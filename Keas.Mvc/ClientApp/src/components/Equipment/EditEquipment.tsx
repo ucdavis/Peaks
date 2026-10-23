@@ -1,7 +1,8 @@
+import { Modal, ModalBody, ModalFooter } from '../Shared/AppModal';
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
+import { Button } from 'reactstrap';
 import {
   equipmentSchema,
   IEquipment,
@@ -103,18 +104,22 @@ const EditEquipment = (props: IProps) => {
     <Modal
       isOpen={props.modal}
       toggle={confirmClose}
-      size='lg'
-      className='equipment-color'
+      className='equipment-color equipment-edit-modal'
+      labelledBy='equipment-edit-title'
     >
-      <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
-        <h2 className="text-xl font-semibold">Edit Equipment</h2>
-        <Button color='link' onClick={closeModal}>
-          <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
-        </Button>
+      <div className='flex items-start justify-between gap-4 border-b border-main-border p-5 sm:px-8 sm:py-6'>
+        <div className='min-w-0'>
+          <p className='mb-1 text-sm text-base-content/60'>Edit equipment</p>
+          <h2 id='equipment-edit-title' className='break-words text-2xl font-semibold'>{props.selectedEquipment.name}</h2>
+        </div>
+        <button type='button' className='btn btn-ghost btn-square btn-sm shrink-0'
+          aria-label='Close equipment editor' onClick={confirmClose} disabled={submitting}>
+          <XMarkIcon className='size-5' aria-hidden='true' />
+        </button>
       </div>
-      <ModalBody className='p-6'>
-        <div className='container-fluid'>
+      <ModalBody>
           <EquipmentEditValues
+            spacious
             selectedEquipment={equipment}
             changeProperty={changeProperty}
             disableEditing={false}
@@ -126,18 +131,19 @@ const EditEquipment = (props: IProps) => {
             error={error}
           />
           <EquipmentAssignmentValues
+            spacious
             selectedEquipment={props.selectedEquipment}
             openUpdateModal={props.openUpdateModal}
           />
-        </div>
       </ModalBody>
-      <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
+      <ModalFooter showCancel={false}>
+        <button type='button' className='btn btn-ghost' onClick={confirmClose} disabled={submitting}>Cancel</button>
         <Button
           color='asset'
           onClick={editSelected}
           disabled={!validState || submitting}
         >
-          Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+          {submitting ? 'Saving…' : 'Save changes'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>
