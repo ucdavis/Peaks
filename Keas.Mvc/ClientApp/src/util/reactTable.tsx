@@ -150,7 +150,8 @@ export class ReactTableExpirationUtil {
     const setFilter = value => column.setFilterValue(value);
     return (
       <select
-        className='form-control'
+        aria-label={`Filter ${column.id}`}
+        className='select select-sm w-full min-w-24'
         value={filterValue}
         style={{ width: '100%' }}
         onChange={e => {
@@ -171,7 +172,8 @@ export class ReactTableExpirationUtil {
     const setFilter = value => column.setFilterValue(value);
     return (
       <select
-        className='form-control'
+        aria-label={`Filter ${column.id}`}
+        className='select select-sm w-full min-w-24'
         value={filterValue}
         style={{ width: '100%' }}
         onChange={e => {
@@ -196,9 +198,10 @@ export class ReactTableNumberOfAssignmentsUtil {
     // filterValue will be something like ['<', '15'] or ['=', '3'] or ['>', '5']
     // defaults to '='
     return (
-      <div className='row justify-content-between'>
+      <div className='flex gap-1'>
         <select
-          className='form-control'
+          aria-label={`Filter ${column.id}`}
+          className='select select-sm w-full min-w-24'
           value={(filterValue as [string, string])?.[0] ?? '='}
           style={{ width: '30%' }}
           onChange={e =>
@@ -216,7 +219,8 @@ export class ReactTableNumberOfAssignmentsUtil {
           </option>
         </select>
         <input
-          className='form-control'
+          aria-label='Filter assignment count'
+          className='input input-sm min-w-0'
           style={{ width: '70%' }}
           value={(filterValue as [string, string])?.[1] ?? ''}
           onChange={e =>
@@ -257,7 +261,8 @@ export class ReactTableKeySerialUtil {
     const setFilter = value => column.setFilterValue(value);
     return (
       <select
-        className='form-control'
+        aria-label={`Filter ${column.id}`}
+        className='select select-sm w-full min-w-24'
         value={filterValue}
         style={{ width: '100%' }}
         onChange={e => {
@@ -306,6 +311,8 @@ export class ReactTableKeyStatusUtil {
     const setFilter = value => column.setFilterValue(value);
     return (
       <select
+        aria-label={`Filter ${column.id}`}
+        className='select select-sm w-full min-w-24'
         value={filterValue}
         style={{ width: '100%' }}
         onChange={e => {

@@ -68,14 +68,14 @@ const EquipmentDetails = (props: IProps) => {
         size='lg'
         className='equipment-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Details for {equipment.name}</h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className="text-xl font-semibold">Details for {equipment.name}</h2>
           <Button color='link' onClick={props.closeModal}>
             <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
 
-        <ModalBody>
+        <ModalBody className='p-6'>
           <EquipmentEditValues
             selectedEquipment={equipment}
             disableEditing={true}

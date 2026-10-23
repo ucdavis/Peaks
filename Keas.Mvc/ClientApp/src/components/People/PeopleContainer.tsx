@@ -1,4 +1,4 @@
-import { UsersIcon } from '@heroicons/react/24/outline';
+import { UsersIcon } from '@heroicons/react/24/solid';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -12,7 +12,7 @@ import Denied from '../Shared/Denied';
 import CreatePerson from './CreatePerson';
 import PeopleTable from './PeopleTable';
 import PersonDetails from './PersonDetails';
-import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import { AssetFilterBar } from '../Shared/AssetFilterBar';
 import PeaksLoader from '../Shared/PeaksLoader';
 import { IAccess } from '../../models/Access';
 
@@ -57,13 +57,16 @@ const PeopleContainer = props => {
     }
     return (
       <div>
-        <SearchDefinedOptions
-          definedOptions={context.tags}
-          selected={tagFilters}
-          onSelect={filterTags}
-          disabled={false}
-          placeholder='Search for Tags'
-          id='searchTagsPeople'
+        <AssetFilterBar
+          categories={[
+            {
+              id: 'tags',
+              label: 'Tags',
+              options: context.tags,
+              selected: tagFilters,
+              onChange: filterTags
+            }
+          ]}
         />
         <PeopleTable
           people={filteredPeople}
@@ -279,12 +282,22 @@ const PeopleContainer = props => {
   const { containerAction: personAction, containerId: personId } = params;
   const selectedId = parseInt(personId, 10);
   const detailPerson = people.find(e => e.id === selectedId);
+
+  if (personAction === 'details') {
+    return (
+      <div className='people-color space-y-6'>
+        {detailPerson && detailPerson.person
+          ? renderDetailsView(detailPerson)
+          : null}
+      </div>
+    );
+  }
   return (
-    <div className='card people-color'>
+    <div className='card mb-4 border border-main-border bg-base-100 shadow-sm people-color'>
       <div className='card-header-people'>
-        <div className='card-head row justify-content-between'>
-          <h2>
-            <UsersIcon data-icon="users" className='hero-icon size-4' /> People
+        <div className='px-5 py-4 sm:px-6 flex items-center justify-between gap-4'>
+          <h2 className='text-xl font-semibold'>
+            <UsersIcon data-icon='users' className='hero-icon size-5' /> People
           </h2>
           <CreatePerson
             onCreate={createPerson}
@@ -296,13 +309,9 @@ const PeopleContainer = props => {
           />
         </div>
       </div>
-      <div className='card-content'>
+      <div className='card-body gap-4 p-5 sm:p-6'>
         {(!personAction || personAction === 'create') &&
           renderTableView(personAction === 'create')}
-        {personAction === 'details' &&
-          !!detailPerson &&
-          !!detailPerson.person &&
-          renderDetailsView(detailPerson)}
       </div>
     </div>
   );

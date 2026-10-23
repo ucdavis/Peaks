@@ -1,0 +1,93 @@
+/* Set the context on the nearest section, card, or modal. Nested contexts
+ * override their parent, so mixed asset lists keep each item's own color.
+ * The actual palette lives in main.css's --color-* theme tokens. */
+@layer components {
+  .people-color,
+  .tab-people {
+    --asset-color: var(--color-people);
+    --asset-button-content: var(--color-base-100);
+  }
+
+  .equipment-color,
+  .tab-equipment {
+    --asset-color: var(--color-equipment);
+    --asset-button-content: var(--color-base-100);
+  }
+
+  .access-color,
+  .tab-access {
+    --asset-color: var(--color-access);
+    --asset-button-content: var(--color-base-100);
+  }
+
+  .keys-color,
+  .tab-keys,
+  .keys-anomaly {
+    --asset-color: var(--color-keys);
+    --asset-button-content: var(--color-base-100);
+  }
+
+  .spaces-color,
+  .tab-spaces {
+    --asset-color: var(--color-spaces);
+    --asset-button-content: var(--color-base-100);
+  }
+
+  .documents-color {
+    --asset-color: var(--color-documents);
+    --asset-button-content: var(--color-base-100);
+  }
+
+  .history-color,
+  .general-color {
+    --asset-color: color-mix(
+      in oklab,
+      var(--color-base-content) 40%,
+      transparent
+    );
+  }
+
+  /* Bridge existing markup to the shared context without repeating rules
+   * for each asset type. Explicit Tailwind utilities still take priority. */
+  :where(.people-color, .equipment-color, .access-color, .keys-color, .spaces-color, .documents-color, .history-color, .general-color)
+    :is(a.link:not(.btn), td a, p a:not(.btn), td
+      .btn-link, [data-icon='information-circle'], [data-icon='tag'], [data-icon='chat-bubble-left-ellipsis'], [data-icon='ellipsis-horizontal'], [data-icon='arrow-path']) {
+    color: var(--asset-color);
+  }
+
+  .keys-anomaly {
+    color: var(--asset-color);
+  }
+
+  .keys-anomaly {
+    border-color: var(--asset-color);
+  }
+
+  .keys-anomaly:hover {
+    color: color-mix(in oklab, var(--asset-color) 80%, black);
+    text-decoration: none;
+  }
+
+  :where(.people-color, .equipment-color, .access-color, .keys-color, .spaces-color, .documents-color)
+    :is(.card-header-people, .card-header-equipment, .card-header-access, .card-header-keys, .card-header-spaces, .card-header-documents) {
+    border-bottom: 4px solid var(--asset-color);
+  }
+
+  .wrapperasset {
+    border-color: color-mix(
+      in oklab,
+      var(--asset-color, var(--color-main-border)) 50%,
+      transparent
+    );
+  }
+
+  .react-tabs a.tab-link.active {
+    color: var(--asset-color);
+    border-bottom-color: var(--asset-color);
+    background-color: color-mix(in oklab, var(--asset-color) 10%, transparent);
+  }
+
+  .react-tabs a.tab-link:hover {
+    color: color-mix(in oklab, var(--asset-color) 80%, black);
+  }
+}

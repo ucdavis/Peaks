@@ -1,5 +1,5 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import * as React from 'react';
-import { Button } from 'reactstrap';
 import { IEquipment } from '../../models/Equipment';
 import { DateUtil } from '../../util/dates';
 import { ReactTableUtil } from '../../util/tableUtil';
@@ -63,12 +63,10 @@ const EquipmentTable = (props: IProps) => {
     () => [
       {
         cell: data => (
-          <Button
-            color='link'
+          <AssetDetailsLink
+            path={`equipment/details/${data.row.original.id}`}
             onClick={() => props.showDetails(data.row.original)}
-          >
-            Details
-          </Button>
+          />
         ),
         header: ' '
       },

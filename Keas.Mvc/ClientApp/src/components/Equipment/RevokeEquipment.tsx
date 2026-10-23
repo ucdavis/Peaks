@@ -47,14 +47,14 @@ const RevokeEquipment = (props: IProps) => {
         size='lg'
         className='equipment-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Revoke {props.selectedEquipment.name}</h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className="text-xl font-semibold">Revoke {props.selectedEquipment.name}</h2>
           <Button color='link' onClick={props.closeModal}>
             <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
 
-        <ModalBody>
+        <ModalBody className='p-6'>
           <EquipmentEditValues
             selectedEquipment={props.selectedEquipment}
             disableEditing={true}
@@ -68,9 +68,9 @@ const RevokeEquipment = (props: IProps) => {
             <div>The equipment you have chosen does not have an assignment</div>
           )}
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
           <Button
-            color='primary'
+            color='error'
             onClick={() => revokeEquipment()}
             disabled={!isValidToRevoke() || submitting}
           >

@@ -134,7 +134,7 @@ const KeyEditValues = (props: IProps) => {
       {error &&
       error.message && // if we have an error message
         !error.path && (
-          <span className='color-unitrans'>
+          <span className='text-error'>
             {
               error.message // that does not correspond to an input
             }

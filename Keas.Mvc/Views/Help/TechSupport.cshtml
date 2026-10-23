@@ -7,27 +7,27 @@
 
 
 
-<div class="card">
-    <div class="card-header-primary">
+<div class="card mb-4 border border-main-border bg-base-100 shadow-sm">
+    <div class="border-b border-main-border">
         <div class="row justify-content-between">
-            <div class="card-head">
-                <h2>Is this a question about your stuff or Emails about your stuff?</h2>
+            <div class="px-5 py-4 sm:px-6">
+                <h2 class="text-xl font-semibold">Is this a question about your stuff or Emails about your stuff?</h2>
             </div>
         </div>
     </div>
-    <div class="card-content">
-        <a asp-action="MyContacts" class="btn  btn-primary" style="background-color: green">Yes!</a>
+    <div class="card-body gap-4 p-5 sm:p-6">
+        <a asp-action="MyContacts" class="btn btn-primary" style="background-color: green">Yes!</a>
     </div>
 </div>
-<div class="card">
-    <div class="card-header-primary">
+<div class="card mb-4 border border-main-border bg-base-100 shadow-sm">
+    <div class="border-b border-main-border">
         <div class="row justify-content-between">
-            <div class="card-head">
-                <h2>Is this a Technical Support question or a General Inquiry NOT related to your stuff?</h2>
+            <div class="px-5 py-4 sm:px-6">
+                <h2 class="text-xl font-semibold">Is this a Technical Support question or a General Inquiry NOT related to your stuff?</h2>
             </div>
         </div>
     </div>
-    <div class="card-content">
+    <div class="card-body gap-4 p-5 sm:p-6">
         <a href=@($"https://caeshelp.ucdavis.edu/?appname=Peaks&team={@Model.Slug}") class="btn btn-primary" target="_blank" ref="noopener noreferrer">Continue...</a>
     </div>
 </div>

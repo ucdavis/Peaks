@@ -40,14 +40,14 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
         size='lg'
         className='equipment-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Computer Details</h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className="text-xl font-semibold">Computer Details</h2>
           <Button color='link' onClick={modalToggle}>
             <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
 
-        <ModalBody className='d-flex justify-content-center'>
+        <ModalBody className='p-6 flex justify-center'>
           {renderModalBody()}
         </ModalBody>
       </Modal>

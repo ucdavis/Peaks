@@ -1,5 +1,5 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import * as React from 'react';
-import { Button } from 'reactstrap';
 import { IEquipment } from '../../models/Equipment';
 import { DateUtil } from '../../util/dates';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
@@ -49,12 +49,10 @@ const EquipmentListItem = (props: IProps) => {
   return (
     <tr>
       <td>
-        <Button
-          color='link'
+        <AssetDetailsLink
+          path={`equipment/details/${props.equipmentEntity.id}`}
           onClick={() => props.showDetails(props.equipmentEntity)}
-        >
-          Details
-        </Button>
+        />
       </td>
       <td>{props.equipmentEntity.serialNumber}</td>
       <td>{props.equipmentEntity.name}</td>

@@ -5,28 +5,29 @@
     ViewBag.Title = "Key Serial Report";
 }
 
-
-<div class="card keys-color">
-    <div class="card-header-keys">
-        <div class="card-head">
-            <h2>Keys With Serials Report</h2>
+<div class="space-y-6 pb-8">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Keys With Serials Report</h1>
         </div>
     </div>
-    <div class="card-content">
+    <div class="space-y-4">
+        <h2 class="m-0 text-lg font-semibold"><hero-icon name="information-circle" class="size-4"></hero-icon> Instructions</h2>
+                                <ul class="m-0 list-disc space-y-1 ps-5 text-sm text-base-content/70">
 
-        <h3><hero-icon name="information-circle" class="size-4"></hero-icon> Instructions</h3>
-                        <ul>
-
-                            <li>
-                                To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).
-                            </li>
-                            <li>
-                                If you have filtered the report with the Search feature, only the filtered results will be exported.
-                            </li>
-                            <li>
-                                You can filter the table with the data that isn't displayed on the screen (such as notes).
-                            </li>
-                        </ul>
+                                    <li>
+                                        To see more details, export the results with one of the buttons on the table (Copy, Excel, etc.).
+                                    </li>
+                                    <li>
+                                        If you have filtered the report with the Search feature, only the filtered results will be exported.
+                                    </li>
+                                    <li>
+                                        You can filter the table with the data that isn't displayed on the screen (such as notes).
+                                    </li>
+                                </ul>
+    </div>
+    <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4 sm:p-6">
         <table id="access" class="table dataTable">
             <thead>
                 <tr>
@@ -109,11 +110,10 @@
                 }
             </tbody>
             </table>
-        </div>
     </div>
+</div>
 
-
-    @section Styles {
+@section Styles {
         @await Html.PartialAsync("_ReportStylePartial")
     }
     @section Scripts {
@@ -121,7 +121,7 @@
 
         <script type="text/javascript">
             $('.dataTable').DataTable({
-                "dom": 'lBfrtip',
+                "layout": { topStart: ['pageLength', 'buttons'] },
                 "buttons": [
                     { extend: 'copyHtml5' },
                     { extend: 'excelHtml5' },

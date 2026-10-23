@@ -90,7 +90,7 @@ const EquipmentEditValues = (props: IProps) => {
   return (
     <div>
       <div className='row justify-content-between'>
-        <h3>Equipment Details</h3>
+        <h3 className="text-lg font-semibold">Equipment Details</h3>
         {props.disableEditing && props.openEditModal && (
           <Button
             color='link'

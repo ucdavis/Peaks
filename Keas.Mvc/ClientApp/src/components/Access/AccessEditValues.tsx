@@ -34,7 +34,7 @@ const AccessEditValues = (props: IProps) => {
   return (
     <div>
       <div className='row justify-content-between'>
-        <h3>Access Details</h3>
+        <h3 className="text-lg font-semibold">Access Details</h3>
       </div>
       <div className='wrapperasset'>
         <FormGroup>

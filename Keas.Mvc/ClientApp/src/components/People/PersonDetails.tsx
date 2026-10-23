@@ -1,8 +1,10 @@
-import { ArrowLeftIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowLeftIcon,
+  MagnifyingGlassIcon
+} from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext } from 'react';
 import { RouteChildrenProps } from 'react-router';
-import { Button } from 'reactstrap';
 import { Context } from '../../Context';
 import { IKey } from '../../models/Keys';
 import { IPerson, IPersonInfo } from '../../models/People';
@@ -55,61 +57,64 @@ const PersonDetails = (props: IProps) => {
   };
 
   return (
-    <div>
-      <div>
-        <Button color='link' onClick={props.goBack}>
-          <ArrowLeftIcon data-icon="arrow-left" className='hero-icon size-4' /> Return to Table
-        </Button>
-      </div>
-      <br />
-      <div className='card'>
+    <div className='space-y-6'>
+      <button
+        type='button'
+        className='btn btn-sm btn-ghost'
+        onClick={props.goBack}
+      >
+        <ArrowLeftIcon className='size-4' aria-hidden='true' /> Return to table
+      </button>
+      <section
+        className='card border border-main-border bg-base-100 shadow-sm'
+        aria-labelledby='person-details-heading'
+      >
         <div className='card-header-people'>
-          <div className='card-head row justify-content-between'>
-            <div className='row justify-content-between'>
-              <h2>
-                {props.selectedPersonInfo.person.name}{' '}
-                <div className='discreet'>
-                  {!!props.selectedPersonInfo.person.user?.pronouns &&
-                    formatPronouns(
-                      props.selectedPersonInfo.person.user.pronouns
-                    )}
-                </div>
-              </h2>
+          <div className='flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6'>
+            <div className='min-w-0 space-y-1'>
+              <h1
+                id='person-details-heading'
+                className='m-0 break-words text-2xl font-semibold'
+              >
+                {props.selectedPersonInfo.person.name}
+              </h1>
+              {!!props.selectedPersonInfo.person.user?.pronouns && (
+                <p className='m-0 text-sm text-base-content/60'>
+                  {formatPronouns(
+                    props.selectedPersonInfo.person.user.pronouns
+                  )}
+                </p>
+              )}
             </div>
-
             {canEdit && (
-              <div className='row justify-content-between'>
+              <div className='flex flex-wrap items-center gap-2'>
                 <EditPerson
                   key={`edit-person-${props.selectedPersonInfo.id}`}
                   onEdit={props.onEdit}
                   selectedPerson={props.selectedPersonInfo.person}
                   tags={props.tags}
                 />
+                <a
+                  href={`/${context.team.slug}/Report/PersonTeamList/?personId=${props.selectedPersonInfo.id}`}
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='btn btn-sm btn-ghost'
+                >
+                  <MagnifyingGlassIcon className='size-4' aria-hidden='true' />
+                  Lookup teams
+                </a>
                 <DeletePerson
                   key={`delete-person-${props.selectedPersonInfo.id}`}
                   selectedPersonInfo={props.selectedPersonInfo}
                   onDelete={props.onDelete}
                 />
-                <div>
-                  <a
-                    href={`/${context.team.slug}/Report/PersonTeamList/?personId=${props.selectedPersonInfo.id}`}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                  >
-                    <Button color='link'>
-                      <MagnifyingGlassIcon data-icon="magnifying-glass" className='hero-icon size-4 mr-2'
-                        aria-hidden='true' />
-                      Lookup Teams
-                    </Button>
-                  </a>
-                </div>
               </div>
             )}
           </div>
         </div>
 
         <BioContainer person={props.selectedPersonInfo.person} />
-      </div>
+      </section>
 
       <KeySerialContainer
         selectedPerson={props.selectedPersonInfo.person}

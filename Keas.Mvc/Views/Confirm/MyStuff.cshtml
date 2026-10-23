@@ -17,7 +17,7 @@
     }
     if (Model.TeamsWithPendingAssignments.Any(a => a.Slug != currentSlug))
     {
-        <h3>You have items pending in other teams:</h3>
+        <h3 class="text-lg font-semibold">You have items pending in other teams:</h3>
         foreach (var teamWithPending in Model.TeamsWithPendingAssignments.Where(a => a.Slug != currentSlug))
         {
             <div class="alert alert-warning">
@@ -29,22 +29,22 @@
         }
     }
 }
-<div class="card">
-  <div class="card-header-primary">
+<div class="card mb-4 border border-main-border bg-base-100 shadow-sm">
+  <div class="border-b border-main-border">
     <div class="row justify-content-between">
-      <div class="card-head">
-        <h2>MyStuff</h2>
+      <div class="px-5 py-4 sm:px-6">
+        <h2 class="text-xl font-semibold">MyStuff</h2>
       </div>
     </div>
   </div>
-  <div class="card-content">
-    <div class="card keys-color">
+  <div class="card-body gap-4 p-5 sm:p-6">
+    <div class="card mb-4 border border-main-border bg-base-100 shadow-sm keys-color">
       <div class="card-header-keys">
-        <div class="card-head">
-  <h2><hero-icon name="key" class="size-4"></hero-icon> Keys</h2>
+        <div class="px-5 py-4 sm:px-6">
+  <h2 class="text-xl font-semibold"><hero-icon name="key" class="size-4"></hero-icon> Keys</h2>
         </div>
       </div>
-      <div class="card-content">
+      <div class="card-body gap-4 p-5 sm:p-6">
         <table class="table">
           <thead>
             <tr>
@@ -75,12 +75,12 @@
         </table>
       </div>
     </div>
-    <div class="card equipment-color">
+    <div class="card mb-4 border border-main-border bg-base-100 shadow-sm equipment-color">
       <div class="card-header-equipment">
-        <div class="card-head">
-          <h2><hero-icon name="computer-desktop" class="size-4"></hero-icon> Equipment</h2></div>
+        <div class="px-5 py-4 sm:px-6">
+          <h2 class="text-xl font-semibold"><hero-icon name="computer-desktop" class="size-4"></hero-icon> Equipment</h2></div>
       </div>
-      <div class="card-content">
+      <div class="card-body gap-4 p-5 sm:p-6">
         <table class="table">
           <thead>
             <tr>
@@ -115,12 +115,12 @@
       </div>
     </div>
 
-    <div class="card access-color">
+    <div class="card mb-4 border border-main-border bg-base-100 shadow-sm access-color">
       <div class="card-header-access">
-        <div class="card-head">
-          <h2><hero-icon name="identification" class="size-4"></hero-icon> Access</h2></div>
+        <div class="px-5 py-4 sm:px-6">
+          <h2 class="text-xl font-semibold"><hero-icon name="identification" class="size-4"></hero-icon> Access</h2></div>
       </div>
-      <div class="card-content">
+      <div class="card-body gap-4 p-5 sm:p-6">
         <table class="table">
           <thead>
             <tr>
@@ -146,12 +146,12 @@
     </div>
 
 
-    <div class="card spaces-color">
+    <div class="card mb-4 border border-main-border bg-base-100 shadow-sm spaces-color">
       <div class="card-header-spaces">
-        <div class="card-head">
-          <h2><hero-icon name="building-office-2" class="size-4"></hero-icon> Workstations</h2></div>
+        <div class="px-5 py-4 sm:px-6">
+          <h2 class="text-xl font-semibold"><hero-icon name="building-office-2" class="size-4"></hero-icon> Workstations</h2></div>
       </div>
-      <div class="card-content">
+      <div class="card-body gap-4 p-5 sm:p-6">
 
         <table class="table">
           <thead>
@@ -182,12 +182,12 @@
       </div>
     </div>
 
-    <div class="card documents-color">
+    <div class="card mb-4 border border-main-border bg-base-100 shadow-sm documents-color">
       <div class="card-header-documents">
-        <div class="card-head">
-          <h2><hero-icon name="briefcase" class="size-4"></hero-icon> Documents</h2></div>
+        <div class="px-5 py-4 sm:px-6">
+          <h2 class="text-xl font-semibold"><hero-icon name="briefcase" class="size-4"></hero-icon> Documents</h2></div>
       </div>
-      <div class="card-content">
+      <div class="card-body gap-4 p-5 sm:p-6">
 
         <table class="table">
           <thead>
@@ -218,10 +218,10 @@
       </div>
     </div>
 
-    <div class="card history-color">
-      <div class="card-head">
-        <h2><hero-icon name="clock" class="size-4"></hero-icon> History</h2></div>
-      <div class="card-content">
+    <div class="card mb-4 border border-main-border bg-base-100 shadow-sm history-color">
+      <div class="px-5 py-4 sm:px-6">
+        <h2 class="text-xl font-semibold"><hero-icon name="clock" class="size-4"></hero-icon> History</h2></div>
+      <div class="card-body gap-4 p-5 sm:p-6">
 
 
         <table class="table">

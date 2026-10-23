@@ -5,16 +5,16 @@
     ViewData["Title"] = "Select Team";
 }
 
-<div class="card">
-    <div class="card-header-primary">
-        <div class="card-head">
-            <h2>Select a Team</h2>
+<div class="card mb-4 border border-main-border bg-base-100 shadow-sm">
+    <div class="border-b border-main-border">
+        <div class="px-5 py-4 sm:px-6">
+            <h2 class="text-xl font-semibold">Select a Team</h2>
         </div>
     </div>
-    <div class="card-content">
+    <div class="card-body gap-4 p-5 sm:p-6">
         @foreach (var item in Model.Teams)
         {
-            <p><a href='@string.Format("/{0}/{1}", item.Slug, ViewBag.urlRedirect)' class="team-link">@item.Name</a></p>
+            <p><a href='@string.Format("/{0}/{1}", item.Slug, ViewBag.urlRedirect)' class="btn btn-success min-w-48">@item.Name</a></p>
         }
     </div>
 </div>

@@ -15,7 +15,7 @@ export default class AssetNav extends React.Component<
           {PermissionsUtil.canViewPeople(this.context.permissions) && (
             <NavLink
               to={`/${this.context.team.slug}/people`}
-              className='tab-link tab-people'
+              className='tab-link font-semibold tab-people'
               activeClassName='active'
             >
               People
@@ -24,7 +24,7 @@ export default class AssetNav extends React.Component<
           {PermissionsUtil.canViewEquipment(this.context.permissions) && (
             <NavLink
               to={`/${this.context.team.slug}/equipment`}
-              className='tab-link tab-equipment'
+              className='tab-link font-semibold tab-equipment'
               activeClassName='active'
             >
               Equipment
@@ -33,7 +33,7 @@ export default class AssetNav extends React.Component<
           {PermissionsUtil.canViewAccess(this.context.permissions) && (
             <NavLink
               to={`/${this.context.team.slug}/access`}
-              className='tab-link tab-access'
+              className='tab-link font-semibold tab-access'
               activeClassName='active'
             >
               Access
@@ -42,7 +42,7 @@ export default class AssetNav extends React.Component<
           {PermissionsUtil.canViewKeys(this.context.permissions) && (
             <NavLink
               to={`/${this.context.team.slug}/keys`}
-              className='tab-link tab-keys'
+              className='tab-link font-semibold tab-keys'
               activeClassName='active'
             >
               Keys
@@ -51,7 +51,7 @@ export default class AssetNav extends React.Component<
           {PermissionsUtil.canViewSpaces(this.context.permissions) && (
             <NavLink
               to={`/${this.context.team.slug}/spaces`}
-              className='tab-link tab-spaces'
+              className='tab-link font-semibold tab-spaces'
               activeClassName='active'
             >
               Spaces

@@ -85,7 +85,7 @@ export const AssignDocument = (props: IProps): JSX.Element => {
               ))}
             </select>
           </div>
-          <button type='submit' className='btn btn-primary'>
+          <button type='submit' className='btn btn-asset'>
             Submit
           </button>
         </form>
@@ -101,14 +101,14 @@ export const AssignDocument = (props: IProps): JSX.Element => {
         size='lg'
         className='documents-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Assign Document for Signature</h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className="text-xl font-semibold">Assign Document for Signature</h2>
           <Button color='link' onClick={() => setShow(false)}>
             <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
 
-        <ModalBody>
+        <ModalBody className='p-6'>
           <div className='container-fluid'>
             {loading && <div>Processing...</div>}
             {!loading && renderTemplates()}

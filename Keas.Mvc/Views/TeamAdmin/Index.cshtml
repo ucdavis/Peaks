@@ -4,7 +4,7 @@
 <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="space-y-2">
             @await Html.PartialAsync("_ActiveTeamEyebrow")
-            <h1 class="m-0 text-3xl font-bold text-base-content">Team settings</h1>
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Team settings</h1>
             <p class="m-0 text-base-content/70">Manage your team’s organizations, departments, and notifications.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2"><a class="btn btn-outline" asp-action="RoledMembers"><hero-icon name="users" class="size-4"></hero-icon>Manage roles</a></div>
@@ -12,7 +12,7 @@
     <div class="grid items-start gap-8 lg:grid-cols-2">
         <section class="min-w-0 space-y-4" aria-labelledby="orgs-heading">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <h2 id="orgs-heading" class="m-0 text-xl font-bold">FIS organizations</h2>
+                <h2 id="orgs-heading" class="m-0 text-xl font-semibold">FIS organizations</h2>
                 <a class="btn btn-sm btn-outline" asp-action="AddFISOrg"><hero-icon name="plus" class="size-4"></hero-icon>Add organization</a>
             </div>
             <ul class="m-0 list-none divide-y divide-main-border rounded-sm border border-main-border bg-base-100 p-0">
@@ -28,7 +28,7 @@
         </section>
         <section class="min-w-0 space-y-4" aria-labelledby="departments-heading">
             <div class="flex flex-wrap items-center justify-between gap-3">
-                <h2 id="departments-heading" class="m-0 text-xl font-bold">PPS departments</h2>
+                <h2 id="departments-heading" class="m-0 text-xl font-semibold">PPS departments</h2>
                 <a class="btn btn-sm btn-outline" asp-action="AddPpsDepartment"><hero-icon name="plus" class="size-4"></hero-icon>Add department</a>
             </div>
             <ul class="m-0 list-none divide-y divide-main-border rounded-sm border border-main-border bg-base-100 p-0">
@@ -45,7 +45,7 @@
     </div>
     <section class="space-y-4 border-t border-main-border pt-8" aria-labelledby="notifications-heading">
         <div class="space-y-2">
-            <h2 id="notifications-heading" class="m-0 text-xl font-bold">Onboarding and offboarding emails</h2>
+            <h2 id="notifications-heading" class="m-0 text-xl font-semibold">Onboarding and offboarding emails</h2>
             <p class="m-0 text-base-content/70">Get notified when people are added, removed, or reactivated for this team.</p>
         </div>
         <form asp-action="UpdateEmail" class="max-w-xl space-y-4">
@@ -64,14 +64,14 @@
     {
         <section class="space-y-4 border-t border-main-border pt-8" aria-labelledby="groups-heading">
             <div class="space-y-2">
-                <h2 id="groups-heading" class="m-0 text-xl font-bold">Reporting groups</h2>
+                <h2 id="groups-heading" class="m-0 text-xl font-semibold">Reporting groups</h2>
                 <p class="m-0 text-base-content/70">Groups allow reporting across multiple teams. Group access does not grant team administration permissions.</p>
             </div>
             <div class="grid items-start gap-x-8 gap-y-8 md:grid-cols-2 xl:grid-cols-3">
                 @foreach (var membership in Model.Groups)
                 {
                     <section class="min-w-0 space-y-3" aria-label="@membership.Group.Name">
-                        <h3 class="m-0 flex items-center gap-2 text-lg font-bold text-base-content">
+                        <h3 class="m-0 flex items-center gap-2 text-lg font-semibold text-base-content">
                             <hero-icon name="users" class="size-5 text-base-content" aria-hidden="true"></hero-icon>
                             @membership.Group.Name
                         </h3>

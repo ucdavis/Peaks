@@ -1,5 +1,5 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import * as React from 'react';
-import { Button } from 'reactstrap';
 import { ISpace } from '../../models/Spaces';
 import ListActionsDropdown, { IAction } from '../ListActionsDropdown';
 
@@ -24,12 +24,10 @@ const SpacesListItem = (props: IProps) => {
   return (
     <tr>
       <td>
-        <Button
-          color='link'
+        <AssetDetailsLink
+          path={`spaces/details/${props.space.id}`}
           onClick={() => props.showDetails(props.space)}
-        >
-          Details
-        </Button>
+        />
       </td>
       <td>
         {space.roomNumber} {space.bldgName}

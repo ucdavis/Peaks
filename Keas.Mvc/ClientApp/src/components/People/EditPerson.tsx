@@ -1,4 +1,8 @@
-import { ArrowPathIcon, PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowPathIcon,
+  PencilSquareIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
@@ -93,8 +97,12 @@ const EditPerson = (props: IProps) => {
 
   return (
     <div>
-      <Button color='link' onClick={toggleModal}>
-        <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4 mr-2' aria-hidden='true' />
+      <Button color='asset' size='sm' onClick={toggleModal}>
+        <PencilSquareIcon
+          data-icon='pencil-square'
+          className='hero-icon size-4 mr-2'
+          aria-hidden='true'
+        />
         Edit Person
       </Button>
       <Modal
@@ -103,13 +111,13 @@ const EditPerson = (props: IProps) => {
         size='lg'
         className='people-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Edit Person</h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className='text-xl font-semibold'>Edit Person</h2>
           <Button color='link' onClick={closeModal}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
+            <XMarkIcon data-icon='x-mark' className='hero-icon size-6' />
           </Button>
         </div>
-        <ModalBody>
+        <ModalBody className='p-6'>
           <div className='container-fluid'>
             <form>
               <PersonEditValues
@@ -124,13 +132,19 @@ const EditPerson = (props: IProps) => {
             </form>
           </div>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
           <Button
-            color='primary'
+            color='asset'
             onClick={editSelected}
             disabled={!validState || submitting}
           >
-            Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+            Go!{' '}
+            {submitting && (
+              <ArrowPathIcon
+                data-icon='arrow-path'
+                className='hero-icon size-5 animate-spin'
+              />
+            )}
           </Button>
         </ModalFooter>
       </Modal>

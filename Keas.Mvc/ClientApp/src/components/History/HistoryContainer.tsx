@@ -49,15 +49,15 @@ const HistoryContainer = (props: IProps) => {
   }
 
   return (
-    <div className='card history-color'>
+    <div className='card mb-4 border border-main-border bg-base-100 shadow-sm history-color'>
       <div>
-        <div className='card-head'>
-          <h2>
+        <div className='px-5 py-4 sm:px-6'>
+          <h2 className="text-xl font-semibold">
             <ClockIcon data-icon="clock" className='hero-icon size-4' /> History
           </h2>
         </div>
       </div>
-      <div className='card-content'>
+      <div className='card-body gap-4 p-5 sm:p-6'>
         {histories.length > 0 && (
           <HistoryList showLink={props.showLink} histories={histories} />
         )}

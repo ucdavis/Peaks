@@ -33,13 +33,13 @@
 
 <div class="space-y-10 pb-8">
     <div class="space-y-2">
-        <h1 class="m-0 text-3xl font-bold text-base-content">Help</h1>
+        <h1 class="m-0 text-3xl font-semibold text-base-content">Help</h1>
         <p class="m-0 text-lg text-base-content/80">Find your team's contacts, get technical support, or share feedback about PEAKS.</p>
     </div>
 
     <section aria-labelledby="support-heading" class="space-y-4">
         <div class="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 id="support-heading" class="m-0 text-2xl font-bold text-base-content">Technical Support</h2>
+            <h2 id="support-heading" class="m-0 text-2xl font-semibold text-base-content">Technical Support</h2>
             <p class="m-0 text-sm text-base-content/60">Version: @ViewBag.Version</p>
         </div>
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -55,7 +55,7 @@
                             <hero-icon name="arrow-right" class="size-5 mt-1 shrink-0 text-base-content/40 transition group-hover:translate-x-1 group-hover:text-primary" aria-hidden="true"></hero-icon>
                         </div>
                         <div>
-                            <h3 class="m-0 text-xl font-bold text-base-content">@link.Label</h3>
+                            <h3 class="m-0 text-xl font-semibold text-base-content">@link.Label</h3>
                             <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">@link.Description</p>
                         </div>
                     </div>
@@ -65,15 +65,15 @@
     </section>
 
     <section aria-labelledby="contacts-heading" class="space-y-6">
-        <h2 id="contacts-heading" class="m-0 text-2xl font-bold text-base-content">Contacts</h2>
+        <h2 id="contacts-heading" class="m-0 text-2xl font-semibold text-base-content">Contacts</h2>
         @if (contactGroups.Any())
         {
             <div class="grid items-start gap-x-8 gap-y-8 md:grid-cols-2 xl:grid-cols-3">
                 @foreach (var group in contactGroups)
                 {
                     <section class="min-w-0 space-y-3" aria-label="@group.Title">
-                        <h3 class="m-0 flex items-center gap-2 text-lg font-bold text-base-content">
-                            <hero-icon name="@group.Icon" class="size-5 @(group.Icon == "trophy" || group.Icon == "user-circle" || group.Icon == "building-office-2" ? "text-base-content" : "text-primary")" aria-hidden="true"></hero-icon>
+                        <h3 class="m-0 flex items-center gap-2 text-lg font-semibold text-base-content">
+                            <hero-icon name="@group.Icon" class="size-5 @(group.Icon =="trophy" || group.Icon == "user-circle" || group.Icon == "building-office-2" ? "text-base-content" : "text-primary")" aria-hidden="true"></hero-icon>
                             @group.Title
                         </h3>
                         @if (!string.IsNullOrWhiteSpace(group.Description))

@@ -134,8 +134,8 @@ const AssignWorkstation = (props: IProps) => {
         size='lg'
         className='spaces-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className="text-xl font-semibold">
             {props.selectedWorkstation || props.person
               ? 'Assign Workstation'
               : 'Add Workstation'}
@@ -145,7 +145,7 @@ const AssignWorkstation = (props: IProps) => {
           </Button>
         </div>
 
-        <ModalBody>
+        <ModalBody className='p-6'>
           <div className='container-fluid'>
             <form>
               <AssignPerson
@@ -183,7 +183,7 @@ const AssignWorkstation = (props: IProps) => {
               !workstation.teamId && ( // if we are creating a new workstation, edit properties
                   <div>
                     <div className='row justify-content-between'>
-                      <h3>Create New Workstation</h3>
+                      <h3 className="text-lg font-semibold">Create New Workstation</h3>
                       <Button color='link' onClick={onDeselected}>
                         Clear{' '}
                         <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
@@ -202,7 +202,7 @@ const AssignWorkstation = (props: IProps) => {
               {!!workstation && !!workstation.teamId && (
                 <div>
                   <div className='row justify-content-between'>
-                    <h3>Assign Existing Workstation</h3>
+                    <h3 className="text-lg font-semibold">Assign Existing Workstation</h3>
                     <Button color='link' onClick={onDeselected}>
                       Clear{' '}
                       <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
@@ -219,9 +219,9 @@ const AssignWorkstation = (props: IProps) => {
             </form>
           </div>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
           <Button
-            color='primary'
+            color='asset'
             onClick={assignSelected}
             disabled={!validState || submitting}
           >

@@ -4,90 +4,90 @@
     ViewBag.Title = "title";
 }
 
-<div class="card">
-    <div class="card-header-primary">
+<div class="card mb-4 border border-main-border bg-base-100 shadow-sm">
+    <div class="border-b border-main-border">
         <div class="row justify-content-between">
-            <div class="card-head">
-                <h2><hero-icon name="clipboard-document-list" class="size-4"></hero-icon> Reports for group: @Model.Group.Name</h2>
+            <div class="px-5 py-4 sm:px-6">
+                <h2 class="text-xl font-semibold"><hero-icon name="clipboard-document-list" class="size-4"></hero-icon> Reports for group: @Model.Group.Name</h2>
             </div>
         </div>
     </div>
-    <div class="card-content">
-        <div class="row">
+    <div class="card-body gap-4 p-5 sm:p-6">
+        <div class="grid items-start gap-8 md:grid-cols-2 xl:grid-cols-3">
 
-            <div class="report-list equipment-color col-md-3">
-                <h3><hero-icon name="computer-desktop" class="size-4"></hero-icon> Equipment Reports</h3>
-                <ul>
+            <div class="min-w-0 space-y-3 equipment-color">
+                <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="computer-desktop" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> Equipment Reports</h3>
+                <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
                     <li>
-                        <a asp-action="EquipmentReport" asp-route-id="@Model.Group.Id">View All Equipment <hero-icon name="chevron-right" class="size-4" aria-hidden="true"></hero-icon></a>
+                        <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="EquipmentReport" asp-route-id="@Model.Group.Id">View All Equipment <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
                     </li>
 
                 </ul>
             </div>
 
 
-            <div class="report-list spaces-color col-md-3">
-                <h3><hero-icon name="building-office-2" class="size-4"></hero-icon> Workstations Reports</h3>
-                <ul>
+            <div class="min-w-0 space-y-3 spaces-color">
+                <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="building-office-2" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> Workstations Reports</h3>
+                <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
                     <li>
-                        <a asp-action="WorkstationReport" asp-route-id="@Model.Group.Id">View All Workstations <hero-icon name="chevron-right" class="size-4" aria-hidden="true"></hero-icon></a>
+                        <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="WorkstationReport" asp-route-id="@Model.Group.Id">View All Workstations <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
                     </li>
                 </ul>
             </div>
 
-            <div class="report-list keys-color col-md-3">
-                <h3><hero-icon name="building-office-2" class="size-4"></hero-icon> Key Reports</h3>
-                <ul>
+            <div class="min-w-0 space-y-3 keys-color">
+                <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="key" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> Key Reports</h3>
+                <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
                     <li>
-                        <a asp-action="KeySerialsWithSpacesReport" asp-route-id="@Model.Group.Id">View Key Serials with Spaces <hero-icon name="chevron-right" class="size-4" aria-hidden="true"></hero-icon></a>
+                        <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="KeySerialsWithSpacesReport" asp-route-id="@Model.Group.Id">View Key Serials with Spaces <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
                     </li>
                     <li>
-                        <a asp-action="KeySerialsReport" asp-route-id="@Model.Group.Id">View Key Serials <hero-icon name="chevron-right" class="size-4" aria-hidden="true"></hero-icon></a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="report-list documents-color col-md-3">
-                <h3><hero-icon name="document-text" class="size-4"></hero-icon> Documents Reports</h3>
-                <ul>
-                    <li>
-                        <a asp-action="IncompleteDocumentsReport" asp-route-id="@Model.Group.Id">View All Incomplete Docs <hero-icon name="chevron-right" class="size-4" aria-hidden="true"></hero-icon></a>
-                    </li>
-                    <li>
-                        <a asp-action="CompletedDocumentsReport" asp-route-id="@Model.Group.Id">Completed Documents <hero-icon name="chevron-right" class="size-4" aria-hidden="true"></hero-icon></a>
+                        <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="KeySerialsReport" asp-route-id="@Model.Group.Id">View Key Serials <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
                     </li>
                 </ul>
             </div>
 
-            <div class="report-list people-color col-md-3">
-                <h3><hero-icon name="users" class="size-4"></hero-icon> People Reports</h3>
-                <ul>
+            <div class="min-w-0 space-y-3 documents-color">
+                <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="document-text" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> Documents Reports</h3>
+                <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
                     <li>
-                        <a asp-action="PeopleLeavingWithAssets" asp-route-id="@Model.Group.Id">People with Assets who are Leaving <hero-icon name="chevron-right" class="size-4" aria-hidden="true"></hero-icon></a>
+                        <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="IncompleteDocumentsReport" asp-route-id="@Model.Group.Id">View All Incomplete Docs <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
+                    </li>
+                    <li>
+                        <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="CompletedDocumentsReport" asp-route-id="@Model.Group.Id">Completed Documents <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="min-w-0 space-y-3 people-color">
+                <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="users" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> People Reports</h3>
+                <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
+                    <li>
+                        <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="PeopleLeavingWithAssets" asp-route-id="@Model.Group.Id">People with Assets who are Leaving <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
                     </li>
 
                 </ul>
             </div>
-            <div class="report-list general-color col-md-3">
-                <h3><hero-icon name="list-bullet" class="size-4"></hero-icon> General Reports</h3>
-                <ul>
+            <div class="min-w-0 space-y-3 general-color">
+                <h3 class="m-0 flex items-center gap-2 text-lg font-semibold"><hero-icon name="list-bullet" class="size-5 shrink-0 text-[var(--asset-color)]"></hero-icon> General Reports</h3>
+                <ul class="m-0 ms-1.5 list-none space-y-2 border-s-4 border-[var(--asset-color)] ps-4">
                     <li>
-                        <a asp-action="ExpiringItems" asp-route-id="@Model.Group.Id">Expiring <span style="white-space: nowrap;">Items <hero-icon name="chevron-right" class="size-4" aria-hidden="true"></hero-icon></span></a>
+                        <a class="flex items-center justify-between gap-3 py-1 text-sm text-base-content underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary" asp-action="ExpiringItems" asp-route-id="@Model.Group.Id">Expiring Items <hero-icon name="chevron-right" class="size-4 shrink-0" aria-hidden="true"></hero-icon></a>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
-<div class="card">
-    <div class="card-header-primary">
+<div class="card mb-4 border border-main-border bg-base-100 shadow-sm">
+    <div class="border-b border-main-border">
         <div class="row justify-content-between">
-            <div class="card-head">
-                <h2><hero-icon name="clipboard-document-list" class="size-4"></hero-icon> Teams in group: @Model.Group.Name</h2>
+            <div class="px-5 py-4 sm:px-6">
+                <h2 class="text-xl font-semibold"><hero-icon name="clipboard-document-list" class="size-4"></hero-icon> Teams in group: @Model.Group.Name</h2>
             </div>
         </div>
     </div>
-    <div class="card-content">
+    <div class="card-body gap-4 p-5 sm:p-6">
         <table id="teams-in-group" class="table dataTable">
             <thead>
             <tr>
@@ -109,15 +109,15 @@
         </table>
     </div>
 </div>
-<div class="card">
-    <div class="card-header-primary">
+<div class="card mb-4 border border-main-border bg-base-100 shadow-sm">
+    <div class="border-b border-main-border">
         <div class="row justify-content-between">
-            <div class="card-head">
-                <h2><hero-icon name="clipboard-document-list" class="size-4"></hero-icon> Teams NOT in group: @Model.Group.Name</h2>
+            <div class="px-5 py-4 sm:px-6">
+                <h2 class="text-xl font-semibold"><hero-icon name="clipboard-document-list" class="size-4"></hero-icon> Teams NOT in group: @Model.Group.Name</h2>
             </div>
         </div>
     </div>
-    <div class="card-content">
+    <div class="card-body gap-4 p-5 sm:p-6">
         <table id="teams-in-group" class="table dataTable">
             <thead>
             <tr>

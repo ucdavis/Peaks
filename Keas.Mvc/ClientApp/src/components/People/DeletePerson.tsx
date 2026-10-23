@@ -1,4 +1,8 @@
-import { ArrowPathIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowPathIcon,
+  TrashIcon,
+  XMarkIcon
+} from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useState } from 'react';
 import { Button, Modal, ModalBody, ModalFooter } from 'reactstrap';
@@ -49,8 +53,12 @@ const DeletePerson = (props: IProps) => {
 
   return (
     <div>
-      <Button color='link' onClick={toggleModal}>
-        <TrashIcon data-icon="trash" className='hero-icon size-4 mr-2' aria-hidden='true' />
+      <Button color='error' size='sm' outline onClick={toggleModal}>
+        <TrashIcon
+          data-icon='trash'
+          className='hero-icon size-4 mr-2'
+          aria-hidden='true'
+        />
         Delete Person
       </Button>
       <Modal
@@ -59,14 +67,16 @@ const DeletePerson = (props: IProps) => {
         size='lg'
         className='people-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Delete {props.selectedPersonInfo.person.name}</h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className='text-xl font-semibold'>
+            Delete {props.selectedPersonInfo.person.name}
+          </h2>
           <Button color='link' onClick={toggleModal}>
-            <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
+            <XMarkIcon data-icon='x-mark' className='hero-icon size-6' />
           </Button>
         </div>
 
-        <ModalBody>
+        <ModalBody className='p-6'>
           <PersonEditValues
             selectedPerson={props.selectedPersonInfo.person}
             disableEditing={true}
@@ -79,13 +89,19 @@ const DeletePerson = (props: IProps) => {
             </div>
           )}
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
           <Button
-            color='primary'
+            color='error'
             onClick={deletePerson}
             disabled={submitting || !checkValidToDelete()}
           >
-            Go! {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+            Go!{' '}
+            {submitting && (
+              <ArrowPathIcon
+                data-icon='arrow-path'
+                className='hero-icon size-5 animate-spin'
+              />
+            )}
           </Button>{' '}
         </ModalFooter>
       </Modal>

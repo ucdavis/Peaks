@@ -42,22 +42,22 @@ const RevokeWorkstation = (props: IProps) => {
         size='lg'
         className='spaces-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Revoke {props.selectedWorkstation.name}</h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className="text-xl font-semibold">Revoke {props.selectedWorkstation.name}</h2>
           <Button color='link' onClick={props.closeModal}>
             <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
-        <ModalBody>
+        <ModalBody className='p-6'>
           <WorkstationEditValues
             selectedWorkstation={props.selectedWorkstation}
             disableEditing={true}
             disableSpaceEditing={true}
           />
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
           <Button
-            color='primary'
+            color='error'
             onClick={revokeWorkstation}
             disabled={submitting}
           >

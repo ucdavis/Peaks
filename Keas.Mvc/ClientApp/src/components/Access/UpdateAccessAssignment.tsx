@@ -101,13 +101,13 @@ const UpdateAccessAssignment = (props: IProps) => {
       size='lg'
       className='access-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>Update Access</h2>
+      <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+        <h2 className="text-xl font-semibold">Update Access</h2>
         <Button color='link' onClick={closeModal}>
           <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
         </Button>
       </div>
-      <ModalBody>
+      <ModalBody className='p-6'>
         <div className='container-fluid'>
           <form>
             <div className='form-group'>
@@ -131,7 +131,7 @@ const UpdateAccessAssignment = (props: IProps) => {
             />
             <div>
               <div className='row justify-content-between'>
-                <h3>Assign Exisiting Access</h3>
+                <h3 className="text-lg font-semibold">Assign Exisiting Access</h3>
               </div>
               <AccessEditValues
                 selectedAccess={props.selectedAccess}
@@ -142,9 +142,9 @@ const UpdateAccessAssignment = (props: IProps) => {
           </form>
         </div>
       </ModalBody>
-      <ModalFooter>
+      <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
         <Button
-          color='primary'
+          color='asset'
           onClick={updateSelected}
           disabled={!validState || submitting}
         >

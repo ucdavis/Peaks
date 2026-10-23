@@ -1,4 +1,5 @@
-import { BuildingOffice2Icon, PlusIcon } from '@heroicons/react/24/outline';
+import { BuildingOffice2Icon } from '@heroicons/react/24/solid';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import {
@@ -20,7 +21,7 @@ import Denied from '../Shared/Denied';
 import SpacesDetails from './SpacesDetails';
 import SpacesList from './SpacesList';
 import SpacesTable from './SpacesTable';
-import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import { AssetFilterBar } from '../Shared/AssetFilterBar';
 import PeaksLoader from '../Shared/PeaksLoader';
 
 interface IProps {
@@ -110,13 +111,16 @@ const SpacesContainer = (props: IProps) => {
 
     return (
       <div>
-        <SearchDefinedOptions
-          definedOptions={context.tags}
-          selected={tagFilters}
-          onSelect={filterTags}
-          disabled={false}
-          placeholder='Search for Tags'
-          id='searchTagsSpaces'
+        <AssetFilterBar
+          categories={[
+            {
+              id: 'tags',
+              label: 'Tags',
+              options: context.tags,
+              selected: tagFilters,
+              onChange: filterTags
+            }
+          ]}
         />
         <SpacesTable
           spaces={filteredSpaces}
@@ -374,17 +378,39 @@ const SpacesContainer = (props: IProps) => {
     );
   };
 
+  if (shouldRenderDetailsView) {
+    return (
+      <div className='spaces-color space-y-6'>
+        {selectedSpaceInfo && selectedSpaceInfo.space
+          ? renderDetailsView(selectedSpaceInfo)
+          : null}
+      </div>
+    );
+  }
+
   return (
-    <div className='card spaces-color'>
+    <div className='card mb-4 border border-main-border bg-base-100 shadow-sm spaces-color'>
       <div className='card-header-spaces'>
-        <div className='card-head row justify-content-between'>
-          <h2>
-            <BuildingOffice2Icon data-icon="building-office-2" className='hero-icon size-4' /> Spaces
+        <div className='px-5 py-4 sm:px-6 flex items-center justify-between gap-4'>
+          <h2 className='text-xl font-semibold'>
+            <BuildingOffice2Icon
+              data-icon='building-office-2'
+              className='hero-icon size-5'
+            />{' '}
+            Spaces
           </h2>
           {shouldRenderTableView && onKeysTab && (
             <div>
-              <Button color='link' onClick={() => openAssociateModal(null)}>
-                <PlusIcon data-icon="plus" className='hero-icon size-4 mr-2' aria-hidden='true' />
+              <Button
+                color='asset'
+                size='sm'
+                onClick={() => openAssociateModal(null)}
+              >
+                <PlusIcon
+                  data-icon='plus'
+                  className='hero-icon size-4 mr-2'
+                  aria-hidden='true'
+                />
                 Associate
               </Button>
               {action === 'associate' && renderAssociateModal()}
@@ -398,23 +424,18 @@ const SpacesContainer = (props: IProps) => {
               href='https://computing.caes.ucdavis.edu/documentation/peaks/spaces'
               target='_blank'
               rel='noopener noreferrer'
+              className='link link-hover'
             >
               Space FAQ
             </a>
-            .
           </div>
         )}
       </div>
 
-      <div className='card-content'>
+      <div className='card-body gap-4 p-5 sm:p-6'>
         {
           shouldRenderTableView && renderTableOrList(selectedId) // show on keys/details page
         }
-        {shouldRenderDetailsView &&
-          !onKeysTab &&
-          !!selectedSpaceInfo &&
-          !!selectedSpaceInfo.space &&
-          renderDetailsView(selectedSpaceInfo)}
       </div>
     </div>
   );

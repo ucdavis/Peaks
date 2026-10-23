@@ -1,0 +1,103 @@
+@layer components {
+  .asset-table {
+    margin-block: 1rem;
+    border: 1px solid var(--color-main-border);
+    border-radius: var(--radius-box);
+    background: var(--color-base-100);
+    color: var(--color-base-content);
+  }
+
+  .asset-table .table {
+    width: 100%;
+    margin: 0;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  .asset-table .table th,
+  .asset-table .table td {
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--color-main-border);
+    vertical-align: middle;
+  }
+
+  .asset-table .table thead {
+    background: var(--color-base-200);
+    color: var(--color-base-content);
+  }
+
+  .asset-table .table th {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .asset-table .table .asset-table-filters th {
+    padding-top: 0;
+    padding-bottom: 0.75rem;
+  }
+
+  .asset-table .table tbody tr:nth-child(odd) {
+    background: color-mix(
+      in oklab,
+      var(--asset-color, var(--color-primary)) 4%,
+      var(--color-base-100)
+    );
+  }
+
+  .asset-table .table tbody tr:hover {
+    background: color-mix(
+      in oklab,
+      var(--asset-color, var(--color-primary)) 8%,
+      var(--color-base-100)
+    );
+  }
+
+  .asset-table .table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .asset-table .table td a,
+  .asset-table .table td .btn-link {
+    color: var(--asset-color, var(--color-primary));
+    font-weight: 600;
+  }
+
+  .asset-table .table td a:hover,
+  .asset-table .table td .btn-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .asset-table-sort {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+    cursor: pointer;
+  }
+
+  .asset-table-sort svg {
+    color: var(--asset-color, var(--color-primary));
+  }
+
+  .asset-table-sort:focus-visible {
+    outline: 2px solid var(--asset-color, var(--color-primary));
+    outline-offset: 4px;
+  }
+
+  .asset-table .pagination .btn:hover:not(:disabled) {
+    background: color-mix(
+      in oklab,
+      var(--asset-color, var(--color-primary)) 10%,
+      transparent
+    );
+    color: var(--asset-color, var(--color-primary));
+  }
+}

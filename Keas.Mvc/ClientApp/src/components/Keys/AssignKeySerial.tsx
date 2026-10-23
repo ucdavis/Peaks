@@ -155,8 +155,8 @@ const AssignKeySerial = (props: IProps) => {
       size='lg'
       className='keys-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>
+      <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+        <h2 className="text-xl font-semibold">
           {props.selectedKeySerial || props.person
             ? 'Assign Key Serial'
             : 'Add Key Serial'}
@@ -165,7 +165,7 @@ const AssignKeySerial = (props: IProps) => {
           <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
         </Button>
       </div>
-      <ModalBody>
+      <ModalBody className='p-6'>
         <div className='container-fluid'>
           <Form>
             <AssignPerson
@@ -205,7 +205,7 @@ const AssignKeySerial = (props: IProps) => {
             !keySerial.id && ( // if we are creating a new serial, edit properties
                 <div>
                   <div className='row justify-content-between'>
-                    <h3>Create New Serial</h3>
+                    <h3 className="text-lg font-semibold">Create New Serial</h3>
                     <Button color='link' onClick={onDeselected}>
                       Clear{' '}
                       <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
@@ -237,7 +237,7 @@ const AssignKeySerial = (props: IProps) => {
             {keySerial && !!keySerial.id && (
               <div>
                 <div className='row justify-content-between'>
-                  <h3>Assign Existing Serial</h3>
+                  <h3 className="text-lg font-semibold">Assign Existing Serial</h3>
                   <Button color='link' onClick={onDeselected}>
                     Clear{' '}
                     <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
@@ -257,9 +257,9 @@ const AssignKeySerial = (props: IProps) => {
           </Form>
         </div>
       </ModalBody>
-      <ModalFooter>
+      <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
         <Button
-          color='primary'
+          color='asset'
           onClick={assignSelected}
           disabled={!validState || submitting}
         >

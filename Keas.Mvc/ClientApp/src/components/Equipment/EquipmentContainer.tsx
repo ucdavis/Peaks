@@ -1,4 +1,5 @@
-import { ComputerDesktopIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { ComputerDesktopIcon } from '@heroicons/react/24/solid';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
@@ -614,18 +615,18 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
   };
 
   return (
-    <div className='card equipment-color'>
+    <div className='card mb-4 border border-main-border bg-base-100 shadow-sm equipment-color'>
       <div className='card-header-equipment'>
-        <div className='card-head row justify-content-between'>
-          <h2>
-            <ComputerDesktopIcon data-icon="computer-desktop" className='hero-icon size-4' /> Equipment
+        <div className='px-5 py-4 sm:px-6 flex items-center justify-between gap-4'>
+          <h2 className="text-xl font-semibold">
+            <ComputerDesktopIcon data-icon="computer-desktop" className='hero-icon size-5' /> Equipment
           </h2>
-          <Button color='link' onClick={openCreateModal}>
+          <Button color='asset' size='sm' onClick={openCreateModal}>
             <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Equipment
           </Button>
         </div>
       </div>
-      <div className='card-content'>
+      <div className='card-body gap-4 p-5 sm:p-6'>
         {renderTableOrList()}
         {activeAsset &&
           (action === 'assign' || action === 'create') &&

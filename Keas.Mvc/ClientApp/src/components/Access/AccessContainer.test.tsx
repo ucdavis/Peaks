@@ -1,3 +1,4 @@
+import { within } from '@testing-library/react';
 import * as React from 'react';
 import { render, cleanup, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
@@ -110,7 +111,7 @@ describe('Access Container', () => {
       );
     });
 
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('.asset-table tbody tr');
 
     let foundIt = false;
     matches.forEach(function (match) {
@@ -143,7 +144,7 @@ describe('Access Container', () => {
         { container }
       );
     });
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('.asset-table tbody tr');
 
     expect(matches.length).toBe(2);
   });
@@ -167,12 +168,16 @@ describe('Access Container', () => {
     });
 
     // should show access contact info
-    const accessContent = container.querySelector('.card-content h2')
-      .textContent;
-    const accessOptions = container.querySelector('.card-content').textContent;
-
-    expect(accessContent).toContain('Real Access'); // confirm name is displayed
-    expect(accessOptions).toContain('Edit Access'); // confirm edit option is displayed
-    expect(accessOptions).toContain('Delete Access'); // confirm delete option is displayed
+    const accessContent = within(container).getByRole('heading', {
+      name: /Real Access/
+    });
+    expect(accessContent).toBeInTheDocument();
+    expect(
+      within(container).getByRole('button', { name: 'Edit Access' })
+    ).toBeInTheDocument();
+    expect(
+      within(container).getByRole('button', { name: 'Delete Access' })
+    ).toBeInTheDocument();
+    expect(container.querySelector('.access-color')).not.toHaveClass('card');
   });
 });

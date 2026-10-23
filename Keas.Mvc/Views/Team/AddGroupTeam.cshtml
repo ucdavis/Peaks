@@ -4,7 +4,7 @@
 <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="space-y-2">
             @await Html.PartialAsync("_ActiveTeamEyebrow")
-            <h1 class="m-0 text-3xl font-bold text-base-content">Add group team</h1>
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Add group team</h1>
             <p class="m-0 text-base-content/70">Include a team in @Model.GroupName reporting.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-action="GroupDetails" asp-controller="Team" asp-route-id="@Model.GroupId"><hero-icon name="arrow-left" class="size-4"></hero-icon>Group details</a></div>

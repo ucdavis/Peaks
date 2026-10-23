@@ -99,7 +99,7 @@ describe('Equipment Container', () => {
       );
     });
 
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('.asset-table tbody tr');
 
     let foundIt = false;
     matches.forEach(function (match) {
@@ -132,7 +132,7 @@ describe('Equipment Container', () => {
         { container }
       );
     });
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('.asset-table tbody tr');
 
     expect(matches.length).toBe(4); //Should this be 3? Or is the inactive ignored and only used when queried by the api?
   });

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, cleanup, act } from '@testing-library/react';
+import { render, cleanup, act, within } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { Context } from '../../Context';
 import { routes } from '../../pages/assets/routes';
@@ -113,7 +113,7 @@ describe('Key Container', () => {
       );
     });
 
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('.asset-table tbody tr');
 
     let foundIt = false;
     matches.forEach(function (match) {
@@ -146,7 +146,7 @@ describe('Key Container', () => {
         { container }
       );
     });
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('.asset-table tbody tr');
 
     expect(matches.length).toBe(3); //Should this be 3? Or is the inactive ignored and only used when queried by the api?
   });
@@ -169,11 +169,11 @@ describe('Key Container', () => {
       );
     });
 
-    // should show keys info
-    const keyTitle = container.querySelector('h2.mb-3').textContent;
+    expect(container.querySelector('.keys-color')).not.toHaveClass('card');
 
-    expect(keyTitle).toContain('Test'); // confirm key name is displayed
-    expect(keyTitle).toContain('ER'); // confirm key code is displayed
+    // should show keys info
+    expect(within(container).getByRole('heading', { level: 1, name: 'Test' })).toBeInTheDocument();
+    expect(within(container).getByText('Key code: ER')).toBeInTheDocument();
 
     // should show the key serial container
     const keySerialContent = container.querySelector('#KeySerialContainer')

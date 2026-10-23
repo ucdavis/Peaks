@@ -48,8 +48,8 @@ const RevokeAccess = (props: IProps) => {
         size='lg'
         className='access-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className="text-xl font-semibold">
             Revoke {selectedAccess.name} from{' '}
             {selectedAccessAssignment.person.name}
           </h2>
@@ -58,7 +58,7 @@ const RevokeAccess = (props: IProps) => {
           </Button>
         </div>
 
-        <ModalBody>
+        <ModalBody className='p-6'>
           <AccessEditValues
             selectedAccess={selectedAccess}
             disableEditing={true}
@@ -71,9 +71,9 @@ const RevokeAccess = (props: IProps) => {
             <div>The access you have chosen does not have an assignment</div>
           )}
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
           <Button
-            color='primary'
+            color='error'
             onClick={() => revokeAccess()}
             disabled={!isValidToRevoke() || submitting}
           >

@@ -1,6 +1,7 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
-import { Button, UncontrolledTooltip } from 'reactstrap';
+import { UncontrolledTooltip } from 'reactstrap';
 import { ISpace, ISpaceInfo } from '../../models/Spaces';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { ReactTable } from '../Shared/ReactTable';
@@ -65,12 +66,10 @@ const SpacesTable = (props: IProps) => {
     () => [
       {
         cell: data => (
-          <Button
-            color='link'
+          <AssetDetailsLink
+            path={`spaces/details/${data.row.original.space.id}`}
             onClick={() => props.showDetails(data.row.original.space)}
-          >
-            Details
-          </Button>
+          />
         ),
         header: ' '
       },
@@ -117,7 +116,11 @@ const SpacesTable = (props: IProps) => {
         header: header => (
           <div>
             Workstations{' '}
-            <InformationCircleIcon data-icon="information-circle" id='workstationsTooltip' className='hero-icon size-5' />
+            <InformationCircleIcon
+              data-icon='information-circle'
+              id='workstationsTooltip'
+              className='hero-icon size-5'
+            />
             <UncontrolledTooltip placement='right' target='workstationsTooltip'>
               In Use / Total
             </UncontrolledTooltip>

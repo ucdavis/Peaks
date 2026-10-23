@@ -17,7 +17,7 @@ const WorkstationAssignmentValues = (props: IProps) => {
   return (
     <div>
       <div className='row justify-content-between mt-5'>
-        <h3>Assignment Details</h3>
+        <h3 className="text-lg font-semibold">Assignment Details</h3>
         <Button
           color='link'
           onClick={() => props.openUpdateModal(props.selectedWorkstation)}

@@ -1,44 +1,44 @@
 @using Keas.Core.Extensions;
 @model Keas.Mvc.Models.ReportModels.AdminHistoryReportViewModel
+@{ ViewData["Title"] = "Admin Action History"; }
 
-
-<div class="card people-color">
-    <div class="card-header-people">
-        <div class="card-head">
-            <h2>Admin Action History</h2>
+<div class="space-y-6 pb-8">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Admin Action History</h1>
         </div>
     </div>
-
-    <div class="card-content">
-        <form asp-action="ActionsByAdmins" method="get">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="row align-items-end">
-                <div class="col-sm">
-                    <h3>Filters</h3>
-                    <div class="form-group">
-                        <div class="form-group">
-                            <label asp-for="Start" class="control-label"></label>
-                            <input id="start" asp-for="Start" class="form-control" />
-                            <span asp-validation-for="Start" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="End" class="control-label"></label>
-                            <input id="end" asp-for="End" class="form-control" />
-                            <span asp-validation-for="End" class="text-danger"></span>
-                        </div>
-                        <div class="form-group">
-                            <label asp-for="PersonId" class="control-label"></label>
-                            <select asp-for="PersonId" class="form-control" asp-items="@(new SelectList(Model.Admins, "Id", "Name"))"></select>
-                        </div>
-                        <div class="form-group">
-                            <hero-icon name="arrow-path" class="size-4"></hero-icon><input type="submit" value="Refresh Report" class="btn btn-link" />
+    <div class="space-y-4">
+        <form class="space-y-5" asp-action="ActionsByAdmins" method="get">
+                    <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+                    <div class="grid items-start gap-6 lg:grid-cols-2">
+                        <div class="min-w-0 space-y-3">
+                            <h2 class="m-0 text-lg font-semibold">Filters</h2>
+                            <div class="space-y-2">
+                                <div class="space-y-2">
+                                    <label asp-for="Start" class="block text-sm font-semibold"></label>
+                                    <input id="start" asp-for="Start" class="input w-full" />
+                                    <span asp-validation-for="Start" class="text-sm text-error"></span>
+                                </div>
+                                <div class="space-y-2">
+                                    <label asp-for="End" class="block text-sm font-semibold"></label>
+                                    <input id="end" asp-for="End" class="input w-full" />
+                                    <span asp-validation-for="End" class="text-sm text-error"></span>
+                                </div>
+                                <div class="space-y-2">
+                                    <label asp-for="PersonId" class="block text-sm font-semibold"></label>
+                                    <select asp-for="PersonId" class="select w-full" asp-items="@(new SelectList(Model.Admins, "Id", "Name"))"></select>
+                                </div>
+                                <div class="space-y-2">
+                                    <input type="submit" value="Refresh Report" class="btn btn-primary" />
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-sm">
-                </div>
-            </div>
-        </form>
+                </form>
+    </div>
+    <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4 sm:p-6">
         <table id="adminActions" class="table dataTable">
             <thead>
                 <tr>
@@ -84,10 +84,8 @@
                 }
             </tbody>
         </table>
-
     </div>
 </div>
-
 
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")
@@ -100,7 +98,7 @@
 
     <script type="text/javascript">
         $('.dataTable').DataTable({
-            "dom": 'lBfrtip',
+            "layout": { topStart: ['pageLength', 'buttons'] },
             "buttons": [
                 { extend: 'copyHtml5' },
                 { extend: 'excelHtml5' },

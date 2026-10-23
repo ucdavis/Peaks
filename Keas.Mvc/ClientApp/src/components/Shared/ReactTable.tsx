@@ -1,9 +1,15 @@
-import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon
+} from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useTable, flexRender } from '@tanstack/react-table';
 import { ColumnFilterHeaders } from './Filtering';
 import { peaksFeatures, PeaksColumn, PeaksInitialState } from './tableFeatures';
-import { PaginationItem, PaginationLink } from 'reactstrap';
 import { ReactTableUtil } from '../../util/tableUtil';
 
 export const ReactTable = <T extends object>({
@@ -36,171 +42,206 @@ export const ReactTable = <T extends object>({
   const canPreviousPage = table.getCanPreviousPage();
   const canNextPage = table.getCanNextPage();
   const pageCount = table.getPageCount();
-  const pageOptions = table.getPageOptions();
+  const filteredCount = table.getFilteredRowModel().rows.length;
+  const displayPage = pageCount ? pageIndex + 1 : 0;
   const gotoPage = (index: number) => {
-    if (index >= 0 && index < pageCount) {
+    if (Number.isInteger(index) && index >= 0 && index < pageCount) {
       table.setPageIndex(index);
     }
   };
   const setPageSize = table.setPageSize;
 
   return (
-    <>
-      <table className='table table-bordered table-striped'>
-        <thead>
-          {headerGroups.map(headerGroup => (
-            <tr className='table-row' key={headerGroup.id}>
-              {headerGroup.headers.map(header => {
-                const column = header.column;
-                const sorted = column.getIsSorted();
-                const label = flexRender(
-                  column.columnDef.header,
-                  header.getContext()
-                );
-                const content = (
-                  <>
-                    {label}
-                    <span aria-hidden='true'>
-                      {sorted && (
-                        sorted === 'desc' ? (
-                          <ArrowDownIcon className='hero-icon size-4' aria-hidden='true' />
-                        ) : (
-                          <ArrowUpIcon className='hero-icon size-4' aria-hidden='true' />
-                        )
-                      )}
-                    </span>
-                  </>
-                );
-                return (
-                  <th
-                    key={header.id}
-                    scope='col'
-                    className={`sort-${sorted || 'none'}`}
-                    aria-sort={
-                      sorted === 'asc'
-                        ? 'ascending'
-                        : sorted === 'desc'
-                        ? 'descending'
-                        : undefined
-                    }
-                  >
-                    {column.getCanSort() ? (
-                      <button
-                        type='button'
-                        className='table-sort-button'
-                        onClick={event => {
-                          const multi =
-                            event.shiftKey && column.getCanMultiSort();
-                          column.toggleSorting(
-                            !multi && table.state.sorting.length > 1
-                              ? column.getFirstSortDir() === 'desc'
-                              : undefined,
-                            multi
-                          );
-                        }}
-                      >
-                        {content}
-                      </button>
-                    ) : (
-                      content
-                    )}
-                  </th>
-                );
-              })}
-            </tr>
-          ))}
-          <ColumnFilterHeaders headerGroups={headerGroups} />
-        </thead>
-        <tbody>
-          {page.map(row => {
-            return (
-              <tr className='rt-tr-group' key={row.id}>
-                {row.getAllCells().map(cell => {
+    <div className='asset-table'>
+      <div className='overflow-x-auto rounded-t-[calc(var(--radius-box)-1px)]'>
+        <table className='table'>
+          <thead>
+            {headerGroups.map(headerGroup => (
+              <tr className='table-row' key={headerGroup.id}>
+                {headerGroup.headers.map(header => {
+                  const column = header.column;
+                  const sorted = column.getIsSorted();
+                  const label = flexRender(
+                    column.columnDef.header,
+                    header.getContext()
+                  );
+                  const content = (
+                    <>
+                      {label}
+                      <span className='shrink-0' aria-hidden='true'>
+                        {sorted &&
+                          (sorted === 'desc' ? (
+                            <ArrowDownIcon
+                              className='hero-icon size-4'
+                              aria-hidden='true'
+                            />
+                          ) : (
+                            <ArrowUpIcon
+                              className='hero-icon size-4'
+                              aria-hidden='true'
+                            />
+                          ))}
+                      </span>
+                    </>
+                  );
                   return (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
+                    <th
+                      key={header.id}
+                      scope='col'
+                      className={`sort-${sorted || 'none'}`}
+                      aria-sort={
+                        sorted === 'asc'
+                          ? 'ascending'
+                          : sorted === 'desc'
+                          ? 'descending'
+                          : undefined
+                      }
+                    >
+                      {column.getCanSort() ? (
+                        <button
+                          type='button'
+                          className='asset-table-sort'
+                          onClick={event => {
+                            const multi =
+                              event.shiftKey && column.getCanMultiSort();
+                            column.toggleSorting(
+                              !multi && table.state.sorting.length > 1
+                                ? column.getFirstSortDir() === 'desc'
+                                : undefined,
+                              multi
+                            );
+                          }}
+                        >
+                          {content}
+                        </button>
+                      ) : (
+                        content
                       )}
-                    </td>
+                    </th>
                   );
                 })}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      <div className='pagination justify-content-center'>
-        <PaginationItem
-          className='align-self-center'
-          onClick={() => gotoPage(0)}
-          disabled={!canPreviousPage}
-        >
-          <PaginationLink first />
-        </PaginationItem>
-        <PaginationItem
-          className='align-self-center'
-          onClick={() => gotoPage(pageIndex - 1)}
-          disabled={!canPreviousPage}
-        >
-          <PaginationLink previous />
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink>
-            <span>
-              Page{' '}
-              <strong>
-                {pageIndex + 1} of {pageOptions.length}
-              </strong>{' '}
-            </span>
-            <span>
-              | Go to page:{' '}
-              <input
-                className='form-control d-inline'
-                type='number'
-                defaultValue={pageIndex + 1}
-                onChange={e => {
-                  const page = e.target.value ? Number(e.target.value) - 1 : 0;
-                  gotoPage(page);
-                }}
-                style={{ width: '100px' }}
-              />
-            </span>{' '}
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem>
-          <PaginationLink>
+            ))}
+            <ColumnFilterHeaders headerGroups={headerGroups} />
+          </thead>
+          <tbody>
+            {page.length === 0 && (
+              <tr>
+                <td
+                  colSpan={table.getAllLeafColumns().length}
+                  className='py-12 text-center text-base-content/60'
+                >
+                  No matching records found. Try adjusting your filters.
+                </td>
+              </tr>
+            )}
+            {page.map(row => {
+              return (
+                <tr key={row.id}>
+                  {row.getAllCells().map(cell => {
+                    return (
+                      <td key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div className='pagination flex flex-wrap items-center justify-between gap-4 border-t border-main-border px-4 py-4'>
+        <p className='m-0 text-sm text-base-content/60' aria-live='polite'>
+          {filteredCount ? pageIndex * pageSize + 1 : 0}–
+          {Math.min((pageIndex + 1) * pageSize, filteredCount)} of{' '}
+          {filteredCount} records
+        </p>
+        <div className='flex flex-wrap items-center gap-4'>
+          <label className='flex items-center gap-2 text-sm'>
+            Rows per page
             <select
-              className='form-control'
+              className='select select-sm w-20'
               value={pageSize}
               onChange={e => {
                 ReactTableUtil.setPageSize(e.target.value);
                 setPageSize(Number(e.target.value));
               }}
             >
-              {[10, 20, 30, 40, 50].map(pageSize => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
+              {[10, 20, 30, 40, 50].map(size => (
+                <option key={size} value={size}>
+                  {size}
                 </option>
               ))}
-            </select>{' '}
-          </PaginationLink>
-        </PaginationItem>
-        <PaginationItem
-          className='align-self-center'
-          onClick={() => gotoPage(pageIndex + 1)}
-          disabled={!canNextPage}
-        >
-          <PaginationLink next />
-        </PaginationItem>
-        <PaginationItem
-          className='align-self-center'
-          onClick={() => gotoPage(pageCount - 1)}
-          disabled={!canNextPage}
-        >
-          <PaginationLink last />
-        </PaginationItem>
+            </select>
+          </label>
+          <nav
+            className='flex items-center gap-1'
+            aria-label='Table pagination'
+          >
+            <button
+              type='button'
+              className='btn btn-sm btn-ghost btn-square'
+              aria-label='First'
+              disabled={!canPreviousPage}
+              onClick={() => gotoPage(0)}
+            >
+              <ChevronDoubleLeftIcon className='size-4' aria-hidden='true' />
+            </button>
+            <button
+              type='button'
+              className='btn btn-sm btn-ghost btn-square'
+              aria-label='Previous'
+              disabled={!canPreviousPage}
+              onClick={() => gotoPage(pageIndex - 1)}
+            >
+              <ChevronLeftIcon className='size-4' aria-hidden='true' />
+            </button>
+            <span className='px-2 text-sm'>
+              Page{' '}
+              <strong>
+                {displayPage} of {pageCount}
+              </strong>
+            </span>
+            <button
+              type='button'
+              className='btn btn-sm btn-ghost btn-square'
+              aria-label='Next'
+              disabled={!canNextPage}
+              onClick={() => gotoPage(pageIndex + 1)}
+            >
+              <ChevronRightIcon className='size-4' aria-hidden='true' />
+            </button>
+            <button
+              type='button'
+              className='btn btn-sm btn-ghost btn-square'
+              aria-label='Last'
+              disabled={!canNextPage}
+              onClick={() => gotoPage(pageCount - 1)}
+            >
+              <ChevronDoubleRightIcon className='size-4' aria-hidden='true' />
+            </button>
+          </nav>
+          <label className='flex items-center gap-2 text-sm'>
+            Go to page
+            <input
+              className='input input-sm w-20'
+              aria-label='Go to page'
+              type='number'
+              min={pageCount ? 1 : 0}
+              max={pageCount}
+              value={displayPage}
+              disabled={!pageCount}
+              onChange={e =>
+                gotoPage(e.target.value ? Number(e.target.value) - 1 : 0)
+              }
+            />
+          </label>
+        </div>
       </div>
-    </>
+    </div>
   );
 };

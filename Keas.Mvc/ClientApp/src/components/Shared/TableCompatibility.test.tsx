@@ -210,7 +210,7 @@ it('rejects page jumps outside the bounds and guards all navigation controls', (
   navigate('Next');
   navigate('Last');
   expect(page()).toBe('3 of 3');
-  expect(screen.getByLabelText('Next').closest('li')).toHaveClass('disabled');
+  expect(screen.getByLabelText('Next')).toBeDisabled();
   navigate('Previous');
   navigate('Last');
   expect(page()).toBe('3 of 3');
@@ -266,18 +266,18 @@ it('retains sort and filter on replacement while resetting pages and persisting 
   });
   await waitFor(() =>
     expect(container.querySelector('.pagination strong')).toHaveTextContent(
-      '1 of 0'
+      '0 of 0'
     )
   );
   for (const label of ['First', 'Previous', 'Next', 'Last']) {
     fireEvent.click(screen.getByLabelText(label));
     expect(container.querySelector('.pagination strong')).toHaveTextContent(
-      '1 of 0'
+      '0 of 0'
     );
   }
   fireEvent.change(screen.getByRole('spinbutton'), { target: { value: '3' } });
   expect(container.querySelector('.pagination strong')).toHaveTextContent(
-    '1 of 0'
+    '0 of 0'
   );
   cleanup();
   const second = render(<EquipmentTable equipment={data} />);

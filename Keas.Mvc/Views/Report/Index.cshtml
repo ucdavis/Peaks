@@ -5,7 +5,7 @@
 <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="min-w-0 space-y-2">
             @await Html.PartialAsync("_ActiveTeamEyebrow")
-            <h1 class="m-0 text-3xl font-bold text-base-content">Reports</h1>
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Reports</h1>
             <p class="m-0 text-base-content/70">Browse reports for your team’s people, assets, and activity.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2"></div>
@@ -14,7 +14,7 @@
         @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
         {
         <section class="min-w-0 space-y-3" aria-label="Equipment reports">
-            <h2 class="m-0 flex items-center gap-2 text-xl font-bold"><hero-icon name="computer-desktop" class="size-5"></hero-icon>Equipment</h2>
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="computer-desktop" class="size-5"></hero-icon>Equipment</h2>
             <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
                 <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="EquipmentReport">All equipment<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
                 <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="EquipmentReportV2">All equipment V2<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
@@ -23,7 +23,7 @@
         </section>
         }
         <section class="min-w-0 space-y-3" aria-label="People reports">
-            <h2 class="m-0 flex items-center gap-2 text-xl font-bold"><hero-icon name="users" class="size-5"></hero-icon>People</h2>
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="users" class="size-5"></hero-icon>People</h2>
             <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
                 <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="SupervisorDirectReports">Direct reports by supervisor<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
                 <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="PersonActions">Actions taken against people<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
@@ -38,7 +38,7 @@
         @if (Model.Contains(Role.Codes.SpaceMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
         {
         <section class="min-w-0 space-y-3" aria-label="Workstations reports">
-            <h2 class="m-0 flex items-center gap-2 text-xl font-bold"><hero-icon name="building-office-2" class="size-5"></hero-icon>Workstations</h2>
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="building-office-2" class="size-5"></hero-icon>Workstations</h2>
             <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
                 <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="WorkstationReport">All workstations<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
             </ul>
@@ -47,7 +47,7 @@
         @if (Model.Contains(Role.Codes.AccessMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
         {
         <section class="min-w-0 space-y-3" aria-label="Access reports">
-            <h2 class="m-0 flex items-center gap-2 text-xl font-bold"><hero-icon name="identification" class="size-5"></hero-icon>Access</h2>
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="identification" class="size-5"></hero-icon>Access</h2>
             <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
                 <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="AccessReport">All access<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
             </ul>
@@ -56,7 +56,7 @@
         @if (Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
         {
         <section class="min-w-0 space-y-3" aria-label="Keys reports">
-            <h2 class="m-0 flex items-center gap-2 text-xl font-bold"><hero-icon name="key" class="size-5"></hero-icon>Keys</h2>
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="key" class="size-5"></hero-icon>Keys</h2>
             <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
                 <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="KeyReport">All keys<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
                 <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="KeyWithSerialReport">Keys with serials<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
@@ -67,7 +67,7 @@
         @if (Model.Contains(Role.Codes.DocumentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin))
         {
         <section class="min-w-0 space-y-3" aria-label="Documents reports">
-            <h2 class="m-0 flex items-center gap-2 text-xl font-bold"><hero-icon name="document-text" class="size-5"></hero-icon>Documents</h2>
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="document-text" class="size-5"></hero-icon>Documents</h2>
             <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
                 <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="PeopleWithIncompleteDocuments">People with unsigned documents<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
                 <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="CompletedDocuments">Completed documents<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
@@ -75,7 +75,7 @@
         </section>
         }
         <section class="min-w-0 space-y-3" aria-label="General reports">
-            <h2 class="m-0 flex items-center gap-2 text-xl font-bold"><hero-icon name="list-bullet" class="size-5"></hero-icon>General</h2>
+            <h2 class="m-0 flex items-center gap-2 text-xl font-semibold"><hero-icon name="list-bullet" class="size-5"></hero-icon>General</h2>
             <ul class="m-0 list-none divide-y divide-main-border border-y border-main-border p-0">
                 <li><a class="flex items-center justify-between gap-3 py-3 text-sm text-base-content hover:text-primary focus-visible:outline-2 focus-visible:outline-primary" asp-action="ExpiringItems">Expiring items<hero-icon name="arrow-right" class="size-4 shrink-0 text-base-content/50"></hero-icon></a></li>
                 @if (Model.Contains(Role.Codes.EquipmentMaster) || Model.Contains(Role.Codes.DepartmentalAdmin) || Model.Contains(Role.Codes.KeyMaster) || Model.Contains(Role.Codes.SpaceMaster))

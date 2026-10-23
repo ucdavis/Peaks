@@ -5,13 +5,13 @@
 <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="min-w-0 space-y-2">
             @await Html.PartialAsync("_ActiveTeamEyebrow")
-            <h1 class="m-0 text-3xl font-bold text-base-content">Bulk edit people</h1>
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Bulk edit people</h1>
             <p class="m-0 text-base-content/70">Select people from the table, then choose the changes to apply.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-controller="TeamAdmin" asp-action="Index"><hero-icon name="arrow-left" class="size-4"></hero-icon>Team settings</a></div>
     </div>
     <section class="space-y-4" aria-labelledby="people-heading">
-        <div class="space-y-2"><h2 id="people-heading" class="m-0 text-xl font-bold">Select people</h2><p class="m-0 text-sm text-base-content/70">Click a row to select it. Hold Ctrl or Command to select multiple people, or Shift to select a range.</p></div>
+        <div class="space-y-2"><h2 id="people-heading" class="m-0 text-xl font-semibold">Select people</h2><p class="m-0 text-sm text-base-content/70">Click a row to select it. Hold Ctrl or Command to select multiple people, or Shift to select a range.</p></div>
         <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4"><table id="people" class="table dataTable">
             <thead>
                 <tr>
@@ -43,7 +43,7 @@
         </table></div>
     </section>
     <section class="space-y-4" aria-labelledby="changes-heading">
-        <h2 id="changes-heading" class="m-0 text-xl font-bold">Changes to apply</h2>
+        <h2 id="changes-heading" class="m-0 text-xl font-semibold">Changes to apply</h2>
         <form id="bulk-edit-form" asp-action="BulkEdit" class="space-y-5 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6">
             @Html.HiddenFor(a => a.Ids)
             <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
@@ -86,15 +86,15 @@
 </div>
 @section Styles
     {
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.0/css/select.dataTables.min.css">
+    @await Html.PartialAsync("_DataTableStyles")
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/4.1.1/css/select.dataTables.min.css">
     <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 }
 
 @section Scripts
     {
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/select/1.3.0/js/dataTables.select.min.js"></script>
+    @await Html.PartialAsync("_DataTableScripts")
+    <script type="text/javascript" src="https://cdn.datatables.net/select/4.1.1/js/dataTables.select.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/js/gijgo.min.js" type="text/javascript"></script>
 
     <script type="text/javascript">

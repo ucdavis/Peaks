@@ -2,8 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { IEquipment } from '../../models/Equipment';
 import EquipmentTable from './EquipmentTable';
-import SearchCustomOptions from '../Shared/SearchCustomOptions';
-import SearchDefinedOptions from '../Shared/SearchDefinedOptions';
+import { AssetFilterBar } from '../Shared/AssetFilterBar';
 
 interface IProps {
   equipment: IEquipment[];
@@ -40,6 +39,26 @@ const EquipmentTableContainer = (props: IProps) => {
   const [makeFilters, setMakeFilters] = useState<string[]>([]);
   const [modelFilters, setModelFilters] = useState<string[]>([]);
   const [teamSpacesFilters, setTeamSpacesFilters] = useState<string[]>([]);
+
+  const filterOptions = React.useMemo(() => {
+    const unique = (values: string[]) =>
+      Array.from(new Set(values.filter(Boolean))).sort();
+    return {
+      attributes: unique(
+        props.equipment.flatMap(item =>
+          (item.attributes || []).flatMap(attribute => [
+            attribute.key,
+            attribute.value
+          ])
+        )
+      ),
+      managedSystem: unique(
+        props.equipment.map(item => item.systemManagementId)
+      ),
+      make: unique(props.equipment.map(item => item.make)),
+      model: unique(props.equipment.map(item => item.model))
+    };
+  }, [props.equipment]);
 
   // filter functions
   const checkTagFilters = (equipment: IEquipment, filters: string[]) => {
@@ -182,76 +201,77 @@ const EquipmentTableContainer = (props: IProps) => {
 
   return (
     <div>
-      <div className='row'>
-        <SearchDefinedOptions
-          definedOptions={props.tags}
-          selected={tagFilters}
-          onSelect={setTagFilters}
-          disabled={false}
-          placeholder='Search for Tags'
-          id='searchTagsEquipment'
-        />
-        <SearchCustomOptions
-          selected={attributeFilters}
-          onSelect={setAttributeFilters}
-          disabled={false}
-          placeholder='Search for Attributes'
-          id='searchAttributes'
-        />
-        <SearchDefinedOptions
-          definedOptions={props.equipmentTypes}
-          selected={equipmentTypeFilters}
-          onSelect={setEquipmentTypeFilters}
-          disabled={false}
-          placeholder='Search for Equipment Types'
-          id='searchEquipmentTypes'
-        />
-        <SearchDefinedOptions
-          definedOptions={props.equipmentProtectionLevels}
-          selected={equipmentProtectionFilters}
-          onSelect={setEquipmentProtectionFilters}
-          disabled={false}
-          placeholder='Search Protection Level'
-          id='equipmentProtectionLevels'
-        />
-        <SearchDefinedOptions
-          definedOptions={props.equipmentAvailabilityLevels}
-          selected={equipmentAvailabilityFilters}
-          onSelect={setEquipmentAvailabilityFilters}
-          disabled={false}
-          placeholder='Search Availability Level'
-          id='equipmentAvailabilityLevels'
-        />
-        <SearchCustomOptions
-          selected={managedSystemFilters}
-          onSelect={setManagedSystemFilters}
-          disabled={false}
-          placeholder='Search for Managed System Id'
-          id='searchBigfix'
-        />
-        <SearchCustomOptions
-          selected={makeFilters}
-          onSelect={setMakeFilters}
-          disabled={false}
-          placeholder='Search for Make'
-          id='searchMake'
-        />
-        <SearchCustomOptions
-          selected={modelFilters}
-          onSelect={setModelFilters}
-          disabled={false}
-          placeholder='Search for Model'
-          id='searchModel'
-        />
-        <SearchDefinedOptions
-          definedOptions={props.teamSpaces}
-          selected={teamSpacesFilters}
-          onSelect={setTeamSpacesFilters}
-          disabled={false}
-          placeholder='Search for Team Spaces'
-          id='searchTeamSpaces'
-        />
-      </div>
+      <AssetFilterBar
+        categories={[
+          {
+            id: 'tags',
+            label: 'Tags',
+            options: props.tags,
+            selected: tagFilters,
+            onChange: setTagFilters
+          },
+          {
+            id: 'attributes',
+            label: 'Attributes',
+            options: filterOptions.attributes,
+            selected: attributeFilters,
+            onChange: setAttributeFilters,
+            allowCustom: true
+          },
+          {
+            id: 'type',
+            label: 'Equipment type',
+            options: props.equipmentTypes,
+            selected: equipmentTypeFilters,
+            onChange: setEquipmentTypeFilters
+          },
+          {
+            id: 'protection',
+            label: 'Protection level',
+            options: props.equipmentProtectionLevels,
+            selected: equipmentProtectionFilters,
+            onChange: setEquipmentProtectionFilters
+          },
+          {
+            id: 'availability',
+            label: 'Availability level',
+            options: props.equipmentAvailabilityLevels,
+            selected: equipmentAvailabilityFilters,
+            onChange: setEquipmentAvailabilityFilters
+          },
+          {
+            id: 'managed-system',
+            label: 'Managed system ID',
+            options: filterOptions.managedSystem,
+            selected: managedSystemFilters,
+            onChange: setManagedSystemFilters,
+            allowCustom: true
+          },
+          {
+            id: 'make',
+            label: 'Make',
+            options: filterOptions.make,
+            selected: makeFilters,
+            onChange: setMakeFilters,
+            allowCustom: true
+          },
+          {
+            id: 'model',
+            label: 'Model',
+            options: filterOptions.model,
+            selected: modelFilters,
+            onChange: setModelFilters,
+            allowCustom: true
+          },
+          {
+            id: 'spaces',
+            label: 'Team space',
+            options: props.teamSpaces,
+            selected: teamSpacesFilters,
+            onChange: setTeamSpacesFilters
+          }
+        ]}
+      />
       <EquipmentTable
         equipment={filteredEquipment}
         onRevoke={props.openRevokeModal}

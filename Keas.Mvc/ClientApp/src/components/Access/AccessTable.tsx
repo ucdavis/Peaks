@@ -1,5 +1,5 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import * as React from 'react';
-import { Button } from 'reactstrap';
 import { IAccess } from '../../models/Access';
 import { DateUtil } from '../../util/dates';
 import {
@@ -49,12 +49,10 @@ const AccessTable = (props: IProps) => {
     () => [
       {
         cell: data => (
-          <Button
-            color='link'
+          <AssetDetailsLink
+            path={`access/details/${data.row.original.id}`}
             onClick={() => props.showDetails(data.row.original)}
-          >
-            Details
-          </Button>
+          />
         ),
         header: ' '
       },

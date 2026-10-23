@@ -67,15 +67,15 @@ const KeySerialDetails = (props: IProps) => {
         size='lg'
         className='keys-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className="text-xl font-semibold">
             Details for {selectedKeySerial.key.code} {selectedKeySerial.number}
           </h2>
           <Button color='link' onClick={props.closeModal}>
             <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
-        <ModalBody>
+        <ModalBody className='p-6'>
           <KeySerialEditValues
             keySerial={selectedKeySerial}
             disableEditing={true}

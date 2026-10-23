@@ -6,7 +6,7 @@
     <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="min-w-0 space-y-2">
             @await Html.PartialAsync("_ActiveTeamEyebrow")
-            <h1 class="m-0 text-3xl font-bold text-base-content">API settings</h1>
+            <h1 class="m-0 text-3xl font-semibold text-base-content">API settings</h1>
             <p class="m-0 text-base-content/70">Manage the API code used by integrations with this team.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-controller="TeamAdmin"
@@ -14,7 +14,7 @@
         </div>
         <section class="max-w-3xl space-y-5 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6"
                  aria-labelledby="api-code-heading">
-            <h2 id="api-code-heading" class="m-0 text-xl font-bold">Team API code</h2>
+            <h2 id="api-code-heading" class="m-0 text-xl font-semibold">Team API code</h2>
             @if (Model.TeamApiCode != null)
             {
                 <div role="alert" class="alert alert-warning"><hero-icon name="exclamation-triangle"
@@ -47,7 +47,7 @@
                     </form>
                 </section>
                 <section class="space-y-4" aria-labelledby="api-docs-heading">
-                    <h2 id="api-docs-heading" class="m-0 text-xl font-bold">API documentation</h2>
+                    <h2 id="api-docs-heading" class="m-0 text-xl font-semibold">API documentation</h2>
                     <a href="/swagger" target="_blank" rel="noopener noreferrer" class="btn btn-outline"><hero-icon name="book-open"
                                                                                                                         class="size-4"></hero-icon>View API documentation<hero-icon name="arrow-top-right-on-square"
                                                                                     class="size-4"></hero-icon></a>

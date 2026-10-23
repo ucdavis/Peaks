@@ -3,14 +3,14 @@
 @{
     ViewData["Title"] = "Confirm Assignments";
 }
-<div class="card">
-    <div class="card-header-primary">
+<div class="card mb-4 border border-main-border bg-base-100 shadow-sm">
+    <div class="border-b border-main-border">
         <div class="row justify-content-between">
-            <div class="card-head">
-                <h2>Confirm Assignments</h2>
+            <div class="px-5 py-4 sm:px-6">
+                <h2 class="text-xl font-semibold">Confirm Assignments</h2>
 
             </div>
-            <div class="card-head">
+            <div class="px-5 py-4 sm:px-6">
                 <form asp-action="AcceptAll" method="POST">
                     <div class="form-group">
                         <input type="submit" value="Confirm all pending" class="btn btn-success" />
@@ -20,18 +20,18 @@
         </div>
     </div>
 
-    <div class="card-content">
+    <div class="card-body gap-4 p-5 sm:p-6">
         @if (Model.KeySerials.Any())
         {
-            <div class="card keys-color">
+            <div class="card mb-4 border border-main-border bg-base-100 shadow-sm keys-color">
                 <div class="card-header-keys">
-                    <div class="card-head">
-                        <h2>
+                    <div class="px-5 py-4 sm:px-6">
+                        <h2 class="text-xl font-semibold">
                             <hero-icon name="key" class="size-4"></hero-icon> Keys
                         </h2>
                     </div>
                 </div>
-                <div class="card-content">
+                <div class="card-body gap-4 p-5 sm:p-6">
                     <table class="table">
                         <thead>
                             <tr>
@@ -53,7 +53,7 @@
                                     <td align="right">
                                         <form asp-action="AcceptKey" asp-route-serialId="@item.Id" method="POST">
                                             <div class="form-group">
-                                                <input type="submit" value="Confirm" class="btn btn-primary" />
+                                                <input type="submit" value="Confirm" class="btn btn-asset" />
                                             </div>
                                         </form>
                                     </td>
@@ -66,15 +66,15 @@
         }
         @if (Model.Equipment.Any())
         {
-            <div class="card equipment-color">
+            <div class="card mb-4 border border-main-border bg-base-100 shadow-sm equipment-color">
                 <div class="card-header-equipment">
-                    <div class="card-head">
-                        <h2>
+                    <div class="px-5 py-4 sm:px-6">
+                        <h2 class="text-xl font-semibold">
                             <hero-icon name="computer-desktop" class="size-4"></hero-icon> Equipment
                         </h2>
                     </div>
                 </div>
-                <div class="card-content">
+                <div class="card-body gap-4 p-5 sm:p-6">
                     <table class="table">
                         <thead>
                             <tr>
@@ -105,7 +105,7 @@
                                     <td align="right">
                                         <form asp-action="AcceptEquipment" asp-route-equipmentId="@item.Id" method="POST">
                                             <div class="form-group">
-                                                <input type="submit" value="Confirm" class="btn btn-primary" />
+                                                <input type="submit" value="Confirm" class="btn btn-asset" />
                                             </div>
                                         </form>
                                     </td>
@@ -118,15 +118,15 @@
         }
         @if (Model.Workstations.Any())
         {
-            <div class="card spaces-color">
+            <div class="card mb-4 border border-main-border bg-base-100 shadow-sm spaces-color">
                 <div class="card-header-spaces">
-                    <div class="card-head">
-                        <h2>
+                    <div class="px-5 py-4 sm:px-6">
+                        <h2 class="text-xl font-semibold">
                             <hero-icon name="briefcase" class="size-4"></hero-icon> Workstation
                         </h2>
                     </div>
                 </div>
-                <div class="card-content">
+                <div class="card-body gap-4 p-5 sm:p-6">
                     <table class="table">
                         <thead>
                             <tr>
@@ -151,7 +151,7 @@
                                     <td align="right">
                                         <form asp-action="AcceptWorkstation" asp-route-workstationId="@item.Id" method="POST">
                                             <div class="form-group">
-                                                <input type="submit" value="Confirm" class="btn btn-primary" />
+                                                <input type="submit" value="Confirm" class="btn btn-asset" />
                                             </div>
                                         </form>
                                     </td>

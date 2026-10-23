@@ -54,17 +54,17 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
         size='lg'
         className='equipment-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Search by Computer Property</h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className="text-xl font-semibold">Search by Computer Property</h2>
           <Button color='link' onClick={modalToggle}>
             <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
 
-        <ModalBody className='d-flex justify-content-center'>
+        <ModalBody className='p-6 flex justify-center'>
           {renderModalBody()}
         </ModalBody>
-        <ModalFooter>{renderSearchButton()}</ModalFooter>
+        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>{renderSearchButton()}</ModalFooter>
       </Modal>
     );
   };
@@ -73,7 +73,7 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
     return (
       <Form className='w-75'>
         <FormGroup className='mb-5'>
-          <h3>Searchable Properties:</h3>
+          <h3 className="text-lg font-semibold">Searchable Properties:</h3>
           <p>
             Computer Name, LoginID, IP Address, Mac Address, or Serial Number
           </p>
@@ -160,14 +160,14 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
   const renderSearchButton = () => {
     if (isSearching) {
       return (
-        <Button color='primary' disabled={false}>
+        <Button color='asset' disabled={false}>
           {' '}
           <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-6 animate-spin' />
         </Button>
       );
     } else {
       return (
-        <Button color='primary' disabled={false} onClick={onSearch}>
+        <Button color='asset' disabled={false} onClick={onSearch}>
           Search!
         </Button>
       );

@@ -4,7 +4,7 @@
 <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="space-y-2">
             @await Html.PartialAsync("_ActiveTeamEyebrow")
-            <h1 class="m-0 text-3xl font-bold text-base-content">Team roles</h1>
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Team roles</h1>
             <p class="m-0 text-base-content/70">Manage who can administer @Model.Team.Name.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-action="Index" ><hero-icon name="arrow-left" class="size-4"></hero-icon>Team settings</a><a class="btn btn-primary" asp-action="AddMemberRole"><hero-icon name="plus" class="size-4"></hero-icon>Assign role</a></div>
@@ -40,12 +40,12 @@
     }
     <script type="text/javascript">
         $(function () {
-            $(".table").dataTable({
+            $(".table").DataTable({
                 "columnDefs": [
                     {
                         targets: -1,
                         className: 'dt-body-right',
-                        sortable: false,
+                        orderable: false,
                     },
 
                 ]

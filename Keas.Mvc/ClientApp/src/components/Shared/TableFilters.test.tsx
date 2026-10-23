@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { render, fireEvent, within, cleanup } from '@testing-library/react';
+import {
+  render,
+  fireEvent,
+  within,
+  cleanup,
+  screen
+} from '@testing-library/react';
 import EquipmentTable from '../Equipment/EquipmentTable';
 import AccessTable from '../Access/AccessTable';
 import { fakeEquipment } from '../specs/mockData/Equipment';
@@ -109,7 +115,7 @@ it('details and actions retain the original equipment after sorting and filterin
   const row = within(container.querySelector('tbody tr'));
   fireEvent.click(row.getByText('Details'));
   expect(details).toHaveBeenCalledWith(equipment[0]);
-  fireEvent.click(row.getByRole('button', { name: '' }));
-  fireEvent.click(row.getByText('Revoke'));
+  fireEvent.click(row.getByRole('button', { name: 'Row actions' }));
+  fireEvent.click(screen.getByRole('menuitem', { name: 'Revoke' }));
   expect(revoke).toHaveBeenCalledWith(equipment[0]);
 });

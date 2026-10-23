@@ -90,7 +90,7 @@ describe('Space Container', () => {
       );
     });
 
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('.asset-table tbody tr');
 
     let foundIt = false;
     matches.forEach(function (match) {
@@ -125,7 +125,7 @@ describe('Space Container', () => {
         { container }
       );
     });
-    const matches = container.querySelectorAll('.rt-tr-group');
+    const matches = container.querySelectorAll('.asset-table tbody tr');
 
     expect(matches.length).toBe(4);
   });
@@ -147,6 +147,8 @@ describe('Space Container', () => {
         { container }
       );
     });
+
+    expect(container.querySelector('.spaces-color')).not.toHaveClass('card');
 
     // should show spaces info
     const spaceTitle = container.querySelector('.card-title').textContent;

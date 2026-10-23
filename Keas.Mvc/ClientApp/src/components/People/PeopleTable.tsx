@@ -1,6 +1,6 @@
+import { AssetDetailsLink } from '../Shared/AssetDetailsLink';
 import * as React from 'react';
 import { useMemo } from 'react';
-import { Button } from 'reactstrap';
 import { IPerson, IPersonInfo } from '../../models/People';
 import { ReactTableUtil } from '../../util/tableUtil';
 import { ReactTable } from '../Shared/ReactTable';
@@ -24,12 +24,10 @@ const PeopleTable = (props: IProps) => {
     () => [
       {
         cell: data => (
-          <Button
-            color='link'
+          <AssetDetailsLink
+            path={`people/details/${data.row.original.id}`}
             onClick={() => props.showDetails(data.row.original)}
-          >
-            Details
-          </Button>
+          />
         ),
         header: ' '
       },

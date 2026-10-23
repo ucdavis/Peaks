@@ -66,7 +66,7 @@ const KeySerialEditValues = (props: IProps) => {
   return (
     <div>
       <div className='row justify-content-between'>
-        <h3>Key Details</h3>
+        <h3 className="text-lg font-semibold">Key Details</h3>
         {props.disableEditing && props.openEditModal && renderEditKeySerial()}
       </div>
       <div className='wrapperasset'>
@@ -140,7 +140,7 @@ const KeySerialEditValues = (props: IProps) => {
         </FormGroup>
       </div>
       {error && error.message && !error.path && (
-        <span className='color-unitrans'>
+        <span className='text-error'>
           {
             error.message // if we have a non-specific error
           }

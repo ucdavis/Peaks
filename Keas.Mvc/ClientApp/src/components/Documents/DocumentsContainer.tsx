@@ -1,4 +1,5 @@
-import { DocumentTextIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { DocumentTextIcon } from '@heroicons/react/24/solid';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { IPerson } from '../../models/People';
 import { PermissionsUtil } from '../../util/permissions';
@@ -89,18 +90,18 @@ const DocumentsContainer = (props: IProps): JSX.Element => {
   }
 
   return (
-    <div className='card documents-color'>
+    <div className='card mb-4 border border-main-border bg-base-100 shadow-sm documents-color'>
       <div className='card-header-documents'>
-        <div className='card-head row justify-content-between'>
-          <h2>
-            <DocumentTextIcon data-icon="document-text" className='hero-icon size-4' /> Documents
+        <div className='px-5 py-4 sm:px-6 flex items-center justify-between gap-4'>
+          <h2 className="text-xl font-semibold">
+            <DocumentTextIcon data-icon="document-text" className='hero-icon size-5' /> Documents
           </h2>
           <Button color='link' onClick={() => setAssign(true)}>
             <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Document
           </Button>
         </div>
       </div>
-      <div className='card-content'>
+      <div className='card-body gap-4 p-5 sm:p-6'>
         <DocumentsList
           documents={documents}
           downloadUrl={`/api/${ctx.team.slug}/documents/get`}

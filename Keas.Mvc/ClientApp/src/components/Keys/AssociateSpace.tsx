@@ -189,23 +189,23 @@ const AssociateSpace = (props: IProps) => {
       size='lg'
       className='keys-color'
     >
-      <div className='modal-header row justify-content-between'>
-        <h2>Assign Key</h2>
+      <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+        <h2 className="text-xl font-semibold">Assign Key</h2>
         <Button color='link' onClick={closeModal}>
           <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
         </Button>
       </div>
-      <ModalBody>
+      <ModalBody className='p-6'>
         {renderSearchSpace()}
 
         {renderSearchKey()}
 
         {renderCreateKey()}
       </ModalBody>
-      <ModalFooter className='justify-content-between'>
+      <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0 justify-between'>
         <span className='text-danger'>{error}</span>
         <Button
-          color='primary'
+          color='asset'
           onClick={assignSelected}
           disabled={!validState || submitting}
         >

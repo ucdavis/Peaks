@@ -56,13 +56,13 @@ const CreateKey = (props: IProps) => {
         size='lg'
         className='keys-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Create Key</h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className="text-xl font-semibold">Create Key</h2>
           <Button color='link' onClick={closeModal}>
             <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
-        <ModalBody>
+        <ModalBody className='p-6'>
           <form ref={formRef}>
             <KeyEditValues
               selectedKey={key}
@@ -73,9 +73,9 @@ const CreateKey = (props: IProps) => {
             />
           </form>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
           <Button
-            color='primary'
+            color='asset'
             onClick={editSelected}
             disabled={!validState || submitting}
           >
@@ -134,7 +134,7 @@ const CreateKey = (props: IProps) => {
 
   return (
     <div>
-      <Button color='link' onClick={props.onOpenModal}>
+      <Button color='asset' size='sm' onClick={props.onOpenModal}>
         <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Key
       </Button>
       {renderModal()}

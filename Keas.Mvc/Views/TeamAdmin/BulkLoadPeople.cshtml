@@ -4,7 +4,7 @@
 <div class="flex flex-wrap items-start justify-between gap-4">
         <div class="min-w-0 space-y-2">
             @await Html.PartialAsync("_ActiveTeamEyebrow")
-            <h1 class="m-0 text-3xl font-bold text-base-content">Bulk load people</h1>
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Bulk load people</h1>
             <p class="m-0 text-base-content/70">Import people from IAM using your team’s PPS departments.</p>
         </div>
         <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-controller="TeamAdmin" asp-action="Index"><hero-icon name="arrow-left" class="size-4"></hero-icon>Team settings</a></div>
@@ -12,13 +12,13 @@
     <div role="alert" class="alert alert-error max-w-4xl"><hero-icon name="exclamation-triangle" class="size-5"></hero-icon><span>Large departments can take a while to load. If the request times out, it continues in the background. Wait at least a couple of hours before running it again.</span></div>
     <div class="max-w-4xl space-y-8">
         <section class="space-y-4 text-sm leading-6" aria-labelledby="import-info-heading">
-            <h2 id="import-info-heading" class="m-0 text-xl font-bold">How the import works</h2>
+            <h2 id="import-info-heading" class="m-0 text-xl font-semibold">How the import works</h2>
             <p class="m-0">The loader adds new people as needed. You can run it again to import new employees; it does not remove people whose appointments have ended.</p>
             <p class="m-0"><a class="link text-primary" href="https://iam.ucdavis.edu/" target="_blank" rel="noopener noreferrer">Identity and Access Management (IAM)</a> supplies user information based on PPS department associations. Campus directory associations can differ from home department codes in PPS.</p>
             <a class="btn btn-outline" asp-controller="PersonAdmin" asp-action="UploadPeople"><hero-icon name="arrow-up-tray" class="size-4"></hero-icon>Import people from CSV</a>
         </section>
         <section class="space-y-4" aria-labelledby="departments-heading">
-            <h2 id="departments-heading" class="m-0 text-xl font-bold">PPS departments</h2>
+            <h2 id="departments-heading" class="m-0 text-xl font-semibold">PPS departments</h2>
             <ul class="m-0 list-none divide-y divide-main-border rounded-sm border border-main-border bg-base-100 p-0">
                 @foreach (var dept in Model)
                 {

@@ -1,8 +1,11 @@
 @layer theme, base, legacy, components, utilities;
+@layer utilities.daisyui.component, utilities.daisyui.modifier;
 
 @import 'tailwindcss';
 @import '@ucdavis/gunrock-tailwind/imports.css';
 @import './legacy.css' layer(legacy);
+@import './asset-colors.css';
+@import './asset-tables.css';
 
 /* Override Gunrock's unlayered white root background. */
 html,
@@ -70,7 +73,7 @@ body {
   --color-neutral-color: var(--color-ucd-blue);
 
   --color-people: var(--color-ucd-doubledecker);
-  --color-equipment: var(--color-ucd-gold);
+  --color-equipment: #daaa00;
   --color-access: var(--color-ucd-quad);
   --color-keys: var(--color-ucd-tahoe);
   --color-spaces: var(--color-ucd-pinot);
@@ -149,5 +152,25 @@ body {
     inset: 0;
     z-index: 1040;
     background: #0006;
+  }
+}
+
+/* Use the same color layer as daisyUI's own variants so outline, soft,
+ * hover, and disabled styles can override the foreground as usual. */
+@layer utilities {
+  @layer daisyui.modifier.color {
+    .btn-asset {
+      --btn-color: var(--asset-color, var(--color-primary));
+      --btn-fg: var(--asset-button-content, var(--color-primary-content));
+    }
+
+    .badge-asset {
+      --badge-color: var(--asset-color, var(--color-primary));
+      --badge-fg: var(--asset-button-content, var(--color-primary-content));
+    }
+  }
+
+  .btn-asset [data-icon] {
+    color: inherit;
   }
 }

@@ -135,7 +135,7 @@ const CreatePerson = (props: IProps) => {
 
   return (
     <div>
-      <Button color='link' onClick={props.onAddNew}>
+      <Button color='asset' size='sm' onClick={props.onAddNew}>
         <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Person
       </Button>
       <Modal
@@ -144,13 +144,13 @@ const CreatePerson = (props: IProps) => {
         size='lg'
         className='people-color'
       >
-        <div className='modal-header row justify-content-between'>
-          <h2>Add Person</h2>
+        <div className='flex flex-wrap items-start justify-between gap-4 p-6 pb-3'>
+          <h2 className="text-xl font-semibold">Add Person</h2>
           <Button color='link' onClick={closeModal}>
             <XMarkIcon data-icon="x-mark" className='hero-icon size-6' />
           </Button>
         </div>
-        <ModalBody>
+        <ModalBody className='p-6'>
           <div className='container-fluid'>
             <div className='form-group'>
               <SearchUsers updatePerson={onSelectPerson} />
@@ -177,9 +177,9 @@ const CreatePerson = (props: IProps) => {
             )}
           </div>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className='flex flex-wrap items-center justify-end gap-2 p-6 pt-0'>
           <Button
-            color='primary'
+            color='asset'
             onClick={createSelected}
             disabled={!validState || submitting}
           >
