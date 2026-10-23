@@ -1,36 +1,25 @@
 @model TeamDocumentSettingsModel
-
-@{
-    ViewData["Title"] = "Document Signing Settings";
-}
-
-
-<div class="card documents-color">
-  <div class="card-header-documents">
-    <div class="card-head">
-      <div class="row justify-content-between">
-        <h2>Document Settings</h2>
-      </div>
+@{ ViewData["Title"] = "DocuSign settings"; }
+<div class="space-y-8 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-bold text-base-content">DocuSign settings</h1>
+            <p class="m-0 text-base-content/70">Choose a signing account and review its shared templates.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-controller="TeamAdmin" asp-action="Index"><hero-icon name="arrow-left" class="size-4"></hero-icon>Team settings</a></div>
     </div>
-  </div>
-  <div class="card-content">
-      <div class="row">
-          <div class="col-md-8">
-              <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseInstructions" aria-expanded="false" aria-controls="collapseInstructions">
-                  Show Instructions
-              </button>
-
-              <div class="collapse" id="collapseInstructions">
-                  <div class="card card-body">
-                      <h3>Familiar with DocuSign Already?</h3>
+    <details class="rounded-sm border border-main-border bg-base-100 p-5">
+        <summary class="cursor-pointer font-semibold">DocuSign setup instructions</summary>
+        <div class="mt-5 max-w-4xl space-y-4 text-sm leading-6"><h3 class="m-0 text-lg font-semibold">Familiar with DocuSign Already?</h3>
                       <p>You need to create a template with a single recipient who's role is "signer" and share the template with the PEAKS group.</p>
-                      <h3>Basic Instructions</h3>
-                      <p>You can find detailed instructions in CRU's Peaks <a target="_blank" href="https://computing.caes.ucdavis.edu/documentation/peaks/docusign-documents">DocuSign Documents</a> Document.
+                      <h3 class="m-0 text-lg font-semibold">Basic Instructions</h3>
+                      <p>You can find detailed instructions in CRU's Peaks <a target="_blank" rel="noopener noreferrer" href="https://computing.caes.ucdavis.edu/documentation/peaks/docusign-documents">DocuSign Documents</a> Document.
                           It essentially boils down to the following steps...</p>
-                      <ol>
+                      <ol class="list-decimal space-y-2 ps-5">
                           <li>
-                              Login to <a href="https://app.docusign.com/home" target="_blank">docusign.com</a> and choose "Templates" from the top menu.
-                              If you do not see that option, <a href="https://itcatalog.ucdavis.edu/service/docusign-pilot" target="_blank">request access here</a>
+                              Login to <a href="https://app.docusign.com/home" target="_blank" rel="noopener noreferrer">docusign.com</a> and choose "Templates" from the top menu.
+                              If you do not see that option, <a href="https://itcatalog.ucdavis.edu/service/docusign-pilot" target="_blank" rel="noopener noreferrer">request access here</a>
                           </li>
                           <li>Click "New" and create a template</li>
                           <li>Give the template and name and then add the documents that need signing</li>
@@ -42,128 +31,68 @@
                           <li>And finally, click on the template name to navigate to the template details page.</li>
                       </ol>
                       <p>Templates created in this manner should be listed in Peaks' Assign Document dialog the next time the User Details page is visited.</p>
-                  </div>
-              </div>
-          </div>
-      </div>
-      @if (Model.TeamAccount?.AccountId == null)
-      {
-          <div class="card card-body">
-              <h3>You currently have no account selected</h3>
-              <p>
-              Before you can access your shared templates, you must add your docusign account to this team.
-              The following DocuSign accounts are available. Please select one.
-              </p>
-          </div>
-      }
-      else
-      {
-          <div class="card card-body">
-              <h3>Selected Account:</h3>
-              <ul>
-                  <li><b>Docusign Account:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountName)</li>
-                  <li><b>Account Id:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.AccountId)</li>
-                  <li><b>Api Base Url:</b> @Html.DisplayFor(modelItem => modelItem.TeamAccount.ApiBasePath)</li>
-              </ul>
-          </div>
-      }
-      <p></p>
-      <table class="table">
-          <thead>
-              <tr>
-                  <th>
-                      @Html.DisplayNameFor(model => model.AvailableAccounts.First().AccountName)
-                  </th>
-                  <th>
-                      @Html.DisplayNameFor(model => model.AvailableAccounts.First().AccountId)
-                  </th>
-                  <th>
-                      @Html.DisplayNameFor(model => model.AvailableAccounts.First().ApiBasePath)
-                  </th>
-                  <th></th>
-              </tr>
-          </thead>
-          <tbody>
-              @foreach (var item in Model.AvailableAccounts)
-              {
-                  <tr>
-                      <td>
-                          @Html.DisplayFor(modelItem => item.AccountName)
-                      </td>
-                      <td>
-                          @Html.DisplayFor(modelItem => item.AccountId)
-                      </td>
-                      <td>
-                          @Html.DisplayFor(modelItem => item.ApiBasePath)
-                      </td>
-                      <td>
-                          <form asp-action="SelectAccount" method="post">
-                              <input id="AccountId" name="AccountId" type="text" value="@item.AccountId" hidden />
-                              <a href="" onclick="this.parentElement.submit(); return false;">Select Account</a>
-                          </form>
-                      </td>
-                  </tr>
-              }
-          </tbody>
-      </table>
-  </div>
-@if (Model.TeamAccount.AccountId != null)
-{
-    <div class="card-content">
-        <div class="card card-body">
-        <div class="card card-body">
-            <h3>Templates available and shared for this account</h3>
-        </div>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Template Name</th>
-                <th>Template Id</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var item in Model.TemplateNames)
-            {
-                <tr>
-                    <td>
-                        @item.Name
-                    </td>
-                    <td>@item.Id</td>
-                    <td></td>
-                </tr>
-            }
-            </tbody>
-        </table>
-    </div>
-    </div>
-}
 </div>
-
-
-
-
-
-@section Styles
-{
-    @{ await Html.RenderPartialAsync("_ReportStylePartial");}
-}
-
-@section Scripts
-{
-    @{ await Html.RenderPartialAsync("_ReportScriptsPartial");}
-    <script type="text/javascript">
-        $(function () {
-            $(".table").dataTable({                
-                "columnDefs": [
+    </details>
+    <section class="space-y-4" aria-labelledby="selected-account-heading">
+        <h2 id="selected-account-heading" class="m-0 text-xl font-bold">Selected account</h2>
+        @if (Model.TeamAccount?.AccountId == null)
+        {
+            <div role="alert" class="alert alert-info"><hero-icon name="information-circle" class="size-5"></hero-icon><span>Select a DocuSign account below to access its shared templates.</span></div>
+        }
+        else
+        {
+            <dl class="m-0 grid gap-5 rounded-sm border border-main-border bg-base-100 p-5 md:grid-cols-3">
+                <div><dt class="text-sm text-base-content/60">Account name</dt><dd class="m-0 mt-1 font-semibold">@Model.TeamAccount.AccountName</dd></div>
+                <div><dt class="text-sm text-base-content/60">Account ID</dt><dd class="m-0 mt-1 break-all font-mono text-sm">@Model.TeamAccount.AccountId</dd></div>
+                <div><dt class="text-sm text-base-content/60">API base URL</dt><dd class="m-0 mt-1 break-all text-sm">@Model.TeamAccount.ApiBasePath</dd></div>
+            </dl>
+        }
+    </section>
+    <section class="space-y-4" aria-labelledby="accounts-heading">
+        <h2 id="accounts-heading" class="m-0 text-xl font-bold">Available accounts</h2>
+        <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4">
+            <table class="table" id="accounts-table">
+                <thead><tr><th scope="col">Account name</th><th scope="col">Account ID</th><th scope="col">API base URL</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead>
+                <tbody>
+                @foreach (var item in Model.AvailableAccounts)
+                {
+                    <tr>
+                        <td class="font-semibold">@item.AccountName</td><td>@item.AccountId</td><td>@item.ApiBasePath</td>
+                        <td class="text-right"><form asp-action="SelectAccount" method="post">
+                            <input name="AccountId" type="hidden" value="@item.AccountId" />
+                            <button type="submit" class="btn btn-sm btn-outline" aria-label="Select @item.AccountName">Select account</button>
+                        </form></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    @if (Model.TeamAccount?.AccountId != null)
+    {
+        <section class="space-y-4" aria-labelledby="templates-heading">
+            <div class="space-y-2"><h2 id="templates-heading" class="m-0 text-xl font-bold">Shared templates</h2><p class="m-0 text-sm text-base-content/70">Templates available and shared for the selected account.</p></div>
+            <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4">
+                <table class="table" id="templates-table">
+                    <thead><tr><th scope="col">Template name</th><th scope="col">Template ID</th></tr></thead>
+                    <tbody>
+                    @foreach (var item in Model.TemplateNames)
                     {
-                        targets: -1,
-                        className: 'dt-body-right',
-                        sortable: false,
-                    },
-
-                ]
-            });
-        });
+                        <tr><td class="font-medium">@item.Name</td><td>@item.Id</td></tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+</div>
+@section Styles {
+    @await Html.PartialAsync("_ReportStylePartial")
+}
+@section Scripts {
+    @await Html.PartialAsync("_CommonReportScripts")
+    <script>
+        $('#templates-table').DataTable();
+        $('#accounts-table').DataTable({columnDefs: [{ targets: -1, orderable: false }]});
     </script>
 }

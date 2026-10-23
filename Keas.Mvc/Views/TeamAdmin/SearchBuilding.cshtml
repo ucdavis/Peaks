@@ -1,24 +1,24 @@
 @model System.Collections.Generic.List<Keas.Core.Models.SpaceSearchModel>
-
-@{
-    ViewBag.Title = "Space Search Results";
-}
-
-        @{ await Html.RenderPartialAsync("_SpaceSearchForm");}
-        <div class="card">
-            <div class="card-header-primary">
-                <div class="card-head">
-                    <h2>Space Search Results</h2>
-                </div>
-            </div>
-            <div class="card-content">
-                <table id="table" class="table dataTable">
+@{ ViewData["Title"] = "Organization search"; }
+<div class="space-y-8 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-bold text-base-content">Organization search</h1>
+            <p class="m-0 text-base-content/70">Find a financial organization by building and add it to your team.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-controller="TeamAdmin" asp-action="Index"><hero-icon name="arrow-left" class="size-4"></hero-icon>Team settings</a></div>
+    </div>
+    @{ await Html.RenderPartialAsync("_SpaceSearchForm"); }
+    <section class="space-y-4" aria-labelledby="search-results-heading">
+        <h2 id="search-results-heading" class="m-0 text-xl font-bold">Search results</h2>
+        <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4"><table id="table" class="table dataTable">
                     <thead>
                         <tr>
-                            <th>Building Name</th>
-                            <th>Department</th>
-                            <th>Org</th>
-                            <th>Add to Team</th>
+                            <th scope="col">Building Name</th>
+                            <th scope="col">Department</th>
+                            <th scope="col">Org</th>
+                            <th scope="col">Add to Team</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -29,25 +29,24 @@
                                 <td>@item.DeptName</td>
                                 <td>@item.ChartNum-@item.OrgId</td>
                                 <td>
-                                    <form asp-action="AddFISOrg" asp method="post">
+                                    <form asp-action="AddFISOrg" method="post">
                                         @Html.Hidden("Chart", item.ChartNum)
                                         @Html.Hidden("OrgCode", item.OrgId)
-                                        <input type="submit" value="Add" class="btn btn-primary" />
+                                        <input type="submit" value="Add" class="btn btn-sm btn-outline" />
                                     </form>
                                 </td>
                             </tr>
                         }
                     </tbody>
-                </table>
-            </div>
-        </div>
-
+                </table></div>
+    </section>
+</div>
 @section Scripts {
 
      @{await Html.RenderPartialAsync("_ImportJS");}
      <script type="text/javascript">
         $(function () {
-            $("#table").dataTable({                
+            $("#table").dataTable({
                 "columnDefs": [
                     {
                         targets: -1,

@@ -1,9 +1,22 @@
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import * as icons from '@heroicons/react/24/outline/index.js';
-import { readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const names = JSON.parse(readFileSync(new URL('./heroicons.json', import.meta.url)));
+const viewsRoot = fileURLToPath(new URL('../../Views/', import.meta.url));
+for (const file of readdirSync(viewsRoot, { recursive: true })) {
+  if (!file.endsWith('.cshtml')) continue;
+  const view = readFileSync(join(viewsRoot, file), 'utf8');
+  for (const match of view.matchAll(/<hero-icon\b[^>]*\bname\s*=\s*["']([a-z][a-z0-9-]*)["']/g)) {
+    if (!Object.hasOwn(names, match[1])) {
+      throw new Error(`Unregistered Razor Heroicon "${match[1]}" in ${file}. Add it to scripts/heroicons.json.`);
+    }
+  }
+}
+
 const license = readFileSync(new URL('../node_modules/@heroicons/react/LICENSE', import.meta.url), 'utf8').trim();
 const entries = Object.entries(names).map(([name, component]) => {
   if (!icons[component]) throw new Error(`Unknown Heroicon: ${component}`);

@@ -4,6 +4,12 @@
 @import '@ucdavis/gunrock-tailwind/imports.css';
 @import './legacy.css' layer(legacy);
 
+/* Override Gunrock's unlayered white root background. */
+html,
+body {
+  background-color: var(--color-base-200);
+}
+
 /* Include server-rendered pages as well as React. Paths are relative to this file. */
 @source '../';
 @source '../../../Views';
@@ -26,6 +32,24 @@
 @plugin 'daisyui' {
   themes: false;
   logs: false;
+}
+
+/* Keep daisyUI's alert variants and layout, with PEAKS' shared alert treatment.
+ * Match in the utilities layer where daisyUI defines its alert borders. */
+@layer utilities {
+  .alert.alert {
+    border-width: 0;
+    border-inline-start: 6px solid var(--alert-color, var(--color-neutral));
+    border-radius: var(--radius-sm);
+    background-color: color-mix(in oklab, var(--alert-color, var(--color-neutral)) 10%, transparent);
+    background-image: none;
+    color: var(--color-base-content);
+    box-shadow: none;
+  }
+
+  .alert svg {
+    color: var(--alert-color, var(--color-neutral));
+  }
 }
 
 /* Shared PEAKS design tokens. Gunrock supplies the UC Davis palette and fonts. */

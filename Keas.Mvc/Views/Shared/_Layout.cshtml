@@ -6,7 +6,7 @@
 @inject ITeamsManager TeamsManager
 @inject IConfiguration Configuration
 <!DOCTYPE html>
-<html lang="en" class="font-sans" data-theme="peaks">
+<html lang="en" class="bg-base-200 font-sans" data-theme="peaks">
 @{
     var currentController = this.ViewContext.RouteData.Values["controller"].ToString();
     var activeMenu = string.Empty;
@@ -50,6 +50,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - PEAKS</title>
     <link rel="icon" type="image/x-icon" href="~/favicon.ico" asp-append-version="true" />
+    <link rel="icon" type="image/svg+xml" href="~/favicon-dark.svg" media="(prefers-color-scheme: dark)" asp-append-version="true" />
 
     <vite-entry src="src/index.tsx" styles-only="true"></vite-entry>
 
@@ -57,7 +58,7 @@
     @RenderSection("Styles", required: false)
 </head>
 
-<body>
+<body class="bg-base-200">
     <div class="page-wrap">
   <header>
     <div class="content-wrapper">
@@ -204,7 +205,7 @@
     @if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"] as string))
     {
         <div class="content-wrapper">
-            <div class="alert alert-danger">
+            <div class="alert alert-error">
                 <button type="button" class="float-right cursor-pointer" data-dismiss-message aria-label="Dismiss message">
                 <hero-icon name="x-mark" class="size-5"></hero-icon>
                 </button> @TempData["ErrorMessage"]
@@ -222,7 +223,7 @@
         </div>
     }
 
-    <main role="main" class="main-content-wrapper content-wrapper">
+    <main role="main" class="content-wrapper mt-8">
         @* Inject React *@
         <div id="root"></div>
 

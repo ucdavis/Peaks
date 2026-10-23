@@ -1,96 +1,28 @@
 @using Keas.Core.Models
 @model BulkEditModel
-
-@{
-    ViewBag.Title = "Person Bulk Edit";
-}
-
-<div class="card people-color">
-    <div class="card-header-people">
-        <div class="card-head">
-            <h2>Bulk Edit</h2>
+@{ ViewData["Title"] = "Bulk edit people"; }
+<div class="space-y-8 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-bold text-base-content">Bulk edit people</h1>
+            <p class="m-0 text-base-content/70">Select people from the table, then choose the changes to apply.</p>
         </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-controller="TeamAdmin" asp-action="Index"><hero-icon name="arrow-left" class="size-4"></hero-icon>Team settings</a></div>
     </div>
-    <div class="card-content">
-        <div class="col-lg-4">
-            <form id="bulk-edit-form" asp-action="BulkEdit">
-                @Html.HiddenFor(a => a.Ids)
-
-                <div class="form-group">
-                    <label asp-for="DeleteUsers" class="control-label"></label>
-                    <input asp-for="DeleteUsers" class="form-control form-control-lg" />
-                </div>
-                <div id="showHide">
-                    <div class="form-group">
-                        <label class="control-label">Category</label>
-                        <select asp-for="Category" asp-items="@(new SelectList(Model.CategoryChoices))" class="form-control"></select>
-                        <div class="form-group">
-                            <input asp-for="UpdateCategory" />
-                            <label asp-for="UpdateCategory"></label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="StartDate"></label>
-                        <input asp-for="StartDate" class="form-control datepicker" />
-                        <div class="form-group">
-                            <input asp-for="UpdateStartDate" />
-                            <label asp-for="UpdateStartDate"></label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="EndDate"></label>
-                        <input asp-for="EndDate" class="form-control datepicker" />
-                        <div class="form-group">
-                            <input asp-for="UpdateEndDate" />
-                            <label asp-for="UpdateEndDate"></label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="SupervisorEmail"></label>
-                        <input asp-for="SupervisorEmail" class="form-control" />
-                        <div class="form-group">
-                            <input asp-for="UpdateSupervisorEmail" />
-                            <label asp-for="UpdateSupervisorEmail"></label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-
-                        <label asp-for="SelectedTags"></label>
-                        <select asp-for="SelectedTags" asp-items="@(new SelectList(Model.Tags))" class="form-control" multiple></select>
-                        <small class="help-block">Ctrl Click to select multiple Tags</small>
-                        <div class="form-group">
-                            <input asp-for="UpdateTags" />
-                            <label asp-for="UpdateTags"></label>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Updated Selected People" class="btn btn-primary" />
-                </div>
-            </form>
-        </div>
-
-    </div>
-</div>
-
-<div class="card people-color">
-    <div class="card-header-people">
-        <div class="card-head">
-            <h2>Select People to Edit</h2>
-        </div>
-    </div>
-    <div class="card-content">
-        <table id="people" class="table dataTable">
+    <section class="space-y-4" aria-labelledby="people-heading">
+        <div class="space-y-2"><h2 id="people-heading" class="m-0 text-xl font-bold">Select people</h2><p class="m-0 text-sm text-base-content/70">Click a row to select it. Hold Ctrl or Command to select multiple people, or Shift to select a range.</p></div>
+        <div class="overflow-x-auto rounded-sm border border-main-border bg-base-100 p-4"><table id="people" class="table dataTable">
             <thead>
                 <tr>
-                    <th>Person</th>
-                    <th>Email</th>
-                    <th>Category</th>
-                    <th>Start</th>
-                    <th>End</th>
-                    <th>Supervisor</th>
-                    <th>Tags</th>
-                    <th>Added Date</th>
+                    <th scope="col">Person</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Start</th>
+                    <th scope="col">End</th>
+                    <th scope="col">Supervisor</th>
+                    <th scope="col">Tags</th>
+                    <th scope="col">Added Date</th>
                 </tr>
             </thead>
             <tbody>
@@ -108,11 +40,50 @@
                     </tr>
                 }
             </tbody>
-        </table>
-    </div>
-
+        </table></div>
+    </section>
+    <section class="space-y-4" aria-labelledby="changes-heading">
+        <h2 id="changes-heading" class="m-0 text-xl font-bold">Changes to apply</h2>
+        <form id="bulk-edit-form" asp-action="BulkEdit" class="space-y-5 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6">
+            @Html.HiddenFor(a => a.Ids)
+            <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+            <label class="flex cursor-pointer items-center gap-3"><input asp-for="DeleteUsers" class="checkbox checkbox-sm checkbox-error" /><span class="text-sm font-semibold">@Html.DisplayNameFor(model => model.DeleteUsers)</span></label>
+            <div id="showHide" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                <div class="min-w-0 space-y-2">
+                    <label for="Category" class="block text-sm font-semibold">Category</label>
+                    <select asp-for="Category" asp-items="@(new SelectList(Model.CategoryChoices))" class="select w-full"></select>
+                    <span asp-validation-for="Category" class="block text-sm text-error"></span>
+                    <label class="flex cursor-pointer items-center gap-2 pt-1"><input asp-for="UpdateCategory" class="checkbox checkbox-sm" /><span class="text-sm">@Html.DisplayNameFor(model => model.UpdateCategory)</span></label>
+                </div>
+                <div class="min-w-0 space-y-2">
+                    <label for="StartDate" class="block text-sm font-semibold">Start date</label>
+                    <input asp-for="StartDate" class="input w-full datepicker" />
+                    <span asp-validation-for="StartDate" class="block text-sm text-error"></span>
+                    <label class="flex cursor-pointer items-center gap-2 pt-1"><input asp-for="UpdateStartDate" class="checkbox checkbox-sm" /><span class="text-sm">@Html.DisplayNameFor(model => model.UpdateStartDate)</span></label>
+                </div>
+                <div class="min-w-0 space-y-2">
+                    <label for="EndDate" class="block text-sm font-semibold">End date</label>
+                    <input asp-for="EndDate" class="input w-full datepicker" />
+                    <span asp-validation-for="EndDate" class="block text-sm text-error"></span>
+                    <label class="flex cursor-pointer items-center gap-2 pt-1"><input asp-for="UpdateEndDate" class="checkbox checkbox-sm" /><span class="text-sm">@Html.DisplayNameFor(model => model.UpdateEndDate)</span></label>
+                </div>
+                <div class="min-w-0 space-y-2">
+                    <label for="SupervisorEmail" class="block text-sm font-semibold">Supervisor email</label>
+                    <input asp-for="SupervisorEmail" class="input w-full" />
+                    <span asp-validation-for="SupervisorEmail" class="block text-sm text-error"></span>
+                    <label class="flex cursor-pointer items-center gap-2 pt-1"><input asp-for="UpdateSupervisorEmail" class="checkbox checkbox-sm" /><span class="text-sm">@Html.DisplayNameFor(model => model.UpdateSupervisorEmail)</span></label>
+                </div>
+                <div class="min-w-0 space-y-2">
+                    <label for="SelectedTags" class="block text-sm font-semibold">Tags</label>
+                    <select asp-for="SelectedTags" asp-items="@(new SelectList(Model.Tags))" class="select h-32 w-full" multiple aria-describedby="tags-help"></select><p id="tags-help" class="m-0 text-sm text-base-content/60">Hold Ctrl or Command to select multiple tags.</p>
+                    <span asp-validation-for="SelectedTags" class="block text-sm text-error"></span>
+                    <label class="flex cursor-pointer items-center gap-2 pt-1"><input asp-for="UpdateTags" class="checkbox checkbox-sm" /><span class="text-sm">@Html.DisplayNameFor(model => model.UpdateTags)</span></label>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2 border-t border-main-border pt-5"><button type="submit" class="btn btn-primary">Update selected people</button><a class="btn btn-ghost" asp-controller="TeamAdmin" asp-action="Index">Cancel</a></div>
+        </form>
+    </section>
 </div>
-
 @section Styles
     {
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css" />
@@ -156,7 +127,7 @@
             if ($("#DeleteUsers").is(":checked") === true) {
                 $("#showHide").hide();
             } else {
-                $("#showHide").show();
+                $("#showHide").css("display", "grid");
             }
         });
         $(document).ready(function () {

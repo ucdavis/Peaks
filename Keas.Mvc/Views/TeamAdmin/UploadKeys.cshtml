@@ -6,53 +6,39 @@
     ViewData["Title"] = "Upload CSV Keys File";
 }
 
-        <div class="card">
-            <div class="card-header-keys">
-                <div class="card-head">
-                    <h2>Upload a CSV File for Key import</h2>
-                </div>
-            </div>
-            <div class="card-content col-lg-6">
-                <form asp-action="UploadKeys" method="post" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <fieldset>
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <div class="row">
-                                    <div class="col-md-10">Select CSV file to upload:</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-10">
-                                        <div class="input-group">
-                                            <input type="hidden" id="filename" name="filename" value="">
-                                            <input type="file" id="file" name="file" class="form-control" accept=".csv">
-                                            <div class="input-group-btn">
-                                                <input type="submit" value="Upload CSV" class="btn btn-primary" style="margin-left: 5px;">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </fieldset>
-                </form>
-            </div>
+<div class="space-y-8 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="min-w-0 space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-bold text-base-content">Import keys</h1>
+            <p class="m-0 text-base-content/70">Upload a CSV file using the format shown below.</p>
         </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-controller="TeamAdmin" asp-action="Upload"><hero-icon name="arrow-left" class="size-4"></hero-icon>CSV imports</a></div>
+    </div>
+    <form asp-action="UploadKeys" method="post" enctype="multipart/form-data" class="max-w-xl space-y-5 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6">
+        <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+        <div class="space-y-2">
+            <label for="file" class="block text-sm font-semibold">CSV file</label>
+            <input type="hidden" id="filename" name="filename" value="" />
+            <input type="file" id="file" name="file" class="file-input w-full" accept=".csv" required />
+        </div>
+        <div class="flex flex-wrap gap-2 border-t border-main-border pt-5"><button type="submit" class="btn btn-primary"><hero-icon name="arrow-up-tray" class="size-4"></hero-icon>Upload CSV</button><a class="btn btn-ghost" asp-controller="TeamAdmin" asp-action="Upload">Cancel</a></div>
+    </form>
         @if (Model == null || Model.Count <= 0)
         {
-            <div class="card">
-                <div class="card-header-keys">
-                    <div class="card-head">
-                        <h2>Instructions/Example</h2>
+            <div class="min-w-0 space-y-4">
+                <div class="space-y-2">
+                    <div class="space-y-2">
+                        <h2 class="m-0 text-xl font-bold">Instructions and example</h2>
                     </div>
                 </div>
-                <div class="card-content">
+                <div class="space-y-4 overflow-x-auto rounded-sm border border-main-border bg-base-100 p-5 [overflow-wrap:anywhere]">
                     <p>Format of the uploaded CSV file must be followed. Must have the following columns, and only these columns:</p><br>
                     <p><b>KeyName<span class="space">,</span>KeyCode<span class="space">,</span>KeyNotes<span class="space">,</span>KeyTags<span class="space">,</span>SerialNumber<span class="space">,</span>KerbUser<span class="space">,</span>DateIssued<span class="space">,</span>DateDue<span class="space">,</span>Status<span class="space">,</span>SerialNotes</b></p>
                     <p>Text above copies properly. If you type the list out, omit the space after the commas.</p>
-                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_key_exampleV2.csv")" class="btn btn-outline-info btn-lg" role="button"><hero-icon name="arrow-down-tray" class="size-5"></hero-icon> CSV file.</a></p>
+                    <p>Or you can use the example <a href="@Url.Content("~/files/csv_key_exampleV2.csv")" class="btn btn-outline" role="button"><hero-icon name="arrow-down-tray" class="size-5"></hero-icon> CSV file.</a></p>
                     <p><hero-icon name="star" class="size-5" style="color: red"></hero-icon> Indicates new fields, Sept 2019</p>
-                    <dl>
+                    <dl class="space-y-3 [&_dt]:font-semibold [&_dd]:ms-0 [&_dd]:text-sm [&_dd]:leading-6">
                         <dt>KeyName</dt>
                         <dd>Required - Description of key (e.g. Example Hall exterior doors). If the same KeyCode appears later in the document, only the first KeyName will be used.</dd>
                         <dt>KeyCode</dt>
@@ -80,14 +66,14 @@
 
     @if (Model != null && Model.Count > 0)
     {
-        <div style="padding-top: 15px">
-            <div class="card">
-                <div class="card-header-keys">
-                    <div class="card-head">
-                        <h2>Import Results</h2>
+        <div class="space-y-4">
+            <div class="min-w-0 space-y-4">
+                <div class="space-y-2">
+                    <div class="space-y-2">
+                        <h2 class="m-0 text-xl font-bold">Import results</h2>
                     </div>
                 </div>
-                <div class="card-content">
+                <div class="space-y-4 overflow-x-auto rounded-sm border border-main-border bg-base-100 p-5 [overflow-wrap:anywhere]">
                     <table id="results" class="table dataTable">
                         <thead>
                             <tr>
@@ -116,7 +102,7 @@
                             {
                                 var style = string.Empty;
                                 if (!item.Success)
-                                { style = "background-color: lightcoral"; }
+                                { style = "background-color: color-mix(in oklab, var(--color-error) 10%, transparent)"; }
                                 <tr style="@style">
                                     <td>@item.LineNumber</td>
                                     <td>
@@ -169,6 +155,8 @@
     }
 
 
+
+</div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
      @{await Html.RenderPartialAsync("_ImportJS");}
@@ -194,4 +182,3 @@
 @section Styles {
     @await Html.PartialAsync("_ReportStylePartial")
 }
-

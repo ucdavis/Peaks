@@ -4,7 +4,10 @@
     ViewBag.Title = "Emulate User";
 }
 
-<h2>@ViewBag.Title</h2>
+<div class="min-w-0">
+    @await Html.PartialAsync("_ActiveTeamEyebrow")
+    <h2>@ViewBag.Title</h2>
+</div>
 
 <form method="post">
     <div class="form-group">

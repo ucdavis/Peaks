@@ -1,46 +1,35 @@
-@using Humanizer
-@using Keas.Core.Extensions
 @model Keas.Mvc.Models.TeamAdminMembersListModel
-
-@{
-    ViewData["Title"] = "Role Assigned Members ";
-}
-
-  <div class="card">
-    <div class="card-header-primary">
-      <div class="card-head">
-  <h2>Remove roles for user in @Model.Team.Name</h2>
-      </div>
+@{ ViewData["Title"] = "Remove roles"; }
+<div class="space-y-6 pb-8">
+<div class="flex flex-wrap items-start justify-between gap-4">
+        <div class="space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-bold text-base-content">Remove roles</h1>
+            <p class="m-0 text-base-content/70">Select the roles to remove from @Model.Team.Name.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2"><a class="btn btn-ghost" asp-action="RoledMembers" ><hero-icon name="arrow-left" class="size-4"></hero-icon>Team roles</a></div>
     </div>
-    <div class="card-content">
-      @foreach(var item in Model.UserRoles) {
-      <div class="row">
-          <div class="col-md-4">
-              <form asp-action="RemoveRoles">
-                  <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                  <input type="hidden" name="userId" value="@item.User.Id"/>
-
-                          <div class="form-group">
-                              <div class="control-label">Name</div>
-                              <div class="form-control">@item.User.Name</div>
-                          </div>
-
-                          <div class="editor-label">Check Roles to delete</div>
-                          @foreach (var role in item.Roles)
-                          {
-                              <input id="@role.Id" type="checkbox" value="@role.Id" name="roles"/>
-                              <label for="@role.Id">@role.Name.Humanize(LetterCasing.Sentence).SafeHumanizeTitle()</label>
-                              <br/>
-                              <br/>
-                          }
-
-                          <input class="btn btn-primary" type="submit" value="Remove role(s)"/>
-
-
-              </form>
-          </div>
-      </div>
-      }
-    </div>
-  </div>
-
+    @foreach (var item in Model.UserRoles)
+    {
+        <form asp-action="RemoveRoles" class="max-w-xl space-y-5 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6">
+            <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+            <input type="hidden" name="userId" value="@item.User.Id" />
+            <div class="space-y-1"><p class="m-0 font-semibold">@item.User.LastName, @item.User.FirstName</p><p class="m-0 break-all text-sm text-base-content/60">@item.User.Email</p></div>
+            <div role="alert" class="alert alert-warning"><hero-icon name="exclamation-triangle" class="size-5"></hero-icon><span>Removing a role revokes the access it provides.</span></div>
+            <fieldset class="space-y-3">
+                <legend class="mb-3 text-sm font-semibold">Roles to remove</legend>
+                @foreach (var role in item.Roles)
+                {
+                    <label class="flex cursor-pointer items-center gap-3 rounded-sm border border-main-border p-3">
+                        <input class="checkbox checkbox-sm" type="checkbox" value="@role.Id" name="roles" />
+                        <span>@role.Name</span>
+                    </label>
+                }
+            </fieldset>
+            <div class="flex flex-wrap gap-2 border-t border-main-border pt-5">
+                <button class="btn btn-error" type="submit">Remove selected roles</button>
+                <a class="btn btn-ghost" asp-action="RoledMembers">Cancel</a>
+            </div>
+        </form>
+    }
+</div>
