@@ -9,6 +9,7 @@ interface IProps {
   placeholder: string;
   id: string;
   inputProps?: any;
+  isInvalid?: boolean;
 }
 
 // user searches and picks from a list of pre-defined options
@@ -30,6 +31,7 @@ const SearchDefinedOptions = (props: IProps) => {
         highlightOnlyResult={true}
         placeholder={props.placeholder}
         inputProps={props.inputProps}
+        isInvalid={props.isInvalid}
       />
     </div>
   );

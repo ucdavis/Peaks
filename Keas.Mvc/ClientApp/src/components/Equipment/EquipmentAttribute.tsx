@@ -15,10 +15,6 @@ interface IProps {
 
 const EquipmentAttribute = (props: IProps) => {
   const renderTypeahead = () => {
-    const style =
-      !!props.attribute.value && !props.attribute.key
-        ? (props.spacious ? 'input input-error w-full' : 'form-control is-invalid')
-        : (props.spacious ? 'input w-full' : 'form-control');
     return (
       <SearchDefinedOptions
         id={`attribute-${props.index}`} // for accessibility
@@ -33,9 +29,8 @@ const EquipmentAttribute = (props: IProps) => {
             props.changeProperty(props.index, 'key', null);
           }
         }}
-        inputProps={{
-          className: style
-        }}
+        isInvalid={!!props.attribute.value && !props.attribute.key}
+        inputProps={{ 'aria-label': `Attribute key ${props.index + 1}` }}
       />
     );
   };
@@ -44,7 +39,7 @@ const EquipmentAttribute = (props: IProps) => {
     return (
       <input
         type='text'
-        className={props.spacious ? 'input w-full' : 'form-control'}
+        className='input w-full'
         disabled={props.disabledEdit}
         value={props.attribute.key}
       />
@@ -61,7 +56,8 @@ const EquipmentAttribute = (props: IProps) => {
         <td>
           <input
             type='text'
-            className={props.spacious ? 'input w-full' : 'form-control'}
+            className='input w-full'
+            aria-label={`Attribute value ${props.index + 1}`}
             disabled={props.disabledEdit}
             value={props.attribute.value}
             onChange={e =>

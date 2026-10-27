@@ -98,8 +98,8 @@ const EditKeySerial = (props: IProps) => {
       <ModalHeading>Edit Serial {props.selectedKeySerial.key.code}{' '}
           {props.selectedKeySerial.number}</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <form>
+        <div className='space-y-6'>
+          <form className='space-y-6'>
             <KeySerialEditValues
               keySerial={keySerial}
               changeProperty={changeProperty}

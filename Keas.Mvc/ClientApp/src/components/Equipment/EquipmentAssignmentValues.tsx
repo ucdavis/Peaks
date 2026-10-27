@@ -17,7 +17,7 @@ const EquipmentAssignmentValues = (props: IProps) => {
 
   return (
     <div className={props.spacious ? 'border-t border-main-border pt-6' : undefined}>
-      <div className={props.spacious ? 'mb-4 flex flex-wrap items-center justify-between gap-3' : 'row justify-content-between mt-5'}>
+      <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
         <h3 className="text-lg font-semibold">Assignment Details</h3>
         <Button
           color='link'

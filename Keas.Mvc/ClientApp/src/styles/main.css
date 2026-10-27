@@ -1,9 +1,8 @@
-@layer theme, base, legacy, components, utilities;
+@layer theme, base, components, utilities;
 @layer utilities.daisyui.component, utilities.daisyui.modifier;
 
 @import 'tailwindcss';
 @import '@ucdavis/gunrock-tailwind/imports.css';
-@import './legacy.css' layer(legacy);
 @import './asset-colors.css';
 @import './asset-tables.css';
 
@@ -70,10 +69,11 @@ body {
   --color-secondary-color: var(--color-ucd-gold);
   --color-accent-color: var(--color-ucd-poppy);
   --color-error-color: var(--color-ucd-doubledecker);
-  --color-info-color: var(--color-ucd-putahcreek);
+  /* Darken Putah Creek so base-100 text clears 4.5:1 contrast. */
+  --color-info-color: color-mix(in oklab, var(--color-ucd-putahcreek) 92%, black);
   --color-success-color: var(--color-ucd-quad);
   --color-warning-color: #cd9400;
-  --color-neutral-color: var(--color-ucd-blue);
+  --color-neutral-color: #d1d5db;
 
   --color-people: var(--color-ucd-doubledecker);
   --color-equipment: #daaa00;
@@ -93,22 +93,23 @@ body {
   --color-base-200: var(--color-light-bg-200);
   --color-base-300: var(--color-light-bg-300);
   --color-base-content: var(--color-dark-font);
+  /* Success uses base-100 content; other variants follow their fill contrast. */
   --color-primary: var(--color-primary-color);
-  --color-primary-content: var(--color-light-font);
+  --color-primary-content: var(--color-base-100);
   --color-secondary: var(--color-secondary-color);
-  --color-secondary-content: var(--color-neutral-color);
+  --color-secondary-content: var(--color-base-content);
   --color-accent: var(--color-accent-color);
-  --color-accent-content: var(--color-neutral-color);
+  --color-accent-content: var(--color-base-content);
   --color-error: var(--color-error-color);
-  --color-error-content: var(--color-light-font);
+  --color-error-content: var(--color-base-100);
   --color-info: var(--color-info-color);
-  --color-info-content: var(--color-light-font);
+  --color-info-content: var(--color-base-100);
   --color-success: var(--color-success-color);
-  --color-success-content: var(--color-neutral-color);
+  --color-success-content: var(--color-base-100);
   --color-warning: var(--color-warning-color);
-  --color-warning-content: var(--color-neutral-color);
+  --color-warning-content: var(--color-base-content);
   --color-neutral: var(--color-neutral-color);
-  --color-neutral-content: var(--color-light-font);
+  --color-neutral-content: var(--color-base-content);
 
   --radius-selector: 0.375rem;
   --radius-field: 0.375rem;
@@ -177,5 +178,61 @@ body {
 
   .btn-asset [data-icon] {
     color: inherit;
+  }
+}
+
+@layer components {
+  /* Toast colors. */
+  .Toastify__toast--success {
+    background-color: #3DAE2B !important;
+  }
+
+  .Toastify__toast--error {
+    background-color: #C10230 !important;
+  }
+
+  .Toastify__toast {
+    color: #fff !important;
+  }
+
+  /* Date-picker positioning. */
+  .gj-datepicker-bootstrap [role=right-icon] button .gj-icon,
+  .gj-datepicker-bootstrap [role=right-icon] button .material-icons {
+    top: 8px !important;
+  }
+
+  .react-date-picker__calendar--open {
+    top: unset !important;
+    bottom: unset !important;
+    left: 100% !important;
+    right: unset !important;
+  }
+
+  /* Each asset takes a turn bouncing and pulsing in its own color. */
+  .peaks-loader-icon {
+    display: inline-flex;
+    color: var(--color-base-content);
+    animation: peaks-loader-bounce 3s infinite;
+  }
+
+  @keyframes peaks-loader-bounce {
+    0%,
+    20%,
+    100% {
+      transform: translateY(0);
+      color: var(--color-base-content);
+    }
+
+    15% {
+      transform: translateY(-10px);
+      color: var(--asset-color);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .peaks-loader-icon {
+      animation: none;
+      color: var(--asset-color);
+    }
   }
 }

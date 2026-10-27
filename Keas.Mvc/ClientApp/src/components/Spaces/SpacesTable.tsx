@@ -23,9 +23,8 @@ const SpaceWorkstationColumnFilter = ({ column }) => {
   const setFilter = value => column.setFilterValue(value);
   return (
     <select
-      className='form-control'
+      className='select select-sm w-full'
       value={filterValue}
-      style={{ width: '100%' }}
       onChange={e => {
         setFilter(e.target.value || undefined);
       }}
@@ -79,7 +78,7 @@ const SpacesTable = (props: IProps) => {
             {data.row.original.space.roomNumber}{' '}
             {data.row.original.space.bldgName}{' '}
             {!data.row.original.space.active && (
-              <span className='text-danger'> (Inactive)</span>
+              <span className='text-error'> (Inactive)</span>
             )}
           </span>
         ),

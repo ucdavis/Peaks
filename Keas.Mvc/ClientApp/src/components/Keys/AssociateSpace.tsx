@@ -68,8 +68,8 @@ const AssociateSpace = (props: IProps) => {
     if (selectedSpace) {
       return <dl><DisplayField label='Space to associate with'>{`${selectedSpace.roomNumber} ${selectedSpace.bldgName}`}</DisplayField></dl>;
     }
-    return <div className='form-group'>
-      <label>Space to associate with:</label>
+    return <div className='space-y-2'>
+      <label className='block text-sm font-semibold'>Space to associate with:</label>
       <SearchSpaces onSelect={onSelectSpace} />
     </div>;
   };
@@ -78,8 +78,8 @@ const AssociateSpace = (props: IProps) => {
     if (selectedKeyInfo) {
       return <dl><DisplayField label='Key to associate with'>{`${selectedKeyInfo.key.name} - ${selectedKeyInfo.key.code}`}</DisplayField></dl>;
     }
-    return <div className='form-group'>
-      <label>Pick a key to associate</label>
+    return <div className='space-y-2'>
+      <label className='block text-sm font-semibold'>Pick a key to associate</label>
       <SearchKeys onSelect={onSelectedKeyInfo} onDeselect={onDeselected} allowNew={false} />
     </div>;
   };

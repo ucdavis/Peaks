@@ -73,21 +73,4 @@
     border-bottom: 4px solid var(--asset-color);
   }
 
-  .wrapperasset {
-    border-color: color-mix(
-      in oklab,
-      var(--asset-color, var(--color-main-border)) 50%,
-      transparent
-    );
-  }
-
-  .react-tabs a.tab-link.active {
-    color: var(--asset-color);
-    border-bottom-color: var(--asset-color);
-    background-color: color-mix(in oklab, var(--asset-color) 10%, transparent);
-  }
-
-  .react-tabs a.tab-link:hover {
-    color: color-mix(in oklab, var(--asset-color) 80%, black);
-  }
 }

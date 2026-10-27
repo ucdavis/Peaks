@@ -3,7 +3,7 @@ import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
-import { FormGroup, Label } from 'reactstrap';
+import { FormGroup } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
 import { DateUtil } from '../../util/dates';
 
@@ -19,11 +19,10 @@ interface IProps {
 const AssignDate = (props: IProps) => {
   if (!props.disabled) {
     return (
-      <FormGroup>
-        <Label for='date'>
+      <FormGroup tag='fieldset' className='min-w-0 space-y-2'>
+        <legend className='text-sm font-semibold'>
           {props.label ? props.label : 'Set the expiration date'}
-        </Label>
-        <br />
+        </legend>
         <DatePicker
           format='MM/dd/yyyy'
           monthAriaLabel='Month'
@@ -36,7 +35,7 @@ const AssignDate = (props: IProps) => {
           onChange={props.onChangeDate}
         />
         {props.error && props.error.path === 'date' && (
-          <div className='invalid-feedback d-block'>{props.error.message}</div>
+          <div className='text-sm text-error'>{props.error.message}</div>
         )}
       </FormGroup>
     );

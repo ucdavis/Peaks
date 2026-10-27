@@ -89,7 +89,7 @@ const EditKey = (props: IProps) => {
     >
       <ModalHeading>Edit Key</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
+        <div className='space-y-6'>
           <form ref={formRef}>
             <KeyEditValues
               selectedKey={key}

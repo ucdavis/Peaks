@@ -146,12 +146,12 @@ const CreatePerson = (props: IProps) => {
       >
         <ModalHeading>Add Person</ModalHeading>
         <ModalBody>
-          <div className='container-fluid'>
-            <div className='form-group'>
+          <div className='space-y-6'>
+            <div className='space-y-2'>
               <SearchUsers updatePerson={onSelectPerson} />
             </div>
 
-            <div className='form-group'>
+            <div className='space-y-2'>
               <PersonEditValues
                 selectedPerson={person}
                 changeProperty={changeProperty}
@@ -163,7 +163,7 @@ const CreatePerson = (props: IProps) => {
               />
             </div>
 
-            {moreInfoString}
+            {moreInfoString && <p role='status' className='m-0 text-sm text-base-content/70'>{moreInfoString}</p>}
             {existingPerson && (
               <Button color='link' type='button' onClick={viewExistingPerson}>
                 <UserIcon data-icon="user" className='hero-icon size-4' aria-hidden='true' /> View

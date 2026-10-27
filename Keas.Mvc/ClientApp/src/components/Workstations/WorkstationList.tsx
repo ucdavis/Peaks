@@ -44,7 +44,7 @@ const WorkstationList = (props: IProps) => {
             <th>Space</th>
             <th>Assigned To</th>
             <th>Expiration</th>
-            <th className='list-actions'>Actions</th>
+            <th className='w-[10%]'>Actions</th>
           </tr>
         </thead>
         <tbody>{workstations}</tbody>

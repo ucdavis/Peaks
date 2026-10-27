@@ -144,9 +144,9 @@ const AssignAccess = (props: IProps) => {
             ? 'Assign Access'
             : 'Add Access'}</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <form>
-            <div className='form-group'>
+        <div className='space-y-6'>
+          <form className='space-y-6'>
+            <div className='space-y-2'>
               <AssignPerson
                 disabled={!!props.person}
                 person={props.person || person}
@@ -165,7 +165,7 @@ const AssignAccess = (props: IProps) => {
               />
             )}
             {!access && (
-              <div className='form-group'>
+              <div className='space-y-2'>
                 <SearchAccess onSelect={onSelected} onDeselect={onDeselected} />
               </div>
             )}
@@ -191,7 +191,7 @@ const AssignAccess = (props: IProps) => {
             {!!access && !!access.teamId && (
               <div>
                 <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
-                  <h3 className="text-lg font-semibold">Assign Exisiting Access</h3>
+                  <h3 className="text-lg font-semibold">Assign Existing Access</h3>
                   <Button color='link' onClick={onDeselected}>
                     Clear{' '}
                     <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />

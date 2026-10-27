@@ -77,8 +77,8 @@ const EditAccess = (props: IProps) => {
     >
       <ModalHeading>Edit Access</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <form>
+        <div className='space-y-6'>
+          <form className='space-y-6'>
             <AccessEditValues
               selectedAccess={access}
               disableEditing={false}

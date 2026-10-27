@@ -37,7 +37,7 @@ const SearchWorkstations = (props: IProps) => {
             filterBy={() => true} // don't filter on top of our search
             allowNew={false}
             renderMenuItemChildren={(option: any, propsData, index) => (
-              <div className={!!option.assignment ? 'disabled' : ''}>
+              <div className={!!option.assignment ? 'opacity-40' : ''}>
                 <div>
                   <Highlighter key='name' search={propsData.text}>
                     {option.name}

@@ -1,19 +1,24 @@
-﻿@model EmulateUserViewModel
-
-@{
-    ViewBag.Title = "Emulate User";
-}
-
-<div class="min-w-0">
-    @await Html.PartialAsync("_ActiveTeamEyebrow")
-    <h2 class="text-xl font-semibold">@ViewBag.Title</h2>
+@model EmulateUserViewModel
+@{ ViewData["Title"] = "Emulate user"; }
+<div class="space-y-6 pb-8">
+    <header class="space-y-2">
+        @await Html.PartialAsync("_ActiveTeamEyebrow")
+        <h1 class="m-0 text-3xl font-semibold text-base-content">Emulate user</h1>
+        <p class="m-0 text-base-content/70">Enter a user's email to view PEAKS with their permissions.</p>
+    </header>
+    <form method="post" class="max-w-xl space-y-5 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6">
+        <div asp-validation-summary="ModelOnly" class="text-sm text-error"></div>
+        <div class="space-y-2">
+            <label asp-for="UserEmail" class="block text-sm font-semibold">Email</label>
+            <input asp-for="UserEmail" class="input w-full" autocomplete="off" />
+            <span asp-validation-for="UserEmail" class="block text-sm text-error"></span>
+        </div>
+        <div class="flex flex-wrap gap-3 border-t border-main-border pt-5">
+            <button type="submit" class="btn btn-primary">Emulate user</button>
+            <a asp-controller="Admin" asp-action="Index" class="btn btn-ghost">Cancel</a>
+        </div>
+    </form>
 </div>
-
-<form method="post">
-    <div class="form-group">
-        <label asp-for="UserEmail" class="control-label">Email</label>
-        <input asp-for="UserEmail" class="form-control"/>
-        <span asp-validation-for="UserEmail" class="text-danger"></span>
-    </div>
-    <input type="submit" value="Emulate User" class="btn btn-primary" />
-</form>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

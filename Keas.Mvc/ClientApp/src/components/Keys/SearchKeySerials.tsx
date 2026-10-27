@@ -62,7 +62,7 @@ const SearchKeySerials = (props: IProps) => {
 
   const renderItem = (option: IKeySerial, props, index) => {
     return (
-      <div className={!!option.keySerialAssignment ? 'disabled' : ''}>
+      <div className={!!option.keySerialAssignment ? 'opacity-40' : ''}>
         <div>
           <div>
             <Highlighter search={props.text}>{option.key.name}</Highlighter>

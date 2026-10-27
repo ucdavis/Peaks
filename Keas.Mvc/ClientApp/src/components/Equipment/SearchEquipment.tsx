@@ -36,7 +36,7 @@ const SearchEquipment = (props: IProps) => {
             labelKey='label'
             allowNew={false}
             renderMenuItemChildren={(option: any, props, index) => (
-              <div className={!!option.equipment.assignment ? 'disabled' : ''}>
+              <div className={!!option.equipment.assignment ? 'opacity-40' : ''}>
                 <div>
                   <Highlighter key='equipment.name' search={props.text}>
                     {option.equipment.name}

@@ -160,8 +160,8 @@ const DuplicateEquipment = (props: IProps) => {
     >
       <ModalHeading>Duplicate Equipment</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <Form>
+        <div className='space-y-6'>
+          <Form className='space-y-6'>
             <AssignPerson
               person={person}
               label='Assign To'

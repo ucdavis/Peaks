@@ -112,8 +112,8 @@ const EditPerson = (props: IProps) => {
       >
         <ModalHeading>Edit Person</ModalHeading>
         <ModalBody>
-          <div className='container-fluid'>
-            <form>
+          <div className='space-y-6'>
+            <form className='space-y-6'>
               <PersonEditValues
                 selectedPerson={person}
                 changeProperty={changeProperty}

@@ -161,8 +161,8 @@ const AssignEquipment = (props: IProps) => {
             ? 'Assign Equipment'
             : 'Add Equipment'}</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <Form>
+        <div className='space-y-6'>
+          <Form className='space-y-6'>
             <AssignPerson
               person={person}
               label='Assign To'
@@ -184,7 +184,7 @@ const AssignEquipment = (props: IProps) => {
               />
             )}
             {!equipment && (
-              <div className='form-group'>
+              <div className='space-y-2'>
                 <SearchEquipment
                   selectedEquipment={equipment}
                   onSelect={onSelected}

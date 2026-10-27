@@ -22,16 +22,16 @@ function renderRoute(path: string) {
 
 it.each(['/team/help', '/team/help/TechSupport', '/team/home', '/help'])(
   'does not render an empty asset tab bar on %s', path => {
-    const { container } = renderRoute(path);
-    expect(container.querySelector('.react-tabs')).toBeNull();
+    renderRoute(path);
+    expect(screen.queryByRole('navigation', { name: 'Team assets' })).not.toBeInTheDocument();
     expect(screen.queryByText('Asset content')).not.toBeInTheDocument();
   }
 );
 
 it.each(['keys', 'equipment', 'access', 'spaces', 'people'])(
   'keeps the asset tab bar and content on %s pages', asset => {
-    const { container } = renderRoute(`/team/${asset}`);
-    expect(container.querySelector('.react-tabs')).not.toBeNull();
+    renderRoute(`/team/${asset}`);
+    expect(screen.getByRole('navigation', { name: 'Team assets' })).toBeVisible();
     expect(screen.getByText('Asset content')).toBeVisible();
     expect(screen.getByRole('link', { name: 'Keys' })).toHaveAttribute('href', '/team/keys');
   }

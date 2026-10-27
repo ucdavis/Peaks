@@ -1,33 +1,26 @@
-@using Keas.Core.Domain
 @model Keas.Core.Domain.Team
-
-@{
-    ViewBag.Title = "Help";
-}
-
-
-
-<div class="card mb-4 border border-main-border bg-base-100 shadow-sm">
-    <div class="border-b border-main-border">
-        <div class="row justify-content-between">
-            <div class="px-5 py-4 sm:px-6">
-                <h2 class="text-xl font-semibold">Is this a question about your stuff or Emails about your stuff?</h2>
-            </div>
+@{ ViewData["Title"] = "Technical support"; }
+<div class="space-y-8 pb-8">
+    <header class="flex flex-wrap items-start justify-between gap-4">
+        <div class="space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">Technical support</h1>
+            <p class="m-0 text-base-content/70">Choose the right contact for your question.</p>
         </div>
-    </div>
-    <div class="card-body gap-4 p-5 sm:p-6">
-        <a asp-action="MyContacts" class="btn btn-primary" style="background-color: green">Yes!</a>
-    </div>
-</div>
-<div class="card mb-4 border border-main-border bg-base-100 shadow-sm">
-    <div class="border-b border-main-border">
-        <div class="row justify-content-between">
-            <div class="px-5 py-4 sm:px-6">
-                <h2 class="text-xl font-semibold">Is this a Technical Support question or a General Inquiry NOT related to your stuff?</h2>
-            </div>
-        </div>
-    </div>
-    <div class="card-body gap-4 p-5 sm:p-6">
-        <a href=@($"https://caeshelp.ucdavis.edu/?appname=Peaks&team={@Model.Slug}") class="btn btn-primary" target="_blank" ref="noopener noreferrer">Continue...</a>
+        <a asp-action="Index" class="btn btn-ghost"><hero-icon name="arrow-left" class="size-4"></hero-icon>Help</a>
+    </header>
+    <div class="grid gap-6 md:grid-cols-2">
+        <section class="space-y-4 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6">
+            <hero-icon name="users" class="size-6"></hero-icon>
+            <h2 class="m-0 text-xl font-semibold">Questions about your stuff</h2>
+            <p class="m-0 leading-6 text-base-content/70">For questions about assignments or emails about your stuff, contact your team's admins.</p>
+            <a asp-action="MyContacts" class="link link-hover inline-flex items-center gap-2 text-primary">Find my contacts <hero-icon name="arrow-right" class="size-4"></hero-icon></a>
+        </section>
+        <section class="space-y-4 rounded-sm border border-main-border bg-base-100 p-5 sm:p-6">
+            <hero-icon name="lifebuoy" class="size-6"></hero-icon>
+            <h2 class="m-0 text-xl font-semibold">Technical issues and general inquiries</h2>
+            <p class="m-0 leading-6 text-base-content/70">Report a problem with PEAKS or ask a question unrelated to your assignments.</p>
+            <a href="@($"https://caeshelp.ucdavis.edu/?appname=Peaks&team={Model.Slug}")" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Create help ticket <hero-icon name="arrow-top-right-on-square" class="size-4"></hero-icon></a>
+        </section>
     </div>
 </div>

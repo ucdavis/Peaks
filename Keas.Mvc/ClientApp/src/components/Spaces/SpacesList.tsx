@@ -37,7 +37,7 @@ const SpacesList = (props: IProps) => {
           <th />
           <th>Room</th>
           <th>Room Name</th>
-          <th className='list-actions'>Actions</th>
+          <th className='w-[10%]'>Actions</th>
         </tr>
       </thead>
       <tbody>{spacesList}</tbody>

@@ -1,7 +1,10 @@
-﻿
-@{
-    ViewData["Title"] = "Not Authorized";
-}
-
-<h2 class="text-xl font-semibold">You are not authorized to view that.</h2>
-
+@{ ViewData["Title"] = "Access denied"; }
+<div class="max-w-3xl space-y-6 py-6">
+    <hero-icon name="information-circle" class="size-10 text-info"></hero-icon>
+    <h1 class="m-0 text-3xl font-semibold text-base-content">Access denied</h1>
+    <p class="m-0 text-lg leading-7 text-base-content/70">Your account does not have permission to view this page. Choose another team or contact your team admin for access.</p>
+    <div class="flex flex-wrap items-center gap-3">
+        <a href="@Url.Content("~/Confirm/SelectTeam")" class="btn btn-primary">Select a team</a>
+        <a href="https://caeshelp.ucdavis.edu/?appname=Peaks" class="link link-hover inline-flex items-center gap-2 text-primary" target="_blank" rel="noopener noreferrer">Contact support <hero-icon name="arrow-top-right-on-square" class="size-4"></hero-icon></a>
+    </div>
+</div>

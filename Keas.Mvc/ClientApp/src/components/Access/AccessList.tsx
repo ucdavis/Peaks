@@ -40,7 +40,7 @@ const AccessAssignmentList = (props: IProps) => {
           <th>Assigned?</th>
           <th>Number of Assignments</th>
           <th>Expiration</th>
-          <th className='list-actions'>Actions</th>
+          <th className='w-[10%]'>Actions</th>
         </tr>
       </thead>
       <tbody>{access}</tbody>

@@ -3,7 +3,7 @@ import { ArrowPathIcon, InformationCircleIcon } from '@heroicons/react/24/outlin
 import * as React from 'react';
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Button, Table } from 'reactstrap';
+import { Table } from 'reactstrap';
 import { Context } from '../../Context';
 
 interface IProps {
@@ -21,15 +21,17 @@ const EquipmentManagedSystemInfo = (props: IProps) => {
 
   const renderInfoIcon = () => {
     return (
-      <a
-        className='bigfix-info'
+      <button
+        type='button'
+        aria-label='View managed system details'
+        className='link link-hover inline-flex cursor-pointer text-primary/80 hover:text-primary'
         onClick={() => {
           modalToggle();
           getManagedSystemComputerInfo(props.managedSystemId || '');
         }}
       >
-        <InformationCircleIcon data-icon="information-circle" className='hero-icon size-5 ml-2' />
-      </a>
+        <InformationCircleIcon data-icon="information-circle" className='hero-icon ml-2 size-5 text-inherit' />
+      </button>
     );
   };
 

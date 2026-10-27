@@ -52,7 +52,7 @@ const KeyList = (props: IProps) => {
               In Use / Total
             </UncontrolledTooltip>
           </th>
-          <th className='list-actions'>Actions</th>
+          <th className='w-[10%]'>Actions</th>
         </tr>
       </thead>
       <tbody>{keys}</tbody>

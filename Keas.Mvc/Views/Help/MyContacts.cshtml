@@ -1,225 +1,69 @@
 @using Keas.Core.Domain
 @model Keas.Core.Domain.Team
-
 @{
-    ViewBag.Title = "Help";
+    ViewData["Title"] = "My contacts";
+    var roles = new[]
+    {
+        (Code: Role.Codes.DepartmentalAdmin, Title: "Team Admin", Icon: "trophy", Description: ""),
+        (Code: Role.Codes.PersonManager, Title: "Person Manager", Icon: "user-circle", Description: "These contacts can edit people's details. For assignment questions, contact the appropriate asset admin."),
+        (Code: Role.Codes.EquipmentMaster, Title: "Equipment Admin", Icon: "computer-desktop", Description: ""),
+        (Code: Role.Codes.AccessMaster, Title: "Access Admin", Icon: "identification", Description: ""),
+        (Code: Role.Codes.KeyMaster, Title: "Key Admin", Icon: "key", Description: ""),
+        (Code: Role.Codes.SpaceMaster, Title: "Space/Workstation Admin", Icon: "building-office-2", Description: ""),
+        (Code: Role.Codes.DocumentMaster, Title: "Document (DocuSign) Admin", Icon: "document-text", Description: "")
+    };
+    var groups = roles.Select(role => new
+    {
+        role.Title, role.Icon, role.Description,
+        Contacts = Model.TeamPermissions.Where(permission => permission.Role.Name.Equals(role.Code, StringComparison.OrdinalIgnoreCase))
+            .OrderBy(permission => permission.User.Name).ToList()
+    }).Where(group => group.Contacts.Any()).ToList();
 }
-
-<div class="card mb-4 border border-main-border bg-base-100 shadow-sm">
-    <div class="border-b border-main-border">
-        <div class="row justify-content-between">
-            <div class="px-5 py-4 sm:px-6">
-                <h2 class="text-xl font-semibold">For questions about your stuff, please contact one of the people below.</h2>
-                <p class="help-block">If you still have issues, or need technical support, then please submit a help ticket from the help menu.</p>
-            </div>
-            <div class="px-5 py-4 sm:px-6">
-            </div>
+<div class="space-y-8 pb-8">
+    <header class="flex flex-wrap items-start justify-between gap-4">
+        <div class="space-y-2">
+            @await Html.PartialAsync("_ActiveTeamEyebrow")
+            <h1 class="m-0 text-3xl font-semibold text-base-content">My contacts</h1>
+            <p class="m-0 text-base-content/70">Contact your team's admins for questions about your assignments or related emails.</p>
         </div>
-    </div>
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.DepartmentalAdmin, StringComparison.OrdinalIgnoreCase)))
+        <a asp-action="Index" class="btn btn-ghost"><hero-icon name="arrow-left" class="size-4"></hero-icon>Help</a>
+    </header>
+    <p class="m-0 text-base-content/70">For technical issues, <a asp-action="TechSupport" class="link link-hover text-primary">create a help ticket</a>.</p>
+    @if (groups.Any())
     {
-        <div class="card-body gap-4 p-5 sm:p-6">
-            <div class="card mb-4 border border-main-border bg-base-100 shadow-sm text-primary">
-                <div class="border-b-4 border-main-border">
-                    <div class="px-5 py-4 sm:px-6">
-                        <h2 class="text-xl font-semibold"><hero-icon name="users" class="size-4"></hero-icon> Team Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.DepartmentalAdmin, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.PersonManager, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-body gap-4 p-5 sm:p-6">
-            <div class="card mb-4 border border-main-border bg-base-100 shadow-sm people-color">
-                <div class="card-header-people">
-                    <div class="px-5 py-4 sm:px-6">
-                        <h2 class="text-xl font-semibold"><hero-icon name="computer-desktop" class="size-4"></hero-icon> Person Manager</h2>
-                        <p class="help-block">The people listed here can edit the details about individuals in the team. If you have a question about an assignment, try one of the other admins.</p>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.PersonManager, StringComparison.OrdinalIgnoreCase)))
+        <div class="grid items-start gap-8 md:grid-cols-2 xl:grid-cols-3">
+            @foreach (var group in groups)
+            {
+                <section class="min-w-0 space-y-3" aria-label="@group.Title">
+                    <h2 class="m-0 flex items-center gap-2 text-lg font-semibold">
+                        <hero-icon name="@group.Icon" class="size-5"></hero-icon>@group.Title
+                    </h2>
+                    @if (!string.IsNullOrWhiteSpace(group.Description))
                     {
-                        <tr>
-                            <td>@item.User.Name</td>
-                            <td>@Html.DisplayFor(a => item.User.Email)</td>
-                        </tr>
+                        <p class="m-0 text-sm leading-6 text-base-content/70">@group.Description</p>
                     }
-                    </tbody>
-                </table>
-            </div>
+                    <ul class="m-0 list-none divide-y divide-main-border p-0">
+                        @foreach (var contact in group.Contacts)
+                        {
+                            <li class="space-y-1 py-3">
+                                <p class="m-0 font-semibold [overflow-wrap:anywhere]">@contact.User.Name</p>
+                                @if (!string.IsNullOrWhiteSpace(contact.User.Email))
+                                {
+                                    <a class="link link-hover text-sm text-primary [overflow-wrap:anywhere]" href="mailto:@contact.User.Email">@contact.User.Email</a>
+                                }
+                                else
+                                {
+                                    <p class="m-0 text-sm text-base-content/60">No email listed.</p>
+                                }
+                            </li>
+                        }
+                    </ul>
+                </section>
+            }
         </div>
     }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.EquipmentMaster, StringComparison.OrdinalIgnoreCase)))
+    else
     {
-        <div class="card-body gap-4 p-5 sm:p-6">
-            <div class="card mb-4 border border-main-border bg-base-100 shadow-sm equipment-color">
-                <div class="card-header-equipment">
-                    <div class="px-5 py-4 sm:px-6">
-                        <h2 class="text-xl font-semibold"><hero-icon name="computer-desktop" class="size-4"></hero-icon> Equipment Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.EquipmentMaster, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.AccessMaster, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-body gap-4 p-5 sm:p-6">
-            <div class="card mb-4 border border-main-border bg-base-100 shadow-sm access-color">
-                <div class="card-header-access">
-                    <div class="px-5 py-4 sm:px-6">
-                        <h2 class="text-xl font-semibold"><hero-icon name="identification" class="size-4"></hero-icon> Access Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.AccessMaster, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.KeyMaster, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-body gap-4 p-5 sm:p-6">
-            <div class="card mb-4 border border-main-border bg-base-100 shadow-sm keys-color">
-                <div class="card-header-keys">
-                    <div class="px-5 py-4 sm:px-6">
-                        <h2 class="text-xl font-semibold"><hero-icon name="key" class="size-4"></hero-icon> Key Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.KeyMaster, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.SpaceMaster, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-body gap-4 p-5 sm:p-6">
-            <div class="card mb-4 border border-main-border bg-base-100 shadow-sm spaces-color">
-                <div class="card-header-spaces">
-                    <div class="px-5 py-4 sm:px-6">
-                        <h2 class="text-xl font-semibold"><hero-icon name="building-office-2" class="size-4"></hero-icon> Space/Workstation Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.SpaceMaster, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    }
-    @if (Model.TeamPermissions.Any(a => a.Role.Name.Equals(Role.Codes.DocumentMaster, StringComparison.OrdinalIgnoreCase)))
-    {
-        <div class="card-body gap-4 p-5 sm:p-6">
-            <div class="card mb-4 border border-main-border bg-base-100 shadow-sm documents-color">
-                <div class="card-header-documents">
-                    <div class="px-5 py-4 sm:px-6">
-                        <h2 class="text-xl font-semibold"><hero-icon name="document-text" class="size-4"></hero-icon> Document (DocuSign) Admin</h2>
-                    </div>
-                </div>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.TeamPermissions.Where(a => a.Role.Name.Equals(Role.Codes.DocumentMaster, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            <tr>
-                                <td>@item.User.Name</td>
-                                <td>@Html.DisplayFor(a => item.User.Email)</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        <p class="m-0 text-base-content/70">No team contacts are listed.</p>
     }
 </div>
-
-

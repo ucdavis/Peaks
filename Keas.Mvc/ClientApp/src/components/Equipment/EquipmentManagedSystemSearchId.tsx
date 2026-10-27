@@ -111,20 +111,22 @@ const EquipmentManagedSystemSearchId = (props: IProps) => {
                   return (
                     <tr
                       key={computer.hardware_u_bigfix_id}
-                      className='bigfix-info border-bottom'
+                      className='border-b border-main-border'
                     >
-                      <Button
-                        color='link'
-                        onClick={() =>
-                          props.addManagedSystemId(
-                            'systemManagementId',
-                            computer.hardware_u_bigfix_id
-                          )
-                        }
-                      >
-                        {computer.hardware_display_name} (
-                        {computer.hardware_u_device_name})
-                      </Button>
+                      <td>
+                        <Button
+                          color='link'
+                          onClick={() =>
+                            props.addManagedSystemId(
+                              'systemManagementId',
+                              computer.hardware_u_bigfix_id
+                            )
+                          }
+                        >
+                          {computer.hardware_display_name} (
+                          {computer.hardware_u_device_name})
+                        </Button>
+                      </td>
                     </tr>
                   );
                 })}

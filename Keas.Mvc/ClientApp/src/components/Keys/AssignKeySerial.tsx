@@ -159,8 +159,8 @@ const AssignKeySerial = (props: IProps) => {
             ? 'Assign Key Serial'
             : 'Add Key Serial'}</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <Form>
+        <div className='space-y-6'>
+          <Form className='space-y-6'>
             <AssignPerson
               disabled={
                 !!props.person ||
@@ -184,7 +184,7 @@ const AssignKeySerial = (props: IProps) => {
               />
             )}
             {!keySerial && (
-              <div className='form-group'>
+              <div className='space-y-2'>
                 <SearchKeySerial
                   selectedKey={selectedKey}
                   selectedKeySerial={keySerial}

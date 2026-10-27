@@ -228,7 +228,7 @@ export const ReactTable = <T extends object>({
           <label className='flex items-center gap-2 text-sm'>
             Go to page
             <input
-              className='input input-sm w-20'
+              className='input input-sm w-20 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none'
               aria-label='Go to page'
               type='number'
               min={pageCount ? 1 : 0}

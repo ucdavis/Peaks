@@ -91,8 +91,8 @@ const EditWorkstation = (props: IProps) => {
     >
       <ModalHeading>Edit Workstation</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <form>
+        <div className='space-y-6'>
+          <form className='space-y-6'>
             <WorkstationEditValues
               selectedWorkstation={workstation}
               changeProperty={changeProperty}

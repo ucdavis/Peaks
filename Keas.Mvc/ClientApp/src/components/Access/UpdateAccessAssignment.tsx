@@ -1,3 +1,4 @@
+import { AssetSummary } from '../Shared/AssetSummary';
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
@@ -103,21 +104,11 @@ const UpdateAccessAssignment = (props: IProps) => {
     >
       <ModalHeading>Update Access</ModalHeading>
       <ModalBody>
-        <div className='container-fluid'>
-          <form>
-            <div className='form-group'>
-              <label>Assigned To</label>
-              <input
-                type='text'
-                className='input w-full'
-                disabled={true}
-                value={
-                  !!props.accessAssignment?.person
-                    ? props.accessAssignment.person.name
-                    : ''
-                }
-              />
-            </div>
+        <div className='space-y-6'>
+          <form className='space-y-6'>
+            <AssetSummary fields={[[
+              'Assigned to', props.accessAssignment?.person?.name
+            ]]} />
             <AssignDate
               date={date}
               isRequired={true}
@@ -126,7 +117,7 @@ const UpdateAccessAssignment = (props: IProps) => {
             />
             <div>
               <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
-                <h3 className="text-lg font-semibold">Assign Exisiting Access</h3>
+                <h3 className="text-lg font-semibold">Assign Existing Access</h3>
               </div>
               <AccessEditValues
                 selectedAccess={props.selectedAccess}

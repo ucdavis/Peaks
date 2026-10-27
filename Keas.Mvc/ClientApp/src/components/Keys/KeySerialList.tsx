@@ -46,7 +46,7 @@ const KeySerialList = (props: IProps) => {
           <th>Status</th>
           <th>Assigned To</th>
           <th>Expiration</th>
-          <th className='list-actions'>Actions</th>
+          <th className='w-[10%]'>Actions</th>
         </tr>
       </thead>
       <tbody>{serials}</tbody>

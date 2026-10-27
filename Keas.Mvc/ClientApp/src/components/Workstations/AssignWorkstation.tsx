@@ -139,8 +139,8 @@ const AssignWorkstation = (props: IProps) => {
               : 'Add Workstation'}</ModalHeading>
 
         <ModalBody>
-          <div className='container-fluid'>
-            <form>
+          <div className='space-y-6'>
+            <form className='space-y-6'>
               <AssignPerson
                 disabled={
                   !!props.person ||
@@ -162,7 +162,7 @@ const AssignWorkstation = (props: IProps) => {
                 />
               )}
               {!workstation && (
-                <div className='form-group'>
+                <div className='space-y-2'>
                   <SearchWorkstations
                     selectedWorkstation={workstation}
                     onSelect={onSelected}
