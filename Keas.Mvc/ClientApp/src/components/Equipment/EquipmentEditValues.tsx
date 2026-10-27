@@ -1,4 +1,4 @@
-import { AssetSummary } from '../Shared/AssetSummary';
+import { AssetActions, AssetSummary } from '../Shared/AssetSummary';
 import EquipmentManagedSystemInfo from './EquipmentManagedSystemInfo';
 import { InformationCircleIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
@@ -109,14 +109,16 @@ const EquipmentEditValues = (props: IProps) => {
     <div>
       <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
         <h3 className="text-lg font-semibold">Equipment Details</h3>
-        {props.disableEditing && props.openEditModal && (
-          <Button
-            color='link'
-            onClick={() => props.openEditModal(props.selectedEquipment)}
-          >
-            <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' /> Edit Equipment
-          </Button>
-        )}
+        <AssetActions>
+          {props.disableEditing && props.openEditModal && (
+            <Button
+              color='link'
+              onClick={() => props.openEditModal(props.selectedEquipment)}
+            >
+              <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' /> Edit Equipment
+            </Button>
+          )}
+        </AssetActions>
       </div>
 
       <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&_.invalid-feedback]:text-sm [&_.invalid-feedback]:text-error'>

@@ -16,10 +16,17 @@ interface Props {
   children?: React.ReactNode;
 }
 
+export const AssetActions = ({ children }: { children: React.ReactNode }) => (
+  <div className='ml-auto flex max-w-full flex-wrap items-center justify-end gap-2'>
+    {children}
+  </div>
+);
+
 export const AssetSummary = ({ title, fields, tags, notes, actions, children }: Props) => (
   <section className='space-y-5'>
     {(title || actions) && <div className='flex flex-wrap items-center justify-between gap-3'>
-      {title && <h3 className='text-lg font-semibold'>{title}</h3>}{actions}
+      {title && <h3 className='text-lg font-semibold'>{title}</h3>}
+      {actions && <AssetActions>{actions}</AssetActions>}
     </div>}
     <dl className='grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3'>
       {fields.map(([label, value]) => <DisplayField key={label} label={label}>{value}</DisplayField>)}

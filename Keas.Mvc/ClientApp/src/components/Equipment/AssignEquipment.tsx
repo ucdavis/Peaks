@@ -1,3 +1,4 @@
+import { AssetActions } from '../Shared/AssetSummary';
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { addYears, format, startOfDay } from 'date-fns';
@@ -199,10 +200,12 @@ const AssignEquipment = (props: IProps) => {
                 <div>
                   <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
                     <h3 className="text-lg font-semibold">Create New Equipment</h3>
-                    <Button color='link' onClick={onDeselected}>
-                      Clear{' '}
-                      <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
-                    </Button>
+                    <AssetActions>
+                      <Button color='link' onClick={onDeselected}>
+                        Clear{' '}
+                        <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
+                      </Button>
+                    </AssetActions>
                   </div>
 
                   <EquipmentEditValues
@@ -223,10 +226,12 @@ const AssignEquipment = (props: IProps) => {
               <div>
                 <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
                   <h3 className="text-lg font-semibold">Assign Existing Equipment</h3>
-                  <Button color='link' onClick={onDeselected}>
-                    Clear{' '}
-                    <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
-                  </Button>
+                  <AssetActions>
+                    <Button color='link' onClick={onDeselected}>
+                      Clear{' '}
+                      <XMarkIcon data-icon="x-mark" className='hero-icon size-4' aria-hidden='true' />
+                    </Button>
+                  </AssetActions>
                 </div>
 
                 <EquipmentEditValues

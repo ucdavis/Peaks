@@ -3,6 +3,8 @@
 
 @import 'tailwindcss';
 @import '@ucdavis/gunrock-tailwind/imports.css';
+@import 'react-date-picker/dist/DatePicker.css' layer(components);
+@import 'react-calendar/dist/Calendar.css' layer(components);
 @import './asset-colors.css';
 @import './asset-tables.css';
 
@@ -201,12 +203,6 @@ body {
     top: 8px !important;
   }
 
-  .react-date-picker__calendar--open {
-    top: unset !important;
-    bottom: unset !important;
-    left: 100% !important;
-    right: unset !important;
-  }
 
   /* Each asset takes a turn bouncing and pulsing in its own color. */
   .peaks-loader-icon {
@@ -234,5 +230,158 @@ body {
       animation: none;
       color: var(--asset-color);
     }
+  }
+}
+
+/* Shared date fields and their calendar popovers. Keep vendor structure in the
+ * components layer so these styles and Tailwind utilities can refine it. */
+@layer components {
+  .peaks-date-picker {
+    width: 100%;
+    max-width: 20rem;
+    font-size: 0.875rem;
+    color: var(--color-base-content);
+  }
+
+  .peaks-date-picker .react-date-picker__wrapper {
+    min-height: 2.5rem;
+    gap: 0.5rem;
+    padding-inline: 0.75rem 0.375rem;
+    border: 1px solid color-mix(in oklab, var(--color-base-content) 18%, transparent);
+    border-radius: var(--radius-box);
+    background: var(--color-base-100);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .peaks-date-picker:focus-within .react-date-picker__wrapper {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 12%, transparent);
+  }
+
+  .peaks-date-picker--error .react-date-picker__wrapper {
+    border-color: var(--color-error);
+  }
+
+  .peaks-date-picker .react-date-picker__inputGroup {
+    padding-block: 0.5rem;
+  }
+
+  .peaks-date-picker .react-date-picker__inputGroup__divider {
+    color: color-mix(in oklab, var(--color-base-content) 40%, transparent);
+  }
+
+  .peaks-date-picker .react-date-picker__inputGroup__input:invalid {
+    background: transparent;
+  }
+
+  .peaks-date-picker .react-date-picker__inputGroup__input:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 1px;
+    border-radius: 0.125rem;
+  }
+
+  .peaks-date-picker .react-date-picker__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    padding: 0.375rem;
+    margin-block: 0.25rem;
+    border-radius: var(--radius-field);
+    color: color-mix(in oklab, var(--color-base-content) 65%, transparent);
+  }
+
+  .peaks-date-picker .react-date-picker__button:enabled:hover,
+  .peaks-date-picker .react-date-picker__button:focus-visible {
+    background: var(--color-base-200);
+    color: var(--color-primary);
+  }
+
+  .peaks-date-picker .react-date-picker__calendar {
+    width: 20rem;
+    max-width: calc(100vw - 2.5rem);
+    margin-block: 0.5rem;
+    z-index: 30;
+  }
+
+  .peaks-date-picker .react-calendar {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--color-main-border);
+    border-radius: 1rem;
+    background: var(--color-base-100);
+    color: var(--color-base-content);
+    font-family: inherit;
+    line-height: 1.5;
+    box-shadow: 0 0.75rem 2rem #00000014;
+  }
+
+  .peaks-date-picker .react-calendar__navigation {
+    height: 2.25rem;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .peaks-date-picker .react-calendar__navigation button {
+    min-width: 2.25rem;
+    border-radius: var(--radius-box);
+    font-weight: 600;
+  }
+
+  .peaks-date-picker .react-calendar__month-view__weekdays {
+    color: color-mix(in oklab, var(--color-base-content) 55%, transparent);
+    font-size: 0.6875rem;
+    letter-spacing: 0.04em;
+  }
+
+  .peaks-date-picker .react-calendar__month-view__weekdays abbr {
+    text-decoration: none;
+  }
+
+  .peaks-date-picker .react-calendar__tile {
+    padding: 0.625rem 0.25rem;
+    border-radius: 0.625rem;
+    font-size: 0.8125rem;
+  }
+
+  .peaks-date-picker .react-calendar__month-view__days__day--weekend {
+    color: inherit;
+  }
+
+  .peaks-date-picker .react-calendar__month-view__days__day--neighboringMonth,
+  .peaks-date-picker .react-calendar__decade-view__years__year--neighboringDecade,
+  .peaks-date-picker .react-calendar__century-view__decades__decade--neighboringCentury {
+    color: color-mix(in oklab, var(--color-base-content) 40%, transparent);
+  }
+
+  .peaks-date-picker .react-calendar__tile--now {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-primary) 40%, transparent);
+    font-weight: 600;
+  }
+
+  .peaks-date-picker .react-calendar__navigation button:enabled:hover,
+  .peaks-date-picker .react-calendar__navigation button:enabled:focus,
+  .peaks-date-picker .react-calendar__tile:enabled:hover,
+  .peaks-date-picker .react-calendar__tile:enabled:focus {
+    background: var(--color-base-200);
+  }
+
+  .peaks-date-picker .react-calendar__tile--hasActive {
+    background: color-mix(in oklab, var(--color-primary) 10%, var(--color-base-100));
+    color: var(--color-primary);
+  }
+
+  .peaks-date-picker .react-calendar__tile--active,
+  .peaks-date-picker .react-calendar__tile--active:enabled:hover,
+  .peaks-date-picker .react-calendar__tile--active:enabled:focus {
+    background: var(--color-primary);
+    color: var(--color-primary-content);
+    box-shadow: none;
+  }
+
+  .peaks-date-picker .react-calendar button:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -2px;
   }
 }

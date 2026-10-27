@@ -1,8 +1,7 @@
 import { AssetSummary } from './AssetSummary';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
-import 'react-date-picker/dist/DatePicker.css';
-import 'react-calendar/dist/Calendar.css';
+import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
 import { FormGroup } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
 import { DateUtil } from '../../util/dates';
@@ -24,6 +23,14 @@ const AssignDate = (props: IProps) => {
           {props.label ? props.label : 'Set the expiration date'}
         </legend>
         <DatePicker
+          className={`peaks-date-picker ${props.error?.path === 'date' ? 'peaks-date-picker--error' : ''}`}
+          calendarIcon={<CalendarDaysIcon className='size-5' aria-hidden='true' />}
+          calendarProps={{
+            prevLabel: <ChevronLeftIcon className='mx-auto size-4' aria-hidden='true' />,
+            nextLabel: <ChevronRightIcon className='mx-auto size-4' aria-hidden='true' />,
+            prev2Label: <ChevronDoubleLeftIcon className='mx-auto size-4' aria-hidden='true' />,
+            next2Label: <ChevronDoubleRightIcon className='mx-auto size-4' aria-hidden='true' />
+          }}
           format='MM/dd/yyyy'
           monthAriaLabel='Month'
           dayAriaLabel='Day'

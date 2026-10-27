@@ -1,4 +1,4 @@
-import { AssetSummary } from '../Shared/AssetSummary';
+import { AssetActions, AssetSummary } from '../Shared/AssetSummary';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
 ﻿import * as React from 'react';
 import { Button } from 'reactstrap';
@@ -19,15 +19,20 @@ const KeySerialAssignmentValues = (props: IProps) => {
     <div>
       <div className='mb-5 mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-main-border pt-6'>
         <h3 className="text-lg font-semibold">Assignment Details</h3>
-        <Button
-          color='link'
-          onClick={() => props.openUpdateModal(props.selectedKeySerial)}
-        >
-          <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' />{' '}
-          {!!props.selectedKeySerial.keySerialAssignment
-            ? 'Update Assignment'
-            : 'Assign Key Serial'}
-        </Button>
+        <AssetActions>
+          <Button
+            color='asset'
+            className='btn-outline'
+            size='sm'
+            type='button'
+            onClick={() => props.openUpdateModal(props.selectedKeySerial)}
+          >
+            <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' />{' '}
+            {!!props.selectedKeySerial.keySerialAssignment
+              ? 'Update Assignment'
+              : 'Assign Key Serial'}
+          </Button>
+        </AssetActions>
       </div>
       <AssetSummary fields={[
         ['Assigned to', props.selectedKeySerial.keySerialAssignment?.person.name || 'Unassigned'],

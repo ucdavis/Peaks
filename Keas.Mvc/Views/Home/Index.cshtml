@@ -52,99 +52,125 @@
     }
 
     <section aria-labelledby="quick-actions-heading" class="space-y-4">
-        <h2 id="quick-actions-heading" class="m-0 text-2xl font-semibold text-base-content">Quick Actions</h2>
+        <h2 id="quick-actions-heading" class="mb-2 text-2xl font-semibold text-base-content">Quick Actions</h2>
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            <a asp-controller="Confirm" asp-action="MyStuff" class="group block rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            <a asp-controller="Confirm" asp-action="MyStuff"
+               class="group block rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <div class="mb-4 flex items-start justify-between gap-3">
                     <hero-icon variant="outline" name="briefcase" class="size-6"></hero-icon>
-                    <hero-icon name="arrow-right" class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
+                    <hero-icon name="arrow-right"
+                               class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
                 </div>
                 <h3 class="m-0 text-xl font-semibold">MyStuff</h3>
-                <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">View your assigned keys, equipment, access, workstations, and documents.</p>
-            </a>
-            @if (isTeamAdmin)
-            {
-                <a asp-controller="TeamAdmin" class="group block rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                    <div class="mb-4 flex items-start justify-between gap-3">
-                        <hero-icon variant="outline" name="trophy" class="size-6"></hero-icon>
-                        <hero-icon name="arrow-right" class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
-                    </div>
-                    <h3 class="m-0 text-xl font-semibold">Administer Team</h3>
-                    <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">Manage your team's settings, permissions, and imports.</p>
+                <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">View your assigned keys, equipment, access,
+                    workstations, and documents.</p>
                 </a>
-            }
-            @if (hasAssetRole)
-            {
-                <a href="/@teamSlug/People" class="group block rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                    <div class="mb-4 flex items-start justify-between gap-3">
-                        <hero-icon variant="outline" name="squares-2x2" class="size-6"></hero-icon>
-                        <hero-icon name="arrow-right" class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
+                @if (isTeamAdmin)
+                {
+                    <a asp-controller="TeamAdmin"
+                       class="group block rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                        <div class="mb-4 flex items-start justify-between gap-3">
+                            <hero-icon variant="outline" name="trophy" class="size-6"></hero-icon>
+                            <hero-icon name="arrow-right"
+                                       class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
+                        </div>
+                        <h3 class="m-0 text-xl font-semibold">Administer Team</h3>
+                        <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">Manage your team's settings, permissions,
+                            and imports.</p>
+                        </a>
+                    }
+                    @if (hasAssetRole)
+                    {
+                        <a href="/@teamSlug/People"
+                           class="group block rounded-sm border border-main-border bg-base-100 p-5 text-base-content transition hover:bg-base-200 hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                            <div class="mb-4 flex items-start justify-between gap-3">
+                                <hero-icon variant="outline" name="squares-2x2" class="size-6"></hero-icon>
+                                <hero-icon name="arrow-right"
+                                           class="size-5 text-base-content/40 group-hover:text-primary"></hero-icon>
+                            </div>
+                            <h3 class="m-0 text-xl font-semibold">Team Assets</h3>
+                            <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">Browse your team's people and their asset
+                                assignments.</p>
+                            </a>
+                        }
                     </div>
-                    <h3 class="m-0 text-xl font-semibold">Team Assets</h3>
-                    <p class="mb-0 mt-2 text-sm leading-6 text-base-content/70">Browse your team's people and their asset assignments.</p>
-                </a>
-            }
-        </div>
-    </section>
+                </section>
 
-    @if (hasAssetRole)
-    {
-        var canViewEquipment = isTeamAdmin || (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.EquipMasterAccess)).Succeeded;
-        var canViewAccess = isTeamAdmin || (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.AccessMasterAccess)).Succeeded;
-        var canViewKeys = isTeamAdmin || (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.KeyMasterAccess)).Succeeded;
-        var canViewSpaces = canViewEquipment || canViewAccess || canViewKeys || (await AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.SpaceMasterAccess)).Succeeded;
+                @if (hasAssetRole)
+                {
+                    var canViewEquipment = isTeamAdmin || (await AuthorizationService.AuthorizeAsync(User,
+                AccessCodes.Codes.EquipMasterAccess)).Succeeded;
+                    var canViewAccess = isTeamAdmin || (await AuthorizationService.AuthorizeAsync(User,
+                AccessCodes.Codes.AccessMasterAccess)).Succeeded;
+                    var canViewKeys = isTeamAdmin || (await AuthorizationService.AuthorizeAsync(User,
+                AccessCodes.Codes.KeyMasterAccess)).Succeeded;
+                    var canViewSpaces = canViewEquipment || canViewAccess || canViewKeys || (await
+                AuthorizationService.AuthorizeAsync(User, AccessCodes.Codes.SpaceMasterAccess)).Succeeded;
 
-        <section aria-labelledby="browse-assets-heading" class="space-y-4">
-            <h2 id="browse-assets-heading" class="m-0 text-2xl font-semibold text-base-content">Browse Assets</h2>
-            <ul class="m-0 max-w-2xl list-none divide-y divide-main-border p-0">
-                <li class="people-color">
-                    <a href="/@teamSlug/people" class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                        <hero-icon variant="outline" name="users" class="size-5 text-[var(--asset-color)]"></hero-icon>
-                        <span class="font-semibold group-hover:underline group-hover:underline-offset-4">People</span>
-                        <hero-icon name="arrow-right" class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
-                    </a>
-                </li>
-                @if (canViewEquipment)
-                {
-                    <li class="equipment-color">
-                        <a href="/@teamSlug/equipment" class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                            <hero-icon variant="outline" name="computer-desktop" class="size-5 text-[var(--asset-color)]"></hero-icon>
-                            <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Equipment</span>
-                            <hero-icon name="arrow-right" class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
-                        </a>
-                    </li>
+                    <section aria-labelledby="browse-assets-heading" class="space-y-4">
+                        <h2 id="browse-assets-heading" class="m-0 text-2xl font-semibold text-base-content">Browse Assets</h2>
+                        <ul class="m-0 max-w-2xl list-none divide-y divide-main-border p-0">
+                            <li class="people-color">
+                                <a href="/@teamSlug/people"
+                                   class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                                    <hero-icon variant="outline" name="users" class="size-5 text-[var(--asset-color)]"></hero-icon>
+                                    <span class="font-semibold group-hover:underline group-hover:underline-offset-4">People</span>
+                                    <hero-icon name="arrow-right"
+                                               class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
+                                </a>
+                            </li>
+                            @if (canViewEquipment)
+                            {
+                                <li class="equipment-color">
+                                    <a href="/@teamSlug/equipment"
+                                       class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                                        <hero-icon variant="outline" name="computer-desktop"
+                                                   class="size-5 text-[var(--asset-color)]"></hero-icon>
+                                        <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Equipment</span>
+                                        <hero-icon name="arrow-right"
+                                                   class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
+                                    </a>
+                                </li>
+                            }
+                            @if (canViewAccess)
+                            {
+                                <li class="access-color">
+                                    <a href="/@teamSlug/access"
+                                       class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                                        <hero-icon variant="outline" name="identification"
+                                                   class="size-5 text-[var(--asset-color)]"></hero-icon>
+                                        <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Access</span>
+                                        <hero-icon name="arrow-right"
+                                                   class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
+                                    </a>
+                                </li>
+                            }
+                            @if (canViewKeys)
+                            {
+                                <li class="keys-color">
+                                    <a href="/@teamSlug/keys"
+                                       class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                                        <hero-icon variant="outline" name="key" class="size-5 text-[var(--asset-color)]"></hero-icon>
+                                        <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Keys</span>
+                                        <hero-icon name="arrow-right"
+                                                   class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
+                                    </a>
+                                </li>
+                            }
+                            @if (canViewSpaces)
+                            {
+                                <li class="spaces-color">
+                                    <a href="/@teamSlug/spaces"
+                                       class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                                        <hero-icon variant="outline" name="building-office-2"
+                                                   class="size-5 text-[var(--asset-color)]"></hero-icon>
+                                        <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Spaces</span>
+                                        <hero-icon name="arrow-right"
+                                                   class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </section>
                 }
-                @if (canViewAccess)
-                {
-                    <li class="access-color">
-                        <a href="/@teamSlug/access" class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                            <hero-icon variant="outline" name="identification" class="size-5 text-[var(--asset-color)]"></hero-icon>
-                            <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Access</span>
-                            <hero-icon name="arrow-right" class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
-                        </a>
-                    </li>
-                }
-                @if (canViewKeys)
-                {
-                    <li class="keys-color">
-                        <a href="/@teamSlug/keys" class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                            <hero-icon variant="outline" name="key" class="size-5 text-[var(--asset-color)]"></hero-icon>
-                            <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Keys</span>
-                            <hero-icon name="arrow-right" class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
-                        </a>
-                    </li>
-                }
-                @if (canViewSpaces)
-                {
-                    <li class="spaces-color">
-                        <a href="/@teamSlug/spaces" class="group flex items-center gap-3 py-3 text-base-content hover:text-base-content focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                            <hero-icon variant="outline" name="building-office-2" class="size-5 text-[var(--asset-color)]"></hero-icon>
-                            <span class="font-semibold group-hover:underline group-hover:underline-offset-4">Spaces</span>
-                            <hero-icon name="arrow-right" class="ml-auto size-4 text-base-content/40 group-hover:text-base-content"></hero-icon>
-                        </a>
-                    </li>
-                }
-            </ul>
-        </section>
-    }
-</div>
+            </div>

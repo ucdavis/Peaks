@@ -1,3 +1,4 @@
+import { AssetActions } from '../Shared/AssetSummary';
 import { Modal, ModalBody } from '../Shared/AppModal';
 import { PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/outline';
 ﻿import * as React from 'react';
@@ -89,9 +90,11 @@ const EquipmentDetails = (props: IProps) => {
         <section aria-labelledby='equipment-summary-title'>
           <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
             <h3 id='equipment-summary-title' className='text-lg font-semibold'>Overview</h3>
-            <button type='button' className='btn btn-asset btn-sm' onClick={() => props.openEditModal(equipment)}>
-              <PencilSquareIcon className='size-4' aria-hidden='true' /> Edit Equipment
-            </button>
+            <AssetActions>
+              <button type='button' className='btn btn-asset btn-sm' onClick={() => props.openEditModal(equipment)}>
+                <PencilSquareIcon className='size-4' aria-hidden='true' /> Edit Equipment
+              </button>
+            </AssetActions>
           </div>
           <dl className='grid grid-cols-1 gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3'>
             {fields.map(([label, value]) => (
@@ -138,10 +141,12 @@ const EquipmentDetails = (props: IProps) => {
         <section className='border-t border-main-border pt-6' aria-labelledby='equipment-assignment-title'>
           <div className='mb-4 flex flex-wrap items-center justify-between gap-3'>
             <h3 id='equipment-assignment-title' className='text-lg font-semibold'>Assignment</h3>
-            <button type='button' className='btn btn-asset btn-outline btn-sm' onClick={() => props.openUpdateModal(equipment)}>
-              <PencilSquareIcon className='size-4' aria-hidden='true' />
-              {equipment.assignment ? 'Update Assignment' : 'Assign Equipment'}
-            </button>
+            <AssetActions>
+              <button type='button' className='btn btn-asset btn-outline btn-sm' onClick={() => props.openUpdateModal(equipment)}>
+                <PencilSquareIcon className='size-4' aria-hidden='true' />
+                {equipment.assignment ? 'Update Assignment' : 'Assign Equipment'}
+              </button>
+            </AssetActions>
           </div>
           <dl className='grid gap-5 sm:grid-cols-2'>
             <div>

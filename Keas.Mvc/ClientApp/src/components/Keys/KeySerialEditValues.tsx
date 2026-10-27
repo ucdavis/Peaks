@@ -1,4 +1,4 @@
-import { AssetSummary, DisplayField } from '../Shared/AssetSummary';
+import { AssetActions, AssetSummary, DisplayField } from '../Shared/AssetSummary';
 import { LinkIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
@@ -58,7 +58,7 @@ const KeySerialEditValues = (props: IProps) => {
 
   const renderEditKeySerial = () => {
     return !props.person ? (
-      <Button color='link' onClick={() => props.openEditModal(keySerial)}>
+      <Button color='asset' size='sm' type='button' onClick={() => props.openEditModal(keySerial)}>
         <PencilSquareIcon data-icon="pencil-square" className='hero-icon size-4' /> Edit Serial
       </Button>
     ) : null;
@@ -70,7 +70,7 @@ const KeySerialEditValues = (props: IProps) => {
       ['Key serial number', numberValue], ['Status', statusValue]
     ]} notes={keySerial.notes} actions={<>
       {props.openEditModal && !props.person && renderEditKeySerial()}
-      {props.goToKeyDetails && <button type='button' className='link link-hover' onClick={goToKeyDetails}>View Key Details</button>}
+      {props.goToKeyDetails && <button type='button' className='btn btn-asset btn-outline btn-sm' onClick={goToKeyDetails}><LinkIcon className='size-4' aria-hidden='true' />View Key Details</button>}
     </>} />;
   }
 
@@ -78,16 +78,17 @@ const KeySerialEditValues = (props: IProps) => {
     <div>
       <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
         <h3 className="text-lg font-semibold">Key Details</h3>
-        {props.disableEditing && props.openEditModal && renderEditKeySerial()}
+        {props.goToKeyDetails && (
+          <AssetActions>
+            <button type='button' className='btn btn-asset btn-outline btn-sm' onClick={goToKeyDetails}>
+              <LinkIcon className='size-4' aria-hidden='true' /> View Key Details
+            </button>
+          </AssetActions>
+        )}
       </div>
       <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
         <dl><DisplayField label='Key Name'>{props.keySerial.key.name ? props.keySerial.key.name : ''}</DisplayField></dl>
         <dl><DisplayField label='Key Code'>{props.keySerial.key.code}</DisplayField></dl>
-        {props.goToKeyDetails && (
-          <Button color='link' onClick={() => goToKeyDetails()}>
-            <LinkIcon data-icon="link" className='hero-icon size-4' /> View Key Details
-          </Button>
-        )}
         <FormGroup>
           <Label for='number'>Key Serial Number</Label>
           <Input
