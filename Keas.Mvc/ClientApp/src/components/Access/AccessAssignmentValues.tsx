@@ -1,3 +1,4 @@
+import { AssetSummary } from '../Shared/AssetSummary';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
 ﻿import * as React from 'react';
 import { Button } from 'reactstrap';
@@ -28,36 +29,10 @@ const AccessAssignmentValues = (props: IProps) => {
             : 'Assign Equipment'}
         </Button>
       </div>
-      <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
-        <div className='form-group'>
-          <label>Assigned To</label>
-          <input
-            type='text'
-            className='input w-full'
-            disabled={true}
-            value={
-              !!props.selectedAccessAssignment
-                ? props.selectedAccessAssignment.person.name
-                : ''
-            }
-          />
-        </div>
-        <div className='form-group'>
-          <label>Expires at</label>
-          <input
-            type='text'
-            className='input w-full'
-            disabled={true}
-            value={
-              !!props.selectedAccessAssignment
-                ? DateUtil.formatExpiration(
-                    props.selectedAccessAssignment.expiresAt
-                  )
-                : ''
-            }
-          />
-        </div>
-      </div>
+      <AssetSummary fields={[
+        ['Assigned to', props.selectedAccessAssignment?.person.name || 'Unassigned'],
+        ['Expires at', props.selectedAccessAssignment?.expiresAt ? DateUtil.formatExpiration(props.selectedAccessAssignment.expiresAt) : null]
+      ]} />
     </div>
   );
 };

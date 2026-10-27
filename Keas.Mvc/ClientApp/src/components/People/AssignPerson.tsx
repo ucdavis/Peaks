@@ -1,3 +1,4 @@
+import { AssetSummary } from '../Shared/AssetSummary';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
@@ -111,6 +112,11 @@ const AssignPerson = (props: IProps) => {
     setPeople(newPeople);
     setIsSearchLoading(false);
   };
+  if (props.disabled) {
+    return <AssetSummary fields={[[props.label, props.person
+      ? <span>{props.person.name}{props.person.email && <> (<a className='link link-hover' href={`mailto:${props.person.email}`}>{props.person.email}</a>)</>}</span>
+      : null]]} />;
+  }
   return renderFindPerson();
 };
 

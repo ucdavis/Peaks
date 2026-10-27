@@ -1,3 +1,4 @@
+import { AssetSummary } from '../Shared/AssetSummary';
 import * as React from 'react';
 import { useState } from 'react';
 import { FormFeedback, FormGroup, Input, Label } from 'reactstrap';
@@ -62,6 +63,12 @@ const KeyEditValues = (props: IProps) => {
     props.changeProperty('tags', value);
     setTags(value);
   };
+
+  if (props.disableEditing) {
+    return <AssetSummary fields={[
+      ['Name', props.selectedKey.name], ['Code', props.selectedKey.code]
+    ]} tags={props.selectedKey.tags} notes={props.selectedKey.notes} />;
+  }
 
   return (
     <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>

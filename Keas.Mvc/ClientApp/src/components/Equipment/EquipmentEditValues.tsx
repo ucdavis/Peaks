@@ -1,3 +1,5 @@
+import { AssetSummary } from '../Shared/AssetSummary';
+import EquipmentManagedSystemInfo from './EquipmentManagedSystemInfo';
 import { InformationCircleIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import {
@@ -87,6 +89,21 @@ const EquipmentEditValues = (props: IProps) => {
 
     return true;
   };
+
+  if (props.disableEditing) {
+    const equipment = props.selectedEquipment;
+    return <AssetSummary title='Equipment details' fields={[
+      ['Name', equipment.name], ['Type', typeValue], ['Serial number / identifier', equipment.serialNumber],
+      ...(shouldShowForType(equipment.type, 'Make') ? [['Make', equipment.make] as [string, React.ReactNode], ['Model', equipment.model] as [string, React.ReactNode]] : []),
+      ...(shouldShowForType(equipment.type, 'ProtectionAndAvailability') ? [['Protection level', equipment.protectionLevel] as [string, React.ReactNode], ['Availability level', equipment.availabilityLevel] as [string, React.ReactNode]] : []),
+      ...(shouldShowForType(equipment.type, 'SystemManagementId') ? [['Managed system ID', <span>{equipment.systemManagementId || '—'}{equipment.systemManagementId && <EquipmentManagedSystemInfo managedSystemId={equipment.systemManagementId} />}</span>] as [string, React.ReactNode]] : []),
+      ['Room', equipment.space ? `${equipment.space.roomNumber} ${equipment.space.bldgName}` : null]
+    ]} tags={equipment.tags} notes={equipment.notes}
+      actions={props.openEditModal && <button type='button' className='btn btn-asset btn-sm' onClick={() => props.openEditModal(equipment)}>Edit Equipment</button>}>
+      {equipment.attributes?.length > 0 && <AssetSummary title='Attributes'
+        fields={equipment.attributes.map(attribute => [attribute.key, attribute.value])} />}
+    </AssetSummary>;
+  }
 
   return (
     <div>

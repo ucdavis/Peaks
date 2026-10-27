@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { render, cleanup, act } from '@testing-library/react';
+import { render, cleanup, act, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router';
 import { Context } from '../../Context';
 import { fakeKeySerials } from '../specs/mockData/KeySerial';
@@ -176,12 +176,13 @@ describe('Key Serial Container', () => {
     });
 
     const detailButton = container.querySelectorAll('button')[1];
-    detailButton.click();
+    await act(async () => { detailButton.click(); });
 
-    const details = document.querySelectorAll('input');
-
-    expect(details[4].value).toContain('ADD'); // confirm key code is displayed
-    expect(details[3].value).toContain('Cereal'); // confirm key name is displayed
-    expect(details[5].value).toContain('2'); // confirm key serial number is displayed
+    const dialog = screen.getByRole('dialog');
+    const values = within(dialog).getAllByRole('definition').map(value => value.textContent);
+    expect(values.some(value => value.includes('ADD'))).toBe(true);
+    expect(values.some(value => value.includes('Cereal'))).toBe(true);
+    expect(values.some(value => value.includes('2'))).toBe(true);
+    expect(dialog.querySelector('input, select, textarea')).toBeNull();
   });
 });

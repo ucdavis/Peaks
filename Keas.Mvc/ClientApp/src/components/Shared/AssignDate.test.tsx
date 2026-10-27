@@ -73,8 +73,8 @@ it('renders disabled expiration values without an editable picker', () => {
       onChangeDate={vi.fn()}
     />
   );
-  expect(screen.getByRole('textbox')).toBeDisabled();
-  expect(screen.getByRole('textbox')).not.toHaveValue('');
+  expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+  expect(screen.getByRole('definition')).toHaveTextContent('10/22/2026');
   expect(screen.queryByRole('spinbutton')).not.toBeInTheDocument();
   rerender(
     <AssignDate
@@ -84,5 +84,5 @@ it('renders disabled expiration values without an editable picker', () => {
       onChangeDate={vi.fn()}
     />
   );
-  expect(screen.getByRole('textbox')).toHaveValue('');
+  expect(screen.getByRole('definition')).toHaveTextContent('—');
 });

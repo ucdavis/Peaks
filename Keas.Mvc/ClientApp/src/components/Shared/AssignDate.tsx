@@ -1,8 +1,9 @@
+import { AssetSummary } from './AssetSummary';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
-import { FormGroup, Input, Label } from 'reactstrap';
+import { FormGroup, Label } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
 import { DateUtil } from '../../util/dates';
 
@@ -40,17 +41,8 @@ const AssignDate = (props: IProps) => {
       </FormGroup>
     );
   }
-  return (
-    <FormGroup>
-      <Label for='date'>{props.label ? props.label : 'Expiration Date'}</Label>
-      <Input
-        type='text'
-        className='form-control'
-        disabled={true}
-        value={props.date ? DateUtil.formatExpiration(props.date) : ''}
-      />
-    </FormGroup>
-  );
+  return <AssetSummary fields={[[props.label || 'Expiration date',
+    props.date ? DateUtil.formatExpiration(props.date) : null]]} />;
 };
 
 export default AssignDate;

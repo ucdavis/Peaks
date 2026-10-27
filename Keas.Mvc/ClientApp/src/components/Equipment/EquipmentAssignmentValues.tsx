@@ -29,7 +29,7 @@ const EquipmentAssignmentValues = (props: IProps) => {
             : 'Assign Equipment'}
         </Button>
       </div>
-      {props.spacious ? (
+      {(
         <dl className='grid gap-5 sm:grid-cols-2'>
           <div>
             <dt className='text-sm text-base-content/60'>Assigned to</dt>
@@ -41,37 +41,6 @@ const EquipmentAssignmentValues = (props: IProps) => {
               ? DateUtil.formatExpiration(props.selectedEquipment.assignment.expiresAt) : '—'}</dd>
           </div>
         </dl>
-      ) : (
-      <div className='wrapperasset'>
-        <div className='form-group'>
-          <label>Assigned To</label>
-          <input
-            type='text'
-            className='form-control'
-            disabled={true}
-            value={
-              !!props.selectedEquipment.assignment
-                ? props.selectedEquipment.assignment.person.name
-                : ''
-            }
-          />
-        </div>
-        <div className='form-group'>
-          <label>Expires at</label>
-          <input
-            type='text'
-            className='form-control'
-            disabled={true}
-            value={
-              !!props.selectedEquipment.assignment
-                ? DateUtil.formatExpiration(
-                    props.selectedEquipment.assignment.expiresAt
-                  )
-                : ''
-            }
-          />
-        </div>
-      </div>
       )}
     </div>
   );

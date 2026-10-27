@@ -1,3 +1,5 @@
+import { AssetSummary } from '../Shared/AssetSummary';
+import { DateUtil } from '../../util/dates';
 import { startOfDay } from 'date-fns';
 import * as React from 'react';
 import { FormFeedback, FormGroup, Input, Label } from 'reactstrap';
@@ -37,6 +39,19 @@ const PersonEditValues = (props: IProps) => {
       ? props.changeProperty('endDate', null)
       : props.changeProperty('endDate', startOfDay(date));
   };
+
+  if (props.disableEditing) {
+    const person = props.selectedPerson;
+    return <AssetSummary fields={[
+      ['First name', person.firstName], ['Last name', person.lastName],
+      ['Email', person.email ? <a className='link link-hover' href={`mailto:${person.email}`}>{person.email}</a> : null],
+      ['Home phone', person.homePhone], ['Team phone', person.teamPhone], ['Title', person.title],
+      ['Start date', person.startDate ? DateUtil.formatDate(person.startDate) : null],
+      ['End date', person.endDate ? DateUtil.formatDate(person.endDate) : null],
+      ['Supervisor', person.supervisor?.name], ['Category', person.category],
+      ['Is supervisor', person.isSupervisor ? 'Yes' : 'No']
+    ]} tags={person.tags} notes={person.notes} />;
+  }
 
   return (
     <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>

@@ -1,3 +1,4 @@
+import { AssetSummary, DisplayField } from '../Shared/AssetSummary';
 import { LinkIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
@@ -63,6 +64,16 @@ const KeySerialEditValues = (props: IProps) => {
     ) : null;
   };
 
+  if (props.disableEditing) {
+    return <AssetSummary title='Key details' fields={[
+      ['Key name', keySerial.key.name], ['Key code', keySerial.key.code],
+      ['Key serial number', numberValue], ['Status', statusValue]
+    ]} notes={keySerial.notes} actions={<>
+      {props.openEditModal && !props.person && renderEditKeySerial()}
+      {props.goToKeyDetails && <button type='button' className='link link-hover' onClick={goToKeyDetails}>View Key Details</button>}
+    </>} />;
+  }
+
   return (
     <div>
       <div className='mb-5 flex flex-wrap items-center justify-between gap-3'>
@@ -70,24 +81,8 @@ const KeySerialEditValues = (props: IProps) => {
         {props.disableEditing && props.openEditModal && renderEditKeySerial()}
       </div>
       <div className='grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2 lg:grid-cols-3 [&>div]:min-w-0 [&>div]:mb-0 [&_label]:mb-2 [&_label]:inline-block [&_label]:text-sm [&_label]:font-semibold [&>div:has(textarea)]:col-span-full'>
-        <FormGroup>
-          <Label for='key.name'>Key Name</Label>
-          <Input
-            type='text'
-            className='input w-full'
-            readOnly={true}
-            value={props.keySerial.key.name ? props.keySerial.key.name : ''}
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for='key.code'>Key Code</Label>
-          <Input
-            type='text'
-            className='input w-full'
-            readOnly={true}
-            value={props.keySerial.key.code}
-          />
-        </FormGroup>
+        <dl><DisplayField label='Key Name'>{props.keySerial.key.name ? props.keySerial.key.name : ''}</DisplayField></dl>
+        <dl><DisplayField label='Key Code'>{props.keySerial.key.code}</DisplayField></dl>
         {props.goToKeyDetails && (
           <Button color='link' onClick={() => goToKeyDetails()}>
             <LinkIcon data-icon="link" className='hero-icon size-4' /> View Key Details

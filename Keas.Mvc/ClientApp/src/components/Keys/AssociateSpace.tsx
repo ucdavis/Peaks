@@ -1,3 +1,4 @@
+import { DisplayField } from '../Shared/AssetSummary';
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
@@ -64,54 +65,23 @@ const AssociateSpace = (props: IProps) => {
 
   const renderSearchSpace = () => {
     const { selectedSpace } = props;
-
-    // we're being given a specific key to readonly
     if (selectedSpace) {
-      return (
-        <div className='form-group'>
-          <label>Space to associate with:</label>
-          <input
-            className='input w-full'
-            value={`${selectedSpace.roomNumber} ${selectedSpace.bldgName}`}
-            readOnly={true}
-          />
-        </div>
-      );
+      return <dl><DisplayField label='Space to associate with'>{`${selectedSpace.roomNumber} ${selectedSpace.bldgName}`}</DisplayField></dl>;
     }
-
-    return (
-      <div className='form-group'>
-        <label>Space to associate with:</label>
-        <SearchSpaces onSelect={onSelectSpace} />
-      </div>
-    );
+    return <div className='form-group'>
+      <label>Space to associate with:</label>
+      <SearchSpaces onSelect={onSelectSpace} />
+    </div>;
   };
 
   const renderSearchKey = () => {
-    // we're being given a specific key to readonly
     if (selectedKeyInfo) {
-      return (
-        <div className='form-group'>
-          <label>Key to associate with:</label>
-          <input
-            className='input w-full'
-            value={`${selectedKeyInfo.key.name} - ${selectedKeyInfo.key.code}`}
-            readOnly={true}
-          />
-        </div>
-      );
+      return <dl><DisplayField label='Key to associate with'>{`${selectedKeyInfo.key.name} - ${selectedKeyInfo.key.code}`}</DisplayField></dl>;
     }
-
-    return (
-      <div className='form-group'>
-        <label>Pick an key to associate</label>
-        <SearchKeys
-          onSelect={onSelectedKeyInfo}
-          onDeselect={onDeselected}
-          allowNew={false}
-        />
-      </div>
-    );
+    return <div className='form-group'>
+      <label>Pick a key to associate</label>
+      <SearchKeys onSelect={onSelectedKeyInfo} onDeselect={onDeselected} allowNew={false} />
+    </div>;
   };
 
   const renderCreateKey = () => {

@@ -1,3 +1,4 @@
+import { DisplayField } from '../Shared/AssetSummary';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
@@ -24,12 +25,7 @@ const SearchKeySerials = (props: IProps) => {
 
   const renderExistingKey = () => {
     return (
-      <input
-        type='text'
-        className='form-control'
-        value={props.selectedKeySerial.number}
-        disabled={true}
-      />
+      <dl><DisplayField label='Key serial number'>{props.selectedKeySerial.number}</DisplayField></dl>
     );
   };
 

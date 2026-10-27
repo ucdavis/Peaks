@@ -1,3 +1,4 @@
+import { DisplayField } from '../Shared/AssetSummary';
 import { Modal, ModalBody, ModalFooter, ModalHeading } from '../Shared/AppModal';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
@@ -56,30 +57,12 @@ const DisassociateSpace = (props: IProps) => {
           />
           <h2 className="text-xl font-semibold">Space</h2>
           <div>
-            <div className='form-group'>
-              <label>Room Number and Building</label>
-              <input
-                className='input w-full'
-                disabled={true}
-                value={
-                  props.selectedSpace.roomNumber +
+            <dl><DisplayField label='Room Number and Building'>{props.selectedSpace.roomNumber +
                   ' ' +
-                  props.selectedSpace.bldgName
-                }
-              />
-            </div>
-            <div className='form-group'>
-              <label>Room Name</label>
-              <input
-                className='input w-full'
-                disabled={true}
-                value={
-                  props.selectedSpace.roomName
+                  props.selectedSpace.bldgName}</DisplayField></dl>
+            <dl><DisplayField label='Room Name'>{props.selectedSpace.roomName
                     ? props.selectedSpace.roomName
-                    : ''
-                }
-              />
-            </div>
+                    : ''}</DisplayField></dl>
           </div>
         </ModalBody>
         <ModalFooter>

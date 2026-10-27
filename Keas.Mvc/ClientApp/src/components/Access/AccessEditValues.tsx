@@ -1,3 +1,4 @@
+import { AssetSummary } from '../Shared/AssetSummary';
 import { LinkIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { Button, FormFeedback, FormGroup, Input, Label } from 'reactstrap';
@@ -30,6 +31,13 @@ const AccessEditValues = (props: IProps) => {
 
   const access = props.selectedAccess;
   const error = props.error;
+
+  if (props.disableEditing) {
+    return <AssetSummary title='Access details' fields={[
+      ['Name', access.name]
+    ]} tags={access.tags} notes={access.notes}
+      actions={props.goToAccessDetails && <button type='button' className='link link-hover' onClick={goToAccessDetails}>View Access Details</button>} />;
+  }
 
   return (
     <div>

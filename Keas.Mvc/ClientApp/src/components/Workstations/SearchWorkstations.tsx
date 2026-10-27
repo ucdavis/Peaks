@@ -1,3 +1,4 @@
+import { DisplayField } from '../Shared/AssetSummary';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
 import { useContext, useState } from 'react';
@@ -100,12 +101,7 @@ const SearchWorkstations = (props: IProps) => {
 
   const renderExistingWorkstation = () => {
     return (
-      <input
-        type='text'
-        className='form-control'
-        value={props.selectedWorkstation.name}
-        disabled={true}
-      />
+      <dl><DisplayField label='Workstation'>{props.selectedWorkstation.name}</DisplayField></dl>
     );
   };
 
