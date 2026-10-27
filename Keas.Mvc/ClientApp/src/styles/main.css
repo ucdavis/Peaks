@@ -178,6 +178,10 @@ body {
     }
   }
 
+  .btn-asset.btn-link:not(:disabled, [disabled], .btn-disabled) {
+    --btn-fg: var(--asset-color, var(--color-primary));
+  }
+
   .btn-asset [data-icon] {
     color: inherit;
   }

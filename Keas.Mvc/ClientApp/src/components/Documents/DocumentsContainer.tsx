@@ -96,7 +96,7 @@ const DocumentsContainer = (props: IProps): JSX.Element => {
           <h2 className="text-xl font-semibold">
             <DocumentTextIcon data-icon="document-text" className='hero-icon size-5' /> Documents
           </h2>
-          <Button color='link' onClick={() => setAssign(true)}>
+          <Button color='asset' size='sm' onClick={() => setAssign(true)}>
             <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Document
           </Button>
         </div>

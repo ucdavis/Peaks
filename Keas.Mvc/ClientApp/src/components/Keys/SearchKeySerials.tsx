@@ -51,7 +51,7 @@ const SearchKeySerials = (props: IProps) => {
         </div>
         <div>or</div>
         <div>
-          <Button color='link' onClick={createNew}>
+          <Button color='asset' type='button' size='sm' onClick={createNew}>
             <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Create New
             Serial
           </Button>

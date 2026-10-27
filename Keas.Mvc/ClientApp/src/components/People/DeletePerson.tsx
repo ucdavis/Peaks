@@ -53,14 +53,14 @@ const DeletePerson = (props: IProps) => {
 
   return (
     <div>
-      <Button color='error' size='sm' outline onClick={toggleModal}>
+      <button type='button' className='btn btn-sm' onClick={toggleModal}>
         <TrashIcon
           data-icon='trash'
           className='hero-icon size-4 mr-2'
           aria-hidden='true'
         />
         Delete Person
-      </Button>
+      </button>
       <Modal
         isOpen={modal}
         toggle={toggleModal}

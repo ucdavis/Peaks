@@ -87,18 +87,12 @@ const PersonDetails = (props: IProps) => {
               )}
             </div>
             {canEdit && (
-              <div className='flex flex-wrap items-center gap-2'>
-                <EditPerson
-                  key={`edit-person-${props.selectedPersonInfo.id}`}
-                  onEdit={props.onEdit}
-                  selectedPerson={props.selectedPersonInfo.person}
-                  tags={props.tags}
-                />
+              <div className='ml-auto flex flex-wrap items-center justify-end gap-2'>
                 <a
                   href={`/${context.team.slug}/Report/PersonTeamList/?personId=${props.selectedPersonInfo.id}`}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='btn btn-sm btn-ghost'
+                  className='btn btn-sm'
                 >
                   <MagnifyingGlassIcon className='size-4' aria-hidden='true' />
                   Lookup teams
@@ -107,6 +101,12 @@ const PersonDetails = (props: IProps) => {
                   key={`delete-person-${props.selectedPersonInfo.id}`}
                   selectedPersonInfo={props.selectedPersonInfo}
                   onDelete={props.onDelete}
+                />
+                <EditPerson
+                  key={`edit-person-${props.selectedPersonInfo.id}`}
+                  onEdit={props.onEdit}
+                  selectedPerson={props.selectedPersonInfo.person}
+                  tags={props.tags}
                 />
               </div>
             )}

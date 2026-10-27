@@ -1,3 +1,4 @@
+import { AssetActions } from '../Shared/AssetSummary';
 import { ComputerDesktopIcon } from '@heroicons/react/24/solid';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import * as React from 'react';
@@ -149,15 +150,6 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
             onEdit={openEditModal}
             onDuplicate={openDuplicateModal}
           />
-          {props.person && (
-            <a
-              href={`/${context.team.slug}/Report/PersonEquipmentHistoryReport/${props.person.id}`}
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              View Equipment History for {props.person.name}
-            </a>
-          )}
         </div>
       );
     } else {
@@ -617,13 +609,25 @@ const EquipmentContainer = (props: IProps): JSX.Element => {
   return (
     <div className='card mb-4 border border-main-border bg-base-100 shadow-sm equipment-color'>
       <div className='card-header-equipment'>
-        <div className='px-5 py-4 sm:px-6 flex items-center justify-between gap-4'>
+        <div className='flex flex-wrap items-center justify-between gap-4 px-5 py-4 sm:px-6'>
           <h2 className="text-xl font-semibold">
             <ComputerDesktopIcon data-icon="computer-desktop" className='hero-icon size-5' /> Equipment
           </h2>
-          <Button color='asset' size='sm' onClick={openCreateModal}>
-            <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Equipment
-          </Button>
+          <AssetActions>
+            {props.person && (
+              <a
+                className='btn btn-asset btn-link btn-sm'
+                href={`/${context.team.slug}/Report/PersonEquipmentHistoryReport/${props.person.id}`}
+                target='_blank'
+                rel='noopener noreferrer'
+              >
+                View Equipment History for {props.person.name}
+              </a>
+            )}
+            <Button color='asset' size='sm' onClick={openCreateModal}>
+              <PlusIcon data-icon="plus" className='hero-icon size-4' aria-hidden='true' /> Add Equipment
+            </Button>
+          </AssetActions>
         </div>
       </div>
       <div className='card-body gap-4 p-5 sm:p-6'>

@@ -47,11 +47,11 @@ const BioContainer = ({ person }: IProps) => {
       <div className='grid items-start gap-8 md:grid-cols-2 xl:grid-cols-3'>
         {hasEmployment && (
           <section
-            className='min-w-0 space-y-4'
+            className='flex min-w-0 flex-col gap-4'
             aria-label='Employment details'
           >
             <h3 className='m-0 text-base font-semibold'>Employment details</h3>
-            <dl className='m-0 space-y-3'>
+            <dl className='m-0 grid gap-3'>
               {person.title && <Detail label='Title'>{person.title}</Detail>}
               {person.category && (
                 <Detail label='Category'>{person.category}</Detail>
@@ -70,9 +70,9 @@ const BioContainer = ({ person }: IProps) => {
           </section>
         )}
         {hasContact && (
-          <section className='min-w-0 space-y-4' aria-label='Contact details'>
+          <section className='flex min-w-0 flex-col gap-4' aria-label='Contact details'>
             <h3 className='m-0 text-base font-semibold'>Contact details</h3>
-            <dl className='m-0 space-y-3'>
+            <dl className='m-0 grid gap-3'>
               {person.email && (
                 <Detail label='Email'>
                   <a
@@ -127,13 +127,13 @@ const BioContainer = ({ person }: IProps) => {
           </section>
         )}
         {tags.length > 0 && (
-          <section className='min-w-0 space-y-4' aria-label='Person tags'>
+          <section className='flex min-w-0 flex-col gap-4' aria-label='Person tags'>
             <h3 className='m-0 text-base font-semibold'>Tags</h3>
             <div className='flex flex-wrap gap-2'>
               {tags.map(tag => (
                 <span
                   key={tag}
-                  className='badge badge-ghost h-auto max-w-full break-words py-2'
+                  className='badge badge-asset badge-soft h-auto max-w-full break-words py-2'
                 >
                   {tag}
                 </span>
@@ -144,7 +144,7 @@ const BioContainer = ({ person }: IProps) => {
       </div>
       {person.notes && (
         <section
-          className='space-y-3 border-t border-main-border pt-5'
+          className='flex flex-col gap-3 border-t border-main-border pt-5'
           aria-label='Person notes'
         >
           <h3 className='m-0 text-base font-semibold'>Notes</h3>

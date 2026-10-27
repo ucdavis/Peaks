@@ -51,7 +51,7 @@ const SearchAccess = (props: IProps) => {
         <div>or</div>
         <div>
           <Button
-            color='link'
+            color='asset' type='button' size='sm'
             onClick={() => {
               createNew();
             }}
