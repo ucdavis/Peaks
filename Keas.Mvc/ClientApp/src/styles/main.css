@@ -21,6 +21,11 @@ body {
 /* Reactstrap generates this class from color='link' at runtime. */
 @source inline('btn-link');
 
+/* Resolve the color at the element's asset context; supports bg-asset-color/10. */
+@theme inline {
+  --color-asset-color: var(--asset-color, var(--color-primary));
+}
+
 /* Shared shell width and gutters for every Razor/React page. */
 @utility content-wrapper {
   @apply mx-auto w-full max-w-[1600px] px-4 sm:px-6 lg:px-8;
