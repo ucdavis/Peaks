@@ -76,7 +76,7 @@ const EquipmentDetails = (props: IProps) => {
   return (
     <Modal isOpen={props.modal} toggle={props.closeModal}
       className='equipment-color equipment-details-modal' labelledBy='equipment-details-title'>
-      <div className='flex items-start justify-between gap-4 rounded-t-box border-b border-main-border bg-asset-color/10 p-5 sm:px-8 sm:py-6'>
+      <div className='flex items-start justify-between gap-4 rounded-t-box border-b-[3px] border-asset-color p-5 sm:px-8 sm:py-6'>
         <div className='min-w-0'>
           <p className='mb-1 text-sm text-base-content/60'>Equipment details</p>
           <h2 id='equipment-details-title' className='break-words text-2xl font-semibold'>{equipment.name}</h2>

@@ -20,7 +20,7 @@ export const Modal = ({ children, labelledBy, ...props }: ModalProps) => {
 export const ModalHeading = ({ children }: { children: React.ReactNode }) => {
   const { titleId, close } = useContext(ModalContext);
   return (
-    <div className='flex items-start justify-between gap-4 rounded-t-box border-b border-main-border bg-asset-color/10 p-5 sm:px-8 sm:py-6'>
+    <div className='flex items-start justify-between gap-4 rounded-t-box border-b-[3px] border-asset-color p-5 sm:px-8 sm:py-6'>
       <h2 id={titleId} className='min-w-0 break-words text-2xl font-semibold'>{children}</h2>
       <button type='button' className='btn btn-ghost btn-square btn-sm shrink-0' aria-label='Close dialog' onClick={close}>
         <XMarkIcon className='size-5' aria-hidden='true' />
