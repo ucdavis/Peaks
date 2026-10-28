@@ -1,6 +1,7 @@
 import { AssetSummary } from './AssetSummary';
 import * as React from 'react';
 import DatePicker from 'react-date-picker';
+import type { CalendarProps } from 'react-calendar';
 import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
 import { FormGroup } from 'reactstrap';
 import { IValidationError } from '../../models/Shared';
@@ -16,6 +17,12 @@ interface IProps {
 }
 
 const AssignDate = (props: IProps) => {
+  const [calendarView, setCalendarView] = React.useState<CalendarProps['view']>('month');
+  const largerPeriod = { month: 'year', year: 'decade', decade: 'century', century: 'century' }[calendarView];
+  React.useEffect(() => {
+    if (props.disabled) setCalendarView('month');
+  }, [props.disabled]);
+
   if (!props.disabled) {
     return (
       <FormGroup tag='fieldset' className='min-w-0 space-y-2'>
@@ -26,6 +33,12 @@ const AssignDate = (props: IProps) => {
           className={`peaks-date-picker ${props.error?.path === 'date' ? 'peaks-date-picker--error' : ''}`}
           calendarIcon={<CalendarDaysIcon className='size-5' aria-hidden='true' />}
           calendarProps={{
+            view: calendarView,
+            onViewChange: ({ view }) => setCalendarView(view),
+            prevAriaLabel: `Previous ${calendarView}`,
+            nextAriaLabel: `Next ${calendarView}`,
+            prev2AriaLabel: `Previous ${largerPeriod}`,
+            next2AriaLabel: `Next ${largerPeriod}`,
             prevLabel: <ChevronLeftIcon className='mx-auto size-4' aria-hidden='true' />,
             nextLabel: <ChevronRightIcon className='mx-auto size-4' aria-hidden='true' />,
             prev2Label: <ChevronDoubleLeftIcon className='mx-auto size-4' aria-hidden='true' />,
