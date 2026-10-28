@@ -107,7 +107,7 @@ const EditEquipment = (props: IProps) => {
       className='equipment-color equipment-edit-modal'
       labelledBy='equipment-edit-title'
     >
-      <div className='flex items-start justify-between gap-4 rounded-t-box border-b border-main-border bg-asset-color/10 p-5 sm:px-8 sm:py-6'>
+      <div className='flex items-start justify-between gap-4 rounded-t-box border-b-[3px] border-asset-color p-5 sm:px-8 sm:py-6'>
         <div className='min-w-0'>
           <p className='mb-1 text-sm text-base-content/60'>Edit equipment</p>
           <h2 id='equipment-edit-title' className='break-words text-2xl font-semibold'>{props.selectedEquipment.name}</h2>

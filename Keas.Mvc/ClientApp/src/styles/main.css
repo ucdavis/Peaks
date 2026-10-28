@@ -21,7 +21,7 @@ body {
 /* Reactstrap generates this class from color='link' at runtime. */
 @source inline('btn-link');
 
-/* Resolve the color at the element's asset context; supports bg-asset-color/10. */
+/* Resolve asset color utilities at the element's nearest asset context. */
 @theme inline {
   --color-asset-color: var(--asset-color, var(--color-primary));
 }
