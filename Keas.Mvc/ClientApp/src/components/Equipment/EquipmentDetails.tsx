@@ -1,7 +1,7 @@
 import { AssetActions } from '../Shared/AssetSummary';
 import { Modal, ModalBody } from '../Shared/AppModal';
 import { PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/outline';
-﻿import * as React from 'react';
+import * as React from 'react';
 import { useContext, useEffect } from 'react';
 import { toast } from 'react-toastify';
 

@@ -1,5 +1,5 @@
 import { ArrowPathIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-﻿import * as React from 'react';
+import * as React from 'react';
 import { useContext, useState } from 'react';
 import { toast } from 'react-toastify';
 import {
