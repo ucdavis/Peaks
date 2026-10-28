@@ -78,6 +78,18 @@
 </head>
 
 <body class="flex min-h-screen flex-col bg-base-200 font-sans text-base-content">
+    @if (Configuration["Environment:ShowTestBanner"] == "Yes")
+    {
+        <div role="alert" class="shrink-0 bg-error text-error-content">
+            <div class="content-wrapper flex items-center justify-center gap-3 py-3 text-center sm:py-4">
+                <hero-icon name="exclamation-triangle" class="size-7 shrink-0 sm:size-8" aria-hidden="true"></hero-icon>
+                <p class="m-0 text-base font-semibold leading-snug sm:text-lg">
+                    <strong class="block text-lg font-bold uppercase tracking-wide sm:inline sm:text-xl">Test site</strong>
+                    <span class="block sm:ml-3 sm:inline">Beta testing. Data will not be retained.</span>
+                </p>
+            </div>
+        </div>
+    }
     <div class="flex-1">
         <header class="bg-base-100 py-4">
             <div class="content-wrapper">
@@ -270,15 +282,6 @@
                         </div>
                     </div>
                 </nav>
-                @if (Configuration["Environment:ShowTestBanner"] == "Yes")
-                {
-                    <div class="content-wrapper">
-                        <div role="alert" class="alert alert-warning mt-4 shadow-none">
-                            <hero-icon name="exclamation-triangle" class="size-5 shrink-0" aria-hidden="true"></hero-icon>
-                            <span class="text-current">Beta testing. Data will not be retained.</span>
-                        </div>
-                    </div>
-                }
                 @if (!string.IsNullOrWhiteSpace(TempData["ErrorMessage"] as string))
                 {
                     <div class="content-wrapper">
