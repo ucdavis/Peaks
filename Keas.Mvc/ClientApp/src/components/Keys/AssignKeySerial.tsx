@@ -261,7 +261,7 @@ const AssignKeySerial = (props: IProps) => {
           onClick={assignSelected}
           disabled={!validState || submitting}
         >
-          Assign {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
+          {keySerial?.keySerialAssignment ? 'Save changes' : 'Assign'} {submitting && <ArrowPathIcon data-icon="arrow-path" className='hero-icon size-5 animate-spin' />}
         </Button>{' '}
       </ModalFooter>
     </Modal>
