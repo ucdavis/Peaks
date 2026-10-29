@@ -113,6 +113,10 @@
             },
             "stateSave": true,
             "stateDuration": 60 * 5,
+            stateLoadParams: function (settings, data) {
+                // Previously selected people may have been deleted since the last load.
+                delete data.select;
+            },
         });
 
 
