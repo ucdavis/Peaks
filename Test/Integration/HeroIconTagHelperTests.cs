@@ -40,6 +40,28 @@ namespace Test.Integration
             Assert.Contains("aria-label=\"People &amp; teams\"", writer.ToString());
         }
 
+        [Theory]
+        [InlineData("outline", null, null)]
+        [InlineData("solid", null, null)]
+        [InlineData("outline", "32", null)]
+        [InlineData("solid", "32", null)]
+        [InlineData("outline", null, "2em")]
+        [InlineData("solid", null, "2em")]
+        [InlineData("outline", "32", "2em")]
+        [InlineData("solid", "32", "2em")]
+        public void IconsHaveFallbackDimensionsWithoutOverwritingExplicitSizes(string variant, string width, string height)
+        {
+            var attributes = new List<TagHelperAttribute>();
+            if (width != null) attributes.Add(new TagHelperAttribute("width", width));
+            if (height != null) attributes.Add(new TagHelperAttribute("height", height));
+
+            var output = Render(new HeroIconTagHelper { Name = "users", Variant = variant }, attributes.ToArray());
+
+            Assert.Equal(width ?? "1.25em", output.Attributes["width"].Value);
+            Assert.Equal(height ?? "1.25em", output.Attributes["height"].Value);
+            Assert.False(output.Attributes.ContainsName("style"));
+        }
+
         [Fact]
         public void UnknownIconsFailRatherThanRenderingAnEmptyGlyph()
         {

@@ -30,6 +30,27 @@ namespace Test.Integration
             Assert.DoesNotContain("@vite/client", second);
         }
 
+        [Fact]
+        public void DevelopmentStylesLoadBeforeModulesAndAreNotDuplicated()
+        {
+            var view = new ViewContext { HttpContext = new DefaultHttpContext() };
+            view.HttpContext.Request.PathBase = "/peaks";
+            var styles = Render("src/index.tsx", "Development", true, null, view,
+                stylesOnly: true, devStylesheet: "/src/styles/main.css", devServerUrl: "http://localhost:5190/");
+            Assert.Contains("rel=\"stylesheet\"", styles);
+            Assert.Contains("href=\"http://localhost:5190/src/styles/main.css?direct\"", styles);
+            Assert.DoesNotContain("<script", styles);
+            Assert.Equal("", Render("src/other.tsx", "Development", true, null, view,
+                stylesOnly: true, devStylesheet: "src/styles/main.css", devServerUrl: "http://localhost:5190"));
+
+            var scripts = Render("src/index.tsx", "Development", true, null, view,
+                react: true, devServerUrl: "http://localhost:5190");
+            Assert.Contains("http://localhost:5190/src/index.tsx", scripts);
+            Assert.Contains("@vite/client", scripts);
+            Assert.Contains("@react-refresh", scripts);
+            Assert.DoesNotContain("<link", scripts);
+        }
+
         [Theory]
         [InlineData("Production", true)]
         [InlineData("Staging", true)]
@@ -46,7 +67,8 @@ namespace Test.Integration
                     "\"nested\":{\"file\":\"assets/nested.js\",\"css\":[\"assets/nested.css\"]}}");
                 var view = new ViewContext { HttpContext = new DefaultHttpContext() };
                 view.HttpContext.Request.PathBase = "/peaks";
-                var styles = Render("src/page.tsx", environment, enabled, root, view, stylesOnly: true);
+                var styles = Render("src/page.tsx", environment, enabled, root, view, stylesOnly: true,
+                    devStylesheet: "src/styles/main.css");
                 Assert.DoesNotContain("<script", styles);
                 Assert.Contains("rel=\"stylesheet\"", styles);
                 Assert.Equal("", Render("src/page.tsx", environment, enabled, root, view, stylesOnly: true));
@@ -55,6 +77,8 @@ namespace Test.Integration
                 Assert.Contains("/peaks/vite/assets/page-123.css", styles);
                 Assert.Contains("/peaks/vite/assets/shared.css", styles);
                 Assert.Contains("/peaks/vite/assets/nested.css", styles);
+                Assert.DoesNotContain("localhost", styles);
+                Assert.DoesNotContain("?direct", styles);
                 Assert.DoesNotContain("localhost", html);
                 Assert.DoesNotContain("@vite", html);
                 Assert.Equal("", Render("src/page.tsx", environment, enabled, root, view));
@@ -62,7 +86,8 @@ namespace Test.Integration
             finally { Directory.Delete(root, recursive: true); }
         }
 
-        private static string Render(string entry, string environment, bool enabled, string root, ViewContext view, bool react = false, bool stylesOnly = false)
+        private static string Render(string entry, string environment, bool enabled, string root, ViewContext view,
+            bool react = false, bool stylesOnly = false, string devStylesheet = null, string devServerUrl = "http://localhost:5179")
         {
             var host = new Mock<IWebHostEnvironment>();
             host.SetupGet(x => x.EnvironmentName).Returns(environment);
@@ -70,9 +95,12 @@ namespace Test.Integration
             var config = new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string>
             {
                 ["Vite:UseDevServer"] = enabled.ToString(),
-                ["Vite:DevServerUrl"] = "http://localhost:5179"
+                ["Vite:DevServerUrl"] = devServerUrl
             }).Build();
-            var helper = new ViteEntryTagHelper(host.Object, config) { Src = entry, ViewContext = view, React = react, StylesOnly = stylesOnly };
+            var helper = new ViteEntryTagHelper(host.Object, config)
+            {
+                Src = entry, ViewContext = view, React = react, StylesOnly = stylesOnly, DevStylesheet = devStylesheet
+            };
             var context = new TagHelperContext(new TagHelperAttributeList(), new Dictionary<object, object>(), "test");
             var output = new TagHelperOutput("vite-entry", new TagHelperAttributeList(),
                 (_, _) => Task.FromResult<TagHelperContent>(new DefaultTagHelperContent()));
